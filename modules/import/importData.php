@@ -1,0 +1,89 @@
+<?php
+
+namespace app\modules\import;
+
+/**
+ * import module definition class
+ */
+class importData extends \yii\base\Module
+{
+    /**
+     * @inheritdoc
+     */
+    public $controllerNamespace = 'app\modules\import\controllers';
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+
+        // custom initialization code goes here
+    }
+    
+   public static function getLabels($l){
+        $label=[
+            'addressbook'=>['table_name'=>'tbl_addressbook','fields'=>'id,destinations,flag_entry,organization_code,organization_type,source_org_type,sync_url,table_name,to_child,to_parent,type','default_fields'=>''],
+
+            'state'=>['table_name'=>'tbl_states','fields'=>'state_code,state_name,local_name,is_active'],
+            'district'=>['table_name'=>'tbl_districts','fields'=>'district_code,district_name,local_name','scenario'=>'importCsv','default_fields'=>'is_active:1'],
+            'sub-district'=>['table_name'=>'tbl_sub_districts','fields'=>'sub_district_code,sub_district_name,district_code,local_name','default_fields'=>'is_active:1'],
+            'village'=>['table_name'=>'tbl_villages','fields'=>'village_code,village_name,sub_district_code,local_name','default_fields'=>'is_active:1'],
+            'hamlet'=>['import_class'=>'hamlet_import','table_name'=>'tbl_hamlets','fields'=>'hamlet_name,village_code,local_name','scenario'=>'importCsv','default_fields'=>'is_active:1'],
+            'village-miscellaneous'=>['table_name'=>'tbl_village_miscellaneous','fields'=>'village_miscellaneous_code,miscellaneous_code,village_code,description,local_description,is_active',],
+            //'village-miscellaneous'=>['table_name'=>'tbl_village_miscellaneous','fields'=>'village_miscellaneous_code,miscellaneous_code,village_code,description,local_name','default_fields'=>'is_active:1','is_child_import'=>true,'child_table_name'=>'tbl_village_miscellaneous_local','child_field_name'=>['village_miscellaneous_code'=>'village_miscellaneous_code','description'=>'description'],'child_default_field'=>'is_active:1'],
+           
+            'TblMiscellaneous'=>['table_name'=>'tbl_miscellaneous','fields'=>'miscellaneous_name,local_name','default_fields'=>'is_active:1','increment'=>1],
+            'TblDcsTypes'=>['table_name'=>'tbl_dcs_types','fields'=>'dcs_type_name,local_name','default_fields'=>'is_active:1','increment'=>1],
+            'TblCasteCategory'=>['table_name'=>'tbl_caste_category','fields'=>'caste_category_name,local_name','default_fields'=>'is_active:1','increment'=>1],
+            'unit'=>['table_name'=>'tbl_units','fields'=>'unit_name,local_name,short_name,local_short_name','default_fields'=>'is_active:1','increment'=>1],
+            'animal-type'=>['table_name'=>'tbl_animal_type','fields'=>'animal_type_name,local_name,short_name,is_milch','default_fields'=>'is_active:1','increment'=>1],
+            'milk-quality-type'=>['table_name'=>'tbl_milk_quality_type','fields'=>'milk_quality_type_name,local_name','default_fields'=>'is_active:1','increment'=>1],
+            'land-unit'=>['table_name'=>'tbl_land_unit','fields'=>'land_unit_name,local_name,land_unit,conversion_factor','scenario'=>'importCsv','default_fields'=>'is_active:1','increment'=>1],
+            'capacity'=>['table_name'=>'tbl_capacity','fields'=>'value','default_fields'=>'is_active:1','increment'=>1],
+            'vehicle_type'=>['table_name'=>'tbl_vehicle_type','fields'=>'vehicle_type_name,local_name','default_fields'=>'is_active:1','increment'=>1],
+            
+
+            'bank'=>['table_name'=>'tbl_banks','fields'=>'ac_no_length,bank_name,local_name,checked_ac_no,nationalized_bank','default_fields'=>'is_active:1','scenario'=>'importCsv','mapping'=>1,'mapping_model'=>'TblBanksDistrictsMapping','mapping_fields'=>'bank_code,district_code'],
+            'branch'=>['import_class'=>'branch_import','table_name'=>'tbl_branch','fields'=>'bank_code,branch_name,local_name,ifsc,hamlet_code,address,local_address,pincode','default_fields'=>'is_active:1','scenario'=>'importCsv'],
+            'federation'=>['table_name'=>'tbl_federations','fields'=>'federation_code,federation_name,federation_code_ex,registration_no,registration_date,state_code,district_code,sub_district_code,village_code,hamlet_code,city,address,pincode,phone_no,contact_person,contact_person_email,contact_person_mobile_no,contact_person_pan_no,contact_person_phone_no,fax_no,bank_code,branch_code,bank_account_no,ifsc','default_fields'=>'is_active:1'],
+            'union'=>['import_class'=>'union_import', 'table_name'=>'tbl_unions','fields'=>'federation_code,union_name,local_name,union_short_name,union_code_ex,registration_no,registration_date,hamlet_code,city,address,local_address,pincode,phone_no,fax_no,contact_person_pan_no,upi_no,gst_no','scenario'=>'importCsv','default_fields'=>'is_active:1'],
+            'route'=>['table_name'=>'tbl_routes','fields'=>'union_code,route_code,route_name,vehicle_type_code,route_length_kms,capacity,start_time,return_time','default_fields'=>'is_active:1'],
+            'dcs'=>['import_class'=>'dcs_import','import_main_class'=>'DcsImportStrategy','table_name'=>'tbl_dcs','fields'=>'union_code,dcs_name,local_name,dcs_short_name,local_short_name,dcs_code_ex,address,local_address,hamlet_code,milk_type_code,pincode,effective_date,phone_no,upi_no,dcs_type_code,pan_no,registration_code,registration_date,is_active','scenario'=>'importCsv','mapping'=>1,'mapping_model'=>'TblDcsMilkType','mapping_fields'=>'dcs_code,milk_type_code'],
+            'member'=>['import_class'=>'member_import','table_name'=>'tbl_member','fields'=>'dcs_code,member_name,local_name,father_name,local_father_name,surname,local_surname,nominee_name,local_nominee_name,nominee_relation,ex_member_code,dob,bloodgroup_code,gender_code,qualification_code,caste_category_code,religion_code,total_land,animal_type_code,no_of_buffalo,no_of_cow_cross,no_of_cow_ind,member_type_code,branch_code,bank_account_no,mobile_no,email,address,local_address,pincode,pan_no,adhar_no,annual_income,hamlet_code,voter_id,member_class,registration_date','scenario'=>'importCsv','default_fields'=>'upload:1,is_active:1'],
+            'member_limited'=>['import_main_class'=>'MemberImportStrategy','table_name'=>'tbl_member','fields'=>'member_name,local_name,mobile_no,bank_name,branch_name,bank_account_no,ifsc,adhar_no','scenario'=>'importLimitedCsv','default_fields'=>'is_active:1,upload:1'],
+            'sub-center'=>['import_class'=>'sub_center_import','import_main_class'=>'SubCenterImportStrategy','table_name'=>'tbl_sub_center','fields'=>'dcs_code,sub_center_code,sub_center_name,is_bmc,destination_type,destination_code,address,hamlet_code,route_code,pincode,phone_no,contact_person,contact_person_mobile_no,contact_person_email,branch_code,bank_account_no,ifsc,upi_no,is_main_dcs','default_fields'=>'is_active:1','scenario'=>'importCsv','mapping'=>1,'mapping_model'=>'TblSubCenterMilkType','mapping_fields'=>'sub_center_code,milk_type_code'],
+            'collection_point'=>['table_name'=>'tbl_collection_point','fields'=>'federation_code,union_code,dcs_code,sub_center_code,collection_point_no,is_default','default_fields'=>'is_active:1','scenario'=>'importCsv'],
+            'mcc-plant'=>['import_class'=>'mcc_plant_import','import_main_class'=>'CommonImportStrategy','table_name'=>'tbl_mcc_plant','fields'=>'union_code,name,local_name,description,plant_code,hamlet_code','default_fields'=>'is_active:1','scenario'=>'importCsv'],
+            'plant'=>['import_class'=>'plant_import','import_main_class'=>'CommonImportStrategy','table_name'=>'tbl_plant','fields'=>'union_code,name,local_name,description,hamlet_code','default_fields'=>'is_active:1','scenario'=>'importCsv'],
+            'bmc'=>['import_class'=>'bmc_import','table_name'=>'tbl_dcs_subcenter_bmc_info','fields'=>'mcc_code,bmc_type_code,bmc_name,local_name,model,capacity,manufacturer_code,bmc_milk_type,union_code,hamlet_code','default_fields'=>'is_active:1','scenario'=>'importCsv'],
+            'transporter'=>['import_class'=>'transporter_import', 'table_name'=>'tbl_transporter','fields'=>'transporter_name,local_name,address,contact_person,email,mobile_no,bank_code,branch_code,bank_account_no,ifsc,adhar_no,union_code,hamlet_code','default_fields'=>'is_active:1','scenario'=>'importCsv','increment'=>1],
+
+            'ledger-group'=>['table_name'=>'tbl_ledger_group','fields'=>'ledger_group_name,ledger_type_code','default_fields'=>'is_active:1','increment'=>1],
+            'ledger'=>['table_name'=>'tbl_ledger','fields'=>'union_code,ledger_group_code,ledger_name,entry_type,has_sub_ledger','default_fields'=>'is_active:1'],
+            'sub-ledger'=>['table_name'=>'tbl_sub_ledger','fields'=>'union_code,sub_ledger_code,sub_ledger_name,reference_code,type','default_fields'=>'is_active:1'],
+            'asset-group'=>['table_name'=>'tbl_asset_group','fields'=>'asset_group_name','default_fields'=>'is_active:1','increment'=>1],
+            'asset-sub-group'=>['table_name'=>'tbl_asset_sub_group','fields'=>'union_code,asset_sub_group_code,asset_sub_group_name,asset_group_code','default_fields'=>'is_active:1'],
+            'union-bill-head'=>['table_name'=>'tbl_union_bill_head','fields'=>'union_code,union_bill_head_name,union_bill_head_code,sequence_no','default_fields'=>'is_active:1'],
+            'tax-group'=>['table_name'=>'tbl_tax_group','fields'=>'tax_group_name','default_fields'=>'is_active:1','increment'=>1],
+            'tax'=>['table_name'=>'tbl_tax','fields'=>'tax_group_code,tax_code,tax_name','default_fields'=>'is_active:1'],
+            'basic-tax'=>['table_name'=>'tbl_basic_tax','fields'=>'basic_tax_name','default_fields'=>'is_active:1','increment'=>1],
+            'financial-year'=>['table_name'=>'tbl_financial_year','fields'=>'starting_date,ending_date,code','default_fields'=>'is_active:1'],
+            'incometax-dep-per'=>['table_name'=>'tbl_asset_depreciation_incometax_act','fields'=>'percentage,type,asset_group_code,financial_year_code','default_fields'=>'is_active:1','increment'=>1],
+
+            
+            'rate-formula'=>['table_name'=>'tbl_formula','fields'=>'formula_code,formula_description,formula,wef_date,dcs_code,milk_type_code,rate_type_code,union_code','default_fields'=>'is_active:1'],
+            'union-payment-cycle'=>['table_name'=>'tbl_union_payment_cycle','fields'=>'union_payment_cycle_code,from_date,from_shift,interval_value,is_billing,lock_billing_process,to_date,to_shift,union_code','default_fields'=>'is_active:1'],
+            'member-classification'=>['table_name'=>'tbl_member_classification','fields'=>'member_classification_name,local_name,member_classification_type,range_from,range_to,union_code','default_fields'=>'is_active:1','scenario'=>'importCsv'],
+            'general-union-config'=>['table_name'=>'tbl_union_config','fields'=>'union_config_code,perc_disp_recp_milk,min_member_age,manual_days_collection,audit_response_time,auto_audit_resolution,range_end,union_code','default_fields'=>'is_active:1'],
+            
+            'product-group'=>['table_name'=>'tbl_product_group','fields'=>'product_group_code,product_group_name','default_fields'=>'is_active:1'],
+            'product'=>['table_name'=>'tbl_product','fields'=>'product_code,product_name','default_fields'=>'is_active:1'],
+            'product-purchase-rate'=>['table_name'=>'tbl_product_purchase_rate','fields'=>'purchase_code,purchase_rate','default_fields'=>'is_active:1'],
+            
+            'interfacing-device'=>['table_name'=>'tbl_interfacing_device','fields'=>'device_code,baud_rate,bit_rate,device_name,device_type,discard_char,end_char,incoming_data_type,is_snf,length,parity,reading_type,reg_expression,split_char,start_char,stop_bit,tare,device_manufacturer_id,union_code','default_fields'=>'is_active:1'],
+            ];
+        return $label[$l];
+    }
+}

@@ -1,0 +1,67 @@
+<?php
+
+namespace app\modules\product\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "tbl_product_history".
+ *
+ * @property integer $id
+ * @property integer $product_code
+ * @property integer $product_group_code
+ * @property string $product_name
+ * @property string $description
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $history_created_at
+ * @property integer $is_active
+ * @property string $operation_type
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property string $local_name
+ */
+class TblProductHistory extends \yii\db\ActiveRecord
+{
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'tbl_product_history';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+//            [['product_code', 'product_group_code', 'is_active'], 'integer'],
+//            [['product_name', 'description', 'created_by', 'operation_type', 'updated_by', 'local_name'], 'string'],
+            [['product_code', 'product_group_code', 'is_active', 'product_name', 'description', 'created_by', 'operation_type', 'updated_by', 'local_name', 'created_at', 'history_created_at', 'updated_at','union_code'], 'safe'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'product_code' => Yii::t('app', 'Product Code'),
+            'product_group_code' => Yii::t('app', 'Product Group Code'),
+            'product_name' => Yii::t('app', 'Product Name'),
+            'description' => Yii::t('app', 'Description'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'history_created_at' => Yii::t('app', 'History Created At'),
+            'is_active' => Yii::t('app', 'Is Active'),
+            'operation_type' => Yii::t('app', 'Operation Type'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'local_name' => Yii::t('app', 'Local Name'),
+        ];
+    }
+}

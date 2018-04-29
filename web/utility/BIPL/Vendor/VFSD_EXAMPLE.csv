@@ -1,0 +1,43 @@
+>VMin = 528													
+>VMax = 4841													
+>TMin = 5277													
+>TMax = 9181													
+>CP_CODE    = CPOINT1											
+>CP_NAME    = COLPOINT TEST NAME													
+>CP_ADDRESS = NEW DELHI INDIA													
+>FILE_NAME  = OUTFILE
+>START_TIME =  02.08.2012 4:21:11													
+>END_TIME   =  09.08.2018 6:55:12
+
+******************  Vendor records  **********************
+
+*Vendor code,Ext. Vendor code,Rank,Given name,Fathers name,Familiy name,Phone number,E-mail address,Send SMS,Send E-mail,Payment type,Rest,Time added,Account number,IFSE number
+528,  hIA5a8G5qVJhEyP  ,1,Nola    ,Clayton,Holt       ,484-130-5662,Fiona@lobortis.org    ,YES,NO ,inv         ,89,0,XSASWE1233,
+735,  b2XEstGYwN3AwZa  ,0,Bertha  ,Wagner ,Barron     ,550-499-5575,     ,NO,YES,inv         ,145,0,,uzygALuWWiCmcd
+997,  3mqZLps1Ol7FNQD  ,0,Kermit  ,Pratt  ,Head       ,240-830-4034,Tamara@venenatis.us   ,YES,NO ,Bank_payment,221,0,S7uxvtPge3brFc,X111
+849,  1CXRuV9Poiqqml7  ,0,Lydia   ,Beach  ,Larsen     ,920-453-8700,Noelle@conubia.org    ,YES,YES,No_payment  ,8,0,MpVhgwZfPUuEH,
+4841,  VjJ5FcyTiWEfvYp  ,0,Whoopi  ,Meadows,Christensen,285-102-1215,    ,NO ,YES,No_payment  ,137,0,3oLWPc19bsdBW2,Vtwcp0WTOgRmio
+4713,  fMzVaqsfdGk8j1V  ,1,Ross    ,Marsh  ,Chang      ,966-874-7762,Benjamin@vestibulum.us,NO,NO ,No_payment  ,58,0,NgAgqp8g1iMXpJ,ivQ13LCm7JD1Yt
+4144,  SbtPqlVG9R3Tds4  ,0,Anne    ,Guerra ,Richard    ,637-538-0043,Justina@natoque.gov   ,NO ,NO ,Bank_payment,188,0,,
+4008,    ,1,Iris    ,West   ,Gould      ,460-595-4860,Colette@eu.net        ,NO ,NO ,Bank_payment,205,0,7xkY3YNdfTAqBd,uhbhIOo9qHFQvI
+3841,  8KiJXX8eW8l0Oij  ,1,Lysandra,Nunez  ,Macias     ,081-210-9591,Charde@nunc.us        ,NO ,YES,No_payment  ,164,0,,EdXnJgfcfBUzek
+3736,  63OhkWVWUmZdchD  ,0,Stephen ,Combs  ,Washington ,969-928-3386,Pamela@nostra.org     ,YES,NO ,No_payment  ,139,0,5rT6gsVvbKQmfa,LgVaaWb43Wo19T
+2302,  bcNo1naBU7IF1i6  ,1,Edan    ,Wells  ,Flynn      ,659-144-5484,Joel@Praesent.org     ,NO ,YES,inv         ,226,0,7kw5UVCI31HTer,cBhQ4xWTG54AX7
+1387,  EeJjKQQA8qHCpvl  ,0,Hamilton,May    ,Jacobs     ,478-844-2077,Uta@mauris.org        ,YES,YES,inv         ,27 ,0,ikMyOiksQoBhwV,yvTEbLWqhGczWF
+													
+													
+******************	Transporter records **********************
+
+5277,  TGykvsQICktMNiy,1,Emi      ,Rojas   ,Byrd     ,230-207-5214,Dexter@sagittis.com ,NO ,YES
+5540,  gQMtmqBZdiUB4AG,1,Erin     ,Mccall  ,Green    ,674-340-6670,Ariana@viverra.org  ,NO ,NO
+5720,  Bf0bcDDhuBy7J6O,0,Thane    ,Kline   ,Sutton   ,044-041-5111,Madison@quis.edu    ,NO ,YES
+6180,  IL3FauErVWe69dm,1,Levi     ,Chaney  ,Glover   ,428-497-3575,Jemima@congue.com   ,NO ,NO
+6269,  vKHMcJe5iRq9y1G,0,Chelsea  ,Buckner ,Reid     ,899-766-5367,Allegra@sit.gov     ,YES,YES
+6325,  tbUBHNF3NrwbJ5O,0,Cassandra,Ware    ,Velasquez,233-689-7365,Judah@felis.net     ,NO ,YES
+6690,  zZYvD2tFFSIv9vS,0,Leigh    ,Hensley ,Hopper   ,034-372-1410,Brooke@dis.gov      ,YES,YES
+6858,  urWijyURYksXH3U,0,Blossom  ,Leblanc ,Franks   ,133-839-1326,Kenneth@habitant.com,NO ,YES
+7012,  DBYuSAjL4EMbdeU,1,Francis  ,Vinson  ,Brown    ,805-976-2286,Kalia@Vivamus.us    ,YES,NO
+7605,  uD1S65lUkrSX4UA,0,Isabella ,Gilbert ,Perez    ,854-973-7690,Eaton@mus.net       ,NO ,NO
+8915,  O95BLyiIKjliLfn,0,Cecilia  ,Murphy  ,Figueroa ,368-806-2150,Diana@facilisi.org  ,YES,YES
+9181,  dZZL84uV7QY2Uq0,0,Connor   ,Holloway,Lowe     ,363-640-0604,Gemma@tempor.edu    ,NO ,NO
+												

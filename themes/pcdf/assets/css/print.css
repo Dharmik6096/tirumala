@@ -1,0 +1,87 @@
+@media print{
+    *{
+        font-family:Calibri;
+        -webkit-print-color-adjust:exact;
+    }
+    body{
+        padding-top: 0;
+        font-family:Calibri;
+        -webkit-print-color-adjust:exact;
+    }
+    .container{
+        width: 100%;
+    }
+    .menu-wrap, footer{
+        display: none;
+    }
+    .col-sm-print-12{
+        width: 100%;
+        float: none;
+    }
+    .panel-default .panel-heading{
+        padding: 0;
+        font-size: 18px;
+        font-weight: normal;
+        border-bottom-color: #000;
+        margin-bottom: 15px;
+    }
+    .table-responsive{
+        page-break-inside: avoid;
+        border-bottom: 1px dashed #000;
+        margin: 0 0 10px;
+    }
+    .table-responsive:last-child{
+        border-bottom: 0;
+    }
+    .table{
+        font-family:Calibri;
+        font-size: 9px;
+        page-break-after: auto;
+    }
+    tr { 
+        page-break-inside:avoid;
+        page-break-after:auto; 
+    }
+    tr.filters{
+        display: none;
+    }
+    td { 
+        page-break-inside:avoid;
+        page-break-after:auto; 
+    }
+    thead { 
+        display:table-header-group; 
+    }
+    .table > thead > tr > th, 
+    .table > tbody > tr > th, 
+    .table > tfoot > tr > th, 
+    .table > thead > tr > td, 
+    .table > tbody > tr > td, 
+    .table > tfoot > tr > td{
+        display: table-cell;
+        padding: 5px;
+        line-height: 1;
+        vertical-align: top;
+    }
+    .table-bordered > thead > tr > th, 
+    .table-bordered > tbody > tr > th, 
+    .table-bordered > tfoot > tr > th, 
+    .table-bordered > thead > tr > td, 
+    .table-bordered > tbody > tr > td, 
+    .table-bordered > tfoot > tr > td{
+        border: 1px solid #ccc !important;
+    }   
+    .table-bordered > thead > tr > th:last-child,
+    .table-bordered > tbody > tr > th:last-child,
+    .table-bordered > tfoot > tr > th:last-child,
+    .table-bordered > thead > tr > td:last-child,
+    .table-bordered > tbody > tr > td:last-child,
+    .table-bordered > tfoot > tr > td:last-child{
+        border-right: 1px solid #ccc !important;
+    }
+}
+@page  { 
+    size: auto;
+    -webkit-print-color-adjust:exact;
+    margin: 5mm 5mm 5mm 5mm;  
+}

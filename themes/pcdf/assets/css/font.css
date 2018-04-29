@@ -1,0 +1,28 @@
+@font-face {
+	font-family: 'Nilkanth';
+	src: url('../fonts/NILKANTH.eot');
+	src: url('../fonts/NILKANTH.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/NILKANTH.woff') format('woff'),
+		url('../fonts/NILKANTH.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Devlys';
+	src: url('../fonts/DevLys-010.eot');
+	src: url('../fonts/DevLys-010.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/DevLys-010.woff') format('woff'),
+		url('../fonts/DevLys-010.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+.Nilkanth{
+    font-family:Nilkanth;
+    font-size: 15px;
+}
+.Devlys{
+    font-family:Devlys;
+}
+.Arial{
+    font-family:Roboto;
+}

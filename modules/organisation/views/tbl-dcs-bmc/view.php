@@ -1,0 +1,199 @@
+<?php
+
+use yii\helpers\Html;
+use app\components\GeneralFunctions;
+use kartik\detail\DetailView;
+use webvimark\modules\UserManagement\components\GhostHtml;
+
+$this->title = 'BMC Detail View';
+$this->params['menu'][] = Yii::$app->controls->update($model->bmc_code);
+$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-dcs-bmc/contact-details', 'id' => $model->bmc_code], ['class' => 'btn btn-danger btn-block']);
+?>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="form-grid">
+            <div class="table-responsive">
+                <?php
+                // DetailView Attributes Configuration
+                $attributes = [
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'mcc_code',
+                                'value' => isset($model->tblMccPlant) ? $model->tblMccPlant->name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'bmc_code',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+//                    'bmc_code',
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'bmc_name',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'local_name',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+//                    'bmc_name',
+//                    'bmc_type_code',
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'bmc_type_code',
+                                'value' => isset($model->bmc_type_code) ? $model->tblBmcType->bmc_type_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'union_code',
+                                'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+//                    'description
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'state_code',
+                                'value' => isset($model->stateCode) ? $model->stateCode->state_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'district_code',
+                                'value' => isset($model->districtCode) ? $model->districtCode->district_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'sub_district_code',
+                                'value' => isset($model->subDistrictCode) ? $model->subDistrictCode->sub_district_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'village_code',
+                                'value' => isset($model->villageCode) ? $model->villageCode->village_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+//                    'unionCode.union_name',
+//                    'stateCode.state_name',
+//                    'districtCode.district_name',
+//                    'subDistrictCode.sub_district_name',
+//                    'villageCode.village_name',
+//                    'hamletCode.hamlet_name',
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'hamlet_code',
+                                'value' => isset($model->hamletCode) ? $model->hamletCode->hamlet_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'model',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+//                    'model',
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'capacity',
+                                'format' => 'html',
+                                'value' => isset($model->capacity0) ? $model->capacity0->value : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'valid_from',
+                                'value' => Yii::$app->controls->view_date($model->valid_from),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+//                    'manufacturerCode.manufacturer_name',
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'manufacturer_code',
+                                'value' => isset($model->manufacturerCode) ? $model->manufacturerCode->manufacturer_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'bmc_milk_type',
+                                'value' => isset($model->bmcMilkType) ? $model->bmcMilkType->animal_type_name : '',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_active',
+                                'label' => 'Status',
+                                'format' => 'html',
+                                'value' => GeneralFunctions::getRecordStatus($model->is_active),
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
+                ];
+
+// View file rendering the widget
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'deleteOptions' => [ // your ajax delete parameters
+                        'params' => ['id' => 1000, 'kvdelete' => true],
+                    ],
+                    'container' => ['id' => 'kv-demo'],
+                ]);
+                ?>
+            </div>
+        </div>
+
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
+        <div class="form-grid">
+            <?=
+            $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                'model' => $model,
+                'dataProvider' => $cdataProvider,
+                'searchModel' => $csearchModel,
+            ])
+            ?>
+        </div>
+        
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Society Mapping</h5></div>
+        <div class="form-grid">
+            <?=
+            $this->render('_society_grid', [
+                'model' => $model,
+                'dataProvider' => $sdataProvider,
+                'searchModel' => $ssearchModel,
+            ])
+            ?>
+        </div>
+
+    </div>
+</div>

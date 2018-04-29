@@ -1,0 +1,5 @@
+$user = $c->userService()->getUserByLookup(
+    $c->userService()->searchUsers('jane', 'organization_1')[0]
+);
+
+$c->userService()->deleteUser($user);

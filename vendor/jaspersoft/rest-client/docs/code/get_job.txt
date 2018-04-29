@@ -1,0 +1,2 @@
+$allAccountsJobs = $c->jobService()->searchJobs("/reports/samples/AllAccounts");
+$first_job_details = $c->jobService()->getJob($allAccountsJobs[0]->id);

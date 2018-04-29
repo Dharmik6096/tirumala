@@ -1,0 +1,65 @@
+<?php
+
+namespace webvimark\modules\UserManagement\models\search;
+
+use Yii;
+use yii\base\Model;
+use yii\data\ActiveDataProvider;
+use webvimark\modules\UserManagement\models\User;
+
+/**
+ * UserSearch represents the model behind the search form about `webvimark\modules\UserManagement\models\User`.
+ */
+class UserSearch extends User {
+
+    public function rules() {
+        return [
+            [['id', 'superadmin', 'status', 'created_at', 'updated_at', 'email_confirmed', 'is_active'], 'integer'],
+            [['username', 'gridRoleSearch', 'registration_ip', 'email', 'user_code', 'name', 'user_type_id'], 'string'],
+        ];
+    }
+
+    public function scenarios() {
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
+    }
+
+    public function search($params) {
+        $query = User::find();
+        $query->joinWith(['userType']);
+        if (!Yii::$app->user->isSuperadmin && Yii::$app->session->get('organizations_type') != 'FEDERATION') {
+            $query->joinWith(['organizations']);
+            $org_array = [];
+            $unions = explode(',', Yii::$app->session->get('Unions'));
+            $feds = explode(',', Yii::$app->session->get('Federations'));
+            $dcs = explode(',', Yii::$app->session->get('Dcs'));
+            $union_dcs = Yii::$app->general->getMappedDcs($unions);
+            $org_array = array_merge($unions, $feds, $dcs, $union_dcs);
+            $query->where(['superadmin' => 0]);
+            $query->andWhere(['tbl_user_organization_mapping.organization_code' => $org_array, 'tbl_user_organization_mapping.organization_type' => Yii::$app->general->getChildOrgs()[0]]);
+            $query->orWhere(['user_id' => Yii::$app->session->get('UserCode')]);
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        $this->load($params);
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'superadmin' => $this->superadmin,
+            'status' => $this->status,
+            'user.is_active' => $this->is_active,
+        ]);
+
+        $query->andFilterWhere(['like', 'username', $this->username])
+                ->andFilterWhere(['like', 'name', $this->name])
+                ->andFilterWhere(['like', 'user_code', $this->user_code])
+                ->andFilterWhere(['like', 'tbl_user_types.user_type', $this->user_type_id])
+                ->andFilterWhere(['like', 'email', $this->email]);
+
+        return $dataProvider;
+    }
+
+}

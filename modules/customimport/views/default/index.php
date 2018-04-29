@@ -1,0 +1,207 @@
+<?php
+
+use yii\web\View;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
+use zainiafzan\widget\Dropzone;
+use yii\helpers\Url;
+use demogorgorn\ajax\AjaxSubmitButton;
+
+$data = \app\modules\customimport\importData::getLabels($type);
+$param = (!empty(Yii::$app->request->get('local_fields'))) ? Yii::$app->request->get('local_fields') : 'local_name';
+//echo '<pre>';
+//print_r($data);
+//exit;
+$readonly = false;
+?>
+
+
+<div class="modal modal-default fade" id="importModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?php echo Yii::t('app', 'Import File'); ?></h4>
+            </div>
+
+            <?php
+            $form = ActiveForm::begin(['options' => [
+                            'validateOnBlur' => true,
+                            'class' => 'popup-form',
+                            'id' => 'import-form',
+                            'enableAjaxValidation' => false,
+                        ], 'fieldConfig' => [
+            ]]);
+            ?>
+            <div class="modal-body">
+                <?= Html::a('Download Sample', ['/import/default/download-sample', 'flag' => $type, 'local_field' => $param], ['class' => 'btn btn-primary']); ?>
+                <?= Html::hiddenInput('mapping', 0, ['id' => 'mappingField']); ?>
+                <div class="modal-msg">
+                    <h4><?= Yii::t('app', 'Upload file having fields in following manner') ?> :</h4>
+                    <p class="fields"><?php echo str_replace(',', ', ', $data['fields']); ?></p>
+                </div>
+                <?php
+                $i = 0;
+                echo Html::hiddenInput('file_name', '', ['id' => 'file_name']);
+                echo Html::hiddenInput('local_field', $param);
+                ?>
+                <?php if ($type == 'member_limited') { ?>
+                    <div class="clearfix"></div>
+                    <div class="row">
+                        <div class="col-sm-4" id="union">
+                            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                        </div>
+                        <div class="col-sm-4">
+                            <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmember-union_code', '', 'Society', $readonly); ?>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                <?php } ?>
+                <?=
+                Dropzone::widget([
+                    'id' => 'mainDrop',
+                    'options' => [
+                        'acceptedMimeTypes' => ".csv,.xls,.xlsx",
+                        'url' => Url::to(['/import/default/import-file',
+                            'main' => 1,]),
+                        'addRemoveLinks' => true,
+                        'autoDiscover' => false,
+                        'maxFiles' => 1,
+                    ],
+                    'clientEvents' => [
+                        'success' => "function( file, response ){
+                                            var data=$.parseJSON(response);
+                                            if(data.status=='success')
+                                                $('#file_name').val(data.msg);
+                                            else
+                                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
+                                                
+                                        }",
+                        'removedfile' => "function(file){
+                                                        $('#file_name').val('');
+                                           }",
+                        'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
+                    ]
+                ]);
+                ?>
+
+            </div>
+            <div class="modal-footer">
+                <?php
+                AjaxSubmitButton::begin([
+
+                    'label' => Yii::t('app', 'Save'),
+                    'ajaxOptions' => [
+                        'type' => 'POST',
+                        'url' => Url::to(['/import', 'flag' => $type]),
+                        'beforeSend' => new \yii\web\JsExpression('function(data){
+                                            $("#loadercontent").show();
+                                            $("#pageloader").show();
+                                    }'),
+                        'success' => new \yii\web\JsExpression('function(data){
+                                            $("#pageloader").hide();
+                                            $("#loadercontent").hide();
+                                            var obj1 = $.parseJSON(data);
+                                            if (obj1.status == "success"){
+                                                $("#importModal").modal("toggle");
+                                                $("#import-form")[0].reset();
+                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                            }else{
+                                                $("#importModal").modal("toggle");
+                                                $("#import-form")[0].reset();
+                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                            }
+                             }'),
+                        'error' => new \yii\web\JsExpression('function(){
+                                    $("#pageloader").hide();
+                                    $("#loadercontent").hide();
+                                    if($("#file_name").val()==""){
+                                     bootbox.alert("Please select file.");
+                                    }else{
+                                        $("#importModal").modal("toggle");
+                                        $("#import-form")[0].reset();
+                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>You have error in your file</span></div></div>");
+                                    }
+                             }'),
+                    ],
+                    'options' => ['class' => 'btn btn-primary',
+                        'type' => 'submit'],
+                ]);
+                AjaxSubmitButton::end();
+                ?>
+                <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+            </div>
+            <?php ActiveForm::end(); ?>
+        </div>
+    </div>
+</div>
+
+<?php
+$script = "
+            $('.import-file').on('click',function(e){
+                    $('#importModal').modal('toggle');
+                    var flg = $(this).attr('data-map-flag');
+                    $('#mappingField').val(flg);
+                    var type = '" . $type . "';
+                    $.ajax({
+                            type: 'post',
+                            url: '" . Url::to(['/import/default/get-fields']) . "',
+                            data: 'sel='+flg+'&type='+type,
+                            success: function(data) {
+                                var obj1 = $.parseJSON(data);
+                                $('.fields').html(obj1);
+                            },
+                            error:function(data){
+                                        //alert('Your data has not been submitted..Please try again');
+                                    }
+                    });
+            });
+           $('.close-import').on('click',function(e){
+                Dropzone.forElement('#mainDrop').removeAllFiles(true);
+            });
+
+            $('#mapping').on('change',function(e){
+                var sel = $(this).val();
+                var type = '" . $type . "';
+                $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/import/default/get-fields']) . "',
+                        data: 'sel='+sel+'&type='+type,
+                        success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            $('.fields').html(obj1);
+                        },
+                        error:function(data){
+                                    //alert('Your data has not been submitted..Please try again');
+                                }
+                });
+            });
+            
+//            $('#tblmember-dcs_code').on('change',function(e){
+//                var code = $(this).val();
+//                var name = $('#tblmember-dcs_code option:selected').text();
+//                var type = '" . $type . "';
+//                $.ajax({
+//                        type: 'post',
+//                        url: '" . Yii::$app->request->baseUrl . "/dcsoperation/tbl-member/dcs-member-exist',
+//                        data: 'code='+code,
+//                        success: function(data) {
+//                            var cnt = $.parseJSON(data);
+//                            if(cnt.cnt>0)
+//                            {
+//                               bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-danger\"><i class=\"fa fa-times\"></i></div><span>Society '+name+' already has members.</span></div></div>'); 
+//                               $('#importModal').modal('toggle');
+//                               $('#tblmember-dcs_code').val('');
+//                            }
+//                        },
+//                        error:function(data){
+//                                    //alert('Your data has not been submitted..Please try again');
+//                                }
+//                });
+//            });
+";
+$this->registerJs($script, View::POS_END, 'import-manager');
+?>

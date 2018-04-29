@@ -1,0 +1,9 @@
+$search = $c->organizationService()->searchOrganization('test_organization');
+$organization = $search[0];
+$organization->tenantDesc = "My test organization";
+
+try {
+    $c->organizationService()->updateOrganization($organization);
+} catch (Exception $e) {
+    printf('Unable to modify organization: %s', $e->getMessage());
+}

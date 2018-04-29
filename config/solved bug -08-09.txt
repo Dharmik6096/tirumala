@@ -1,0 +1,10 @@
+2. Provide option for select all under scheme applicability.-> Done
+1.  Filtration not working on product, purchase code, under Product Purchase Rate List. & Product Sale Rate List -> Done
+Amount Field Appears twice in Milk Dispatch -> Done
+-(Milk Collection : Qty (L) & UI and List Screen relevant change in portal also
+Sample Milk: Qty (L) in UI & List Screen relevant change in portal also
+Local Milk Sale: : Qty (L) in UI & List Screen relevant change in portal also
+Farmer Billing: Qty(L) in UI & List Screen relevant change in portal also
+Milk Dispatch: Qty (Kg) in UI & List Screen relevant change in portal also
+Milk Receipt at Plant: Qty (Kg) in UI & List Screen relevant change in portal also
+Farmer Billing: Qty (L) in UI & List Screen relevant change in portal also) -> Done

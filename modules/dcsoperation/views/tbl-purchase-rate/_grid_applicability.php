@@ -1,0 +1,46 @@
+<?php
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+use yii\helpers\Html;
+use app\components\GeneralFunctions;
+use kartik\grid\GridView;
+?>
+
+<?php
+
+$attribute = [
+    [
+        'attribute' => 'wef_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->wef_date);
+        }],
+    ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle',],
+    ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'vAlign' => 'middle',],
+    ['attribute' => 'route_name', 'value' => 'dcsCode.routeCode.route_name', 'vAlign' => 'middle', 'label' => Yii::t('app', 'Route Name')],
+    ['attribute' => 'is_download', 'filter' => array('1' => 'Yes', '0' => 'No'),
+        'value' => function($model) {
+    return ($model->is_download == 1) ? 'Yes' : 'No';
+}],
+    ['attribute' => 'download_date_time',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+    return Yii::$app->controls->view_date($model->download_date_time);
+}],
+];
+
+$grid_option = [
+    'id' => 'purchase-rate-applicability-grid',
+    'attributes' => $attribute,
+    'active_column' => false,
+];
+
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['view', 'id' => Yii::$app->request->get('id')]);
+?>

@@ -1,0 +1,5 @@
+$allAccountsJobs = $c->jobService()->searchJobs("/reports/samples/AllAccounts");
+$job = $c->jobService()->getJob($allAccountsJobs[0]->id);
+
+$job->label = "New label";
+$c->jobService()->updateJob($job);

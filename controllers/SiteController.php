@@ -1,0 +1,818 @@
+<?php
+
+namespace app\controllers;
+
+use Yii;
+use yii\web\Controller;
+//use app\models\LoginForm;
+use webvimark\modules\UserManagement\models\forms\LoginForm;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use webvimark\components\BaseController;
+use webvimark\modules\UserManagement\components\UserAuthEvent;
+use webvimark\modules\UserManagement\models\forms\ChangeOwnPasswordForm;
+use webvimark\modules\UserManagement\models\forms\ConfirmEmailForm;
+use webvimark\modules\UserManagement\models\forms\PasswordRecoveryForm;
+use webvimark\modules\UserManagement\models\User;
+use webvimark\modules\UserManagement\UserManagementModule;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
+use yii\helpers\Json;
+use yii\helpers\Url;
+use yii\db\Query;
+use app\models\Dashboard;
+use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
+use app\modules\collection\models\TblMilkCollection;
+use phpseclib\Net\SFTP;
+use app\modules\payment\models\TblPaymentTransaction;
+use app\modules\payment\models\TblBankPaymentLog;
+use PHPExcel;
+use PHPExcel_Cell;
+use PHPExcel_IOFactory;
+use app\modules\payment\models\TblMemberPayment;
+use app\modules\payment\models\TblDcsPayment;
+use app\components\FTPConnection;
+use app\modules\payment\models\TblMemberPaymentHistory;
+use app\modules\payment\models\TblReversePaymentFileLog;
+use app\modules\payment\models\TblTransporterPayment;
+use app\modules\payment\models\TblTransporterPaymentHistory;
+
+class SiteController extends Controller {
+
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status'];
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors() {
+
+        return [
+            'ghost-access' => [
+                'class' => 'webvimark\modules\UserManagement\components\GhostAccessControl',
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['rail-login,rail-logout'],
+                'rules' => [
+                    [
+                        'actions' => ['rail-login,rail-logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions() {
+
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
+    }
+
+    /**
+     * Displays homepage.
+     *
+     * @return string
+     */
+    public function actionIndex() {
+        return $this->redirect(['dashboard']);
+    }
+
+    public function actionDashboard() {
+
+        $this->layout = "@app/themes/pcdf/layouts/dashboardLayout.php";
+        $model = new Dashboard();
+        if (!empty(Yii::$app->request->post('Dashboard')['union_code'])) {
+            $union_str = Yii::$app->request->post('Dashboard')['union_code'];
+            $model->union_code = Yii::$app->request->post('Dashboard')['union_code'];
+        } else {
+            $unionModel = new TblUnions();
+            $union = $unionModel->getActiveUnions();
+            $union_ary = ArrayHelper::getColumn($union, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+        $dcs_str = NULL;
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $dcs_str = Yii::$app->session->get('Dcs');
+            $dcs_str = ',' . $dcs_str . ',';
+        }
+        //echo $union_str; exit;
+        $today_date = date('Y-m-d');
+        if (!empty(Yii::$app->request->post('Dashboard')['date'])) {
+            $date = Yii::$app->request->post('Dashboard')['date'];
+            $end_date = date('Y-m-d', strtotime($date));
+            $start_date = date('Y-m-d', strtotime("-1 months", strtotime($end_date)));
+        } else {
+            $end_date = $today_date;
+            $start_date = date('Y-m-d', strtotime("-1 months", strtotime($today_date)));
+        }
+
+        $model->date = $end_date;
+        $month = date('Y-m', strtotime($end_date));
+        $results = $this->callDashboardSp($union_str, $start_date, $end_date, $dcs_str);
+        $results2 = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
+        $results3 = $this->callDashboardSp($union_str, $end_date, $end_date, $dcs_str);
+        $results4 = $this->callDashboardCalSp($union_str, $month);
+        $results5 = $this->getSpResult('fed_union');
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5]);
+    }
+
+    private function callDashboardSp($union_str, $sdate, $edate, $dcs_str) {
+        $query = \Yii::$app->db->createCommand("{CALL sp_Portal_Dashboard(:union_code,:startdate,:enddate,:dcs_code)}")
+                ->bindValue(':union_code', ',' . $union_str . ',')
+                ->bindValue(':startdate', $sdate)
+                ->bindValue(':enddate', $edate)
+                ->bindValue(':dcs_code', $dcs_str);
+        $results = $query->queryAll();
+        return $results;
+    }
+
+    private function callDashboardCalSp($union_str, $month) {
+        $month_start = date("$month-01");
+        $month_end = date("Y-m-t", strtotime($month_start));
+        $query = \Yii::$app->db->createCommand("{CALL sp_Portal_Dashboard_Cal_Day(:union_code,:startdate,:enddate)}")
+                ->bindValue(':union_code', $union_str)
+                ->bindValue(':startdate', $month_start)
+                ->bindValue(':enddate', $month_end);
+
+        $results = $query->queryAll();
+        return $results;
+    }
+
+    /**
+     * Login action.
+     *
+     * @return string
+     */
+    public function actionRailLogin() {
+
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $model = new LoginForm();
+        $identityModel = new \app\models\IdentityMaster();
+        $identity = $identityModel->getIdentity();
+
+        if (empty($identity)) {
+
+            return $this->render('error');
+        }
+
+        if (Yii::$app->request->isAjax) {
+            $model->username = $identity->organization_code . '#' . $model->username;
+            if ($model->load(Yii::$app->request->post())) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);
+            }
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->username = $identity->organization_code . '#' . $model->username;
+            $user = $model->getUser();
+            $userRoels = $user->findByRole('vendor');
+
+            $permission = '';
+            foreach ($userRoels as $key => $row) {
+                if ($user['id'] == $row['id']) {
+                    $permission = 'true';
+                }
+            }
+
+            if ($model->login()) {
+
+                if ($permission == 'true') {
+                    return $this->redirect(['/site/dashboard']);
+                } else {
+                    Yii::$app->user->logout();
+                    $model->addError('password', UserManagementModule::t('front', 'You are not authorize to login'));
+                    $model->username = $_POST['LoginForm']['username'];
+                }
+            } else {
+                $model->username = $_POST['LoginForm']['username'];
+            }
+        }
+        Yii::$app->session->set('Login-sess', 'Rail');
+        $this->layout = "@app/themes/pcdf/layouts/installationLayout.php";
+        return $this->render('login', compact('model'));
+    }
+
+    /**
+     * Logout action.
+     *
+     * @return string
+     */
+    public function actionRailLogout() {
+        Yii::$app->user->logout();
+        $this->redirect(Url::toRoute('site/rail-login', true));
+    }
+
+    /* function for get languages at login time */
+
+    public function actionGetOrganization() {
+        $out = NULL;
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            //$list['en|0'] = ['English'];
+            $list = [];
+            if ($value[0] == 'UNION') {
+
+                $unions = \app\modules\organisation\models\TblUnions::find()->select(['union_code', 'union_name'])->where(['is_active' => true])->all();
+
+                $list = \yii\helpers\ArrayHelper::map($unions, 'union_code', 'union_name');
+            }
+            foreach ($list as $key => $r) {
+                $out[] = array('id' => $key,
+                    'name' => $r);
+            }
+            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
+            return;
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    /* function for retriving data for common depend dropdown */
+
+    public function actionGetData() {
+
+        if (isset($_POST['depdrop_parents']) && $_POST['depdrop_parents'][0] != '') {
+            $cnt = 0;
+            foreach ($_POST as $key => $val) {
+                if ($cnt == 0) {
+                    $cnt++;
+                    continue;
+                }
+                $data = explode(',', $key);
+            }
+
+            $fields[] = $data[3];
+            $fields[] = $data[4];
+            if (!empty($data[5])) {
+                array_push($fields, $data[5]);
+            }
+            $check_list = [];
+            if (!empty($data[7]) && $data[6] == 1) {
+                $check_list = explode('-', $data[7]);
+            }
+            $local_name = (!empty($data[5])) ? $data[5] : '';
+            $model_name = Yii::$app->path->define($data[0]);
+            $model = new $model_name();
+            $table_name = $model->tableName();
+            $out = NULL;
+            if ($data[2] != '') {
+                $unionQuery = $model->find()->select($fields)
+                                ->where([$data[3] => $data[2], $data[1] => $_POST['depdrop_parents'][0]])
+                                ->createCommand()->rawSql;
+                $tmp_query = $model->find()->select($fields)
+                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->union($unionQuery);
+                if ($data[8] != 'false') {
+                    $tmp_query->andWhere(['<=', 'valid_from', date('Y-m-d')]);
+                }
+                $query = new Query();
+                $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
+            } else {
+                $records = $model->find()->select($fields)
+                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->orderBy($fields[1])->all();
+            }
+
+            foreach ($records as $key => $r) {
+                if (!empty($data[5]) && !empty($r[$data[5]]))
+                    $value = $r[$data[4]] . '(' . $r[$data[5]] . ')';
+                else
+                    $value = $r[$data[4]];
+                if ($data[6] == 0 || empty($check_list) || in_array($r[$data[3]], $check_list))
+                    $out[] = array('id' => $r[$data[3]],
+                        'name' => $value);
+            }
+            echo Json::encode(['output' => $out, 'selected' => '']);
+            return;
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
+        return;
+    }
+
+    public function actionGetAutoData() {
+        
+    }
+
+    public function actionExceltoCsv() {
+
+        $path = Yii::$app->basePath . '/web/data.xlsx';
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
+
+        switch ($ext) {
+            case 'xls':
+                $format = 'Excel5';
+                break;
+            case 'xlsx':
+                $format = 'Excel2007';
+                break;
+            case 'xml':
+                $format = 'Excel2003XML';
+                break;
+        }
+
+        $reader = \PHPExcel_IOFactory::createReader($format);
+        $reader->setReadDataOnly(true);
+        $excel = $reader->load($path);
+
+        $savePath = Yii::$app->basePath . '/web/data.csv';
+        $writer = \PHPExcel_IOFactory::createWriter($excel, 'CSV');
+        $writer->save($savePath);
+
+        chmod($savePath, 0777);
+    }
+
+    public function actionLoadDcsData() {
+
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union_str = Yii::$app->request->post('union');
+        } else {
+            $unionModel = new TblUnions();
+            $union = $unionModel->getActiveUnions();
+            $union_ary = ArrayHelper::getColumn($union, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+        $dcs_str = NULL;
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $dcs_str = Yii::$app->session->get('Dcs');
+            $dcs_str = ',' . $dcs_str . ',';
+        }
+        if (isset($_POST['dt'])) {
+            $query = \Yii::$app->db->createCommand("{CALL sp_Portal_Dashboard_Cal(:union_code,:startdate,:enddate,:dcs_code)}")
+                    ->bindValue(':union_code', ',' . $union_str . ',')
+                    ->bindValue(':startdate', $_POST['dt'])
+                    ->bindValue(':enddate', $_POST['dt'])
+                    ->bindValue(':dcs_code', $dcs_str);
+            $results = $query->queryAll();
+            if (!empty($results)) {
+                $results = array_values($results);
+                //$results=(object)$results;
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ['status' => 'success', 'res' => $results];
+            }
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        echo Json::encode(['status' => 'failure', 'res' => '']);
+        return;
+    }
+
+    public function actionLoadMonthData() {
+        if (!empty(Yii::$app->request->post('union')) && !empty(Yii::$app->request->post('m'))) {
+            $union_str = Yii::$app->request->post('union');
+            $month = Yii::$app->request->post('m');
+            $results = $this->callDashboardCalSp($union_str, $month);
+            if (!empty($results)) {
+                if (!empty($results)) {
+                    foreach ($results as $res) {
+                        $cal_data[$res['dt']] = [$res['AvgFAT'], $res['AvgSNF'], $res['Qty']];
+                    }
+                } else {
+                    $cal_data = [];
+                }
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ['status' => 'success', 'res' => $cal_data];
+            }
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        echo Json::encode(['status' => 'failure', 'res' => '']);
+        return;
+    }
+
+    public function actionLoadDailyData() {
+
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union_str = Yii::$app->request->post('union');
+        } else {
+            $unionModel = new TblUnions();
+            $union = $unionModel->getActiveUnions();
+            $union_ary = ArrayHelper::getColumn($union, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+        $dcs_str = NULL;
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $dcs_str = Yii::$app->session->get('Dcs');
+            $dcs_str = ',' . $dcs_str . ',';
+        }
+        $today_date = date('Y-m-d');
+        $results = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
+        if (!empty($results)) {
+            $results = array_values($results);
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['status' => 'success', 'res' => $results];
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        echo Json::encode(['status' => 'failure', 'res' => '']);
+        return;
+    }
+
+    public function actionSendCollectionSms() {
+        try {
+            $collectionModel = new TblMilkCollection();
+            $collectionModel = $collectionModel->find()->innerJoinWith('memberCode')->where(['sms_status' => 'n'])->andWhere(['and', ['IS NOT', 'tbl_member.mobile_no', NULL], ['<>', 'tbl_member.mobile_no', '']])->limit(2000)->all();
+            foreach ($collectionModel as $collection) {
+                $mobile = '91' . $collection->memberCode->mobile_no;
+                $msg = "Dear " . $collection->memberCode->member_name . ",\n";
+                $msg.="Collection Received\n";
+                $msg.="S.CODE:" . $collection->dcs_code . "\n";
+                $msg.="DATE:" . date('d-m-Y', strtotime($collection->date_time_of_collection)) . "\n";
+                $msg.="SHIFT:" . $collection->shiftCode->shift . "\n";
+                $msg.="M.CODE:" . substr($collection->member_code, -4) . "\n";
+                $msg.="TYPE:" . $collection->milkTypeCode->animal_type_name . "\n";
+                $msg.="FAT:" . $collection->fat . "\n";
+                $msg.="SNF:" . $collection->snf . "\n";
+                $msg.="QTY:" . $collection->qty . "\n";
+                $msg.="AMT:" . $collection->amount . "\n";
+                $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $msg);
+                $sent = json_decode($sent);
+                $res = $sent->results;
+                $res = $res[0];
+                $collection->sms_status = $res->status;
+                $collection->sms_msgid = $res->messageid;
+                $collection->sms_mobile = $res->destination;
+                //$collection->sms_errorlog=Yii::$app->bsmartsms->getStatusMsg($res->status);
+                $collection->sms_timestamp = date('Y-m-d H:i:s');
+                $collection->save(false);
+            }
+            $paymentModel = new TblPaymentTransaction();
+            $paymentModel = $paymentModel->getSmsRecords();
+            foreach ($paymentModel as $payment) {
+                $mobile = '91' . $payment->mobile_no; //'919712147065';
+                // $message = 'We have initiated your payment of RS.' . $payment->final_amount . '. actual effect is subject to bank realization.';
+                if ($payment->type == 'member') {
+                    $m_code = substr($payment->code, -4);
+                    $message = $m_code . ':,
+ दूध की मात्रा: ' . $payment->qty . ' लि. की धनराशि Rs.' . $payment->final_amount . ' बैंक को भेज दिया';
+                    $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $message, TRUE);
+                } else {
+                    $message = 'We have disbursed payment of Rs. ' . $payment->final_amount . ' on ' . date('d-m-Y') . ' to the bank.Subject to realisation.';
+                    $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
+                }
+                $sent = json_decode($sent);
+                $res = $sent->results;
+                $res = $res[0];
+                $payment->sms_status = $res->status;
+                $payment->sms_msgid = $res->messageid;
+                $payment->sms_timestamp = date('Y-m-d H:i:s');
+                $payment->save(false);
+            }
+        } catch (yii\base\Exception $e) {
+            var_dump($e);
+        }
+    }
+
+    public function actionLoadChart() {
+        $sp = Yii::$app->request->post('sp');
+        $results = $this->getSpResult($sp);
+        $series = [];
+        $labels = [];
+
+        //echo '<pre>';
+        //print_r($results);die;
+        if (!empty($results)) {
+            $keys = array_keys($results[0]);
+            foreach ($keys as $key) {
+                if (in_array($key, ['qty', 'fat', 'snf', 'kgfat', 'kgsnf'])) {
+                    $series[$key] = array_column($results, $key);
+                }
+                if (in_array($key, ['union_short_name', 'collection_date', 'period'])) {
+                    $labels[] = array_column($results, $key);
+                }
+            }
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $series, 'lbl' => $labels];
+    }
+
+    public function actionPaymentFileStatus() {
+        $model = new TblBankPaymentLog();
+        $data = $model->getFileRecord();
+        $misfile = ['status' => '', 'misfile' => []];
+        foreach ($data as $file) {
+            if ($file->unionBankPaymentCode->server_type == 'eipl') {
+                $misfile = $this->CheckMisFile($file, $misfile['misfile']);
+                if ($file->status != $misfile['status']) {
+                    $file->status = $misfile['status'];
+                    $file->save(FALSE);
+                }
+            } else {
+                $new_status = $file->status;
+                if (!file_exists($file->file_path)) {
+                    $new_status = 2;
+                }
+                if (!empty($file->unionBankPaymentCode->ftp_type)) {
+                    $array = explode('/', $file->file_path);
+                    $array = array_reverse($array);
+                    $file_name = $array[0];
+                    $pickFiles = $this->getFileList($file);
+                    $ftp = new FTPConnection();
+                    $ftp->ftp_type = $file->unionBankPaymentCode->ftp_type;
+                    $ftp->ftp_host = $file->unionBankPaymentCode->ftp_server;
+                    $ftp->ftp_username = $file->unionBankPaymentCode->ftp_username;
+                    $ftp->ftp_password = $file->unionBankPaymentCode->ftp_password;
+                    $ftp->ftp_port = $file->unionBankPaymentCode->ftp_port;
+                    $ftp->ftp_path = $file->unionBankPaymentCode->reverse_ftp_path;
+                    $ftp->local_path = $file->unionBankPaymentCode->reverse_server_path;
+                    Yii::$app->general->checkDirectory($ftp->local_path . 'archive/');
+                    foreach ($pickFiles as $fname) {
+                        $ftp->file_name = $fname;
+                        if ($ftp->DownloadFile()) {
+                            $this->SaveReverseFileLog($file->unionBankPaymentCode->union_code, $fname);
+                            echo 'Downloaded : ' . $fname . '<br/>';
+                        } else {
+                            echo 'Not Downloaded : ' . $fname . '<br/>';
+                        }
+                    }
+//                if (!empty($file->unionBankPaymentCode->compare_file_name)) {
+//                    $ftp->file_name = str_replace('[BANK_ACCOUNT_NO]', $file->unionBankPaymentCode->bank_account_no, $file->unionBankPaymentCode->compare_file_name);
+//                    $date = date('Ymd', strtotime($file->payment_date));
+//                    $ftp->file_name = str_replace('[DATE]', $date, $ftp->file_name);
+//                    if (Yii::$app->general->checkDirectory($ftp->local_path) && Yii::$app->general->checkDirectory($ftp->local_path . 'archive/') && $ftp->DownloadFile()) {
+//                        $new_status = 3;
+//                    }
+//                }
+                }
+                if ($file->status != $new_status) {
+                    $file->status = $new_status;
+                    $file->save(FALSE);
+                }
+            }
+        }
+        $destination = Yii::$app->basePath . '/web/payment/';
+        if (Yii::$app->general->checkDirectory($destination) && Yii::$app->general->checkDirectory($destination . 'archive/')) {
+            $delete = [];
+            foreach (array_unique($misfile['misfile']) as $source) {
+                $files = scandir($source);
+                foreach ($files as $file) {
+                    if (in_array($file, array(".", "..")))
+                        continue;
+                    if (copy($source . $file, $destination . $file)) {
+                        $delete[] = $source . $file;
+                    }
+                }
+            }
+            foreach ($delete as $file) {
+                unlink($file);
+            }
+        }
+    }
+
+    public function actionUpdatePaymentStatus() {
+        $folder = Yii::$app->basePath . '/web/payment/';
+        $this->ReadPaymentFile($folder, 'UNION', 'csv');
+        $folder = Yii::$app->basePath . '/web/payment/AXIS/';
+        $this->ReadPaymentFile($folder, 'AXIS', 'xlsx');
+    }
+
+    public function CheckMisFile($file, $misfile = []) {
+        $array = explode('/', $file->file_path);
+        $array = array_reverse($array);
+        unset($array[0]);
+        unset($array[1]);
+        $array = array_reverse($array);
+        $mispath = implode('/', $array) . '/mis/';
+        if (is_dir($mispath) && count(scandir($mispath)) > 2) {
+            $misfile[] = $mispath;
+            return ['status' => 3, 'misfile' => $misfile];
+        } else if (!file_exists($file->file_path)) {
+            return ['status' => 2, 'misfile' => $misfile];
+        }
+        return ['status' => $file->status, 'misfile' => $misfile];
+    }
+
+    private function getSpResult($sp_name) {
+
+        $post = Yii::$app->request->post('Dashboard');
+        $input = $this->SpInput($sp_name);
+        $spname = $input['name'];
+        $in_array = explode(',', str_replace(' ', '', $input['input']));
+        $param_str = '';
+        foreach ($in_array as $in) {
+            $data = explode('=', $in);
+            $variable = explode('~', $data[0]);
+            $val_type = explode('|', $data[1]);
+            $param = $variable[0];
+
+            $param1 = isset($variable[1]) ? $variable[1] : '';
+            $value = !empty($post[$param]) ? $post[$param] : $val_type[0];
+            $value = (isset($val_type[1]) && $val_type[1] == 'date') ? date('Y-m-d', strtotime($value)) : $value;
+            $value = (isset($val_type[1]) && $val_type[1] == 'list') ? str_replace('-', ',', $value) : $value;
+
+            if ($param1 == 'shift') {
+                $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
+            }
+            $param_str.="'" . $value . "',";
+        }
+        $param_str = rtrim($param_str, ",");
+        $query = \Yii::$app->db->createCommand("{CALL $spname($param_str)}");
+        // echo $query->rawSql;exit;
+        $results = $query->queryAll();
+        return $results;
+    }
+
+    private function SpInput($sp) {
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union_str = Yii::$app->request->post('union');
+        } else {
+            $unionModel = new TblUnions();
+            $union = $unionModel->getActiveUnions();
+            $union_ary = ArrayHelper::getColumn($union, 'union_code');
+            $union_str = implode('-', $union_ary);
+        }
+
+        $union_str = '-' . $union_str . '-';
+        $dcs_str = NULL;
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $dcs_str = Yii::$app->session->get('Dcs');
+            $dcs_str = ',' . $dcs_str . ',';
+        }
+        $array = [
+            'fed_union' => [
+                'name' => 'sp_dashboard_fed_union',
+                'input' => 'qlt_param=1,date~shift=' . date('Y-m-d') . '|date,shift=0',
+            ],
+            'fed_comparison' => [
+                'name' => 'sp_dashboard_fed_comparison',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date, from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date',
+            ],
+            'fed_datewise' => [
+                'name' => 'sp_dashboard_fed_datewise',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date',
+            ],
+            'union_comparison' => [
+                'name' => 'sp_dashboard_union_comparison',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+            ],
+            'union_datewise' => [
+                'name' => 'sp_dashboard_union_datewise',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+            ],
+        ];
+        return $array[$sp];
+    }
+
+    private function ReadPaymentFile($folder, $bank_type, $file_type) {
+        if (is_dir($folder)) {
+            if ($dh = opendir($folder)) {
+                while (($file = readdir($dh)) !== false) {
+                    if (pathinfo($file, PATHINFO_EXTENSION) == $file_type) {
+                        $objPHPExcel = PHPExcel_IOFactory::load($folder . $file);
+                        $objPHPExcel->getDefaultStyle()
+                                ->getNumberFormat()
+                                ->setFormatCode(
+                                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+                        );
+                        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+                            if ($bank_type == 'UNION') {
+                                $this->UnionPaymentData($worksheet);
+                            } else if ($bank_type == 'AXIS') {
+                                $this->AxisPaymentData($worksheet);
+                            }
+                        }
+                        if (copy($folder . $file, $folder . 'archive/' . $file)) {
+                            unlink($folder . $file);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function PaymentUpdate($payment_code, $status, $utr_no, $ref_no, $date, $reason) {
+        $model = TblPaymentTransaction::findOne($payment_code);
+        if (!empty($model) && $model->bank_status == NULL) {
+            $model->utr_no = $utr_no;
+            $model->reference_no = $ref_no;
+            $model->process_date = $date;
+            $model->reject_reason = $reason;
+            $model->bank_status = $status;
+            if (strtoupper($model->bank_status) != 'SUCCESS') {
+                $model->status = 'rejected';
+                $disburse_amount = '0.00';
+            } else {
+                $model->status = 'disbursed';
+                $disburse_amount = $model->final_amount;
+            }
+            $model->disburse_date = $model->process_date;
+            $model->disburse_amount = (double) $disburse_amount;
+            $model->save(FALSE);
+            $payment_model = [];
+            if ($model->type == 'dcs') {
+                $payment_model = TblMemberPayment::find()->where(['vsp_payment_reference_no' => $payment_code])->all();
+            } else if ($model->type == 'member') {
+                $payment_model = TblMemberPayment::find()->where(['payment_transaction_code' => $payment_code])->all();
+            } else if ($model->type == 'tp') {
+                $payment_model = TblTransporterPayment::find()->where(['payment_transaction_code' => $payment_code])->all();
+            }
+            foreach ($payment_model as $data) {
+                if ($model->type == 'member') {
+                    $historyModel = new TblMemberPaymentHistory();
+                } else {
+                    $historyModel = new TblTransporterPaymentHistory();
+                }
+                Yii::$app->operation->history($data, $historyModel, 'UPDATE');
+                $historyModel->save(FALSE);
+                if ($model->type == 'member' && $model->status == 'rejected') {
+                    $dcs_data = TblDcsPayment::find()
+                                    ->where(['dcs_code' => $data->dcs_code, 'dcs_payment_cycle_applicabilty_code' => $data->dcs_payment_cycle_applicabilty_code, 'dcs_payment_cycle_code' => $data->dcs_payment_cycle_code])->one();
+                    if (!empty($dcs_data) && $dcs_data->status != 'processed') {
+                        $dcs_data->status = 'processed';
+                        $dcs_data->save(FALSE);
+                    }
+                }
+                $data->status = $model->status;
+                if ($data->status == 'rejected') {
+                    $disburse_amount = '0.00';
+                } else {
+                    $disburse_amount = $data->final_amount;
+                }
+                $data->disburse_date = $model->disburse_date;
+                $data->disburse_amount = (double) $disburse_amount;
+                $data->utr_no = $model->utr_no;
+                $data->reference_no = $model->reference_no;
+                $data->process_date = $model->process_date;
+                $data->reject_reason = $model->reject_reason;
+                $data->bank_status = $model->bank_status;
+                $data->save(FALSE);
+            }
+        }
+    }
+
+    private function UnionPaymentData($worksheet) {
+        for ($row = 1; $row <= $worksheet->getHighestRow(); $row ++) {
+            $payment_code = $worksheet->getCell('D' . $row)->getValue();
+            $status = $worksheet->getCell('O' . $row)->getValue();
+            $utr_no = $worksheet->getCell('P' . $row)->getValue();
+            $ref_no = $worksheet->getCell('Q' . $row)->getValue();
+            $date = date('Y-m-d', strtotime($worksheet->getCell('R' . $row)->getValue()));
+            $reason = $worksheet->getCell('S' . $row)->getValue();
+            $this->PaymentUpdate($payment_code, $status, $utr_no, $ref_no, $date, $reason);
+        }
+    }
+
+    private function AxisPaymentData($worksheet) {
+        for ($row = 2; $row <= $worksheet->getHighestRow(); $row ++) {
+            $status = $worksheet->getCell('M' . $row)->getValue();
+            if (strtoupper($status) == 'EXECUTED' || strtoupper($status) == 'SETTLED') {
+                $status = 'SUCCESS';
+            } else if (strtoupper($status) == 'CANCELLED' || strtoupper($status) == 'RETURNED SETTLED') {
+                $status = 'FAILURE';
+            } else {
+                $status = '';
+            }
+            if ($status != '') {
+                $payment_code = $worksheet->getCell('C' . $row)->getValue();
+                $utr_no = $worksheet->getCell('L' . $row)->getValue();
+                $ref_no = '';
+                $date = date('Y-m-d', strtotime($worksheet->getCell('J' . $row)->getFormattedValue()));
+                $reason = $worksheet->getCell('N' . $row)->getValue();
+
+                $this->PaymentUpdate($payment_code, $status, $utr_no, $ref_no, $date, $reason);
+            }
+        }
+    }
+
+    private function getFileList($file) {
+        $data = new TblReversePaymentFileLog();
+        $data->union_code = $file->unionBankPaymentCode->union_code;
+        $oldFiles = $data->getRecord();
+        $oldFiles = ArrayHelper::getColumn($oldFiles, 'file_name');
+        $ftp = new FTPConnection();
+        $ftp->ftp_type = $file->unionBankPaymentCode->ftp_type;
+        $ftp->ftp_host = $file->unionBankPaymentCode->ftp_server;
+        $ftp->ftp_username = $file->unionBankPaymentCode->ftp_username;
+        $ftp->ftp_password = $file->unionBankPaymentCode->ftp_password;
+        $ftp->ftp_port = $file->unionBankPaymentCode->ftp_port;
+        $ftp->ftp_path = $file->unionBankPaymentCode->reverse_ftp_path;
+        $ftpFiles = $ftp->ListFile();
+        $pickFiles = array_diff($ftpFiles, $oldFiles);
+        return $pickFiles;
+    }
+
+    private function SaveReverseFileLog($union_code, $file_name) {
+        $model = new TblReversePaymentFileLog();
+        $model->union_code = $union_code;
+        $model->file_name = $file_name;
+        $model->save(FALSE);
+    }
+
+}

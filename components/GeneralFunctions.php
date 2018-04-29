@@ -1,0 +1,842 @@
+<?php
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+namespace app\components;
+
+use yii;
+use yii\base\Component;
+use yii\helpers\StringHelper;
+use app\modules\geo\models\TblStates;
+use app\models\TblNational;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblBranch;
+use app\modules\geo\models\TblHamlets;
+use app\modules\organisation\models\TblBanksDistrictsMapping;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\organisation\models\TblFederations;
+use yii\helpers\Html;
+use webvimark\modules\UserManagement\models\User;
+use app\models\TblUserOrganizationMapping;
+use app\modules\organisation\models\TblDcs;
+use app\modules\general\models\TblSocietyVendor;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\details\models\TblContactDetails;
+use app\modules\details\models\TblBankDetails;
+use app\modules\notification\models\TblNotifications;
+use DateTime;
+use stdClass;
+use SoapClient;
+
+class GeneralFunctions extends Component {
+
+    public static function getUserOrganization($user) {
+        $org = \app\models\TblUserOrganizationMapping::find()->where(['user_id' => $user])->all();
+
+        $values = '';
+        foreach ($org as $val) {
+            switch ($val->organizationType) {
+                case '2' :
+                    $union = \app\models\TblUnions::find()->where(['union_code' => $val->organizationCode])->one();
+                    if ($union)
+                        $values[$val->organizationCode . '_' . $union->stateCode->default_language_code . '_' . $union->stateCode->defaultLanguageCode->font_name . '_' . $union->union_name] = $union->union_name;
+                    break;
+                case '3' :
+                    $dcs = \app\models\TblDcs::find()->where(['dcs_code' => $val->organizationCode])->one();
+//                            print_r($dcs->stateCode);exit;
+                    if ($dcs)
+                        $values[$val->organizationCode . '_' . $dcs->stateCode->default_language_code . '_' . $dcs->stateCode->defaultLanguageCode->font_name . '_' . $dcs->dcs_name] = $dcs->dcs_name;
+                    break;
+                case '1' :
+                    $fed = \app\models\TblFederations::find()->where(['federation_code' => $val->organizationCode])->select('federation_name')->one();
+                    if ($fed)
+                        $values[$val->organizationCode . '_' . $fed->stateCode->default_language_code . '_' . $fed->stateCode->defaultLanguageCode->font_name . '_' . $fed->federation_name] = $fed->federation_name;
+                    break;
+                default:
+                    $national = \app\models\TblNational::find()->where(['national_code' => $val->organizationCode])->select('national_name')->one();
+                    if ($national)
+                        $values[$val->organizationCode . '_' . $national->national_name] = $national->national_name;
+                    break;
+            }
+        }
+//         exit;
+        return (!empty($values)) ? $values : [];
+    }
+
+    public static function getRange($flag, $union = null) {
+
+        $query = \app\models\SystemConfiguration::find()->where(['module_name' => $flag]);
+
+        if (Yii::$app->session->get('organizations_type') == 'UNION') {
+            $query->andWhere(['organization_id' => explode(',', Yii::$app->session->get('organizations_code'))]);
+        }
+        $systemConfig = $query->one();
+        $from = 0;
+        $to = 100000;
+        if ($systemConfig) {
+            $from = $systemConfig->from_value;
+            $to = $systemConfig->to_value;
+        }
+
+        return ['from' => $from, 'to' => $to];
+    }
+
+    /**
+     * Description: get local name in gridview
+     * @param type $model
+     * @param type $field
+     * @param type $field_value
+     * @param type $languageId
+     * @return type
+     */
+    public static function getLocalName($model, $field, $field_value, $languageId = NULL) {
+
+        $languageId = Yii::$app->session->get('LanguageId');
+        $model_name = Yii::$app->path->getModel($model);
+
+        $record = $model_name::find()->where(['language_code' => $languageId, $field => $field_value])->select('local_name')->one();
+
+        return isset($record) ? $record->local_name : '';
+    }
+
+    public static function getLocalAddress($model, $field, $field_value, $languageId = NULL) {
+
+        $languageId = Yii::$app->session->get('LanguageId');
+        $model_name = Yii::$app->path->getModel($model);
+        $record = $model_name::find()->where(['language_code' => $languageId, $field => $field_value])->select('local_address')->one();
+        return isset($record) ? $record->local_address : '';
+    }
+
+    public static function getLocalShortName($model, $field, $field_value, $languageId = NULL) {
+
+        $languageId = Yii::$app->session->get('LanguageId');
+        $model_name = Yii::$app->path->getModel($model);
+        $record = $model_name::find()->where(['language_code' => $languageId, $field => $field_value])->select('local_name_short')->one();
+        return isset($record) ? $record->local_name_short : '';
+    }
+
+    public static function getLocalDescription($model, $field, $field_value, $languageId) {
+
+        $model_name = Yii::$app->path->getModel($model);
+
+        $record = $model_name::find()->where(['language_code' => $languageId, $field => $field_value])->select('local_description')->one();
+
+        return isset($record) ? $record->local_description : '';
+    }
+
+    public static function getClassFromTable($table_name) {
+        $modelName = str_replace('_', ' ', $table_name);
+        $modelName = ucwords($modelName);
+        return '\\app\models\\' . str_replace(' ', '', $modelName);
+    }
+
+    public static function getStates($value) {
+
+        //$model = IdentityMaster::find()->where(['organization_type'=>$value])->one();
+
+        $return_array = [];
+        switch ($value) {
+            case 'Federations':
+                $record = TblFederations::find()->where(['federation_code' => Yii::$app->session->get('organizations_code')])->one();
+                break;
+            case 'Unions' :
+                $record = TblUnions::find()->where(['union_code' => explode(',', Yii::$app->session->get('organizations_code'))])->one();
+                break;
+            default:
+                $record = TblNational::find()->where(['national_code' => Yii::$app->session->get('organizations_code')])->one();
+                break;
+        }
+        if ($record) {
+            $states = explode(',', $record->state_code);
+            foreach ($states as $row) {
+                $statename = TblStates::find()->where(['state_code' => $row])->select('state_name')->one();
+                $return_array[$row] = [$statename->state_name];
+            }
+        }
+
+        return $return_array;
+    }
+
+    public static function organizationSessionCheck() {
+        if (Yii::$app->session->get('organizations_type') == 'NATIONAL' || Yii::$app->session->get('LanguageId') == 0)
+            return FALSE;
+        else
+            return true;
+    }
+
+    public static function getRecordStatus($status) {
+        return $status == 1 ? 'Active' : 'In Active';
+    }
+
+    /**
+     * validate bank detail if bank code is not empty
+     * @param type $bank
+     * @param type $attribute
+     * @param type $params
+     * @return boolean
+     */
+    public function validateBankDetail($bank, $attribute, $params) {
+        if ((!empty($bank->bank_code))) {
+            if (empty($bank->branch_code) || empty($bank->bank_account_no) || empty($bank->ifsc)) {
+                $bank->addError($attribute, Yii::t('app/validation', $bank->getAttributeLabel($attribute) . ' cannot be blank.'));
+                return false;
+            }
+        }
+    }
+
+    public function validateName($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[a-zA-Z ]+$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' should contain Alphabetic Character Only'));
+                return false;
+            }
+    }
+
+    public function validateAlphaNumber($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[a-zA-Z0-9 ]+$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' should not contain the special characters'));
+                return false;
+            }
+    }
+
+    public function validateDiscriptiveField($model, $attribute) {
+        if (!empty($model->$attribute)) {
+            if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '.'));
+                return false;
+            }
+        }
+    }
+
+    public function validateIfsc($model, $attribute, $params) {
+        if (!empty($model->$attribute)) {
+            if (!preg_match('/[a-zA-Z]{4}[0][a-zA-Z0-9]{6}$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', ' You have entered invalid ifsc code. e.g. "SBIN0005748"(length=11).'));
+                return false;
+            }
+        }
+    }
+
+    public function validatePancard($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', ' You have entered invalid pancard number. e.g. "AAAPL1234C".'));
+            }
+    }
+
+    public function validateAadharcard($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
+            }
+    }
+
+    public function vaildateMobileNumbers($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[0-9]{10}$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must contain exactly 10 digits.'));
+            }
+    }
+
+    public function vaildatePhoneNumbers($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[0-9]{10,16}$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must contain minimum 10 and maximum 16 digits.'));
+            }
+    }
+
+    public function vaildateServiceTax($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^\d+(?:\.\d{2})?$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute)));
+            }
+    }
+
+    public function vaildateNumericField($model, $attribute, $params) {
+        if (!empty($model->$attribute)) {
+            if (!preg_match('/^[1-9][0-9]*$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '. e.g "25"'));
+            }
+        }
+    }
+
+    public function vaildateLocalField($model, $attribute, $params) {
+        if (!empty($model->$attribute)) {
+            if (strlen($model->$attribute) == mb_strlen($model->$attribute, 'UTF-8')) {
+                $model->addError($attribute, Yii::t('app/validation', 'Data Should be in UTF-8 Format'));
+            }
+        }
+    }
+
+    public function validateTime($model, $attribute) {
+        if (!empty($model->$attribute)) {
+            $value = explode(':', $model->$attribute);
+            if ((!preg_match('/^[0-9]{2}[:][0-9]{2}$/', $model->$attribute)) || $value[0] > 24 || $value[1] > 60) {
+                $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . ' Formate. e.g "01:00"'));
+            }
+        }
+    }
+
+//    public function validateBranch($model,$attribute,$params) {
+//        if(!empty($model->$attribute)){
+//            $branch = new TblBranch();
+//            $data = $branch->getBranchIfcs($model->ifsc);
+//           
+//            if(!$data){
+//                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) ." '".$model->branch_code."'". ' is invalid.'));
+//               return false;
+//            }else{
+//                if($data->branch_code != $model->branch_code){
+//                    $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) ." '".$model->branch_code."'". ' is invalid.'));
+//                    return false;
+//                }else{
+//                    $hamlet = new TblHamlets();
+//                    $hamlet= $hamlet->getRecord($model->hamlet_code);
+//                    if($hamlet){
+//                        $district = $hamlet->villageCode->subDistrictCode->district_code;
+//                        $mapping = new TblBanksDistrictsMapping();
+//                        $mapping = $mapping->getRecord($data->bank_code,$district);
+//                        if(!$mapping){
+//                            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) ." '".$model->branch_code."'". ' is invalid.'));
+//                            return false;
+//                        }else{
+//                            $model->bank_code = $data->bank_code;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    public function validateBranch($model, $attribute, $params) {
+        if (!empty($model->$attribute)) {
+            $data = Yii::$app->general->validateActiveRelation($model, 'TblBranch', 'branch_code', 'branch_code', 'Branch Code', $params, 'ifsc,bank_code');
+            if ($data['msg'] != '') {
+                $model->addError($attribute, Yii::t('app/validation', $data['msg']));
+                return false;
+            } else {
+                $model->bank_code = $data['model']->bank_code;
+                $bank = Yii::$app->general->validateActiveRelation($model, 'TblBanks', 'bank_code', 'bank_code', 'Bank', $params);
+                if ($bank != '') {
+                    $model->addError($attribute, Yii::t('app/validation', $bank));
+                    return false;
+                } else {
+//                    if($data['model']->branch_code != $model->branch_code){
+//                        $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) ." '".$model->branch_code."'". ' is invalid.'));
+//                        return false;
+//                    }else{
+                    $model->ifsc = $data['model']->ifsc;
+                    $district = $model->district_code;
+                    $mapping = new TblBanksDistrictsMapping();
+                    $mapping = $mapping->getRecord($data['model']->bank_code, $district);
+                    if (!$mapping && $data['model']->bankCode->nationalized_bank == 0) {
+                        $model->addError($attribute, Yii::t('app/validation', "District is not mapped in relevant bank for branch '" . $model->branch_code . "'."));
+                        return false;
+                    } else {
+                        $model->bank_code = $data['model']->bank_code;
+                    }
+//                    }
+                }
+            }
+        } else {
+            $model->ifsc = '';
+            $model->bank_code = '';
+        }
+    }
+
+    public function validateIsBmc($model, $attribute, $params) {
+        if (!empty($model->is_bmc)) {
+            if (!in_array($model->$attribute, ['0', '1', '2', '3'])) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must be from "0" to "4".'));
+                return false;
+            }
+        }
+    }
+
+    public function validateMilkType($model, $attribute, $params) {
+        if (!empty($model->milk_type_code)) {
+            $milkType = new TblAnimalType();
+            $data = $milkType->getRecords();
+            if (!in_array($model->milk_type_code, array_map('strval', array_column($data, 'animal_type_code')), true)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . " '" . $model->milk_type_code . "'" . ' is invalid.'));
+                return false;
+            }
+        }
+    }
+
+    public function getUserName($username) {
+        $name = explode('#', $username);
+        $username = isset($name[1]) ? $name[1] : $name[0];
+
+        return $username;
+    }
+
+    public function getUnionName($model) {
+        if (isset($model->dcsCode)) {
+            return Yii::$app->general->getforeignkey($model->dcsCode->unionCode, 'union_name');
+        } else {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'union_code');
+        }
+    }
+
+    public function array_flatten($array, $isKey = '') {
+        if (!is_array($array)) {
+            return FALSE;
+        }
+        $result = array();
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                if (!empty($isKey))
+                    $result = $result + $this->array_flatten($value);
+                else
+                    $result = array_merge($result, $this->array_flatten($value));
+            }
+            else {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+
+    public function getLocalCode($tableName) {
+
+//        $identity = new IdentityMaster();
+//        $idenRecord = $identity->getIdentity();
+
+        $orgCode = Yii::$app->session->get('organizations_code');
+        $len = strlen($orgCode);
+
+        $val = (new \yii\db\Query)
+                ->select("MAX(CAST(trim(SUBSTRING(`local_code` FROM " . $len . " +2)) AS UNSIGNED)) as local_code")
+                ->from($tableName)
+                ->where('(CAST(trim(SUBSTRING(local_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->one();
+
+
+
+        $code1 = (int) $val['local_code'] + 1;
+
+        $value = $orgCode . '-' . $code1;
+        return $value;
+    }
+
+    public function getCodeAutoIncrement($model) {
+
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $tableName = $model->tableName();
+        $val = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
+                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
+                ->from($tableName)
+                ->one();
+        $number = (int) $val[$primaryKey] + 1;
+
+        return $number;
+    }
+
+    public function getOrganizationName() {
+        return [0 => ['national_code' => 91, 'national_name' => 'PCDF']];
+    }
+
+    public function uploadFile($file, $model, $name = "logo_path", $folder = 'attachments') {
+        $info = $this->getPath($folder, $file->baseName, '.' . $file->extension);
+        if ($file->saveAs($info['path'])) {
+            $model->$name = $info['name'];
+            $model->updateAttributes([$name]);
+        }
+    }
+
+    private function getPath($folder, $name, $ext) {
+        $path = Yii::getAlias('@webroot') . '/web/uploads/' . $folder . '/' . $name . $ext;
+        $info = [];
+        if (!file_exists($path)) {
+            $info['path'] = $path;
+            $info['name'] = $name . $ext;
+            return $info;
+        } else {
+            $name = $name . '1';
+            return $this->getPath($folder, $name, $ext);
+        }
+    }
+
+    public function getAttachmentLink($ext, $src) {
+        ?><li><span><?php
+                switch (1) {
+                    case (in_array($ext, array('.gif', '.jpg', '.jpeg', '.png', '.bmp'))):
+                        return Html::a(Html::img($src, ['class' => 'img-responsive']), $src, ['data-toggle' => 'modal', 'data-target' => '#attachedImg']);
+                        break;
+                    case $ext == '.pdf':
+                        return Html::a('<i class="fa fa-file-pdf-o"></i>', $src);
+                    case (in_array($ext, array('.doc', '.docx'))):
+                        return Html::a('<i class="fa fa-file-o"></i>', $src);
+                        break;
+                    case $ext == '.xls':
+                        return Html::a('<i class="fa fa-file-excel-o"></i>', $src);
+                        break;
+                    default:
+                        return Html::a('<i class="fa fa-file-text-o"></i>', $src);
+                        break;
+                }
+                ?></span></li><?php
+    }
+
+    public function checkAccess($route, $superadmin = 'true') {
+        return User::canRoute($route, $superAdminAllowed = $superadmin);
+    }
+
+    public function getforeignkey($value, $field) {
+        return !empty($value) ? $value->$field : '';
+        // return '';
+    }
+
+    public function valiadteUnique($model, $field, $value, $msg = '') {
+
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $values = $model->find()->where([$field => ucwords($value), 'is_active' => 1])->andWhere(['<>', $primaryKey, $model->$primaryKey])->count();
+        if ($values != 0) {
+
+            $modleName = StringHelper::basename(get_class($model));
+            $field = strtolower($modleName) . '-' . $field;
+            $value = !empty($msg) ? $msg : $value;
+            return 0;
+        }
+        return 1;
+    }
+
+    public function validateActiveRelation($model, $modelName, $parentField, $childField, $parentLabel, $childLabel, $returnParams = '') {
+
+        $className = Yii::$app->path->getModel($modelName);
+        $returnParams = ($returnParams) ? ',' . $returnParams : '';
+        if (!is_array($parentField)) {
+            $check = $className::find()->select('is_active' . $returnParams)->where([$parentField => $model->{$childField}])->one();
+        } else {
+            $check = $className::find()->select('is_active' . $returnParams);
+            foreach ($parentField as $key => $pf) {
+                $check->andwhere([$pf => $model->{$childField[$key]}]);
+            }
+            $check = $check->one();
+        }
+
+        $msg = '';
+        if (!$check)
+            $msg = $parentLabel . ' is invalid.';
+        else if ($check->is_active != '1')
+            $msg = 'You can not add ' . ucfirst($childLabel) . ' for deleted/inactive ' . ucfirst($parentLabel) . '.';
+
+        if ($returnParams == '')
+            return $msg;
+        else
+            return ['msg' => $msg, 'model' => $check];
+    }
+
+    public function getChildOrgs() {
+        switch (Yii::$app->session->get('UserType')) {
+            case 2:
+                $orgs = ['UNION', 'DCS'];
+                $i = 2;
+                break;
+            case 3:
+                $orgs = ['DCS'];
+                $i = 3;
+                break;
+            case 4:
+                $orgs = ['none'];
+                $i = 4;
+                break;
+            default :
+                $orgs = ['none'];
+                $i = 0;
+        }
+        return [$orgs, $i];
+    }
+
+    public function getMappedDcs($unions = []) {
+        $dcs = [];
+        if (!empty($unions)) {
+            foreach ($unions as $union) {
+                $mapping = TblDcs::find()->select(['dcs_code'])->where(['union_code' => $union])->asArray()->all();
+                if (!empty($mapping)) {
+                    $map = array_values(yii\helpers\ArrayHelper::getColumn($mapping, 'dcs_code'));
+                    if (!empty($dcs))
+                        array_merge($dcs, $map);
+                    else
+                        $dcs = $map;
+                }
+            }
+        }
+        return $dcs;
+    }
+
+    public function checkDirectory($path, $permission = '0755') {
+        if (file_exists($path)) {
+            if (!is_dir($path)) { //if file is already present, but it's not a dir
+                if (mkdir($path, $permission, true) == false) {
+                    die('Failed to create folders...' . $path);
+                    return false;
+                }
+            }
+        } else { //no file exists with this name
+            if (mkdir($path, $permission, true) == false) {
+                die('Failed to create folders...' . $path);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function createLogFile($path, $text, $file_name = '', $append = '') {
+        if (!empty($append)) {
+            $path = $path . '\\' . $append;
+        }
+        $dir = $this->checkDirectory($path);
+        if ($dir) {
+            if (empty($file_name)) {
+                $timestamp = date('d-m-Y-H-i-s');
+                $fileName = $path . "\\" . $timestamp . '.txt';
+            } else {
+                $fileName = $path . "\\" . $file_name . '.txt';
+            }
+            $logfile = fopen($fileName, "w") or die("Unable to open file!");
+            fwrite($logfile, $text);
+            fclose($logfile);
+        }
+        return;
+    }
+
+    public function findCensus($model, $attribute) {
+        if (!empty($model->$attribute)) {
+            $code = TblSocietyVendor::find()->where(['dcs_code' => $model->$attribute, 'vendor_code' => 'BIPL'])->one();
+            if (empty($code)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . " '" . $model->$attribute . "'" . ' not found.'));
+                return false;
+            }
+        }
+    }
+
+    public function isVendor($dcs_code, $vendor) {
+        if (!empty($dcs_code) && !empty($vendor)) {
+            $code = TblSocietyVendor::find()->where(['dcs_code' => $dcs_code, 'vendor_code' => $vendor])->one();
+            return empty($code) ? false : true;
+        }
+        return false;
+    }
+
+    public function validateBiplMilkType($model, $attribute) {
+        if (!empty($model->$attribute)) {
+            if (!in_array(strtolower($model->$attribute), ['cow', 'buffalo', 'mix', 'mixed'])) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' can only have values from: Cow, Buffalo, Mix, Mixed'));
+                return false;
+            }
+        }
+    }
+
+    public function filterByOrg($query, $model, $union_table = '') {
+        $tablename = $model->tableSchema->fullName;
+        //if($model->hasAttribute('union_code'))
+        //{
+        $union_table = !empty($union_table) ? $union_table : $tablename;
+        if (Yii::$app->session->get('Unions') !== '' && empty($model->union_code))
+            $query->andFilterWhere([ $union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        else
+            $query->andwhere([$union_table . '.union_code' => $model->union_code]);
+
+        if ($model->hasAttribute('dcs_code')) {
+            if (Yii::$app->session->get('Dcs') !== '' && empty($model->dcs_code))
+                $query->andFilterWhere([ $tablename . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+            else
+                $query->andFilterWhere([$tablename . '.dcs_code' => $model->dcs_code]);
+            // }
+        }
+    }
+
+    public function validateLocalCode($model, $attribute) {
+        if (!empty($model->$attribute)) {
+            $mcode = str_pad($model->$attribute, 4, '0', STR_PAD_LEFT);
+            $code = TblMember::find()->where(['dcs_code' => $model->census_code, 'member_code' => $model->census_code . $mcode])->one();
+            if (empty($code)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . " '" . $model->$attribute . "'" . ' not found.'));
+                return false;
+            }
+        }
+    }
+
+    public function getEntryType() {
+
+        switch (Yii::$app->session->get('organizations_type')) {
+            case 'NATIONAL':
+                return 0;
+                break;
+            case 'FEDERATION':
+                return 1;
+                break;
+            case 'UNION':
+                return 2;
+                break;
+        }
+    }
+
+    public function getEntryValue($entry_type) {
+
+        switch ($entry_type) {
+            case '0':
+                return 'NATIONAL';
+                break;
+            case 1:
+                return 'FEDERATION';
+                break;
+            case 2:
+                return 'UNION';
+                break;
+            case 3:
+                return 'DCS';
+                break;
+            case NULL:
+                return '';
+                break;
+        }
+    }
+
+    public function getDefaultContactDetail($code, $module) {
+        $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => $code, 'module_name' => $module])->one();
+        return $detail;
+    }
+
+    public function getDefaultBankDetail($code, $module) {
+        $detail = TblBankDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => $code, 'module_name' => $module])->one();
+        return $detail;
+    }
+
+    public function getNotifications() {
+        $notifications = TblNotifications::find()->where(['is_active' => 1])->orderBy(['id' => SORT_DESC])->all();
+        return $notifications;
+    }
+
+    public function getshift($shift) {
+        $shift_time = '00:00:00';
+        if ($shift == 1) {
+            $shift_time = '06:00:00';
+        } else if ($shift == 2) {
+            $shift_time = '18:00:00';
+        }
+        return $shift_time;
+    }
+
+    public function encryptData($string) {
+        return \Yii::$app->encrypter->encrypt($string);
+    }
+
+    public function decryptData($string) {
+        $decryptedData = \Yii::$app->encrypter->decrypt($string);
+        if ($decryptedData) {
+            return $decryptedData;
+        }
+        return FALSE;
+    }
+
+    public function base64url_encode($data) {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    public function base64url_decode($data) {
+        if (in_array(explode('/', $data)[0], ['restservices', 'webservice'])) {
+            return $data;
+        }
+        return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+    }
+
+    public function filterByNumber($query, $model, $fields) {
+        $tablename = $model->tableSchema->fullName;
+        foreach ($fields as $fd) {
+            if (!empty($model->{$fd}) || $model->{$fd} == 0) {
+                if (preg_match('/^[0-9][0-9]*$/', $model->{$fd})) {
+                    $query->andwhere([$fd => $model->{$fd}]);
+                } else {
+                    $query->andFilterWhere(['like', $fd, $model->{$fd}]);
+                }
+            }
+        }
+    }
+
+    public function dropdownRange($model, $field, $range) {
+        $model_name = Yii::$app->path->define($model);
+        $model = new $model_name();
+        $min = $model::find()->select('min(' . $field . ') as ' . $field)->one();
+        $max = $model::find()->select('max(' . $field . ') as ' . $field)->one();
+        $min_data = (int) $min[$field];
+        $max_data = (int) $max[$field];
+        $array = [];
+        $i = $min_data;
+        $j = $min_data;
+        for ($min_data; $min_data <= $max_data; $min_data+=$range) {
+            $array[$i . ',' . $i+=$range] = $j . ' <= ' . $j+=$range;
+        }
+        return $array;
+    }
+
+    public function filterByDropdownRange($query, $model, $fields) {
+        if (is_array($fields)) {
+            foreach ($fields as $fd) {
+                if (!empty($model->{$fd})) {
+                    $range = explode(',', $model->{$fd});
+                    $query->andFilterWhere(['between', $fd, $range[0], $range[1]]);
+                }
+            }
+        } else {
+            $range = explode(',', $model->{$fields});
+            $query->andFilterWhere(['between', $fields, $range[0], $range[1]]);
+        }
+    }
+
+    public function validateAge($model, $attribute, $params) {
+        if (!empty($model->$attribute)) {
+            $from = new DateTime($model->$attribute);
+            $to = new DateTime('today');
+            $age = $from->diff($to)->y;
+            if ($age < 18) {
+                $model->addError($attribute, Yii::t('app/validation', 'Member\'s age should be greater than 18 years.'));
+            }
+        }
+    }
+
+    public function CurrencyFormat() {
+        return ['IndianCurrency', 2];
+    }
+
+    public function ColoumnAlign() {
+        return 'right';
+    }
+
+    public function validateVehiclePayment($model) {
+        $wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
+        $payment_model = new \app\modules\payment\models\TblVehiclePayment();
+        $data = $payment_model->find()
+                ->where(['=', 'vehicle_code', $model->vehicle_code])
+                ->andWhere(['<=', 'from_date', $wef_date])
+                ->andWhere(['>=', 'to_date', $wef_date])
+                ->andWhere(['!=', 'status', 'processed'])
+                ->one();
+        if (!empty($data)) {
+            $model->addError('wef_date', "Payment for that vehicle has been sent or disbursed");
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    public function sendEmail($subject, $body, $to_mail) {
+        try {
+            $headers[] = 'MIME-Version: 1.0';
+            $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+            $headers[] = 'From: PCDF <no-reply@portal.pcdf-eipl.com>';
+            mail($to_mail, $subject, $body, implode("\r\n", $headers));
+            return true;
+        } catch (Exception $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n";
+            return true;
+        }
+    }
+
+}

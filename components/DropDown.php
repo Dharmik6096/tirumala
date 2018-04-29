@@ -1,0 +1,532 @@
+<?php
+
+/*
+ *
+ */
+
+namespace app\components;
+
+use yii;
+use yii\base\Component;
+use kartik\depdrop\DepDrop;
+use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblFederations;
+use app\modules\setting\models\TblProfiles;
+use app\modules\geo\models\TblStates;
+use app\modules\globalmaster\models\TblLandUnit;
+use app\modules\dcsaccounting\models\TblFinancialYear;
+use yii\web\View;
+use ReflectionClass;
+use kartik\widgets\Select2;
+use yii\web\JsExpression;
+use yii\db\Query;
+use app\modules\organisation\models\TblRouteMappingSources;
+use yii\helpers\Html;
+
+class DropDown extends Component {
+
+    private $class = 'form-group padding-right-5 col-sm-2';
+
+    public function state($model, $form, $name = 'state_code', $islable = false, $disable = false, $multiple = false) {
+
+        $this->setClass($form, $name);
+        $state = new TblStates;
+        $model->{$name} = Yii::$app->session->get('States');
+        echo $form->field($model, $name)->dropDownList($state->getActiveStates($model->$name), ['prompt' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple])->label($islable);
+        $script = "$(document).ready(function() {
+                $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
+                });";
+        Yii::$app->view->registerJs($script, View::POS_END, 'state-hide');
+    }
+
+    public function district($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false) {
+
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
+    }
+
+    public function uniondistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/district-list', 'Select District', $multiple, $model->$name, $readonly);
+    }
+
+    public function unionpaymentcycle($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-member-payment/payment-cycle-list', 'Select Payment Cycle', $multiple, $model->$name, $readonly);
+    }
+
+    public function unionpaymentcyclewithdate($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-member-payment/payment-cycle-list-with-date', 'Select Payment Cycle', $multiple, $model->$name, $readonly);
+    }
+
+    public function dcsvillage($model, $form, $depends, $name = 'village_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/village-list', 'Select Village', $multiple, $model->$name, $readonly);
+    }
+
+    public function vendordcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/load-vendor-society', 'Select Society', $multiple, $model->$name);
+    }
+
+    public function bankdistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-banks/bank-district-list', 'Select District', $multiple, $model->$name);
+    }
+
+    public function bankdepended($model, $form, $depends, $name = 'bank_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-banks/bank-list', 'Select Bank', $multiple);
+    }
+
+    public function federation($model, $form, $name = 'federation_code', $islable = false, $disable = false) {
+
+        $this->setClass($form, $name);
+        $federation = new TblFederations();
+        echo $form->field($model, $name)->dropDownList($federation->getActiveFederation($model->$name), ['prompt' => 'Select Federation', 'disabled' => $disable])->label($islable);
+    }
+
+    public function dcsdestinationtype($model, $form, $depends, $name = 'destination_type', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/destination-list', 'Select Destination Type', $multiple);
+    }
+
+    public function routedestinationtype($model, $form, $depends, $name = 'destination_type', $islable = false, $multiple = false, $type = 'to') {
+        $this->setClass($form, $name);
+        $url = $type == 'to' ? '/organisation/tbl-route-mapping/to-destination-list' : '/organisation/tbl-route-mapping/from-destination-list';
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, 'Select Destination Type', $multiple);
+    }
+
+    public function financialyear($model, $form, $name = 'financial_year_code', $islable = false, $disable = false) {
+        $this->setClass($form, $name);
+        $routs = new TblFinancialYear();
+        echo $form->field($model, $name)->dropDownList($routs->getLatestYear(), ['prompt' => 'Select Year', 'disabled' => $disable])->label($islable);
+    }
+
+    public function profile($model, $form, $name = 'profile_id', $islable = false, $disable = false) {
+        $this->setClass($form, $name);
+        $profiles = new TblProfiles();
+        echo $form->field($model, $name)->dropDownList($profiles->getAllRoles(), ['prompt' => 'Select Profile', 'disabled' => $disable])->label($islable);
+    }
+
+    public function shift($model, $form, $name = 'shift', $islable = false, $class = '', $disable = false) {
+        $list = ['1' => 'Morning', '2' => 'Evening'];
+        echo $form->field($model, $name)->dropDownList($list, ['prompt' => 'Select Shift', 'disabled' => $disable, 'class' => 'form-control ' . $class])->label($islable);
+    }
+
+    private function setClass($form, $name) {
+        if (array_key_exists($name, $form->options))
+            $this->class = $form->options[$name];
+        else if (isset($form->options['field-class']))
+            $this->class = $form->options['field-class'];
+    }
+
+    public function union($model, $form, $depends, $name = 'union_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/union-list', 'Select Union', $multiple/* ,$model->$name */);
+    }
+
+    public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $disable = $readonly ? 'disabled' : false;
+        $unionModel = new \app\modules\organisation\models\TblUnions();
+        $selected = '';
+        if (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) {
+            $selected = Yii::$app->session->get('Unions');
+        }
+        $model->{$name} = !empty($selected) ? $selected : $model->{$name};
+        echo $form->field($model, $name)->dropDownList($unionModel->getActiveUnions(1), ['prompt' => 'Select Union', 'disabled' => $disable])->label($islable);
+        if (!empty($selected)) {
+            $script = "$(document).ready(function() {
+                   $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
+                    });";
+            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
+        }
+    }
+
+    public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
+        $check_list = '';
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $check_list = explode(',', Yii::$app->session->get('Dcs'));
+            $check_list = implode('-', $check_list);
+        }
+        return $this->depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
+    }
+
+    public function union_routes($model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
+        $check_list = '';
+        $routes = new TblRouteMappingSources();
+        $check_list = implode('-', $routes->getRoutesWithDcs());
+        return $this->depend_dropdown('routemapping', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
+    }
+
+    public function route_dcs($model, $form, $depends, $name = '', $islable = false, $multiple = false, $multiselect = false, $id = '', $readonly = false) {
+        //$this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
+        if ($multiselect) {
+            $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-dcs/route-dcs-list');
+        } else {
+            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', 'Select Dcs', '', '', $readonly);
+        }
+    }
+
+    public function bank($model, $form, $name = 'bank_code', $islable = false, $disable = false) {
+        $this->setClass($form, $name);
+        $data = $this->getLabels('bank');
+        $records = $this->withLocal($data, $model);
+        echo $form->field($model, $name)->dropDownList($records, ['prompt' => 'Select Bank', 'disabled' => $disable])->label($islable);
+    }
+
+    public function defaultlandunit($model, $form, $name = 'land_unit', $islable = false, $disable = false) {
+        $this->setClass($form, $name);
+        $routs = new TblLandUnit();
+        echo $form->field($model, $name)->dropDownList($routs->getDefaultValues(), ['prompt' => 'Select Data', 'disabled' => $disable])->label($islable);
+    }
+
+    public function vehicle($model, $form, $name = 'vehicle_code', $islable = false, $disable = false, $km_base = false) {
+        $this->setClass($form, $name);
+        $vehicle = new \app\modules\transporter\models\TblVehicleMaster();
+        echo $form->field($model, $name)->dropDownList($vehicle->vehicle($km_base), ['prompt' => 'Select Vehicle', 'disabled' => $disable])->label($islable);
+    }
+
+    public function bmcroutecode($model, $form, $name = 'route_code', $islable = false, $disable = false, $bmc_code = '') {
+        $this->setClass($form, $name);
+        $routes = new \app\modules\organisation\models\TblRouteMapping();
+        echo $form->field($model, $name)->dropDownList($routes->route($bmc_code), ['prompt' => 'Select Route Code', 'disabled' => $disable])->label($islable);
+    }
+
+    public function transporterpaymentcycle($model, $form, $depends, $name = 'transporter_payment_cycle', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/payment-cycle-list', 'Select Payment Cycle', $multiple, $model->$name, $readonly);
+    }
+
+    public function vehicletransporter($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/depend-vehicles', 'Select Vehicle', $multiple, $model->$name);
+    }
+
+    public function depend_select2($model, $form, $name, $url, $dep_id = '') {
+        echo $form->field($model, $name)->widget(Select2::classname(), [
+            'initValueText' => 'Products', // set the initial display text
+            'options' => ['placeholder' => 'Search here...', 'class' => 'form-group'],
+            'pluginOptions' => [
+                'allowClear' => true,
+                'minimumInputLength' => 2,
+                'language' => [
+                    'errorLoading' => new JsExpression("function () { return 'Waiting for results...'; }"),
+                ],
+                'ajax' => [
+                    'url' => $url,
+                    'type' => 'post',
+                    'dataType' => 'json',
+                    'data' => new JsExpression('function(params) { 
+                    var did="' . $dep_id . '";
+                    var dep_code="";
+                    if(did!=="")
+                    {
+                       dep_code=$("#"+did).val();
+                    }
+                    return {q:params.term,depend_code:dep_code}; }')
+                ],
+                'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                'templateResult' => new JsExpression('function(city) { return city.text; }'),
+                'templateSelection' => new JsExpression('function (city) { return city.text; }'),
+        ]]);
+    }
+
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false) {
+        $class = $readonly ? 'depend-control' : '';
+        $depends = explode(',', $depends);
+        if ($multiple)
+            $placeholder = FALSE;
+//        $name = ($name == '') ? $data['name'] : $name;
+        echo $form->field($model, $name)
+                ->widget(DepDrop::classname(), [
+                    'data' => [$model->{$name} => $model->{$name}],
+                    'name' => $name,
+                    'options' => ['multiple' => $multiple],
+                    'pluginOptions' => [
+                        'depends' => $depends,
+                        'placeholder' => $placeholder,
+                        'url' => Url::to([$url]),
+                        'allParam' => ["'" . $extraParam . "'"],
+                        'initialize' => true,
+                        'allowClear' => true,
+                    ],
+                    'options' => [
+                        'readonly' => $readonly,
+                        'class' => 'form-control ' . $class
+                    ]
+                ])->label($islable);
+    }
+
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = []) {
+        $class = $readonly ? 'depend-control' : '';
+        $data = $this->getLabels($flag);
+        $fields = explode(',', $data['fields']);
+        $checkValid = in_array('checkValid', $data);
+        $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
+        $control_name = ($name == '') ? $data['name'] : $name;
+        echo $form->field($model, $control_name)
+                ->widget(DepDrop::classname(), [
+                    'data' => [$model->{$control_name} => $model->{$control_name}],
+                    'name' => $control_name,
+                    'pluginOptions' => [
+                        'depends' => [$depends],
+                        'placeholder' => $data['prompt'],
+                        'url' => Url::to(['/site/get-data']),
+                        'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid],
+                        'initialize' => true,
+                    ],
+                    'options' => [
+                        'readonly' => $readonly,
+                        'class' => 'form-control ' . $class
+                    ]
+                ])->label($label);
+    }
+
+    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false) {
+        $data = $this->getLabels($flag);
+        $control_name = ($name == '') ? $data['name'] : $name;
+        $records = $this->withoutLocal($data, $model);
+
+        if (in_array($flag, array(('shift_applicability')))) {
+            arsort($records, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        if ($addAll) {
+            $records = [0 => 'All'] + $records;
+        }
+
+        return $form->field($model, $control_name)->dropDownList($records, ['prompt' => $data['prompt'], 'disabled' => $disable])->label($label);
+    }
+
+    public function withoutLocal($labelData, $old_model) {
+
+
+        $fields = explode(',', $labelData['fields']);
+        $model_name = Yii::$app->path->define($labelData['model']);
+        $model = new $model_name();
+        $select_fields[] = $fields[0];
+        $select_fields[] = $fields[1];
+        //  var_dump($old_model);exit;
+        if (!empty($fields[2])) {
+            array_push($select_fields, $fields[2]);
+        }
+        if (isset($old_model->{$fields[0]}) && $old_model->{$fields[0]} != '') {
+            $unionQuery = $model->find()
+                            ->select($select_fields)
+                            ->where([$fields[0] => $old_model->{$fields[0]}])
+                            ->createCommand()->rawSql;
+            $tmp_query = $model->find()->select($select_fields)->where(['is_active' => 1])->union($unionQuery);
+            $query = new Query();
+            $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
+        } else {
+            $records = $model->find()->select($select_fields)->where(['is_active' => 1])->orderBy($model->tablename() . '.' . $fields[1])->all();
+        }
+
+        return ArrayHelper::map($records, $fields[0], function($array, $key) use ($fields) {
+                    if (!empty($fields[2]) && !empty($array[$fields[2]]))
+                        return $array[$fields[1]] . '(' . $array[$fields[2]] . ')';
+                    else
+                        return $array[$fields[1]];
+                });
+    }
+
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false) {
+        if (in_array($flag, ['organizations_type'])) {
+            (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
+        }
+        $data = $this->getRecords($flag);
+        $control_name = ($name == '') ? $data['name'] : $name;
+        $records = $data['data'];
+
+        if (!in_array($flag, array('p_type'))) {
+            asort($records, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        if ($addAll) {
+            $records = [0 => Yii::t('app', 'All')] + $records;
+        }
+        echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
+    }
+
+    public function dropdownfilterStatic($flag, $model, $name = '', $class = 'form-control', $addAll = false) {
+        $data = $this->getRecords($flag);
+        $control_name = ($name == '') ? $data['name'] : $name;
+        $records = $data['data'];
+
+        if (!in_array($flag, array('consumer_type_member', 'gender'))) {
+            asort($records, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+
+        if ($addAll) {
+            $records = [0 => 'All'] + $records;
+        }
+        return Html::activeDropDownList($model, $control_name, $records, ['class' => $class, 'prompt' => $data['prompt']]);
+    }
+
+    private function dependedDropdownMultiple($model, $form, $depends, $name, $id = '', $islable = false, $url = '', $placeholder = '', $multiple = true, $extraParam = '', $readonly = false) {
+        $depends = explode(',', $depends);
+        $class = $readonly ? 'depend-control' : '';
+        if ($multiple)
+            $placeholder = FALSE;
+        echo $form->field($model, $name, ['options' => ['class' => $class]])->widget(DepDropComp::classname(), [
+            'type' => DepDropComp::TYPE_MULTISELECT,
+            'options' => [
+                'multiple' => true,
+            ],
+            'model' => $model,
+            'attribute' => $name,
+            'data' => !empty($model->{$name}) ? array_values($model->{$name}) : [''],
+            'value' => !empty($model->{$name}) ? array_values($model->{$name}) : [0],
+            'multiSelectOptions' => [
+                'id' => $id,
+                'clientOptions' =>
+                [
+                    'includeSelectAllOption' => true,
+                    'numberDisplayed' => 1,
+                    'disableIfEmpty' => true,
+                    'buttonClass' => 'form-control text-left',
+                    'buttonContainer' => '<div class="form-group"/>',
+                    'buttonWidth' => '100%'
+                ],
+            ],
+            'pluginOptions' => [
+                'depends' => [$depends],
+                'placeholder' => false,
+                'url' => Url::to([$url]),
+                'allParam' => ["'" . $extraParam . "'"],
+                'initialize' => true,
+            ]
+        ])->label(Yii::t('app', $islable));
+    }
+
+    public function getRecords($l) {
+        $records = [
+            'with_and_without_milktype' => [
+                'name' => 'with_and_without_milktype',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['With Milk Type' => Yii::t('app', 'With Milk Type'), 'Without Milk Type' => Yii::t('app', 'Without Milk Type')],
+            ],
+            'p_type' => [
+                'name' => 'p_type',
+                'prompt' => Yii::t('app', 'Select Parameters'),
+                'data' => [0 => Yii::t('app', 'Quantity (Ltr)'), 2 => Yii::t('app', 'Fat%'), 1 => Yii::t('app', 'SNF%'), 4 => Yii::t('app', 'Amount (Rs.)'), 3 => Yii::t('app', 'Pourers No.')],
+            ],
+            'organizations_type_union' => [
+                'name' => 'organizations_type_union',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [1 => Yii::t('app', 'UNION')],
+            ],
+            'organizations_type_federation' => [
+                'name' => 'organizations_type_federation',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [0 => Yii::t('app', 'FEDERATION'), 1 => Yii::t('app', 'UNION')],
+            ],
+            'vendor' => [
+                'name' => 'vendor',
+                'prompt' => Yii::t('app', 'Select Vendor'),
+                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL'), 'REIL' => Yii::t('app', 'REIL')],
+            ],
+            'member_class' => [
+                'name' => 'member_class',
+                'prompt' => Yii::t('app', 'Select Class'),
+                'data' => [1 => Yii::t('app', 'APL'), 2 => Yii::t('app', 'BPL')],
+            ],
+            'bank_status' => [
+                'name' => 'bank_status',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => [0 => Yii::t('app', 'With Bank'), 1 => Yii::t('app', 'Without Bank')],
+            ],
+            'frequency_data' => [
+                'name' => 'frequency',
+                'prompt' => Yii::t('app', 'Select Frequency'),
+                'data' => [3 => Yii::t('app', '3 Hours'), 6 => Yii::t('app', '6 Hours'), 9 => Yii::t('app', '9 Hours'), 12 => Yii::t('app', '12 Hours')],
+            ],
+            'credit_type_data' => [
+                'name' => 'credit_type',
+                'prompt' => Yii::t('app', 'Select Credit Type'),
+                'data' => [0 => Yii::t('app', 'Fixed'), 1 => Yii::t('app', 'Variable')],
+            ],
+            'calc_type' => [
+                'name' => 'type',
+                'prompt' => Yii::t('app', 'Select Head Type'),
+                'data' => [0 => Yii::t('app', 'Addition'), 1 => Yii::t('app', 'Deduction')],
+            ],
+            'collection_type' => [
+                'name' => 'collection_type',
+                'prompt' => Yii::t('app', 'Select Collection Type'),
+                'data' => [1 => Yii::t('app', 'Self'), 2 => Yii::t('app', 'Transporter')],
+            ],
+        ];
+        return $records[$l];
+    }
+
+    private function getLabels($l) {
+        $label = [
+            'manufacture' => ['name' => 'manufacturer_code', 'fields' => 'id,manufacturer_name', 'prompt' => 'Select Manufacture', 'model' => 'TblManufacturer'],
+            'bank' => ['name' => 'bank_code', 'fields' => 'bank_code,bank_name,local_name', 'prompt' => 'Select Bank', 'model' => 'TblBanks'],
+            'branch' => ['name' => 'branch_code', 'fields' => 'branch_code,branch_name,local_name', 'prompt' => 'Select Branch', 'model' => 'TblBranch', 'depend' => 'bank_code', 'checkValid'],
+            'sub-center' => ['name' => 'sub_center_code', 'fields' => 'sub_center_code,sub_center_name,local_name', 'prompt' => 'Select Sub Center', 'model' => 'TblSubCenter', 'depend' => 'dcs_code'],
+            'destination' => ['name' => 'destination_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select Destination', 'model' => 'TblDcsBmc', 'depend' => 'union_code'],
+            'bmc' => ['name' => 'bmc_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select BMC', 'model' => 'TblDcsBmc', 'depend' => 'union_code'],
+            'dcs' => ['name' => 'dcs_code', 'fields' => 'dcs_code,dcs_name,local_name', 'prompt' => 'Select Society', 'model' => 'TblDcs', 'depend' => 'union_code', 'checkValid'],
+            'plant' => ['name' => 'plant_code', 'fields' => 'plant_code,name,local_name', 'prompt' => 'Select Plant', 'model' => 'TblPlant', 'depend' => 'union_code', 'checkValid'],
+            'mcc' => ['name' => 'mcc_code', 'fields' => 'mcc_plant_code,name,local_name', 'prompt' => 'Select MCC', 'model' => 'TblMccPlant', 'depend' => 'union_code', 'checkValid'],
+            'member' => ['name' => 'member_code', 'fields' => 'member_code,member_name,local_name', 'prompt' => 'Select Member', 'model' => 'TblMember', 'depend' => 'dcs_code'],
+            'route' => ['name' => 'route_code', 'fields' => 'route_code,route_name,local_name', 'prompt' => 'Select Route', 'model' => 'TblRoutes', 'depend' => 'bmc_code'],
+            'routemapping' => ['name' => 'route_code', 'fields' => 'route_code,route_name,local_name', 'prompt' => 'Select Route', 'model' => 'TblRouteMapping', 'depend' => 'union_code'],
+            'land_unit' => ['name' => 'land_unit', 'fields' => 'land_unit_code,land_unit_name,local_name', 'prompt' => 'Select Data', 'model' => 'TblLandUnit'],
+            'unit_code' => ['name' => 'unit_code', 'fields' => 'unit_code,unit_name,local_name', 'prompt' => 'Select Unit', 'model' => 'TblUnits', 'local_model' => 'TblUnitsLocal'],
+            'state_code' => ['name' => 'state_code', 'fields' => 'state_code,state_name,local_name', 'prompt' => 'Select State', 'model' => 'TblStates', 'local_model' => 'TblStatesLocal'],
+            'district_code' => ['name' => 'district_code', 'fields' => 'district_code,district_name,local_name', 'prompt' => 'Select District', 'model' => 'TblDistricts', 'local_model' => 'TblDistrictsLocal', 'depend' => 'state_code'],
+            'sub_district_code' => ['name' => 'sub_district_code', 'fields' => 'sub_district_code,sub_district_name,local_name', 'prompt' => 'Select Sub District', 'model' => 'TblSubDistricts', 'local_model' => 'TblSubDistrictsLocal', 'depend' => 'district_code'],
+            'village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => 'Select Village', 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
+            'block_code' => ['name' => 'block_code', 'fields' => 'block_code,block_name,local_name', 'prompt' => 'Select Block', 'model' => 'TblBlocks', 'depend' => 'sub_district_code'],
+            //'dcs_village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => 'Select Village', 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
+            'hamlet_code' => ['name' => 'hamlet_code', 'fields' => 'hamlet_code,hamlet_name,local_name', 'prompt' => 'Select Hamlet', 'model' => 'TblHamlets', 'local_model' => 'TblHamletsLocal', 'depend' => 'village_code'],
+            //'animal_type_code'=>['name'=>'animal_type_code','fields'=>'animal_type_code,animal_type_name','prompt'=>'Select Animal Type','model'=>'TblAnimalType'],
+            'vehicle_type_code' => ['name' => 'vehicle_type_code', 'fields' => 'vehicle_type_code,vehicle_type_name,local_name', 'prompt' => 'Select Vehicle Type', 'model' => 'TblVehicleType'],
+            'milk_quality_type_code' => ['name' => 'milk_quality_type_code', 'fields' => 'milk_quality_type_code,milk_quality_type_name,local_name', 'prompt' => 'Select Milk Quality Type', 'model' => 'TblMilkQualityType'],
+            //'milk_type'=>['name'=>'milk_quality_type_code','fields'=>'animal_type_code,animal_type_name','prompt'=>'Select Type','model'=>'TblAnimalType'],
+            'milk_type_code' => ['name' => 'milk_type_code', 'fields' => 'animal_type_code,animal_type_name,local_name', 'prompt' => 'Select Milk Type', 'model' => 'TblAnimalType'],
+            'dcs_type_code' => ['name' => 'dcs_type_code', 'fields' => 'dcs_type_code,dcs_type_name,local_name', 'prompt' => 'Select Society Type', 'model' => 'TblDcsTypes'],
+            'rate_type_code' => ['name' => 'rate_type_code', 'fields' => 'code,rate_type', 'prompt' => 'Select Rate Type', 'model' => 'TblRateType'],
+            'rate_gen_method_code' => ['name' => 'rate_gen_method_code', 'fields' => 'code,method', 'prompt' => 'Select Rate Method', 'model' => 'TblRateGenerateMethod'],
+            'shift_applicability' => ['name' => 'shift_applicability', 'fields' => 'id,shift', 'prompt' => 'Select Shift', 'model' => 'TblShift'],
+            'shift' => ['name' => 'shift', 'fields' => 'id,shift', 'prompt' => 'Select Shift', 'model' => 'TblShift'],
+            'deduction_type' => ['name' => 'deduction_type', 'fields' => 'deduction_type,deduction_type', 'prompt' => 'Select Deduction Type', 'model' => 'TblRateDeductionType'],
+            'ref_type' => ['name' => 'ref_type', 'fields' => 'reference_type,reference_type', 'prompt' => 'Select Reference Type', 'model' => 'TblRateReferenceType'],
+            'quality_param' => ['name' => 'quality_param', 'fields' => 'code,type', 'prompt' => 'Select Quality Param', 'model' => 'TblMilkType'],
+            'criteria_type_code' => ['name' => 'criteria_type_code', 'fields' => 'code,criteria_name', 'prompt' => 'Select Criteria', 'model' => 'TblHeadLoadCriteria'],
+            'product_group_code' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup'],
+            'product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code'],
+            'member_classification_type_code' => ['name' => 'member_classification_type_code', 'fields' => 'member_classification_type_code,member_classification_type', 'prompt' => 'Select Member Classification Type', 'model' => 'TblMemberClassificationType'],
+            'member-type' => ['name' => 'member_type_code', 'fields' => 'member_type_code,member_type_name', 'prompt' => 'Select Member Type', 'model' => 'TblMemberTypes'],
+            'blood-group' => ['name' => 'bloodgroup_code', 'fields' => 'blood_group_code,blood_group', 'prompt' => 'Select Blood Group', 'model' => 'TblBloodgroup'],
+            'religion' => ['name' => 'religion_code', 'fields' => 'religion_code,religion', 'prompt' => 'Select Religion', 'model' => 'TblReligion'],
+            'gender' => ['name' => 'gender_code', 'fields' => 'gender_code,gender', 'prompt' => 'Select Gender', 'model' => 'TblGender'],
+            'qualification' => ['name' => 'qualification_code', 'fields' => 'qualification_code,qualification_name', 'prompt' => 'Select Qualification', 'model' => 'TblQualification'],
+            'caste-category' => ['name' => 'caste_category_code', 'fields' => 'caste_category_code,caste_category_name,local_name', 'prompt' => 'Select Caste/Category', 'model' => 'TblCasteCategory'],
+            'capacity' => ['name' => 'capacity_code', 'fields' => 'capacity_code,value', 'prompt' => 'Select Capacity', 'model' => 'TblCapacity'],
+            'bmc_type' => ['name' => 'bmc_type_code', 'fields' => 'bmc_type_code,bmc_type_name', 'prompt' => 'Select BMC Type', 'model' => 'TblBmcType'],
+            'device_manufacturer' => ['name' => 'device_manufacturer_id', 'fields' => 'id,manufacturer', 'prompt' => 'Select Device Manufacturer', 'model' => 'TblDeviceManufacturer'],
+            'organisation_type' => ['name' => 'organisation_type_code', 'fields' => 'organisation_type_code,organisation_type', 'prompt' => 'Select Organisation Type', 'model' => 'TblOrganisationType'],
+            'scheme_type' => ['name' => 'scheme_type_code', 'fields' => 'scheme_type_code,scheme_type', 'prompt' => 'Select Scheme Type', 'model' => 'TblSchemeType'],
+            'transporter' => ['name' => 'transporter_code', 'fields' => 'transporter_code,transporter_name,local_name', 'prompt' => 'Select Transporter', 'model' => 'TblTransporter', 'depend' => 'union_code'],
+            'relation' => ['name' => 'nominee_relation', 'fields' => 'relationship_code,relationship', 'prompt' => 'Select Relationship', 'model' => 'TblRelationship'],
+            'rule_id' => ['name' => 'rule_id', 'fields' => 'rule_id,process_name', 'prompt' => 'Select Rule', 'model' => 'TblEmailProcessMaster'],
+            'fuel_type_code' => ['name' => 'fuel_type_code', 'fields' => 'fuel_type_code,fuel_type', 'prompt' => 'Select Fuel Type', 'model' => 'TblFuelTypeMaster'],
+            'vehicle_code' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,vehicle_type_code', 'prompt' => 'Select Vehicle', 'model' => 'TblVehicleMaster'],
+            'route_code' => ['name' => 'route_code', 'fields' => 'route_code,route_name', 'prompt' => 'Select Route', 'model' => 'TblRouteMapping'],
+            'transporter_code' => ['name' => 'transporter_code', 'fields' => 'transporter_code,transporter_name', 'prompt' => 'Select Transporter', 'model' => 'TblTransporter'],
+            'bmc_code' => ['name' => 'bmc_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select BMC', 'model' => 'TblDcsBmc'],
+            'bmc_codes' => ['name' => 'bmc_code', 'fields' => 'bmc_code,bmc_name,local_name', 'prompt' => 'Select BMC', 'model' => 'TblDcsBmc', 'depend' => 'union_code', 'false'],
+            'billing_type_code' => ['name' => 'billing_type_code', 'fields' => 'billing_type_code,billing_type', 'prompt' => 'Select Billing Type', 'model' => 'TblBillingType'],
+            'transporter_payment_head_code' => ['name' => 'transporter_payment_head_code', 'fields' => 'transporter_payment_head_code,transporter_payment_head', 'prompt' => 'Select Payment Head', 'model' => 'TblTransporterPaymentHead'],
+        ];
+        return $label[$l];
+    }
+
+}

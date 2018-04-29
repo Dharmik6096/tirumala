@@ -1,0 +1,79 @@
+{
+    "name": "yiisoft/yii2-app-basic",
+    "description": "Yii 2 Basic Project Template",
+    "keywords": ["yii2", "framework", "basic", "project template"],
+    "homepage": "http://www.yiiframework.com/",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/yiisoft/yii2/issues?state=open",
+        "forum": "http://www.yiiframework.com/forum/",
+        "wiki": "http://www.yiiframework.com/wiki/",
+        "irc": "irc://irc.freenode.net/yii",
+        "source": "https://github.com/yiisoft/yii2"
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "~2.0.5",
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+        "yiisoft/yii2-swiftmailer": "~2.0.0",
+        "webvimark/module-user-management": "^1.0",
+        "demogorgorn/yii2-ajax-submit-button": "*",
+        "kartik-v/yii2-widget-depdrop": "@dev",
+        "kartik-v/yii2-dynagrid": "@dev",
+        "kartik-v/yii2-mpdf": "dev-master",
+        "ruskid/yii2-csv-importer": "dev-master",
+        "zainiafzan/yii2-dropzone": "*",
+        "yiisoft/yii2-jui": "^2.0",
+        "arogachev/yii2-excel": "^0.1.1",
+        "kartik-v/yii2-detail-view": "*",
+        "wbraganca/yii2-dynamicform": "*",
+        "spanjeta/yii2-backup": "*",
+        "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-date-range": "*",
+        "2amigos/yii2-tinymce-widget": "~1.1",
+        "kartik-v/yii2-field-range": "*",
+        "guzzlehttp/guzzle": "^6.2@dev",
+        "phpseclib/phpseclib": "~2.0",
+        "nickcv/yii2-encrypter": "*",
+        "jaspersoft/rest-client": "dev-master",
+        "2amigos/yii2-multi-select-widget": "*",
+        "softark/yii2-dual-listbox": "dev-master"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.0.0",
+        "yiisoft/yii2-gii": "~2.0.0",
+        "yiisoft/yii2-faker": "~2.0.0",
+
+        "codeception/base": "^2.2.3",
+        "codeception/verify": "~0.3.1",
+        "codeception/specify": "~0.4.3"
+    },
+    "config": {
+        "process-timeout": 1800
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "yii\\composer\\Installer::postCreateProject"
+        ]
+    },
+    "extra": {
+        "yii\\composer\\Installer::postCreateProject": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777",
+                    "yii": "0755"
+                }
+            ],
+            "generateCookieValidationKey": [
+                "config/web.php"
+            ]
+        },
+        "asset-installer-paths": {
+            "npm-asset-library": "vendor/npm",
+            "bower-asset-library": "vendor/bower"
+        }
+    }
+}

@@ -1,0 +1,34 @@
+vendor/demogorgorn/yii2-ajax-submit-button/.git/
+vendor/kartik-v/yii2-dialog/.git/
+vendor/kartik-v/yii2-field-range/.git/
+vendor/kartik-v/yii2-field-range/.github/
+vendor/kartik-v/yii2-dynagrid/.git/
+vendor/kartik-v/yii2-grid/.git/
+vendor/kartik-v/yii2-krajee-base/.git/
+vendor/kartik-v/yii2-mpdf/.git/
+vendor/kartik-v/yii2-widget-activeform/.git/
+vendor/kartik-v/yii2-widget-depdrop/.git/
+vendor/kartik-v/yii2-widget-select2/.git/
+vendor/kartik-v/yii2-export/.github/
+vendor/kartik-v/yii2-date-range/.github/
+vendor/guzzlehttp/promises/.git/
+vendor/guzzlehttp/psr7/.git/
+vendor/nickcv/yii2-encrypter/.git/
+vendor/jaspersoft/rest-client/.git/
+web/assets/**
+web/minify/**
+assets/**
+!assets/*.php
+# exclude everything
+runtime/*
+# exception to the rule
+!runtime/.gitkeep
+nbproject
+config/db.php
+web/ratechart/**
+web/import/**
+web/payment/**
+sftp/**
+vendor/phpseclib/phpseclib/.git/
+web/uploads/**
+vendor/2amigos/yii2-multi-select-widget/.gitignore

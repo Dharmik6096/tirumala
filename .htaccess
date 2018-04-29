@@ -1,0 +1,8 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !index.php
+RewriteRule ^.*$ index.php
+php_value max_input_vars 10000
+php_value upload_max_filesize 800M
+php_value post_max_size 800M
