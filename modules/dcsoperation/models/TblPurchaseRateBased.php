@@ -32,7 +32,7 @@ use yii\helpers\ArrayHelper;
  * @property string $purchase_rate_code
  * @property string $updated_by
  * @property string $deleted_by
- * @property integer $rate_type
+ * @property integer $rate_type_code
  *
  * @property TblAnimalType $milkTypeCode
  * @property User $createdBy
@@ -58,30 +58,32 @@ class TblPurchaseRateBased extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['deduction_type', 'fixed_point', 'kg_rate', 'ref_type', 'step', 'value'], 'default', 'value' => '0'],
-            [['quality_param_code','deduction_type', 'ref_type', 'kg_rate'], 'required', 'on' => 'manualForm'],
-            [['milk_type_code', 'end_range', 'start_range', 'rate_type'], 'required'],
-            [['formula', 'kg_rate'], 'required', 'except' => 'excel'],
-            [['end_range', 'start_range'], 'number', 'min' => 0.1, 'max' => 99, 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => Yii::t('app/validation', 'Range should single decimal number.')],
-            [['end_range'], 'customValidate'],
-            [['rate_type'], 'RateTypeValidate'],
-            [['fixed_point', 'value', 'step'], 'required', 'when' => function($model) {
-            return $model->ref_type == 1;
+        [['milk_quality_type_code'], 'default', 'value' => 1],
+        [['deduction_type', 'fixed_point', 'kg_rate', 'ref_type', 'step', 'value'], 'default', 'value' => '0'],
+        [['rate_type_code'], 'unique', 'targetAttribute' => ['rate_type_code', 'quality_param_code', 'purchase_rate_code', 'milk_type_code'], 'on' => 'stellapps'],
+        [['quality_param_code', 'deduction_type', 'ref_type', 'kg_rate'], 'required', 'on' => 'manualForm'],
+        [['milk_type_code', 'end_range', 'start_range', 'rate_type_code'], 'required'],
+        [['formula', 'kg_rate'], 'required', 'except' => ['excel', 'stellapps']],
+        [['end_range', 'start_range'], 'number', 'min' => 0.1, 'max' => 99, 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => Yii::t('app/validation', 'Range should single decimal number.')],
+        [['end_range'], 'customValidate'],
+        [['rate_type_code'], 'RateTypeValidate'],
+        [['fixed_point', 'value', 'step'], 'required', 'when' => function($model) {
+        return $model->ref_type == 1;
         }, 'whenClient' => "function (attribute, value) {  if($('#tblpurchaseratebased-0-ref_type').val()==1){return true;} }", 'on' => 'manualForm'],
-            [['value'], 'required', 'when' => function($model) {
-            return $model->ref_type == 2;
+        [['value'], 'required', 'when' => function($model) {
+        return $model->ref_type == 2;
         }, 'whenClient' => "function (attribute, value) {  if($('#tblpurchaseratebased-0-ref_type').val()==2){return true;} }", 'on' => 'manualForm'],
-            [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
-            [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
-            [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
-            [['created_at', 'step', 'updated_at', 'kg_rate',  'quality_param_code_name', 'formula_code', 'fixed_point', 'formula'], 'safe'],
-            [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
-            [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
-            [['deduction_type', 'ref_type'], 'string', 'max' => 50],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['purchase_rate_code'], 'safe'],
-//            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
-//            [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityGrade::className(), 'targetAttribute' => ['milk_quality_type_code' => 'grade_code']],
+        [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
+        [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
+        [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
+        [['created_at', 'step', 'updated_at', 'kg_rate', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula'], 'safe'],
+        [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
+        [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
+        [['deduction_type', 'ref_type'], 'string', 'max' => 50],
+        [['created_by', 'updated_by'], 'string', 'max' => 14],
+        [['purchase_rate_code'], 'safe'],
+        [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
+        [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code']],
 //            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
         ];
     }
@@ -96,11 +98,11 @@ class TblPurchaseRateBased extends \app\models\ChildModel {
 
     public function RateTypeValidate($attribute, $params) {
 
-        if (!empty($this->rate_type) && !empty($this->milk_quality_type_code)) {
+        if (!empty($this->rate_type_code) && !empty($this->milk_quality_type_code)) {
 
             $query = $this->find()->where('purchase_rate_code=\'' . $this->purchase_rate_code . '\'  and milk_type_code=\'' . $this->milk_type_code . '\'');
             $record = $query->one();
-            if (!empty($record) && $this->rate_type != $record->rate_type) {
+            if (!empty($record) && $this->rate_type_code != $record->rate_type_code) {
                 $this->addError($attribute, Yii::t('app/validation', 'Other Rate Type is not allowed.'));
                 return false;
             }
@@ -163,7 +165,7 @@ class TblPurchaseRateBased extends \app\models\ChildModel {
         for ($i = 0; $i < count($model); $i++) {
             $data = $this->find()->where(['milk_type_code' => $model[$i]->milk_type_code, 'purchase_rate_code' => $model[$i]->purchase_rate_code])->orderBy('quality_param_code,start_range')->all();
             $aqcnt = ArrayHelper::map($data, 'quality_param_code', 'quality_param_code');
-            $qpcnt = explode('+', $model[$i]->rateType->rate_type);
+            $qpcnt = explode('+', $model[$i]->rateType->rate_type_code);
             if (count($aqcnt) != count($qpcnt)) {
                 $message = 'Line Missing for ' . $model[$i]->milkTypeCode->animal_type_name;
                 break;
@@ -277,7 +279,7 @@ class TblPurchaseRateBased extends \app\models\ChildModel {
     }
 
     public function getRateType() {
-        return $this->hasOne(TblRateType::className(), ['code' => 'rate_type']);
+        return $this->hasOne(TblRateType::className(), ['code' => 'rate_type_code']);
     }
 
     /**
@@ -365,7 +367,7 @@ class TblPurchaseRateBased extends \app\models\ChildModel {
         Yii::$app->session->set('rate1', 0);
         Yii::$app->session->set('rate2', 0);
         Yii::$app->session->set('formula', 0);
-        Yii::$app->session->set('rate_type', 0);
+        Yii::$app->session->set('rate_type_code', 0);
         Yii::$app->session->set('rate_method', 0);
         Yii::$app->session->set('milk_type_code', 0);
         Yii::$app->session->set('milk_quality_type_code', NULL);

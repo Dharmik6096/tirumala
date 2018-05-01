@@ -25,7 +25,7 @@ use app\modules\dcsoperation\models\TblShift;
  * @property string $rtpl
  * @property string $amount
  * @property string $auto_flag
- * @property string $shift
+ * @property string $shift_code
  * @property string $date_time_of_collection
  * @property string $date_time_of_recieve
  * @property string $village_code
@@ -48,7 +48,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $union_code, $date, $weigh_time,$testing_time;
+    public $union_code, $date, $weigh_time, $testing_time;
 
     public static function tableName() {
         return 'tbl_bmc_collection';
@@ -59,16 +59,16 @@ class TblBmcCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string'],
+            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string'],
             [['milk_type_code', 'sample_no', 'ack'], 'integer'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             [['transporter_code', 'vehicle_code'], 'required', 'on' => 'transporter'],
             [['dcs_code'], 'validateDcs'],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->shift;
+            [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+            return $this->shift_code;
         }],
-            [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift', 'milk_type_code', 'date_time_of_collection', 'collection_type', 'milk_quality_type_code'], 'required'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time','testing_time'], 'safe'],
+            [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'collection_type', 'milk_quality_type_code'], 'required'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing',], 'safe']
         ];
     }
@@ -93,7 +93,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'rtpl' => Yii::t('app', 'Rtpl'),
             'amount' => Yii::t('app', 'Amount'),
             'auto_flag' => Yii::t('app', 'Auto Flag'),
-            'shift' => Yii::t('app', 'Shift'),
+            'shift_code' => Yii::t('app', 'Shift'),
             'date_time_of_collection' => Yii::t('app', 'Date Of Collection'),
             'date_time_of_recieve' => Yii::t('app', 'Date Time Of Recieve'),
             'village_code' => Yii::t('app', 'Village'),
@@ -138,7 +138,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getShiftCode() {
-        return $this->hasOne(TblShift::className(), ['id' => 'shift']);
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
 
     public function getDcsCode() {

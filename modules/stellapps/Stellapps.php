@@ -18,6 +18,13 @@ class Stellapps extends \yii\base\Module {
             'data_key' => 'ex_member_code',
             'history_model' => 'TblMemberHistory',
             'update_on' => 'member_code',
+        ],
+        'save_tmcc_configs' => [
+            'allow_update' => TRUE,
+            'merge_key' => 'dcs_code',
+            'data_key' => '',
+            'history_model' => 'TblDcsConfigHistory',
+            'update_on' => 'dcs_code',
         ]
     ];
 

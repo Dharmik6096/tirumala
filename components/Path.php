@@ -51,7 +51,7 @@ class Path extends Component {
             'TblMccPlant', 'TblMccPlantHistory','TblPlant', 'TblPlantHistory','TblPlantProductGroup','TblPlantProductGroupHistory','TblPlantProductGroupDetails','TblPlantProductGroupDetailsHistory',
             'TblRoutes', 'TblRoutesHistory', 'TblRoutesLocl', 'TblRoutesSearch','TblRouteMappingSources','TblRouteMappingSourcesHistory','TblRouteMapping','TblRouteMappingHistory',
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch', 'TblTransporterHistory',
-            'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch',
+            'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch','TblDcsConfigHistory'
         ],
         
         '\\app\modules\details\models\\' =>

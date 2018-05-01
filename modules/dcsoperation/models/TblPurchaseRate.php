@@ -17,7 +17,6 @@ use app\modules\organisation\models\TblUnions;
  * @property integer $originating_org_type
  * @property string $originating_org_code
  * @property string $rate_gen_method_code
- * @property string $milk_type_code
  * @property string $updated_at
  * @property string $created_by
  * @property integer $shift_applicability
@@ -41,12 +40,14 @@ class TblPurchaseRate extends \app\models\ChildModel {
     public function rules() {
         return [
             [['is_default',], 'default', 'value' => '1'],
-            [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'union_code', 'shift_id'], 'required'],
+            [['is_active',], 'default', 'value' => '1'],
+            [['rate_gen_method_code',], 'default', 'value' => '3', 'on' => ['stellapps']],
+            [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'union_code', 'shift_id'], 'required', 'except' => ['stellapps']],
             ['originating_org_code', 'unique', 'when' => function($model) {
                     $data = $this->find()->where(['originating_org_code' => $model->originating_org_code, 'wef_date' => $model->wef_date, 'shift_applicability' => $model->shift_applicability])->andWhere(['<>', 'purchase_rate_code', $model->purchase_rate_code])->one();
                     return ($data) ? true : false;
                 }, 'message' => Yii::t('app/validation', 'Purchase Rate is already created for inserted inputs.')],
-                    [['wef_date', 'created_at', 'originating_org_type', 'is_active', 'milk_type_code', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id'], 'safe'],
+                    [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code'], 'safe'],
                     [['shift_applicability'], 'integer'],
                     [['description', 'originating_org_code'], 'string', 'max' => 255],
                     [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -66,7 +67,6 @@ class TblPurchaseRate extends \app\models\ChildModel {
                     'originating_org_type' => Yii::t('app', 'Originating Location'),
                     'originating_org_code' => Yii::t('app', 'Originating Loc ID'),
                     'rate_gen_method_code' => Yii::t('app', 'Rate Method'),
-                    'milk_type_code' => Yii::t('app', 'Milk Type'),
                     'updated_at' => Yii::t('app', 'Updated At'),
                     'created_by' => Yii::t('app', 'Created By'),
                     'shift_applicability' => Yii::t('app', 'Shift Applicability'),
@@ -162,6 +162,10 @@ class TblPurchaseRate extends \app\models\ChildModel {
              */
             public function getUnionCode() {
                 return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+            }
+
+            public function getReferenceRecord() {
+                return $this->findOne(['reference_code' => $this->reference_code]);
             }
 
         }

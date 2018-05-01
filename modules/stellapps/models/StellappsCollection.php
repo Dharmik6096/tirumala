@@ -18,10 +18,10 @@ class StellappsCollection extends TblBmcCollection {
             [['date'], 'date', 'format' => 'php:d-m-Y', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01-12-2018'), 'skipOnEmpty' => true],
             [['dcs_code'], 'AddAutoData', 'skipOnEmpty' => true],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-            [['shift'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift' => 'id']],
+            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code']],
-            [['qty_mode', 'qty_auto', 'qlty_auto', 'avg_qlty_param'], 'boolean', 'strict' => true]
+            [['qty_mode', 'qty_auto', 'qlty_auto'], 'in', 'range' => [0,1]]
         ];
         foreach ($rules as $row) {
             array_push($array, $row);

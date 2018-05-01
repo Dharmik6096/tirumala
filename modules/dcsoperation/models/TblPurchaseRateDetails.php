@@ -11,7 +11,6 @@ use app\modules\globalmaster\models\TblAnimalType;
  * This is the model class for table "tbl_purchase_rate_auto".
  *
  * @property integer $code
- * @property string $wef_date
  * @property string $milk_type_code
  * @property string $created_at
  * @property double $fat
@@ -44,8 +43,9 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['milk_quality_type_code'], 'default', 'value' => 1],
             //[['milk_type_code', 'fat'/* ,'formula' */], 'required'],
-            [['wef_date', 'created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code'], 'safe'],
+            [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'purchase_rate_code'], 'safe'],
             [['fat', 'rtpl', 'snf'], 'number'],
 //            [['snf_to', 'snf'], 'customValidate','skipOnEmpty'=> false],
 //            [['is_delete', 'milk_quality_type_code'], 'integer'],
@@ -68,7 +68,6 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'code' => Yii::t('app', 'ID'),
-            'wef_date' => Yii::t('app', 'Wef Date'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'created_at' => Yii::t('app', 'Created At'),
             'fat' => Yii::t('app', 'FAT'),

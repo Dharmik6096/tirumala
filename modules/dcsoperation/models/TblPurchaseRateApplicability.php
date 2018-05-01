@@ -41,7 +41,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $rate_gen_method_code;
-    public $rate_type;
+    public $rate_type, $reference_code;
 
     public static function tableName() {
         return 'tbl_purchase_rate_applicability';
@@ -55,9 +55,10 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             [['is_download'], 'default', 'value' => '0'],
             [['wef_date', 'shift_code'], 'required'],
             [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
-            [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time'], 'safe'],
+            [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
             //[['purchase_rate_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,]
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
                 //[['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
@@ -163,6 +164,10 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
     }
 
+    public function getReferenceCode() {
+        return $this->hasOne(TblPurchaseRate::className(), ['reference_code' => 'reference_code']);
+    }
+
     public function checkVendorDcs() {
         $vendor = Yii::$app->general->isVendor($this->dcs_code, ['BIPL', 'REIL']);
         return $vendor ? false : true;
@@ -253,6 +258,12 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         exec('rfgb ' . $ratefile . ' ' . $path);
         //exit;
         return;
+    }
+
+    public function AddAutoData($attribute, $params) {
+        $this->union_code = $this->dcsCode->union_code;
+        $this->wef_date = date('Y-m-d', strtotime($this->wef_date)) . ' ' . Yii::$app->general->getshift($this->shift_code);
+        $this->purchase_rate_code = $this->referenceCode->purchase_rate_code;
     }
 
 }

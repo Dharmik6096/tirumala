@@ -34,6 +34,7 @@ class TblDcsConfig extends \app\models\ChildModel
     public function rules()
     {
         return [
+            [['dcs_code'],'unique'],
             [['dcs_code', 'bmc_code', 'created_by', 'updated_by'], 'string'],
             [['max_weigh'], 'number'],
             [['max_farmer', 'is_active'], 'integer'],

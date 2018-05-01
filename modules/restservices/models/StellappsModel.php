@@ -6,7 +6,7 @@ use Yii;
 use ReflectionClass;
 use app\models\GeneralModel;
 use DateTime;
-use app\modules\stellapps\models\TmccConfig;
+use app\modules\organisation\models\TblDcsConfig;
 use app\modules\stellapps\models\StellappsMember;
 use app\modules\organisation\models\TblSocietyCodes;
 use app\modules\stellapps\models\StellappsCollection;
@@ -14,17 +14,55 @@ use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\dcsoperation\models\TblPurchaseRateBased;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
-
-//use app\modules\stellapps\models\StellappsPriceChart;
-//use app\modules\stellapps\models\StellappsPriceChartBased;
-//use app\modules\stellapps\models\StellappsPriceChartDetail;
-//use app\modules\stellapps\models\StellappsPriceChartApplicability;
-
+use app\modules\dcsoperation\models\TblQualityParam;
 
 class StellappsModel {
 
     private $data, $model, $username = "STA", $password = "STA", $path = 'C:\STELLAPPSFTP\ErrorLogs';
-    public $change_att = array('member_code' => 'ex_member_code');
+    public $change_att = array('member_code' => 'ex_member_code', 'rate_id' => 'reference_code');
+    public $reference_att = [
+        'milk_type' => [
+            'model' => 'TblAnimalType',
+            'ref_key' => 'animal_type_code',
+            'ref_val' => 'animal_type_name',
+            'data_mapping' => ['C' => 'COW', 'B' => 'BUFFALO', 'M' => 'MIX'],
+        ],
+        'rate_type' => [
+            'model' => 'TblRateType',
+            'ref_key' => 'code',
+            'ref_val' => 'rate_type'
+        ],
+        'shift' => [
+            'model' => 'TblShift',
+            'ref_key' => 'id',
+            'ref_val' => 'shift',
+            'data_mapping' => ['A' => 'All', 'M' => 'Morning', 'E' => 'Evening'],
+        ],
+        'shift_applicability' => [
+            'model' => 'TblShift',
+            'ref_key' => 'id',
+            'ref_val' => 'shift',
+            'data_mapping' => ['A' => 'All', 'M' => 'Morning', 'E' => 'Evening'],
+        ],
+        'milk_quality_type' => [
+            'model' => 'TblMilkQualityType',
+            'ref_key' => 'milk_quality_type_code',
+            'ref_val' => 'milk_quality_type_name',
+            'data_mapping' => ['G' => 'GOOD', 'C' => 'CURD', 'S' => 'SOUR', 'D' => 'DRAIN'],
+        ],
+        'qty_auto' => [
+            'is_static' => TRUE,
+            'data_mapping' => ['A' => 0, 'M' => 1], // A-Auto,M-Manual
+        ],
+        'qlty_auto' => [
+            'is_static' => TRUE,
+            'data_mapping' => ['A' => 0, 'M' => 1], // A-Auto,M-Manual
+        ],
+        'qty_mode' => [
+            'is_static' => TRUE,
+            'data_mapping' => ['L' => 0, 'K' => 1], //L-Ltr,K-Kg
+        ],
+    ];
 
     function __construct() {
         set_error_handler(array($this, 'handleError'));
@@ -36,19 +74,14 @@ class StellappsModel {
 
     public function manipulation($data) {
         $this->data = $data;
-        $this->changeAttributeLabel();
-        $this->validateTmccCode();
+        $this->parseData();
         switch (1) {
-//            case empty($this->data['tmcc_code']):
-//                return $this->responseData(0, 'tmcc_code');
             case empty($this->data['svc']):
                 return $this->responseData(0, 'nosvc');
             case empty($this->data['usr']):
                 return $this->responseData(0, 'usr');
             case empty($this->data['pswd']):
                 return $this->responseData(0, 'pswd');
-//            case empty($this->data['dcs_code']):
-//                return $this->responseData(0, 'dcs_code');
             default:break;
         }
         if ($this->data['usr'] == $this->username && $this->data['pswd'] == $this->password) {
@@ -66,12 +99,14 @@ class StellappsModel {
     }
 
     private function saveTmccConfigs() {
-        $this->model = new TmccConfig();
+        $this->model = new TblDcsConfig();
+        $this->model->scenario = 'default';
         return $this->saveData();
     }
 
     private function saveTmccMemberList() {
         $this->model = new StellappsMember();
+        $this->model->scenario = 'default';
         return $this->saveData();
     }
 
@@ -81,12 +116,14 @@ class StellappsModel {
     }
 
     private function saveTmccPriceChartMapping() {
-        $this->model = new StellappsPriceChartApplicability();
+        $this->model = new TblPurchaseRateApplicability();
+        $this->model->scenario = 'stellapps';
         return $this->saveData();
     }
 
     private function saveBmcCollection() {
         $this->model = new StellappsCollection();
+        $this->model->scenario = 'default';
         return $this->saveData();
     }
 
@@ -124,10 +161,10 @@ class StellappsModel {
                         $dt = new \DateTime($a);
                         $a = $dt->format('Y-m-d\TH:i:s.u');
                         $saveModel->$key = $a;
-                        $saveModel->scenario = 'default';
                     }
                 }
             }
+            $saveModel->scenario = $this->model->scenario;
             $saveData[] = $saveModel;
         }
         if (in_array(FALSE, $valid)) {
@@ -164,30 +201,88 @@ class StellappsModel {
         $reponse = 0;
         $tmp = new ReflectionClass($this->model->className());
         $saveModel = $tmp->newInstanceArgs();
-       $saveModel->attributes = $this->data;
-        var_dump($saveModel);
-        die;
-        foreach ($this->data['data'] as $value) {
-            $tmp = new ReflectionClass($this->model->className());
-            $saveModel = $tmp->newInstanceArgs();
-            $saveModel->attributes = $this->data;
-            $saveModel->attributes = $value;
-            var_dump($saveModel);
-            die;
-            $schema = $saveModel->getTableSchema();
-            $valid[] = $saveModel->validate();
-            if ($saveModel->validate() != FALSE) {
-                foreach ($saveModel->attributes as $key => $a) {
-                    $type = $schema->columns[$key]->type;
-                    if ($type == 'date' && $a != '') {
-                        $dt = new \DateTime($a);
-                        $a = $dt->format('Y-m-d\TH:i:s.u');
-                        $saveModel->$key = $a;
-                        $saveModel->scenario = 'default';
-                    }
+        $saveModel->purchase_rate_code = $saveModel->getCode();
+        $saveModel->attributes = $this->data;
+        $oldData = $saveModel->getReferenceRecord();
+        if (empty($oldData)) {
+            foreach ($saveModel->attributes as $key => $a) {
+                $type = $schema->columns[$key]->type;
+                if ($type == 'date' && $a != '') {
+                    $dt = new \DateTime($a);
+                    $a = $dt->format('Y-m-d\TH:i:s.u');
+                    $saveModel->$key = $a;
                 }
             }
             $saveData[] = $saveModel;
+        } else {
+            $saveModel = $oldData;
+        }
+        $saveModel->scenario = 'stellapps';
+        $schema = $saveModel->getTableSchema();
+        $valid[] = $saveModel->validate();
+        if ($saveModel->validate() != FALSE) {
+            $fat_array = [];
+            $snf_array = [];
+            $cnt = 0;
+            foreach ($this->data['data'] as $value) {
+                $rate_detail = new TblPurchaseRateDetails();
+                $rate_detail->attributes = $this->data;
+                $rate_detail->attributes = $saveModel->attributes;
+                $rate_detail->code = $rate_detail->getCode() + $cnt;
+                $cnt++;
+                $rate_data = explode(',', $value);
+                if (count($rate_data) == 3) {
+                    $fat_array[] = $rate_detail->fat = $rate_data[0];
+                    $snf_array[] = $rate_detail->snf = $rate_data[1];
+                    $rate_detail->rtpl = $rate_data[2];
+                }
+                $schema = $rate_detail->getTableSchema();
+                $valid[] = $rate_detail->validate();
+                if ($rate_detail->validate() != FALSE) {
+                    foreach ($rate_detail->attributes as $key => $a) {
+                        $type = $schema->columns[$key]->type;
+                        if ($type == 'date' && $a != '') {
+                            $dt = new \DateTime($a);
+                            $a = $dt->format('Y-m-d\TH:i:s.u');
+                            $rate_detail->$key = $a;
+                        }
+                    }
+                }
+                $saveData[] = $rate_detail;
+            }
+            $qlty_param = explode('+', $this->data['rate_type']);
+            $qualityModel = new TblQualityParam();
+            $qualityParam = $qualityModel->getParams();
+            $cnt = 0;
+            foreach ($qlty_param as $param) {
+                $basedModel = new TblPurchaseRateBased();
+                $basedModel->scenario = 'stellapps';
+                $basedModel->attributes = $this->data;
+                $basedModel->attributes = $saveModel->attributes;
+                $basedModel->rate_based_code = $basedModel->getCode() + $cnt;
+                $cnt++;
+                $basedModel->quality_param_code = array_search($param, $qualityParam);
+                if ($param == 'FAT') {
+                    $basedModel->start_range = min($fat_array);
+                    $basedModel->end_range = max($fat_array);
+                } else {
+                    $basedModel->start_range = min($snf_array);
+                    $basedModel->end_range = max($snf_array);
+                }
+                $schema = $basedModel->getTableSchema();
+                $valid[] = $basedModel->validate();
+                if ($basedModel->validate() != FALSE) {
+                    foreach ($basedModel->attributes as $key => $a) {
+                        $type = $schema->columns[$key]->type;
+                        if ($type == 'date' && $a != '') {
+                            $dt = new \DateTime($a);
+                            $a = $dt->format('Y-m-d\TH:i:s.u');
+                            $basedModel->$key = $a;
+                        }
+                    }
+                }
+                $saveData[] = $basedModel;
+            }
         }
         if (in_array(FALSE, $valid)) {
             $dir = $this->checkDirectory($this->path);
@@ -299,7 +394,13 @@ class StellappsModel {
         return;
     }
 
-    private function changeAttributeLabel() {
+    private function parseData() {
+        $this->setUnsetAttribute();
+        $this->setReferenceAttribute();
+        isset($this->data['tmcc_code']) ? $this->data['dcs_code'] = $this->validateTmccCode($this->data['tmcc_code']) : '';
+    }
+
+    private function setUnsetAttribute() {
         foreach ($this->change_att as $key => $value) {
             if (isset($this->data[$key])) {
                 $this->data[$value] = $this->data[$key];
@@ -316,15 +417,51 @@ class StellappsModel {
         }
     }
 
-    public function validateTmccCode() {
+    private function setReferenceAttribute() {
+        foreach ($this->reference_att as $key => $att) {
+            if (isset($this->data[$key])) {
+                if (isset($att['is_static']) && $att['is_static'] == TRUE) {
+                    $this->data[$key] = $att['data_mapping'][$this->data[$key]];
+                } else {
+                    $ref_val = isset($att['data_mapping']) ? $att['data_mapping'][$this->data[$key]] : $this->data[$key];
+                    $model_name = Yii::$app->path->define($att['model']);
+                    $model = new $model_name();
+                    $record = $model->find()
+                                    ->select($att['ref_key'])
+                                    ->where([$att['ref_val'] => $ref_val])->one();
+                    !empty($record) ? $this->data[$key . '_code'] = $record->{$att['ref_key']} : '';
+                }
+            }
+        }
+        foreach ($this->data['data'] as $index => $data) {
+            foreach ($this->reference_att as $key => $att) {
+                if (isset($this->data['data'][$index][$key])) {
+                    if (isset($att['is_static']) && $att['is_static'] == TRUE) {
+                        $this->data['data'][$index][$key] = $att['data_mapping'][$this->data['data'][$index][$key]];
+                    } else {
+                        $ref_val = isset($att['data_mapping']) ? $att['data_mapping'][$this->data['data'][$index][$key]] : $this->data['data'][$index][$key];
+                        $model_name = Yii::$app->path->define($att['model']);
+                        $model = new $model_name();
+                        $record = $model->find()
+                                        ->select($att['ref_key'])
+                                        ->where([$att['ref_val'] => $ref_val])->one();
+                        !empty($record) ? $this->data['data'][$index][$key . '_code'] = $record->{$att['ref_key']} : '';
+                    }
+                }
+            }
+            isset($this->data['data'][$index]['tmcc_code']) ? $this->data['data'][$index]['dcs_code'] = $this->validateTmccCode($this->data['data'][$index]['tmcc_code']) : '';
+        }
+    }
+
+    public function validateTmccCode($tmcc_code) {
         $dcs_code = NULL;
-        if (!empty($this->data['tmcc_code'])) {
-            $code = TblSocietyCodes::find()->where(['bipl_code' => $this->data['tmcc_code']])->one();
+        if (!empty($tmcc_code)) {
+            $code = TblSocietyCodes::find()->where(['bipl_code' => $tmcc_code])->one();
             if (!empty($code)) {
                 $dcs_code = $code->dcs_code;
             }
         }
-        $this->data['dcs_code'] = $dcs_code;
+        return $dcs_code;
     }
 
 }
