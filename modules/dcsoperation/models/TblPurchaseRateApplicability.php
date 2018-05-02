@@ -58,10 +58,12 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
             //[['purchase_rate_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,]
+            [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,],
+            [['purchase_rate_code'], 'required', 'on' => ['stellapps']],
+            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code', 'purchase_rate_code'], 'on' => ['stellapps']],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
-                //[['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
+            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
                 //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
         ];

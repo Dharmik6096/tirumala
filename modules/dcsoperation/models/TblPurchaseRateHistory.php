@@ -49,7 +49,7 @@ class TblPurchaseRateHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['purchase_rate_code', 'description', 'rate_method', 'originating_org_id', 'originating_org_type', 'is_excel', 'rate_type', 'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default'], 'safe'],
+            [['purchase_rate_code', 'description', 'rate_method', 'originating_org_id', 'originating_org_type', 'is_excel', 'rate_type', 'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default','union_code'], 'safe'],
 //            [['purchase_rate_code'], 'required'],
 //            [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default'], 'safe'],
 //            [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'integer'],

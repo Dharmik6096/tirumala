@@ -152,6 +152,7 @@ class StellappsModel {
             }
             $saveModel->attributes = $this->data;
             $saveModel->attributes = $value;
+            $saveModel->scenario = $this->model->scenario;
             $schema = $saveModel->getTableSchema();
             $valid[] = $saveModel->validate();
             if ($saveModel->validate() != FALSE) {
@@ -164,7 +165,6 @@ class StellappsModel {
                     }
                 }
             }
-            $saveModel->scenario = $this->model->scenario;
             $saveData[] = $saveModel;
         }
         if (in_array(FALSE, $valid)) {
@@ -180,6 +180,10 @@ class StellappsModel {
             }
             $reponse = 0;
         } else {
+            if ($this->data['svc'] == 'save_tmcc_price_chart_mapping' && !empty($saveModel->referenceCode)) {
+                $rate_master = new TblPurchaseRate();
+                $saveData = $rate_master->UpdateRateMaster($saveModel, $saveData);
+            }
             $transaction = $generalModel->saveTransaction($saveData, ['stellapps services', 'create']);
             if ($transaction === FALSE) {
                 $reponse = 0;

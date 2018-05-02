@@ -68,7 +68,7 @@ class Path extends Component {
         '\\app\modules\dcsoperation\models\\' =>
         ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
           'TblMemberTypes','TblMember','MemberImport','TblMemberHistory',
-          'TblMemberClassification','TblMemberClassificationHistory','MemberClassificationImport'],
+          'TblMemberClassification','TblMemberClassificationHistory','MemberClassificationImport','TblPurchaseRateHistory'],
         
         '\\app\modules\product\models\\' =>
         ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory',

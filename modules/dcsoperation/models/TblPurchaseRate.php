@@ -168,5 +168,19 @@ class TblPurchaseRate extends \app\models\ChildModel {
                 return $this->findOne(['reference_code' => $this->reference_code]);
             }
 
+            public function UpdateRateMaster($saveModel, $saveData) {
+                $rate_master = TblPurchaseRate::findOne($saveModel->purchase_rate_code);
+                if (!empty($rate_master) && empty($rate_master->union_code)) {
+                    $model_name = Yii::$app->path->define('TblPurchaseRateHistory');
+                    $historyModel = new $model_name();
+                    Yii::$app->operation->history($rate_master, $historyModel, UPDATE);
+                    $saveData[] = $historyModel;
+                    $rate_master->scenario = 'stellapps';
+                    $rate_master->union_code = $saveModel->union_code;
+                    $saveData[] = $rate_master;
+                }
+                return $saveData;
+            }
+
         }
         
