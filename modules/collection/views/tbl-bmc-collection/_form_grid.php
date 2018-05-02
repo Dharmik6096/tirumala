@@ -21,7 +21,7 @@ $attribute = [
     return Yii::$app->controls->view_date($model->date_time_of_collection);
 }],
     //['attribute' => 'date_time_of_collection', 'value' => function($model){ return Yii::$app->controls->view_date($model->date_time_of_collection); }, 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter'=>false],
+    ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter'=>false],
     ['attribute' => 'milk_type_code', 'value' => function($model){ return isset($model->milkType) ? $model->milkType->animal_type_name:''; }, 'vAlign' => 'middle', 'visible'=>false, 'filter'=>false],
     ['attribute' => 'milk_quality_type_code', 'value' => function($model){ return isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name:''; }, 'vAlign' => 'middle', 'visible'=>false, 'filter'=>false],
     ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter'=>false],

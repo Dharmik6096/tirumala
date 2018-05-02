@@ -111,7 +111,7 @@ class TblPurchaseRateDetailsController extends \app\controllers\ChildController 
                 $modelAttributesLoaded[$i]['milk_type_code'] = $modelAttributesLoaded[0]['milk_type_code'];
                 $modelAttributesLoaded[$i]['formula_code'] = $modelAttributesLoaded[0]['formula_code'];
                 $modelAttributesLoaded[$i]['formula'] = $modelAttributesLoaded[0]['formula'];
-                $modelAttributesLoaded[$i]['rate_type'] = $modelAttributesLoaded[0]['rate_type'];
+                $modelAttributesLoaded[$i]['rate_type_code'] = $modelAttributesLoaded[0]['rate_type_code'];
                 //  if (isset($modelAttributesLoaded[0]['quality_param_code'])) {
                 //  $modelAttributesLoaded[$i]['quality_param_code'] = $modelAttributesLoaded[0]['quality_param_code'];
                 //  }
@@ -175,7 +175,7 @@ class TblPurchaseRateDetailsController extends \app\controllers\ChildController 
         $purchaseRate = TblPurchaseRate::findOne($id);
         $valid = TRUE;
         $message = '';
-        $milk_type = $model->find()->select(['milk_type_code', 'rate_type', 'purchase_rate_code'])->distinct()->where(['purchase_rate_code' => $id])->all();
+        $milk_type = $model->find()->select(['milk_type_code', 'rate_type_code', 'purchase_rate_code'])->distinct()->where(['purchase_rate_code' => $id])->all();
         if ($purchaseRate->rate_gen_method_code == 1) {
             $validate = $model->ValidateManualRange($milk_type);
             $valid = $validate[0];
@@ -193,8 +193,8 @@ class TblPurchaseRateDetailsController extends \app\controllers\ChildController 
                     $model->setRateRangeSession($id, $m->milk_type_code);
                     Yii::$app->session->set('rate_method', $purchaseRate->rate_gen_method_code);
                     Yii::$app->session->set('milk_type_code', $m->milk_type_code);
-                    Yii::$app->session->set('rate_type', $m->rate_type);
-                    $array = ['start1', 'end1', 'rate1', 'start2', 'end2', 'rate2', 'formula', 'rate_method', 'rate_type', 'milk_quality_type_code', 'milk_type_code'];
+                    Yii::$app->session->set('rate_type_code', $m->rate_type_code);
+                    $array = ['start1', 'end1', 'rate1', 'start2', 'end2', 'rate2', 'formula', 'rate_method', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code'];
                     $object = new StdClass;
                     foreach ($array as $a) {
                         $object->{$a} = Yii::$app->session->get($a);
@@ -304,7 +304,7 @@ class TblPurchaseRateDetailsController extends \app\controllers\ChildController 
         $objPHPExcel = new PHPExcel();
         $sheetcnt = 0;
         $model = new TblPurchaseRateBased();
-        $RateChart = $model->find()->select(['milk_type_code', 'rate_type', 'purchase_rate_code'])->distinct()->where(['purchase_rate_code' => $id])->all();
+        $RateChart = $model->find()->select(['milk_type_code', 'rate_type_code', 'purchase_rate_code'])->distinct()->where(['purchase_rate_code' => $id])->all();
         foreach ($RateChart as $m) {
             $purchaseDetail = new TblPurchaseRateDetails();
             $milk_type = $m->milk_type_code;

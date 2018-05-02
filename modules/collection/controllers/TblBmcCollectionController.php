@@ -59,7 +59,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->scenario = 'transporter';
             }
             $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
-            $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift);
+            $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
 
             $transaction = $this->generalModel->saveTransaction([$this->model], ['BMC Collection', 'create']);
             if ($transaction == 'customRedirect') {

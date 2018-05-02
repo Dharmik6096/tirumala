@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
                     ?>
                 <div class="row">
                     <?php
-                    echo Html::hiddenInput('rate_type', '', ['id' => 'rate_type']);
+                    echo Html::hiddenInput('rate_type_code', '', ['id' => 'rate_type']);
                     ?>
                     <?=  Dropzone::widget([
                                     'id' => 'mainDrop',

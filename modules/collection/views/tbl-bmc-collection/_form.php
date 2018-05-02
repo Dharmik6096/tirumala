@@ -44,7 +44,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'),false,false,true); ?>
     </div>
     <div class="col-sm-3 shift rtpl_validate">
-        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift', true, false, 'shift'); ?>
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift_code'); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-1 rtpl_validate">
@@ -168,7 +168,7 @@ $script = "
         var milk_type = $('#tblbmccollection-milk_type_code').val();
         var milk_quality_type = $('#tblbmccollection-milk_quality_type_code').val();
         var dt_date = $('#tblbmccollection-date_time_of_collection').val();
-        var shift = $('#tblbmccollection-shift').val();
+        var shift = $('#tblbmccollection-shift_code').val();
         var fat = $('#tblbmccollection-fat').val();
         var snf = $('#tblbmccollection-snf').val();
         if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != ''){

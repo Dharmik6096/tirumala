@@ -42,7 +42,7 @@ $script = "
                 $('#error-summary').hide();
                 $('#range_table').val('');
              $('#range').empty();
-            $('#tblpurchaseratebased-0-rate_type').val('');
+            $('#tblpurchaseratebased-0-rate_type_code').val('');
             $('#tblpurchaseratebased-0-milk_type_code').val('');
                 $('#sampleModal').modal('toggle');
             });

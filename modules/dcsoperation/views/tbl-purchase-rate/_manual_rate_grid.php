@@ -14,7 +14,7 @@ use yii\widgets\Pjax;
 <?php
 
 $attribute = [
-    ['attribute' => 'rate_type', 'value' => 'rateType.rate_type', 'vAlign' => 'middle', 'filter' => false,'label'=>Yii::t('app','Rate Type')],
+    ['attribute' => 'rate_type_code', 'value' => 'rateType.rate_type', 'vAlign' => 'middle', 'filter' => false,'label'=>Yii::t('app','Rate Type')],
      ['attribute' => 'formula_code', 'value' => 'rateFormula.formula_description', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'quality_param_code', 'value' => 'qualityParamCode.param', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'milk_quality_type_code', 'value' => 'milkQualityTypeCode.milk_quality_type_name', 'vAlign' => 'middle', 'filter' => false],

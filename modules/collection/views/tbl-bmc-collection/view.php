@@ -33,7 +33,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'shift',
+                            'attribute' => 'shift_code',
                             'value' => isset($model->shiftCode) ? $model->shiftCode->shift:'',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],

@@ -19,7 +19,7 @@ $form = ActiveForm::begin(['id' => 'manual_form',
 <h5 class="panel-subtitle"><?php echo Yii::t('app', 'Purchase Rate - Automatic'); ?></h5>
 <div class="row">
     <div class="col-sm-3 change">
-        <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel[0], $form, '', 'Rate Type', false, '[0]rate_type'); ?>
+        <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel[0], $form, '', 'Rate Type', false, '[0]rate_type_code'); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $purchaseBasedModel[0], $form, '', 'Milk Type', false, '[0]milk_type_code'); ?>
@@ -89,12 +89,12 @@ $script = "
 
     $('#purchase_rate').val(records);
 
-    $('#tblpurchaseratebased-0-rate_type').on('change',function(e){
+    $('#tblpurchaseratebased-0-rate_type_code').on('change',function(e){
         $('#range').empty();
         $('#tblpurchaseratebased-0-formula').val('');
         $('#tblpurchaseratebased-0-formula_code').val('');
         $('#tblpurchaseratebased-0-milk_type_code').val('');
-        var rateType = $('#tblpurchaseratebased-0-rate_type :selected').text();     
+        var rateType = $('#tblpurchaseratebased-0-rate_type_code :selected').text();     
         var field_before = '<div class=\"col-sm-3\"><div class=\"form-group\">';
         var field_after = '<div class=\"help-block\"></div></div></div>';
         var quality_param=$.parseJSON($('#quality_param').val());
@@ -122,7 +122,7 @@ $script = "
     var data = $('#purchase_rate').val();
     var obj = $.parseJSON(data);
     var milkType = this.value;
-    var rateType = $('#tblpurchaseratebased-0-rate_type').val();
+    var rateType = $('#tblpurchaseratebased-0-rate_type_code').val();
     var union_code= obj.union_code;
     var wefDate = obj.wef_date;
 

@@ -46,7 +46,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
             }
             for ($i = 0; $i < count($transaction); $i++) {
                 $milk_type = $transaction[$i]['milk_type'];
-                $rate_type = $transaction[$i]['rate_type'];
+                $rate_type = $transaction[$i]['rate_type_code'];
                 $fat_start = $transaction[$i]['fat_start'];
                 $fat_end = $transaction[$i]['fat_end'];
                 $snf_start = isset($transaction[$i]['snf_start']) ? $transaction[$i]['snf_start'] : 0;
@@ -219,7 +219,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         $purchaseBasedModel->purchase_rate_code = $purchaseRate->purchase_rate_code;
                         $purchaseBasedModel->rate_based_code = $purchaseBasedModel->getCode() + $baseCode;
                         $purchaseBasedModel->milk_type_code = $milk_type_code;
-                        $purchaseBasedModel->rate_type = $rate_type_code;
+                        $purchaseBasedModel->rate_type_code = $rate_type_code;
                         $purchaseBasedModel->quality_param_code = array_search($quality_param[0], $qualityModel->getParams());
                         $purchaseBasedModel->start_range = number_format((float) $worksheet->getCell('A2')->getValue(), 1);
                         $purchaseBasedModel->end_range = number_format((float) $worksheet->getCell('A' . $worksheet->getHighestRow())->getValue(), 1);

@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 <?php Pjax::begin(['id' => 'manual-grid']); ?> 
 <?php
 $attribute = [
-    ['attribute' => 'rate_type', 'value' => 'rateType.rate_type', 'vAlign' => 'middle', 'filter' => false, 'label' => Yii::t('app', 'Rate Type')],
+    ['attribute' => 'rate_type_code', 'value' => 'rateType.rate_type', 'vAlign' => 'middle', 'filter' => false, 'label' => Yii::t('app', 'Rate Type')],
     ['attribute' => 'formula_code', 'value' => 'rateFormula.formula_description', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'quality_param_code', 'value' => 'qualityParamCode.param', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'milk_quality_type_code', 'value' => 'milkQualityTypeCode.milk_quality_type_name', 'vAlign' => 'middle', 'filter' => false],
@@ -41,7 +41,7 @@ if (isset($delete)) {
         'delete' => ['option' => 'rate_based_code,rate_based_code,tbl-purchase-rate-details/delete'],
     ];
 }
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create', 'id' => Yii::$app->request->get('id'), 'method' => Yii::$app->request->get('method'), 'rate_type' => Yii::$app->request->get('rate_type')]);
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create', 'id' => Yii::$app->request->get('id'), 'method' => Yii::$app->request->get('method'), 'rate_type_code' => Yii::$app->request->get('rate_type_code')]);
 ?>
 <?php Pjax::end(); ?>
 <div class="col-sm-12 mt25">

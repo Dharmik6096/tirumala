@@ -18,7 +18,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
     public function rules() {
         return [
             [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
-            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks'], 'safe'],
+            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks'], 'safe'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
         ];
     }
@@ -77,7 +77,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
                 ->andFilterWhere(['like', 'name', $this->name])
                 ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'auto_flag', $this->auto_flag])
-                ->andFilterWhere(['like', 'shift', $this->shift])
+                ->andFilterWhere(['like', 'shift_code', $this->shift_code])
                 ->andFilterWhere(['like', 'village_code', $this->village_code])
                 ->andFilterWhere(['like', 'type_of_data_receive', $this->type_of_data_receive])
                 ->andFilterWhere(['like', 'rate_code', $this->rate_code])

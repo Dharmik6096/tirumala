@@ -115,7 +115,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         $j = bcadd($object->end1, 0.0, 1);
         $this->purchase_rate_code = $object->purchase_rate_code;
         $this->milk_type_code = $object->milk_type_code;
-        $this->rate_type_code = $object->rate_type;
+        $this->rate_type_code = $object->rate_type_code;
         $key_value = $this->getCode();
         $save_array = [];
         for (; $i <= $j;) {
@@ -212,7 +212,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         //$models->rtpl = $rate;
         $models->rtpl = round($rate, 2);
         $models->is_active = 1;
-        $models->rate_type_code = $object->rate_type;
+        $models->rate_type_code = $object->rate_type_code;
 //        $modelArray[] = $models;
 
         return $models;

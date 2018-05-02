@@ -40,7 +40,7 @@ $form = ActiveForm::begin(['options' => [
                             <?php echo $form->errorSummary($purchaseBasedModel, ['id' => 'error-summary']); ?>
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel, $form, '', 'Rate Type', false, '[0]rate_type'); ?>                                  
+                                    <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel, $form, '', 'Rate Type', false, '[0]rate_type_code'); ?>                                  
                                 </div>
                                 <div class="col-sm-6">
                                     <?= Yii::$app->dropdown->dropdown('milk_type_code', $purchaseBasedModel, $form, '', 'Milk Type', false, '[0]milk_type_code'); ?>
@@ -83,13 +83,13 @@ $script = "
     $('#download-sample').submit(function() {
     $('#sampleModal').modal('hide');
 });
-       $('#tblpurchaseratebased-0-rate_type').on('change',function(e){
+       $('#tblpurchaseratebased-0-rate_type_code').on('change',function(e){
         $('#range').empty();       
-        var rateType = $('#tblpurchaseratebased-0-rate_type :selected').text();     
+        var rateType = $('#tblpurchaseratebased-0-rate_type_code :selected').text();     
         var field_before = '<div class=\"col-sm-3\"><div class=\"form-group\">';
        // var field_after = '<div class=\"help-block\"></div></div></div>';
         var field_after = '';
-      if($('#tblpurchaseratebased-0-rate_type').val()!=''){
+      if($('#tblpurchaseratebased-0-rate_type_code').val()!=''){
         $.each(rateType.split('+'), function(index, item)
         {         
            $('#range').append(field_before + '<label class=\"control-label\">' + item + ' Start*</label><input type=\"text\" name=\"TblPurchaseRateBased['+index+'][start_range]\" id=\"tblpurchaseratebased-'+index+'-start_range\" class=\"form-control number-validate\">' + field_after);
@@ -118,10 +118,10 @@ $this->registerJs($script, View::POS_END, 'sample-download');
         var cnt = 0;
         var oldItems = JSON.parse(localStorage.getItem('transactionsArray')) || [];
         var no = $('#edit_tr').val();
-        var rate = $('#tblpurchaseratebased-0-rate_type').val();
+        var rate = $('#tblpurchaseratebased-0-rate_type_code').val();
         var milk = $('#tblpurchaseratebased-0-milk_type_code').val();
         var newItem = {
-            'rate_type': $('#tblpurchaseratebased-0-rate_type option:selected').text(),
+            'rate_type_code': $('#tblpurchaseratebased-0-rate_type_code option:selected').text(),
             'milk_type': $('#tblpurchaseratebased-0-milk_type_code option:selected').text(),
             'fat_start': $('#tblpurchaseratebased-0-start_range').val(),
             'fat_end': $('#tblpurchaseratebased-0-end_range').val(),
@@ -178,10 +178,10 @@ $this->registerJs($script, View::POS_END, 'sample-download');
             var content = '';
             var data = JSON.parse(localStorage.getItem('transactionsArray'));
             $.each(data, function (index, value) {
-                var qltyparam = value.rate_type.split('+');
-                content += '<tr><td class=\'width15\'>' + value.rate_type + '</td><td class=\'width15\'>' + qltyparam[0] + '</td><td class=\'width15\'>' + value.milk_type + '</td><td class=\'width10\'>' + value.fat_start + '</td><td class=\'width15\'>' + value.fat_end + '</td></tr>'
+                var qltyparam = value.rate_type_code.split('+');
+                content += '<tr><td class=\'width15\'>' + value.rate_type_code + '</td><td class=\'width15\'>' + qltyparam[0] + '</td><td class=\'width15\'>' + value.milk_type + '</td><td class=\'width10\'>' + value.fat_start + '</td><td class=\'width15\'>' + value.fat_end + '</td></tr>'
                 if (typeof (qltyparam[1]) != "undefined" && qltyparam[1] !== null) {
-                    content += '<tr><td class=\'width15\'>' + value.rate_type + '</td><td class=\'width15\'>' + qltyparam[1] + '</td><td class=\'width15\'>' + value.milk_type + '</td><td class=\'width15\'>' + value.snf_start + '</td><td class=\'width15\'>' + value.snf_end + '</td></tr>'
+                    content += '<tr><td class=\'width15\'>' + value.rate_type_code + '</td><td class=\'width15\'>' + qltyparam[1] + '</td><td class=\'width15\'>' + value.milk_type + '</td><td class=\'width15\'>' + value.snf_start + '</td><td class=\'width15\'>' + value.snf_end + '</td></tr>'
                 }
             });
 
@@ -190,7 +190,7 @@ $this->registerJs($script, View::POS_END, 'sample-download');
             $('#range_table').val(JSON.stringify(data));
             $('#range').empty();
              $('#error-summary').hide();
-            $('#tblpurchaseratebased-0-rate_type').val('');
+            $('#tblpurchaseratebased-0-rate_type_code').val('');
             $('#tblpurchaseratebased-0-milk_type_code').val('');
         } else {
             $('#error-summary ul').html('');

@@ -26,7 +26,7 @@ $qualityparam = $purchaseBasedModel->quality_param_code;
 
 <div class="row">
     <div class="col-sm-3 change">
-        <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel, $form, '', 'Rate Type', false, '[0]rate_type'); ?>
+        <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel, $form, '', 'Rate Type', false, '[0]rate_type_code'); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $purchaseBasedModel, $form, '', 'Milk Quality Type', false, '[0]milk_quality_type_code'); ?>
@@ -114,7 +114,7 @@ if($('#tblpurchaseratebased-0-deduction_type').val()=='' || $('#tblpurchaserateb
    $('#tblpurchaseratebased-0-milk_quality_type_code').prop('disabled',true);
    $('#tblpurchaseratebased-0-milk_quality_type_code option:selected').text('Good');
      getQualityparam();
- if($('#tblpurchaseratebased-0-rate_type :selected').val() != ''){
+ if($('#tblpurchaseratebased-0-rate_type_code :selected').val() != ''){
  $('#tblpurchaseratebased-0-quality_param_code').val({$qualityparam});
                      }     
 
@@ -154,11 +154,11 @@ if($('#tblpurchaseratebased-0-deduction_type').val()=='' || $('#tblpurchaserateb
   $('#tblpurchaseratebased-0-ref_type').prop('disabled',false); 
   }
    });
-    $('#tblpurchaseratebased-0-rate_type').on('change',function(){
+    $('#tblpurchaseratebased-0-rate_type_code').on('change',function(){
         getQualityparam();
     });
         function getQualityparam(){
-          var rateType = $('#tblpurchaseratebased-0-rate_type :selected').text();
+          var rateType = $('#tblpurchaseratebased-0-rate_type_code :selected').text();
                 $('#tblpurchaseratebased-0-quality_param_code').empty();
                 $('#tblpurchaseratebased-0-quality_param_code').append('<option value>Select Quality Param</option>');
                 var quality_param=$.parseJSON($('#quality_param').val());
@@ -170,7 +170,7 @@ if($('#tblpurchaseratebased-0-deduction_type').val()=='' || $('#tblpurchaserateb
                             return value=p;
                         }                
                      });    
-                   if($('#tblpurchaseratebased-0-rate_type :selected').val()==''){
+                   if($('#tblpurchaseratebased-0-rate_type_code :selected').val()==''){
                     return value='';
                      }
                     $('#tblpurchaseratebased-0-quality_param_code').append('<option value='+value+'>' + item + '</option>');
@@ -181,7 +181,7 @@ if($('#tblpurchaseratebased-0-deduction_type').val()=='' || $('#tblpurchaserateb
             var data = $('#purchase_rate').val();
             var obj = $.parseJSON(data);
             var milkType = this.value;
-            var rateType = $('#tblpurchaseratebased-0-rate_type').val();
+            var rateType = $('#tblpurchaseratebased-0-rate_type_code').val();
             var wefDate = obj.wef_date;
             var union_code = obj.union_code;
             $.ajax({

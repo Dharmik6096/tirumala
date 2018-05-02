@@ -112,13 +112,6 @@ class TblPurchaseRate extends \app\models\ChildModel {
                 return $this->hasOne(TblPurchaseRateBased::className(), ['purchase_rate_code' => 'purchase_rate_code']);
             }
 
-//            /**
-//             * @return \yii\db\ActiveQuery
-//             */
-//            public function getRateType() {
-//                return $this->hasOne(TblRateType::className(), ['code' => 'rate_type']);
-//            }
-
             /**
              * @return \yii\db\ActiveQueryNULL
              */
