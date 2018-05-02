@@ -469,7 +469,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         if (!in_array(strtolower($username), ['bipl', 'reil']))
             $appModel->actions = ['delete' => ['option' => 'dcsCode.dcs_name,rate_app_code,tbl-purchase-rate/delete-rate-app,checkVendorDcs()']];
 
-        $appModel->shift_type = strtolower($model->shiftApplicability->shift);
+        $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
 
         return $appModel->createApp();
