@@ -43,20 +43,20 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Member'), 'url' => ['/dcsoperation/tbl-member/index'], 'active' => ($cntrl == 'tbl-member')],
             ],
         ],
-        [
-            'options' => ['class' => 'dropdown'],
-            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
-            'items' => [
-                ['label' => Yii::t('app', 'Transporter'), 'url' => ['/transporter/tbl-transporter/index'], 'active' => ($cntrl == 'tbl-transporter')],
-                ['label' => Yii::t('app', 'Vehicle Master'), 'url' => ['/transporter/tbl-vehicle-master/index'], 'active' => ($cntrl == 'tbl-vehicle-master')],
-                ['label' => Yii::t('app', 'Vehicle Km Information'), 'url' => ['/transporter/tbl-vehicle-km-info/index'], 'active' => ($cntrl == 'tbl-vehicle-km-info')],
-                ['label' => Yii::t('app', 'Km Wise Rate'), 'url' => ['/transporter/tbl-km-wise-rate/index'], 'active' => ($cntrl == 'tbl-km-wise-rate')],
-                ['label' => Yii::t('app', 'Mobile Oil Rate'), 'url' => ['/transporter/tbl-mobile-oil-rate-master/index'], 'active' => ($cntrl == 'tbl-mobile-oil-rate-master')],
-                ['label' => Yii::t('app', 'Fuel Rate'), 'url' => ['/transporter/tbl-fuel-rate-master/index'], 'active' => ($cntrl == 'tbl-fuel-rate-master')],
-                ['label' => Yii::t('app', 'Transporter Payment Head'), 'url' => ['/transporter/tbl-transporter-payment-head/index'], 'active' => ($cntrl == 'tbl-transporter-payment-head')],
-                ['label' => Yii::t('app', 'Vehicle Transporter Payment Head'), 'url' => ['/transporter/tbl-vehicle-transporter-head-mapping/index'], 'active' => ($cntrl == 'tbl-vehicle-transporter-payment-head')],
-            ],
-        ],
+//        [
+//            'options' => ['class' => 'dropdown'],
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Transporter <b class="caret"></b></a>',
+//            'items' => [
+//                ['label' => Yii::t('app', 'Transporter'), 'url' => ['/transporter/tbl-transporter/index'], 'active' => ($cntrl == 'tbl-transporter')],
+//                ['label' => Yii::t('app', 'Vehicle Master'), 'url' => ['/transporter/tbl-vehicle-master/index'], 'active' => ($cntrl == 'tbl-vehicle-master')],
+//                ['label' => Yii::t('app', 'Vehicle Km Information'), 'url' => ['/transporter/tbl-vehicle-km-info/index'], 'active' => ($cntrl == 'tbl-vehicle-km-info')],
+//                ['label' => Yii::t('app', 'Km Wise Rate'), 'url' => ['/transporter/tbl-km-wise-rate/index'], 'active' => ($cntrl == 'tbl-km-wise-rate')],
+//                ['label' => Yii::t('app', 'Mobile Oil Rate'), 'url' => ['/transporter/tbl-mobile-oil-rate-master/index'], 'active' => ($cntrl == 'tbl-mobile-oil-rate-master')],
+//                ['label' => Yii::t('app', 'Fuel Rate'), 'url' => ['/transporter/tbl-fuel-rate-master/index'], 'active' => ($cntrl == 'tbl-fuel-rate-master')],
+//                ['label' => Yii::t('app', 'Transporter Payment Head'), 'url' => ['/transporter/tbl-transporter-payment-head/index'], 'active' => ($cntrl == 'tbl-transporter-payment-head')],
+//                ['label' => Yii::t('app', 'Vehicle Transporter Payment Head'), 'url' => ['/transporter/tbl-vehicle-transporter-head-mapping/index'], 'active' => ($cntrl == 'tbl-vehicle-transporter-payment-head')],
+//            ],
+//        ],
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Collection <b class="caret"></b></a>',
@@ -74,16 +74,16 @@ echo GhostMenu::widget([
                 ['label' => 'Milk Purcahse Rate', 'url' => ['/dcsoperation/tbl-purchase-rate/index'], 'active' => ($cntrl == 'tbl-purchase-rate')],
             ],
         ],
-        [
-            'options' => ['class' => 'dropdown'],
-            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
-            'items' => [
-                ['label' => 'Product Group', 'url' => ['/product/tbl-product-group/index'], 'active' => ($cntrl == 'tbl-product-group')],
-                ['label' => 'Product', 'url' => ['/product/tbl-product/index'], 'active' => ($cntrl == 'tbl-product')],
-                ['label' => 'Product Rate', 'url' => ['/product/tbl-product-rate/index'], 'active' => ($cntrl == 'tbl-product-rate')],
-                ['label' => Yii::t('app', 'Product Sale'), 'url' => ['/payment/tbl-product-sale/index'], 'active' => ($cntrl == 'tbl-product-sale')],
-            ],
-        ],
+//        [
+//            'options' => ['class' => 'dropdown'],
+//            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Product <b class="caret"></b></a>',
+//            'items' => [
+//                ['label' => 'Product Group', 'url' => ['/product/tbl-product-group/index'], 'active' => ($cntrl == 'tbl-product-group')],
+//                ['label' => 'Product', 'url' => ['/product/tbl-product/index'], 'active' => ($cntrl == 'tbl-product')],
+//                ['label' => 'Product Rate', 'url' => ['/product/tbl-product-rate/index'], 'active' => ($cntrl == 'tbl-product-rate')],
+//                ['label' => Yii::t('app', 'Product Sale'), 'url' => ['/payment/tbl-product-sale/index'], 'active' => ($cntrl == 'tbl-product-sale')],
+//            ],
+//        ],
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Payment <b class="caret"></b></a>',
@@ -96,7 +96,7 @@ echo GhostMenu::widget([
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
-        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
+//        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports <b class="caret"></b></a>',
@@ -206,9 +206,9 @@ echo GhostMenu::widget([
                         ['label' => 'General Configuration', 'url' => ['/setting/tbl-general-config/index'], 'active' => ($cntrl == 'tbl-general-config')],
                         ['label' => 'Custom Import (Create)', 'url' => ['/customimport/default/create-by-import'], 'active' => ($cntrl == 'customimport-create')],
                         ['label' => 'Custom Import (Update)', 'url' => ['/customimport/default/update-by-import'], 'active' => ($cntrl == 'customimport-update')],
-                        ['label' => 'Escalation', 'url' => ['/email/tbl-email-rule-master/index']],
+//                        ['label' => 'Escalation', 'url' => ['/email/tbl-email-rule-master/index']],
                         ['label' => 'Union Credit', 'url' => ['/payment/tbl-union-credit-limit/index']],
-                        ['label' => 'Member Credit', 'url' => ['/payment/tbl-member-credit-limit/index']],
+//                        ['label' => 'Member Credit', 'url' => ['/payment/tbl-member-credit-limit/index']],
                     ]
                 ],
                 [
@@ -220,20 +220,20 @@ echo GhostMenu::widget([
                         ['label' => 'Member Acknowledgement', 'url' => ['/dcsoperation/tbl-member-download/index']],
                     ]
                 ],
-                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],
-                [
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">BIPL Ack <b class="caret"></b></a>',
-                    'items' => [
-                        ['label' => 'Rate Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'rate']],
-                        ['label' => 'Member Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'member']],
-                    ]
-                ],
+//                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],
+//                [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">BIPL Ack <b class="caret"></b></a>',
+//                    'items' => [
+//                        ['label' => 'Rate Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'rate']],
+//                        ['label' => 'Member Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'member']],
+//                    ]
+//                ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Collection Files<b class="caret"></b></a>',
                     'items' => [
-                        ['label' => 'BIPL Files Process', 'url' => ['/collection/tbl-processed-files/index']],
+//                        ['label' => 'BIPL Files Process', 'url' => ['/collection/tbl-processed-files/index']],
                         ['label' => 'EIPL Files Process', 'url' => ['/eipl-packet/create']],
                     ]
                 ],

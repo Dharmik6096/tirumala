@@ -61,10 +61,10 @@ $attribute = [
     ['attribute' => 'adhar_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'annual_income', 'visible' => false, 'filter' => false],
     ['attribute' => 'payment_mode', 'visible' => false, 'filter' => false],
-    ['attribute' => 'registration_date','value' => function($model) {
-    return Yii::$app->controls->view_date($model->registration_date);}, 'visible' => false, 'filter' => false],
-    ['attribute' => 'member_class','value' => function($model) {
-    return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');}, 'visible' => false, 'filter' => false],
+//    ['attribute' => 'registration_date','value' => function($model) {
+//    return Yii::$app->controls->view_date($model->registration_date);}, 'visible' => false, 'filter' => false],
+//    ['attribute' => 'member_class','value' => function($model) {
+//    return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');}, 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [
@@ -72,19 +72,19 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => true,
     'actions' => [
-        'update' => function ($url, $model) {
-            $name = $model->member_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
-        },
-                'view' => true,
-                'deactive' => function ($url, $model) {
-            $name = $model->member_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
-        },
+//        'update' => function ($url, $model) {
+//            $name = $model->member_name;
+//            $class = ($model->is_active == 1) ? '' : 'link-disable';
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+//            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+//        },
+//                'view' => true,
+//                'deactive' => function ($url, $model) {
+//            $name = $model->member_name;
+//            $class = ($model->is_active == 1) ? '' : 'link-disable';
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+//            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
+//        },
             //'delete' => ['option' => 'member_name,member_code,tbl-member/delete'],
             ]
         ];

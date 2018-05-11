@@ -529,4 +529,38 @@ class DropDown extends Component {
         return $label[$l];
     }
 
+    
+    public function sp_union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
+        $check_list = '';
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $check_list = explode(',', Yii::$app->session->get('Dcs'));
+            $check_list = implode('-', $check_list);
+        }
+        return $this->sp_depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
+    }
+    
+    public function sp_depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = []) {
+        $class = $readonly ? 'depend-control' : '';
+        $data = $this->getLabels($flag);
+        $fields = explode(',', $data['fields']);
+        $checkValid = in_array('checkValid', $data);
+        $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
+        $control_name = ($name == '') ? $data['name'] : $name;
+        echo $form->field($model, $control_name)
+                ->widget(DepDrop::classname(), [
+                    'data' => [$model->{$control_name} => $model->{$control_name}],
+                    'name' => $control_name,
+                    'pluginOptions' => [
+                        'depends' => [$depends],
+                        'placeholder' => $data['prompt'],
+                        'url' => Url::to(['/site/sp-get-data']),
+                        'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid],
+                        'initialize' => true,
+                    ],
+                    'options' => [
+                        'readonly' => $readonly,
+                        'class' => 'form-control ' . $class
+                    ]
+                ])->label($label);
+    }
 }
