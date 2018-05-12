@@ -194,6 +194,7 @@ $config = [
         'complaint' => [ 'class' => 'app\modules\complaint\Complaint',],
         'notification' => ['class' => 'app\modules\notification\Notification',],
         'jasperreports' => [ 'class' => 'app\modules\jasperreports\JasperReports',],
+        'crystalreports' => [ 'class' => 'app\modules\crystalreports\CrystalReports',],
         'verification' => [ 'class' => 'app\modules\verification\Verification',],
         'changelog' => [ 'class' => 'app\modules\changelog\ChangeLog',],
         'webservice' => [ 'class' => 'app\modules\webservice\Webservice',],

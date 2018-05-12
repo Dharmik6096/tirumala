@@ -525,6 +525,7 @@ class DropDown extends Component {
             'bmc_codes' => ['name' => 'bmc_code', 'fields' => 'bmc_code,bmc_name,local_name', 'prompt' => 'Select BMC', 'model' => 'TblDcsBmc', 'depend' => 'union_code', 'false'],
             'billing_type_code' => ['name' => 'billing_type_code', 'fields' => 'billing_type_code,billing_type', 'prompt' => 'Select Billing Type', 'model' => 'TblBillingType'],
             'transporter_payment_head_code' => ['name' => 'transporter_payment_head_code', 'fields' => 'transporter_payment_head_code,transporter_payment_head', 'prompt' => 'Select Payment Head', 'model' => 'TblTransporterPaymentHead'],
+            'village-code' => ['name' => 'village_code', 'fields' => 'village_code,village_name', 'prompt' => 'Select Village', 'model' => 'TblVillages'],
         ];
         return $label[$l];
     }

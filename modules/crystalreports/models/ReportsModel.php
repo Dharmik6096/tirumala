@@ -1,0 +1,113 @@
+<?php
+
+namespace app\modules\crystalreports\models;
+
+use Yii;
+use yii\helpers\ArrayHelper;
+use yii\base\Model;
+
+class ReportsModel extends Model {
+
+    public $federation_code, $union_code, $from_shift, $p_dcs_code, $p_collection_date, $p_language_code;
+    public $to_shift, $from_date, $to_date, $dcs_code, $p_animal_type, $shift;
+    public $p_member_code, $p_test_status, $p_milk_type, $report_type;
+    public $language_code, $milk_class, $milk_type;
+    public $p_from_date, $p_to_date, $p_date, $p_milk_class, $p_consumer_type, $consumer_type;
+    public $p_payment_type, $p_dcs_payment;
+    public $pm_dcs_code, $p_dispatch_type, $dispatch_type, $p_member_type, $date;
+    public $p_meeting_type, $p_start_date, $p_end_date, $p_attandance, $p_qty;
+    public $financial_year_code, $member_code, $p_status, $with_and_without_milktype, $route_code, $p_route_code, $p_union_code, $p_union_name, $p_dcs_name, $p_route_name, $p_type;
+    public $p_is_bank;
+    public $state_code, $p_district_code, $p_sub_district_code, $p_block_name;
+    public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty, $p_village_code;
+
+    function __construct() {
+        if (Yii::$app->session->get('LanguageId') == 0) {
+            $this->p_language_code = 0;
+            $this->language_code = 0;
+        } else {
+            $this->p_language_code = Yii::$app->session->get('LanguageId');
+            $this->language_code = Yii::$app->session->get('LanguageId');
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+            [['union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
+            [['p_dcs_code','p_village_code'], 'required', 'on' => 'MemberData'],
+            [['union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionSummary'],
+            [['union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionRegister'],
+            [['union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedMilkCollection'],
+            [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedDcsMilkCollection'],
+            [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'p_type', 'report_type'], 'required', 'on' => 'ConsolidatedUnionMilkCollection'],
+            [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'CollectionDispatchDifferenceReport'],
+            [['union_code', 'p_route_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'UnionCollectionDispatchDifferenceReport'],
+            [['union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'CollectionVsDispatchGraph'],
+            [['union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
+            [['union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
+            [['union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
+            [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code'], 'safe'],
+            [['union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
+            [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
+            [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
+            [['p_report_name'], 'safe'],
+            [['p_no_of_pouring_day'], 'integer'],
+            [['p_pouring_qty'], 'double'],
+            [['union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
+        ];
+    }
+
+    public function attributeLabels() {
+        return [
+            'p_dcs_code' => \Yii::t('app', 'Society'),
+            'p_collection_date' => \Yii::t('app', 'Date'),
+            'from_shift' => \Yii::t('app', 'From Shift'),
+            'from_date' => \Yii::t('app', 'Date From'),
+            'to_date' => \Yii::t('app', 'Date To'),
+            'to_shift' => \Yii::t('app', 'To Shift'),
+            'p_animal_type' => \Yii::t('app', 'Milk Type'),
+            'dcs_code' => \Yii::t('app', 'DCS'),
+            'p_member_code' => \Yii::t('app', 'Member'),
+            'p_test_status' => \Yii::t('app', 'Result'),
+            'p_milk_type' => \Yii::t('app', 'Milk Type'),
+            'shift' => \Yii::t('app', 'Shift'),
+            'report_type' => \Yii::t('app', 'Report Type'),
+            'milk_type' => \Yii::t('app', 'Milk Type'),
+            'milk_class' => \Yii::t('app', 'Milk Class'),
+            'p_from_date' => \Yii::t('app', 'From Date'),
+            'p_to_date' => \Yii::t('app', 'To Date'),
+            'p_date' => \Yii::t('app', 'As On Date'),
+            'p_milk_class' => \Yii::t('app', 'Milk Class'),
+            'p_consumer_type' => \Yii::t('app', 'Consumer Type'),
+            'consumer_type' => \Yii::t('app', 'Consumer Type'),
+            'p_payment_type' => \Yii::t('app', 'Payment Type'),
+            'p_dcs_payment' => \Yii::t('app', 'Payment Cycle'),
+            'p_dispatch_type' => \Yii::t('app', 'Dispatch Type'),
+            'dispatch_type' => \Yii::t('app', 'Dispatch Type'),
+            'pm_dcs_code' => \Yii::t('app', 'DCS'),
+            'p_member_type' => \Yii::t('app', 'Member Type'),
+            'date' => \Yii::t('app', 'As On Date'),
+            'p_meeting_type' => \Yii::t('app', 'Meeting Type'),
+            'p_start_date' => \Yii::t('app', 'Start Date'),
+            'p_end_date' => \Yii::t('app', 'End Date'),
+            'p_attandance' => \Yii::t('app', 'No. of Poured Days (Minimum)>='),
+            'p_qty' => \Yii::t('app', 'Poured Quantity (Minimum)>='),
+            'financial_year_code' => \Yii::t('app', 'Financial Year'),
+            'member_code' => \Yii::t('app', 'Member'),
+            'p_status' => \Yii::t('app', 'Report Type'),
+            'with_and_without_milktype' => \Yii::t('app', 'Type'),
+            'p_type' => \Yii::t('app', 'Parameters'),
+            'p_is_bank' => \Yii::t('app', 'Bank Type'),
+            'p_district_code' => \Yii::t('app', 'District'),
+            'p_sub_district_code' => \Yii::t('app', 'Sub District'),
+            'p_block_name' => \Yii::t('app', 'Block Name'),
+            'state_code' => \Yii::t('app', 'State'),
+            'p_pouring_qty' => \Yii::t('app', 'Pouring Qty >='),
+            'p_no_of_pouring_day' => \Yii::t('app', 'No of Pouring Day >='),
+        ];
+    }
+
+}
