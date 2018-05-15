@@ -121,4 +121,10 @@ class TblRouteMappingSources extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'from_dest']);
     }
 
+    public function getRouteDcsData() {
+        return $this->find()
+                ->where(['from_dest' => $this->from_dest, 'from_type' => 'society'])
+                ->one();
+    }
+
 }

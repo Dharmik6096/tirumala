@@ -9,7 +9,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\geo\models\TblVillages;
 use app\modules\dcsoperation\models\TblShift;
-
+use app\modules\globalmaster\models\TblMilkQualityType;
 /**
  * This is the model class for table "tbl_milk_collection".
  *
@@ -73,7 +73,7 @@ class TblMilkCollection extends \yii\db\ActiveRecord
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve','sms_msgid','sms_mobile','sms_errorlog','sms_timestamp','sms_status'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve','sms_msgid','sms_mobile','sms_errorlog','sms_timestamp','sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
@@ -141,7 +141,7 @@ class TblMilkCollection extends \yii\db\ActiveRecord
      */
     public function getMemberCode()
     {
-        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+        return $this->hasOne(TblMember::className(), ['milk_quality_type_code' => 'member_code']);
     }
 
     /**
@@ -188,5 +188,23 @@ class TblMilkCollection extends \yii\db\ActiveRecord
     public static function find()
     {
         return new TblMilkCollectionQuery(get_called_class());
+    }
+        
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMilkQualityCode()
+    {
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
+    }
+    
+    public function getMilkCollData() {
+        return $this->find()
+                ->where(['data_post_status' => 0])
+                ->all();
+    }
+
+    public function updateMilkColl($value){
+        return $this->updateAll(['data_post_status' => 1], ['milk_collection_code' => $value]);
     }
 }

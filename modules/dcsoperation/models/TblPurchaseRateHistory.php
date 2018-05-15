@@ -33,23 +33,21 @@ use Yii;
  * @property TblPurchaseRateMaster $purchaseRateCode
  * @property User $updatedBy
  */
-class TblPurchaseRateHistory extends \yii\db\ActiveRecord
-{
+class TblPurchaseRateHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_purchase_rate_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['purchase_rate_code', 'description', 'rate_method', 'originating_org_id', 'originating_org_type', 'is_excel', 'rate_type', 'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default','union_code'], 'safe'],
+            [['purchase_rate_code', 'description', 'rate_method', 'originating_org_id', 'originating_org_type', 'is_excel', 'rate_type', 'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default', 'union_code', 'reference_code'], 'safe'],
 //            [['purchase_rate_code'], 'required'],
 //            [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default'], 'safe'],
 //            [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'integer'],
@@ -65,8 +63,7 @@ class TblPurchaseRateHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
 //            'id' => Yii::t('app', 'ID'),
 //            'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
@@ -94,32 +91,28 @@ class TblPurchaseRateHistory extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
-    {
+    public function getCreatedBy() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeletedBy()
-    {
+    public function getDeletedBy() {
         return $this->hasOne(User::className(), ['id' => 'deleted_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPurchaseRateCode()
-    {
+    public function getPurchaseRateCode() {
         return $this->hasOne(TblPurchaseRateMaster::className(), ['purchase_rate_code' => 'purchase_rate_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
-    {
+    public function getUpdatedBy() {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
 
@@ -127,8 +120,8 @@ class TblPurchaseRateHistory extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblPurchaseRateHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblPurchaseRateHistoryQuery(get_called_class());
     }
+
 }
