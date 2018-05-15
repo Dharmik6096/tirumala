@@ -141,7 +141,7 @@ class TblMilkCollection extends \yii\db\ActiveRecord
      */
     public function getMemberCode()
     {
-        return $this->hasOne(TblMember::className(), ['milk_quality_type_code' => 'member_code']);
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
 
     /**
