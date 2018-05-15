@@ -238,9 +238,11 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                 </div>
             <?php } ?>
         </div>
-        <?php if ($result != '') { 
-            echo $this->render('@app/modules/crystalreports/html/RptCrystalFarmer/'.$result.'.htm', []);
-        } ?>
+        <?php if ($result != '') { ?>
+        <div class="clearfix"></div>
+        <?php echo $this->render('@app/modules/crystalreports/html/'.$result.'.htm', []); ?>
+        <div class="clearfix"></div>
+        <?php } ?>
     </div>
 </div>       
 <?php ActiveForm::end(); ?>

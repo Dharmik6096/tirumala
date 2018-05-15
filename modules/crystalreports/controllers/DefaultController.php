@@ -176,7 +176,7 @@ class DefaultController extends \app\controllers\ChildController {
     private function LoadReport($model) {
         $model->p_village_code = '001003';
         $cmd = "F:\Hardik\Software\CrystalReportsNinja-master\Deployment\CrystalReportsNinja -U sa -P !!EiPl@2017 -S 182.73.178.90,14033 -D TIRUMALA";
-        $cmd .= " -F ".$this->data['path']." -O C:\wamp64\www\\tirumala\modules\crystalreports\html";
+        $cmd .= " -F ".$this->data['path'].'\\'.$this->data['report_name'].".rpt -O C:\wamp64\www\\tirumala\modules\crystalreports\html";
         $cmd .= "\\".$this->data['file_name'].'.html -E htm';
         $data = Yii::$app->request->post()['ReportsModel'];
         foreach ($data as $key=>$value){
@@ -184,7 +184,7 @@ class DefaultController extends \app\controllers\ChildController {
         }
         exec($cmd,$out,$retval);
         if(!empty($out)){
-            $this->output = $this->data['file_name'];
+            $this->output = $this->data['report_name'].'/'.$this->data['file_name'];
         }
     }
 
@@ -194,7 +194,8 @@ class DefaultController extends \app\controllers\ChildController {
         $label = [
             'MemberData' => [
                 'param' => 'p_dcs_code,p_village_code',
-                'path' => 'C:\wamp64\www\tirumala\modules\crystalreports\reports\RptCrystalFarmer.rpt',
+                'path' => 'C:\wamp64\www\tirumala\modules\crystalreports\reports',
+                'report_name' => 'RptCrystalFarmer',
                 'file_name' => 'member_data',
                 'scenario' => 'MemberData',
                 'title' => '101 - Member Data',
