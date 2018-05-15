@@ -10,25 +10,23 @@ use app\modules\dcsoperation\models\TblMember;
 /**
  * TblMemberSearch represents the model behind the search form about `app\modules\dcsoperation\models\TblMember`.
  */
-class TblMemberSearch extends TblMember
-{
+class TblMemberSearch extends TblMember {
 
-    public $mobile_no,$federation_code,$ifsc;
+    public $mobile_no, $federation_code, $ifsc;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['member_code','is_active','payment_mode', 'caste_category_code', 'member_type_code','bank_account_no','mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code','email','is_download', 'download_date_time'], 'safe'],
+            [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +38,95 @@ class TblMemberSearch extends TblMember
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
+        $query = TblMember::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        
+        $this->load($params);
+
+        $query->joinWith(['memberTypeCode']);
+
+        Yii::$app->general->filterByOrg($query,$this);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        if (!empty($this->download_date_time))
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'tbl_member.is_active' => $this->is_active,
+            'tbl_member.payment_mode' => $this->payment_mode,
+            'caste_category_code' => $this->caste_category_code,
+//            'milk_quality_type_code' => $this->milk_quality_type_code,
+        ]);
+
+        // grid filtering conditions
+        /* $query->andFilterWhere([
+          'bloodgroup_code' => $this->bloodgroup_code,
+          'gender_code' => $this->gender_code,
+          'qualification_code' => $this->qualification_code,
+          'caste_category_code' => $this->caste_category_code,
+          'no_of_buffalo' => $this->no_of_buffalo,
+          'no_of_cow_cross' => $this->no_of_cow_cross,
+          'no_of_cow_ind' => $this->no_of_cow_ind,
+          'total_animals' => $this->total_animals,
+          'member_type_code' => $this->member_type_code,
+          'annual_income' => $this->annual_income,
+          'created_at' => $this->created_at,
+          'updated_at' => $this->updated_at,
+          'deleted_at' => $this->deleted_at,
+          'is_active' => $this->is_active,
+          'is_delete' => $this->is_delete,
+          'payment_mode' => $this->payment_mode,
+          'animal_type_code' => $this->animal_type_code,
+        ]);*/
+
+        $query->andFilterWhere(['like', 'member_code', $this->member_code])
+                //->andFilterWhere(['like', 'tbl_member.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'ex_member_code', $this->ex_member_code])
+                ->andFilterWhere(['like', 'member_name', $this->member_name])
+                ->andFilterWhere(['like', 'father_name', $this->father_name])
+                ->andFilterWhere(['like', 'surname', $this->surname])
+                ->andFilterWhere(['like', 'nominee_name', $this->nominee_name])
+                ->andFilterWhere(['like', 'dob', $this->dob])
+                //->andFilterWhere(['like', 'land_class', $this->land_class])
+                ->andFilterWhere(['like', 'total_land', $this->total_land])
+                ->andFilterWhere(['like', 'bank_code', $this->bank_code])
+                ->andFilterWhere(['like', 'branch_code', $this->branch_code])
+                ->andFilterWhere(['like', 'bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'ifsc', $this->ifsc])
+                ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
+                ->andFilterWhere(['like', 'address', $this->address])
+                ->andFilterWhere(['like', 'pincode', $this->pincode])
+                ->andFilterWhere(['like', 'pan_no', $this->pan_no])
+                ->andFilterWhere(['like', 'adhar_no', $this->adhar_no])
+                ->andFilterWhere(['like', 'village_code', $this->village_code])
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'hamlet_code', $this->hamlet_code])
+                ->andFilterWhere(['like', 'sub_district_code', $this->sub_district_code])
+                ->andFilterWhere(['like', 'district_code', $this->district_code])
+                ->andFilterWhere(['like', 'state_code', $this->state_code])
+                ->andFilterWhere(['like', 'tbl_member.union_code', $this->union_code])
+                ->andFilterWhere(['like', 'local_name', $this->local_name])
+                ->andFilterWhere(['like', 'local_father_name', $this->local_father_name])
+                ->andFilterWhere(['like', 'local_surname', $this->local_surname])
+                ->andFilterWhere(['like', 'local_nominee_name', $this->local_nominee_name])
+                ->andFilterWhere(['like', 'is_download', $this->is_download])
+                ->andFilterWhere(['like', 'local_address', $this->local_address]);
+
+        return $dataProvider;
+    }
+
+    public function spSearch($params) {
         $this->load($params);
         $union_code = isset($params['TblMemberSearch']['union_code']) ? $params['TblMemberSearch']['union_code'] : NULL;
         $dcs_code = isset($params['TblMemberSearch']['dcs_code']) ? $params['TblMemberSearch']['dcs_code'] : NULL;
@@ -144,4 +229,5 @@ class TblMemberSearch extends TblMember
 
         return $dataProvider;
     }
+
 }
