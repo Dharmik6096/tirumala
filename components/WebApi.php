@@ -8,31 +8,70 @@ use GuzzleHttp\RequestOptions;
 
 class WebApi {
 
-    private $serverUrl = '193.105.74.58';
-    private $username = 'Everest_Instru';
-    private $password = 'voda1234';
-    private $sender = 'PCDFLK';
-    private $msgs = ['0' => 'Successfully Sent'];
+    private $serverUrl = 'http://52.32.190.89/tpi/eipl/';
+    private $authentication = [
+        'user' => ['userName' => 'eipl', 'password' => 'eipl123']
+    ];
+    public $apiurl = '';
+    public $body = [];
 
-    public function sendSmsPOST($mobileNumber, $message, $language = FALSE) {
-        $url = "http://" . $this->serverUrl . "/api/v3/sendsms/json";
+    public function POSTDATA() {
+        $this->body = array_merge($this->authentication, $this->body);
+        return $this->PHPCURL();
+    }
+
+    public function GuzzleCURL() {
+        $url = $this->serverUrl . $this->apiurl;
+        $client = new GuzzleHttp\Client();
         $postData = [
             RequestOptions::JSON => [
-                'authentication' => ['username' => $this->username, 'password' => $this->password],
-                'messages' => [
-                    [
-                        'sender' => $this->sender,
-                        'text' => $message,
-                        'recipients' => [['gsm' => $mobileNumber]]
-                    ]
+                'user' =>
+                ['userName' => 'eipl',
+                    'password' => 'eipl123'],
+                'metadata' => [
+                    'organization' => [
+                        'id' => 'TMD0011',
+                        'name' => 'Thirumala',
+                    ],
+                    'chillingCenter' => [
+                        'id' => '2068',
+                        'name' => 'Annur',
+                    ],
+                    'route' => [
+                        'id' => 'ROUTE1',
+                        'name' => 'Route EIPL Test',
+                    ],
                 ],
+                'collectionCenterList' => [[
+                'name' => 'EIPL Test',
+                'id' => 'TMCC01',
+                'isActive' => true,
+                'location' => 'bangalore',
+                'operatorName' => 'balu',
+                'operatorMobileNum' => '8095242818',
+                'operatorCode' => '00001',
+                'operatorEmailId' => 'test@gmail.com',
+                'createdTime' => 1524655358296,
+                'lastModifiedTime' => 1524655358296
+                    ]
+                ]
         ]];
-        if ($language) {
-            $postData['json']['messages'][0]['datacoding'] = '8';
-        }
-        $client = new GuzzleHttp\Client();
-        $res = $client->request('POST', $url, $postData);
-        return $res->getBody();                 // {"type":"User"...'
+        $resp = $client->request('POST', $url, $postData);
+        return $resp->getBody();
+    }
+
+    public function PHPCURL() {
+        $url = $this->serverUrl . $this->apiurl;
+        $data = json_encode($this->body);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "Content-length: " . strlen($data)));
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($result);
     }
 
 }
