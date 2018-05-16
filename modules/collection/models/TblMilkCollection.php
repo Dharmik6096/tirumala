@@ -190,7 +190,7 @@ class TblMilkCollection extends \yii\db\ActiveRecord {
     public function getMilkCollData() {
         return $this->find()
                         ->joinWith(['societyVendorCode'])
-//                        ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
+                        ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
                         ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
                         ->all();
     }
