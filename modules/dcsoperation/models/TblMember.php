@@ -84,7 +84,6 @@ use app\modules\verification\models\TblKycRecord;
 class TblMember extends ChildModel {
 
     public $cnt;
-    public $plant_code, $bmc_code, $route_code;
 
     /**
      * @inheritdoc

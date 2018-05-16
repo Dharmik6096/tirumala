@@ -587,12 +587,6 @@ class TblDcs extends ChildModel {
                 return $this->updateAll(['data_post_status' => 1], ['dcs_code' => $value]);
             }
 
-            public function getDcsMilkColl() {
-                return $this->find()
-                                ->where(['dcs_code' => $this->dcs_code])
-                                ->one();
-            }
-
             public function rlsDcs($parents = '') {
                 $rows = $this->find()->where(['route_code' => $parents])->all();
                 $bmc = [];
