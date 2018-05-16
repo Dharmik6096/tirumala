@@ -19,22 +19,22 @@ use yii\helpers\Json;
 /**
  * TblPlantController implements the CRUD actions for TblPlant model.
  */
-class TblPlantController extends \app\controllers\ChildController
-{
-     public $contactDetails;
-     public $freeAccessActions = ['plant-list'];
+class TblPlantController extends \app\controllers\ChildController {
+
+    public $contactDetails;
+    public $freeAccessActions = ['plant-list'];
+
     /**
      * Lists all TblPlant models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblPlantSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -43,8 +43,7 @@ class TblPlantController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
 //        $csearchModel = new TblContactDetailsSearch();
 //        $csearchModel->module_name='society';
 //        $csearchModel->module_code=$id;
@@ -53,10 +52,10 @@ class TblPlantController extends \app\controllers\ChildController
 //            'model' => $this->findModel($id),'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
 //        ]);
         $csearchModel = new TblContactDetailsSearch();
-        $csearchModel->module_name='plant';
-        $csearchModel->module_code=$id;        
-        $cdataProvider= $csearchModel->search(Yii::$app->request->queryParams);
-        
+        $csearchModel->module_name = 'plant';
+        $csearchModel->module_code = $id;
+        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
+
         $mccsearchModel = new TblMccPlantSearch();
         $mccsearchModel->plant_code = $id;
         $mccdataProvider = $mccsearchModel->mccSearch(Yii::$app->request->queryParams);
@@ -72,59 +71,58 @@ class TblPlantController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblPlant();
         $this->viewFile = 'create';
-        $this->contactDetails=new TblContactDetails();
-        $this->model->valid_from =  date('Y-m-d');
-        $this->contactDetails->scenario='additional';
+        $this->contactDetails = new TblContactDetails();
+        $this->model->valid_from = date('Y-m-d');
+        $this->contactDetails->scenario = 'additional';
         $validate = 1;
 
         if ($this->model->load(Yii::$app->request->post())) {
-            
+
             $this->setModel($this->model);
             $this->model->plant_code = $this->model->getCode();
             $this->model->name = ucwords($this->model->name);
-            
-            $mccModel=new TblMccPlant();
-            $mccModel->plant_code=$this->model->plant_code;
-            $mccModel->mcc_plant_code=$mccModel->getCode();
-            $mccModel->name= $this->model->name;
-            $mccModel->local_name= $this->model->local_name;
-            $mccModel->capacity= $this->model->capacity;
-            $mccModel->is_active= $this->model->is_active;
-            $mccModel->state_code= $this->model->state_code;
-            $mccModel->district_code= $this->model->district_code;
-            $mccModel->sub_district_code= $this->model->sub_district_code;
-            $mccModel->village_code= $this->model->village_code;
-            $mccModel->hamlet_code= $this->model->hamlet_code;
-            $mccModel->union_code= $this->model->union_code;
-            $mccModel->valid_from =  $this->model->valid_from;
-            $mccModel->is_plant=1; 
 
-            $bmcModel=new TblDcsBmc();
-            $bmcModel->scenario='from_mcc';
-            $bmcModel->mcc_code=$mccModel->mcc_plant_code;
-            $bmcModel->bmc_code=$bmcModel->getCode();
-            $bmcModel->bmc_name=  $mccModel->name;
-            $bmcModel->local_name=  $mccModel->local_name;
-            $bmcModel->capacity=  $mccModel->capacity;
-            $bmcModel->is_active= $mccModel->is_active;
-            $bmcModel->state_code= $mccModel->state_code;
-            $bmcModel->district_code= $mccModel->district_code;
-            $bmcModel->sub_district_code= $mccModel->sub_district_code;
-            $bmcModel->village_code= $mccModel->village_code;
-            $bmcModel->hamlet_code= $mccModel->hamlet_code;
-            $bmcModel->union_code= $mccModel->union_code;
-            $bmcModel->valid_from =  $this->model->valid_from;
-            $bmcModel->is_mcc=1;
+//            $mccModel=new TblMccPlant();
+//            $mccModel->plant_code=$this->model->plant_code;
+//            $mccModel->mcc_plant_code=$mccModel->getCode();
+//            $mccModel->name= $this->model->name;
+//            $mccModel->local_name= $this->model->local_name;
+//            $mccModel->capacity= $this->model->capacity;
+//            $mccModel->is_active= $this->model->is_active;
+//            $mccModel->state_code= $this->model->state_code;
+//            $mccModel->district_code= $this->model->district_code;
+//            $mccModel->sub_district_code= $this->model->sub_district_code;
+//            $mccModel->village_code= $this->model->village_code;
+//            $mccModel->hamlet_code= $this->model->hamlet_code;
+//            $mccModel->union_code= $this->model->union_code;
+//            $mccModel->valid_from =  $this->model->valid_from;
+//            $mccModel->is_plant=1; 
+//
+//            $bmcModel=new TblDcsBmc();
+//            $bmcModel->scenario='from_mcc';
+//            $bmcModel->mcc_code=$mccModel->mcc_plant_code;
+//            $bmcModel->bmc_code=$bmcModel->getCode();
+//            $bmcModel->bmc_name=  $mccModel->name;
+//            $bmcModel->local_name=  $mccModel->local_name;
+//            $bmcModel->capacity=  $mccModel->capacity;
+//            $bmcModel->is_active= $mccModel->is_active;
+//            $bmcModel->state_code= $mccModel->state_code;
+//            $bmcModel->district_code= $mccModel->district_code;
+//            $bmcModel->sub_district_code= $mccModel->sub_district_code;
+//            $bmcModel->village_code= $mccModel->village_code;
+//            $bmcModel->hamlet_code= $mccModel->hamlet_code;
+//            $bmcModel->union_code= $mccModel->union_code;
+//            $bmcModel->valid_from =  $this->model->valid_from;
+//            $bmcModel->is_mcc=1;
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('plant', $this->model->plant_code);
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'name', $this->model->name);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model],[$mccModel,$bmcModel,$this->contactDetails], ['plant', 'create']);
+                $transaction = $this->generalModel->saveTransaction([$this->model], [$this->contactDetails], ['plant', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -139,14 +137,13 @@ class TblPlantController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         $validate = 1;
 
         if (Yii::$app->request->post()) {
-            
+
             $historyModel = new TblPlantHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
 
@@ -171,15 +168,14 @@ class TblPlantController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionDelete()
-    {
+    public function actionDelete() {
         //echo Yii::$app->request->post('id');exit;
-        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_plant','tbl_plant_product_group_details', 'tbl_plant_product_group_details_history', Yii::$app->request->post('id'), 'plant_code']);
+        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_plant', 'tbl_plant_product_group_details', 'tbl_plant_product_group_details_history', Yii::$app->request->post('id'), 'plant_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
             $historyModel = new TblPlantHistory();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
-            $record = $this->generalModel->deleteTransaction([$this->model,$historyModel],['TblPlantProductGroupDetails','TblPlantProductGroupDetailsHistory', 'TblContactDetails', 'TblContactDetailsHistory'],['plant_code','plant']);
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel], ['TblPlantProductGroupDetails', 'TblPlantProductGroupDetailsHistory', 'TblContactDetails', 'TblContactDetailsHistory'], ['plant_code', 'plant']);
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }
@@ -187,32 +183,30 @@ class TblPlantController extends \app\controllers\ChildController
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
-    
-    public function actionContactDetails($id)
-    {
-        $contactDetails=new TblContactDetails();
+
+    public function actionContactDetails($id) {
+        $contactDetails = new TblContactDetails();
         $searchModel = new TblContactDetailsSearch();
-        $searchModel->module_name='plant';
-        $searchModel->module_code=$id;
+        $searchModel->module_name = 'plant';
+        $searchModel->module_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('../../../details/views/tbl-contact-details/create', [
-            'model' => $contactDetails,
-            'id'=>$id,
-            'module'=>'plant',
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'plant',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
         ]);
-        
     }
-    
+
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->plant_code]);
     }
-    
+
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
-            'contactDetails'=>$this->contactDetails
-            ]);
+                    'contactDetails' => $this->contactDetails
+        ]);
     }
 
     /**
@@ -222,19 +216,18 @@ class TblPlantController extends \app\controllers\ChildController
      * @return TblPlant the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblPlant::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
     private function setModel() {
-        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);        
+        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
     }
-    
+
     public function actionMapProductGroups($id) {
         $model = new TblPlantProductGroupDetails();
         $modelPlant = $this->findModel($id);
@@ -249,7 +242,7 @@ class TblPlantController extends \app\controllers\ChildController
                 $model->addError('plant_code', 'Please select at lease one Product Group.');
                 $district_code = [];
                 return $this->render('_map_product_group', [
-                            'model' => $model, 'product_groups' => $values['product_groups'], 'selected' => $district_code, 'modelPlant' => $modelPlant, 'defaultValue' =>'' //$modelUnion->district_code
+                            'model' => $model, 'product_groups' => $values['product_groups'], 'selected' => $district_code, 'modelPlant' => $modelPlant, 'defaultValue' => '' //$modelUnion->district_code
                 ]);
             }
 
@@ -277,8 +270,8 @@ class TblPlantController extends \app\controllers\ChildController
                     'model' => $model, 'product_groups' => $values['product_groups'], 'selected' => $values['selected'], 'modelPlant' => $modelPlant, 'defaultValue' => ''//$modelUnion->district_code
         ]);
     }
-    
-    public function actionPlantList(){        
+
+    public function actionPlantList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -287,11 +280,11 @@ class TblPlantController extends \app\controllers\ChildController
                 $plants = new TblPlant();
                 $out = $plants->rlsPlant($parents[0]);
 
-                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                echo Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output'=>'', 'selected'=>'']);
-    
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
+
 }
