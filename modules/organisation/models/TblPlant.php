@@ -176,4 +176,13 @@ class TblPlant extends \app\models\ChildModel
     {
         return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant'=>1]);
     }
+    
+    public function rlsPlant($parents = ''){
+        $rows = $this->find()->where(['union_code'=>$parents])->all();
+        $plants = [];
+        foreach($rows as $value){
+            $plants[] = array('id' => $value->plant_code, 'name' => $value->name);
+        }
+        return $plants;
+    }
 }

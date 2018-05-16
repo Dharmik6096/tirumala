@@ -100,7 +100,7 @@ class TblDcs extends ChildModel {
     public function rules() {
         return [
             [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode'], 'required', 'except' => ['deactivate']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate']],
+            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank')],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => 'importCsv'],
             [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => 'importCsv'],
@@ -591,6 +591,15 @@ class TblDcs extends ChildModel {
                 return $this->find()
                                 ->where(['dcs_code' => $this->dcs_code])
                                 ->one();
+            }
+
+            public function rlsDcs($parents = '') {
+                $rows = $this->find()->where(['route_code' => $parents])->all();
+                $bmc = [];
+                foreach ($rows as $value) {
+                    $bmc[] = array('id' => $value->dcs_code, 'name' => $value->dcs_name);
+                }
+                return $bmc;
             }
 
         }

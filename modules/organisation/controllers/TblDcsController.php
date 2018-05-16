@@ -36,7 +36,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-
+    public $freeAccessActions = ['dcs-list'];
     /**
      * Lists all TblDcs models.
      * @return mixed
@@ -772,6 +772,22 @@ class TblDcsController extends ChildController {
                     'model' => $model,
         ]);
 
+    }
+    
+    public function actionDcsList(){        
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $transporter_code = $parents[0];
+                $plants = new TblDcs();
+                $out = $plants->rlsDcs($parents[0]);
+
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        echo Json::encode(['output'=>'', 'selected'=>'']);
     }
 
 }

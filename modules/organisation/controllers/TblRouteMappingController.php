@@ -20,6 +20,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsHistory;
 
 /**
  * TblRouteMappingController implements the CRUD actions for TblRouteMapping model.
@@ -28,6 +30,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
+    public $freeAccessActions = ['route-list'];
 
     /**
      * @inheritdoc
@@ -90,8 +93,8 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         $this->model = new TblRouteMapping();
         $this->viewFile = 'create';
         $this->contactDetails = new TblContactDetails();
-        $this->model->valid_from =  date('Y-m-d');
-        $this->contactDetails->scenario='additional';
+        $this->model->valid_from = date('Y-m-d');
+        $this->contactDetails->scenario = 'additional';
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
@@ -160,7 +163,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
             $historyModel = new TblRouteMappingHistory();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
 //            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel], ['TblRouteMappingSources', 'TblRouteMappingSourcesHistory'], 'route_code');
-            $record = $this->generalModel->deleteTransaction([$this->model,$historyModel],['TblRouteMappingSources', 'TblRouteMappingSourcesHistory','TblContactDetails', 'TblContactDetailsHistory'],['route_code','routeMapping']);
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel], ['TblRouteMappingSources', 'TblRouteMappingSourcesHistory', 'TblContactDetails', 'TblContactDetailsHistory'], ['route_code', 'routeMapping']);
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }
@@ -234,7 +237,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         }
         echo \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
     }
-    
+
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->route_code]);
     }
@@ -283,13 +286,22 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
                     if ($modelRouteSource->route_type == 'Can') {
                         $societyCodes = TblSocietyCodes::find()->where(['dcs_code' => $d[0]])->one();
-                        $historyModel= new TblSocietyCodesHistory();
+                        $historyModel = new TblSocietyCodesHistory();
                         Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
                         $societyCodes->bmc_code = $modelRouteSource->getBmcCode();
                         $societyCodes->route_code = $modelRouteSource->route_code;
-                        $societyCodes->pooling_point_code = str_pad((int)$societyCodes->getPpCode()+$i , 3, '0', STR_PAD_LEFT);
+                        $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + $i, 3, '0', STR_PAD_LEFT);
+
+                        $dcsCode = TblDcs::findOne($d[0]);
+                        $dcsCode->scenario = 'routeMapping';
+                        $dcsHistoryModel = new TblDcsHistory();
+                        Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
+                        $dcsCode->route_code = $modelRouteSource->route_code;
+
                         array_push($mapping, $societyCodes);
                         array_push($mapping, $historyModel);
+                        array_push($mapping, $dcsCode);
+                        array_push($mapping, $dcsHistoryModel);
                     }
                     $i++;
                 }
@@ -324,6 +336,22 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionRouteList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $transporter_code = $parents[0];
+                $routes = new TblRouteMapping();
+                $out = $routes->rlsRoutes($parents[0]);
+
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

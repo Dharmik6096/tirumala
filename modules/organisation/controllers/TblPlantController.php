@@ -22,6 +22,7 @@ use yii\helpers\Json;
 class TblPlantController extends \app\controllers\ChildController
 {
      public $contactDetails;
+     public $freeAccessActions = ['plant-list'];
     /**
      * Lists all TblPlant models.
      * @return mixed
@@ -275,5 +276,22 @@ class TblPlantController extends \app\controllers\ChildController
         return $this->render('_map_product_group', [
                     'model' => $model, 'product_groups' => $values['product_groups'], 'selected' => $values['selected'], 'modelPlant' => $modelPlant, 'defaultValue' => ''//$modelUnion->district_code
         ]);
+    }
+    
+    public function actionPlantList(){        
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $transporter_code = $parents[0];
+                $plants = new TblPlant();
+                $out = $plants->rlsPlant($parents[0]);
+
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        echo Json::encode(['output'=>'', 'selected'=>'']);
+    
     }
 }

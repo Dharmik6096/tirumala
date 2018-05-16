@@ -207,6 +207,26 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/depend-vehicles', 'Select Vehicle', $multiple, $model->$name);
     }
 
+    public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', 'Select Plant', $multiple);
+    }
+    
+    public function plant_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', 'Select Bmc', $multiple);
+    }
+    
+    public function bmc_route($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/route-list', 'Select Route', $multiple);
+    }
+    
+    public function route_society($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', 'Select Society', $multiple);
+    }
+    
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

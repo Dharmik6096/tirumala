@@ -279,5 +279,14 @@ class TblRouteMapping extends \app\models\ChildModel
                 ->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'route_code', 'route_name');
         return $array;
+    }    
+    
+    public function rlsRoutes($parents = ''){
+        $rows = $this->find()->where(['to_dest'=>$parents, 'to_type' => 'bmc'])->all();
+        $routes = [];
+        foreach($rows as $value){
+            $routes[] = array('id' => $value->route_code, 'name' => $value->route_name);
+        }
+        return $routes;
     }
 }
