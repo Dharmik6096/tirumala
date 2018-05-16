@@ -16,7 +16,6 @@ class TblDcsController extends \yii\web\Controller {
         $dcs_model = new TblDcs();
         $dcs_data = $dcs_model->getNewDcs();
         $dcs_codes = array_column($dcs_data, 'dcs_code');
-
         $update = $dcs_model->updateDcs($dcs_codes);
         foreach ($dcs_data as $dcs) {
             try {
@@ -57,12 +56,12 @@ class TblDcsController extends \yii\web\Controller {
                         $collectionCenterList['name'] = $dcs->dcs_name;
                         $collectionCenterList['isActive'] = $dcs->is_active == 1 ? 'True' : 'False';
                         $collectionCenterList['location'] = Yii::$app->general->getforeignkey($dcs->hamletCode, 'hamlet_name');
-                        $collectionCenterList['operatorName'] = $contact_model->firstname;
-                        $collectionCenterList['operatorMobileNum'] = $contact_model->mobile_no;
-                        $collectionCenterList['operatorCode'] = 'Tets';
-                        $collectionCenterList['operatorEmailId'] = $contact_model->email;
-                        $collectionCenterList['createdTime'] = 1524655358296;
-                        $collectionCenterList['lastModifiedTime'] = 1524655358296;
+                        $collectionCenterList['operatorName'] = $contact_data->firstname;
+                        $collectionCenterList['operatorMobileNum'] = $contact_data->mobile_no;
+                        $collectionCenterList['operatorCode'] = '';
+                        $collectionCenterList['operatorEmailId'] = $contact_data->email;
+                        $collectionCenterList['createdTime'] = !empty($contact_data->created_at) ? strtotime($contact_data->created_at) : '';
+                        $collectionCenterList['lastModifiedTime'] = !empty($contact_data->updated_at) ? strtotime($contact_data->updated_at) : '';
                         $body['collectionCenterList'][] = $collectionCenterList;
                         $api = new WebApi();
                         $api->apiurl = 'tmccs';

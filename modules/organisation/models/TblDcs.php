@@ -577,18 +577,21 @@ class TblDcs extends ChildModel {
 
             public function getNewDcs() {
                 return $this->find()
-                        ->where(['data_post_status' => 0])
-                        ->all();
+                                ->joinWith(['societyVendors'])
+//                                ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
+                                ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
+                                ->all();
             }
-            
-            public function updateDcs($value){
+
+            public function updateDcs($value) {
                 return $this->updateAll(['data_post_status' => 1], ['dcs_code' => $value]);
             }
 
             public function getDcsMilkColl() {
                 return $this->find()
-                        ->where(['dcs_code' => $this->dcs_code])
-                        ->one();
+                                ->where(['dcs_code' => $this->dcs_code])
+                                ->one();
             }
+
         }
         

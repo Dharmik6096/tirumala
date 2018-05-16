@@ -10,6 +10,8 @@ use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\geo\models\TblVillages;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\globalmaster\models\TblMilkQualityType;
+use app\modules\general\models\TblSocietyVendor;
+
 /**
  * This is the model class for table "tbl_milk_collection".
  *
@@ -51,21 +53,19 @@ use app\modules\globalmaster\models\TblMilkQualityType;
  * @property TblMilkCollection $milkCollectionCode
  * @property TblMilkCollection $tblMilkCollection
  */
-class TblMilkCollection extends \yii\db\ActiveRecord
-{
+class TblMilkCollection extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_milk_collection';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag'], 'string'],
             [['milk_type_code'], 'required'],
@@ -73,7 +73,7 @@ class TblMilkCollection extends \yii\db\ActiveRecord
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve','sms_msgid','sms_mobile','sms_errorlog','sms_timestamp','sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
@@ -86,8 +86,7 @@ class TblMilkCollection extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'milk_collection_code' => Yii::t('app', 'Milk Collection Code'),
             'member_code' => Yii::t('app', 'Member'),
@@ -123,88 +122,85 @@ class TblMilkCollection extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMilkTypeCode()
-    {
+    public function getMilkTypeCode() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMemberCode()
-    {
+    public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRateCode()
-    {
+    public function getRateCode() {
         return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'rate_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVillageCode()
-    {
+    public function getVillageCode() {
         return $this->hasOne(TblVillages::className(), ['village_code' => 'village_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMilkCollectionCode()
-    {
+    public function getMilkCollectionCode() {
         return $this->hasOne(TblMilkCollection::className(), ['milk_collection_code' => 'milk_collection_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblMilkCollection()
-    {
+    public function getTblMilkCollection() {
         return $this->hasOne(TblMilkCollection::className(), ['milk_collection_code' => 'milk_collection_code']);
     }
-    
-    public function getShiftCode()
-    {
+
+    public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift']);
     }
-    
+
     /**
      * @inheritdoc
      * @return TblMilkCollectionQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblMilkCollectionQuery(get_called_class());
     }
-        
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMilkQualityCode()
-    {
+    public function getMilkQualityCode() {
         return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
     }
-    
+
     public function getMilkCollData() {
         return $this->find()
-                ->where(['data_post_status' => 0])
-                ->all();
+                        ->joinWith(['societyVendorCode'])
+//                        ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
+                        ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
+                        ->all();
     }
 
-    public function updateMilkColl($value){
+    public function updateMilkColl($value) {
         return $this->updateAll(['data_post_status' => 1], ['milk_collection_code' => $value]);
     }
+
+    public function getSocietyVendorCode() {
+        return $this->hasOne(TblSocietyVendor::className(), ['dcs_code' => 'dcs_code']);
+    }
+
 }
