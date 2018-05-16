@@ -71,8 +71,7 @@ if (!empty($filter_data)) {
             <?php } ?>
             <?php \yii\widgets\ActiveForm::end(); ?>
 
-            <?php
-        }
+            </div>
+        <?php }
     }
     ?>
-</div>
