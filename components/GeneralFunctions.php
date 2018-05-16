@@ -634,6 +634,16 @@ class GeneralFunctions extends Component {
     }
 
     public function filterByOrg($query, $model, $union_table = '') {
+        $model_class = (new \ReflectionClass($model))->getShortName();
+        $q_param = Yii::$app->request->queryParams;
+        if (isset($q_param[$model_class])) {
+            $data = $q_param[$model_class];
+            isset($data['f_union_code']) ? $model->f_union_code = $data['f_union_code'] : NULL;
+            isset($data['f_plant_code']) ? $model->f_plant_code = $data['f_plant_code'] : NULL;
+            isset($data['f_bmc_code']) ? $model->f_bmc_code = $data['f_bmc_code'] : NULL;
+            isset($data['f_route_code']) ? $model->f_route_code = $data['f_route_code'] : NULL;
+            isset($data['f_dcs_code']) ? $model->f_dcs_code = $data['f_dcs_code'] : NULL;
+        }
         $tablename = $model->tableSchema->fullName;
         //if($model->hasAttribute('union_code'))
         //{
@@ -821,11 +831,11 @@ class GeneralFunctions extends Component {
         if (!empty($data)) {
             $model->addError('wef_date', "Payment for that vehicle has been sent or disbursed");
             return false;
-        }else{
+        } else {
             return true;
         }
     }
-    
+
     public function sendEmail($subject, $body, $to_mail) {
         try {
             $headers[] = 'MIME-Version: 1.0';
