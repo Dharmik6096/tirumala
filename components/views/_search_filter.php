@@ -11,6 +11,7 @@ if (!empty($filter_data)) {
     $aciton = isset($filter_data['action']) ? $filter_data['action'] : ['index'];
     $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
     $filters = $filter_data['filter'];
+    $count = count($filters);
     if (!empty($filters)) {
         $f_cnt = 0;
         $form = \yii\widgets\ActiveForm::begin([
@@ -53,25 +54,62 @@ if (!empty($filter_data)) {
                 </div>
             <?php } ?>
 
+            <?php
+            if ($count > 5 && $f_cnt > 3) {
+                echo '<div class="clearfix"></div>';
+                $count = 0;
+            }
+            ?>
 
             <?php
             if (in_array('f_dcs_code', $filters)) {
                 $f_cnt++
                 ?>
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->route_society($model, $form, $field_class . '-f_route_code', 'f_dcs_code'); ?>         
+                <?= Yii::$app->dropdown->route_society($model, $form, $field_class . '-f_route_code', 'f_dcs_code'); ?>         
                 </div>
             <?php } ?>
 
+            <?php
+            if ($count > 5 && $f_cnt > 3) {
+                echo '<div class="clearfix"></div>';
+                $count = 0;
+            }
+            ?>
 
-            <?php if ($f_cnt > 0) { ?>
+            <?php
+            if (in_array('min_date', $filters)) {
+                $request = Yii::$app->request->queryParams;
+                $min_date = empty($request["min_date"]) ? '' : $request["min_date"];
+                $max_date = empty($request["max_date"]) ? '' : $request["max_date"];
+                $f_cnt++
+                ?>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                <?= Yii::$app->controls->min_max_date('min_date', 'max_date', $min_date, $max_date); ?>
+                    </div>
+                </div>
+            <?php } ?>
+
+            <?php
+            if (in_array('shift', $filters)) {
+                $f_cnt++
+                ?>
                 <div class="col-sm-2">
-                    <?= Yii::$app->controls->search(); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
                 </div>
             <?php } ?>
-            <?php \yii\widgets\ActiveForm::end(); ?>
 
-            </div>
-        <?php }
+
+                <?php if ($f_cnt > 0) { ?>
+                <div class="col-sm-2">
+                <?= Yii::$app->controls->search(); ?>
+                </div>
+        <?php } ?>
+        <?php \yii\widgets\ActiveForm::end(); ?>
+
+        </div>
+        <?php
     }
-    ?>
+}
+?>

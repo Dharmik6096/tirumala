@@ -7,10 +7,6 @@ use yii\helpers\Url;
 use yii\web\View;
 ?>
 
-<div class="grid-search">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
-
 <?php
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],

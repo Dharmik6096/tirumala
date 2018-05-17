@@ -14,6 +14,15 @@ class SearchFilter {
             'TblMemberSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_bmc_code', 'f_route_code', 'f_dcs_code'],
             ],
+            'TblMilkCollectionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_bmc_code', 'f_route_code', 'f_dcs_code', 'min_date', 'shift'],
+            ],
+            'TblMilkDispatchSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_bmc_code', 'f_route_code', 'f_dcs_code', 'min_date', 'shift'],
+            ],
+            'TblBmcCollectionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_bmc_code', 'f_route_code'],
+            ]
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

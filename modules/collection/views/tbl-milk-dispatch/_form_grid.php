@@ -11,9 +11,7 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 //$snf = Yii::$app->general->dropdownRange('TblMilkDispatch', 'snf', 3);
 //$qty = Yii::$app->general->dropdownRange('TblMilkCollection','qty', 100);
 ?>
-<div class="grid-search large-search">
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
-</div>
+
 <?php
 $attribute = [
     ['attribute' => 'dcsCode.union_code', 'value' => function($model) {

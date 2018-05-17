@@ -53,7 +53,7 @@ use app\modules\general\models\TblSocietyVendor;
  * @property TblMilkCollection $milkCollectionCode
  * @property TblMilkCollection $tblMilkCollection
  */
-class TblMilkCollection extends \yii\db\ActiveRecord {
+class TblMilkCollection extends \app\models\ChildModel {
 
     /**
      * @inheritdoc

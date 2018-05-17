@@ -54,6 +54,10 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith(['dcsCode']);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
+        
         if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['and', ['>=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)).' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)).' 23:59:59.000']]);
         // grid filtering conditions

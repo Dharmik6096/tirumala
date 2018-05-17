@@ -12,9 +12,7 @@ $milk_type = $milkType->getAnimalMilkTypeArray();
 //$amount = Yii::$app->general->dropdownRange('TblMilkCollection', 'amount', 1000);
 $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 ?>
-<div class="grid-search large-search">
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
-</div>
+
 <?php
 $attribute = [
     ['attribute' => 'dcsCode.union_code', 'value' => function($model) {
