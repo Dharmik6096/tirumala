@@ -8,7 +8,6 @@ use app\modules\organisation\models\TblClusterHistory;
 use app\modules\organisation\models\TblClusterSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblContactDetailsSearch;
 
@@ -18,20 +17,6 @@ use app\modules\details\models\TblContactDetailsSearch;
 class TblClusterController extends \app\controllers\ChildController {
 
     public $contactDetails;
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     /**
      * Lists all TblCluster models.
