@@ -119,7 +119,7 @@ class TblDcs extends ChildModel {
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['registration_code'], 'string', 'max' => 20],
             [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
-            [['dcs_code_ex'], 'string', 'max' => 10],
+            [['dcs_code_ex'], 'string', 'max' => 3, 'min' => '3'],
             [['gst_no'], 'string', 'max' => 15],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['ifsc', 'pan_no'], 'trim'],
@@ -262,16 +262,17 @@ class TblDcs extends ChildModel {
             }
 
             public function getCode() {
-                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
-                if ((int) $data['dcs_code'] < 9) {
-                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
-                } else {
-                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code']);
-                }
+                return $this->district_code . $this->village_code . $this->dcs_code_ex;
+//                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
+//                if ((int) $data['dcs_code'] < 9) {
+//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
+//                } else {
+//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code']);
+//                }
             }
 
             public function getActiveDcs() {
-                //echo $fedrCode;
+//echo $fedrCode;
                 $value = $this->find()->where(['is_active' => 1])->all();
                 return ArrayHelper::map($value, 'dcs_code', 'dcs_name');
             }
@@ -406,12 +407,12 @@ class TblDcs extends ChildModel {
                 $selected = [];
                 foreach ($village_list as $key => $row) {
                     if (array_search($key, array_column($values, 'village_code')) !== FALSE) {
-                        //$selected[$key] = ['selected' => 'selected'];
+//$selected[$key] = ['selected' => 'selected'];
                         $selected[$key] = $row;
                     }
                 }
                 return ['value' => $selected, 'selected' => ''];
-                //return ['value' => $village_list, 'selected' => $selected];
+//return ['value' => $village_list, 'selected' => $selected];
             }
 
             public function getVillageList() {
@@ -488,8 +489,8 @@ class TblDcs extends ChildModel {
                 return $routeSocieties = TblSocietyCodes::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
 
 
-                //return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
-                ///$routeSocieties = TblSocietyCodes::find()->select('dcs_code,dcs_name')->where(['route_code'=>$route,'is_active'=>1])->all();
+//return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
+///$routeSocieties = TblSocietyCodes::find()->select('dcs_code,dcs_name')->where(['route_code'=>$route,'is_active'=>1])->all();
             }
 
             public function getMilkTypes() {
