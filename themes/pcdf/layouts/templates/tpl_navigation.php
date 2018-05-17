@@ -35,6 +35,7 @@ echo GhostMenu::widget([
 //                ['label' => Yii::t('app', 'PCDF Info'), 'url' => ['/organisation/tbl-federations/view', 'id' => Yii::$app->session->get('Federations')], 'active' => ($cntrl == 'tbl-federations')],
                 ['label' => Yii::t('app', 'Union'), 'url' => $url_action, 'active' => ($cntrl == 'tbl-unions')],
                 ['label' => Yii::t('app', 'Plant'), 'url' => ['/organisation/tbl-plant/index'], 'active' => ($cntrl == 'tbl-plant')],
+                ['label' => Yii::t('app', 'Cluster'), 'url' => ['/organisation/tbl-cluster/index'], 'active' => ($cntrl == 'tbl-cluster')],
                 ['label' => Yii::t('app', 'MCC'), 'url' => ['/organisation/tbl-mcc-plant/index'], 'active' => ($cntrl == 'tbl-mcc-plant')],
                 ['label' => Yii::t('app', 'BMC'), 'url' => ['/organisation/tbl-dcs-bmc/index'], 'active' => ($cntrl == 'tbl-dcs-bmc')],
                 //['label' => Yii::t('app', 'Route'), 'url' => ['/organisation/tbl-routes/index'], 'active' => ($cntrl == 'tbl-routes')],

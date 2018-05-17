@@ -26,6 +26,9 @@ use yii\db\Query;
 use app\modules\organisation\models\TblDpuInstallation;
 use app\modules\organisation\models\TblSocietyCodes;
 use app\modules\organisation\models\TblSocietyCollection;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_dcs".
@@ -100,7 +103,7 @@ class TblDcs extends ChildModel {
     public function rules() {
         return [
             [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode'], 'required', 'except' => ['deactivate']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
+            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'bmc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank')],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => 'importCsv'],
             [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => 'importCsv'],
@@ -113,7 +116,7 @@ class TblDcs extends ChildModel {
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status'], 'safe'],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
 //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
@@ -595,6 +598,18 @@ class TblDcs extends ChildModel {
                     $bmc[] = array('id' => $value->dcs_code, 'name' => $value->dcs_name);
                 }
                 return $bmc;
+            }
+            
+            public function getBmcCode() {
+                return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+            }            
+            
+            public function getMccPlantCode() {
+                return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+            }            
+            
+            public function getPlantCode() {
+                return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
             }
 
         }

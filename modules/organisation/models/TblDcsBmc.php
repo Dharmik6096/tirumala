@@ -235,9 +235,12 @@ class TblDcsBmc extends \app\models\ChildModel {
     }
     
     public function rlsBmc($parents = ''){
+        $where = '';
+        if(!empty($parents)){
+            $where = ['mcc_code' => $parents];
+        }
         $rows = $this->find()
-                ->joinWith(['tblMccPlant'])
-                ->where(['tbl_mcc_plant.plant_code' => $parents])
+                ->where($where)
                 ->all();
         $bmc = [];
         foreach($rows as $value){
