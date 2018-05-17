@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Message translations.
  *
@@ -18,4 +19,10 @@
  */
 return [
     'Local Name' => 'Hindi Name',
+    'Union' => 'Company',
+    'PCDF' => 'EVEREST',
+    'Union Code'=>'Company Code',
+    'Old Union Code'=>'Old Company Code',
+    'Union Name'=>'Company Name',
+    'Union Short Name'=>'Company Short Name',
 ];
