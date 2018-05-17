@@ -82,28 +82,28 @@ class TblMccPlantController extends \app\controllers\ChildController {
             $this->setModel($this->model);
             $this->model->mcc_plant_code = $this->model->getCode();
             $this->model->name = ucwords($this->model->name);
-            $bmcModel = new TblDcsBmc();
-            $bmcModel->scenario = 'from_mcc';
-            $bmcModel->mcc_code = $this->model->mcc_plant_code;
-            $bmcModel->bmc_code = $bmcModel->getCode();
-            $bmcModel->bmc_name = $this->model->name;
-            $bmcModel->local_name = $this->model->local_name;
-            $bmcModel->capacity = $this->model->capacity;
-            $bmcModel->is_active = $this->model->is_active;
-            $bmcModel->state_code = $this->model->state_code;
-            $bmcModel->district_code = $this->model->district_code;
-            $bmcModel->sub_district_code = $this->model->sub_district_code;
-            $bmcModel->village_code = $this->model->village_code;
-            $bmcModel->hamlet_code = $this->model->hamlet_code;
-            $bmcModel->union_code = $this->model->union_code;
-            $bmcModel->valid_from = $this->model->valid_from;
-            $bmcModel->is_mcc = 1;
+//            $bmcModel = new TblDcsBmc();
+//            $bmcModel->scenario = 'from_mcc';
+//            $bmcModel->mcc_code = $this->model->mcc_plant_code;
+//            $bmcModel->bmc_code = $bmcModel->getCode();
+//            $bmcModel->bmc_name = $this->model->name;
+//            $bmcModel->local_name = $this->model->local_name;
+//            $bmcModel->capacity = $this->model->capacity;
+//            $bmcModel->is_active = $this->model->is_active;
+//            $bmcModel->state_code = $this->model->state_code;
+//            $bmcModel->district_code = $this->model->district_code;
+//            $bmcModel->sub_district_code = $this->model->sub_district_code;
+//            $bmcModel->village_code = $this->model->village_code;
+//            $bmcModel->hamlet_code = $this->model->hamlet_code;
+//            $bmcModel->union_code = $this->model->union_code;
+//            $bmcModel->valid_from = $this->model->valid_from;
+//            $bmcModel->is_mcc = 1;
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('mccPlant', $this->model->mcc_plant_code);
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'name', $this->model->name);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model], [$bmcModel, $this->contactDetails], ['MCC', 'create']);
+                $transaction = $this->generalModel->saveTransaction([$this->model], [$this->contactDetails], ['MCC', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
