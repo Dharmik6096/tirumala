@@ -781,7 +781,7 @@ class TblDcsController extends ChildController {
             if ($parents != null) {
                 $transporter_code = $parents[0];
                 $plants = new TblDcs();
-                $out = $plants->rlsDcs($parents[0]);
+                $out = $plants->rlsBmcDcs($parents[0]);
 
                 echo Json::encode(['output'=>$out, 'selected'=>'']);
                 return;

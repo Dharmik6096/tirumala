@@ -29,6 +29,7 @@ use app\modules\notification\models\TblNotifications;
 use DateTime;
 use stdClass;
 use SoapClient;
+use app\components\SearchFilter;
 
 class GeneralFunctions extends Component {
 
@@ -634,54 +635,57 @@ class GeneralFunctions extends Component {
     }
 
     public function filterByOrg($query, $model, $union_table = '') {
-
         $model_class = (new \ReflectionClass($model))->getShortName();
-        $q_param = Yii::$app->request->queryParams;
-        if (isset($q_param[$model_class])) {
-            $data = $q_param[$model_class];
-            isset($data['f_union_code']) ? $model->f_union_code = $data['f_union_code'] : NULL;
-            isset($data['f_plant_code']) ? $model->f_plant_code = $data['f_plant_code'] : NULL;
-            isset($data['f_bmc_code']) ? $model->f_bmc_code = $data['f_bmc_code'] : NULL;
-            isset($data['f_route_code']) ? $model->f_route_code = $data['f_route_code'] : NULL;
-            isset($data['f_dcs_code']) ? $model->f_dcs_code = $data['f_dcs_code'] : NULL;
-        }
-        $tablename = $model->tableSchema->fullName;
+        $filter_model = new SearchFilter();
+        $filter_data = $filter_model->getRecord($model_class);
+        if (!empty($filter_data)) {
+            $filters = $filter_data['filter'];
+            $q_param = Yii::$app->request->queryParams;
+            if (isset($q_param[$model_class])) {
+                $data = $q_param[$model_class];
+                isset($data['f_union_code']) ? $model->f_union_code = $data['f_union_code'] : NULL;
+                isset($data['f_plant_code']) ? $model->f_plant_code = $data['f_plant_code'] : NULL;
+                isset($data['f_mcc_code']) ? $model->f_mcc_code = $data['f_mcc_code'] : NULL;
+                isset($data['f_bmc_code']) ? $model->f_bmc_code = $data['f_bmc_code'] : NULL;
+                isset($data['f_dcs_code']) ? $model->f_dcs_code = $data['f_dcs_code'] : NULL;
+            }
+            $tablename = $model->tableSchema->fullName;
 
-        $union_table = !empty($union_table) ? $union_table : $tablename;
-        if (Yii::$app->session->get('Unions') !== '')
-            $query->andFilterWhere([ $union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-        if (!empty($model->f_union_code))
-            $query->andFilterWhere([$union_table . '.union_code' => $model->f_union_code]);
+            if (in_array('f_union_code', $filters)) {
+                $union_table = !empty($union_table) ? $union_table : $tablename;
+                if (Yii::$app->session->get('Unions') !== '')
+                    $query->andFilterWhere([ $union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+                if (!empty($model->f_union_code))
+                    $query->andFilterWhere([$union_table . '.union_code' => $model->f_union_code]);
+            }
 
+            if (in_array('f_plant_code', $filters)) {
+                if (Yii::$app->session->get('Plant') !== '')
+                    $query->andFilterWhere([ 'tbl_dcs.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+                if (!empty($model->f_plant_code))
+                    $query->andFilterWhere(['tbl_dcs.plant_code' => $model->f_plant_code]);
+            }
 
-        if ($model->hasAttribute('f_plant_code')) {
-            $query->join('LEFT JOIN', 'tbl_plant', 'tbl_plant.union_code=' . $union_table . '.union_code');
-            if (Yii::$app->session->get('Plant') !== '')
-                $query->andFilterWhere([ 'tbl_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
-            if(!empty($model->f_plant_code))
-                $query->andFilterWhere(['tbl_plant.plant_code' => $model->f_plant_code]);
-        }
+            if (in_array('f_mcc_code', $filters)) {
+                if (Yii::$app->session->get('MCC') !== '')
+                    $query->andFilterWhere([ 'tbl_dcs.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+                if (!empty($model->f_bmc_code))
+                    $query->andFilterWhere(['tbl_dcs.mcc_plant_code' => $model->f_mcc_code]);
+            }
 
-        if ($model->hasAttribute('f_bmc_code')) {
-            $query->join('LEFT JOIN', 'tbl_dcs_subcenter_bmc_info', 'tbl_dcs_subcenter_bmc_info.union_code=' . $union_table . '.union_code');
-            if (Yii::$app->session->get('BMC') !== '')
-                $query->andFilterWhere([ 'tbl_dcs_subcenter_bmc_info.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
-            if(!empty($model->f_bmc_code))
-                $query->andFilterWhere(['tbl_dcs_subcenter_bmc_info.bmc_code' => $model->f_bmc_code]);
-        }
+            if (in_array('f_bmc_code', $filters)) {
+                if (Yii::$app->session->get('BMC') !== '')
+                    $query->andFilterWhere([ 'tbl_dcs.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+                if (!empty($model->f_bmc_code))
+                    $query->andFilterWhere(['tbl_dcs.bmc_code' => $model->f_bmc_code]);
+            }
 
-        if ($model->hasAttribute('f_route_code')) {
-            if (Yii::$app->session->get('Route') !== '')
-                $query->andFilterWhere([ 'tbl_dcs.route_code' => explode(',', Yii::$app->session->get('Route'))]);
-            if(!empty($model->f_route_code))
-                $query->andFilterWhere(['tbl_dcs.route_code' => $model->f_route_code]);
-        }
-
-        if ($model->hasAttribute('f_dcs_code')) {
-            if (Yii::$app->session->get('Dcs') !== '')
-                $query->andFilterWhere([ $tablename . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
-            if(!empty($model->f_dcs_code))
-                $query->andFilterWhere([$tablename . '.dcs_code' => $model->f_dcs_code]);
+            if (in_array('f_dcs_code', $filters)) {
+                if (Yii::$app->session->get('Dcs') !== '')
+                    $query->andFilterWhere([ $tablename . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+                if (!empty($model->f_dcs_code))
+                    $query->andFilterWhere([$tablename . '.dcs_code' => $model->f_dcs_code]);
+            }
         }
     }
 

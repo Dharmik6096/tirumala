@@ -41,26 +41,24 @@ use yii\helpers\ArrayHelper;
  * @property TblUnions $unionCode
  * @property TblVillages $villageCode
  */
-class TblMccPlant extends \app\models\ChildModel
-{
+class TblMccPlant extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_mcc_plant';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['plant_code', 'name', 'hamlet_code','union_code'], 'required'],
-            [['mcc_plant_code','state_code','district_code','sub_district_code','village_code','valid_from'], 'required', 'except'=>'importCsv'],
-            [['created_at', 'updated_at','is_active','capacity', 'valid_from', 'is_plant'], 'safe'],
-            [[ 'capacity'], 'integer'],
+            [['plant_code', 'name', 'hamlet_code', 'union_code'], 'required'],
+            [['mcc_plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant'], 'safe'],
+            [['capacity'], 'integer'],
 //            [['is_active'], 'boolean'],
             [['mcc_plant_code'], 'unique'],
             [['mcc_plant_code', 'village_code'], 'string', 'max' => 6],
@@ -70,24 +68,22 @@ class TblMccPlant extends \app\models\ChildModel
             [['email'], 'string', 'max' => 50],
             [['email'], 'email'],
             [['name'], function ($attribute, $params) {
-                Yii::$app->general->validateName($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute,$params);
-                },'skipOnEmpty'=> false],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
             [['name',], 'string', 'max' => 255],
-             [['local_name','local_contact_person_name'], function ($attribute, $params) {
-                Yii::$app->general->vaildateLocalField($this, $attribute,$params);
-            },'skipOnEmpty'=> false],            
+            [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
         ];
     }
 
-
-    public function validateAttribute($attribute, $params)
-    {
+    public function validateAttribute($attribute, $params) {
         if (!in_array($this->$attribute, ['1', '2'])) {
-            $this->addError($attribute, Yii::t('app/validation',$this->getAttributeLabel($attribute).' must be either "1" or "2".'));
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be either "1" or "2".'));
             return false;
         }
     }
@@ -95,8 +91,7 @@ class TblMccPlant extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'mcc_plant_code' => Yii::t('app', 'MCC Code'),
             'plant_code' => Yii::t('app', 'Plant'),
@@ -123,13 +118,13 @@ class TblMccPlant extends \app\models\ChildModel
             'valid_from' => Yii::t('app', 'Valid From'),
         ];
     }
-    
+
     public function addMcc($jsonData) {
 
         $this->union_code = $jsonData['union_code'];
-        $this->mcc_plant_code=$this->getCode();
-        $this->name=$jsonData['name'];
-        $this->local_name =  $jsonData['local_name'];
+        $this->mcc_plant_code = $this->getCode();
+        $this->name = $jsonData['name'];
+        $this->local_name = $jsonData['local_name'];
         $this->capacity = $jsonData['capacity'];
         $this->valid_from = $jsonData['valid_from'];
         $this->description = $jsonData['description'];
@@ -138,104 +133,108 @@ class TblMccPlant extends \app\models\ChildModel
         $this->state_code = $jsonData['state_code'];
         $this->sub_district_code = $jsonData['sub_district_code'];
         $this->village_code = $jsonData['village_code'];
-        $this->is_active =1;
-
+        $this->is_active = 1;
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDistrictCode()
-    {
+    public function getDistrictCode() {
         return $this->hasOne(TblDistricts::className(), ['district_code' => 'district_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getHamletCode()
-    {
+    public function getHamletCode() {
         return $this->hasOne(TblHamlets::className(), ['hamlet_code' => 'hamlet_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getStateCode()
-    {
+    public function getStateCode() {
         return $this->hasOne(TblStates::className(), ['state_code' => 'state_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSubDistrictCode()
-    {
+    public function getSubDistrictCode() {
         return $this->hasOne(TblSubDistricts::className(), ['sub_district_code' => 'sub_district_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVillageCode()
-    {
+    public function getVillageCode() {
         return $this->hasOne(TblVillages::className(), ['village_code' => 'village_code']);
     }
-    
-     /**
+
+    /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPlantCode()
-    {
+    public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
+
     /**
      * @inheritdoc
      * @return TblMccPlantQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblMccPlantQuery(get_called_class());
     }
 
-    public function getCode(){
+    public function getCode() {
 
-        $data=  $this->find()->select(["MAX(CONVERT(bigint,mcc_plant_code)) as mcc_plant_code"])->one();       
-        return str_pad(((int)$data['mcc_plant_code']+1),6,'0',STR_PAD_LEFT);
+        $data = $this->find()->select(["MAX(CONVERT(bigint,mcc_plant_code)) as mcc_plant_code"])->one();
+        return str_pad(((int) $data['mcc_plant_code'] + 1), 6, '0', STR_PAD_LEFT);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCapacity0()
-    {
+    public function getCapacity0() {
         return $this->hasOne(TblCapacity::className(), ['capacity_code' => 'capacity']);
     }
-    public function getchillingcenter($type,$union){
-     $value = $this->find()->select(['mcc_plant_code','name'])->where(['union_code'=>$union])->all();
+
+    public function getchillingcenter($type, $union) {
+        $value = $this->find()->select(['mcc_plant_code', 'name'])->where(['union_code' => $union])->all();
         //$value = ArrayHelper::map($value, 'id', 'name');
-        $a = ArrayHelper::map($value,'mcc_plant_code',function($value){
-            $type='MCC';
-            return $value['name'].'-'.$type;
-        });
+        $a = ArrayHelper::map($value, 'mcc_plant_code', function($value) {
+                    $type = 'MCC';
+                    return $value['name'] . '-' . $type;
+                });
         return $a;
     }
 
-    public function getChillingCenterValue($value){
-        $value = $this->find()->select(['mcc_plant_code','name'])->where(['mcc_plant_code'=>$value])->one();
+    public function getChillingCenterValue($value) {
+        $value = $this->find()->select(['mcc_plant_code', 'name'])->where(['mcc_plant_code' => $value])->one();
 
         return $value;
     }
-    
-    public function getBmcCode()
-    {
-        return $this->hasOne(TblDcsBmc::className(), ['mcc_code' => 'mcc_plant_code'])->where(['is_mcc'=>1]);
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['mcc_code' => 'mcc_plant_code'])->where(['is_mcc' => 1]);
     }
+
+    public function rlsMcc($parents = '') {
+        $rows = $this->find()
+                ->where(['plant_code' => $parents])
+                ->all();
+        $mcc = [];
+        foreach ($rows as $value) {
+            $mcc[] = array('id' => $value->mcc_plant_code, 'name' => $value->name);
+        }
+        return $mcc;
+    }
+
 }

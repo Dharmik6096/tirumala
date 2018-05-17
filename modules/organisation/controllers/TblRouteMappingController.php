@@ -338,20 +338,4 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionRouteList() {
-        $out = [];
-        if (isset($_POST['depdrop_parents'])) {
-            $parents = $_POST['depdrop_parents'];
-            if ($parents != null) {
-                $transporter_code = $parents[0];
-                $routes = new TblRouteMapping();
-                $out = $routes->rlsRoutes($parents[0]);
-
-                echo Json::encode(['output' => $out, 'selected' => '']);
-                return;
-            }
-        }
-        echo Json::encode(['output' => '', 'selected' => '']);
-    }
-
 }

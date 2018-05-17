@@ -211,22 +211,22 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', 'Select Plant', $multiple);
     }
-    
-    public function plant_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false) {
+
+    public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', 'Select Bmc', $multiple);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', 'Select MCC', $multiple);
     }
-    
-    public function bmc_route($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false) {
+
+    public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/route-list', 'Select Route', $multiple);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', 'Select BMC', $multiple);
     }
-    
-    public function route_society($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false) {
+
+    public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', 'Select Society', $multiple);
     }
-    
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -549,7 +549,6 @@ class DropDown extends Component {
         return $label[$l];
     }
 
-    
     public function sp_union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
         $check_list = '';
         if (!empty(Yii::$app->session->get('Dcs'))) {
@@ -558,7 +557,7 @@ class DropDown extends Component {
         }
         return $this->sp_depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
     }
-    
+
     public function sp_depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = []) {
         $class = $readonly ? 'depend-control' : '';
         $data = $this->getLabels($flag);
@@ -583,4 +582,5 @@ class DropDown extends Component {
                     ]
                 ])->label($label);
     }
+
 }

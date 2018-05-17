@@ -38,22 +38,21 @@ if (!empty($filter_data)) {
                 </div>
             <?php } ?>
             <?php
+            if (in_array('f_mcc_code', $filters)) {
+                $f_cnt++
+                ?>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->plant_mcc($model, $form, $field_class . '-f_plant_code', 'f_mcc_code'); ?>
+                </div>
+            <?php } ?>
+            <?php
             if (in_array('f_bmc_code', $filters)) {
                 $f_cnt++
                 ?>
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->plant_bmc($model, $form, $field_class . '-f_plant_code', 'f_bmc_code'); ?>
+                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, $field_class . '-f_mcc_code', 'f_bmc_code'); ?>
                 </div>
-            <?php } ?>
-            <?php
-            if (in_array('f_route_code', $filters)) {
-                $f_cnt++
-                ?>
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->bmc_route($model, $form, $field_class . '-f_bmc_code', 'f_route_code'); ?>
-                </div>
-            <?php } ?>
-
+            <?php } ?>         
             <?php
             if ($count > 5 && $f_cnt > 3) {
                 echo '<div class="clearfix"></div>';
@@ -66,7 +65,7 @@ if (!empty($filter_data)) {
                 $f_cnt++
                 ?>
                 <div class="col-sm-2">
-                <?= Yii::$app->dropdown->route_society($model, $form, $field_class . '-f_route_code', 'f_dcs_code'); ?>         
+                    <?= Yii::$app->dropdown->bmc_society($model, $form, $field_class . '-f_bmc_code', 'f_dcs_code'); ?>         
                 </div>
             <?php } ?>
 
@@ -86,7 +85,7 @@ if (!empty($filter_data)) {
                 ?>
                 <div class="col-sm-4">
                     <div class="form-group">
-                <?= Yii::$app->controls->min_max_date('min_date', 'max_date', $min_date, $max_date); ?>
+                        <?= Yii::$app->controls->min_max_date('min_date', 'max_date', $min_date, $max_date); ?>
                     </div>
                 </div>
             <?php } ?>
@@ -96,17 +95,17 @@ if (!empty($filter_data)) {
                 $f_cnt++
                 ?>
                 <div class="col-sm-2">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
                 </div>
             <?php } ?>
 
 
-                <?php if ($f_cnt > 0) { ?>
+            <?php if ($f_cnt > 0) { ?>
                 <div class="col-sm-2">
-                <?= Yii::$app->controls->search(); ?>
+                    <?= Yii::$app->controls->search(); ?>
                 </div>
-        <?php } ?>
-        <?php \yii\widgets\ActiveForm::end(); ?>
+            <?php } ?>
+            <?php \yii\widgets\ActiveForm::end(); ?>
 
         </div>
         <?php
