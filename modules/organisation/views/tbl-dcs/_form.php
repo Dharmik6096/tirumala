@@ -56,7 +56,7 @@ $form = ActiveForm::begin([
     <?= Html::activeHiddenInput($model, 'destination_code') ?>
     <?= Html::activeHiddenInput($model, 'route_code') ?>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'bmc_code', $model->getAttributeLabel('bmc_code'), $disable); ?>
+        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disable); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'dcs_code_ex')->textInput(['maxlength' => true]) ?>

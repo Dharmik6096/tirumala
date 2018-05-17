@@ -227,15 +227,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', 'Select Society', $multiple);
     }
     
-    public function bmcDropdown($model, $form, $name = 'bmc_code', $label = '', $disable = false) {
-        $records = [];
-        $model_name = Yii::$app->path->define('TblDcsBmc');
-        $bmc_model = new $model_name();
-        $record = $bmc_model->rlsBmc();
-        foreach ($record as $rec){
-           $records[$rec['id']] = $rec['name']; 
-        }
-        return $form->field($model, $name)->dropDownList($records, ['prompt' => Yii::t('app', 'Select BMC'), 'disabled' => $disable])->label($label);
+    public function bmcDropdown($model, $form, $depends, $name = 'bmc_code', $islable = '', $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list-union', 'Select BMC', $multiple, $model->$name, $readonly);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {

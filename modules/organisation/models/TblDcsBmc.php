@@ -248,4 +248,15 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         return $bmc;
     }
+    
+    public function bmcUnion($parents = ''){
+        $rows = $this->find()
+                ->where(['union_code' => $parents])
+                ->all();
+        $bmc = [];
+        foreach($rows as $value){
+            $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
+        }
+        return $bmc;
+    }
 }

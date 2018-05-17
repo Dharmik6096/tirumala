@@ -102,8 +102,8 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode'], 'required', 'except' => ['deactivate']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'bmc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
+            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate']],
+            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank')],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => 'importCsv'],
             [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => 'importCsv'],
@@ -159,7 +159,10 @@ class TblDcs extends ChildModel {
                     [['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
                     return $model->is_registered == 1;
                 },
-                        'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }"]
+                        'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }"],
+                    [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
+                    [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code']],
+                    [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code']],
 //            [['branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
@@ -253,6 +256,7 @@ class TblDcs extends ChildModel {
                     'valid_from' => Yii::t('app', 'Valid From'),
                     'bipl_code' => Yii::t('app', 'BIPL Code'),
                     'society_status' => Yii::t('app', 'Collection Status'),
+                    'bmc_code' => Yii::t('app', 'BMC'),
                 ];
             }
 
@@ -591,7 +595,7 @@ class TblDcs extends ChildModel {
                 return $this->updateAll(['data_post_status' => 1], ['dcs_code' => $value]);
             }
 
-            public function rlsDcs($parents = '') {
+            public function rlsBmcDcs($parents = '') {
                 $rows = $this->find()->where(['route_code' => $parents])->all();
                 $bmc = [];
                 foreach ($rows as $value) {
@@ -599,15 +603,15 @@ class TblDcs extends ChildModel {
                 }
                 return $bmc;
             }
-            
+
             public function getBmcCode() {
                 return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
-            }            
-            
+            }
+
             public function getMccPlantCode() {
                 return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
-            }            
-            
+            }
+
             public function getPlantCode() {
                 return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
             }

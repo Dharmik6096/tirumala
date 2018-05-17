@@ -9,7 +9,7 @@ use ruskid\csvimporter\ARImportStrategy;
 use app\modules\organisation\models\TblDcsVillageMapping;
 use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;
-
+use Yii;
 class DcsImportStrategy extends ARImportStrategy{
     
     public function import(&$data) {
@@ -55,6 +55,8 @@ class DcsImportStrategy extends ARImportStrategy{
                     }
                   
                     $modelList = [];
+                    $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_code');
+                    $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
                     $error = ActiveForm::validate($model);
                     
                     if ($model->hasAttribute('is_active')) {
