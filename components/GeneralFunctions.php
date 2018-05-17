@@ -669,7 +669,7 @@ class GeneralFunctions extends Component {
             if (in_array('f_mcc_code', $filters)) {
                 if (Yii::$app->session->get('MCC') !== '')
                     $query->andFilterWhere([ 'tbl_dcs.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
-                if (!empty($model->f_bmc_code))
+                if (!empty($model->f_mcc_code))
                     $query->andFilterWhere(['tbl_dcs.mcc_plant_code' => $model->f_mcc_code]);
             }
 

@@ -236,7 +236,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('makerChecker', $maker_checker);
         Yii::$app->session->set('Plant', '');
         Yii::$app->session->set('BMC', '');
-        Yii::$app->session->set('Route', '');
+        Yii::$app->session->set('MCC', '');
         return true;
     }
 
