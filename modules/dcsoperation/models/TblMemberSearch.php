@@ -47,7 +47,7 @@ class TblMemberSearch extends TblMember {
         
         $this->load($params);
 
-        $query->joinWith(['memberTypeCode']);
+        $query->joinWith(['memberTypeCode','dcsCode']);
 
         Yii::$app->general->filterByOrg($query,$this);
 
@@ -64,7 +64,7 @@ class TblMemberSearch extends TblMember {
         $query->andFilterWhere([
             'tbl_member.is_active' => $this->is_active,
             'tbl_member.payment_mode' => $this->payment_mode,
-            'caste_category_code' => $this->caste_category_code,
+            'tbl_member.caste_category_code' => $this->caste_category_code,
 //            'milk_quality_type_code' => $this->milk_quality_type_code,
         ]);
 
@@ -89,39 +89,39 @@ class TblMemberSearch extends TblMember {
           'animal_type_code' => $this->animal_type_code,
         ]);*/
 
-        $query->andFilterWhere(['like', 'member_code', $this->member_code])
+        $query->andFilterWhere(['like', 'tbl_member.member_code', $this->member_code])
                 //->andFilterWhere(['like', 'tbl_member.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'ex_member_code', $this->ex_member_code])
-                ->andFilterWhere(['like', 'member_name', $this->member_name])
-                ->andFilterWhere(['like', 'father_name', $this->father_name])
-                ->andFilterWhere(['like', 'surname', $this->surname])
-                ->andFilterWhere(['like', 'nominee_name', $this->nominee_name])
-                ->andFilterWhere(['like', 'dob', $this->dob])
+                ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_name])
+                ->andFilterWhere(['like', 'tbl_member.father_name', $this->father_name])
+                ->andFilterWhere(['like', 'tbl_member.surname', $this->surname])
+                ->andFilterWhere(['like', 'tbl_member.nominee_name', $this->nominee_name])
+                ->andFilterWhere(['like', 'tbl_member.dob', $this->dob])
                 //->andFilterWhere(['like', 'land_class', $this->land_class])
-                ->andFilterWhere(['like', 'total_land', $this->total_land])
-                ->andFilterWhere(['like', 'bank_code', $this->bank_code])
-                ->andFilterWhere(['like', 'branch_code', $this->branch_code])
-                ->andFilterWhere(['like', 'bank_account_no', $this->bank_account_no])
-                ->andFilterWhere(['like', 'ifsc', $this->ifsc])
-                ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
-                ->andFilterWhere(['like', 'address', $this->address])
-                ->andFilterWhere(['like', 'pincode', $this->pincode])
-                ->andFilterWhere(['like', 'pan_no', $this->pan_no])
-                ->andFilterWhere(['like', 'adhar_no', $this->adhar_no])
-                ->andFilterWhere(['like', 'village_code', $this->village_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'hamlet_code', $this->hamlet_code])
-                ->andFilterWhere(['like', 'sub_district_code', $this->sub_district_code])
-                ->andFilterWhere(['like', 'district_code', $this->district_code])
-                ->andFilterWhere(['like', 'state_code', $this->state_code])
+                ->andFilterWhere(['like', 'tbl_member.total_land', $this->total_land])
+                ->andFilterWhere(['like', 'tbl_member.bank_code', $this->bank_code])
+                ->andFilterWhere(['like', 'tbl_member.branch_code', $this->branch_code])
+                ->andFilterWhere(['like', 'tbl_member.bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'tbl_member.ifsc', $this->ifsc])
+                ->andFilterWhere(['like', 'tbl_member.mobile_no', $this->mobile_no])
+                ->andFilterWhere(['like', 'tbl_member.address', $this->address])
+                ->andFilterWhere(['like', 'tbl_member.pincode', $this->pincode])
+                ->andFilterWhere(['like', 'tbl_member.pan_no', $this->pan_no])
+                ->andFilterWhere(['like', 'tbl_member.adhar_no', $this->adhar_no])
+                ->andFilterWhere(['like', 'tbl_member.village_code', $this->village_code])
+                ->andFilterWhere(['like', 'tbl_member.created_by', $this->created_by])
+                ->andFilterWhere(['like', 'tbl_member.updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'tbl_member.hamlet_code', $this->hamlet_code])
+                ->andFilterWhere(['like', 'tbl_member.sub_district_code', $this->sub_district_code])
+                ->andFilterWhere(['like', 'tbl_member.district_code', $this->district_code])
+                ->andFilterWhere(['like', 'tbl_member.state_code', $this->state_code])
                 ->andFilterWhere(['like', 'tbl_member.union_code', $this->union_code])
-                ->andFilterWhere(['like', 'local_name', $this->local_name])
-                ->andFilterWhere(['like', 'local_father_name', $this->local_father_name])
-                ->andFilterWhere(['like', 'local_surname', $this->local_surname])
-                ->andFilterWhere(['like', 'local_nominee_name', $this->local_nominee_name])
-                ->andFilterWhere(['like', 'is_download', $this->is_download])
-                ->andFilterWhere(['like', 'local_address', $this->local_address]);
+                ->andFilterWhere(['like', 'tbl_member.local_name', $this->local_name])
+                ->andFilterWhere(['like', 'tbl_member.local_father_name', $this->local_father_name])
+                ->andFilterWhere(['like', 'tbl_member.local_surname', $this->local_surname])
+                ->andFilterWhere(['like', 'tbl_member.local_nominee_name', $this->local_nominee_name])
+                ->andFilterWhere(['like', 'tbl_member.is_download', $this->is_download])
+                ->andFilterWhere(['like', 'tbl_member.local_address', $this->local_address]);
 
         return $dataProvider;
     }
