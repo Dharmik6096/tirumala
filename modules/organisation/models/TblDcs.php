@@ -119,7 +119,7 @@ class TblDcs extends ChildModel {
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['registration_code'], 'string', 'max' => 20],
             [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
-            [['dcs_code_ex'], 'string', 'max' => 10],
+            [['dcs_code_ex'], 'string', 'max' => 3, 'min' => '3'],
             [['gst_no'], 'string', 'max' => 15],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['ifsc', 'pan_no'], 'trim'],
@@ -262,12 +262,13 @@ class TblDcs extends ChildModel {
             }
 
             public function getCode() {
-                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
-                if ((int) $data['dcs_code'] < 9) {
-                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
-                } else {
-                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code']);
-                }
+                return $this->district_code . $this->village_code . $this->dcs_code_ex;
+//                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
+//                if ((int) $data['dcs_code'] < 9) {
+//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
+//                } else {
+//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code']);
+//                }
             }
 
             public function getActiveDcs() {
@@ -577,18 +578,19 @@ class TblDcs extends ChildModel {
 
             public function getNewDcs() {
                 return $this->find()
-                        ->where(['data_post_status' => 0])
-                        ->all();
+                                ->where(['data_post_status' => 0])
+                                ->all();
             }
-            
-            public function updateDcs($value){
+
+            public function updateDcs($value) {
                 return $this->updateAll(['data_post_status' => 1], ['dcs_code' => $value]);
             }
 
             public function getDcsMilkColl() {
                 return $this->find()
-                        ->where(['dcs_code' => $this->dcs_code])
-                        ->one();
+                                ->where(['dcs_code' => $this->dcs_code])
+                                ->one();
             }
+
         }
         
