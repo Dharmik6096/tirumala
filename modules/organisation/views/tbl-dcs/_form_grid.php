@@ -10,16 +10,10 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
 ?>
-
-<div class="grid-search">
-    <?php
-    if (Yii::$app->session->get('organizations_type') !== 'UNION' || count(explode(',', Yii::$app->session->get('Unions'))) > 1)
-        echo $this->render('_search', ['model' => $searchModel]);
-    ?>
-</div>
 <?php
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'bmc_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'); }, 'visible' => true, 'filter' => false],
     ['attribute' => 'dcs_code_ex', 'value' => 'dcs_code_ex', 'visible' => false, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => 'dcs_code'],
     ['attribute' => 'dcs_name', 'value' => 'dcs_name'],

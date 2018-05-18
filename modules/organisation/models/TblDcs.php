@@ -26,6 +26,9 @@ use yii\db\Query;
 use app\modules\organisation\models\TblDpuInstallation;
 use app\modules\organisation\models\TblSocietyCodes;
 use app\modules\organisation\models\TblSocietyCollection;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_dcs".
@@ -99,8 +102,8 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode'], 'required', 'except' => ['deactivate']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate']],
+            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate']],
+            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank')],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => 'importCsv'],
             [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => 'importCsv'],
@@ -113,13 +116,13 @@ class TblDcs extends ChildModel {
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor'], 'safe'],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
 //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['registration_code'], 'string', 'max' => 20],
             [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
-            [['dcs_code_ex'], 'string', 'max' => 10],
+            [['dcs_code_ex'], 'string', 'max' => 3, 'min' => '3'],
             [['gst_no'], 'string', 'max' => 15],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['ifsc', 'pan_no'], 'trim'],
@@ -156,7 +159,10 @@ class TblDcs extends ChildModel {
                     [['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
                     return $model->is_registered == 1;
                 },
-                        'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }"]
+                        'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }"],
+                    [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
+                    [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code']],
+                    [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code']],
 //            [['branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
@@ -250,6 +256,7 @@ class TblDcs extends ChildModel {
                     'valid_from' => Yii::t('app', 'Valid From'),
                     'bipl_code' => Yii::t('app', 'BIPL Code'),
                     'society_status' => Yii::t('app', 'Collection Status'),
+                    'bmc_code' => Yii::t('app', 'BMC'),
                 ];
             }
 
@@ -262,16 +269,17 @@ class TblDcs extends ChildModel {
             }
 
             public function getCode() {
-                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
-                if ((int) $data['dcs_code'] < 9) {
-                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
-                } else {
-                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code']);
-                }
+                return $this->district_code . $this->village_code . $this->dcs_code_ex;
+//                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
+//                if ((int) $data['dcs_code'] < 9) {
+//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
+//                } else {
+//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code']);
+//                }
             }
 
             public function getActiveDcs() {
-                //echo $fedrCode;
+//echo $fedrCode;
                 $value = $this->find()->where(['is_active' => 1])->all();
                 return ArrayHelper::map($value, 'dcs_code', 'dcs_name');
             }
@@ -406,12 +414,12 @@ class TblDcs extends ChildModel {
                 $selected = [];
                 foreach ($village_list as $key => $row) {
                     if (array_search($key, array_column($values, 'village_code')) !== FALSE) {
-                        //$selected[$key] = ['selected' => 'selected'];
+//$selected[$key] = ['selected' => 'selected'];
                         $selected[$key] = $row;
                     }
                 }
                 return ['value' => $selected, 'selected' => ''];
-                //return ['value' => $village_list, 'selected' => $selected];
+//return ['value' => $village_list, 'selected' => $selected];
             }
 
             public function getVillageList() {
@@ -488,8 +496,8 @@ class TblDcs extends ChildModel {
                 return $routeSocieties = TblSocietyCodes::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
 
 
-                //return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
-                ///$routeSocieties = TblSocietyCodes::find()->select('dcs_code,dcs_name')->where(['route_code'=>$route,'is_active'=>1])->all();
+//return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
+///$routeSocieties = TblSocietyCodes::find()->select('dcs_code,dcs_name')->where(['route_code'=>$route,'is_active'=>1])->all();
             }
 
             public function getMilkTypes() {
@@ -570,9 +578,43 @@ class TblDcs extends ChildModel {
             public function getSocietyStatus() {
                 return $this->hasOne(TblSocietyCollection::className(), ['dcs_code' => 'dcs_code'])->orderBy('collection_id desc');
             }
-            
-            public function validDcs($dcs){
-                return $this->find()->where(['dcs_code'=>$dcs, 'is_active'=>1])->one();
+
+            public function validDcs($dcs) {
+                return $this->find()->where(['dcs_code' => $dcs, 'is_active' => 1])->one();
             }
-}
+
+            public function getNewDcs() {
+                return $this->find()
+                                ->joinWith(['societyVendors'])
+                                ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
+                                ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
+                                ->all();
+            }
+
+            public function updateDcs($value) {
+                return $this->updateAll(['data_post_status' => 1], ['dcs_code' => $value]);
+            }
+
+            public function rlsBmcDcs($parents = '') {
+                $rows = $this->find()->where(['route_code' => $parents])->all();
+                $bmc = [];
+                foreach ($rows as $value) {
+                    $bmc[] = array('id' => $value->dcs_code, 'name' => $value->dcs_name);
+                }
+                return $bmc;
+            }
+
+            public function getBmcCode() {
+                return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+            }
+
+            public function getMccPlantCode() {
+                return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+            }
+
+            public function getPlantCode() {
+                return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+            }
+
+        }
         

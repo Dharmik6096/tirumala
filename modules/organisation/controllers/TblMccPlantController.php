@@ -19,7 +19,8 @@ use yii\helpers\Json;
  */
 class TblMccPlantController extends \app\controllers\ChildController {
 
-     public $contactDetails;
+    public $contactDetails;
+
     /**
      * Lists all TblMccPlant models.
      * @return mixed
@@ -47,16 +48,16 @@ class TblMccPlantController extends \app\controllers\ChildController {
 //        return $this->render('view', [
 //                    'model' => $this->findModel($id),'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
 //        ]);
-        
+
         $csearchModel = new TblContactDetailsSearch();
-        $csearchModel->module_name='mccPlant';
-        $csearchModel->module_code=$id;
-        $cdataProvider= $csearchModel->search(Yii::$app->request->queryParams);
-        
+        $csearchModel->module_name = 'mccPlant';
+        $csearchModel->module_code = $id;
+        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
+
         $bmcsearchModel = new TblDcsBmcSearch();
         $bmcsearchModel->mcc_code = $id;
         $bmcdataProvider = $bmcsearchModel->bccSearch(Yii::$app->request->queryParams);
-        
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
@@ -72,37 +73,37 @@ class TblMccPlantController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblMccPlant();
         $this->viewFile = 'create';
-        $this->contactDetails=new TblContactDetails();
-        $this->model->valid_from =  date('Y-m-d');
-        $this->contactDetails->scenario='additional';
+        $this->contactDetails = new TblContactDetails();
+        $this->model->valid_from = date('Y-m-d');
+        $this->contactDetails->scenario = 'additional';
         $validate = 1;
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
             $this->model->mcc_plant_code = $this->model->getCode();
             $this->model->name = ucwords($this->model->name);
-            $bmcModel=new TblDcsBmc();
-            $bmcModel->scenario='from_mcc';
-            $bmcModel->mcc_code=$this->model->mcc_plant_code;
-            $bmcModel->bmc_code=$bmcModel->getCode();
-            $bmcModel->bmc_name=  $this->model->name;
-            $bmcModel->local_name=  $this->model->local_name;
-            $bmcModel->capacity=  $this->model->capacity;
-            $bmcModel->is_active= $this->model->is_active;
-            $bmcModel->state_code= $this->model->state_code;
-            $bmcModel->district_code= $this->model->district_code;
-            $bmcModel->sub_district_code= $this->model->sub_district_code;
-            $bmcModel->village_code= $this->model->village_code;
-            $bmcModel->hamlet_code= $this->model->hamlet_code;
-            $bmcModel->union_code= $this->model->union_code;
-            $bmcModel->valid_from= $this->model->valid_from;
-            $bmcModel->is_mcc=1;
+//            $bmcModel = new TblDcsBmc();
+//            $bmcModel->scenario = 'from_mcc';
+//            $bmcModel->mcc_code = $this->model->mcc_plant_code;
+//            $bmcModel->bmc_code = $bmcModel->getCode();
+//            $bmcModel->bmc_name = $this->model->name;
+//            $bmcModel->local_name = $this->model->local_name;
+//            $bmcModel->capacity = $this->model->capacity;
+//            $bmcModel->is_active = $this->model->is_active;
+//            $bmcModel->state_code = $this->model->state_code;
+//            $bmcModel->district_code = $this->model->district_code;
+//            $bmcModel->sub_district_code = $this->model->sub_district_code;
+//            $bmcModel->village_code = $this->model->village_code;
+//            $bmcModel->hamlet_code = $this->model->hamlet_code;
+//            $bmcModel->union_code = $this->model->union_code;
+//            $bmcModel->valid_from = $this->model->valid_from;
+//            $bmcModel->is_mcc = 1;
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('mccPlant', $this->model->mcc_plant_code);
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'name', $this->model->name);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model],[$bmcModel,$this->contactDetails], ['MCC', 'create']);
+                $transaction = $this->generalModel->saveTransaction([$this->model], [$this->contactDetails], ['MCC', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -129,7 +130,7 @@ class TblMccPlantController extends \app\controllers\ChildController {
 
             $this->model->load(Yii::$app->request->post());
             $this->setModel($this->model);
-             $this->model->name = ucwords($this->model->name);
+            $this->model->name = ucwords($this->model->name);
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique($this->model, 'name', $_POST['TblMccPlant']['name']);
             if ($validate == 1) {
@@ -149,13 +150,13 @@ class TblMccPlantController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionDelete() {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_mcc_plant',  Yii::$app->request->post('id'), 'mcc_plant_code']);
+        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_mcc_plant', Yii::$app->request->post('id'), 'mcc_plant_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
             $historyModel = new TblMccPlantHistory();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
 //             $record = $this->generalModel->deleteTransaction([$this->model,$historyModel]);
-            $record = $this->generalModel->deleteTransaction([$this->model,$historyModel],[false,'TblContactDetails', 'TblContactDetailsHistory'],['mcc_plant_code','mccPlant']);
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel], [false, 'TblContactDetails', 'TblContactDetailsHistory'], ['mcc_plant_code', 'mccPlant']);
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }
@@ -163,36 +164,34 @@ class TblMccPlantController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
-    
-    public function actionContactDetails($id)
-    {
-        $contactDetails=new TblContactDetails();
+
+    public function actionContactDetails($id) {
+        $contactDetails = new TblContactDetails();
         $searchModel = new TblContactDetailsSearch();
-        $searchModel->module_name='mccPlant';
-        $searchModel->module_code=$id;
+        $searchModel->module_name = 'mccPlant';
+        $searchModel->module_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('../../../details/views/tbl-contact-details/create', [
-            'model' => $contactDetails,
-            'id'=>$id,
-            'module'=>'mccPlant',
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'mccPlant',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
         ]);
-        
     }
-    
+
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->mcc_plant_code]);
     }
-    
+
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
-            'contactDetails'=>$this->contactDetails
-            ]);
+                    'contactDetails' => $this->contactDetails
+        ]);
     }
-    
+
     private function setModel() {
-        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);        
+        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
     }
 
     /**
@@ -208,6 +207,21 @@ class TblMccPlantController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionMccList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $transporter_code = $parents[0];
+                $plants = new TblMccPlant();
+                $out = $plants->rlsMcc($parents[0]);
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

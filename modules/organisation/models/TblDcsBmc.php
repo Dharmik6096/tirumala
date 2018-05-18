@@ -42,46 +42,42 @@ use app\modules\general\models\TblBmcType;
  * @property TblManufacturer $manufacturerCode
  * @property User $updatedBy
  */
-class TblDcsBmc extends \app\models\ChildModel
-{
+class TblDcsBmc extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_subcenter_bmc_info';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bmc_name','union_code', 'hamlet_code','mcc_code'], 'required'],
-            [[ 'model', 'capacity', 'manufacturer_code'], 'required','except'=>'from_mcc'],
-            [['bmc_code', 'state_code', 'district_code', 'sub_district_code','village_code','valid_from'], 'required','except'=>'importCsv'],
-            [[ 'is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from'], 'safe'],
+            [['bmc_name', 'union_code', 'hamlet_code', 'mcc_code'], 'required'],
+            [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
+            [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute,$params);
-                },'skipOnEmpty'=> false],
-            [[ 'bmc_milk_type', 'capacity', 'manufacturer_code','bmc_type_code'], 'integer'],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['local_name'], function ($attribute, $params) {
-                Yii::$app->general->vaildateLocalField($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
         ];
     }
-
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bmc_code' => Yii::t('app', 'BMC Code'),
             'bmc_name' => Yii::t('app', 'BMC Name'),
@@ -108,80 +104,72 @@ class TblDcsBmc extends \app\models\ChildModel
             'valid_from' => Yii::t('app', 'Valid From'),
         ];
     }
-    
+
     public function addBmc($jsonData) {
 
-                $this->union_code = $jsonData['union_code'];
-                $this->bmc_code=$this->getCode();
-                 $this->bmc_name=$jsonData['bmc_name'];
-                $this->bmc_type_code =  $jsonData['bmc_type_code'];
-                $this->model = $jsonData['model'];
-                $this->bmc_milk_type = $jsonData['bmc_milk_type'];
-                $this->capacity = $jsonData['capacity'];
-                $this->manufacturer_code = $jsonData['manufacturer_code'];
-                $this->district_code = $jsonData['district_code'];
-                $this->hamlet_code = $jsonData['hamlet_code'];
-                $this->state_code = $jsonData['state_code'];
-                $this->sub_district_code = $jsonData['sub_district_code'];
-                $this->village_code = $jsonData['village_code'];
-                $this->is_active =1;
-                
-            }
+        $this->union_code = $jsonData['union_code'];
+        $this->bmc_code = $this->getCode();
+        $this->bmc_name = $jsonData['bmc_name'];
+        $this->bmc_type_code = $jsonData['bmc_type_code'];
+        $this->model = $jsonData['model'];
+        $this->bmc_milk_type = $jsonData['bmc_milk_type'];
+        $this->capacity = $jsonData['capacity'];
+        $this->manufacturer_code = $jsonData['manufacturer_code'];
+        $this->district_code = $jsonData['district_code'];
+        $this->hamlet_code = $jsonData['hamlet_code'];
+        $this->state_code = $jsonData['state_code'];
+        $this->sub_district_code = $jsonData['sub_district_code'];
+        $this->village_code = $jsonData['village_code'];
+        $this->is_active = 1;
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBmcMilkType()
-    {
+    public function getBmcMilkType() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'bmc_milk_type']);
     }
-    
-    public function getTblMccPlant()
-    {
+
+    public function getTblMccPlant() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_code']);
     }
-    
-    public function getTblBmcType()
-    {
+
+    public function getTblBmcType() {
         return $this->hasOne(TblBmcType::className(), ['bmc_type_code' => 'bmc_type_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCapacity0()
-    {
+    public function getCapacity0() {
         return $this->hasOne(TblCapacity::className(), ['capacity_code' => 'capacity']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
-    {
+    public function getCreatedBy() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeletedBy()
-    {
+    public function getDeletedBy() {
         return $this->hasOne(User::className());
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getManufacturerCode()
-    {
+    public function getManufacturerCode() {
         return $this->hasOne(TblManufacturer::className(), ['id' => 'manufacturer_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
-    {
+    public function getUpdatedBy() {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
 
@@ -189,17 +177,16 @@ class TblDcsBmc extends \app\models\ChildModel
      * @inheritdoc
      * @return TblDcsBmcQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblDcsBmcQuery(get_called_class());
     }
 
-    public function getCode(){
-        $data=  $this->find()->select(["max(convert(int,bmc_code)) as bmc_code"])->one();        
-        return str_pad((int)$data['bmc_code'] + 1 , 5, '0', STR_PAD_LEFT);
+    public function getCode() {
+        $data = $this->find()->select(["max(convert(int,bmc_code)) as bmc_code"])->one();
+        return str_pad((int) $data['bmc_code'] + 1, 5, '0', STR_PAD_LEFT);
     }
-    
-      /**
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getStateCode() {
@@ -233,10 +220,43 @@ class TblDcsBmc extends \app\models\ChildModel
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getSubDistrictCode() {
         return $this->hasOne(TblSubDistricts::className(), ['sub_district_code' => 'sub_district_code']);
+    }
+
+    public function getDcsBmcData($field) {
+        return $this->find()
+                        ->where([$field => $this->$field])
+                        ->one();
+    }
+    
+    public function rlsBmc($parents = ''){
+        $where = '';
+        if(!empty($parents)){
+            $where = ['mcc_code' => $parents];
+        }
+        $rows = $this->find()
+                ->where($where)
+                ->all();
+        $bmc = [];
+        foreach($rows as $value){
+            $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
+        }
+        return $bmc;
+    }
+    
+    public function bmcUnion($parents = ''){
+        $rows = $this->find()
+                ->where(['union_code' => $parents])
+                ->all();
+        $bmc = [];
+        foreach($rows as $value){
+            $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
+        }
+        return $bmc;
     }
 }

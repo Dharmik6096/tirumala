@@ -31,7 +31,7 @@ use app\modules\dcsoperation\models\TblShift;
  * @property TblDcs $dcsCode
  * @property TblVillages $villageCode
  */
-class TblMilkDispatch extends \yii\db\ActiveRecord
+class TblMilkDispatch extends \app\models\ChildModel
 {
     /**
      * @inheritdoc

@@ -19,7 +19,7 @@ use yii\helpers\Json;
 class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $contactDetails;
-
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union'];
     /**
      * Lists all TblDcsBmc models.
      * @return mixed
@@ -183,6 +183,38 @@ class TblDcsBmcController extends \app\controllers\ChildController {
 
     protected function customRedirect() {
         return $this->redirect(['index', 'dcs' => Yii::$app->request->get('dcs'), 'dcsname' => Yii::$app->request->get('dcsname'), 'subcenter' => Yii::$app->request->get('subcenter'), 'subname' => Yii::$app->request->get('subname')]);
+    }
+    
+    public function actionBmcList(){        
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $transporter_code = $parents[0];
+                $plants = new TblDcsBmc();
+                $out = $plants->rlsBmc($parents[0]);
+
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        echo Json::encode(['output'=>'', 'selected'=>'']);
+    }
+    
+    public function actionBmcListUnion(){        
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $transporter_code = $parents[0];
+                $plants = new TblDcsBmc();
+                $out = $plants->bmcUnion($parents[0]);
+
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        echo Json::encode(['output'=>'', 'selected'=>'']);
     }
 
 }

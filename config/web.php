@@ -13,6 +13,7 @@ $config = [
     'timeZone' => 'Asia/Calcutta',
     // 'language'=>'gu',
     'components' => [
+        'session' => ['name' => 'tirumala'],
         'general' => [ 'class' => 'app\components\GeneralFunctions'],
         'dropdown' => [ 'class' => 'app\components\DropDown'],
         'label' => [ 'class' => 'app\components\GeneralLabels'],

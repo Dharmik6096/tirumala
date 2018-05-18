@@ -234,6 +234,9 @@ class LoginForm extends Model {
         Yii::$app->session->set('UserName', $user->username);
         Yii::$app->session->set('UserType', $user_type);
         Yii::$app->session->set('makerChecker', $maker_checker);
+        Yii::$app->session->set('Plant', '');
+        Yii::$app->session->set('BMC', '');
+        Yii::$app->session->set('MCC', '');
         return true;
     }
 

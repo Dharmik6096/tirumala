@@ -815,4 +815,54 @@ class SiteController extends Controller {
         $model->save(FALSE);
     }
 
+    public function actionSpGetData() {
+
+        if (isset($_POST['depdrop_parents']) && $_POST['depdrop_parents'][0] != '') {
+            $cnt = 0;
+            foreach ($_POST as $key => $val) {
+                if ($cnt == 0) {
+                    $cnt++;
+                    continue;
+                }
+                $data = explode(',', $key);
+            }
+
+            $fields[] = $data[3];
+            $fields[] = $data[4];
+            if (!empty($data[5])) {
+                array_push($fields, $data[5]);
+            }
+            $check_list = [];
+            if (!empty($data[7]) && $data[6] == 1) {
+                $check_list = explode('-', $data[7]);
+            }
+            $local_name = (!empty($data[5])) ? $data[5] : '';
+            $model_name = Yii::$app->path->define($data[0]);
+            $model = new $model_name();
+            $table_name = $model->tableName();
+            $out = NULL;
+            
+            
+            $result = \Yii::$app->db->createCommand("{CALL [sp_dropdown](:dd1,:dd2,:dd3,:dd4)}")
+                ->bindValue(':dd1', $_POST['depdrop_parents'][0])
+                ->bindValue(':dd2', '')
+                ->bindValue(':dd3', '')
+                ->bindValue(':dd4', '');
+            $records = $result->queryAll();
+
+            foreach ($records as $key => $r) {
+                if (!empty($data[5]) && !empty($r[$data[5]]))
+                    $value = $r[$data[4]] . '(' . $r[$data[5]] . ')';
+                else
+                    $value = $r[$data[4]];
+                if ($data[6] == 0 || empty($check_list) || in_array($r[$data[3]], $check_list))
+                    $out[] = array('id' => $r[$data[3]],
+                        'name' => $value);
+            }
+            echo Json::encode(['output' => $out, 'selected' => '']);
+            return;
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
+        return;
+    }
 }

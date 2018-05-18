@@ -31,6 +31,7 @@ class Grid extends Widget {
     }
 
     public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true) {
+        echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
         if (isset($searchModel->tableSchema->fullName)) {
             $table_name = $searchModel->tableSchema->fullName;
             if (Yii::$app->session->get('makerChecker') == 1) {

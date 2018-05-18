@@ -29,9 +29,10 @@ if (isset($address[1])) {
     $model->street2 = $address[1];
 }
 
-$vendor = ['NA' => 'Other', 'BIPL' => 'BIPL', 'EIPL' => 'EIPL', 'REIL' => 'REIL'];
+$vendor = [ 'EIPL' => 'EIPL', 'STELLAPPS' => 'STELLAPPS'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
+$disable = !empty($model->bmc_code) ? TRUE : FALSE;
 ?>
 
 <?php
@@ -54,6 +55,9 @@ $form = ActiveForm::begin([
     <?= Html::activeHiddenInput($model, 'destination_type') ?>
     <?= Html::activeHiddenInput($model, 'destination_code') ?>
     <?= Html::activeHiddenInput($model, 'route_code') ?>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disable); ?>
+    </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'dcs_code_ex')->textInput(['maxlength' => true]) ?>
     </div>

@@ -36,7 +36,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-
+    public $freeAccessActions = ['dcs-list'];
     /**
      * Lists all TblDcs models.
      * @return mixed
@@ -487,6 +487,8 @@ class TblDcsController extends ChildController {
         $this->model->registration_date = ($this->model->registration_date == '') ? null : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
         $this->model->effective_date = ($this->model->effective_date == '') ? null : Yii::$app->formatter->asDate($this->model->effective_date, DATE_FORMAT);
         $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
+        $this->model->mcc_plant_code = Yii::$app->general->getforeignkey($this->model->bmcCode, 'mcc_code');
+        $this->model->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
     }
 
     private function setMapping(&$modelMapping) {
@@ -772,6 +774,22 @@ class TblDcsController extends ChildController {
                     'model' => $model,
         ]);
 
+    }
+    
+    public function actionDcsList(){        
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $transporter_code = $parents[0];
+                $plants = new TblDcs();
+                $out = $plants->rlsBmcDcs($parents[0]);
+
+                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return;
+            }
+        }
+        echo Json::encode(['output'=>'', 'selected'=>'']);
     }
 
 }

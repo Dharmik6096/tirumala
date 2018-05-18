@@ -32,7 +32,7 @@ class Controls extends Component {
         else
             $url_path[] = $action;
         $url = Url::to($url_path);
-        return GhostHtml::a(Yii::t('app', '<i class="fa fa-plus"></i> Add ' . ucfirst($name)), $url, ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']);
+        return GhostHtml::a(Yii::t('app', '<i class="fa fa-plus"></i> Add ' . Yii::t('app',ucfirst($name))), $url, ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']);
     }
 
     public function save($value, $model, $class = '') {

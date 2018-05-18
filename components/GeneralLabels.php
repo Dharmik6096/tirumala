@@ -34,7 +34,7 @@ class GeneralLabels extends Component {
 
      public function title($type,$param=''){
          if($type=='list' || $type=='view')
-             return trim(ucwords($param.' '.$this->labelList('title',$type)));
+             return trim(Yii::t('app',ucwords($param)).' '.ucwords($this->labelList('title',$type)));
          else
             return trim(ucwords($this->labelList('title',$type).' '.$param));
      }

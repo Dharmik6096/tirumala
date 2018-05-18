@@ -55,74 +55,71 @@ use Yii;
  * @property string $scheme_type_code
  * @property string $is_registerd
  */
-class TblDcsHistory extends \yii\db\ActiveRecord
-{
+class TblDcsHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['created_at','created_by','updated_by', 'operation_type', 'history_created_at', 'updated_at','is_active','local_name','local_short_name','local_address','organisation_type_code','scheme_type_code','is_registered'], 'safe'],
-            [['address','bank_code','district_code','hamlet_code','route_code','state_code','sub_district_code','contact_person', 'email','phone_no','dcs_short_name','dcs_code', 'dcs_code_ex', 'mobile_no','destination_code', 'dcs_name','bank_account_no', 'ifsc', 'pan_no', 'registration_code', 'service_tax', 'tin_no','destination_type',  'dcs_type_code','allow_multi_family_member', 'is_bmc', 'bmc_code','village_code','effective_date','registration_date', 'upi_no','branch_code','union_code', 'valid_from'], 'safe'],
+            [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'local_name', 'local_short_name', 'local_address', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status'], 'safe'],
+            [['address', 'bank_code', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'contact_person', 'email', 'phone_no', 'dcs_short_name', 'dcs_code', 'dcs_code_ex', 'mobile_no', 'destination_code', 'dcs_name', 'bank_account_no', 'ifsc', 'pan_no', 'registration_code', 'service_tax', 'tin_no', 'destination_type', 'dcs_type_code', 'allow_multi_family_member', 'is_bmc', 'bmc_code', 'village_code', 'effective_date', 'registration_date', 'upi_no', 'branch_code', 'union_code', 'valid_from'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
-            /*'id' => Yii::t('app', 'ID'),
-            'address' => Yii::t('app', 'Address'),
-            'allow_multi_family_member' => Yii::t('app', 'Allow Multi Family Member'),
-            'bank_account_no' => Yii::t('app', 'Bank Accout No'),
-            'contact_person' => Yii::t('app', 'Contact Person'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'dcs_code_ex' => Yii::t('app', 'Dcs Code Ex'),
-            'dcs_name' => Yii::t('app', 'Dcs Name'),
-            'dcs_short_name' => Yii::t('app', 'Dcs Short Name'),
-            'destination_code' => Yii::t('app', 'Destination Code'),
-            'destination_type' => Yii::t('app', 'Destination Type'),
-            'effective_date' => Yii::t('app', 'Effective Date'),
-            'email' => Yii::t('app', 'Email'),
-            'history_created_at' => Yii::t('app', 'History Created At'),
-            'ifsc' => Yii::t('app', 'Ifsc'),
-            'is_active' => Yii::t('app', 'Is Active'),
-            'is_bmc' => Yii::t('app', 'Is Bmc'),
-            'mobile_no' => Yii::t('app', 'Mobile No'),
-            'operation_type' => Yii::t('app', 'Operation Type'),
-            'pan_no' => Yii::t('app', 'Pan No'),
-            'phone_no' => Yii::t('app', 'Phone No'),
-            'pincode' => Yii::t('app', 'Pincode'),
-            'registration_code' => Yii::t('app', 'Registration Code'),
-            'registration_date' => Yii::t('app', 'Registration Date'),
-            'service_tax' => Yii::t('app', 'Service Tax'),
-            'tin_no' => Yii::t('app', 'Tin No'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'bank_code' => Yii::t('app', 'Bank Code'),
-            'branch_code' => Yii::t('app', 'Branch Code'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'dcs_type_code' => Yii::t('app', 'Dcs Type Code'),
-            'district_code' => Yii::t('app', 'District Code'),
-            'hamlet_code' => Yii::t('app', 'Hamlet Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
-            'state_code' => Yii::t('app', 'State Code'),
-            'sub_district_code' => Yii::t('app', 'Sub District Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'village_code' => Yii::t('app', 'Village Code'),
-            'upi_no' => Yii::t('app', 'UPI No.'),*/
+                /* 'id' => Yii::t('app', 'ID'),
+                  'address' => Yii::t('app', 'Address'),
+                  'allow_multi_family_member' => Yii::t('app', 'Allow Multi Family Member'),
+                  'bank_account_no' => Yii::t('app', 'Bank Accout No'),
+                  'contact_person' => Yii::t('app', 'Contact Person'),
+                  'created_at' => Yii::t('app', 'Created At'),
+                  'dcs_code' => Yii::t('app', 'Dcs Code'),
+                  'dcs_code_ex' => Yii::t('app', 'Dcs Code Ex'),
+                  'dcs_name' => Yii::t('app', 'Dcs Name'),
+                  'dcs_short_name' => Yii::t('app', 'Dcs Short Name'),
+                  'destination_code' => Yii::t('app', 'Destination Code'),
+                  'destination_type' => Yii::t('app', 'Destination Type'),
+                  'effective_date' => Yii::t('app', 'Effective Date'),
+                  'email' => Yii::t('app', 'Email'),
+                  'history_created_at' => Yii::t('app', 'History Created At'),
+                  'ifsc' => Yii::t('app', 'Ifsc'),
+                  'is_active' => Yii::t('app', 'Is Active'),
+                  'is_bmc' => Yii::t('app', 'Is Bmc'),
+                  'mobile_no' => Yii::t('app', 'Mobile No'),
+                  'operation_type' => Yii::t('app', 'Operation Type'),
+                  'pan_no' => Yii::t('app', 'Pan No'),
+                  'phone_no' => Yii::t('app', 'Phone No'),
+                  'pincode' => Yii::t('app', 'Pincode'),
+                  'registration_code' => Yii::t('app', 'Registration Code'),
+                  'registration_date' => Yii::t('app', 'Registration Date'),
+                  'service_tax' => Yii::t('app', 'Service Tax'),
+                  'tin_no' => Yii::t('app', 'Tin No'),
+                  'updated_at' => Yii::t('app', 'Updated At'),
+                  'bank_code' => Yii::t('app', 'Bank Code'),
+                  'branch_code' => Yii::t('app', 'Branch Code'),
+                  'created_by' => Yii::t('app', 'Created By'),
+                  'dcs_type_code' => Yii::t('app', 'Dcs Type Code'),
+                  'district_code' => Yii::t('app', 'District Code'),
+                  'hamlet_code' => Yii::t('app', 'Hamlet Code'),
+                  'route_code' => Yii::t('app', 'Route Code'),
+                  'state_code' => Yii::t('app', 'State Code'),
+                  'sub_district_code' => Yii::t('app', 'Sub District Code'),
+                  'union_code' => Yii::t('app', 'Union Code'),
+                  'updated_by' => Yii::t('app', 'Updated By'),
+                  'village_code' => Yii::t('app', 'Village Code'),
+                  'upi_no' => Yii::t('app', 'UPI No.'), */
         ];
     }
 
@@ -130,8 +127,8 @@ class TblDcsHistory extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblDcsHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblDcsHistoryQuery(get_called_class());
     }
+
 }

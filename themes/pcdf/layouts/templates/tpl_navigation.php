@@ -32,9 +32,10 @@ echo GhostMenu::widget([
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Master <b class="caret"></b></a>',
             'items' => [
-                ['label' => Yii::t('app', 'PCDF Info'), 'url' => ['/organisation/tbl-federations/view', 'id' => Yii::$app->session->get('Federations')], 'active' => ($cntrl == 'tbl-federations')],
+//                ['label' => Yii::t('app', 'PCDF Info'), 'url' => ['/organisation/tbl-federations/view', 'id' => Yii::$app->session->get('Federations')], 'active' => ($cntrl == 'tbl-federations')],
                 ['label' => Yii::t('app', 'Union'), 'url' => $url_action, 'active' => ($cntrl == 'tbl-unions')],
                 ['label' => Yii::t('app', 'Plant'), 'url' => ['/organisation/tbl-plant/index'], 'active' => ($cntrl == 'tbl-plant')],
+                ['label' => Yii::t('app', 'Cluster'), 'url' => ['/organisation/tbl-cluster/index'], 'active' => ($cntrl == 'tbl-cluster')],
                 ['label' => Yii::t('app', 'MCC'), 'url' => ['/organisation/tbl-mcc-plant/index'], 'active' => ($cntrl == 'tbl-mcc-plant')],
                 ['label' => Yii::t('app', 'BMC'), 'url' => ['/organisation/tbl-dcs-bmc/index'], 'active' => ($cntrl == 'tbl-dcs-bmc')],
                 //['label' => Yii::t('app', 'Route'), 'url' => ['/organisation/tbl-routes/index'], 'active' => ($cntrl == 'tbl-routes')],
@@ -96,7 +97,7 @@ echo GhostMenu::widget([
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
-        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
+//        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
         [
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports <b class="caret"></b></a>',
@@ -208,7 +209,7 @@ echo GhostMenu::widget([
                         ['label' => 'Custom Import (Update)', 'url' => ['/customimport/default/update-by-import'], 'active' => ($cntrl == 'customimport-update')],
                         ['label' => 'Escalation', 'url' => ['/email/tbl-email-rule-master/index']],
                         ['label' => 'Union Credit', 'url' => ['/payment/tbl-union-credit-limit/index']],
-                        ['label' => 'Member Credit', 'url' => ['/payment/tbl-member-credit-limit/index']],
+//                        ['label' => 'Member Credit', 'url' => ['/payment/tbl-member-credit-limit/index']],
                     ]
                 ],
                 [
@@ -220,20 +221,20 @@ echo GhostMenu::widget([
                         ['label' => 'Member Acknowledgement', 'url' => ['/dcsoperation/tbl-member-download/index']],
                     ]
                 ],
-                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],
-                [
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">BIPL Ack <b class="caret"></b></a>',
-                    'items' => [
-                        ['label' => 'Rate Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'rate']],
-                        ['label' => 'Member Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'member']],
-                    ]
-                ],
+//                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],
+//                [
+//                    'options' => ['class' => 'dropdown-submenu'],
+//                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">BIPL Ack <b class="caret"></b></a>',
+//                    'items' => [
+//                        ['label' => 'Rate Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'rate']],
+//                        ['label' => 'Member Downloaded', 'url' => ['/bipl/bipl-change-acknowledgement/index', 'flag' => 'member']],
+//                    ]
+//                ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Collection Files<b class="caret"></b></a>',
                     'items' => [
-                        ['label' => 'BIPL Files Process', 'url' => ['/collection/tbl-processed-files/index']],
+//                        ['label' => 'BIPL Files Process', 'url' => ['/collection/tbl-processed-files/index']],
                         ['label' => 'EIPL Files Process', 'url' => ['/eipl-packet/create']],
                     ]
                 ],
