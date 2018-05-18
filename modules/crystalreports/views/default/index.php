@@ -203,7 +203,34 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                         <div class="col-sm-3">
                             <?= $form->field($model, 'p_no_of_pouring_day')->textInput(['maxlength' => true]) ?>
                         </div>  
-                    <?php }
+                    <?php } 
+                    if (in_array($value, array('mccid'))) { ?>
+                <div class="col-sm-3">
+                    <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant code'); ?>
+                </div>
+                <div class="col-sm-3">
+                    <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', 'mccid', 'MCC'); ?>
+                </div>
+                <?php 
+                    }
+                    if (in_array($value, array('bmcid'))) { ?>
+                <div class="col-sm-3">
+                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mccid', 'bmcid', 'BMC'); ?>
+                </div>
+                <?php 
+                    }
+                    if (in_array($value, array('vlccid'))) { ?>
+                <div class="col-sm-3">
+                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmcid', 'vlccid', 'Society'); ?>
+                </div>
+                <?php 
+                    }
+                    if (in_array($value, array('routeid'))) { ?>
+                <div class="col-sm-3">
+                    <?= Yii::$app->dropdown->depend_dropdown('routemapping', $model, $form, 'reportsmodel-union_code','','Route', 'routeid'); ?>
+                </div>
+                <?php 
+                    }
                 }
                 if (isset($data['report_type'])) {
                     echo $form->field($model, 'report_type', [ 'options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);

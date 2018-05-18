@@ -20,6 +20,7 @@ class ReportsModel extends Model {
     public $p_is_bank;
     public $state_code, $p_district_code, $p_sub_district_code, $p_block_name;
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty, $p_village_code;
+    public $mccid,$bmcid,$vlccid,$routeid,$date1,$date2,$plant_code;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -53,6 +54,7 @@ class ReportsModel extends Model {
             [['union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
             [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
             [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
+            [['union_code', 'mccid', 'bmcid', 'vlccid', 'routeid'], 'required', 'on' => 'BmcCollection'],
             [['p_report_name'], 'safe'],
             [['p_no_of_pouring_day'], 'integer'],
             [['p_pouring_qty'], 'double'],
