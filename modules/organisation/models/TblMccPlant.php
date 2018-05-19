@@ -237,4 +237,8 @@ class TblMccPlant extends \app\models\ChildModel {
         return $mcc;
     }
 
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
 }

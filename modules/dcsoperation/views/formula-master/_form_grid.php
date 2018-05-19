@@ -4,13 +4,6 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 ?>
 
-<div class="grid-search">
-<?php
-if (Yii::$app->session->get('organizations_type') !== 'UNION' || count(explode(',', Yii::$app->session->get('Unions')))>1)
-    echo $this->render('_search', ['model' => $searchModel]); 
-?>
-</div>
-
 <?php
 
 $attribute = [    

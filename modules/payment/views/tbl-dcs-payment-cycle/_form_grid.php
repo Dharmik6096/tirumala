@@ -6,15 +6,6 @@ use yii\widgets\Pjax;
 use yii\helpers\Url;
 ?>
 
-<div class="grid-search clearfix">
-    <?php
-    if (Yii::$app->session->get('organizations_type') !== 'UNION')
-        echo $this->render('_search', ['model' => $searchModel]);
-    ?>
-</div>
-<div class="grid-search">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
 <?php
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],    

@@ -51,7 +51,8 @@ class TblDcsPaymentCycleSearch extends TblDcsPaymentCycle
         ]);
 
         $this->load($params);
-
+        Yii::$app->general->filterByOrg($query,$this);
+        
         if(Yii::$app->session->get('organizations_type')=='UNION')
         {
             $query->andWhere(['union_code'=>  explode(',', Yii::$app->session->get('Unions'))]);

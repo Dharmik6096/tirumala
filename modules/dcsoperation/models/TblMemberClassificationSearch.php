@@ -52,7 +52,7 @@ class TblMemberClassificationSearch extends TblMemberClassification
         ]);
 
         $this->load($params);
-        
+        Yii::$app->general->filterByOrg($query, $this);
         if (Yii::$app->general->organizationSessionCheck()){
             
             $query->leftJoin('tbl_member_classification_local', '`tbl_member_classification`.`member_classification_code` = `tbl_member_classification_local`.`member_classification_code` '

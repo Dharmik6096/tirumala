@@ -126,19 +126,20 @@ class DropDown extends Component {
 
     public function union($model, $form, $depends, $name = 'union_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/union-list', 'Select Union', $multiple/* ,$model->$name */);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/union-list', Yii::t('app', 'Select Union'), $multiple/* ,$model->$name */);
     }
 
     public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false) {
         $this->setClass($form, $name);
         $disable = $readonly ? 'disabled' : false;
+        $islable = $islable ? Yii::t('app', $islable) : false;
         $unionModel = new \app\modules\organisation\models\TblUnions();
         $selected = '';
         if (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) {
             $selected = Yii::$app->session->get('Unions');
         }
         $model->{$name} = !empty($selected) ? $selected : $model->{$name};
-        echo $form->field($model, $name)->dropDownList($unionModel->getActiveUnions(1), ['prompt' => 'Select Union', 'disabled' => $disable])->label($islable);
+        echo $form->field($model, $name)->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
                    $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
@@ -226,7 +227,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', 'Select Society', $multiple);
     }
-    
+
     public function bmcDropdown($model, $form, $depends, $name = 'bmc_code', $islable = '', $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list-union', 'Select BMC', $multiple, $model->$name, $readonly);

@@ -4,10 +4,6 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 ?>
 
-<div class="grid-search">
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
-</div>
-
 <?php
 $attribute = [
     //'threshold_code',

@@ -10,13 +10,12 @@ use app\modules\organisation\models\TblVehicleMaster;
 /**
  * TblVehicleMasterSearch represents the model behind the search form about `app\modules\organisation\models\TblVehicleMaster`.
  */
-class TblVehicleMasterSearch extends TblVehicleMaster
-{
+class TblVehicleMasterSearch extends TblVehicleMaster {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['vehicle_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'wef_date', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'expiry_date', 'average', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'delete_at', 'delete_by'], 'safe'],
             [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active'], 'integer'],
@@ -26,8 +25,7 @@ class TblVehicleMasterSearch extends TblVehicleMaster
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblVehicleMasterSearch extends TblVehicleMaster
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblVehicleMaster::find();
 
         // add conditions that should always apply here
@@ -50,7 +47,7 @@ class TblVehicleMasterSearch extends TblVehicleMaster
         ]);
 
         $this->load($params);
-
+        Yii::$app->general->filterByOrg($query, $this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -73,20 +70,21 @@ class TblVehicleMasterSearch extends TblVehicleMaster
         ]);
 
         $query->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
-            ->andFilterWhere(['like', 'registration_no', $this->registration_no])
-            ->andFilterWhere(['like', 'applicable_rto', $this->applicable_rto])
-            ->andFilterWhere(['like', 'driver_name', $this->driver_name])
-            ->andFilterWhere(['like', 'driver_contact_no', $this->driver_contact_no])
-            ->andFilterWhere(['like', 'driving_license_number', $this->driving_license_number])
-            ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
-            ->andFilterWhere(['like', 'mapped_route', $this->mapped_route])
-            ->andFilterWhere(['like', 'rc_book_no', $this->rc_book_no])
-            ->andFilterWhere(['like', 'average', $this->average])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'delete_by', $this->delete_by]);
+                ->andFilterWhere(['like', 'registration_no', $this->registration_no])
+                ->andFilterWhere(['like', 'applicable_rto', $this->applicable_rto])
+                ->andFilterWhere(['like', 'driver_name', $this->driver_name])
+                ->andFilterWhere(['like', 'driver_contact_no', $this->driver_contact_no])
+                ->andFilterWhere(['like', 'driving_license_number', $this->driving_license_number])
+                ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
+                ->andFilterWhere(['like', 'mapped_route', $this->mapped_route])
+                ->andFilterWhere(['like', 'rc_book_no', $this->rc_book_no])
+                ->andFilterWhere(['like', 'average', $this->average])
+                ->andFilterWhere(['like', 'union_code', $this->union_code])
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'delete_by', $this->delete_by]);
 
         return $dataProvider;
     }
+
 }

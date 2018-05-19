@@ -50,7 +50,7 @@ class TblFormulaMasterSearch extends TblFormulaMaster
         ]);
 
         $this->load($params);
-        
+        Yii::$app->general->filterByOrg($query,$this);
         if(Yii::$app->session->get('Unions')!=='' && empty($this->union_code)){
             $query->andFilterWhere([ 'tbl_formula.union_code'=>explode(',',Yii::$app->session->get('Unions'))]);
         }

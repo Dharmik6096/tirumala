@@ -596,7 +596,7 @@ class TblDcs extends ChildModel {
             }
 
             public function rlsBmcDcs($parents = '') {
-                $rows = $this->find()->where(['route_code' => $parents])->all();
+                $rows = $this->find()->where(['bmc_code' => $parents])->all();
                 $bmc = [];
                 foreach ($rows as $value) {
                     $bmc[] = array('id' => $value->dcs_code, 'name' => $value->dcs_name);

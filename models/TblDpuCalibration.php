@@ -22,7 +22,7 @@ use app\modules\dcsoperation\models\TblShift;
  * @property TblDcs $dcsCode
  * @property TblAnimalType $milkTypeCode
  */
-class TblDpuCalibration extends \yii\db\ActiveRecord
+class TblDpuCalibration extends ChildModel
 {
     /**
      * @inheritdoc

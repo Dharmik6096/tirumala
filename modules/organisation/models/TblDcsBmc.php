@@ -233,30 +233,35 @@ class TblDcsBmc extends \app\models\ChildModel {
                         ->where([$field => $this->$field])
                         ->one();
     }
-    
-    public function rlsBmc($parents = ''){
+
+    public function rlsBmc($parents = '') {
         $where = '';
-        if(!empty($parents)){
+        if (!empty($parents)) {
             $where = ['mcc_code' => $parents];
         }
         $rows = $this->find()
                 ->where($where)
                 ->all();
         $bmc = [];
-        foreach($rows as $value){
+        foreach ($rows as $value) {
             $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
         }
         return $bmc;
     }
-    
-    public function bmcUnion($parents = ''){
+
+    public function bmcUnion($parents = '') {
         $rows = $this->find()
                 ->where(['union_code' => $parents])
                 ->all();
         $bmc = [];
-        foreach($rows as $value){
+        foreach ($rows as $value) {
             $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
         }
         return $bmc;
     }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['bmc_code' => 'bmc_code']);
+    }
+
 }

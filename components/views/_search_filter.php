@@ -99,6 +99,50 @@ if (!empty($filter_data)) {
                 </div>
             <?php } ?>
 
+            <?php
+            if (in_array('Shift', $filters)) {
+                $f_cnt++
+                ?>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'Shift'); ?>
+                </div>
+            <?php } ?>
+
+            <?php
+            if (in_array('shift_id', $filters)) {
+                $f_cnt++
+                ?>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift_id'); ?>
+                </div>
+            <?php } ?>
+
+            <?php
+            if (in_array('shift_code', $filters)) {
+                $f_cnt++
+                ?>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift_code'); ?>
+                </div>
+            <?php } ?>
+
+            <?php
+            if (in_array('unit', $filters)) {
+                $f_cnt++
+                ?>
+                <div class="col-sm-2">
+                    <?= Yii::$app->controls->unit_conversion($model, [1, 2], 1, 'Select capacity unit'); ?>
+                </div>
+            <?php } ?>
+
+            <?php
+            if (in_array('transporter_code', $filters)) {
+                $f_cnt++
+                ?>
+                <div class="col-sm-2">
+                    <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, $field_class . '-f_union_code', 'form-group col-sm-2 padding-right-5 padding-left-0'); ?>
+                </div>
+            <?php } ?>
 
             <?php if ($f_cnt > 0) { ?>
                 <div class="col-sm-2">

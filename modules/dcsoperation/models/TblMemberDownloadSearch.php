@@ -41,7 +41,7 @@ class TblMemberDownloadSearch extends TblMemberDownload {
      */
     public function search($params) {
         $query = TblMemberDownload::find();
-        $query->joinWith(['dcsCode','dcsCode.unionCode']);
+        $query->joinWith(['dcsCode']);
         $query->where(['is_download'=>1]);
         // add conditions that should always apply here
 
@@ -50,10 +50,11 @@ class TblMemberDownloadSearch extends TblMemberDownload {
         ]);
 
         $this->load($params);
-        if (Yii::$app->session->get('Unions') !== '' && empty($this->union_code))
-            $query->andFilterWhere([ 'tbl_unions' . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-        else
-            $query->andwhere(['tbl_unions' . '.union_code' => $this->union_code]);
+        Yii::$app->general->filterByOrg($query,$this,'tbl_dcs');
+//        if (Yii::$app->session->get('Unions') !== '' && empty($this->union_code))
+//            $query->andFilterWhere([ 'tbl_unions' . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+//        else
+//            $query->andwhere(['tbl_unions' . '.union_code' => $this->union_code]);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
