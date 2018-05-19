@@ -22,11 +22,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '202 - Society Coll
 
             <?php
             $attribute = [
-                'union_name',
+                ['attribute'=>'union_name', 'label' => Yii::t('app', 'Union Name')],
                 'district_name',
-                'society_code',
-                'dcs_code_ex',
-                'society_name',
+                ['attribute'=>'society_code', 'label' => Yii::t('app', 'Society Code')],
+                ['attribute'=>'dcs_code_ex', 'label' => Yii::t('app', 'Old Soc. Code')],
+                ['attribute'=>'society_name', 'label' => Yii::t('app', 'Society Name')],
                 'first_date_of_data_received',
                 'last_date_of_data_received',
                 'total_shift',

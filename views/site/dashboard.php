@@ -31,7 +31,7 @@ $cal_data= json_encode($cal_data);
     <div class="panel panel-default">
         <div class="panel-heading text-center">
             <h4 class="panel-title">
-                Data for PCDF (<?= Yii::$app->controls->view_date($date) ?>)
+                <?= Yii::t('app', 'Data for PCDF').' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
                 <a data-toggle="collapse" href="#collapse1" class="setting"><i class="fa fa-gear"></i></a>
             </h4>
         </div>
@@ -122,7 +122,7 @@ $form = ActiveForm::begin([
                             </thead>
                             <thead>
                                 <tr>
-                                    <th>Union</th>
+                                    <th><?= Yii::t('app', 'Union') ?></th>
                                     <th>Villages</th>
                                     <th>No of Pourers</th>
                                     <th>Monthly Milk Collection(ltr)</th>
@@ -149,7 +149,7 @@ $form = ActiveForm::begin([
                     <div class="col-sm-3">
                         <div class="collection">
                             <div class="tbl-cell">
-                                <p>No. of Societies</p>
+                                <p><?= Yii::t('app', 'No. of Societies') ?></p>
                                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
                                 <h3><?= !empty($results) ? $results[0]['Dcs_Count'] : 0 ?></h3>
                                 <p><b>M:</b> <?= !empty($results) ? $results[0]['Dcs_Count_M'] : 0 ?> | <b>E:</b> <?= !empty($results) ? $results[0]['Dcs_Count_E'] : 0 ?></p>

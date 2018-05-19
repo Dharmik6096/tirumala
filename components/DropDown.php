@@ -150,6 +150,7 @@ class DropDown extends Component {
 
     public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
         $check_list = '';
+        $label = $label ? Yii::t('app', $label) : false;
         if (!empty(Yii::$app->session->get('Dcs'))) {
             $check_list = explode(',', Yii::$app->session->get('Dcs'));
             $check_list = implode('-', $check_list);
@@ -169,7 +170,7 @@ class DropDown extends Component {
         if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-dcs/route-dcs-list');
         } else {
-            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', 'Select Dcs', '', '', $readonly);
+            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', Yii::t('app', 'Select Dcs'), '', '', $readonly);
         }
     }
 
@@ -210,22 +211,22 @@ class DropDown extends Component {
 
     public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', 'Select Plant', $multiple);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple);
     }
 
     public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', 'Select MCC', $multiple);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple);
     }
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', 'Select BMC', $multiple);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple);
     }
 
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', 'Select Society', $multiple);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple);
     }
 
     public function bmcDropdown($model, $form, $depends, $name = 'bmc_code', $islable = '', $multiple = false, $readonly = false) {
@@ -497,7 +498,7 @@ class DropDown extends Component {
             'sub-center' => ['name' => 'sub_center_code', 'fields' => 'sub_center_code,sub_center_name,local_name', 'prompt' => 'Select Sub Center', 'model' => 'TblSubCenter', 'depend' => 'dcs_code'],
             'destination' => ['name' => 'destination_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select Destination', 'model' => 'TblDcsBmc', 'depend' => 'union_code'],
             'bmc' => ['name' => 'bmc_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select BMC', 'model' => 'TblDcsBmc', 'depend' => 'union_code'],
-            'dcs' => ['name' => 'dcs_code', 'fields' => 'dcs_code,dcs_name,local_name', 'prompt' => 'Select Society', 'model' => 'TblDcs', 'depend' => 'union_code', 'checkValid'],
+            'dcs' => ['name' => 'dcs_code', 'fields' => 'dcs_code,dcs_name,local_name', 'prompt' => Yii::t('app', 'Select Society'), 'model' => 'TblDcs', 'depend' => 'union_code', 'checkValid'],
             'plant' => ['name' => 'plant_code', 'fields' => 'plant_code,name,local_name', 'prompt' => 'Select Plant', 'model' => 'TblPlant', 'depend' => 'union_code', 'checkValid'],
             'mcc' => ['name' => 'mcc_code', 'fields' => 'mcc_plant_code,name,local_name', 'prompt' => 'Select MCC', 'model' => 'TblMccPlant', 'depend' => 'union_code', 'checkValid'],
             'member' => ['name' => 'member_code', 'fields' => 'member_code,member_name,local_name', 'prompt' => 'Select Member', 'model' => 'TblMember', 'depend' => 'dcs_code'],
@@ -517,7 +518,7 @@ class DropDown extends Component {
             'milk_quality_type_code' => ['name' => 'milk_quality_type_code', 'fields' => 'milk_quality_type_code,milk_quality_type_name,local_name', 'prompt' => 'Select Milk Quality Type', 'model' => 'TblMilkQualityType'],
             //'milk_type'=>['name'=>'milk_quality_type_code','fields'=>'animal_type_code,animal_type_name','prompt'=>'Select Type','model'=>'TblAnimalType'],
             'milk_type_code' => ['name' => 'milk_type_code', 'fields' => 'animal_type_code,animal_type_name,local_name', 'prompt' => 'Select Milk Type', 'model' => 'TblAnimalType'],
-            'dcs_type_code' => ['name' => 'dcs_type_code', 'fields' => 'dcs_type_code,dcs_type_name,local_name', 'prompt' => 'Select Society Type', 'model' => 'TblDcsTypes'],
+            'dcs_type_code' => ['name' => 'dcs_type_code', 'fields' => 'dcs_type_code,dcs_type_name,local_name', 'prompt' => Yii::t('app', 'Select Society Type'), 'model' => 'TblDcsTypes'],
             'rate_type_code' => ['name' => 'rate_type_code', 'fields' => 'code,rate_type', 'prompt' => 'Select Rate Type', 'model' => 'TblRateType'],
             'rate_gen_method_code' => ['name' => 'rate_gen_method_code', 'fields' => 'code,method', 'prompt' => 'Select Rate Method', 'model' => 'TblRateGenerateMethod'],
             'shift_applicability' => ['name' => 'shift_applicability', 'fields' => 'id,shift', 'prompt' => 'Select Shift', 'model' => 'TblShift'],

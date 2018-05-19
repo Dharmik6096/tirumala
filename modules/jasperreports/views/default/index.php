@@ -50,7 +50,7 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                             ?>
                             <div class="col-sm-2">
                                 <?php
-                                echo Yii::$app->dropdown->route_dcs($model, $form, 'reportsmodel-p_route_code', 'p_dcs_code', 'Society', false, $allowmulti, $id);
+                                echo Yii::$app->dropdown->route_dcs($model, $form, 'reportsmodel-p_route_code', 'p_dcs_code', Yii::t('app', 'Society'), false, $allowmulti, $id);
                                 ?>
                             </div>
                         <?php } else { ?>

@@ -75,14 +75,14 @@ $attribute = [
         'value' => function($model){ isset($model->societyVendors) ? $vendor = $model->societyVendors->vendor_code : $vendor = 'Other';  return $vendor; },
         'visible' => false, 'filter' => false],
 // Contact Detail
-    ['label' => 'Society Secretory', 'visible' => false, 'filter' => false,
+    ['label' => Yii::t('app', 'Society Secretory'), 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society');
             isset($detail->firstname) ? $detail = $detail->firstname . ' ' . $detail->lastname . ' ' . $detail->surname : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Society Secretory Hindi Name', 'visible' => false, 'filter' => false,
+    ['label' => Yii::t('app', 'Society Secretory Hindi Name'), 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society');
             isset($detail->local_firstname) ? $detail = $detail->local_firstname . ' ' . $detail->local_lastname . ' ' . $detail->local_surname : $detail = '';

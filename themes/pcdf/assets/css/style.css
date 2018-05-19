@@ -46,7 +46,7 @@ h1, h2, h3, h4, h5, h6{
     font-weight: 500;
 }
 a{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
 }
 a:hover{
     text-decoration: none;
@@ -143,15 +143,21 @@ ul{
     line-height: 40px !important;
 }
 .btn-default{
-    background-color: #EEEEEE !important;
-    color: rgba(0,0,0, 0.87) !important;
+    background: -moz-linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: -webkit-linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%) !important;
+    color: #fff !important;
 }
 .btn-primary, .pgc-modal .modal-footer .btn-default{
-    background-color: #3B3E47 !important;
+    background: -moz-linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: -webkit-linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%) !important;
     color: #fff !important;
 }
 .btn-danger{
-    background-color: #790000 !important;
+    background: -moz-linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: -webkit-linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: linear-gradient(to top, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%) !important;
     color: #fff !important;
 }
 .btn-success:hover {
@@ -192,7 +198,7 @@ ul{
     padding-right: 5px;
 }
 .text-danger{
-    color: #790000 !important;
+    color: rgba(122, 35, 28, 1) !important;
 }
 .text-info{
     color: #607188;
@@ -204,7 +210,7 @@ ul{
     background-color: #eee;
 }
 .bg-danger {
-    background-color: #790000;
+    background-color: rgba(0, 0, 0, 0.7);
 }
 .bg-info{
     background-color: #607188;
@@ -219,9 +225,11 @@ ul{
 }
 /*main menu*/
 .menu-wrap{
-    background-color: #3B3E47;
-    -webkit-box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.5), 0 1px 6px 0 rgba(0, 0, 0, 0.5);
-    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.5), 0 1px 6px 0 rgba(0, 0, 0, 0.5);
+    background: -moz-linear-gradient(to right, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: -webkit-linear-gradient(to right, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%);
+    background: linear-gradient(to right, rgba(122, 35, 28, 0.5) 0%, rgba(122, 35, 28, 0.8) 100%) !important;
+    -webkit-box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1);
 }
 .menu-wrap a{
     color: #fff;
@@ -235,7 +243,8 @@ ul{
     margin-left: 5px;
 }
 .navbar .dropdown-menu li > a:hover, .navbar.navbar-default .dropdown-menu li > a:hover, .navbar .dropdown-menu li > a:focus, .navbar.navbar-default .dropdown-menu li > a:focus{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
+    background: rgba(122, 35, 28, 0.4);
 }
 .dropdown-menu{
     border-radius: 2px;
@@ -249,7 +258,7 @@ ul{
     color: #3B3E47;
 }
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus{
-    background-color: #790000;
+    background-color: rgba(122, 35, 28, 0.8);
     color: #fff !important;
 }
 .dropdown-submenu {
@@ -290,7 +299,7 @@ h5 .badge{
     line-height:1.1;
     padding: 4px 7px 3px;
     border-radius: 3px;
-    background: #790000;
+    background: rgba(0, 0, 0, 0.7);
 }
 /* sidebar layout */
 @media (min-width: 992px){
@@ -342,14 +351,14 @@ h5 .badge{
     text-align: center;
     border: 1px solid transparent;
     background-color: #fff;
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
     border-radius: 50%;
     margin-right: 5px;
     font-size: 13px;
     transition: all 0.3s ease;
 }
 .panel-button ul li .btn:hover{
-    background-color: #3b3e47 !important;
+    background-color: rgba(31, 114, 162, 0.8) !important;
 }
 .panel-button ul li .btn:hover i{
     color: #3b3e47;
@@ -360,9 +369,9 @@ h5 .badge{
     margin-bottom: 20px;
 }
 .panel-default .panel-heading{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
     background-color: #fff !important;
-    border-bottom: 1px solid #790000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.7);
     font-size: 18px;
     font-weight: 600;
     /*text-transform: uppercase;*/
@@ -406,7 +415,7 @@ h5 .badge{
     border-bottom: 1px solid #eee;
 }
 .panel-default .panel-heading .dropdown-menu li a:hover{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
 }
 .panel-default .panel-heading .dropdown-menu li a span{
     float: none !important;
@@ -589,7 +598,7 @@ td.action-cell a i{
     margin: 2px 0;
 }
 td.action-cell a:hover i{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
 }
 .kv-panel-before .btn{
     background-color: #EEEEEE;
@@ -629,8 +638,8 @@ td.action-cell a:hover i{
 .pagination > .active > span:hover, 
 .pagination > .active > a:focus, 
 .pagination > .active > span:focus{
-    background-color: #790000;
-    border-color: #790000;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-color: rgba(0, 0, 0, 0.7);
 }
 .table-input td .form-control{
     background-color: transparent;
@@ -691,11 +700,11 @@ select[multiple]{
 .form-control:focus,
 .has-error .form-control{
     border-color: #ddd;
-    border-bottom-color: #790000;
-    box-shadow: 0px 1px 0px #790000;
+    border-bottom-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.7);
 }
 .has-error .form-control{
-    border-color: #790000;
+    border-color: rgba(0, 0, 0, 0.7);
 }
 .disabled .form-control{
     background-color: #eee;
@@ -751,7 +760,7 @@ form .checkbox input[type="checkbox"]{
 }
 form .checkbox input[type="checkbox"]:focus + label:before,
 form .checkbox input[type="checkbox"]:focus + span:before{
-    border: 2px solid #790000;
+    border: 2px solid rgba(0, 0, 0, 0.7);
 }
 form .checkbox input[type="checkbox"]:checked + label:after,
 form .checkbox input[type="checkbox"]:checked + span:after{
@@ -764,7 +773,7 @@ form .checkbox input[type="checkbox"]:checked + span:after{
     width: 17px;
     text-align: center;
     font-size: 11px;
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
 }
 
 .checkbox label.disabled{
@@ -788,7 +797,7 @@ form .checkbox input[type="checkbox"]:checked + span:after{
     margin-bottom: 0;
 }
 .has-error .help-block{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
 }
 .checkbox .help-block{
     height: 0;
@@ -817,7 +826,7 @@ input[type="hidden"] + .help-block{
     color: #fff;
     font-size: 25px;
     margin-bottom: 0px;
-    background-color: #790000;
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 25px 0px 45px;
 }
 .dash .user-info h1 span{
@@ -831,12 +840,12 @@ input[type="hidden"] + .help-block{
 }
 .dash .user-info .user-content h2 i{
     margin: -30px 0 0;
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
     font-size: 40px;
     border-radius: 50%;
     height: 80px;
     width: 80px;
-    border: 1px solid #790000;
+    border: 1px solid rgba(0, 0, 0, 0.7);
     line-height: 80px;
     background-color: #fff;
 }
@@ -860,9 +869,9 @@ input[type="hidden"] + .help-block{
 }
 .error-summary{
     background: #fff5f5;
-    border-left: 2px solid #790000;
+    border-left: 2px solid rgba(0, 0, 0, 0.7);
     padding: 5px 10px;
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
     font-size: 13px;
     margin-bottom: 20px;
 }
@@ -997,7 +1006,7 @@ input[type="hidden"] + .help-block{
 
 .top span.clear {
     float: right;
-    background: #790000;
+    background: rgba(0, 0, 0, 0.7);
     box-shadow: 0px 4px #4b0000;
     color: white;
 }
@@ -1027,7 +1036,7 @@ input[type="hidden"] + .help-block{
 
 .top span.clear:hover {
     background: #981b1b;
-    box-shadow: 0px 4px #790000;
+    box-shadow: 0px 4px rgba(0, 0, 0, 0.7);
     color: white;
 }
 .top span.bkspc:hover {
@@ -1135,7 +1144,7 @@ input[type="hidden"] + .help-block{
     border-radius: 2px 2px 0 0;
 }
 .modal-header{
-    background-color: #790000;
+    background-color: rgba(0, 0, 0, 0.7);
     color: #fff;
 }
 .login-content{
@@ -1192,7 +1201,7 @@ input[type="hidden"] + .help-block{
 }
 .dcs-city i{
     margin-right: 10px;
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
 }
 .dcs-city b{
     font-weight: 500;
@@ -1330,12 +1339,12 @@ footer p{
     display: block;
     width: 30px;
     margin-left: 45px;
-    background: #790000;
+    background: rgba(0, 0, 0, 0.7);
     position: absolute;
     bottom: 0;
 }
 #chart #bars li .bar:hover {
-    background: #790000;
+    background: rgba(0, 0, 0, 0.7);
     cursor: pointer;
 }
 #chart #bars li .bar:hover:before {
@@ -1362,7 +1371,7 @@ footer p{
 }
 .milk-collection thead{
     border: none;
-    background-color: #790000;
+    background-color: rgba(0, 0, 0, 0.7);
 }
 .milk-collection .table > thead > tr > th{
     color: #fff;
@@ -1406,7 +1415,7 @@ footer p{
     margin-bottom: 5px;
 }
 .collection h3{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
     margin-bottom: 0;
 }
 .collection h4{
@@ -1461,7 +1470,7 @@ footer p{
     margin: 0 0 5px;
 }
 .dashboard-news > span{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
 }
 .dashboard-news > span i{
     margin-right: 5px;
@@ -1475,7 +1484,7 @@ footer p{
 .dashboard-title{
     position: relative;
     padding: 10px 15px;
-    background-color: #790000;
+    background-color: rgba(0, 0, 0, 0.7);
     color: #ffffff;
     font-weight: 500;
 }
@@ -1537,7 +1546,7 @@ footer p{
     margin: 15px 0;
 }
 .fc-header-toolbar{
-    background-color: #790000;
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 10px 15px 8px;
     margin-bottom: 0 !important;
     border-bottom: 1px solid #fff;
@@ -1602,7 +1611,7 @@ footer p{
     margin-right: 30px;
 }
 .blog-desc h4{
-    color: #790000;
+    color: rgba(0, 0, 0, 0.7);
     font-size: 20px;
     margin: 0 0 5px;
 }
@@ -1870,11 +1879,11 @@ ul.orderable label.checked {
 {
     font-size: 16px;
 }
-.bootstrap-dialog.type-warning .modal-header {background-color: #790000;}
-.bootstrap-dialog.type-warning .btn-warning {background-color: #790000;}
+.bootstrap-dialog.type-warning .modal-header {background-color: rgba(0, 0, 0, 0.7);}
+.bootstrap-dialog.type-warning .btn-warning {background-color: rgba(0, 0, 0, 0.7);}
 
 .cal-header {
-    background: #790000;
+    background: rgba(0, 0, 0, 0.7);
     display: block;
     color: #fff;
     font-size: 14px;
@@ -2030,4 +2039,51 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 .kv-expand-icon-cell:hover{
     background-color: #dedede !important;
     color: #000 !important;
+}
+
+.grid-search {
+    position: relative !important;
+    width: calc(100% - 220px) !important;
+}
+
+.navbar-brand img {
+    height: 44px;
+}
+
+.navbar-brand {
+    padding-top: 3px;
+}
+
+
+.hide_drop_box .dropzone{
+    min-height:0 !important;
+    border: none !important;
+}
+
+.hide_drop_box .dropzone .dz-default.dz-message {
+    background-image: none;
+    position: relative;
+}
+
+.hide_drop_box #mainDrop {
+    max-height: 170px;
+    padding: 0;
+    margin-top: 64px;
+}
+
+
+.hide_drop_box .dz-preview.dz-processing.dz-image-preview {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    margin-top: -120px;
+    margin-left: 22px;
+}
+
+.padding-0 {
+    padding: 0;
+}
+
+.img-responsive {
+    max-height: 150px;
 }

@@ -20,8 +20,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '214 - DPMCU Workin
             <?php
             $attribute = [
                 ['attribute' => 'vendor_code', 'filter' => false],
-                ['attribute' => 'union_code', 'filter' => false],
-                ['attribute' => 'U_Short_Name', 'filter' => false],
+                ['attribute' => 'union_code', 'label' => Yii::t('app', 'Union Code'), 'filter' => false],
+                ['attribute' => 'U_Short_Name', 'label' => Yii::t('app', 'U Short Name'), 'filter' => false],
                 ['attribute' => 'DCS_Installed', 'filter' => false,'label'=>Yii::t('app', 'DCS Installed')],
                 ['attribute' => 'InActiveD_DCS', 'filter' => false,'label'=>Yii::t('app', 'DCS Collection Stopped')],
                 ['attribute' => 'Data_Received_Dcs', 'filter' => false,'label'=>Yii::t('app', 'DCS Data Received')],
