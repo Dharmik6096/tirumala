@@ -12,7 +12,7 @@ if (!empty($filter_data)) {
     $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
     $filters = $filter_data['filter'];
     $count = count($filters);
-    if (!empty($filters)) {
+    if (!empty($filters) && Yii::$app->controller->action->id == $aciton[0]) {
         $f_cnt = 0;
         $form = \yii\widgets\ActiveForm::begin([
                     'action' => $aciton,
