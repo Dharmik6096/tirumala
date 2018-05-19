@@ -53,12 +53,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
         $this->load($params);
         $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this);
-        if(Yii::$app->session->get('Unions')!=='' && empty($this->union_code)){
-            $query->andFilterWhere([ 'tbl_route_mapping.union_code'=>explode(',',Yii::$app->session->get('Unions'))]);
-        }
-        else{
-            $query->andFilterWhere(['tbl_route_mapping.union_code'=> $this->union_code]);
-        }
+        
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

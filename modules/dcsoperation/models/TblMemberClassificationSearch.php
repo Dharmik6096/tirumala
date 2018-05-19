@@ -63,12 +63,6 @@ class TblMemberClassificationSearch extends TblMemberClassification
         
         $query->joinWith(['unionCode.federationCode']);        
         
-        if(Yii::$app->session->get('Unions')!==''){
-            $query->andFilterWhere([ 'tbl_member_classification.union_code'=>explode(',',Yii::$app->session->get('Unions'))]);
-        }else
-            $query->andFilterWhere([ 'tbl_member_classification.union_code'=>$this->union_code]);
-        
-
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -84,8 +78,7 @@ class TblMemberClassificationSearch extends TblMemberClassification
 
         $query->andFilterWhere(['like', 'member_classification_type', $this->member_classification_type])
             ->andFilterWhere(['like', 'tbl_member_classification.member_classification_code', $this->member_classification_code])
-            ->andFilterWhere(['like', 'member_classification_name', $this->member_classification_name])
-           ->andFilterWhere(['like', 'tbl_member_classification.union_code', $this->union_code]);
+            ->andFilterWhere(['like', 'member_classification_name', $this->member_classification_name]);
 
         return $dataProvider;
     }

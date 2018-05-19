@@ -27,10 +27,10 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblMccPlantSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code'],
+                'filter' => ['f_union_code'],
             ],
             'TblDcsBmcSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],
+                'filter' => ['f_union_code', 'f_plant_code'],
             ],
             'TblRouteMappingSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'unit'],
@@ -69,7 +69,19 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblVehicleMasterSearch' => [
-                'filter' => ['f_union_code', 'transporter_code'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code'],
+            ],
+            'TblVehicleKmInfoSearch' => [
+                'filter' => ['transporter_code', 'vehicle_code:transporter_code'],
+            ],
+            'TblKmWiseRateSearch' => [
+                'filter' => ['vehicle_code'],
+            ],
+            'TblMobileOilRateMasterSearch' => [
+                'filter' => ['vehicle_code'],
+            ],
+            'TblVehicleTransporterHeadMappingSearch' => [
+                'filter' => ['vehicle_code', 'transporter_payment_head_code'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

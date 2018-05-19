@@ -2,13 +2,6 @@
 
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
-?>
-<div class="grid-search">
-    <?php
-    echo $this->render('_search', ['model' => $searchModel]);
-    ?>
-</div>
-<?php
 
 $attribute = [
     ['attribute' => 'vehicle_code','value'=>function($model){ return $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name; },'filter'=>false],

@@ -52,13 +52,6 @@ class TblMccPlantSearch extends TblMccPlant {
         $this->load($params);
         $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this);
-
-        if(Yii::$app->session->get('Unions')!=='' && empty($this->union_code)){
-            $query->andFilterWhere([ 'tbl_mcc_plant.union_code'=>explode(',',Yii::$app->session->get('Unions'))]);
-        }
-        else{
-            $query->andFilterWhere(['tbl_mcc_plant.union_code'=> $this->union_code]);
-        }
         
         if (!empty($this->plant_code)) {
             $query->joinWith(['plantCode']);
