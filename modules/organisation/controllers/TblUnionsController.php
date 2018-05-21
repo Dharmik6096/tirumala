@@ -300,17 +300,14 @@ class TblUnionsController extends ChildController {
         $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
         
         if (!empty(Yii::$app->request->post('file_name'))) {
-            echo 'test';
             $file_name = Yii::$app->request->post('file_name');
             $base_path = Yii::$app->basePath;
             $base_url = Yii::$app->urlManager->createAbsoluteUrl('');
-            $logo_path = '/themes/pcdf/assets/images/union_logo/';
-            $file = $base_path . '/web/import/image/' . $file_name;
+            $logo_path = Yii::$app->params['logo_path'];
+            $file = $base_path . Yii::$app->params['temp_logo_path'] . $file_name;
             $path = $base_path . $logo_path;
-            if (!is_dir($path)) {
-                mkdir($path);
-                chmod($path, 0777);
-            }
+            
+            Yii::$app->general->checkDirectory($path);             
 
             if (!empty($this->model->logo)) {
                 $exist_logo = $base_path . str_replace($base_url, '', $this->model->logo);
@@ -390,7 +387,7 @@ class TblUnionsController extends ChildController {
 
     public function actionUploadImg() {
 
-        $path = Yii::$app->basePath . '/web/import/image/';
+        $path = Yii::$app->basePath . Yii::$app->params['temp_logo_path'];
         if (!is_dir($path)) {
             mkdir($path);
             chmod($path, 0777);
