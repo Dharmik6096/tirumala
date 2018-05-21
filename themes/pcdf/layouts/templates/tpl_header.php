@@ -2,6 +2,11 @@
 <?php
 
 use yii\helpers\Url;
+
+$logo = $this->theme->getUrl('/assets/images/logo.png');
+if (Yii::$app->session->get('organization_logo') != '') {
+    $logo = substr(Yii::$app->params['logo_path'], 1) . Yii::$app->session->get('organization_logo');
+}
 ?>
 
 <div class="navbar navbar-fixed-top menu-wrap">
@@ -12,7 +17,7 @@ use yii\helpers\Url;
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>">PCDF</a>
+            <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>"><img src="<?= $logo ?>" alt='<?= Yii::t('app', 'Company Logo') ?>' class="logo img-responsive"/></a>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <?php require_once('tpl_navigation.php'); ?>

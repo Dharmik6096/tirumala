@@ -126,7 +126,7 @@ class TblUnionsController extends ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->setModel($this->model);
-            
+
             //set mapping model
             $mappingList = [];
 
@@ -298,7 +298,7 @@ class TblUnionsController extends ChildController {
         $this->model->registration_date = ($this->model->registration_date == '') ? null : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
         $this->model->contact_person_pan_no = strtoupper($this->model->contact_person_pan_no);
         $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
-        
+
         if (!empty(Yii::$app->request->post('file_name'))) {
             $file_name = Yii::$app->request->post('file_name');
             $base_path = Yii::$app->basePath;
@@ -306,22 +306,22 @@ class TblUnionsController extends ChildController {
             $logo_path = Yii::$app->params['logo_path'];
             $file = $base_path . Yii::$app->params['temp_logo_path'] . $file_name;
             $path = $base_path . $logo_path;
-            
-            Yii::$app->general->checkDirectory($path);             
+
+            Yii::$app->general->checkDirectory($path);
 
             if (!empty($this->model->logo)) {
                 $exist_logo = $base_path . str_replace($base_url, '', $this->model->logo);
-                if(file_exists($exist_logo)){
+                if (file_exists($exist_logo)) {
                     unlink($exist_logo);
                 }
             }
-
-            $upload = copy($file, $path . $file_name);
+            $logo_name = 'logo_' . Yii::$app->session->get('organizations_type') . '_' . $this->model->union_code . '.' . explode('.', $file_name)[1];
+            $upload = copy($file, $path . $logo_name);
             if ($upload) {
-                if(file_exists($file)){
+                if (file_exists($file)) {
                     unlink($file);
                 }
-                $this->model->logo = $base_url . $logo_path . $file_name;
+                $this->model->logo = $base_url . $logo_path . $logo_name;
             }
         }
     }
