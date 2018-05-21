@@ -36,7 +36,7 @@ class GeneralLabels extends Component {
          if($type=='list' || $type=='view')
              return trim(Yii::t('app',ucwords($param)).' '.ucwords($this->labelList('title',$type)));
          else
-            return trim(ucwords($this->labelList('title',$type).' '.$param));
+            return trim(Yii::t('app',ucwords($this->labelList('title',$type)).' '.Yii::t('app',ucwords($param))));
      }
 
      public function button($type,$param=''){
