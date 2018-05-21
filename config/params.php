@@ -17,4 +17,5 @@ return [
     'collection_dir_path' => '/web/collection-data/',
     'logo_path' => '/themes/pcdf/assets/images/union_logo/',
     'temp_logo_path' => '/web/import/image/',
+    'crystal_report_path' => 'C:\wamp64\www\tirumala\modules\crystalreports\reports',
 ];
