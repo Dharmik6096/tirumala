@@ -23,7 +23,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '207 - No Network D
 
             <?php
             $attribute = [
-                'union_name',
+                ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
                 'dcs_code',
                 'dcs_code_ex',
                 'dcs_name',

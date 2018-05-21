@@ -10,7 +10,7 @@ $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', $title);
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading">Union Districts for <?= $modelUnion->union_name ?></div>
+    <div class="panel-heading"><?= Yii::t('app', 'Union Districts for') . ' ' . $modelUnion->union_name ?></div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin(['options' => [

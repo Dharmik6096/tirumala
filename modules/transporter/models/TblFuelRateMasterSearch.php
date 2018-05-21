@@ -10,13 +10,12 @@ use app\modules\transporter\models\TblFuelRateMaster;
 /**
  * TblFuelRateMasterSearch represents the model behind the search form about `app\modules\transporter\models\TblFuelRateMaster`.
  */
-class TblFuelRateMasterSearch extends TblFuelRateMaster
-{
+class TblFuelRateMasterSearch extends TblFuelRateMaster {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['fuel_rate_code', 'fuel_type_code'], 'integer'],
             [['rate'], 'number'],
@@ -27,8 +26,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +38,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblFuelRateMaster::find();
 
         // add conditions that should always apply here
@@ -51,7 +48,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster
         ]);
 
         $this->load($params);
-
+        Yii::$app->general->filterByOrg($query, $this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -69,9 +66,10 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster
         ]);
 
         $query->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }
+
 }

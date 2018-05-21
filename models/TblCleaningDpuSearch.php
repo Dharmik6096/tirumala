@@ -53,7 +53,6 @@ class TblCleaningDpuSearch extends TblCleaningDpu
         ]);
 
         $this->load($params);
-        $this->load($params);
         //$query->andwhere(['tblCleaningDpu.dcs_code'=> $this->dcs_code]);
         $query->joinWith(['dcsCode']);
             Yii::$app->general->filterByOrg($query,$this,'tbl_dcs');

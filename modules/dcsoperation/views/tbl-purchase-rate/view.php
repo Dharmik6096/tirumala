@@ -8,7 +8,6 @@ use app\components\GeneralFunctions;
 /* @var $model app\modules\dcsoperation\models\TblPurchaseRate */
 
 $this->title = Yii::$app->label->title('view', 'Purchase Rates');
-$this->params['menu'][] = Yii::$app->controls->update($model->purchase_rate_code);
 //$this->title = $model->purchase_rate_code;
 //$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Purchase Rates'), 'url' => ['index']];
 //$this->params['breadcrumbs'][] = $this->title;

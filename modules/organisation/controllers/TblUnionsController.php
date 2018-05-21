@@ -21,9 +21,10 @@ use yii\helpers\Json;
  * TblUnionsController implements the CRUD actions for TblUnions model.
  */
 class TblUnionsController extends ChildController {
-    
+
     public $bankDetails;
     public $contactDetails;
+
     /**
      * @inheritdoc
      */
@@ -51,13 +52,13 @@ class TblUnionsController extends ChildController {
      */
     public function actionView($id) {
         $bsearchModel = new TblBankDetailsSearch();
-        $bsearchModel->module_name='union';
-        $bsearchModel->module_code=$id;
-        $bdataProvider= $bsearchModel->search(Yii::$app->request->queryParams);
+        $bsearchModel->module_name = 'union';
+        $bsearchModel->module_code = $id;
+        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
         $csearchModel = new TblContactDetailsSearch();
-        $csearchModel->module_name='union';
-        $csearchModel->module_code=$id;
-        $cdataProvider= $csearchModel->search(Yii::$app->request->queryParams);
+        $csearchModel->module_name = 'union';
+        $csearchModel->module_code = $id;
+        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
@@ -73,27 +74,26 @@ class TblUnionsController extends ChildController {
     public function actionCreate() {
         $this->model = new TblUnions();
         $this->viewFile = 'create';
-        $this->bankDetails=new TblBankDetails();
-        $this->contactDetails=new TblContactDetails();
-        $this->model->valid_from =  date('Y-m-d');
-        $this->contactDetails->scenario='additional';
+        $this->bankDetails = new TblBankDetails();
+        $this->contactDetails = new TblContactDetails();
+        $this->model->valid_from = date('Y-m-d');
+        $this->contactDetails->scenario = 'additional';
         $validate = 1;
-        
+
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->federation_code = Yii::$app->session->get('Federations');
             $this->model->union_code = $this->model->getCode();
             $this->setModel($this->model);
-            $mapping=[];
+            $mapping = [];
             $this->bankDetails->load(Yii::$app->request->post());
-            if(!empty($this->bankDetails->bank_code))
-                    {
-                        $this->bankDetails->setModel('union', $this->model->union_code);
-                        $this->bankDetails->scenario='bank_selected';
-                        array_push($mapping, $this->bankDetails);
-                    }
+            if (!empty($this->bankDetails->bank_code)) {
+                $this->bankDetails->setModel('union', $this->model->union_code);
+                $this->bankDetails->scenario = 'bank_selected';
+                array_push($mapping, $this->bankDetails);
+            }
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('union', $this->model->union_code);
-             array_push($mapping, $this->contactDetails);
+            array_push($mapping, $this->contactDetails);
             // set mapping table
             $modelMapping = new TblUnionsDistrictMapping();
             $this->setMapping($modelMapping);
@@ -170,7 +170,7 @@ class TblUnionsController extends ChildController {
             $historyModel = new TblUnionsHistory();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
 //            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel], ['TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory'], 'union_code');
-            $record = $this->generalModel->deleteTransaction([$this->model,$historyModel],['TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory','TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],['union_code','union']);
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel], ['TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'], ['union_code', 'union']);
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }
@@ -192,14 +192,14 @@ class TblUnionsController extends ChildController {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
-            'bankDetails'=>$this->bankDetails,
-            'contactDetails'=>$this->contactDetails
-            ]);
+                    'bankDetails' => $this->bankDetails,
+                    'contactDetails' => $this->contactDetails
+        ]);
     }
-    
+
     /**
      * Description: return branch array
      * By: Dhara
@@ -297,7 +297,33 @@ class TblUnionsController extends ChildController {
         $this->model->union_name = ucwords($this->model->union_name);
         $this->model->registration_date = ($this->model->registration_date == '') ? null : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
         $this->model->contact_person_pan_no = strtoupper($this->model->contact_person_pan_no);
-        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);        
+        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
+
+        if (!empty(Yii::$app->request->post('file_name'))) {
+            $file_name = Yii::$app->request->post('file_name');
+            $base_path = Yii::$app->basePath;
+            $base_url = Yii::$app->urlManager->createAbsoluteUrl('');
+            $logo_path = Yii::$app->params['logo_path'];
+            $file = $base_path . Yii::$app->params['temp_logo_path'] . $file_name;
+            $path = $base_path . $logo_path;
+
+            Yii::$app->general->checkDirectory($path);
+
+            if (!empty($this->model->logo)) {
+                $exist_logo = $base_path . str_replace($base_url, '', $this->model->logo);
+                if (file_exists($exist_logo)) {
+                    unlink($exist_logo);
+                }
+            }
+            $logo_name = 'logo_' . Yii::$app->session->get('organizations_type') . '_' . $this->model->union_code . '.' . explode('.', $file_name)[1];
+            $upload = copy($file, $path . $logo_name);
+            if ($upload) {
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+                $this->model->logo = $base_url . $logo_path . $logo_name;
+            }
+        }
     }
 
     private function setMapping(&$modelMapping) {
@@ -324,43 +350,55 @@ class TblUnionsController extends ChildController {
         }
         echo Json::encode(['output' => '', 'selected' => $selected]);
     }
-    
-    public function actionBankDetails($id)
-    {
-        $bankDetails=new TblBankDetails();
-        $bankDetails->scenario='additional';
+
+    public function actionBankDetails($id) {
+        $bankDetails = new TblBankDetails();
+        $bankDetails->scenario = 'additional';
         $searchModel = new TblBankDetailsSearch();
-        $searchModel->module_name='union';
-        $searchModel->module_code=$id;
+        $searchModel->module_name = 'union';
+        $searchModel->module_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $modelUnion = $this->findModel($id);
         return $this->render('../../../details/views/tbl-bank-details/create', [
-            'model' => $bankDetails,
-            'id'=>$id,
-            'module'=>'union',
-            'dist'=>$modelUnion->district_code,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'dist_field'=>'tblunions-district_code'
-            
+                    'model' => $bankDetails,
+                    'id' => $id,
+                    'module' => 'union',
+                    'dist' => $modelUnion->district_code,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'dist_field' => 'tblunions-district_code'
         ]);
-        
     }
-    
-    public function actionContactDetails($id)
-    {
-        $contactDetails=new TblContactDetails();
+
+    public function actionContactDetails($id) {
+        $contactDetails = new TblContactDetails();
         $searchModel = new TblContactDetailsSearch();
-        $searchModel->module_name='union';
-        $searchModel->module_code=$id;
+        $searchModel->module_name = 'union';
+        $searchModel->module_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('../../../details/views/tbl-contact-details/create', [
-            'model' => $contactDetails,
-            'id'=>$id,
-            'module'=>'union',
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'union',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
         ]);
-        
     }
+
+    public function actionUploadImg() {
+
+        $path = Yii::$app->basePath . Yii::$app->params['temp_logo_path'];
+        if (!is_dir($path)) {
+            mkdir($path);
+            chmod($path, 0777);
+        }
+        $file = \yii\web\UploadedFile::getInstanceByName('file');
+        $name = 'logo_' . Yii::$app->session->get('organizations_type') . Yii::$app->session->get('organizations_code') . '.' . $file->extension;
+//        $name = 'logo_' . Yii::$app->session->get('organizations_type') . '_' . '002' . '.' . $file->extension;
+        if ($file->saveAs($path . $name)) {
+            chmod($path . $name, 0777);
+            echo $name;
+        }
+    }
+
 }

@@ -3,11 +3,6 @@ use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 
-<div class="grid-search clearfix">
-    <?php
-        echo $this->render('_search', ['model' => $searchModel]);
-    ?>
-</div>
 <?php
 
 $attribute = [

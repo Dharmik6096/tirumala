@@ -14,6 +14,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblSubDistricts;
 use app\modules\general\models\TblBmcType;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_dcs_bmc".
@@ -233,30 +234,36 @@ class TblDcsBmc extends \app\models\ChildModel {
                         ->where([$field => $this->$field])
                         ->one();
     }
-    
-    public function rlsBmc($parents = ''){
-        $where = '';
-        if(!empty($parents)){
-            $where = ['mcc_code' => $parents];
-        }
-        $rows = $this->find()
-                ->where($where)
-                ->all();
-        $bmc = [];
-        foreach($rows as $value){
-            $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
-        }
-        return $bmc;
-    }
-    
-    public function bmcUnion($parents = ''){
+
+    public function bmcUnion($parents = '') {
         $rows = $this->find()
                 ->where(['union_code' => $parents])
                 ->all();
         $bmc = [];
-        foreach($rows as $value){
+        foreach ($rows as $value) {
             $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
         }
         return $bmc;
     }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getBMCList($plantCode, $RLS = 'TRUE') {
+        $value = $this->getBMC($plantCode, $RLS);
+        $value = ArrayHelper::map($value, 'bmc_code', 'bmc_name');
+        return $value;
+    }
+
+    public function getBMC($plantCode = [], $RLS = 'TRUE') {
+        $query = $this->find()->select(['bmc_code', 'bmc_name'])->where(['is_active' => 1]);
+        if (!empty($plantCode))
+            $query->andWhere(['mcc_code' => $plantCode]);
+        if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        return $query->all();
+    }
+
 }

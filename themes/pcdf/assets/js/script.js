@@ -154,21 +154,22 @@ var initDepdropMs;
         function setHeight() {
             var page_height = $(".pagination").height();
             var toolbar_height = $(".kv-grid-toolbar").height();
-            var search_height = $(".kv-panel-before").height();
+            var search_height = $(".grid-search").height();
             if (page_height === null) {
                 page_height = 0;
             } else {
                 page_height += 28;
             }
+            
             if (search_height === null) {
-                search_height = 0;
+                search_height = 5;
                 if (toolbar_height === null) {
-                    search_height = 0;
+                    search_height = 5;
                 } else {
-                    search_height = toolbar_height + 20;
+                    search_height = toolbar_height + 25;
                 }
             } else {
-                search_height += 23;
+                search_height += 65;
             }
             $(".kv-grid-wrapper").height($(".panel-body").height() - search_height - page_height);
         }

@@ -4,10 +4,6 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 ?>
 
-<div class="grid-search">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
-
 <?php
 $attribute = [
     ['attribute' => 'dcsCode.union_code', 'value' => function($model) {

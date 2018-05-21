@@ -19,7 +19,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '205 - No Collectio
 
             <?php
             $attribute = [
-                ['attribute' => 'union_name', 'value' => 'union_name', 'filter' => false],
+                ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
                 ['attribute' => 'dcs_name', 'value' => 'dcs_name', 'filter' => false],
                 ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'filter' => false],
                 'dcs_code_ex',

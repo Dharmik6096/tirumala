@@ -52,6 +52,7 @@ class TblVehicleMasterSearch extends TblVehicleMaster
         ]);
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -83,7 +84,6 @@ class TblVehicleMasterSearch extends TblVehicleMaster
             ->andFilterWhere(['like', 'mapped_route', $this->mapped_route])
             ->andFilterWhere(['like', 'rc_book_no', $this->rc_book_no])
             ->andFilterWhere(['like', 'average', $this->average])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
             ->andFilterWhere(['like', 'created_by', $this->created_by])
             ->andFilterWhere(['like', 'updated_by', $this->updated_by])
             ->andFilterWhere(['like', 'parsing_no', $this->parsing_no])

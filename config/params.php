@@ -15,4 +15,6 @@ return [
     'dpu_docs_path' => 'web/uploads/dpu-docs/',
     'complaint_dir_path' => 'web/uploads/complaint-docs/',
     'collection_dir_path' => '/web/collection-data/',
+    'logo_path' => '/themes/pcdf/assets/images/union_logo/',
+    'temp_logo_path' => '/web/import/image/',
 ];

@@ -32,7 +32,7 @@ use app\modules\organisation\models\TblDcs;
  * @property string $CreatedDate
  * @property string $ModifyDate
  */
-class TblCleaningDpu extends \yii\db\ActiveRecord
+class TblCleaningDpu extends ChildModel
 {
     /**
      * @inheritdoc

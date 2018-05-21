@@ -36,7 +36,8 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['dcs-list'];
+    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs'];
+
     /**
      * Lists all TblDcs models.
      * @return mixed
@@ -737,7 +738,7 @@ class TblDcsController extends ChildController {
         }
         echo \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
     }
-    
+
     public function actionSocietyStatus($dcs_code, $coll_status) {
         $model = new TblSocietyCollection();
         $model->dcs_code = $dcs_code;
@@ -748,48 +749,58 @@ class TblDcsController extends ChildController {
             } else {
                 $coll_status = 1;
             }
-            
+
             $collection_status = [];
-            
+
             $model->load(Yii::$app->request->post());
             $from_date = date('Y-m-d', strtotime($model->from_date)) . " " . date('H:i:s');
             $remarks = $model->remarks;
             $model->from_date = $from_date;
             $model->status = $coll_status;
-            
+
             $exist_data = $model->find(['dcs_code' => $dcs_code])->orderBy('collection_id desc')->one();
-            $to_date = date('Y-m-d H:i:s', strtotime('-1'.' day', strtotime($from_date)));
+            $to_date = date('Y-m-d H:i:s', strtotime('-1' . ' day', strtotime($from_date)));
             $exist_data->to_date = $to_date;
             $exist_data->remarks = $remarks;
-            
+
             $historyModel = new TblSocietyCollectionHistory();
             Yii::$app->operation->history($exist_data, $historyModel, UPDATE);
-            $transaction = $this->generalModel->saveTransaction([$model,$exist_data,$historyModel], ['society collection', 'edit']);
+            $transaction = $this->generalModel->saveTransaction([$model, $exist_data, $historyModel], ['society collection', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['index']);
             }
-            
         }
         return $this->render('society_status', [
                     'model' => $model,
         ]);
-
     }
-    
-    public function actionDcsList(){        
+
+    public function actionDcsList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if ($parents != null) {
-                $transporter_code = $parents[0];
-                $plants = new TblDcs();
-                $out = $plants->rlsBmcDcs($parents[0]);
-
-                echo Json::encode(['output'=>$out, 'selected'=>'']);
+            if (!empty($parents[0])) {
+                $mccs = new TblDcs();
+                $data = $mccs->getBMCDCSList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output'=>'', 'selected'=>'']);
+        echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetBmcDcs() {
+        $mccList = [];
+        if (!empty($_POST['bmc'])) {
+            $palnt = explode(',', $_POST['bmc']);
+            $RLS = $_POST['RLS'];
+            $model = new TblDcs();
+            $mccList = $model->getBMCDCSList($palnt, $RLS);
+        }
+        echo Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
 }

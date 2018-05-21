@@ -266,4 +266,8 @@ class TblRouteMapping extends \app\models\ChildModel {
         return $array;
     }
 
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['route_code' => 'route_code']);
+    }
+
 }

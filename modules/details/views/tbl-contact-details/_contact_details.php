@@ -8,11 +8,11 @@
 use yii\helpers\Html;
 
 if($searchModel->module_name == 'society') { 
-    $contact_person_lable = 'Society Secretory';
-    $local_contact_person_lable = 'Society Secretory Hindi Name';
+    $contact_person_lable = Yii::t('app', 'Society Secretory');
+    $local_contact_person_lable = Yii::t('app', 'Society Secretory Hindi Name');
 } else {
-    $contact_person_lable = 'Contact Person';
-    $local_contact_person_lable = 'Contact Person Hindi Name';
+    $contact_person_lable = Yii::t('app', 'Contact Person');
+    $local_contact_person_lable = Yii::t('app', 'Contact Person Hindi Name');
 }
 $attribute = [
 //    ['attribute' => 'contact_person', 'filter'=>false],

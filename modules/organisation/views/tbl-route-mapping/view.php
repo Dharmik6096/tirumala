@@ -50,11 +50,11 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                    'route_type',
                     [
                         'columns' => [
-                            /*[
-                                'attribute' => 'from_dest',
-                                'value' => $model->getDestinationName($model->from_type, $model->from_dest),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],*/
+                            /* [
+                              'attribute' => 'from_dest',
+                              'value' => $model->getDestinationName($model->from_type, $model->from_dest),
+                              'valueColOptions' => ['style' => 'width:30%'],
+                              ], */
                             [
                                 'attribute' => 'to_dest',
                                 'value' => $model->getDestinationName($model->to_type, $model->to_dest),
@@ -112,7 +112,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                             [
                                 'attribute' => 'union_code',
-                                'label' => 'Union',
                                 'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],

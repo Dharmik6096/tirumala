@@ -30,7 +30,7 @@ $this->title = Yii::t('app', $title);
                 <?= $form->field($model, 'federation')->listBox($federations['data'], ['multiple' => 'multiple', 'size' => '10', 'options' => $federations['selectedArray']]); ?>
             </div>            
             <div class="col-sm-3">
-                <?= $form->field($model, 'union')->listBox($unions['data'], ['multiple' => 'multiple', 'size' => '10', 'options' => $unions['selectedArray']]); ?>
+                <?= $form->field($model, 'union')->listBox($unions['data'], ['multiple' => 'multiple', 'size' => '10', 'options' => $unions['selectedArray']])->label(Yii::t('app', 'Union')); ?>
             </div>           
             <div class="col-sm-3">
                 <?= $form->field($model, 'dcs')->listBox($dcs['data'], ['multiple' => 'multiple', 'size' => '10', 'options' => $dcs['selectedArray']])->label('Society'); ?>

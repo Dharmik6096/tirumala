@@ -8,10 +8,7 @@ $milk_type = $milkType->getAnimalMilkTypeArray();
 $fat = Yii::$app->general->dropdownRange('TblDpuCalibration', 'fat', 3);
 $snf = Yii::$app->general->dropdownRange('TblDpuCalibration', 'snf', 3);
 ?>
-<div class="grid-search">
-    <?php 
-    echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
+
 <?php
 
 $attribute = [

@@ -23,7 +23,7 @@ use app\modules\payment\models\TblDcsPaymentCycleApplicability;
  * @property string $dcs_code
  * @property integer $lock_data
  */
-class TblDcsPaymentCycle extends \yii\db\ActiveRecord {
+class TblDcsPaymentCycle extends \app\models\ChildModel {
 
     public $federation_code;
     public $check_month;

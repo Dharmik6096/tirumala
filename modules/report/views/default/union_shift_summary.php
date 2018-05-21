@@ -19,8 +19,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '213 - Union Shift 
 
             <?php
             $attribute = [
-                ['attribute' => 'union_code', 'filter' => false],
-                ['attribute' => 'union_name', 'filter' => false],
+                ['attribute' => 'union_code', 'label' => Yii::t('app', 'Union Code'), 'filter' => false],
+                ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
                 //['attribute' => 'dtdate', 'filter' => false],
                 ['attribute' => 'qty', 'filter' => false],
                 ['attribute' => 'avg_fat', 'filter' => false],

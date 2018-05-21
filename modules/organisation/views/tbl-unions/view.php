@@ -30,28 +30,34 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
-                                'attribute' => 'union_code_ex',
+                                'attribute' => 'logo',
+                                'format' => 'raw',
+                                'value' => Html::img($model->logo, ['class' => 'img-responsive']),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
                     [
                         'columns' => [
+                            [
+                                'attribute' => 'union_code_ex',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
                             [
                                 'attribute' => 'union_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
-                                'attribute' => 'local_name',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
                         ],
                     ],
                     [
                         'columns' => [
                             [
+                                'attribute' => 'local_name',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'union_short_name',
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],

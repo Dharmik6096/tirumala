@@ -4,11 +4,6 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 ?>
 
-<div class="grid-search">
-    <?php
-    echo $this->render('_search', ['model' => $searchModel]);
-    ?>
-</div>
 <?php
 $attribute = [
     //'vehicle_code',

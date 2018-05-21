@@ -1,4 +1,5 @@
 <?php
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -8,18 +9,15 @@ use yii\helpers\Html;
 use app\components\GeneralFunctions;
 ?>
 
-<div class="grid-search clearfix">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
-
 <?php
+
 $attribute = [
-    ['attribute' => 'union_code','value'=>'unionCode.union_name'],
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name'],
     ['attribute' => 'member_classification_code',],
-    ['attribute' => 'member_classification_name','value'=>'member_classification_name',],
+    ['attribute' => 'member_classification_name', 'value' => 'member_classification_name',],
     ['attribute' => 'range_from'],
     ['attribute' => 'range_to'],
-    ['attribute' => 'member_classification_type','value'=>'member_classification_type'],
+    ['attribute' => 'member_classification_type', 'value' => 'member_classification_type'],
     ['attribute' => 'local_name'],
 ];
 

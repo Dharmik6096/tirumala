@@ -19,7 +19,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '210 - Union-Day Cr
 
             <?php
             $attribute = [
-                ['attribute' => 'union_name', 'filter' => false],
+                ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
             ];
             if(!empty($extra))
                 $attribute=  array_merge($attribute,$extra);
