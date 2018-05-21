@@ -22,7 +22,7 @@ use yii\helpers\Json;
 class TblPlantController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['plant-list'];
+    public $freeAccessActions = ['plant-list', 'get-union-plant'];
 
     /**
      * Lists all TblPlant models.
@@ -275,16 +275,28 @@ class TblPlantController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if ($parents != null) {
-                $transporter_code = $parents[0];
+            if (!empty($parents[0])) {
                 $plants = new TblPlant();
-                $out = $plants->rlsPlant($parents[0]);
-
+                $data = $plants->getPlantList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
                 echo Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetUnionPlant() {
+        $plantList = [];
+        if (!empty($_POST['union'])) {
+            $union = explode(',', $_POST['union']);
+            $RLS = $_POST['RLS'];
+            $model = new TblPlant();
+            $plantList = $model->getPlantList($union, $RLS);
+        }
+        echo Json::encode(['status' => 'success', 'data' => $plantList]);
     }
 
 }

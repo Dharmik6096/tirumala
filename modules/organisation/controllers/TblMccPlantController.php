@@ -20,6 +20,7 @@ use yii\helpers\Json;
 class TblMccPlantController extends \app\controllers\ChildController {
 
     public $contactDetails;
+    public $freeAccessActions = ['mcc-list', 'get-plant-mcc'];
 
     /**
      * Lists all TblMccPlant models.
@@ -213,15 +214,28 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if ($parents != null) {
-                $transporter_code = $parents[0];
-                $plants = new TblMccPlant();
-                $out = $plants->rlsMcc($parents[0]);
+            if (!empty($parents[0])) {
+                $mccs = new TblMccPlant();
+                $data = $mccs->getMCCList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
                 echo Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetPlantMcc() {
+        $mccList = [];
+        if (!empty($_POST['plant'])) {
+            $palnt = explode(',', $_POST['plant']);
+            $RLS = $_POST['RLS'];
+            $model = new TblMccPlant();
+            $mccList = $model->getMCCList($palnt, $RLS);
+        }
+        echo Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
 }

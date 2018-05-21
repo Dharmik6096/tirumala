@@ -9,6 +9,7 @@ use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
+
 /**
  * This is the model class for table "tbl_plant".
  *
@@ -33,38 +34,36 @@ use yii\helpers\ArrayHelper;
  * @property string $description
  * @property integer $capacity
  */
-class TblPlant extends \app\models\ChildModel
-{
+class TblPlant extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_plant';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['name','hamlet_code','union_code'], 'required'],
-            [['plant_code','state_code','district_code','sub_district_code','village_code','valid_from'], 'required', 'except'=>'importCsv'],
-            [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by','updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
+            [['name', 'hamlet_code', 'union_code'], 'required'],
+            [['plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
             [['email'], 'email'],
             [['plant_code'], 'unique'],
             [['name'], function ($attribute, $params) {
-                Yii::$app->general->validateName($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
-            [['local_name','local_cantact_person_name'], function ($attribute, $params) {
-                Yii::$app->general->vaildateLocalField($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['local_name', 'local_cantact_person_name'], function ($attribute, $params) {
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute,$params);
-                },'skipOnEmpty'=> false],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
-            [['created_at','updated_at','capacity', 'valid_from','is_active'], 'safe'],
+            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
             [['capacity'], 'integer'],
         ];
     }
@@ -72,8 +71,7 @@ class TblPlant extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'plant_code' => Yii::t('app', 'Plant Code'),
             'contact_person' => Yii::t('app', 'Contact Person'),
@@ -103,86 +101,85 @@ class TblPlant extends \app\models\ChildModel
      * @inheritdoc
      * @return TblPlantQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblPlantQuery(get_called_class());
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDistrictCode()
-    {
+    public function getDistrictCode() {
         return $this->hasOne(TblDistricts::className(), ['district_code' => 'district_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getHamletCode()
-    {
+    public function getHamletCode() {
         return $this->hasOne(TblHamlets::className(), ['hamlet_code' => 'hamlet_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getStateCode()
-    {
+    public function getStateCode() {
         return $this->hasOne(TblStates::className(), ['state_code' => 'state_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSubDistrictCode()
-    {
+    public function getSubDistrictCode() {
         return $this->hasOne(TblSubDistricts::className(), ['sub_district_code' => 'sub_district_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVillageCode()
-    {
+    public function getVillageCode() {
         return $this->hasOne(TblVillages::className(), ['village_code' => 'village_code']);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCapacity0()
-    {
+    public function getCapacity0() {
         return $this->hasOne(TblCapacity::className(), ['capacity_code' => 'capacity']);
     }
-    
-    public function getCode(){
-        $data=$this->find()->select(["MAX(CONVERT(INT,substring(plant_code,4,3))) AS plant_code"])->where(['union_code'=>  $this->union_code])->one();        
-        return $this->union_code.str_pad((int)$data['plant_code']+1,3,'0',STR_PAD_LEFT);
-        
+
+    public function getCode() {
+        $data = $this->find()->select(["MAX(CONVERT(INT,substring(plant_code,4,3))) AS plant_code"])->where(['union_code' => $this->union_code])->one();
+        return $this->union_code . str_pad((int) $data['plant_code'] + 1, 3, '0', STR_PAD_LEFT);
+
         //$data=  $this->find()->select(["MAX(CONVERT(INT,plant_code)) as plant_code"])->one();       
         //return str_pad(((int)$data['plant_code']+1),3,'0',STR_PAD_LEFT);
     }
-    
-    public function getMccCode()
-    {
-        return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant'=>1]);
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant' => 1]);
     }
-    
-    public function rlsPlant($parents = ''){
-        $rows = $this->find()->where(['union_code'=>$parents])->all();
-        $plants = [];
-        foreach($rows as $value){
-            $plants[] = array('id' => $value->plant_code, 'name' => $value->name);
+
+    public function getPlantList($unionCode, $RLS = 'TRUE') {
+        $value = $this->getPlant($unionCode, $RLS);
+        $value = ArrayHelper::map($value, 'plant_code', 'name');
+        return $value;
+    }
+
+    public function getPlant($unionCode = [], $RLS = 'TRUE') {
+        $query = $this->find()->select(['plant_code', 'name'])->where(['is_active' => 1]);
+        if (!empty($unionCode))
+            $query->andWhere(['union_code' => $unionCode]);
+        if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
         }
-        return $plants;
+        return $query->all();
     }
+
 }

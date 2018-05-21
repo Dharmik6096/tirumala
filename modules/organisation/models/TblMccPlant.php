@@ -226,19 +226,27 @@ class TblMccPlant extends \app\models\ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['mcc_code' => 'mcc_plant_code'])->where(['is_mcc' => 1]);
     }
 
-    public function rlsMcc($parents = '') {
-        $rows = $this->find()
-                ->where(['plant_code' => $parents])
-                ->all();
-        $mcc = [];
-        foreach ($rows as $value) {
-            $mcc[] = array('id' => $value->mcc_plant_code, 'name' => $value->name);
-        }
-        return $mcc;
-    }
-
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getMCCList($plantCode, $RLS = 'TRUE') {
+        $value = $this->getMCC($plantCode, $RLS);
+        $value = ArrayHelper::map($value, 'mcc_plant_code', 'name');
+        return $value;
+    }
+
+    public function getMCC($plantCode = [], $RLS = 'TRUE') {
+        $query = $this->find()->select(['mcc_plant_code', 'name'])->where(['is_active' => 1]);
+        if (!empty($plantCode))
+            $query->andWhere(['plant_code' => $plantCode]);
+        if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andWhere(['union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
+        return $query->all();
     }
 
 }

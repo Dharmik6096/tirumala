@@ -616,5 +616,21 @@ class TblDcs extends ChildModel {
                 return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
             }
 
+            public function getBMCDCSList($plantCode, $RLS = 'TRUE') {
+                $value = $this->getBMCDCS($plantCode, $RLS);
+                $value = ArrayHelper::map($value, 'dcs_code', 'dcs_name');
+                return $value;
+            }
+
+            public function getBMCDCS($plantCode = [], $RLS = 'TRUE') {
+                $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
+                if (!empty($plantCode))
+                    $query->andWhere(['bmc_code' => $plantCode]);
+                if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
+                    $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+                }
+                return $query->all();
+            }
+
         }
         
