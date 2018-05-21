@@ -19,7 +19,8 @@ use yii\helpers\Json;
 class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['bmc-list', 'bmc-list-union'];
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc'];
+
     /**
      * Lists all TblDcsBmc models.
      * @return mixed
@@ -184,24 +185,25 @@ class TblDcsBmcController extends \app\controllers\ChildController {
     protected function customRedirect() {
         return $this->redirect(['index', 'dcs' => Yii::$app->request->get('dcs'), 'dcsname' => Yii::$app->request->get('dcsname'), 'subcenter' => Yii::$app->request->get('subcenter'), 'subname' => Yii::$app->request->get('subname')]);
     }
-    
-    public function actionBmcList(){        
+
+    public function actionBmcList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if ($parents != null) {
-                $transporter_code = $parents[0];
-                $plants = new TblDcsBmc();
-                $out = $plants->rlsBmc($parents[0]);
-
-                echo Json::encode(['output'=>$out, 'selected'=>'']);
+            if (!empty($parents[0])) {
+                $mccs = new TblDcsBmc();
+                $data = $mccs->getBMCList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output'=>'', 'selected'=>'']);
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
-    
-    public function actionBmcListUnion(){        
+
+    public function actionBmcListUnion() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -210,11 +212,22 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                 $plants = new TblDcsBmc();
                 $out = $plants->bmcUnion($parents[0]);
 
-                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                echo Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output'=>'', 'selected'=>'']);
+        echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetMccBmc() {
+        $mccList = [];
+        if (!empty($_POST['mcc'])) {
+            $palnt = explode(',', $_POST['mcc']);
+            $RLS = $_POST['RLS'];
+            $model = new TblDcsBmc();
+            $mccList = $model->getBMCList($palnt, $RLS);
+        }
+        echo Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
 }
