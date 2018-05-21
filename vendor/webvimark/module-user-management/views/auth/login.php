@@ -24,7 +24,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="javascript:void(0)">PCDF</a>
+            <a class="navbar-brand" href="javascript:void(0)"><img src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive"/></a>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav navbar-right">
@@ -75,7 +75,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                 <?= $form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']); ?>
                             </div>
                         </div>
-                         <?= Html::activeHiddenInput($model,'organization'); ?>
+                        <?= Html::activeHiddenInput($model, 'organization'); ?>
                         <?= Html::hiddenInput('state', $state); ?>
                     </div>
                     <?php //}  ?>
@@ -93,16 +93,16 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                 <div class="row registration-block">
                     <div class="col-sm-6">
                         <?php
-                        /*GhostHtml::a(
-                                UserManagementModule::t('front', "Registration"), ['/user-management/auth/registration']
-                        )*/
+                        /* GhostHtml::a(
+                          UserManagementModule::t('front', "Registration"), ['/user-management/auth/registration']
+                          ) */
                         ?>
                     </div>
                     <div class="col-sm-6 text-right">
                         <?php
-                        /*GhostHtml::a(
-                                UserManagementModule::t('front', "Forgot password ?"), ['/user-management/auth/password-recovery']
-                        )*/
+                        /* GhostHtml::a(
+                          UserManagementModule::t('front', "Forgot password ?"), ['/user-management/auth/password-recovery']
+                          ) */
                         ?>
                     </div>
                 </div>
@@ -125,7 +125,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <h3>Welcome to Admin Portal</h3>
                                         <div class="tbl">
                                             <div class="tbl-cell">
-                                                <img src="<?= Url::to('themes/pcdf/assets/images/pcdf_smiley.png')?>" alt="" class="img-responsive"/>
+                                                <img src="<?= Url::to('themes/pcdf/assets/images/pcdf_smiley.png') ?>" alt="" class="img-responsive"/>
                                             </div>
                                             <div class="tbl-cell">
                                                 <h4>Pradeshik Cooperative Dairy Federation, Uttar Pradesh</h4>
@@ -147,15 +147,13 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
 </div>
 
 <?php
-if(!empty($model->getErrors()))
-{
+if (!empty($model->getErrors())) {
     $script = "
         $('#loginModal').modal('show');";
-$this->registerJs($script, View::POS_READY, 'login-code');
+    $this->registerJs($script, View::POS_READY, 'login-code');
 }
 $css = <<<CSS
 CSS;
 
 $this->registerCss($css);
-
 ?>
