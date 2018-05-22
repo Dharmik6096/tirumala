@@ -55,6 +55,8 @@ use app\modules\general\models\TblSocietyVendor;
  */
 class TblMilkCollection extends \app\models\ChildModel {
 
+    public $collection_date;
+
     /**
      * @inheritdoc
      */
@@ -73,7 +75,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto','collection_date'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
@@ -201,6 +203,18 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function getSocietyVendorCode() {
         return $this->hasOne(TblSocietyVendor::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getCollection($data) {
+        $from_date = $data['from_date'];
+        $to_date = $data['to_date'];
+        return $this->find()->select(['member_code', 'fat', 'snf', 'qty', 'amount', 'date_time_of_collection', 'sample_no', 'shift', 'clr', 'rtpl', 'qlty_auto', 'qty_auto', 'milk_type_code'])
+                        ->where(['member_code' => $this->member_code])->andWhere("date_time_of_collection between '$from_date' and '$to_date' ")->orderBy(['date_time_of_collection' => SORT_ASC, 'shift' => SORT_ASC, 'sample_no' => SORT_DESC])->all();
+    }
+
+    public function getCollectionDatewise() {
+        return $this->find()->select(['member_code', 'fat', 'snf', 'qty', 'amount', 'date_time_of_collection', 'sample_no', 'shift', 'clr', 'rtpl', 'qlty_auto', 'qty_auto', 'milk_type_code'])
+                        ->where(['member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->collection_date])->orderBy(['date_time_of_collection' => SORT_ASC, 'shift' => SORT_ASC, 'sample_no' => SORT_DESC])->all();
     }
 
 }

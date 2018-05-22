@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblMember;
+
 /**
  * This is the model class for table "tbl_sale_installments".
  *
@@ -31,41 +32,38 @@ use app\modules\dcsoperation\models\TblMember;
  * @property TblDcsPaymentCycleApplicability $paymentCycleApplicabiltyCode
  * @property TblProductSale $saleCode
  */
-class TblSaleInstallments extends \app\models\ChildModel
-{
-    
+class TblSaleInstallments extends \app\models\ChildModel {
+
     public $max;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_sale_installments';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['installment_code'], 'required'],
             [['installment_code', 'payment_cycle_applicabilty_code', 'installment_status', 'is_active'], 'integer'],
             [['member_code', 'sale_type', 'sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
             [['main_amount', 'installment_amount'], 'number'],
-            [['created_at', 'updated_at','dcs_payment_cycle_code'], 'safe'],
-            //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-            //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            //[['payment_cycle_applicabilty_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPaymentCycleApplicability::className(), 'targetAttribute' => ['payment_cycle_applicabilty_code' => 'payment_cycle_applicabilty_code']],
-            //[['sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['sale_code' => 'product_sale_code']],
+            [['created_at', 'updated_at', 'dcs_payment_cycle_code'], 'safe'],
+                //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
+                //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                //[['payment_cycle_applicabilty_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPaymentCycleApplicability::className(), 'targetAttribute' => ['payment_cycle_applicabilty_code' => 'payment_cycle_applicabilty_code']],
+                //[['sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['sale_code' => 'product_sale_code']],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'installment_code' => Yii::t('app', 'Installment Code'),
             'member_code' => Yii::t('app', 'Member'),
@@ -89,52 +87,52 @@ class TblSaleInstallments extends \app\models\ChildModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPaymentCycleApplicabiltyCode()
-    {
+    public function getPaymentCycleApplicabiltyCode() {
         return $this->hasOne(TblDcsPaymentCycleApplicability::className(), ['payment_cycle_applicabilty_code' => 'payment_cycle_applicabilty_code']);
     }
-    
+
     //relationship with dcs
-    public function getPaymentCycleCode()
-    {
+    public function getPaymentCycleCode() {
         return $this->hasOne(TblDcsPaymentCycle::className(), ['dcs_payment_cycle_code' => 'dcs_payment_cycle_code']);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSaleCode()
-    {
+    public function getSaleCode() {
         return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'sale_code']);
     }
-    
-    public function getMemberCode()
-    {
+
+    public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
-    } 
+    }
 
     /**
      * @inheritdoc
      * @return TblSaleInstallmentsQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblSaleInstallmentsQuery(get_called_class());
     }
+
+    public function getInstData($invoice_no) {
+        return $this->find()->select(['installment_code',
+                            'installment_amount', 'dcs_payment_cycle_code', 'sale_code', 'sale_type'])
+                        ->where(['sale_code' => $invoice_no])->all();
+    }
+
 }
