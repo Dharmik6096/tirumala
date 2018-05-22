@@ -13,6 +13,10 @@ use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblUnions;
 use app\models\TblUserOrganizationMapping;
 use app\modules\setting\models\TblGeneralConfig;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
 
 class LoginForm extends Model {
 
@@ -28,7 +32,7 @@ class LoginForm extends Model {
      */
     public function rules() {
         return [
-            [['username', 'password', 'type'], 'required'],
+            [['username', 'password'], 'required'],
             [['type'], 'required', 'on' => 'non_national'],
             [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
             ['rememberMe', 'boolean'],
@@ -106,23 +110,21 @@ class LoginForm extends Model {
             $this->addError('useranme', UserManagementModule::t('front', 'Insufficiant data'));
             return false;
         }
-        $list = \app\models\TblUserOrganizationMapping::find()->select(['organization_code'])->where(['is_active' => 1, 'user_id' => $user->user_code])->asArray()->all();
+        $list = \app\models\TblUserOrganizationMapping::find()->select(['organization_code', 'organization_type'])->where(['is_active' => 1, 'user_id' => $user->user_code])->asArray()->all();
 
         if (!empty($list)) {
             $user_organisation = ArrayHelper::getColumn($list, 'organization_code');
-            if (!empty($_POST['LoginForm']['organization']))
-                if (!in_array($_POST['LoginForm']['organization'], $user_organisation, true)) {
-                    $this->addError('useranme', UserManagementModule::t('front', 'Select assigned oraganisation.'));
-                    return FALSE;
-                }
+//            if (!empty($_POST['LoginForm']['organization']))
+//                if (!in_array($_POST['LoginForm']['organization'], $user_organisation, true)) {
+//                    $this->addError('useranme', UserManagementModule::t('front', 'Select assigned oraganisation.'));
+//                    return FALSE;
+//                }
         } else {
             $this->addError('useranme', UserManagementModule::t('front', 'No oraganisation has assigned'));
             return FALSE;
         }
-
-//        $identityModel = new IdentityMaster();
-//        $identity_data = $identityModel->getIdentity();
-        $identity_data = $_POST['LoginForm']['type'];
+        $organisation_type = $list[0]['organization_type'];
+        $main_org_type = ($organisation_type == 'FEDERATION') ? 'PCDF' : 'UNION';
         $district = '';
         $name = '';
         $user_type = $user->user_type_id;
@@ -134,53 +136,18 @@ class LoginForm extends Model {
             $maker_checker = 0;
         }
         $organization_logo = '';
-        switch ($identity_data) {
-            /* case 'NATIONAL' : 
-              //$name = \app\models\TblNational::find()->select(['national_name as name'])->where(['national_code' => $identity_data->organization_code])->one();
-              $name = ['name'=>'PCDF'];
-              switch ($user->user_type_id) {
-              case 1 : $federation = '';
-              $union = '';
-              $dcs = '';
-              break;
-              case 2 : $federation = $this->getFederation($user_organisation, 0, 0);
-              $union = '';
-              $dcs = '';
-
-              break;
-              case 3 : $union = $this->getUnion($user_organisation, 0, 0, 0);
-              $federation = $this->getFederation(0, 0, $union);
-              $dcs = '';
-              break;
-              case 4 :
-              $dcs = $this->getDcs($user_organisation, 0);
-              $union = $this->getUnion(0, 0, 0, $dcs);
-              $federation = $federation = $this->getFederation(0, 0, $union);
-              break;
-              }
-              break; */
+        $union = '';
+        $plant = '';
+        $mcc = '';
+        $bmc = '';
+        $dcs = '';
+        switch ($main_org_type) {
             case 'PCDF':
                 $name = models\TblFederations::find()->select('federation_name as name,federation_code')->where(['is_active' => 1])->one();
                 $union_names = !(empty($name)) ? $name['name'] : '';
                 switch ($user->user_type_id) {
-                    /* case 1 : $federation = $this->getFederation(0, $name['federation_code'], 0);
-                      $union = '';
-                      $dcs = '';
-                      break; */
-
                     case 2 : $federation = $this->getFederation($user_organisation, $name['federation_code'], 0);
-                        $union = '';
-                        $dcs = '';
                         break;
-                    /* case 3 : $federation = $this->getFederation(0, $name['federation_code'], 0);
-                      $union = $this->getUnion($user_organisation, 0, $federation, 0);
-                      $dcs = '';
-                      break;
-                      case 4 : $federation = $this->getFederation(0, $name['federation_code'], 0);
-                      $dcs = $this->getDcs($user_organisation, 0);
-                      $union = $this->getUnion(0, 0, $federation, $dcs);
-
-                      break; */
                     default : $this->addError('useranme', UserManagementModule::t('front', 'Selected oraganisation is not assigned to user'));
                         return FALSE;
                         break;
@@ -189,39 +156,51 @@ class LoginForm extends Model {
                 $organization = $name['federation_code'];
                 break;
 
-            case 'UNION': $name = models\TblUnions::find()->select('union_name as name, union_code, logo')->where(['union_code' => $user_organisation, 'is_active' => 1])->all();
-                $union_names = ArrayHelper::getColumn($name, 'name');
-                $union_names = implode(',', $union_names);
-                if (count($name) == 1) {
-                    $organization_logo = !empty($name[0]->logo) ? array_reverse(explode('/', $name[0]->logo))[0] : '';
-                }
+            case 'UNION':
                 switch ($user->user_type_id) {
-                    /* case 1 : $union = $this->getUnion(0, 0, 0, 0);
-                      $federation = $this->getFederation(0, 0, $union);
-                      $dcs = '';
-                      break;
-                      case 2 : $union = $this->getUnion(0, 0, 0, 0);
-                      $federation = $this->getFederation(0, 0, $union);
-                      $dcs = '';
-                      break; */
-
                     case 3 :
                         $union = $this->getUnion($user_organisation, 0, 0, 0);
                         $federation = $this->getFederation(0, 0, $union);
-                        $dcs = '';
                         break;
                     case 4 :
+                        $plant = $this->getPlant($user_organisation, 0, 0);
+                        $union = $this->getUnion(0, 0, 0, $plant);
+                        $federation = $this->getFederation(0, 0, $union);
+                        break;
+                    case 5 :
+                        $mcc = $this->getMCC($user_organisation, 0, 0);
+                        $plant = $this->getPlant(0, 0, $mcc);
+                        $union = $this->getUnion(0, 0, 0, $plant);
+                        $federation = $this->getFederation(0, 0, $union);
+                        break;
+                    case 6 :
+                        $bmc = $this->getBMC($user_organisation, 0, 0);
+                        $mcc = $this->getMcc(0, 0, $bmc);
+                        $plant = $this->getPlant(0, 0, $mcc);
+                        $union = $this->getUnion(0, 0, 0, $plant);
+                        $federation = $federation = $this->getFederation(0, 0, $union);
+                        break;
+                    case 7 :
                         $dcs = $this->getDcs($user_organisation, 0);
-                        $union = $this->getUnion(0, 0, 0, $dcs);
+                        $bmc = $this->getBMC(0, 0, $dcs);
+                        $mcc = $this->getMCC(0, 0, $bmc);
+                        $plant = $this->getPlant(0, 0, $mcc);
+                        $union = $this->getUnion(0, 0, 0, $plant);
                         $federation = $federation = $this->getFederation(0, 0, $union);
                         break;
                     default : $this->addError('useranme', UserManagementModule::t('front', 'Selected oraganisation is not assigned to user'));
                         return FALSE;
                         break;
                 }
-                $district = $this->getDistrict($_POST['state'], $user_organisation);
+                $name = models\TblUnions::find()->select('union_name as name, union_code, logo')->where(['union_code' => explode(',', $union), 'is_active' => 1])->all();
+                $union_names = ArrayHelper::getColumn($name, 'name');
+                $union_names = implode(',', $union_names);
+                if (count($name) == 1) {
+                    $organization_logo = !empty($name[0]->logo) ? array_reverse(explode('/', $name[0]->logo))[0] : '';
+                }
+                $district = $this->getDistrict($_POST['state'], explode(',', $union));
                 $orgType = 'UNION';
-                $organization = implode(',', $user_organisation);
+                $organization = $union;
                 break;
         }
         $language_code = 'en';
@@ -238,9 +217,9 @@ class LoginForm extends Model {
         Yii::$app->session->set('UserName', $user->username);
         Yii::$app->session->set('UserType', $user_type);
         Yii::$app->session->set('makerChecker', $maker_checker);
-        Yii::$app->session->set('Plant', '');
-        Yii::$app->session->set('BMC', '');
-        Yii::$app->session->set('MCC', '');
+        Yii::$app->session->set('Plant', $plant);
+        Yii::$app->session->set('BMC', $bmc);
+        Yii::$app->session->set('MCC', $mcc);
         Yii::$app->session->set('organization_logo', $organization_logo);
         return true;
     }
@@ -269,7 +248,7 @@ class LoginForm extends Model {
             return 0;
     }
 
-    private function getUnion($code, $identity_code, $federation, $dcs) {
+    private function getUnion($code, $identity_code, $federation, $plant) {
         $query = models\TblUnions::find();
         $query->select(['union_code']);
         $query->where(['is_active' => 1]);
@@ -279,11 +258,10 @@ class LoginForm extends Model {
             $query->andWhere(['union_code' => $identity_code]);
         if ($federation != 0)
             $query->andWhere(['federation_code' => explode(',', $federation)]);
-        if ($dcs != 0) {
-            $codes = models\TblDcs::find()->select(['union_code'])->where(['dcs_code' => explode(',', $dcs)])->asArray()->all();
+        if ($plant != 0) {
+            $codes = TblPlant::find()->select(['union_code'])->where(['plant_code' => explode(',', $plant)])->asArray()->all();
             $query->andWhere(['union_code' => $codes]);
         }
-        //echo $query->createCommand()->rawSql; exit;
         $list = $query->asArray()->all();
         if (count($list) > 0)
             return implode(',', array_map(function($a) {
@@ -293,14 +271,77 @@ class LoginForm extends Model {
             return 0;
     }
 
-    private function getDcs($code, $union) {
-        $query = models\TblDcs::find();
+    private function getPlant($code, $union, $mcc) {
+        $query = TblPlant::find();
+        $query->select(['plant_code']);
+        $query->where(['is_active' => 1]);
+        if ($code != 0)
+            $query->andWhere(['plant_code' => $code]);
+        if ($union != 0)
+            $query->andWhere(['union_code' => explode(',', $union)]);
+        if ($mcc != 0) {
+            $codes = TblMccPlant::find()->select(['plant_code'])->where(['mcc_plant_code' => explode(',', $mcc)])->asArray()->all();
+            $query->andWhere(['plant_code' => $codes]);
+        }
+        $list = $query->asArray()->all();
+        if (count($list) > 0)
+            return implode(',', array_map(function($a) {
+                        return $a['plant_code'];
+                    }, $list));
+        else
+            return 0;
+    }
+
+    private function getMCC($code, $plant, $bmc) {
+        $query = TblMccPlant::find();
+        $query->select(['mcc_plant_code']);
+        $query->where(['is_active' => 1]);
+        if ($code != 0)
+            $query->andWhere(['mcc_plant_code' => $code]);
+        if ($plant != 0)
+            $query->andWhere(['plant_code' => explode(',', $plant)]);
+        if ($bmc != 0) {
+            $codes = TblDcsBmc::find()->select(['mcc_code As mcc_plant_code'])->where(['bmc_code' => explode(',', $bmc)])->asArray()->all();
+            $query->andWhere(['mcc_plant_code' => $codes]);
+        }
+        $list = $query->asArray()->all();
+        if (count($list) > 0)
+            return implode(',', array_map(function($a) {
+                        return $a['mcc_plant_code'];
+                    }, $list));
+        else
+            return 0;
+    }
+
+    private function getBMC($code, $mcc, $dcs) {
+        $query = TblDcsBmc::find();
+        $query->select(['bmc_code']);
+        $query->where(['is_active' => 1]);
+        if ($code != 0)
+            $query->andWhere(['bmc_code' => $code]);
+        if ($mcc != 0)
+            $query->andWhere(['mcc_code' => explode(',', $mcc)]);
+        if ($dcs != 0) {
+            $codes = TblDcs::find()->select(['bmc_code'])->where(['dcs_code' => explode(',', $dcs)])->asArray()->all();
+            $query->andWhere(['bmc_code' => $codes]);
+        }
+        $list = $query->asArray()->all();
+        if (count($list) > 0)
+            return implode(',', array_map(function($a) {
+                        return $a['bmc_code'];
+                    }, $list));
+        else
+            return 0;
+    }
+
+    private function getDcs($code, $bmc) {
+        $query = TblDcs::find();
         $query->select(['dcs_code']);
         $query->where(['is_active' => 1]);
         if ($code != 0)
             $query->andWhere(['dcs_code' => $code]);
-        if ($union != 0)
-            $query->andWhere(['union_code' => explode(',', $union)]);
+        if ($bmc != 0)
+            $query->andWhere(['bmc_code' => explode(',', $bmc)]);
         $list = $query->asArray()->all();
         if (count($list) > 0)
             return implode(',', array_map(function($a) {

@@ -39,7 +39,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?= UserManagementModule::t('front', 'PCDF Application') ?></h4>
+                <h4 class="modal-title"><?= UserManagementModule::t('front', 'EVEREST Application') ?></h4>
             </div>
             <div class="modal-body">
                 <?php
@@ -72,7 +72,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     <div id="org" class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-6">
-                                <?= $form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']); ?>
+                                <?php //$form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']); ?>
                             </div>
                         </div>
                         <?= Html::activeHiddenInput($model, 'organization'); ?>
