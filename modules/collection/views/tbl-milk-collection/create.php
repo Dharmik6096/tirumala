@@ -1,21 +1,14 @@
 <?php
-
-use yii\helpers\Html;
-
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\collection\models\TblMilkCollection */
-
-$this->title = Yii::t('app', 'Create Tbl Milk Collection');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Milk Collections'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('create', 'Milk Collection');
 ?>
-<div class="tbl-milk-collection-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'create',
+        ])
+        ?>
+    </div>
 </div>

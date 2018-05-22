@@ -1,5 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collections'));
+$this->params['menu'][] = Yii::$app->controls->add('Milk Collection');
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
@@ -8,7 +9,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collections')
         </div>
         <div class="panel-body">
             <?=
-            $this->render('_form_grid', [              
+            $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
             ])

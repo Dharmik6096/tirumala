@@ -4,6 +4,7 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
+
 /**
  * This is the model class for table "tbl_dcs_purchase_rate".
  *
@@ -24,21 +25,19 @@ use app\modules\organisation\models\TblDcs;
  * @property integer $originating_type
  * @property string $union_code
  */
-class TblDcsPurchaseRate extends \app\models\ChildModel
-{
+class TblDcsPurchaseRate extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_purchase_rate';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['created_at', 'updated_at', 'wef_date'], 'safe'],
             [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
@@ -49,8 +48,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -70,32 +68,33 @@ class TblDcsPurchaseRate extends \app\models\ChildModel
             'union_code' => Yii::t('app', 'Union Code'),
         ];
     }
-    
-    public function purchaseRate($data){
+
+    public function purchaseRate($data) {
         $rtpl_data = [];
         $model = new TblDcs();
-        $union = $model->find()->select(['union_code'])->where(['dcs_code'=>$data['dcs_code'], 'is_active' => 1])->one();
-        if(!empty($union)){
+        $union = $model->find()->select(['union_code'])->where(['dcs_code' => $data['dcs_code'], 'is_active' => 1])->one();
+        if (!empty($union)) {
             $union_code = $union->union_code;
 
             $purchase_rate_code = $this->find()
-                    ->where(['union_code' => $union_code, 'shift_applicability'=> [3,$data['shift']]])
-                    ->andWhere(['<=','wef_date',$data['dt_date']])
+                    ->where(['union_code' => $union_code, 'shift_applicability' => [3, $data['shift']]])
+                    ->andWhere(['<=', 'wef_date', $data['dt_date']])
                     ->orderBy('wef_date desc')
                     ->one();
-            
-            if(!empty($purchase_rate_code)){
+
+            if (!empty($purchase_rate_code)) {
                 $purchase_rate_code = $purchase_rate_code->purchase_rate_code;
 
                 $detail_model = new TblDcsPurchaseRateDetails();
 
                 $rtpl_data = $detail_model->find()
-                        ->select(['rtpl','purchase_rate_code'])
-                        ->where(['purchase_rate_code'=>$purchase_rate_code,'fat'=>$data['fat'],'snf'=>$data['snf'],'milk_quality_type_code'=>$data['milk_quality_type'],'milk_type_code'=>$data['milk_type']])
+                        ->select(['rtpl', 'purchase_rate_code'])
+                        ->where(['purchase_rate_code' => $purchase_rate_code, 'fat' => $data['fat'], 'snf' => $data['snf'], 'milk_quality_type_code' => $data['milk_quality_type'], 'milk_type_code' => $data['milk_type']])
                         ->one();
             }
         }
-        
+
         return $rtpl_data;
     }
+
 }

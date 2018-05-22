@@ -18,7 +18,7 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['v1/society/society-data', 'v1/app-activation/register', 'v1/app-activation/verification', 'v1/app-activation/initialization', 'v1/member/register', 'v1/member/verification', 'v1/member/initialization'];
+    public $is_free = ['v1/society/society-data', 'v1/app-activation/register', 'v1/app-activation/verification', 'v1/app-activation/initialization', 'v1/member/register', 'v1/member/verification', 'v1/member/initialization', 'v1/bmc-dispatch/add-dispatch'];
     public $request;
     public $allow_call = FALSE;
 

@@ -55,7 +55,7 @@ use app\modules\general\models\TblSocietyVendor;
  */
 class TblMilkCollection extends \app\models\ChildModel {
 
-    public $collection_date;
+    public $collection_date, $union_code;
 
     /**
      * @inheritdoc
@@ -70,7 +70,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag'], 'string'],
-            [['milk_type_code'], 'required'],
+            [['milk_type_code', 'shift', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'rtpl', 'qty', 'amount'], 'required'],
             [['milk_type_code', 'sample_no', 'ack'], 'integer'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             //[['sms_status'],'default','n'],
@@ -81,7 +81,8 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
             [['rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['rate_code' => 'purchase_rate_code']],
             [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
-            [['milk_collection_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkCollection::className(), 'targetAttribute' => ['milk_collection_code' => 'milk_collection_code']],
+//            [['milk_collection_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkCollection::className(), 'targetAttribute' => ['milk_collection_code' => 'milk_collection_code']],
+            [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount'], 'default', 'value' => '0'],
         ];
     }
 
@@ -118,6 +119,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'sms_mobile' => Yii::t('app', 'SMS Mobile'),
             'sms_errorlog' => Yii::t('app', 'SMS Error Log'),
             'sms_timestamp' => Yii::t('app', 'SMS Timestamp'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
 
