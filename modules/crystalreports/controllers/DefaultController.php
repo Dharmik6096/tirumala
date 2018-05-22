@@ -24,11 +24,8 @@ class DefaultController extends \app\controllers\ChildController {
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
             $model->scenario = $this->data['scenario'];
-            if(strpos( $this->data['param'], 'p_milk_type') !== FALSE){
-                $model->p_milk_type = 0;
-            }
         }
-        if ($model->load(Yii::$app->request->post()) &&  $model->validate()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $this->LoadReport($model);
         }
         return $this->render('index', ['result' => $this->output, 'report' => $this->report, 'data' => $this->data, 'model' => $model]);
@@ -40,81 +37,101 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'BmcCollection';
         return $this->actionIndex();
     }
-    
+
     public function actionActualBmcCollection() {
         $this->report = 'ActualBmcCollection';
         return $this->actionIndex();
     }
-    
+
     public function actionRmrdMilkCollection() {
         $this->report = 'RmrdMilkCollection';
         return $this->actionIndex();
     }
-    
+
     public function actionVariationMilkTypeDateWise() {
         $this->report = 'VariationMilkTypeDateWise';
         return $this->actionIndex();
-    }    
-    
+    }
+
     public function actionVariationMilkTypeVillageWise() {
         $this->report = 'VariationMilkTypeVillageWise';
         return $this->actionIndex();
-    }    
-    
+    }
+
     public function actionVariationDateWise() {
         $this->report = 'VariationDateWise';
         return $this->actionIndex();
-    }    
-    
+    }
+
     public function actionVariationVillageWise() {
         $this->report = 'VariationVillageWise';
         return $this->actionIndex();
-    }    
-    
+    }
+
     public function actionVariationPercentageWise() {
         $this->report = 'VariationPercentageWise';
         return $this->actionIndex();
     }
-    
+
     public function actionDifferenceReport() {
         $this->report = 'DifferenceReport';
         return $this->actionIndex();
     }
-    
+
     public function actionDifferenceReportDateWise() {
         $this->report = 'DifferenceReportDateWise';
         return $this->actionIndex();
     }
-    
+
     public function actionBmcSummaryReport() {
         $this->report = 'BmcSummaryReport';
         return $this->actionIndex();
     }
-    
+
     public function actionDifferenceReportVillageWise() {
         $this->report = 'DifferenceReportVillageWise';
         return $this->actionIndex();
     }
-    
-    
+
     /* Call Crystal Report */
+
     private function LoadReport($model) {
-//        $model->p_village_code = '001003';
-        $report_path = Yii::$app->params['crystal_report_path'];
-        $cmd = "F:\Hardik\Software\CrystalReportsNinja-master\Deployment\CrystalReportsNinja -U sa -P !!EiPl@2017 -S 182.73.178.90,14033 -D TIRUMALA";
-        $cmd .= " -F ".$report_path.'\\'.$this->data['report_name'].".rpt -O C:\wamp64\www\\tirumala\modules\crystalreports\html";
-        $cmd .= "\\".$this->data['file_name'].'.html -E htm';
         $data = Yii::$app->request->post()['ReportsModel'];
-        $data['date1'] = date('Y-m-d', strtotime($data['date1'])).' '.Yii::$app->general->getshift($data['from_shift']);
-        $data['date2'] = date('Y-m-d', strtotime($data['date2'])).' '.Yii::$app->general->getshift($data['to_shift']);
-        foreach ($data as $key=>$value){
-            $cmd.= ' -a "@'.str_replace('p_', '', $key).':'.$value.'"';
+        $file_name = $data['file_name'];
+        $report_path = Yii::$app->params['crystal_report_path'];
+        $type = 'htm';
+        $out_type = Yii::$app->request->post('submit');
+        if ($out_type != 'html') {
+            $type = $out_type;
         }
-//        echo $cmd;die;
-        exec($cmd,$out,$retval);
-//        var_dump($out);die;
-        if(!empty($out)){
-            $this->output = $this->data['report_name'].'/'.$this->data['file_name'];
+        $cmd = "F:\Hardik\Software\CrystalReportsNinja-master\Deployment\CrystalReportsNinja -U sa -P !!EiPl@2017 -S 182.73.178.90,14033 -D TIRUMALA";
+        $cmd .= " -F " . $report_path . '\\' . $this->data['report_name'] . ".rpt -O C:\wamp64\www\\tirumala\modules\crystalreports\html";
+        $cmd .= "\\" . $file_name . '.' . $out_type . ' -E ' . $type;
+        $data['date1'] = date('Y-m-d', strtotime($data['date1'])) . ' ' . Yii::$app->general->getshift($data['from_shift']);
+        $data['date2'] = date('Y-m-d', strtotime($data['date2'])) . ' ' . Yii::$app->general->getshift($data['to_shift']);
+        foreach ($data as $key => $value) {
+            $cmd.= ' -a "@' . str_replace('p_', '', $key) . ':' . $value . '"';
+        }
+        exec($cmd, $out, $retval);
+        if (!empty($out) && isset($out[2]) && $out[2] == 'Completed') {
+            if ($out_type != 'html') {
+                $file = 'C:\wamp64\www\tirumala\modules\crystalreports\html' . '/' . $file_name . '.' . $out_type;
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Description: File Transfer');
+                header("Content-Disposition: attachment; filename=" . $file_name . '.' . $out_type);
+                header("Content-Type: application/octet-stream");
+                header("Content-Type: application/download");
+                header("Content-Description: File Transfer");
+                header("Content-Length: " . filesize($file));
+                $fp = fopen($file, "r");
+                while (!feof($fp)) {
+                    echo fread($fp, 65536);
+                    flush(); // this is essential for large downloads
+                }
+                fclose($fp);
+            }
+            $this->output = $this->data['report_name'] . '/' . $file_name;
         }
     }
 

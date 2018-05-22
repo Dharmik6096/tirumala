@@ -8,7 +8,7 @@ use yii\base\Model;
 
 class ReportsModel extends Model {
 
-    public $union_code, $mccid, $bmcid, $vlccid, $routeid, $date1, $date2, $from_shift, $to_shift, $plant_code, $CattleType, $MilkQualityType;
+    public $union_code, $mccid, $bmcid, $vlccid, $routeid, $date1, $date2, $from_shift, $to_shift, $plant_code, $CattleType, $MilkQualityType, $file_name;
 
     function __construct() {
     }
@@ -18,10 +18,11 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
+            ['file_name', 'safe'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code', 'CattleType'], 'required', 'on' => 'BmcCollection'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'ActualBmcCollection'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code', 'CattleType', 'MilkQualityType'], 'required', 'on' => 'RmrdMilkCollection'],
-            [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code', 'CattleType'], 'required', 'on' => 'BmcSummaryReport'],
+            [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code', 'CattleType', 'MilkQualityType'], 'required', 'on' => 'BmcSummaryReport'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'VariationMilkTypeDateWise'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'VariationMilkTypeVillageWise'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'VariationDateWise'],
