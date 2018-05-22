@@ -52,6 +52,7 @@ class TblUserOrganizationMapping extends ChildModel {
     public function rules() {
         return [
             [['federation'], 'required', 'on' => 'organizationMapping'],
+            [['union'], 'required', 'on' => 'organizationMappingUnion'],
             [['federation', 'union', 'dcs', 'created_at', 'deleted_at', 'updated_at', 'organization', 'plant', 'mcc', 'bmc'], 'safe'],
             [['is_active'], 'integer'],
 //            [['federation'], function ($attribute, $params) {
