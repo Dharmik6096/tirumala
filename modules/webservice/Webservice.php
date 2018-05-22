@@ -18,6 +18,9 @@ class Webservice extends \yii\base\Module {
     public function init() {
         parent::init();
         $this->modules = [
+            'vsp' => [
+                'class' => 'app\modules\webservice\bmc\Bmc',
+            ],
             'member' => [
                 'class' => 'app\modules\webservice\member\Member',
             ],
