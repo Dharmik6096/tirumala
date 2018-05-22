@@ -297,9 +297,9 @@ function setData(){
            var count = $('#tbluserorganizationmapping-union option').length;             
              if(count > 0 && selectedUnion != 0){
               $('#user_type').val(3);
-                if(selectedUnion==count) {
-                $('#user_type').val(2);
-                }
+//                if(selectedUnion==count) {
+//                $('#user_type').val(2);
+//                }
               } else {             
                 $('#user_type').val(2);
                 
