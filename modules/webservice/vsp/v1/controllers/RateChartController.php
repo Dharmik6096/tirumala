@@ -1,11 +1,11 @@
 <?php
 
-namespace app\modules\webservice\v1\controllers;
+namespace app\modules\webservice\vsp\v1\controllers;
 
 use app\modules\webservice\controllers\ChildController;
 use Yii;
-use app\modules\webservice\v1\models\RateChart;
-use app\modules\webservice\v1\models\TblAppActivation;
+use app\modules\webservice\vsp\v1\models\RateChart;
+use app\modules\webservice\models\TblAppActivation;
 class RateChartController extends ChildController {
 
     public function actionRateChart(){

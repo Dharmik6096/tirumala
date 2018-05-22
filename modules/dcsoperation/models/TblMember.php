@@ -127,12 +127,12 @@ class TblMember extends ChildModel {
             [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
             return $this->is_active;
         }],
-        /*    [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->is_active;
-        }],
-            [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->is_active;
-        }], */
+            /*    [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+              return $this->is_active;
+              }],
+              [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+              return $this->is_active;
+              }], */
             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
             return $this->is_active;
         }],
@@ -450,6 +450,18 @@ class TblMember extends ChildModel {
     public function getKycCode() {
         return $this->hasOne(TblKycRecord::className(), ['module_id' => 'member_code'])
                         ->where(['module_name' => 'TblMember']);
+    }
+
+    public function memberInfo($encryptedmobile) {
+        if (strlen($this->member_code) == 4) {
+            return $this->find()->where(['mobile_no' => $encryptedmobile, "RIGHT(`member_code`,4)" => $this->member_code])->andWhere(['is_active' => 1])->all();
+        } else {
+            return $this->find()->where(['mobile_no' => $encryptedmobile, 'member_code' => $this->member_code])->andWhere(['is_active' => 1])->all();
+        }
+    }
+
+    public function getmember() {
+        return $this->find()->where(['member_code' => $this->member_code])->andWhere(['is_active' => 1])->one();
     }
 
 }

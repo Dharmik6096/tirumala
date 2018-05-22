@@ -1,8 +1,8 @@
 <?php
 
-namespace app\modules\webservice\v1\models;
+namespace app\modules\webservice\models;
 
-class TblAppActivationQuery extends \yii\db\ActiveQuery
+class TblAppRequestLogQuery extends \yii\db\ActiveQuery
 {
     /**
      * @inheritdoc

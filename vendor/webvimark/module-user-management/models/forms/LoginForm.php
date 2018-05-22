@@ -133,6 +133,7 @@ class LoginForm extends Model {
         } else {
             $maker_checker = 0;
         }
+        $organization_logo = '';
         switch ($identity_data) {
             /* case 'NATIONAL' : 
               //$name = \app\models\TblNational::find()->select(['national_name as name'])->where(['national_code' => $identity_data->organization_code])->one();
@@ -188,9 +189,12 @@ class LoginForm extends Model {
                 $organization = $name['federation_code'];
                 break;
 
-            case 'UNION': $name = models\TblUnions::find()->select('union_name as name, union_code')->where(['union_code' => $user_organisation, 'is_active' => 1])->all();
+            case 'UNION': $name = models\TblUnions::find()->select('union_name as name, union_code, logo')->where(['union_code' => $user_organisation, 'is_active' => 1])->all();
                 $union_names = ArrayHelper::getColumn($name, 'name');
                 $union_names = implode(',', $union_names);
+                if (count($name) == 1) {
+                    $organization_logo = !empty($name[0]->logo) ? array_reverse(explode('/', $name[0]->logo))[0] : '';
+                }
                 switch ($user->user_type_id) {
                     /* case 1 : $union = $this->getUnion(0, 0, 0, 0);
                       $federation = $this->getFederation(0, 0, $union);
@@ -237,6 +241,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('Plant', '');
         Yii::$app->session->set('BMC', '');
         Yii::$app->session->set('MCC', '');
+        Yii::$app->session->set('organization_logo', $organization_logo);
         return true;
     }
 

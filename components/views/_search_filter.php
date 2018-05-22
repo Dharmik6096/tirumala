@@ -19,7 +19,7 @@ if (!empty($filter_data)) {
                     'method' => $method,
         ]);
         ?>
-        <div class="grid-search">
+        <div class="grid-search search-filter">
             <?php
             foreach ($filters as $key => $value) {
                 $value_array = explode(':', $value);

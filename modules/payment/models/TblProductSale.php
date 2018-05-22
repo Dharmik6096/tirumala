@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\payment\models\TblMemberCreditLimit;
+
 /**
  * This is the model class for table "tbl_product_sale".
  *
@@ -32,31 +33,29 @@ use app\modules\payment\models\TblMemberCreditLimit;
  * @property TblProductSaleDetails[] $tblProductSaleDetails
  * @property TblSaleInstallments[] $tblSaleInstallments
  */
-class TblProductSale extends \app\models\ChildModel
-{
-    
-    public $payment_cycle_code,$available_credit;
+class TblProductSale extends \app\models\ChildModel {
+
+    public $payment_cycle_code, $available_credit;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_product_sale';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code','member_code'], 'required'],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required'],
             [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
-            [['sale_date_time', 'created_at', 'updated_at','dcs_code', 'union_code', 'sale_date_time','no_of_installment','is_installment','payment_cycle_code','available_credit'], 'safe'],
+            [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
             [['other_amount', 'discount', 'paid_amount'], 'number', 'min' => 0],
             [['discount'], 'validateDisccount'],
-            [['amount_due'], 'checkAmount','on'=>'validate_credit'],
+            [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
             [['paid_amount'], 'validatePaidAmount'],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
@@ -68,27 +67,27 @@ class TblProductSale extends \app\models\ChildModel
 //            [['no_of_installment'], 'required','on'=>'payment','when'=>function(){
 //                return ($this->is_installment==1);
 //            },'message'=>'You must have atleast 1 installment to pay the due'],
-            //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-            //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
+                //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
         ];
     }
-    
+
     public function validateDisccount($attribute, $param) {
-        if (!empty($this->discount) && $this->discount > (int)$this->amount+(int)$this->other_amount) {
-            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel ($attribute). ' must be less then 100%.'));
+        if (!empty($this->discount) && $this->discount > (int) $this->amount + (int) $this->other_amount) {
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less then 100%.'));
         }
     }
+
     public function validatePaidAmount($attribute, $param) {
-        if (!empty($this->paid_amount) && $this->paid_amount > (int)$this->amount+(int)$this->other_amount-(int)$this->discount) {
-            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel ($attribute). ' must be less then Amount due.'));
+        if (!empty($this->paid_amount) && $this->paid_amount > (int) $this->amount + (int) $this->other_amount - (int) $this->discount) {
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less then Amount due.'));
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'product_sale_code' => Yii::t('app', 'Product Sale Code'),
             'dcs_code' => Yii::t('app', 'Society Name'),
@@ -113,43 +112,36 @@ class TblProductSale extends \app\models\ChildModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
-    
-    
-    public function getMemberCredit()
-    {
+
+    public function getMemberCredit() {
         return $this->hasOne(TblMemberCreditLimit::className(), ['member_code' => 'member_code']);
     }
-    
-     public function getMemberCode()
-    {
+
+    public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
-    } 
-    
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblProductSaleDetails()
-    {
+    public function getTblProductSaleDetails() {
         return $this->hasMany(TblProductSaleDetails::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblSaleInstallments()
-    {
+    public function getTblSaleInstallments() {
         return $this->hasMany(TblSaleInstallments::className(), ['sale_code' => 'product_sale_code']);
     }
 
@@ -157,38 +149,48 @@ class TblProductSale extends \app\models\ChildModel
      * @inheritdoc
      * @return TblProductSaleQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblProductSaleQuery(get_called_class());
     }
+
     public function getCode() {
         $data = $this->find()->select(["MAX(product_sale_code) as product_sale_code"])->where(['union_code' => $this->union_code])->one();
         return $data['product_sale_code'] + 1;
     }
-    public function addProductSaleData($jsonData)
-    {
+
+    public function addProductSaleData($jsonData) {
         $this->union_code = $jsonData['union_code'];
         $this->attributes = $jsonData;
-        $this->product_sale_code = (string)Yii::$app->general->getCodeAutoIncrement($this);
+        $this->product_sale_code = (string) Yii::$app->general->getCodeAutoIncrement($this);
         $this->dcs_code = $jsonData['dcs_code'];
         $this->member_code = $jsonData['member_code'];
         $this->sale_date_time = date('Y-m-d H:i:s');
-        $this->other_amount=0;
-        $this->discount=0;
-        $this->paid_amount=0;
-        $this->is_installment=0;
-        $this->no_of_installment=0;
+        $this->other_amount = 0;
+        $this->discount = 0;
+        $this->paid_amount = 0;
+        $this->is_installment = 0;
+        $this->no_of_installment = 0;
         //$this->is_active = 1;
     }
-    
+
     public function checkAmount($attribute, $params) {
         $due = $this->amount_due;
         $available = $this->available_credit;
-        if($available!=''){
+        if ($available == '') {
             $available = 0;
         }
-        if($due > $available){
-            $this->addError($attribute, "Amount Due '".$due."' is more then Available Credit.");
+        if ($due > $available) {
+            $this->addError($attribute, "Amount Due '" . $due . "' is more then Available Credit.");
         }
     }
+
+    public function getData($data) {
+        $from_date = $data['from_date'];
+        $to_date = $data['to_date'];
+        return $this->find()->select(['product_sale_code', 'amount', 'amount_due', 'sale_date_time',
+                            'no_of_installment', 'is_installment',
+                            'dcs_code', 'union_code', 'member_code'])
+                        ->where(['member_code' => $this->member_code])->andWhere("sale_date_time between '$from_date' and '$to_date' ")->asArray()->all();
+    }
+
 }

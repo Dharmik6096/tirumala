@@ -55,6 +55,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-3">
             <?= Yii::$app->controls->date($model, $form, 'registration_date'); ?>
         </div>
+        <div class="col-sm-3">
+            <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
+        </div>
     </div>
     <?php
     if (!empty($model->logo)) {
@@ -86,9 +89,6 @@ $form = ActiveForm::begin([
             ]
         ]);
         ?>
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
     </div>
     <div class="col-sm-12">
         <p class="form-subtitle">Address Details</p>

@@ -4,8 +4,8 @@ namespace app\modules\webservice\components;
 
 use yii\helpers\Json;
 use Yii;
-use app\modules\webservice\v1\models\TblApiRequestLog;
-use app\modules\webservice\v1\models\TblAppActivation;
+use app\modules\webservice\models\TblApiRequestLog;
+use app\modules\webservice\models\TblAppActivation;
 
 class HttpRequest extends \yii\base\Component {
 
@@ -18,12 +18,12 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['v1/society/society-data','v1/app-activation/register', 'v1/app-activation/verification', 'v1/app-activation/initialization'];
+    public $is_free = ['v1/society/society-data', 'v1/app-activation/register', 'v1/app-activation/verification', 'v1/app-activation/initialization', 'v1/member/register', 'v1/member/verification', 'v1/member/initialization'];
     public $request;
     public $allow_call = FALSE;
 
     public function ParseRequest() {
-        
+
         $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
         $post_data = Json::decode(Yii::$app->request->getRawBody());
         $request = $this->camelCaseToUnderscore($post_data);
@@ -73,8 +73,12 @@ class HttpRequest extends \yii\base\Component {
                 $model = new TblAppActivation();
                 $model->hash_key = $this->request['token'];
                 $model->imei_no = $this->request['imei'];
-                $model->code = $this->request['dcs_code'];
                 $model->type = $this->request['type'];
+                if ($model->type == 1) {
+                    $model->code = $this->request['dcs_code'];
+                } else if ($model->type == 2) {
+                    $model->code = $this->request['member_code'];
+                }
                 if ($model->getActiveRecord() == 1) {
                     return TRUE;
                 } else {
@@ -86,7 +90,7 @@ class HttpRequest extends \yii\base\Component {
         } else {
             $message[] = 'Imei Can not be blank.';
         }
-        Yii::$app->apiError->error($message,'error');
+        Yii::$app->apiError->error($message, 'error');
         return FALSE;
     }
 

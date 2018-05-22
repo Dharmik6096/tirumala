@@ -1,10 +1,10 @@
 <?php
 
-namespace app\modules\webservice\v1\controllers;
+namespace app\modules\webservice\vsp\v1\controllers;
 
 use app\modules\webservice\controllers\ChildController;
-use app\modules\webservice\v1\models\Member;
-use app\modules\webservice\v1\models\TblAppActivation;
+use app\modules\webservice\vsp\v1\models\Member;
+use app\modules\webservice\models\TblAppActivation;
 use Yii;
 
 class MemberController extends ChildController {

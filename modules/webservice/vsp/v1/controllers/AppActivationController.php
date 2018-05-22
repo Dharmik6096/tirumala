@@ -1,12 +1,12 @@
 <?php
 
-namespace app\modules\webservice\v1\controllers;
+namespace app\modules\webservice\vsp\v1\controllers;
 
 use app\modules\webservice\controllers\ChildController;
-use app\modules\webservice\v1\models\TblAppActivation;
+use app\modules\webservice\models\TblAppActivation;
 use app\modules\installation\models\InstallationIdentity;
-use app\modules\webservice\v1\models\Society;
-use app\modules\webservice\v1\models\Member;
+use app\modules\webservice\vsp\v1\models\Society;
+use app\modules\webservice\vsp\v1\models\Member;
 use Yii;
 
 class AppActivationController extends ChildController {
@@ -21,7 +21,7 @@ class AppActivationController extends ChildController {
         $encryptedmobile = Yii::$app->general->encryptData($appModel->mobile_no);
         if ($this->post_data['type'] == 1) {
             $appModel = $appModel->activationData($encryptedmobile);
-        }else{
+        } else {
             $appModel = [];
         }
         $data = [];
@@ -33,13 +33,13 @@ class AppActivationController extends ChildController {
             $appModel->hash_key = Yii::$app->security->generateRandomString(20);
             $appModel->orignating_timestamp = date('Y-m-d H:i:s');
             $message = 'Dear Your OTP Pin is ' . $appModel->otp_code . '.Enter this pin to login your account.';
-            
+
             $mobile = '91' . $appModel->mobile_no;
             $send = Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
             $sent = json_decode($send);
             $res = $sent->results;
-            foreach($res as $result){
-               $status = $result->status; 
+            foreach ($res as $result) {
+                $status = $result->status;
             }
             $appModel->sms_sent = 1;
             $appModel->sms_log = $status;
@@ -79,7 +79,7 @@ class AppActivationController extends ChildController {
                 return FALSE;
             }
             $societyData = $societyModel->societyData();
-            $data = ['token'=>$this->post_data['token']];
+            $data = ['token' => $this->post_data['token']];
         }
         $this->response['data'] = $data;
         return $this->response;
@@ -97,7 +97,7 @@ class AppActivationController extends ChildController {
         $encryptedmobile = Yii::$app->general->encryptData($appModel->mobile_no);
         $data = $societyModel->societyData();
         if (isset($data) && count($data) == 1) {
-           
+            
         } else {
             return $this->response;
         }
@@ -105,7 +105,7 @@ class AppActivationController extends ChildController {
         $data = $dcsInfo->attributes;
         $data['union_name'] = $dcsInfo->unionCode->union_name;
         $data['village_name'] = $dcsInfo->villageCode->village_name;
-        
+
         $app_data = $appModel->activationDetail();
         $data['c_rate_code'] = $app_data['c_rate_code_a'];
         $data['b_rate_code'] = $app_data['b_rate_code_a'];
@@ -115,12 +115,11 @@ class AppActivationController extends ChildController {
         $this->response['data'] = $data;
         return $this->response;
     }
-    
-    
+
     public function actionAcknowledgement() {
         $appModel = new TblAppActivation();
         $code = $this->post_data['content'];
-        foreach($code as $field_name => $val){
+        foreach ($code as $field_name => $val) {
             $field = $field_name;
             $value = $val;
         }
@@ -128,17 +127,17 @@ class AppActivationController extends ChildController {
         $appModel->hash_key = $this->post_data['token'];
         $appModel->imei_no = $this->post_data['imei'];
         $appModel->code = $this->post_data['dcs_code'];
-        
+
         $data = $appModel->activationDetail();
-        $a_field = $field.'_a';
+        $a_field = $field . '_a';
         $data->$a_field = $value;
-        if($data->save()){
+        if ($data->save()) {
             $response = ['message' => 'Data Updated Successfully'];
             $this->response['data'] = $response;
-        }else{
+        } else {
             $response = ['message' => 'Data not Updated Successfully'];
             $this->response['data'] = $response;
         }
-        
     }
+
 }
