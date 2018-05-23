@@ -3,7 +3,7 @@
 namespace app\modules\webservice\models;
 
 use Yii;
-use app\modules\restservices\models\TblAppActivation;
+use app\modules\webservice\models\TblAppActivation;
 
 /**
  * This is the model class for table "tbl_app_notification".
