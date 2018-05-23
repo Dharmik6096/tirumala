@@ -4,6 +4,7 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\product\models\TblProduct;
+
 /**
  * This is the model class for table "tbl_product_sale_details".
  *
@@ -23,27 +24,25 @@ use app\modules\product\models\TblProduct;
  * @property TblProduct $productCode0
  * @property TblProductSale $productSaleCode
  */
-class TblProductSaleDetails extends \app\models\ChildModel
-{
+class TblProductSaleDetails extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_product_sale_details';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['sale_detail_code', 'product_sale_code', 'product_code','qty'], 'required'],
+            [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required'],
             [['sale_detail_code', 'product_code'], 'integer'],
             [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
             [['rate', 'qty', 'amount'], 'number', 'min' => 0],
-            [['created_at', 'updated_at','rate_app_code'], 'safe'],
+            [['created_at', 'updated_at', 'rate_app_code'], 'safe'],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
             [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
@@ -53,8 +52,7 @@ class TblProductSaleDetails extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'sale_detail_code' => Yii::t('app', 'Sale Detail Code'),
             'product_sale_code' => Yii::t('app', 'Product Sale Code'),
@@ -73,24 +71,21 @@ class TblProductSaleDetails extends \app\models\ChildModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProductCode()
-    {
+    public function getProductCode() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProductCode0()
-    {
+    public function getProductCode0() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProductSaleCode()
-    {
+    public function getProductSaleCode() {
         return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
@@ -98,8 +93,14 @@ class TblProductSaleDetails extends \app\models\ChildModel
      * @inheritdoc
      * @return TblProductSaleDetailsQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblProductSaleDetailsQuery(get_called_class());
     }
+
+    public function getTransData($invoice_no) {
+        return $this->find()->select(['sale_detail_code', 'amount',
+                    'qty', 'rate', 'product_sale_code', 'product_code',
+                ])->where(['product_sale_code' => $invoice_no])->all();
+    }
+
 }

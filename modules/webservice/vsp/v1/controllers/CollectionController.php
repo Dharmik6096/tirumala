@@ -1,9 +1,9 @@
 <?php
 
-namespace app\modules\webservice\v1\controllers;
+namespace app\modules\webservice\vsp\v1\controllers;
 
 use app\modules\webservice\controllers\ChildController;
-use app\modules\webservice\v1\models\Collection;
+use app\modules\webservice\vsp\v1\models\Collection;
 use Yii;
 
 class CollectionController extends ChildController {

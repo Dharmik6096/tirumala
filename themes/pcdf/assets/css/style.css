@@ -210,7 +210,7 @@ ul{
     background-color: #607188;
 }
 .bg-success{
-    background-color: #4caf50;
+    background-color: rgb(58, 123, 213);
 }
 .link-disable {
     opacity: 0.65;
@@ -2087,4 +2087,21 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
     display: block;
     margin-left: -50px;
     max-width: 100px;
+}
+
+.mt-50 {
+    margin-top: 50px;
+}
+
+.table-height{
+    height: auto !important;
+    padding: 10px 0px;
+}
+
+.table-height .help-block {
+    height: 13px;
+    margin:2px;
+}
+.table-height td {
+    padding-bottom: 0px !important;
 }

@@ -7,7 +7,11 @@ use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblFederations;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
 use yii\helpers\ArrayHelper;
+
 /**
  * This is the model class for table "tbl_user_organization_mapping".
  *
@@ -25,62 +29,63 @@ use yii\helpers\ArrayHelper;
  * @property TblUsers $updatedBy
  * @property TblUsers $createdBy
  */
-class TblUserOrganizationMapping extends ChildModel
-{
+class TblUserOrganizationMapping extends ChildModel {
+
     public $organization;
     public $federation;
     public $union;
+    public $plant;
+    public $bmc;
+    public $mcc;
     public $dcs;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_user_organization_mapping';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['federation'], 'required','on'=>'organizationMapping'],
-            [['federation','union','dcs','created_at', 'deleted_at', 'updated_at','organization'], 'safe'],
+            [['federation'], 'required', 'on' => 'organizationMapping'],
+            [['union'], 'required', 'on' => 'organizationMappingUnion'],
+            [['federation', 'union', 'dcs', 'created_at', 'deleted_at', 'updated_at', 'organization', 'plant', 'mcc', 'bmc'], 'safe'],
             [['is_active'], 'integer'],
 //            [['federation'], function ($attribute, $params) {
 //                    $this->validateChecked($attribute,$params);
 //                },'skipOnEmpty'=> false],
             [['organization_code', 'organization_type'], 'string', 'max' => 25],
-            [['created_by','updated_by', 'user_id'], 'string', 'max' => 14],           
+            [['created_by', 'updated_by', 'user_id'], 'string', 'max' => 14],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
     }
 
-    public function validateChecked($attribute,$params){
-        
-        if(!empty($this->identity)){
+    public function validateChecked($attribute, $params) {
+
+        if (!empty($this->identity)) {
             $ary = explode('-', $this->identity);
-            if(empty($this->$attribute) && $ary[2]=='4'){
-                $this->addError($attribute,Yii::t('app/validation',$this->getAttributeLabel($attribute).' cannot be blank.'));
+            if (empty($this->$attribute) && $ary[2] == '4') {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' cannot be blank.'));
                 return false;
             }
         }
     }
-    
+
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'organization'=>Yii::t('app', 'Organization'),
+            'organization' => Yii::t('app', 'Organization'),
             'created_at' => Yii::t('app', 'Created At'),
             'deleted_at' => Yii::t('app', 'Deleted At'),
-            
             'is_active' => Yii::t('app', 'Is Active'),
             'organization_code' => Yii::t('app', 'Organization Code'),
             'organization_type' => Yii::t('app', 'Organization Type'),
@@ -88,34 +93,35 @@ class TblUserOrganizationMapping extends ChildModel
             'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'created_by' => Yii::t('app', 'Created By'),
-         
             'updated_by' => Yii::t('app', 'Updated By'),
             'user_id' => Yii::t('app', 'User ID'),
+            'federation' => Yii::t('app', 'FEDERATION'),
+            'union' => Yii::t('app', 'UNION'),
+            'plant' => Yii::t('app', 'PLANT'),
+            'mcc' => Yii::t('app', 'MCC'),
+            'bmc' => Yii::t('app', 'BMC'),
+            'dcs' => Yii::t('app', 'DCS'),
         ];
     }
 
-  
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->hasOne(TblUsers::className(), ['id' => 'user_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
-    {
+    public function getUpdatedBy() {
         return $this->hasOne(TblUsers::className(), ['id' => 'updated_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
-    {
+    public function getCreatedBy() {
         return $this->hasOne(TblUsers::className(), ['id' => 'created_by']);
     }
 
@@ -123,184 +129,302 @@ class TblUserOrganizationMapping extends ChildModel
      * @inheritdoc
      * @return TblUserOrganizationMappingQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblUserOrganizationMappingQuery(get_called_class());
     }
 
-
-    public function getOrganization($id,$orgType){
+    public function getOrganization($id, $orgType) {
         $userOrg = User::getSelectedOrganization($orgType);
 
-        foreach ($userOrg['data'] as $row){
-                $data[$row->{$userOrg['field'][0]}] = $row->{$userOrg['field'][1]};
+        foreach ($userOrg['data'] as $row) {
+            $data[$row->{$userOrg['field'][0]}] = $row->{$userOrg['field'][1]};
         }
-        $values = $this->find()->select('organization_code,organization_type')->where(['user_id' => $id,'is_active'=>1])->asArray()->all();
+        $values = $this->find()->select('organization_code,organization_type')->where(['user_id' => $id, 'is_active' => 1])->asArray()->all();
         $selected = [];
         foreach ($data as $key => $row) {
             if (array_search($key, array_column($values, 'organization_code')) !== FALSE) {
-                $selected[$key] = ['selected'=>'selected'];
+                $selected[$key] = ['selected' => 'selected'];
             }
         }
         return ['value' => $data, 'selected' => $selected];
     }
 
-    public function getOrganizationsArray($id,$orgType){
-        
+    public function getOrganizationsArray($id, $orgType) {
         $userOrg = User::getSelectedOrganization($orgType);
         $fedModel = new TblFederations();
         $federations = $fedModel->getActiveFederation();
-        $unions = ['data'=>[],'selectedArray'=>[]];
-        $dcs = ['data'=>[],'selectedArray'=>[]];
-        $federations = ['data'=>$federations,'selectedArray'=>[]];
-        $data=[];
-        foreach ($userOrg['data'] as $row){
-            $data[$row[$userOrg['field'][0]]] = $row[$userOrg['field'][1]];
+        $uniModel = new TblUnions();
+        $unions = $uniModel->getActiveUnions(1);
+        $plant = ['data' => [], 'selectedArray' => []];
+        $mcc = ['data' => [], 'selectedArray' => []];
+        $bmc = ['data' => [], 'selectedArray' => []];
+        $dcs = ['data' => [], 'selectedArray' => []];
+        $federations = ['data' => $federations, 'selectedArray' => []];
+        $unions = ['data' => $unions, 'selectedArray' => []];
+        $data = [];
+        foreach ($userOrg['data'] as $row) {
+            $data_key = $row[$userOrg['field'][0]];
+            $data_val = $row[$userOrg['field'][1]];
+            $data[$data_key] = $data_val;
         }
-        $values = $this->find()->select('organization_code,organization_type')->where(['user_id' => $id,'is_active'=>1])->asArray()->all();
+        $values = $this->find()->select('organization_code,organization_type')->where(['user_id' => $id, 'is_active' => 1])->asArray()->all();
         $selected = [];
-        $selectedArray = [];
         foreach ($data as $key => $row) {
             if (array_search($key, array_column($values, 'organization_code')) !== FALSE) {
-                $selected[$key] = ['selected'=>'selected'];
-                $selectedArray[$key] = $row;
+                $selected[$key] = $key;
             }
         }
-        
+
         switch ($orgType) {
+            case '7' :
+                $federations = $this->getFederations();
+                $unions = $this->getUnions($federations['selectedArray'], 0);
+                $bmc_temp = $this->getBMC(0, $selected);
+                $mcc_temp = $this->getMCC(0, $bmc_temp['selectedArray']);
+                $plant_temp = $this->getPlant(0, $mcc_temp['selectedArray']);
+                $uni_temp = $this->getUnions(0, $plant_temp['selectedArray']);
+                $unions['selectedArray'] = $uni_temp['selectedArray'];
+                $plant = $this->getPlant($unions['selectedArray'], 0);
+                $plant['selectedArray'] = $plant_temp['selectedArray'];
+                $mcc = $this->getMCC($plant['selectedArray'], 0);
+                $mcc['selectedArray'] = $mcc_temp['selectedArray'];
+                $bmc = $this->getBMC($mcc['selectedArray'], 0);
+                $bmc['selectedArray'] = $bmc_temp['selectedArray'];
+                $dcs = $this->getDcs($bmc['selectedArray']);
+                $dcs['selectedArray'] = $selected;
+                break;
+            case '6' :
+                $federations = $this->getFederations();
+                $unions = $this->getUnions($federations['selectedArray'], 0);
+                $mcc_temp = $this->getMCC(0, $selected);
+                $plant_temp = $this->getPlant(0, $mcc_temp['selectedArray']);
+                $uni_temp = $this->getUnions(0, $plant_temp['selectedArray']);
+                $unions['selectedArray'] = $uni_temp['selectedArray'];
+                $plant = $this->getPlant($unions['selectedArray'], 0);
+                $plant['selectedArray'] = $plant_temp['selectedArray'];
+                $mcc = $this->getMCC($plant['selectedArray'], 0);
+                $mcc['selectedArray'] = $mcc_temp['selectedArray'];
+                $bmc = $this->getBMC($mcc['selectedArray'], 0);
+                $bmc['selectedArray'] = $selected;
+                $dcs = $this->getDcs($selected);
+                break;
+            case '5' :
+                $federations = $this->getFederations();
+                $unions = $this->getUnions($federations['selectedArray'], 0);
+                $plant = $this->getPlant(0, $selected);
+                $uni_temp = $this->getUnions(0, $plant['selectedArray']);
+                $unions['selectedArray'] = $uni_temp['selectedArray'];
+                $plant = $this->getPlant($unions['selectedArray'], 0);
+                $plant_temp = $this->getPlant(0, $selected);
+                $plant['selectedArray'] = $plant_temp['selectedArray'];
+                $mcc = $this->getMCC($plant['selectedArray'], 0);
+                $mcc['selectedArray'] = $selected;
+                $bmc = $this->getBMC($selected, 0);
+                $dcs = $this->getDcs($bmc['selectedArray']);
+                break;
             case '4' :
-                $union_temp1 = $this->getUnions(0,$selectedArray);
-                $federations = $this->getFederations(0,$union_temp1['selectedValue']);
-                $union_temp2 = $this->getUnions($federations['selectedValue'],0);
-                $unions=['data'=>$union_temp2['data'],'selectedArray'=>$union_temp1['selectedArray']];
-                $dcs = $this->getDcs($union_temp1['data']);
-                $dcs = ['data'=>$dcs['data'],'selectedArray'=>$selected];
+                $federations = $this->getFederations();
+                $unions = $this->getUnions($federations['selectedArray'], 0);
+                $uni_temp = $this->getUnions($federations['selectedArray'], $selected);
+                $unions['selectedArray'] = $uni_temp['selectedArray'];
+                $plant = $this->getPlant($unions['selectedArray'], 0);
+                $plant['selectedArray'] = $selected;
+                $mcc = $this->getMCC($selected, 0);
+                $bmc = $this->getBMC($mcc['selectedArray'], 0);
+                $dcs = $this->getDcs($bmc['selectedArray']);
                 break;
             case '3' :
-                $federations = $this->getFederations(0,$selectedArray);
-                $unions =$this->getUnions($federations['selectedValue'],0);
-                $unions['selectedArray']=$selected;
-                $dcs = $this->getDcs($selectedArray);
+                $federations = $this->getFederations();
+                $unions = $this->getUnions($federations['selectedArray'], 0);
+                $unions['selectedArray'] = $selected;
+                $plant = $this->getPlant($selected, 0);
+                $mcc = $this->getMCC($plant['selectedArray'], 0);
+                $bmc = $this->getBMC($mcc['selectedArray'], 0);
+                $dcs = $this->getDcs($bmc['selectedArray']);
                 break;
             case '2' :
-                $federations = ['data'=>$data,'selectedArray'=>$selected];
-                $unions = $this->getUnions($selectedArray,0);
-                $dcs = $this->getDcs($unions['selectedArray']);
+                $federations = ['data' => $data, 'selectedArray' => $selected];
+                $unions = $this->getUnions($selected, 0);
+                $plant = $this->getPlant($unions['selectedArray'], 0);
+                $mcc = $this->getMCC($plant['selectedArray'], 0);
+                $bmc = $this->getBMC($mcc['selectedArray'], 0);
+                $dcs = $this->getDcs($bmc['selectedArray']);
                 break;
         }
-        return ['federation'=>$federations,'union'=>$unions,'dcs'=>$dcs];
+        return ['federation' => $federations, 'union' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs];
     }
 
-    private function getUnions($fedearionArray,$dcsArray){
-
-        $query = TblUnions::find();
-        $query->select(['union_code','union_name']);
+    private function getDcs($BMCArray) {
+        $query = TblDcs::find();
+        $query->select(['dcs_code', 'dcs_name']);
         $query->where(['is_active' => 1]);
-        $selected=[];
-        $selectedValue = [];
-        if (!empty(Yii::$app->session->get('Unions'))){
-             $sel=explode(',',Yii::$app->session->get('Unions'));
-             $query->andWhere(['union_code'=>$sel]);
+        if (!empty(Yii::$app->session->get('Unions'))) {
+            $sel = explode(',', Yii::$app->session->get('Unions'));
+            $query->andWhere(['union_code' => $sel]);
         }
-        if ($fedearionArray !== 0){
-            $query->andWhere(['federation_code' => array_keys($fedearionArray)]);
-            $list = $query->asArray()->all();
-            $data=ArrayHelper::map($list,'union_code','union_name');
+        if ($BMCArray !== 0) {
+            $query->andWhere(['bmc_code' => $BMCArray]);
         }
-        if($dcsArray!=0){
+        $list = $query->asArray()->all();
+        $data = ArrayHelper::map($list, 'dcs_code', 'dcs_name');
+        return ['data' => $data, 'selectedArray' => []];
+    }
 
-            $codes = TblDcs::find()->select(['union_code'])->where(['dcs_code' =>array_flip($dcsArray)])->asArray()->all();
+    private function getBMC($MCCArray, $DcsArray) {
+        $query = TblDcsBmc::find();
+        $query->select(['bmc_code', 'bmc_name']);
+        $query->where(['is_active' => 1]);
+        if (!empty(Yii::$app->session->get('Unions'))) {
+            $sel = explode(',', Yii::$app->session->get('Unions'));
+            $query->andWhere(['union_code' => $sel]);
+        }
+        $selected = [];
+        if ($MCCArray !== 0) {
+            $query->andWhere(['mcc_code' => array_keys($MCCArray)]);
+        }
+        $list = $query->asArray()->all();
+        $data = ArrayHelper::map($list, 'bmc_code', 'bmc_name');
+        if ($DcsArray != 0) {
+            $codes = TblDcs::find()->select(['bmc_code'])->where(['dcs_code' => array_flip($DcsArray)])->asArray()->all();
+            $query->andWhere(['bmc_code' => $codes]);
+            $list = $query->asArray()->all();
+
+            $data = ArrayHelper::map($list, 'bmc_code', 'bmc_name');
+            foreach ($data as $key => $row) {
+                $selected[$key] = $key;
+            }
+        }
+        return ['data' => $data, 'selectedArray' => $selected];
+    }
+
+    private function getMCC($plantArray, $BMCArray) {
+        $query = TblMccPlant::find();
+        $query->select(['mcc_plant_code', 'name']);
+        $query->where(['is_active' => 1]);
+        if (!empty(Yii::$app->session->get('Unions'))) {
+            $sel = explode(',', Yii::$app->session->get('Unions'));
+            $query->andWhere(['union_code' => $sel]);
+        }
+        $selected = [];
+        if ($plantArray !== 0) {
+            $query->andWhere(['plant_code' => array_keys($plantArray)]);
+        }
+        $list = $query->asArray()->all();
+        $data = ArrayHelper::map($list, 'mcc_plant_code', 'name');
+        if ($BMCArray != 0) {
+            $codes = TblDcsBmc::find()->select(['mcc_code As mcc_plant_code'])->where(['bmc_code' => array_flip($BMCArray)])->asArray()->all();
+            $query->andWhere(['mcc_plant_code' => $codes]);
+            $list = $query->asArray()->all();
+            $data = ArrayHelper::map($list, 'mcc_plant_code', 'name');
+            foreach ($data as $key => $row) {
+                $selected[$key] = $key;
+            }
+        }
+        return ['data' => $data, 'selectedArray' => $selected];
+    }
+
+    private function getPlant($unionArray, $MCCArray) {
+        $query = TblPlant::find();
+        $query->select(['plant_code', 'name']);
+        $query->where(['is_active' => 1]);
+        if (!empty(Yii::$app->session->get('Unions'))) {
+            $sel = explode(',', Yii::$app->session->get('Unions'));
+            $query->andWhere(['union_code' => $sel]);
+        }
+        $selected = [];
+        if ($unionArray !== 0) {
+            $query->andWhere(['union_code' => array_keys($unionArray)]);
+        }
+        $list = $query->asArray()->all();
+        $data = ArrayHelper::map($list, 'plant_code', 'name');
+        if ($MCCArray != 0) {
+            $codes = TblMccPlant::find()->select(['plant_code'])->where(['mcc_plant_code' => array_flip($MCCArray)])->asArray()->all();
+            $query->andWhere(['plant_code' => $codes]);
+            $list = $query->asArray()->all();
+            $data = ArrayHelper::map($list, 'plant_code', 'name');
+            foreach ($data as $key => $row) {
+                $selected[$key] = $key;
+            }
+        }
+
+        return ['data' => $data, 'selectedArray' => $selected];
+    }
+
+    private function getUnions($fedearionArray, $plantArray) {
+        $query = TblUnions::find();
+        $query->select(['union_code', 'union_name']);
+        $query->where(['is_active' => 1]);
+        $selected = [];
+        if (!empty(Yii::$app->session->get('Unions'))) {
+            $sel = explode(',', Yii::$app->session->get('Unions'));
+            $query->andWhere(['union_code' => $sel]);
+        }
+        if ($fedearionArray !== 0) {
+            $query->andWhere(['federation_code' => array_keys($fedearionArray)]);
+        }
+        $list = $query->asArray()->all();
+        $data = ArrayHelper::map($list, 'union_code', 'union_name');
+        if ($plantArray != 0) {
+            $codes = TblPlant::find()->select(['union_code'])->where(['plant_code' => array_flip($plantArray)])->asArray()->all();
             $query->andWhere(['union_code' => $codes]);
             $list = $query->asArray()->all();
-
-            $data=ArrayHelper::map($list,'union_code','union_name');
+            $data = ArrayHelper::map($list, 'union_code', 'union_name');
             foreach ($data as $key => $row) {
-                    $selected[$key] = ['selected'=>'selected'];
-                    $selectedValue[$key] = $row;
+                $selected[$key] = $key;
             }
         }
-        /*$selected = [];
-        $selectedValue = [];
-        foreach ($data as $key => $row) {
-            if (array_search($key, array_column($unions, 'union_code')) !== FALSE) {
-                $selected[$key] = ['selected'=>'selected'];
-                $selectedValue[$key] = $row;
-            }
-        }
-//        $data=ArrayHelper::map($unions,'union_code','dcs_name');
-//        $selectedValue=ArrayHelper::map($unions,'union_code',function($array,$key) {
-//                 return ['selected' => 'selected'];
-//        });*/
-        return ['data'=>$data,'selectedArray'=>$selected,'selectedValue'=>$selectedValue];
+
+        return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    private function getFederations($federationArray,$unionArray){
-
+    private function getFederations() {
         $allFeder = User::getSelectedOrganization(2);
         $selected = [];
-        $selectedValue = [];
-        foreach ($allFeder['data'] as $row){
-                $data[$row->{$allFeder['field'][0]}] = $row->{$allFeder['field'][1]};
+        foreach ($allFeder['data'] as $row) {
+            $data[$row->{$allFeder['field'][0]}] = $row->{$allFeder['field'][1]};
         }
-        $unions = TblUnions::find()->joinWith(['federationCode'])->select('tbl_federations.federation_code,tbl_federations.federation_name as union_name')->where(['union_code' => array_flip($unionArray)])->asArray()->all();
         foreach ($data as $key => $row) {
-            if (array_search($key, array_column($unions, 'federation_code')) !== FALSE) {
-                $selected[$key] = ['selected'=>'selected'];
-                $selectedValue[$key] = $row;
-            }
+            $selected[$key] = $key;
         }
-        $selectedValue=ArrayHelper::map($unions,'federation_code',function($array,$key) {
-                 return ['selected' => 'selected'];
-        });
-        return ['data'=>$data,'selectedArray'=>$selected,'selectedValue'=>$selectedValue];
+        return ['data' => $data, 'selectedArray' => $selected];
     }
 
-    private function getDcs($unions){
-        $model = new TblDcs();
-        $finalDcs = [];
+    public function getCode() {
 
-        foreach ($unions as $key=>$row){
-            $dcsList = $model->getDcsList($key);
-            $finalDcs = array_merge($finalDcs,$dcsList);
-        }
-        return ['data'=>$finalDcs,'selectedArray'=>[]];
-    }
-    
-    public function getCode(){
-        
         $orgCode = Yii::$app->session->get('organizations_code');
         $len = strlen($orgCode);
-        
+
         $val = (new \yii\db\Query)
                 ->select(["MAX(convert(int,id)) as id"])
-                ->from('tbl_user_organization_mapping')               
+                ->from('tbl_user_organization_mapping')
                 ->one();
-        $code1 = (int)$val['id'] + 1 ;
+        $code1 = (int) $val['id'] + 1;
 
-        $value = $orgCode.$code1;
-        
+        $value = $orgCode . $code1;
+
         return $value;
     }
-    
-     public function getInstalltionCode($orgCode){
-        
+
+    public function getInstalltionCode($orgCode) {
+
         $orgCode = Yii::$app->session->get('organizations_code');
         $len = strlen($orgCode);
-        
-        $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`id` FROM ".$len." +1)) AS UNSIGNED)) as id")
-                ->from('tbl_user_organization_mapping')
-                ->where('(CAST(trim(SUBSTRING(id, 1,'.$len.')) AS UNSIGNED))="'.trim($orgCode).'"')
-                ->one();
-        $code1 = (int)$val['id'] + 1 ;
 
-        $value = $orgCode.$code1;
-        
+        $val = (new \yii\db\Query)
+                ->select("MAX(CAST(trim(SUBSTRING(`id` FROM " . $len . " +1)) AS UNSIGNED)) as id")
+                ->from('tbl_user_organization_mapping')
+                ->where('(CAST(trim(SUBSTRING(id, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->one();
+        $code1 = (int) $val['id'] + 1;
+
+        $value = $orgCode . $code1;
+
         return $value;
     }
-    
-    public function getUserOrgs($userCode){
-        $records = $this->find()->select(['organization_code'])->where(['user_id'=>$userCode,'is_active'=>1])->asArray()->all();
+
+    public function getUserOrgs($userCode) {
+        $records = $this->find()->select(['organization_code'])->where(['user_id' => $userCode, 'is_active' => 1])->asArray()->all();
         return $records;
     }
+
 }

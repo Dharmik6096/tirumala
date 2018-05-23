@@ -4,6 +4,7 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_purchase_rate".
@@ -173,6 +174,35 @@ class TblPurchaseRate extends \app\models\ChildModel {
                     $saveData[] = $rate_master;
                 }
                 return $saveData;
+            }
+
+            public function purchaseRate($data) {
+                $rtpl_data = [];
+                $model = new TblDcs();
+                $union = $model->find()->select(['union_code'])->where(['dcs_code' => $data['dcs_code'], 'is_active' => 1])->one();
+
+                if (!empty($union)) {
+                    $union_code = $union->union_code;
+
+                    $purchase_rate_code = $this->find()
+                            ->where(['union_code' => $union_code, 'shift_applicability' => [3, $data['shift']]])
+                            ->andWhere(['<=', 'wef_date', $data['dt_date']])
+                            ->orderBy('wef_date desc')
+                            ->one();
+
+                    if (!empty($purchase_rate_code)) {
+                        $purchase_rate_code = $purchase_rate_code->purchase_rate_code;
+
+                        $detail_model = new TblPurchaseRateDetails();
+
+                        $rtpl_data = $detail_model->find()
+                                ->select(['rtpl', 'purchase_rate_code'])
+                                ->where(['purchase_rate_code' => $purchase_rate_code, 'fat' => $data['fat'], 'snf' => $data['snf'], 'milk_quality_type_code' => $data['milk_quality_type'], 'milk_type_code' => $data['milk_type']])
+                                ->one();
+                    }
+                }
+
+                return $rtpl_data;
             }
 
         }

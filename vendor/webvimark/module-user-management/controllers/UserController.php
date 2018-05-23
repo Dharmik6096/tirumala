@@ -11,6 +11,7 @@ use yii\helpers\Json;
 use app\modules\setting\models\TblUserProfileMapping;
 use app\models\TblUserOrganizationMapping;
 use yii\helpers\FileHelper;
+
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -46,7 +47,7 @@ class UserController extends AdminDefaultController {
 
             $this->model->username = $this->model->user_identity . '#' . $this->model->username;
             $this->model->portal_type = 'portal';
-             $this->model->is_active=1;
+            $this->model->is_active = 1;
             //Assign Role
             // $mapList = [];
             $transaction = $this->generalModel->saveTransaction([$this->model], ['User', 'create']);
@@ -152,19 +153,35 @@ class UserController extends AdminDefaultController {
     }
 
     public function actionOrganizationMap($id) {
-
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
-        $model->scenario='organizationMapping';
+        $model->scenario = 'organizationMapping';
+        if (Yii::$app->session->get('organizations_type') == 'UNION') {
+            $model->scenario = 'organizationMappingUnion';
+        }
         $organization = $model->getOrganizationsArray($id, $user->user_type_id);
         $federations = $organization['federation'];
-        $unions = $organization['union'];        
+        $unions = $organization['union'];
+        $plant = $organization['plant'];
+        $mcc = $organization['mcc'];
+        $bmc = $organization['bmc'];
         $dcs = $organization['dcs'];
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {             
+        $model->dcs = $dcs['selectedArray'];
+        $model->bmc = $bmc['selectedArray'];
+        $model->mcc = $mcc['selectedArray'];
+        $model->plant = $plant['selectedArray'];
+        $model->union = $unions['selectedArray'];
+        $model->federation = ['01'];
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             TblUserOrganizationMapping::deleteAll(['user_id' => $id]);
             switch ($_POST['user_type']) {
-                case 4 : $this->addUserOrganizationMapping($model->dcs, 'DCS', $id, $user->is_active);
+                case 7 : $this->addUserOrganizationMapping($model->dcs, 'DCS', $id, $user->is_active);
+                    break;
+                case 6 : $this->addUserOrganizationMapping($model->bmc, 'BMC', $id, $user->is_active);
+                    break;
+                case 5 : $this->addUserOrganizationMapping($model->mcc, 'MCC', $id, $user->is_active);
+                    break;
+                case 4 : $this->addUserOrganizationMapping($model->plant, 'PLANT', $id, $user->is_active);
                     break;
                 case 3 : $this->addUserOrganizationMapping($model->union, 'UNION', $id, $user->is_active);
                     break;
@@ -176,14 +193,14 @@ class UserController extends AdminDefaultController {
             Yii::$app->display->message(true, 'user', 'edit');
             return $this->redirect(['index']);
         }
-        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'dcs' => $dcs]);
+        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs]);
     }
 
     private function addUserOrganizationMapping($data, $type, $userId, $active) {
-        $userModel=new User();
-        $users=$userModel->findByRole(['EIPL']);
-        $users=  \yii\helpers\ArrayHelper::getColumn($users, 'id');
-        $is_eipl=  in_array($userId, $users);
+        $userModel = new User();
+        $users = $userModel->findByRole(['EIPL']);
+        $users = \yii\helpers\ArrayHelper::getColumn($users, 'id');
+        $is_eipl = in_array($userId, $users);
         foreach ($data as $value) {
             $modelNew = new TblUserOrganizationMapping();
             // $modelNew->id = $modelNew->getCode();
@@ -193,15 +210,12 @@ class UserController extends AdminDefaultController {
             $modelNew->is_active = $active;
             Yii::$app->operation->defaults($modelNew, INSERT);
             //$roles=Yii::$app->authManager->getRolesByUser('00000000000035');
-            
-            if($modelNew->save())
-            {
-                if($is_eipl && $modelNew->organization_type=='DCS')
-                {
-                    $path=Yii::$app->params['eiplDirPath'].$modelNew->organization_code.'/';
-                    if(!file_exists($path) || !is_dir($path))
-                    {
-                        FileHelper::createDirectory($path); 
+
+            if ($modelNew->save()) {
+                if ($is_eipl && $modelNew->organization_type == 'DCS') {
+                    $path = Yii::$app->params['eiplDirPath'] . $modelNew->organization_code . '/';
+                    if (!file_exists($path) || !is_dir($path)) {
+                        FileHelper::createDirectory($path);
                     }
                 }
             }

@@ -40,7 +40,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $rate_gen_method_code;
+    public $rate_gen_method_code,$rate_description;
     public $rate_type, $reference_code;
 
     public static function tableName() {
@@ -53,6 +53,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
     public function rules() {
         return [
             [['is_download'], 'default', 'value' => '0'],
+            [['is_active'], 'default', 'value' => '1'],
             [['wef_date', 'shift_code'], 'required'],
             [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
             [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code'], 'safe'],

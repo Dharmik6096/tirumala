@@ -165,7 +165,7 @@ class TblPurchaseRateBased extends \app\models\ChildModel {
         for ($i = 0; $i < count($model); $i++) {
             $data = $this->find()->where(['milk_type_code' => $model[$i]->milk_type_code, 'purchase_rate_code' => $model[$i]->purchase_rate_code])->orderBy('quality_param_code,start_range')->all();
             $aqcnt = ArrayHelper::map($data, 'quality_param_code', 'quality_param_code');
-            $qpcnt = explode('+', $model[$i]->rateType->code);
+            $qpcnt = explode('+', $model[$i]->rateType->rate_type);
             if (count($aqcnt) != count($qpcnt)) {
                 $message = 'Line Missing for ' . $model[$i]->milkTypeCode->animal_type_name;
                 break;
