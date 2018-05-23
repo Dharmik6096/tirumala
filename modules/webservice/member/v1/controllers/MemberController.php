@@ -22,7 +22,7 @@ class MemberController extends ChildController {
             $mdata = $model->memberInfo($encryptedmobile);
         }
         $data = [];
-        if (isset($mdata) && count($mdata) == 1) {
+        if (isset($mdata) && !empty($mdata)) {
             $master = [];
             $appModel->imei_no = $this->post_data['imei'];
             $appModel->code = $mdata[0]->member_code;
@@ -31,7 +31,7 @@ class MemberController extends ChildController {
             $appModel->hash_key = Yii::$app->security->generateRandomString(20);
             $appModel->orignating_timestamp = date('Y-m-d H:i:s');
             $message = 'Dear Your OTP Pin is ' . $appModel->otp_code . '.Enter this pin to login your account.';
-            
+
             $mobile = '91' . $appModel->mobile_no;
             $send = Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
             $sent = json_decode($send);
@@ -40,7 +40,7 @@ class MemberController extends ChildController {
             foreach ($res as $result) {
                 $status = $result->status;
             }
-            
+
             // $result = Yii::$app->general->sendsms($appModel->mobile_no, $message);
             $appModel->sms_sent = 1;
             $appModel->sms_log = $status;
@@ -104,7 +104,7 @@ class MemberController extends ChildController {
         $encryptedmobile = $appModel->mobile_no;
         $model->member_code = $this->post_data['member_code'];
         $data = $model->memberInfo($encryptedmobile);
-        if (isset($data) && count($data) == 1) {
+        if (isset($data) && !empty($data)) {
             if ($appModel->getActiveRecord() == 0) {
                 $appModel->type = 1;
                 $appModel->code = $data[0]->member_code;
