@@ -835,4 +835,41 @@ class DefaultController extends Controller {
         return $this->render('calibration_change_report', ['model' => $model, 'dataProvider' => $dataProvider, 'summary' => true]);
     }
 
+    public function actionShiftAReport() {
+
+        $request = Yii::$app->request->queryParams;
+
+        $model = new TblDpuRequestSearch();
+        $model->load($request);
+        $model->scenario = 'shift_a_report';
+        $date = !empty($model->max_date) ? date('Y-m-d H:i:s', strtotime($model->max_date . ' ' . $model->shift)) : NULL;
+        $query = [];
+        if (!empty($date) && $model->validate()) {
+            $result = \Yii::$app->db->createCommand("{CALL rptShiftA(:Date,:bmc)}")
+                    ->bindValue(':Date', $date)
+                    ->bindValue(':bmc', $model->bmc_code);
+            $query = $result->queryAll();
+        }
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $query,
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => ['bmc_name' => SORT_ASC],
+                'attributes' => [
+                    'bmc_name',
+                    'dcs_code',
+                    'dcs_name',
+                    'DPU_SerialNo',
+                    'DPUVersionNo',
+                    'MA_Internal_Number',
+                    'MA_External_Number',
+                    'Last_Calibration_Date',
+                    'Last_Cleaning_Date'
+                ],
+            ],
+        ]);
+
+        return $this->render('shift_a_report', ['model' => $model, 'dataProvider' => $dataProvider, 'summary' => true]);
+    }
+
 }

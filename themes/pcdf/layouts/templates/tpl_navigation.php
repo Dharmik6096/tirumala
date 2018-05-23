@@ -143,6 +143,7 @@ echo GhostMenu::widget([
                         ['label' => '212-' . Yii::t('app', 'Union Shift Report'), 'url' => ['/report/default/union-shift-report']],
                         ['label' => '213-' . Yii::t('app', 'Union Shift Summary Report'), 'url' => ['/report/default/union-shift-summary-report']],
                         ['label' => '214-' . Yii::t('app', 'DPMCU Working Status'), 'url' => ['/report/default/dpmcu-working-status']],
+                        ['label' => '215-' . Yii::t('app', 'DPMCU Information'), 'url' => ['/report/default/shift-a-report']],
                     //  ['label' => Yii::t('app', 'Cleaning Not Done'), 'url' => ['/report/default/cleaning-not-done']],
                     // ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
                     ]
@@ -209,6 +210,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Custom Import (Update)'), 'url' => ['/customimport/default/update-by-import'], 'active' => ($cntrl == 'customimport-update')],
                         ['label' => Yii::t('app', 'Escalation'), 'url' => ['/email/tbl-email-rule-master/index']],
                         ['label' => Yii::t('app', 'Union Credit'), 'url' => ['/payment/tbl-union-credit-limit/index']],
+                        ['label' => Yii::t('app', 'DPU Passwords'), 'url' => ['/setting/tbl-dpu-passwords/create'], 'active' => ($cntrl == 'tbl-dpu-passwords')],
 //                        ['label' => 'Member Credit', 'url' => ['/payment/tbl-member-credit-limit/index']],
                     ]
                 ],
