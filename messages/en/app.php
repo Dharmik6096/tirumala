@@ -93,5 +93,6 @@ return [
     'DCS Data Received' => 'TMCC Data Received',
     'DCS Under Maintanance' => 'TMCC Under Maintanance',
     'UNION' => 'COMPANY',
-    'DCS' => 'TMCC'
+    'DCS' => 'TMCC',
+    'DCS Code' => 'TMCC Code',
 ];
