@@ -1,4 +1,5 @@
 <?php
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -9,11 +10,15 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
+
 ?>
 <?php
+
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
-    ['attribute' => 'bmc_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'); }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'visible' => true, 'filter' => false],
     ['attribute' => 'dcs_code_ex', 'value' => 'dcs_code_ex', 'visible' => false, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => 'dcs_code'],
     ['attribute' => 'dcs_name', 'value' => 'dcs_name'],
@@ -71,8 +76,11 @@ $attribute = [
     return ($model->allow_multi_family_member == 1) ? 'Yes' : 'No';
 }
     ],
-    ['attribute' => 'vendor', 
-        'value' => function($model){ isset($model->societyVendors) ? $vendor = $model->societyVendors->vendor_code : $vendor = 'Other';  return $vendor; },
+    ['attribute' => 'vendor',
+        'value' => function($model) {
+            isset($model->societyVendors) ? $vendor = $model->societyVendors->vendor_code : $vendor = 'Other';
+            return $vendor;
+        },
         'visible' => false, 'filter' => false],
 // Contact Detail
     ['label' => Yii::t('app', 'Society Secretory'), 'visible' => false, 'filter' => false,
@@ -139,7 +147,7 @@ $attribute = [
             return $detail;
         }
     ],
-    ['attribute' => 'bipl_code', 'label'=>Yii::t('app', 'Reference Code'),'value'=>'societyCodes.bipl_code', 'filter' => false,'visible'=>false],
+    ['attribute' => 'bipl_code', 'label' => Yii::t('app', 'Reference Code'), 'value' => 'societyCodes.bipl_code', 'filter' => false, 'visible' => false],
 ];
 
 $grid_option = [
@@ -212,7 +220,16 @@ $grid_option = [
                 $title = ($status_id == 1) ? 'Stop Collection' : 'Start Collection';
                 $class = ($model->is_active == 1) ? '' : 'link-disable';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => 'society-status ' . $class, 'data-val' => $model->dcs_code . ',' . $status_id . ',' . $name, 'data-name' => $title . ' of "' . $name . '"'];
-                return GhostHtml::a('<i class="fa ' . $icon_class . '"></i>', ['/organisation/tbl-dcs/society-status', 'dcs_code' => $model->dcs_code,'coll_status'=> $status_id], $options);
+                return GhostHtml::a('<i class="fa ' . $icon_class . '"></i>', ['/organisation/tbl-dcs/society-status', 'dcs_code' => $model->dcs_code, 'coll_status' => $status_id], $options);
+            }
+        },
+                'rate-list' => function ($url, $model) {
+            if (!empty($model->tblPurchaseRateApplicabilityUnblock) || !empty($model->tblPurchaseRateApplicabilityBlock)) {
+                $icon_class = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'fa-bar-chart text-danger' : 'fa-bar-chart text-success';
+                $title = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'Un-Block Rate Chart' : 'Block Rate Chart';
+                $class = ($model->is_active == 1) ? '' : 'link-disable';
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => $class];
+                return GhostHtml::a('<i class="fa ' . $icon_class . '""></i>', $url, $options);
             }
         },
             /* 'miscellaneous' => function ($url, $model) {
@@ -223,8 +240,9 @@ $grid_option = [
         ];
 
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-        ?>
+?>
         <?php
+
         $script = "
 $(document).ready(function(){
     $(document).on('click','.deact-dcs',function(e){
