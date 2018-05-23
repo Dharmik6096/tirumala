@@ -63,8 +63,9 @@ class ProductController extends ChildController {
             array_push($products, $product_sale_detail);
         }
         $credit_limit = [];
+        $payment_mode = 'Cash';
         if ($product_info['payment_type'] == 1) {
-
+            $payment_mode = 'Credit';
             $credit_limit_model = new TblMemberCreditLimit();
             $credit_limit_data = $credit_limit_model->find()->where(['member_code' => $product_info['member_code']])->one();
             if (!empty($credit_limit_data)) {
@@ -93,10 +94,10 @@ class ProductController extends ChildController {
 
         $transaction = $this->generalModel->saveTransaction($products, $credit_limit, ['Product Sale', 'edit']);
         if ($transaction == 'customRedirect') {
-            $data = ['message' => 'Credit Updated Successfully'];
+            $data = ['message' => 'Product sale done in ' . $payment_mode . ' mode successfully'];
             $this->response['data'] = $data;
         } else {
-            $data = ['message' => 'Credit Not Updated Successfully'];
+            $data = ['message' => 'Product Sale not done'];
             $this->response['data'] = $data;
         }
     }
