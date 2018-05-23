@@ -40,7 +40,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $rate_gen_method_code;
+    public $rate_gen_method_code,$rate_description;
     public $rate_type, $reference_code;
 
     public static function tableName() {

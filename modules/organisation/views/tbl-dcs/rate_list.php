@@ -18,6 +18,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
             <?php
             $attribute = [
                 ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
+                ['attribute' => 'purchase_rate_code', 'filter' => false],
+                ['attribute' => 'rate_description', 'value' => 'purchaseRateCode.description', 'filter' => false],
                 [
                     'attribute' => 'wef_date', 'filter' => false,
                     'filterType' => GridView::FILTER_DATE,
@@ -28,6 +30,10 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
                     'value' => function($model) {
                 return Yii::$app->controls->view_date($model->wef_date);
             },],
+                ['attribute' => 'shift_code', 'value' => function($model) {
+                        return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
+                    },
+                    'filter' => false,],
             ];
 
             $grid_option = [
