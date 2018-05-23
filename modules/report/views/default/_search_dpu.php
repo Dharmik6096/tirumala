@@ -28,15 +28,20 @@ $model->shift = empty($model->shift) ? '3' : $model->shift;
             <?php echo Yii::$app->dropdown->dropdownStatic('vendor', $model, $form, 'form-group', false); ?>
         </div>   
     <?php } ?>
-    <div class="col-sm-4 padding-left-0 padding-right-5">
-        <div class="form-group">
-            <?php if (!isset($minMaxFilter)) { ?>
+    <?php if (!isset($minMaxFilter)) { ?>
+        <div class="col-sm-4 padding-left-0 padding-right-5">
+            <div class="form-group">
                 <?= Yii::$app->controls->min_max_date('min_date', 'max_date', $min_date, $max_date); ?>
-            <?php } else { ?>
+            </div>
+        </div>           
+    <?php } else { ?>
+        <div class="col-sm-3 padding-left-0 padding-right-5">
+            <div class="form-group">
                 <?= Yii::$app->controls->date($model, $form, 'min_date')->label(false); ?>
-            <?php } ?>
-        </div>
-    </div>
+            </div>
+        </div>  
+    <?php } ?>
+
     <?php if (!empty($shiftFilter)) { ?>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
