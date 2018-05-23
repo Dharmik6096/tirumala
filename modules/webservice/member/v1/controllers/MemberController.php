@@ -31,10 +31,19 @@ class MemberController extends ChildController {
             $appModel->hash_key = Yii::$app->security->generateRandomString(20);
             $appModel->orignating_timestamp = date('Y-m-d H:i:s');
             $message = 'Dear Your OTP Pin is ' . $appModel->otp_code . '.Enter this pin to login your account.';
-            $result = '';
+            
+            $mobile = '91' . $appModel->mobile_no;
+            $send = Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
+            $sent = json_decode($send);
+            $res = $sent->results;
+            $status = '';
+            foreach ($res as $result) {
+                $status = $result->status;
+            }
+            
             // $result = Yii::$app->general->sendsms($appModel->mobile_no, $message);
             $appModel->sms_sent = 1;
-            $appModel->sms_log = $result;
+            $appModel->sms_log = $status;
             $appModel->is_delete = 0;
             $appModel->is_active = 0;
             $appModel->is_expired = 0;

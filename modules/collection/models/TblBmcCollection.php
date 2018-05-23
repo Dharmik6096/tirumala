@@ -68,7 +68,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             return $this->shift_code;
         }],
             [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'collection_type', 'milk_quality_type_code'], 'required'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing',], 'safe']
         ];
     }
@@ -143,6 +143,14 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function collectionData($from_date, $to_date, $bmc_code) {
+        return $this->find()
+                        ->select(['dcs_code' ,'milk_type_code', 'fat', 'snf', 'qty', 'rtpl', 'amount', 'shift_code', 'date_time_of_collection', 'sample_no'])
+                        ->andFilterWhere(['>=', 'date_time_of_collection', $from_date])
+                        ->andFilterWhere(['<=', 'date_time_of_collection', $to_date])
+                        ->where(['bmc_code' => $bmc_code])->all();
     }
 
 }

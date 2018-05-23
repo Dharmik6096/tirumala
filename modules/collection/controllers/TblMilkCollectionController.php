@@ -54,6 +54,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->mobile_no = Yii::$app->general->getforeignkey($this->model->memberCode, 'mobile_no');
+            $this->model->name = Yii::$app->general->getforeignkey($this->model->memberCode, 'member_name');
             $this->model->village_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code');
             $datetime = date('Y-m-d H:i:s');
             $this->model->date_time_of_collection = $datetime;

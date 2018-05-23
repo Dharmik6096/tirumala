@@ -75,7 +75,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto','collection_date'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
@@ -217,6 +217,14 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function getCollectionDatewise() {
         return $this->find()->select(['member_code', 'fat', 'snf', 'qty', 'amount', 'date_time_of_collection', 'sample_no', 'shift', 'clr', 'rtpl', 'qlty_auto', 'qty_auto', 'milk_type_code'])
                         ->where(['member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->collection_date])->orderBy(['date_time_of_collection' => SORT_ASC, 'shift' => SORT_ASC, 'sample_no' => SORT_DESC])->all();
+    }
+
+    public function memberCollectionData($from_date, $to_date, $society_code) {
+        return $this->find()->select(['member_code', 'name', 'milk_type_code', 'fat', 'snf', 'qty', 'rtpl', 'amount', 'shift', 'date_time_of_collection', 'sample_no'])
+                        ->where(['dcs_code' => $society_code])
+                        ->andFilterWhere(['>=', 'date_time_of_collection', $from_date])
+                        ->andFilterWhere(['<=', 'date_time_of_collection', $to_date])
+                        ->all();
     }
 
 }

@@ -28,7 +28,7 @@ use Yii;
  * @property string $expired_datetime
  * @property string $device_id
  */
-class TblAppActivation extends \yii\db\ActiveRecord
+class TblAppActivation extends \app\models\ChildModel
 {
     /**
      * @inheritdoc

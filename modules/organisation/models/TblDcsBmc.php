@@ -265,5 +265,13 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         return $query->all();
     }
+    
+    public function bmcData(){
+        return $this->find()->select(['bmc_code', 'bmc_name'])->where(['bmc_code' => $this->bmc_code])->one();
+    }
+    
+    public function bmcInfo() {
+        return $this->find()->where(['bmc_code' => $this->bmc_code,])->andWhere(['is_active' => 1])->one();
+    }
 
 }
