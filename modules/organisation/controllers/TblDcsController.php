@@ -28,6 +28,9 @@ use yii\helpers\Json;
 use yii\base\Model;
 use app\modules\organisation\models\TblSocietyCollection;
 use app\modules\organisation\models\TblSocietyCollectionHistory;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicabilitySearch;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -801,6 +804,37 @@ class TblDcsController extends ChildController {
             $mccList = $model->getBMCDCSList($palnt, $RLS);
         }
         echo Json::encode(['status' => 'success', 'data' => $mccList]);
+    }
+
+    public function actionRateList($id) {
+        $model = new TblDcs();
+        $model->dcs_code = $id;
+        $model->is_active = !empty($model->tblPurchaseRateApplicabilityBlock) ? 0 : 1;
+        $searchModel = new TblPurchaseRateApplicabilitySearch();
+        $searchModel->dcs_code = $id;
+        $searchModel->is_active = $model->is_active;
+        $title = ($model->is_active == 1) ? 'Un-Block Rate' : 'Block Rate';
+        $dataProvider = $searchModel->RateList();
+        return $this->render('rate_list', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'title' => $title
+        ]);
+    }
+
+    public function actionUpdateRateStatus($id) {
+        $this->model = TblPurchaseRateApplicability::findOne($id);
+        $historyModel = new TblPurchaseRateApplicabilityHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $this->model->is_active = ($this->model->is_active == 0) ? 1 : 0;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['rate chart', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Rate Chart Updated Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Rate Chart Not Updated.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

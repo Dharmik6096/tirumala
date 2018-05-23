@@ -29,6 +29,7 @@ use app\modules\organisation\models\TblSocietyCollection;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 
 /**
  * This is the model class for table "tbl_dcs".
@@ -630,6 +631,14 @@ class TblDcs extends ChildModel {
                     $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
                 }
                 return $query->all();
+            }
+
+            public function getTblPurchaseRateApplicabilityUnblock() {
+                return $this->hasMany(TblPurchaseRateApplicability::className(), ['dcs_code' => 'dcs_code'])->andwhere(['is_active' => 1]);
+            }
+
+            public function getTblPurchaseRateApplicabilityBlock() {
+                return $this->hasMany(TblPurchaseRateApplicability::className(), ['dcs_code' => 'dcs_code'])->andwhere(['is_active' => 0]);
             }
 
         }

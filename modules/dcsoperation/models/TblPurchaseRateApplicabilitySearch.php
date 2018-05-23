@@ -17,7 +17,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
      */
     public function rules() {
         return [
-            [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code','is_download', 'download_date_time'], 'safe'],
+            [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time'], 'safe'],
             [['is_active'], 'boolean'],
 //            [['shift_code'], 'integer'],
         ];
@@ -48,7 +48,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
             'query' => $query,
         ]);
 
-        $query->joinWith(['dcsCode','shiftCode']);
+        $query->joinWith(['dcsCode', 'shiftCode']);
         //$query->joinWith(['rateType','dcsCode','rateMethod']);
 
         $this->load($params);
@@ -84,9 +84,20 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
                 ->andFilterWhere(['like', 'is_download', $this->is_download]);
-            //->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
-            //->andFilterWhere(['like', 'union_code', $this->union_code]);
+        //->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
+        //->andFilterWhere(['like', 'union_code', $this->union_code]);
         //echo $query->createCommand()->rawSql;exit;
+        return $dataProvider;
+    }
+
+    public function RateList() {
+        $query = TblPurchaseRateApplicability::find();
+        $query->where(['dcs_code' => $this->dcs_code]);
+        $query->where(['is_active' => $this->is_active]);
+        $query->orderBy(['wef_date' => SORT_DESC]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
         return $dataProvider;
     }
 
