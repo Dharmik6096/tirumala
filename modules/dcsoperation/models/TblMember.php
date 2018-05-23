@@ -454,7 +454,7 @@ class TblMember extends ChildModel {
 
     public function memberInfo($encryptedmobile) {
         if (strlen($this->member_code) == 4) {
-            return $this->find()->where(['mobile_no' => $encryptedmobile, "RIGHT(`member_code`,4)" => $this->member_code])->andWhere(['is_active' => 1])->all();
+            return $this->find()->where(['mobile_no' => $encryptedmobile, "RIGHT(member_code,4)" => $this->member_code])->andWhere(['is_active' => 1])->all();
         } else {
             return $this->find()->where(['mobile_no' => $encryptedmobile, 'member_code' => $this->member_code])->andWhere(['is_active' => 1])->all();
         }
