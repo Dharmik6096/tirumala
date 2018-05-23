@@ -44,7 +44,7 @@ class TblAppNotification extends \app\models\ChildModel {
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['sync_status', 'flg_sentbox_entry'], 'string', 'max' => 1],
             [['notification_title'], 'string', 'max' => 100],
-            [['type'], 'integer'],
+            [['app_type'], 'integer'],
         ];
     }
 
