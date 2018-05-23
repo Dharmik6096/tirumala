@@ -12,7 +12,7 @@ if (!empty($filter_data)) {
     $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
     $filters = $filter_data['filter'];
     $count = count($filters);
-    if (!empty($filters) && Yii::$app->controller->action->id == $aciton[0]) {
+    if (!empty($filters) && Yii::$app->controller->action->id == $aciton[0] && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
         $f_cnt = 0;
         $form = \yii\widgets\ActiveForm::begin([
                     'action' => $aciton,

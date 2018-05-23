@@ -61,6 +61,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
 
+            $this->model->bmc_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'bmc_code');
             $transaction = $this->generalModel->saveTransaction([$this->model], ['BMC Collection', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
@@ -68,7 +69,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         }
         $searchModel = new TblBmcCollectionSearch();
         if (!empty(Yii::$app->request->get())) {
-            $searchModel->date_time_of_collection=Yii::$app->request->get('TblBmcCollection')['date_time_of_collection'];
+            $searchModel->date_time_of_collection = Yii::$app->request->get('TblBmcCollection')['date_time_of_collection'];
         }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

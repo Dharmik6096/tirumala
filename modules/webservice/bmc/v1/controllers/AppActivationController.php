@@ -16,7 +16,7 @@ class AppActivationController extends ChildController {
         $bmcModel->setAttributes($this->post_data);
         $appModel->setAttributes($this->post_data);
         $appModel->setAttributes($this->post_data['content']);
-        $appModel->code = $this->post_data['identity_code'];
+        $appModel->code = $this->post_data['bmc_code'];
         $encryptedmobile = Yii::$app->general->encryptData($appModel->mobile_no);
         if ($this->post_data['type'] == 3) {
             $appModel = $appModel->activationData($encryptedmobile);
@@ -92,9 +92,9 @@ class AppActivationController extends ChildController {
         $appModel->setAttributes($this->post_data['content']);
         $appModel->hash_key = $this->post_data['token'];
         $appModel->imei_no = $this->post_data['imei'];
-        $appModel->code = $this->post_data['identity_code'];
+        $appModel->code = $this->post_data['bmc_code'];
         $encryptedmobile = Yii::$app->general->encryptData($appModel->mobile_no);
-        $bmcModel->bmc_code = $this->post_data['identity_code'];
+        $bmcModel->bmc_code = $this->post_data['bmc_code'];
         $data = $bmcModel->bmcData();
         if (isset($data) && count($data) == 1) {
             
@@ -105,7 +105,7 @@ class AppActivationController extends ChildController {
         $data = $bmcInfo->attributes;
         $detail = Yii::$app->general->getDefaultContactDetail($data['bmc_code'], 'bmc');
         $data['mobile_no'] = '';
-        if(!empty($detail)){
+        if (!empty($detail)) {
             $data['mobile_no'] = $detail->mobile_no;
         }
         $data['union_name'] = Yii::$app->general->getforeignkey($bmcInfo->unionCode, 'union_name');

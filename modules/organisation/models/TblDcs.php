@@ -641,5 +641,14 @@ class TblDcs extends ChildModel {
                 return $this->hasMany(TblPurchaseRateApplicability::className(), ['dcs_code' => 'dcs_code'])->andwhere(['is_active' => 0]);
             }
 
+            public function getBmcDcsData() {
+                $rows = $this->find()->where(['bmc_code' => $this->bmc_code])->all();
+                $dcs = [];
+                foreach ($rows as $key => $value) {
+                    $dcs[] = $value->dcs_code;
+                }
+                return $dcs;
+            }
+
         }
         
