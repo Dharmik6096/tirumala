@@ -103,4 +103,33 @@ class TblProductSaleDetails extends \app\models\ChildModel {
                 ])->where(['product_sale_code' => $invoice_no])->all();
     }
 
+    public function productSaleDetail($product_info, $dcs_code) {
+        $sale_detail = $this->find()
+                ->joinWith('productSaleCode')
+                ->select(['tbl_product_sale_details.*', 'tbl_product_sale.*'])
+                ->where(['tbl_product_sale_details.product_code' => $product_info['product_code']])
+                ->andWhere(['tbl_product_sale.dcs_code' => $dcs_code])
+                ->andFilterWhere(['>=', 'tbl_product_sale.sale_date_time', $product_info['from_date']])
+                ->andFilterWhere(['<=', 'tbl_product_sale.sale_date_time', $product_info['to_date']])
+                ->all();
+        $sale_details = [];
+        $sale_product = [];
+        if (!empty($sale_detail)) {
+            foreach ($sale_detail as $product_detail) {
+                $member_name = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->memberCode, 'member_name');
+                $product_name = Yii::$app->general->getforeignkey($product_detail->productCode, 'product_name');
+                $sale_product['dcs_code'] = $product_detail['productSaleCode']->dcs_code;
+                $sale_product['dcs_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->dcsCode, 'dcs_name');
+                $sale_product['member_name'] = $member_name;
+                $sale_product['product_name'] = $product_name;
+                $sale_product['rate'] = $product_detail->rate;
+                $sale_product['quantity'] = $product_detail->qty;
+                $sale_product['amount'] = $product_detail->amount;
+                $sale_product['sale_date_time'] = $product_detail['productSaleCode']->sale_date_time;
+                $sale_details[] = $sale_product;
+            }
+        }
+        return $sale_details;
+    }
+
 }

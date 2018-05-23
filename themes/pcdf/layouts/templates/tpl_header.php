@@ -4,7 +4,7 @@
 use yii\helpers\Url;
 
 $logo = $this->theme->getUrl('/assets/images/logo.png');
-if (Yii::$app->session->get('organization_logo') != '') {
+if (Yii::$app->session->get('organization_logo') != '' && file_exists(Yii::$app->session->get('organization_logo'))) {
     $logo = substr(Yii::$app->params['logo_path'], 1) . Yii::$app->session->get('organization_logo');
 }
 ?>

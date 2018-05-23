@@ -85,4 +85,12 @@ class TblBmcDispatch extends \app\models\ChildModel {
         ];
     }
 
+    public function getDispatchList($from_date, $to_date) {
+        return $this->find()
+                        ->where(['bmc_code' => $this->bmc_code])
+                        ->andFilterWhere(['>=', 'dispatch_datetime', $from_date])
+                        ->andFilterWhere(['<=', 'dispatch_datetime', $to_date])
+                        ->all();
+    }
+
 }
