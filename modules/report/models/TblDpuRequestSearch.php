@@ -10,40 +10,38 @@ use app\modules\report\models\TblDpuRequest;
 /**
  * TblDpuRequestSearch represents the model behind the search form about `app\modules\report\models\TblDpuRequest`.
  */
-class TblDpuRequestSearch extends TblDpuRequest
-{
-    
-    public $union_code,$min_date,$max_date,$shift, $union_name,$total_dcs,$dpu_dcs,$col_dcs,$no_col_dcs,$dcs_name,$dcs_code_ex;
+class TblDpuRequestSearch extends TblDpuRequest {
+
+    public $union_code, $min_date, $max_date, $shift, $union_name, $total_dcs, $dpu_dcs, $col_dcs, $no_col_dcs, $dcs_name, $dcs_code_ex, $bmc_code, $plant_code, $mcc_code;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['request_code', 'shift_code'], 'integer'],
-            [['dcs_code', 'datetime', 'request_date', 'request_time', 'union_code'], 'safe'],
+            [['shift_code'], 'integer'],
+            [['dcs_code', 'datetime', 'request_date', 'request_time', 'union_code', 'bmc_code', 'plant_code', 'mcc_code', 'max_date','shift'], 'safe'],
             [['lat', 'long'], 'number'],
+            [['bmc_code', 'max_date', 'shift'], 'required', 'on' => 'shift_a_report']
         ];
     }
-    
-    public function attributeLabels()
-    {
+
+    public function attributeLabels() {
         return [
             'dcs_name' => Yii::t('app', 'Society Name'),
-            'dcs_code'=>Yii::t('app', 'Society Code'),
-            'total_dcs'=>Yii::t('app', 'No of Societies'),
-            'dpu_dcs'=>Yii::t('app', 'DPU Installed'),
-            'col_dcs'=>Yii::t('app', 'Collection Received'),
-            'no_col_dcs'=>Yii::t('app', 'Collection Not Received'),
-            'dcs_code_ex'=>Yii::t('app', 'Old Soc. Code'),
-            ];
+            'dcs_code' => Yii::t('app', 'Society Code'),
+            'total_dcs' => Yii::t('app', 'No of Societies'),
+            'dpu_dcs' => Yii::t('app', 'DPU Installed'),
+            'col_dcs' => Yii::t('app', 'Collection Received'),
+            'no_col_dcs' => Yii::t('app', 'Collection Not Received'),
+            'dcs_code_ex' => Yii::t('app', 'Old Soc. Code'),
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -55,8 +53,7 @@ class TblDpuRequestSearch extends TblDpuRequest
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblDpuRequest::find();
 
         // add conditions that should always apply here
@@ -85,8 +82,9 @@ class TblDpuRequestSearch extends TblDpuRequest
         ]);
 
         $query->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'union_code', $this->union_code]);
+                ->andFilterWhere(['like', 'union_code', $this->union_code]);
 
         return $dataProvider;
     }
+
 }
