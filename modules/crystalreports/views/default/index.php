@@ -53,14 +53,13 @@ $model->date2 = empty($model->date2) ? date('d-m-Y') : $model->date2;
                             <?php
                         }
                     }
-
-                    if (in_array($value, array('mccid'))) {
+                    if (in_array($value, array('mccid', 'MCCId'))) {
                         ?>
                         <div class="col-sm-3">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant code'); ?>
                         </div>
                         <div class="col-sm-3">
-                            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', 'mccid', 'MCC'); ?>
+                            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC'); ?>
                         </div>
                         <?php
                     }
@@ -69,9 +68,9 @@ $model->date2 = empty($model->date2) ? date('d-m-Y') : $model->date2;
                         <div class="col-sm-3">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                         </div>   <?php
-                    }
-                    if (in_array($value, array('bmcid'))) {
-                        ?>
+                        }
+                        if (in_array($value, array('bmcid'))) {
+                            ?>
                         <div class="col-sm-3">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mccid', 'bmcid', 'BMC'); ?>
                         </div>
@@ -104,6 +103,10 @@ $model->date2 = empty($model->date2) ? date('d-m-Y') : $model->date2;
                             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, 'form-group col-sm-3', 'Milk Quality Type', false, 'MilkQualityType'); ?>
                         </div>
                         <?php
+                    }
+
+                    if (in_array($value, array('VLCTotal'))) {
+                        echo $form->field($model, 'VLCTotal')->hiddenInput(['value' => '0'])->label(false);
                     }
                 }
 
@@ -150,7 +153,7 @@ $script = "
          
     });
     if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport'){
-        $('#reportsmodel-cattletype option:first').after($('<option/>', { 'value': 'ALL', text: '" . Yii::t('app', 'All') . "'}));      
+        $('#reportsmodel-cattletype option:first').after($('<option/>', { 'value': 'ALL', text: '" . Yii::t('app', 'ALL') . "'}));      
         if('" . $model->CattleType . "'=='ALL'){
             $('#reportsmodel-cattletype').val('ALL');
         }
@@ -164,13 +167,13 @@ $script = "
     }
     if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='ActualBmcCollection'){
         $('#reportsmodel-mccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+            $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
             if('" . $model->mccid . "'=='0'){
                 $('#reportsmodel-mccid').val(0);      
             }
         });
         $('#reportsmodel-bmcid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            $('#reportsmodel-bmcid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+            $('#reportsmodel-bmcid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
             if('" . $model->bmcid . "'=='0'){
                 $('#reportsmodel-bmcid').val(0);
             }
@@ -180,7 +183,7 @@ $script = "
             }
         });
         $('#reportsmodel-routeid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            $('#reportsmodel-routeid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+            $('#reportsmodel-routeid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
             if('" . $model->routeid . "'=='0'){
                 $('#reportsmodel-routeid').val(0);      
             }
@@ -191,13 +194,22 @@ $script = "
         });
     }
     
+    if('" . $report . "'=='ActualBmcCollection'){
+        $('#reportsmodel-mccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
+            if('" . $model->MCCId . "'=='0'){
+                $('#reportsmodel-mccid').val(0);      
+            }
+        });
+    }
+    
     if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise'){
         $('#reportsmodel-vlccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            $('#reportsmodel-vlccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+            $('#reportsmodel-vlccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
             if('" . $model->vlccid . "'=='0'){
                 $('#reportsmodel-vlccid').val(0);
             }
-            if($('#reportsmodel-routeid').val()=='0'){ 
+            if($('#reportsmodel-bmcid').val()=='0'){ 
                 $('#reportsmodel-vlccid').prop('disabled',false);
                 $('#reportsmodel-vlccid').val(0);
             }

@@ -148,6 +148,24 @@ echo GhostMenu::widget([
                     // ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
                     ]
                 ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">BMC Collection <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => '301-' . Yii::t('app', 'Actual BMC Collection'), 'url' => ['/crystalreports/default/actual-bmc-collection']],
+                        ['label' => '302-' . Yii::t('app', 'RMRD Milk Collection'), 'url' => ['/crystalreports/default/rmrd-milk-collection']],
+                        ['label' => '303-' . Yii::t('app', 'BMC Sumary'), 'url' => ['/crystalreports/default/bmc-summary-report']],
+                        ['label' => '304-' . Yii::t('app', 'Milk Type Variation Date Wise'), 'url' => ['/crystalreports/default/variation-milk-type-date-wise']],
+                        ['label' => '305-' . Yii::t('app', 'Milk Type Variation Village Wise'), 'url' => ['/crystalreports/default/variation-milk-type-village-wise']],
+                        ['label' => '306-' . Yii::t('app', 'Date Wise Variation'), 'url' => ['/crystalreports/default/variation-date-wise']],
+                        ['label' => '307-' . Yii::t('app', 'Village Wise Variation'), 'url' => ['/crystalreports/default/variation-village-wise']],
+                        ['label' => '308-' . Yii::t('app', 'Percentage Wise Variation'), 'url' => ['/crystalreports/default/variation-percentage-wise']],
+                        ['label' => '309-' . Yii::t('app', 'Difference Report'), 'url' => ['/crystalreports/default/difference-report']],
+                        ['label' => '310-' . Yii::t('app', 'Date Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-date-wise']],
+                        ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-village-wise']],
+                        ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/crystalreports/default/bmc-collection']],
+                    ]
+                ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => $reportUser],
             ],
         ],

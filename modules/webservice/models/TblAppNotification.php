@@ -44,6 +44,7 @@ class TblAppNotification extends \app\models\ChildModel {
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['sync_status', 'flg_sentbox_entry'], 'string', 'max' => 1],
             [['notification_title'], 'string', 'max' => 100],
+            [['type'], 'integer'],
         ];
     }
 
@@ -78,12 +79,12 @@ class TblAppNotification extends \app\models\ChildModel {
     }
 
     public function getActiveMobile() {
-        $this->mobile_no = \Yii::$app->general->encryptData($this->mobile_no);
+//        $this->mobile_no = \Yii::$app->general->encryptData($this->mobile_no);
         return $this->hasMany(TblAppActivation::className(), ['mobile_no' => 'mobile_no'])->where([ 'is_active' => 1, 'is_delete' => 0, 'is_expired' => 0]);
     }
 
     public function getRecord() {
-        return $this->find()->where(['is_send' => 0])->all();
+        return $this->find()->where(['is_send' => 0, 'app_type' => $this->app_type])->all();
     }
 
 }

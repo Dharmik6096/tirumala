@@ -39,6 +39,7 @@ use app\modules\payment\models\TblMemberPaymentHistory;
 use app\modules\payment\models\TblReversePaymentFileLog;
 use app\modules\payment\models\TblTransporterPayment;
 use app\modules\payment\models\TblTransporterPaymentHistory;
+use app\modules\webservice\models\TblAppNotification;
 
 class SiteController extends Controller {
 
@@ -841,13 +842,13 @@ class SiteController extends Controller {
             $model = new $model_name();
             $table_name = $model->tableName();
             $out = NULL;
-            
-            
+
+
             $result = \Yii::$app->db->createCommand("{CALL [sp_dropdown](:dd1,:dd2,:dd3,:dd4)}")
-                ->bindValue(':dd1', $_POST['depdrop_parents'][0])
-                ->bindValue(':dd2', '')
-                ->bindValue(':dd3', '')
-                ->bindValue(':dd4', '');
+                    ->bindValue(':dd1', $_POST['depdrop_parents'][0])
+                    ->bindValue(':dd2', '')
+                    ->bindValue(':dd3', '')
+                    ->bindValue(':dd4', '');
             $records = $result->queryAll();
 
             foreach ($records as $key => $r) {
@@ -865,4 +866,57 @@ class SiteController extends Controller {
         echo Json::encode(['output' => '', 'selected' => '']);
         return;
     }
+
+    public function actionSendNotification() {
+        $url = \Yii::$app->params['notification_url'];
+        $types = ['1', '3'];
+        foreach ($types as $type) {
+            $serverKey = '';
+            if ($type == '1') {
+                $serverKey = \Yii::$app->params['everest_notification_key'];
+            } else if ($type == '3') {
+                $serverKey = \Yii::$app->params['bmc_notification_key'];
+            }
+            $headers = array();
+            $headers[] = 'Content-Type: application/json';
+            $headers[] = 'Authorization: key=' . $serverKey;
+            $model = new TblAppNotification();
+            $model->app_type = $type;
+            foreach ($model->getRecord() as $data) {
+                $reg_id = [];
+                $activation_id = [];
+                foreach ($data->activeMobile as $notif) {
+                    $reg_id[] = $notif->device_id;
+                    $activation_id[] = $notif->activation_id;
+                }
+                if (!empty($reg_id)) {
+                    $notification = array('title' => $data->notification_title, 'body' => $data->notification_text, 'sound' => 'default', 'badge' => '1');
+                    $arrayToSend = array('registration_ids' => $reg_id, 'data' => $notification, 'priority' => 'high');
+                    $json = json_encode($arrayToSend);
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                    //Send the request
+                    $response = curl_exec($ch);
+                    //Close request
+                    if ($response === FALSE) {
+                        die('FCM Send Error: ' . curl_error($ch));
+                    }
+                    curl_close($ch);
+                    $response = json_decode($response);
+                    $data->mobile_no = $data->mobile_no;
+                    $data->is_send = 1;
+                    $data->device_count = count($activation_id);
+                    $data->activation_id = implode(',', $activation_id);
+                    $data->success_count = $response->success;
+                    $data->save();
+                }
+            }
+        }
+    }
+
 }
