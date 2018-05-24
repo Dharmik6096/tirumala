@@ -21,4 +21,5 @@ return [
     'notification_url' => 'https://fcm.googleapis.com/fcm/send',
     'everest_notification_key' => 'AAAA2-vGiKw:APA91bH6ktJ0IRHSyIYqToe5OoUh5IJp2w5yVoNvqGc3AZtTjgTdRyDa9fbcLkyp6PCVfh03S9-2Si7e6ofwnZ_vv0OCPD4uTsKAxPci6mA-06630U5ydXMRqca0eFEcMz4CCw0bwlyi',
     'bmc_notification_key' => 'AAAAwaXvLGk:APA91bFt_cBNfXsVl6L6U4RiZrlotbQQyxvKBmsxGnxHUI8LI23FMf4hEntk52_1Gwxi7z9rC22e-3j89tzYz47v8lrw8aVbeCSU0bej719usgK8JgB3LJw81BS87IrquCEpQ76cELAS',
+    'member_notification_key'=>'AAAAbdLVu64:APA91bEdjAOomODXEbjtGr74P5-NQDpN3FnlVPg9tzyf8SChLTkUDz1wtv8tHYj0OjeU1DZhpq0BBD81twAjbZlAVJNJ3ogpIYsQCJZ1cN1Xr9fgfZD6ASdHirmOIatOfqRH52u0AyBf',
 ];

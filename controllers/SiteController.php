@@ -869,11 +869,13 @@ class SiteController extends Controller {
 
     public function actionSendNotification() {
         $url = \Yii::$app->params['notification_url'];
-        $types = ['1', '3'];
+        $types = ['1', '2', '3'];
         foreach ($types as $type) {
             $serverKey = '';
             if ($type == '1') {
                 $serverKey = \Yii::$app->params['everest_notification_key'];
+            } else if ($type == '2') {
+                $serverKey = \Yii::$app->params['member_notification_key'];
             } else if ($type == '3') {
                 $serverKey = \Yii::$app->params['bmc_notification_key'];
             }
