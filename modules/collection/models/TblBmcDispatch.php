@@ -63,9 +63,9 @@ class TblBmcDispatch extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'bmc_dispatch_code' => Yii::t('app', 'Bmc Dispatch Code'),
-            'fat' => Yii::t('app', 'Fat'),
-            'snf' => Yii::t('app', 'Snf'),
-            'mbrt' => Yii::t('app', 'Mbrt'),
+            'fat' => Yii::t('app', 'FAT'),
+            'snf' => Yii::t('app', 'SNF'),
+            'mbrt' => Yii::t('app', 'MBRT'),
             'temprature' => Yii::t('app', 'Temprature'),
             'milk_test' => Yii::t('app', 'Milk Test'),
             'alcohole_test' => Yii::t('app', 'Alcohole Test'),
