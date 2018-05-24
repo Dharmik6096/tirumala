@@ -8,7 +8,7 @@ use app\modules\payment\models\TblMemberCreditLimit;
 class Member extends TblMember {
 
     public function memberList() {
-        return $this->find()->select(['member_code', 'CONCAT(member_name,\' \',father_name,\' \',surname) as member_name', 'mobile_no','gender_code','caste_category_code','bank_code','branch_code','bank_account_no','ifsc','email','pan_no','adhar_no'])->where(['dcs_code' => $this->dcs_code])->all();
+        return $this->find()->select(['member_code', 'CONCAT(member_name,\' \',father_name,\' \',surname) as member_name', 'mobile_no','gender_code','caste_category_code','bank_code','branch_code','bank_account_no','ifsc','email','pan_no','adhar_no','dob'])->where(['dcs_code' => $this->dcs_code])->all();
     }
     
     public function memberCount($dcs_code) {
