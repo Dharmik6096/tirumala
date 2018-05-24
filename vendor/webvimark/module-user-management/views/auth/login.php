@@ -123,14 +123,9 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                 <div class="col-sm-12">
                                     <div class="login-content text-center">
                                         <h3>Welcome to EIPL Milk Procurement Portal</h3>
-                                        <div class="tbl">
-                                            <div class="tbl-cell">
-                                                <h4>Pradeshik Cooperative Dairy Federation, Uttar Pradesh</h4>
-                                            </div>
-                                        </div>
                                         <hr>
                                         <h3>About Us</h3>
-                                        <p class="text-justify">PCDF was formed in 1962 with the aim to develop organized dairying in the State on Cooperative lines PCDF's is a cohesive body that successfully does away with the exploitative forces of years to years-the Middlemen.Therefore a direct link is established between the producer and the ultimate consumer . This Apex Milk Cooperative draws its inherent strength from the farmers committed participation , and injects corporate skills and dynamic professionalism into what is fundamentally a traditional institution.</p>
+                                        <p class="text-justify">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                                         <a href="javascript:void(0)" class="btn btn-danger" data-toggle="modal" data-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
                                     </div>
                                 </div>
