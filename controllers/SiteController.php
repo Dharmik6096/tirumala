@@ -885,9 +885,9 @@ class SiteController extends Controller {
             $model = new TblAppNotification();
             $model->app_type = $type;
             foreach ($model->getRecord() as $data) {
-                $reg_id = [];
-                $activation_id = [];
                 foreach ($data->activeMobile as $notif) {
+                    $reg_id = [];
+                    $activation_id = [];
                     if ($model->app_type == $notif->type) {
                         $reg_id[] = $notif->device_id;
                         $activation_id[] = $notif->activation_id;
