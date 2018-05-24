@@ -93,7 +93,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
     public function RateList() {
         $query = TblPurchaseRateApplicability::find();
         $query->where(['dcs_code' => $this->dcs_code]);
-        $query->where(['is_active' => $this->is_active]);
+        $query->andWhere(['is_active' => $this->is_active]);
         $query->orderBy(['wef_date' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
