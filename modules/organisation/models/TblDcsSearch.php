@@ -96,7 +96,8 @@ class TblDcsSearch extends TblDcs {
                 ->andFilterWhere(['like', 'tbl_dcs.route_code', $this->route_code])
                 ->andFilterWhere(['like', 'tbl_states.state_name', $this->state_code])
                 ->andFilterWhere(['like', 'sub_district_code', $this->sub_district_code])
-                ->andFilterWhere(['like', 'village_code', $this->village_code]);
+                ->andFilterWhere(['like', 'village_code', $this->village_code])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code]);
 
         return $dataProvider;
     }

@@ -169,7 +169,7 @@ var initDepdropMs;
                     search_height = toolbar_height + 25;
                 }
             } else {
-                search_height += 65;
+                search_height += 70;
             }
             $(".kv-grid-wrapper").height($(".panel-body").height() - search_height - page_height);
         }

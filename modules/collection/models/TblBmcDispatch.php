@@ -3,6 +3,10 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblMilkQualityType;
 
 /**
  * This is the model class for table "tbl_bmc_dispatch".
@@ -74,9 +78,9 @@ class TblBmcDispatch extends \app\models\ChildModel {
             'dispatch_qty' => Yii::t('app', 'Dispatch Qty'),
             'dispatch_datetime' => Yii::t('app', 'Dispatch Datetime'),
             'dispatch_shift' => Yii::t('app', 'Dispatch Shift'),
-            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
-            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
+            'bmc_code' => Yii::t('app', 'BMC'),
             'route_code' => Yii::t('app', 'Route Code'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -91,6 +95,22 @@ class TblBmcDispatch extends \app\models\ChildModel {
                         ->andFilterWhere(['>=', 'dispatch_datetime', $from_date])
                         ->andFilterWhere(['<=', 'dispatch_datetime', $to_date])
                         ->all();
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'dispatch_shift']);
+    }
+
+    public function getMilkQualityType() {
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
     }
 
 }

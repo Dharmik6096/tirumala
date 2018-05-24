@@ -72,7 +72,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag'], 'string'],
             [['milk_type_code', 'shift', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'rtpl', 'qty', 'amount'], 'required'],
             [['milk_type_code', 'sample_no', 'ack'], 'integer'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number'],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
             [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date'], 'safe'],
@@ -225,6 +225,15 @@ class TblMilkCollection extends \app\models\ChildModel {
                         ->andFilterWhere(['>=', 'date_time_of_collection', $from_date])
                         ->andFilterWhere(['<=', 'date_time_of_collection', $to_date])
                         ->all();
+    }
+
+    public function getSampleNo() {
+        $data = $this->find()
+                ->select('max(sample_no) as sample_no')
+                ->where(['member_code' => $this->member_code, 'shift' => $this->shift, 'CONVERT(date,date_time_of_collection)' => date('Y-m-d')])
+                ->one();
+        $sample_no = (int) $data['sample_no'] + 1;
+        return $sample_no;
     }
 
 }

@@ -83,6 +83,9 @@ class SearchFilter {
             'TblVehicleTransporterHeadMappingSearch' => [
                 'filter' => ['vehicle_code', 'transporter_payment_head_code'],
             ],
+            'TblBmcDispatchSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

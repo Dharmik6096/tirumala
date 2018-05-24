@@ -30,25 +30,24 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmilkcollection-union_code', '', $model->getAttributeLabel('dcs_code')); ?>            
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmilkcollection-dcs_code', '', $model->getAttributeLabel('member_code')); ?>
     </div>
-    <div class="col-sm-3 rtpl_validate">
+    <div class="col-sm-2 rtpl_validate">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type'); ?>
     </div>
-    <div class="col-sm-3 rtpl_validate">
+    <div class="col-sm-2 rtpl_validate">
         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', 'Milk Quality Type', false, 'milk_quality_type_code'); ?>
     </div>
-    <div class="col-sm-3 shift rtpl_validate">
+    <div class="col-sm-2 shift rtpl_validate">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift'); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="clearfix"></div>
     <div class="col-sm-1 rtpl_validate">
         <?= $form->field($model, 'fat')->textInput() ?>
@@ -65,9 +64,6 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-1">
         <?= $form->field($model, 'water')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'sample_no')->textInput() ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'no_of_can')->textInput() ?>

@@ -177,7 +177,7 @@ class TblPlant extends \app\models\ChildModel {
         if (!empty($unionCode))
             $query->andWhere(['union_code' => $unionCode]);
         if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
-            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+//            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
         }
         return $query->all();
     }

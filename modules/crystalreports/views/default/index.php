@@ -68,9 +68,9 @@ $model->date2 = empty($model->date2) ? date('d-m-Y') : $model->date2;
                         <div class="col-sm-3">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                         </div>   <?php
-                        }
-                        if (in_array($value, array('bmcid'))) {
-                            ?>
+                    }
+                    if (in_array($value, array('bmcid'))) {
+                        ?>
                         <div class="col-sm-3">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mccid', 'bmcid', 'BMC'); ?>
                         </div>
@@ -166,12 +166,6 @@ $script = "
         }
     }
     if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='ActualBmcCollection'){
-        $('#reportsmodel-mccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
-            if('" . $model->mccid . "'=='0'){
-                $('#reportsmodel-mccid').val(0);      
-            }
-        });
         $('#reportsmodel-bmcid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
             $('#reportsmodel-bmcid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
             if('" . $model->bmcid . "'=='0'){
@@ -190,6 +184,15 @@ $script = "
             if($('#reportsmodel-bmcid').val()=='0'){ 
                 $('#reportsmodel-routeid').prop('disabled',false);
                 $('#reportsmodel-routeid').val(0);
+            }
+        });
+    }
+    
+    if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise'){
+        $('#reportsmodel-mccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
+            if('" . $model->mccid . "'=='0'){
+                $('#reportsmodel-mccid').val(0);      
             }
         });
     }
@@ -216,6 +219,11 @@ $script = "
         });
     }
     
+    if($('div.crystalstyle').length){
+        var report= '" . $data['report_name'] . "';
+        var image = $('div.crystalstyle img').attr('src');
+        $('div.crystalstyle img').attr('src','../../modules/crystalreports/html/'+report+'/'+image);        
+    }
     $('div.crystalstyle').removeAttr('style');
 ";
 ?>

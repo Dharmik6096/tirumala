@@ -69,7 +69,7 @@ class TblProductSearch extends TblProduct
             'product_code' => $this->product_code,
            // 'product_group_code' => $this->product_group_code,
             'created_at' => $this->created_at,
-            'is_active' => $this->is_active,
+            'tbl_product.is_active' => $this->is_active,
             'updated_at' => $this->updated_at,
         ]);
 

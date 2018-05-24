@@ -149,23 +149,24 @@ class TblProductSaleController extends \app\controllers\ChildController
                 $credit_limit_model = new TblMemberCreditLimit();
                 $credit_limit_data = $credit_limit_model->find()->where(['member_code' => $this->model->member_code])->one();
 
-                $credit_limit_history_model = new TblMemberCreditLimitHistory();
-                Yii::$app->operation->history($credit_limit_data, $credit_limit_history_model, UPDATE);
+                if(!empty($credit_limit_data)){
+                    $credit_limit_history_model = new TblMemberCreditLimitHistory();
+                    Yii::$app->operation->history($credit_limit_data, $credit_limit_history_model, UPDATE);
 
-                $old_balance = $credit_limit_data->balance;
-                $due = $this->model->amount_due;
-                $new_balance = $old_balance - $due;
-                $credit_limit_data->balance = $new_balance;
-                array_push($installments, $credit_limit_data);
-                array_push($installments, $credit_limit_history_model);
-                
-                $credit_limit_transaction_model = new TblMemberCreditLimitTransaction();
-                $credit_limit_transaction_model->member_credit_limit_code = $credit_limit_data->member_credit_limit_code;
-                $credit_limit_transaction_model->old_value = $old_balance;
-                $credit_limit_transaction_model->transaction_type = 2;
-                $credit_limit_transaction_model->new_value = $due;
-                $credit_limit_transaction_model->balance = $new_balance;
-                array_push($installments, $credit_limit_transaction_model);
+                    $old_balance = $credit_limit_data->balance;
+                    $due = $this->model->amount_due;
+                    $new_balance = $old_balance - $due;
+                    $credit_limit_data->balance = $new_balance;
+                    array_push($installments, $credit_limit_data);
+                    array_push($installments, $credit_limit_history_model);
+                    $credit_limit_transaction_model = new TblMemberCreditLimitTransaction();
+                    $credit_limit_transaction_model->member_credit_limit_code = $credit_limit_data->member_credit_limit_code;
+                    $credit_limit_transaction_model->old_value = $old_balance;
+                    $credit_limit_transaction_model->transaction_type = 2;
+                    $credit_limit_transaction_model->new_value = $due;
+                    $credit_limit_transaction_model->balance = $new_balance;
+                    array_push($installments, $credit_limit_transaction_model);
+                }
 
                 if(!empty($installments)){
                     $transaction = $this->generalModel->saveTransaction([$this->model], $installments, ['Product Sale', 'edit']);

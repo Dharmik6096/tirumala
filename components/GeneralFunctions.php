@@ -634,7 +634,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function filterByOrg($query, $model, $union_table = '') {
+    public function filterByOrg($query, $model, $union_table = '', $plant_table = 'tbl_dcs') {
         $model_class = (new \ReflectionClass($model))->getShortName();
         $filter_model = new SearchFilter();
         $filter_data = $filter_model->getRecord($model_class);
@@ -661,16 +661,16 @@ class GeneralFunctions extends Component {
 
             if (in_array('f_plant_code', $filters)) {
                 if (Yii::$app->session->get('Plant') !== '')
-                    $query->andFilterWhere([ 'tbl_dcs.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+                    $query->andFilterWhere([ $plant_table . '.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
                 if (!empty($model->f_plant_code))
-                    $query->andFilterWhere(['tbl_dcs.plant_code' => $model->f_plant_code]);
+                    $query->andFilterWhere([$plant_table . '.plant_code' => $model->f_plant_code]);
             }
 
             if (in_array('f_mcc_code', $filters)) {
                 if (Yii::$app->session->get('MCC') !== '')
-                    $query->andFilterWhere([ 'tbl_dcs.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+                    $query->andFilterWhere([ $plant_table . '.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
                 if (!empty($model->f_mcc_code))
-                    $query->andFilterWhere(['tbl_dcs.mcc_plant_code' => $model->f_mcc_code]);
+                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => $model->f_mcc_code]);
             }
 
             if (in_array('f_bmc_code', $filters)) {

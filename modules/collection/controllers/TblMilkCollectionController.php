@@ -67,7 +67,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->qty_mode = 1;
             $this->model->qlty_auto = 1;
             $this->model->qty_auto = 1;            
-            $this->model->sms_status = 'n';            
+            $this->model->sms_status = 'n';
+            $this->model->sample_no = $this->model->getSampleNo();
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Milk Collection', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();

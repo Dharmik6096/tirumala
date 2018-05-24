@@ -73,10 +73,10 @@ class TblRouteMappingSearch extends TblRouteMapping {
             'vehicle_type_code' => $this->vehicle_type_code,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'is_active' => $this->is_active,
+            'tbl_route_mapping.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'route_code', $this->route_code])
+        $query->andFilterWhere(['like', 'tbl_route_mapping.route_code', $this->route_code])
                 ->andFilterWhere(['like', 'morning_start_time', $this->morning_start_time])
                 ->andFilterWhere(['like', 'morning_end_time', $this->morning_end_time])
                 ->andFilterWhere(['like', 'route_name', $this->route_name])
