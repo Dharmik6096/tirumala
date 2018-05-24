@@ -60,24 +60,18 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'vehicle_code' => $this->vehicle_code,
-            'wef_date' => $this->wef_date,
-            'morning_kms' => $this->morning_kms,
-            'evening_kms' => $this->evening_kms,
-            'extra_kms' => $this->extra_kms,
-            'total_kms' => $this->total_kms,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'delete_at' => $this->delete_at,
-            'is_active' => $this->is_active,
+            'tbl_vehicle_km_info.vehicle_code' => $this->vehicle_code,
+            'tbl_vehicle_km_info.wef_date' => $this->wef_date,
+            'tbl_vehicle_km_info.morning_kms' => $this->morning_kms,
+            'tbl_vehicle_km_info.evening_kms' => $this->evening_kms,
+            'tbl_vehicle_km_info.extra_kms' => $this->extra_kms,
+            'tbl_vehicle_km_info.total_kms' => $this->total_kms,
+            'tbl_vehicle_km_info.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'km_info_code', $this->km_info_code])
-            ->andFilterWhere(['like', 'route_code', $this->route_code])
-            ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'delete_by', $this->delete_by]);
+        $query->andFilterWhere(['like', 'tbl_vehicle_km_info.km_info_code', $this->km_info_code])
+            ->andFilterWhere(['like', 'tbl_vehicle_km_info.route_code', $this->route_code])
+            ->andFilterWhere(['like', 'tbl_vehicle_km_info.transporter_code', $this->transporter_code]);
 
         return $dataProvider;
     }

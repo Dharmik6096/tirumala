@@ -72,13 +72,13 @@ class TblMemberClassificationSearch extends TblMemberClassification
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_member_classification.is_active' => $this->is_active,
-            'range_from' => $this->range_from,
-            'range_to' => $this->range_to,
+            'tbl_member_classification.range_from' => $this->range_from,
+            'tbl_member_classification.range_to' => $this->range_to,
         ]);
 
-        $query->andFilterWhere(['like', 'member_classification_type', $this->member_classification_type])
+        $query->andFilterWhere(['like', 'tbl_member_classification.member_classification_type', $this->member_classification_type])
             ->andFilterWhere(['like', 'tbl_member_classification.member_classification_code', $this->member_classification_code])
-            ->andFilterWhere(['like', 'member_classification_name', $this->member_classification_name]);
+            ->andFilterWhere(['like', 'tbl_member_classification.member_classification_name', $this->member_classification_name]);
 
         return $dataProvider;
     }

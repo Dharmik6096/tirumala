@@ -1546,7 +1546,7 @@ footer p{
     border-bottom: 1px solid #fff;
 }
 .fc-head{
-    background-color: rgba(121, 0, 0, 0.21);
+    background-color: rgba(58, 123, 213, 0.7);
 }
 .fc-head td{
     border-width: 0;
@@ -1557,7 +1557,7 @@ footer p{
 }
 .fc th{
     border-color: #fff;
-    color: #333;
+    color: #fff;
     font-weight: 500;
 }
 .fc td{
@@ -2104,4 +2104,8 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 }
 .table-height td {
     padding-bottom: 0px !important;
+}
+
+.floatThead-wrapper .kv-grid-table.kv-table-wrap.kv-table-float {
+    width: 99.9044% !important;
 }

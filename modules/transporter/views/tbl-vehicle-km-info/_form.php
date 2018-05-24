@@ -42,7 +42,7 @@ $this->title = Yii::t('app', $title);
                         <th><?= Yii::t('app', 'Vehicle') ?></th>
                         <th><?= Yii::t('app', 'Route') ?></th>
                         <th><?= Yii::t('app', 'Morning Km') ?></th>
-                        <th><?= Yii::t('app', 'Eveing Km') ?></th>
+                        <th><?= Yii::t('app', 'Evening Km') ?></th>
                         <th><?= Yii::t('app', 'Extra Km') ?></th>
                         <th><?= Yii::t('app', 'Total Km') ?></th>   
                     </tr> 

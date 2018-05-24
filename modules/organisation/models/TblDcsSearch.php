@@ -61,34 +61,34 @@ class TblDcsSearch extends TblDcs {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'allow_multi_family_member' => $this->allow_multi_family_member,
-            'destination_type' => $this->destination_type,
-            'effective_date' => $this->effective_date,
+            'tbl_dcs.allow_multi_family_member' => $this->allow_multi_family_member,
+            'tbl_dcs.destination_type' => $this->destination_type,
+            'tbl_dcs.effective_date' => $this->effective_date,
             'tbl_dcs.is_active' => $this->is_active,
             'tbl_dcs.is_bmc' => $this->is_bmc,
-            'dcs_type_code' => $this->dcs_type_code,
-            'milk_type_code' => $this->milk_type_code,
+            'tbl_dcs.dcs_type_code' => $this->dcs_type_code,
+            'tbl_dcs.milk_type_code' => $this->milk_type_code,
         ]);
 
         if (!empty($this->registration_date))
             $query->andFilterWhere(['like', 'tbl_dcs.registration_date', date('Y-m-d', strtotime($this->registration_date))]);
 
         $query->andFilterWhere(['like', 'tbl_dcs.address', $this->address])
-                ->andFilterWhere(['like', 'bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'tbl_dcs.bank_account_no', $this->bank_account_no])
                 ->andFilterWhere(['like', 'tbl_dcs.contact_person', $this->contact_person])
-                ->andFilterWhere(['like', 'dcs_code_ex', $this->dcs_code_ex])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->dcs_code_ex])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_short_name', $this->dcs_short_name])
-                ->andFilterWhere(['like', 'destination_code', $this->destination_code])
+                ->andFilterWhere(['like', 'tbl_dcs.destination_code', $this->destination_code])
                 ->andFilterWhere(['like', 'tbl_dcs.email', $this->email])
                 ->andFilterWhere(['like', 'tbl_dcs.ifsc', $this->ifsc])
                 ->andFilterWhere(['like', 'tbl_dcs.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_dcs.pan_no', $this->pan_no])
                 ->andFilterWhere(['like', 'tbl_dcs.phone_no', $this->phone_no])
                 ->andFilterWhere(['like', 'tbl_dcs.pincode', $this->pincode])
-                ->andFilterWhere(['like', 'registration_code', $this->registration_code])
-                ->andFilterWhere(['like', 'service_tax', $this->service_tax])
-                ->andFilterWhere(['like', 'tin_no', $this->tin_no])
+                ->andFilterWhere(['like', 'tbl_dcs.registration_code', $this->registration_code])
+                ->andFilterWhere(['like', 'tbl_dcs.service_tax', $this->service_tax])
+                ->andFilterWhere(['like', 'tbl_dcs.tin_no', $this->tin_no])
                 ->andFilterWhere(['like', 'tbl_dcs.bank_code', $this->bank_code])
                 ->andFilterWhere(['like', 'tbl_dcs.branch_code', $this->branch_code])
                 ->andFilterWhere(['like', 'tbl_districts.district_code', $this->district_code])
@@ -96,7 +96,7 @@ class TblDcsSearch extends TblDcs {
                 ->andFilterWhere(['like', 'tbl_dcs.route_code', $this->route_code])
                 ->andFilterWhere(['like', 'tbl_states.state_name', $this->state_code])
                 ->andFilterWhere(['like', 'sub_district_code', $this->sub_district_code])
-                ->andFilterWhere(['like', 'village_code', $this->village_code])
+                ->andFilterWhere(['like', 'tbl_dcs.village_code', $this->village_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code]);
 
         return $dataProvider;

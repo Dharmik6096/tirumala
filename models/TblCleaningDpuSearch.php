@@ -61,9 +61,9 @@ class TblCleaningDpuSearch extends TblCleaningDpu
             $start_date=date('Y-m-d',  strtotime($request['min_date']));
             $end_date=date('Y-m-d',  strtotime($request['max_date']));
             if($start_date!=$end_date)
-                $query->andFilterWhere(['between', 'CAST(Dtdate AS DATE)', $start_date, $end_date]);
+                $query->andFilterWhere(['between', 'CAST(tblCleaningDpu.Dtdate AS DATE)', $start_date, $end_date]);
             else
-                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), Dtdate, 126)', $start_date]);                
+                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tblCleaningDpu.Dtdate, 126)', $start_date]);                
         }
         if($this->Shift!=3)
         {
@@ -71,17 +71,17 @@ class TblCleaningDpuSearch extends TblCleaningDpu
         }
         Yii::$app->general->filterByNumber($query, $this, ['c1cycle', 'c1testing', 'c2cycle', 'c2testing', 'c3cycle', 'c3testing', 'c4cycle', 'c4testing', 'c5cycle', 'c5testing']);
         if (!empty($this->Dtdate))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), Dtdate, 126)', date('Y-m-d', strtotime($this->Dtdate))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tblCleaningDpu.Dtdate, 126)', date('Y-m-d', strtotime($this->Dtdate))]);
         if (!empty($this->c1Date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), c1Date, 126)', date('Y-m-d', strtotime($this->c1Date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tblCleaningDpu.c1Date, 126)', date('Y-m-d', strtotime($this->c1Date))]);
         if (!empty($this->c2Date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), c2Date, 126)', date('Y-m-d', strtotime($this->c2Date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tblCleaningDpu.c2Date, 126)', date('Y-m-d', strtotime($this->c2Date))]);
         if (!empty($this->c3Date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), c3Date, 126)', date('Y-m-d', strtotime($this->c3Date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tblCleaningDpu.c3Date, 126)', date('Y-m-d', strtotime($this->c3Date))]);
         if (!empty($this->c4Date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), c4Date, 126)', date('Y-m-d', strtotime($this->c4Date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tblCleaningDpu.c4Date, 126)', date('Y-m-d', strtotime($this->c4Date))]);
         if (!empty($this->c5Date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), c5Date, 126)', date('Y-m-d', strtotime($this->c5Date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tblCleaningDpu.c5Date, 126)', date('Y-m-d', strtotime($this->c5Date))]);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -90,7 +90,7 @@ class TblCleaningDpuSearch extends TblCleaningDpu
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'tblCleaningDpu.id' => $this->id,
             //'Dtdate' => $this->Dtdate,
 //            'c1Date' => $this->c1Date,
 //            'c1cycle' => $this->c1cycle,
@@ -107,9 +107,9 @@ class TblCleaningDpuSearch extends TblCleaningDpu
 //            'c5Date' => $this->c5Date,
 //            'c5cycle' => $this->c5cycle,
 //            'c5testing' => $this->c5testing,
-            'Counter' => $this->Counter,
-            'CreatedDate' => $this->CreatedDate,
-            'ModifyDate' => $this->ModifyDate,
+            'tblCleaningDpu.Counter' => $this->Counter,
+            'tblCleaningDpu.CreatedDate' => $this->CreatedDate,
+            'tblCleaningDpu.ModifyDate' => $this->ModifyDate,
         ]);
 
         return $dataProvider;

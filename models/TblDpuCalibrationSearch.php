@@ -61,18 +61,18 @@ class TblDpuCalibrationSearch extends TblDpuCalibration
             $start_date=date('Y-m-d',  strtotime($request['min_date']));
             $end_date=date('Y-m-d',  strtotime($request['max_date']));
             if($start_date!=$end_date)
-                $query->andFilterWhere(['between', 'CAST(date AS DATE)', $start_date, $end_date]);
+                $query->andFilterWhere(['between', 'CAST(tbl_dpu_calibration.date AS DATE)', $start_date, $end_date]);
             else
-                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), date, 126)', $start_date]);                
+                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_dpu_calibration.date, 126)', $start_date]);                
         }
         if($this->shift!=3)
         {
-            $query->andFilterWhere(['like', 'shift', $this->shift]);            
+            $query->andFilterWhere(['like', 'tbl_dpu_calibration.shift', $this->shift]);            
         }
         Yii::$app->general->filterByDropdownRange($query, $this, ['fat', 'snf']);
         Yii::$app->general->filterByNumber($query, $this, ['water']);
         if (!empty($this->date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), date, 126)', date('Y-m-d', strtotime($this->date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_dpu_calibration.date, 126)', date('Y-m-d', strtotime($this->date))]);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -87,9 +87,9 @@ class TblDpuCalibrationSearch extends TblDpuCalibration
 //            'water' => $this->water,
         ]);
 
-        $query->andFilterWhere(['like', 'milk_type_code', $this->milk_type_code])
+        $query->andFilterWhere(['like', 'tbl_dpu_calibration.milk_type_code', $this->milk_type_code])
 //            ->andFilterWhere(['like', 'shift', $this->shift])
-            ->andFilterWhere(['like', 'cycle', $this->cycle]);
+            ->andFilterWhere(['like', 'tbl_dpu_calibration.cycle', $this->cycle]);
 //echo $query->createCommand()->getRawSql();die;
         return $dataProvider;
     }

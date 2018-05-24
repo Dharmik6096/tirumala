@@ -63,13 +63,13 @@ class TblFormulaMasterSearch extends TblFormulaMaster {
         ]);
 
         if (!empty($this->wef_date))
-            $query->andwhere(['wef_date' => date('Y-m-d', strtotime($this->wef_date))]);
+            $query->andwhere(['tbl_formula.wef_date' => date('Y-m-d', strtotime($this->wef_date))]);
 
-        $query->andFilterWhere(['like', 'formula_code', $this->formula_code])
-                ->andFilterWhere(['like', 'formula_description', $this->formula_description])
+        $query->andFilterWhere(['like', 'tbl_formula.formula_code', $this->formula_code])
+                ->andFilterWhere(['like', 'tbl_formula.formula_description', $this->formula_description])
                 ->andFilterWhere(['like', 'tbl_rate_type.rate_type', $this->rate_type_code])
                 ->andFilterWhere(['like', 'tbl_animal_type.animal_type_name', $this->milk_type_code])
-                ->andFilterWhere(['like', 'formula', $this->formula]);
+                ->andFilterWhere(['like', 'tbl_formula.formula', $this->formula]);
 
         return $dataProvider;
     }

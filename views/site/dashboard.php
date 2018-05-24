@@ -270,7 +270,7 @@ $script = "
                 series: [{
                             name: 'QTY(ltr)',
                             type: 'column',
-                            color: '#790000',
+                            color: '#3a7bd5',
                             yAxis: 1,
                             data: ydata,
                             tooltip: {
@@ -295,7 +295,7 @@ $script = "
                         var index=$('#'+cntr).data('highcharts-chart');
                         var chart=Highcharts.charts[index];
                         var vals=[];
-                        var color='790000';
+                        var color='3a7bd5';
                         var suf='';
                         while( chart.series.length > 0 ) {
                             chart.series[0].remove( false );

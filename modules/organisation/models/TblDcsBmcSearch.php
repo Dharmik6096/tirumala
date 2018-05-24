@@ -89,9 +89,9 @@ class TblDcsBmcSearch extends TblDcsBmc {
         ]);
 
         $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_code', $this->bmc_code])
-                ->andFilterWhere(['like', 'bmc_name', $this->bmc_name])
-                ->andFilterWhere(['like', 'local_name', $this->local_name])
-                ->andFilterWhere(['like', 'model', $this->model])
+                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->bmc_name])
+                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.local_name', $this->local_name])
+                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.model', $this->model])
                 ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.subcenter_code', $this->subcenter_code]);
 
         return $dataProvider;

@@ -63,15 +63,15 @@ class TblDcsPaymentCycleSearch extends TblDcsPaymentCycle {
         }
         if (!empty($request['TblDcsPaymentCycleSearch']['to_date'])) {
             $to_date = date('Y-m-d', strtotime($request['TblDcsPaymentCycleSearch']['to_date']));
-            $query->andFilterWhere(['like', 'CAST(to_date AS DATE)', $to_date]);
+            $query->andFilterWhere(['like', 'CAST(tbl_dcs_payment_cycle.to_date AS DATE)', $to_date]);
         }
 
         // grid filtering conditions
 
         if (!empty($this->from_date))
-            $query->andFilterWhere(['like', 'from_date', date('Y-m-d', strtotime($this->from_date))]);
+            $query->andFilterWhere(['like', 'tbl_dcs_payment_cycle.from_date', date('Y-m-d', strtotime($this->from_date))]);
         if (!empty($this->to_date))
-            $query->andFilterWhere(['like', 'to_date', date('Y-m-d', strtotime($this->to_date))]);
+            $query->andFilterWhere(['like', 'tbl_dcs_payment_cycle.to_date', date('Y-m-d', strtotime($this->to_date))]);
 
         Yii::$app->general->filterByNumber($query, $this, ['interval_value']);
 
@@ -81,11 +81,11 @@ class TblDcsPaymentCycleSearch extends TblDcsPaymentCycle {
             //'to_date' => $this->to_date,
             //'lock_billing_process'=>$this->lock_billing_process,
             //'lock_data'=>$this->lock_data,
-            'is_active' => $this->is_active,
+            'tbl_dcs_payment_cycle.is_active' => $this->is_active,
 //            'interval_value' => $this->interval_value,            
         ]);
 
-        $query->andFilterWhere(['like', 'lock_data', $this->lock_data]);
+        $query->andFilterWhere(['like', 'tbl_dcs_payment_cycle.lock_data', $this->lock_data]);
 
         return $dataProvider;
     }

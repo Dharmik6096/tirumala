@@ -60,18 +60,13 @@ class TblKmWiseRateSearch extends TblKmWiseRate
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'vehicle_code' => $this->vehicle_code,
-            'km_code' => $this->km_code,
-            'rate' => $this->rate,
-            'from_km' => $this->from_km,
-            'to_km' => $this->to_km,
-            'wef_date' => $this->wef_date,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'tbl_km_wise_rate.vehicle_code' => $this->vehicle_code,
+            'tbl_km_wise_rate.km_code' => $this->km_code,
+            'tbl_km_wise_rate.rate' => $this->rate,
+            'tbl_km_wise_rate.from_km' => $this->from_km,
+            'tbl_km_wise_rate.to_km' => $this->to_km,
+            'tbl_km_wise_rate.wef_date' => $this->wef_date,
         ]);
-
-        $query->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }

@@ -60,17 +60,13 @@ class TblMobileOilRateMasterSearch extends TblMobileOilRateMaster
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'mobile_oil_rate_master_code' => $this->mobile_oil_rate_master_code,
-            'rate' => $this->rate,
-            'wef_date' => $this->wef_date,
-            'vehicle_code' => $this->vehicle_code,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'tbl_mobile_oil_rate_master.mobile_oil_rate_master_code' => $this->mobile_oil_rate_master_code,
+            'tbl_mobile_oil_rate_master.rate' => $this->rate,
+            'tbl_mobile_oil_rate_master.wef_date' => $this->wef_date,
+            'tbl_mobile_oil_rate_master.vehicle_code' => $this->vehicle_code,
         ]);
 
-        $query->andFilterWhere(['like', 'km_info', $this->km_info])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+        $query->andFilterWhere(['like', 'tbl_mobile_oil_rate_master.km_info', $this->km_info]);
 
         return $dataProvider;
     }

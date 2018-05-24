@@ -58,24 +58,24 @@ class TblBmcDispatchSearch extends TblBmcDispatch {
             return $dataProvider;
         }
         if (!empty($this->fat)) {
-            $query->andFilterWhere([$this->operator_fat, 'fat', $this->fat]);
+            $query->andFilterWhere([$this->operator_fat, 'tbl_bmc_dispatch.fat', $this->fat]);
         }
         if (!empty($this->snf)) {
-            $query->andFilterWhere([$this->operator_snf, 'snf', $this->snf]);
+            $query->andFilterWhere([$this->operator_snf, 'tbl_bmc_dispatch.snf', $this->snf]);
         }
         if (!empty($this->dispatch_qty)) {
-            $query->andFilterWhere([$this->operator_qty, 'dispatch_qty', $this->dispatch_qty]);
+            $query->andFilterWhere([$this->operator_qty, 'tbl_bmc_dispatch.dispatch_qty', $this->dispatch_qty]);
         }
         if (!empty($this->dispatch_datetime)) {
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), dispatch_datetime, 126)', date('Y-m-d', strtotime($this->dispatch_datetime))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_bmc_dispatch.dispatch_datetime, 126)', date('Y-m-d', strtotime($this->dispatch_datetime))]);
         }
         // grid filtering conditions
         $query->andFilterWhere([
-            'bmc_dispatch_code' => $this->bmc_dispatch_code,
-            'milk_test' => $this->milk_test,
-            'dispatch_shift' => $this->dispatch_shift,
-            'milk_type_code' => $this->milk_type_code,
-            'milk_quality_type_code' => $this->milk_quality_type_code,
+            'tbl_bmc_dispatch.bmc_dispatch_code' => $this->bmc_dispatch_code,
+            'tbl_bmc_dispatch.milk_test' => $this->milk_test,
+            'tbl_bmc_dispatch.dispatch_shift' => $this->dispatch_shift,
+            'tbl_bmc_dispatch.milk_type_code' => $this->milk_type_code,
+            'tbl_bmc_dispatch.milk_quality_type_code' => $this->milk_quality_type_code,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_bmc_dispatch.destination_code', $this->destination_code])

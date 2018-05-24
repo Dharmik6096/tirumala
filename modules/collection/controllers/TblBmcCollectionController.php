@@ -62,6 +62,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
 
             $this->model->bmc_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'bmc_code');
+            $this->model->qty_mode = 1;
+            $this->model->qlty_auto = 1;
+            $this->model->qty_auto = 1;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['BMC Collection', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();

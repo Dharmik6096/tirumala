@@ -91,7 +91,7 @@ class TblMemberSearch extends TblMember {
 
         $query->andFilterWhere(['like', 'tbl_member.member_code', $this->member_code])
                 //->andFilterWhere(['like', 'tbl_member.dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'ex_member_code', $this->ex_member_code])
+                ->andFilterWhere(['like', 'tbl_member.ex_member_code', $this->ex_member_code])
                 ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_name])
                 ->andFilterWhere(['like', 'tbl_member.father_name', $this->father_name])
                 ->andFilterWhere(['like', 'tbl_member.surname', $this->surname])

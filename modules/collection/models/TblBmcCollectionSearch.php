@@ -59,39 +59,39 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
         
         if (!empty($this->date_time_of_collection))
-            $query->andFilterWhere(['and', ['>=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)).' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)).' 23:59:59.000']]);
+            $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)).' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)).' 23:59:59.000']]);
         // grid filtering conditions
         $query->andFilterWhere([
-            'milk_collection_code' => $this->milk_collection_code,
-            'milk_type_code' => $this->milk_type_code,
-            'fat' => $this->fat,
-            'snf' => $this->snf,
-            'water' => $this->water,
-            'qty' => $this->qty,
-            'rtpl' => $this->rtpl,
-            'amount' => $this->amount,
-            'date_time_of_recieve' => $this->date_time_of_recieve,
-            'sample_no' => $this->sample_no,
-            'ack' => $this->ack,
-            'dt_date' => $this->dt_date,
-            'sms_timestamp' => $this->sms_timestamp,
+            'tbl_bmc_collection.milk_collection_code' => $this->milk_collection_code,
+            'tbl_bmc_collection.milk_type_code' => $this->milk_type_code,
+            'tbl_bmc_collection.fat' => $this->fat,
+            'tbl_bmc_collection.snf' => $this->snf,
+            'tbl_bmc_collection.water' => $this->water,
+            'tbl_bmc_collection.qty' => $this->qty,
+            'tbl_bmc_collection.rtpl' => $this->rtpl,
+            'tbl_bmc_collection.amount' => $this->amount,
+            'tbl_bmc_collection.date_time_of_recieve' => $this->date_time_of_recieve,
+            'tbl_bmc_collection.sample_no' => $this->sample_no,
+            'tbl_bmc_collection.ack' => $this->ack,
+            'tbl_bmc_collection.dt_date' => $this->dt_date,
+            'tbl_bmc_collection.sms_timestamp' => $this->sms_timestamp,
         ]);
 
-        $query->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'name', $this->name])
-                ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
-                ->andFilterWhere(['like', 'auto_flag', $this->auto_flag])
-                ->andFilterWhere(['like', 'shift_code', $this->shift_code])
-                ->andFilterWhere(['like', 'village_code', $this->village_code])
-                ->andFilterWhere(['like', 'type_of_data_receive', $this->type_of_data_receive])
-                ->andFilterWhere(['like', 'rate_code', $this->rate_code])
-                ->andFilterWhere(['like', 'error_log', $this->error_log])
-                ->andFilterWhere(['like', 'soc_bmc_flag', $this->soc_bmc_flag])
-                ->andFilterWhere(['like', 'sms_status', $this->sms_status])
-                ->andFilterWhere(['like', 'sms_msgid', $this->sms_msgid])
-                ->andFilterWhere(['like', 'sms_mobile', $this->sms_mobile])
-                ->andFilterWhere(['like', 'sms_errorlog', $this->sms_errorlog])
-                ->andFilterWhere(['like', 'remarks', $this->remarks]);
+        $query->andFilterWhere(['like', 'tbl_bmc_collection.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.name', $this->name])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.mobile_no', $this->mobile_no])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.auto_flag', $this->auto_flag])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.shift_code', $this->shift_code])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.village_code', $this->village_code])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.type_of_data_receive', $this->type_of_data_receive])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.rate_code', $this->rate_code])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.error_log', $this->error_log])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.soc_bmc_flag', $this->soc_bmc_flag])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.sms_status', $this->sms_status])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.sms_msgid', $this->sms_msgid])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.sms_mobile', $this->sms_mobile])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.sms_errorlog', $this->sms_errorlog])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.remarks', $this->remarks]);
 
         return $dataProvider;
     }

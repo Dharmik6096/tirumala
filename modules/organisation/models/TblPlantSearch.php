@@ -71,27 +71,23 @@ class TblPlantSearch extends TblPlant {
         }
         // grid filtering conditions
         $query->andFilterWhere([
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'is_active' => $this->is_active,
+            'tbl_plant.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'plant_code', $this->plant_code])
-                ->andFilterWhere(['like', 'contact_person', $this->contact_person])
-                ->andFilterWhere(['like', 'name', $this->name])
-                ->andFilterWhere(['like', 'district_code', $this->district_code])
-                ->andFilterWhere(['like', 'hamlet_code', $this->hamlet_code])
-                ->andFilterWhere(['like', 'state_code', $this->state_code])
-                ->andFilterWhere(['like', 'sub_district_code', $this->sub_district_code])
-                ->andFilterWhere(['like', 'village_code', $this->village_code])
-                ->andFilterWhere(['like', 'local_name', $this->local_name])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
-                ->andFilterWhere(['like', 'local_contact_person_name', $this->local_contact_person_name])
-                ->andFilterWhere(['like', 'email', $this->email])
-                ->andFilterWhere(['like', 'description', $this->description]);
+        $query->andFilterWhere(['like', 'tbl_plant.plant_code', $this->plant_code])
+                ->andFilterWhere(['like', 'tbl_plant.contact_person', $this->contact_person])
+                ->andFilterWhere(['like', 'tbl_plant.name', $this->name])
+                ->andFilterWhere(['like', 'tbl_plant.district_code', $this->district_code])
+                ->andFilterWhere(['like', 'tbl_plant.hamlet_code', $this->hamlet_code])
+                ->andFilterWhere(['like', 'tbl_plant.state_code', $this->state_code])
+                ->andFilterWhere(['like', 'tbl_plant.sub_district_code', $this->sub_district_code])
+                ->andFilterWhere(['like', 'tbl_plant.village_code', $this->village_code])
+                ->andFilterWhere(['like', 'tbl_plant.local_name', $this->local_name])
+                ->andFilterWhere(['like', 'tbl_plant.union_code', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_plant.mobile_no', $this->mobile_no])
+                ->andFilterWhere(['like', 'tbl_plant.local_contact_person_name', $this->local_contact_person_name])
+                ->andFilterWhere(['like', 'tbl_plant.email', $this->email])
+                ->andFilterWhere(['like', 'tbl_plant.description', $this->description]);
 
         return $dataProvider;
     }

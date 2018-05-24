@@ -71,25 +71,21 @@ class TblShiftTimeSearch extends TblShiftTime
         
         if($this->shift_code!=3)
         {
-            $query->andFilterWhere(['like', 'shift_code', $this->shift_code]);            
+            $query->andFilterWhere(['like', 'tbl_shift_time.shift_code', $this->shift_code]);            
         }
         if(!empty($this->wef_date))
-            $query->andwhere(['wef_date' => date('Y-m-d', strtotime($this->wef_date))]);
+            $query->andwhere(['tbl_shift_time.wef_date' => date('Y-m-d', strtotime($this->wef_date))]);
         
         // grid filtering conditions
         $query->andFilterWhere([
-            'shift_time_code' => $this->shift_time_code,
+            'tbl_shift_time.shift_time_code' => $this->shift_time_code,
 //            'shift_code' => $this->shift_code,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time,
-            'allow_after_collection' => $this->allow_after_collection,
+            'tbl_shift_time.start_time' => $this->start_time,
+            'tbl_shift_time.end_time' => $this->end_time,
+            'tbl_shift_time.allow_after_collection' => $this->allow_after_collection,
             'tbl_shift_time.is_active' => $this->is_active,
             'tbl_shift_time.dcs_code'=> $this->dcs_code
         ]);
-
-//        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-        $query->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }

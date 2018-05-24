@@ -73,13 +73,13 @@ class TblFatSnfThresholdSearch extends TblFatSnfThreshold
 //        }
         if($this->shift_id!=3)
         {
-            $query->andFilterWhere(['like', 'shift_id', $this->shift_id]);            
+            $query->andFilterWhere(['like', 'tbl_fat_snf_threshold.shift_id', $this->shift_id]);            
         }
         if(!empty($this->wef_date))
-            $query->andwhere(['wef_date' => date('Y-m-d', strtotime($this->wef_date))]);
+            $query->andwhere(['tbl_fat_snf_threshold.wef_date' => date('Y-m-d', strtotime($this->wef_date))]);
         // grid filtering conditions
         $query->andFilterWhere([
-            'threshold_code' => $this->threshold_code,
+            'tbl_fat_snf_threshold.threshold_code' => $this->threshold_code,
 //            'minimum_fat' => $this->minimum_fat,
 //            'maximum_fat' => $this->maximum_fat,
 //            'minimum_snf' => $this->minimum_snf,
@@ -88,9 +88,6 @@ class TblFatSnfThresholdSearch extends TblFatSnfThreshold
             'tbl_fat_snf_threshold.dcs_code'=> $this->dcs_code
         ]);
 
-//       $query ->andFilterWhere(['like', 'union_code', $this->union_code])
-        $query->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }

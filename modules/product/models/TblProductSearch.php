@@ -66,19 +66,15 @@ class TblProductSearch extends TblProduct
         
         // grid filtering conditions
         $query->andFilterWhere([
-            'product_code' => $this->product_code,
-           // 'product_group_code' => $this->product_group_code,
-            'created_at' => $this->created_at,
+            'tbl_product.product_code' => $this->product_code,
             'tbl_product.is_active' => $this->is_active,
-            'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'product_name', $this->product_name])
-            ->andFilterWhere(['like', 'description', $this->description])
+        $query->andFilterWhere(['like', 'tbl_product.product_name', $this->product_name])
+            ->andFilterWhere(['like', 'tbl_product.description', $this->description])
             ->andFilterWhere(['like', 'tbl_product_group.product_group_name', $this->product_group_code])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
             ->andFilterWhere(['like', 'tbl_product.union_code', $this->union_code])
-            ->andFilterWhere(['like', 'local_name', $this->local_name]);
+            ->andFilterWhere(['like', 'tbl_product.local_name', $this->local_name]);
 
         return $dataProvider;
     }

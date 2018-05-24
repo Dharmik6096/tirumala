@@ -60,19 +60,15 @@ class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMa
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'vehicle_transporter_head_mapping_code' => $this->vehicle_transporter_head_mapping_code,
-            'transporter_payment_head_code' => $this->transporter_payment_head_code,
-            'wef_date' => $this->wef_date,
-            'amount' => $this->amount,
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'tbl_vehicle_transporter_head_mapping.vehicle_transporter_head_mapping_code' => $this->vehicle_transporter_head_mapping_code,
+            'tbl_vehicle_transporter_head_mapping.transporter_payment_head_code' => $this->transporter_payment_head_code,
+            'tbl_vehicle_transporter_head_mapping.wef_date' => $this->wef_date,
+            'tbl_vehicle_transporter_head_mapping.amount' => $this->amount,
+            'tbl_vehicle_transporter_head_mapping.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+        $query->andFilterWhere(['like', 'tbl_vehicle_transporter_head_mapping.remarks', $this->remarks])
+            ->andFilterWhere(['like', 'tbl_vehicle_transporter_head_mapping.vehicle_code', $this->vehicle_code]);
 
         return $dataProvider;
     }

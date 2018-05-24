@@ -77,16 +77,16 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
         //  Yii::$app->general->filterByDropdownRange($query, $this, ['fat', 'snf', 'qty', 'amount']);
         if (!empty($this->fat)) {
-            $query->andFilterWhere([$this->operator_fat, 'fat', $this->fat]);
+            $query->andFilterWhere([$this->operator_fat, 'tbl_milk_collection.fat', $this->fat]);
         }
         if (!empty($this->snf)) {
-            $query->andFilterWhere([$this->operator_snf, 'snf', $this->snf]);
+            $query->andFilterWhere([$this->operator_snf, 'tbl_milk_collection.snf', $this->snf]);
         }
         if (!empty($this->qty)) {
-            $query->andFilterWhere([$this->operator_qty, 'qty', $this->qty]);
+            $query->andFilterWhere([$this->operator_qty, 'tbl_milk_collection.qty', $this->qty]);
         }
         if (!empty($this->amount)) {
-            $query->andFilterWhere([$this->operator_amount, 'amount', $this->amount]);
+            $query->andFilterWhere([$this->operator_amount, 'tbl_milk_collection.amount', $this->amount]);
         }
 
 
@@ -96,30 +96,30 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'milk_collection_code' => $this->milk_collection_code,
+            'tbl_milk_collection.milk_collection_code' => $this->milk_collection_code,
 //            'milk_type_code' => $this->milk_type_code,
 //            'fat' => $this->fat,
 //            'snf' => $this->snf,
-            'water' => $this->water,
+            'tbl_milk_collection.water' => $this->water,
 //            'qty' => $this->qty,
 //            'rtpl' => $this->rtpl,
 //            'amount' => $this->amount,
 //            'date_time_of_collection' => $this->date_time_of_collection,
-            'date_time_of_recieve' => $this->date_time_of_recieve,
-            'sample_no' => $this->sample_no,
-            'ack' => $this->ack,
+            'tbl_milk_collection.date_time_of_recieve' => $this->date_time_of_recieve,
+            'tbl_milk_collection.sample_no' => $this->sample_no,
+            'tbl_milk_collection.ack' => $this->ack,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code])
-                ->andFilterWhere(['like', 'name', $this->name])
-                ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
-                ->andFilterWhere(['like', 'auto_flag', $this->auto_flag])
-                ->andFilterWhere(['like', 'village_code', $this->village_code])
-                ->andFilterWhere(['like', 'type_of_data_receive', $this->type_of_data_receive])
-                ->andFilterWhere(['like', 'rate_code', $this->rate_code])
-                ->andFilterWhere(['like', 'error_log', $this->error_log])
-                ->andFilterWhere(['like', 'milk_type_code', $this->milk_type_code])
-                ->andFilterWhere(['like', 'soc_bmc_flag', $this->soc_bmc_flag]);
+                ->andFilterWhere(['like', 'tbl_milk_collection.name', $this->name])
+                ->andFilterWhere(['like', 'tbl_milk_collection.mobile_no', $this->mobile_no])
+                ->andFilterWhere(['like', 'tbl_milk_collection.auto_flag', $this->auto_flag])
+                ->andFilterWhere(['like', 'tbl_milk_collection.village_code', $this->village_code])
+                ->andFilterWhere(['like', 'tbl_milk_collection.type_of_data_receive', $this->type_of_data_receive])
+                ->andFilterWhere(['like', 'tbl_milk_collection.rate_code', $this->rate_code])
+                ->andFilterWhere(['like', 'tbl_milk_collection.error_log', $this->error_log])
+                ->andFilterWhere(['like', 'tbl_milk_collection.milk_type_code', $this->milk_type_code])
+                ->andFilterWhere(['like', 'tbl_milk_collection.soc_bmc_flag', $this->soc_bmc_flag]);
 
 //        echo $query->createCommand()->getRawSql();die;
         return $dataProvider;

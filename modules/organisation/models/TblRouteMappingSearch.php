@@ -69,28 +69,23 @@ class TblRouteMappingSearch extends TblRouteMapping {
         // grid filtering conditions
         $query->andFilterWhere([
             //'capacity' => $this->capacity,
-            'route_length_kms' => $this->route_length_kms,
-            'vehicle_type_code' => $this->vehicle_type_code,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'tbl_route_mapping.is_active' => $this->is_active,
+            'tbl_route_mapping.route_length_kms' => $this->route_length_kms,
+            'tbl_route_mapping.vehicle_type_code' => $this->vehicle_type_code,
+            'tbl_route_mapping.tbl_route_mapping.is_active' => $this->is_active,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_route_mapping.route_code', $this->route_code])
-                ->andFilterWhere(['like', 'morning_start_time', $this->morning_start_time])
-                ->andFilterWhere(['like', 'morning_end_time', $this->morning_end_time])
-                ->andFilterWhere(['like', 'route_name', $this->route_name])
-                //->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'local_name', $this->local_name])
-                ->andFilterWhere(['like', 'evening_start_time', $this->evening_start_time])
-                ->andFilterWhere(['like', 'evening_end_time', $this->evening_end_time])
-                ->andFilterWhere(['like', 'route_type', $this->route_type])
-                ->andFilterWhere(['like', 'from_type', $this->from_type])
-                ->andFilterWhere(['like', 'from_dest', $this->from_dest])
-                ->andFilterWhere(['like', 'to_type', $this->to_type])
-                ->andFilterWhere(['like', 'to_dest', $this->to_dest])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+                ->andFilterWhere(['like', 'tbl_route_mapping.morning_start_time', $this->morning_start_time])
+                ->andFilterWhere(['like', 'tbl_route_mapping.morning_end_time', $this->morning_end_time])
+                ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_name])
+                ->andFilterWhere(['like', 'tbl_route_mapping.local_name', $this->local_name])
+                ->andFilterWhere(['like', 'tbl_route_mapping.evening_start_time', $this->evening_start_time])
+                ->andFilterWhere(['like', 'tbl_route_mapping.evening_end_time', $this->evening_end_time])
+                ->andFilterWhere(['like', 'tbl_route_mapping.route_type', $this->route_type])
+                ->andFilterWhere(['like', 'tbl_route_mapping.from_type', $this->from_type])
+                ->andFilterWhere(['like', 'tbl_route_mapping.from_dest', $this->from_dest])
+                ->andFilterWhere(['like', 'tbl_route_mapping.to_type', $this->to_type])
+                ->andFilterWhere(['like', 'tbl_route_mapping.to_dest', $this->to_dest]);
 
         return $dataProvider;
     }

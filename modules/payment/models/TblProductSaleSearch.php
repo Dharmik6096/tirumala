@@ -64,27 +64,19 @@ class TblProductSaleSearch extends TblProductSale
             $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);            
         }
         if(!empty($this->sale_date_time))
-            $query->andFilterWhere(['like', 'sale_date_time', date('Y-m-d', strtotime($this->sale_date_time))]);
+            $query->andFilterWhere(['like', 'tbl_product_sale.sale_date_time', date('Y-m-d', strtotime($this->sale_date_time))]);
         // grid filtering conditions
         $query->andFilterWhere([
-            //'sale_date_time' => $this->sale_date_time,
-            'amount' => $this->amount,
-            'other_amount' => $this->other_amount,
-            'discount' => $this->discount,
-            'paid_amount' => $this->paid_amount,
-            'amount_due' => $this->amount_due,
-            'is_installment' => $this->is_installment,
-            'no_of_installment' => $this->no_of_installment,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'tbl_product_sale.amount' => $this->amount,
+            'tbl_product_sale.other_amount' => $this->other_amount,
+            'tbl_product_sale.discount' => $this->discount,
+            'tbl_product_sale.paid_amount' => $this->paid_amount,
+            'tbl_product_sale.amount_due' => $this->amount_due,
+            'tbl_product_sale.is_installment' => $this->is_installment,
+            'tbl_product_sale.no_of_installment' => $this->no_of_installment,
         ]);
 
-        $query->andFilterWhere(['like', 'product_sale_code', $this->product_sale_code])
-            //->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            //->andFilterWhere(['like', 'union_code', $this->union_code])
-            //->andFilterWhere(['like', 'member_code', $this->member_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+        $query->andFilterWhere(['like', 'tbl_product_sale.product_sale_code', $this->product_sale_code]);
 
         return $dataProvider;
     }

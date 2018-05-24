@@ -16,7 +16,7 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 
 $attribute = [
     ['attribute' => 'bmc_code',
-        'filter' => Html::activeTextInput($searchModel, 'bmc_code', ['class' => 'form-control wd60']),
+        'filter' => Html::activeTextInput($searchModel, 'bmc_code', ['class' => 'form-control']),
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }],

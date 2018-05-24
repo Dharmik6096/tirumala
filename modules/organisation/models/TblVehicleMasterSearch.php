@@ -56,33 +56,27 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'vehicle_type_code' => $this->vehicle_type_code,
-            'capacity_code' => $this->capacity_code,
-            'wef_date' => $this->wef_date,
-            'pollution_certificate' => $this->pollution_certificate,
-            'insurance' => $this->insurance,
-            'expiry_date' => $this->expiry_date,
-            'rent' => $this->rent,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'delete_at' => $this->delete_at,
-            'is_active' => $this->is_active,
+            'tbl_vehicle_master.vehicle_type_code' => $this->vehicle_type_code,
+            'tbl_vehicle_master.capacity_code' => $this->capacity_code,
+            'tbl_vehicle_master.wef_date' => $this->wef_date,
+            'tbl_vehicle_master.pollution_certificate' => $this->pollution_certificate,
+            'tbl_vehicle_master.insurance' => $this->insurance,
+            'tbl_vehicle_master.expiry_date' => $this->expiry_date,
+            'tbl_vehicle_master.rent' => $this->rent,
+            'tbl_vehicle_master.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
-                ->andFilterWhere(['like', 'registration_no', $this->registration_no])
-                ->andFilterWhere(['like', 'applicable_rto', $this->applicable_rto])
-                ->andFilterWhere(['like', 'driver_name', $this->driver_name])
-                ->andFilterWhere(['like', 'driver_contact_no', $this->driver_contact_no])
-                ->andFilterWhere(['like', 'driving_license_number', $this->driving_license_number])
-                ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
-                ->andFilterWhere(['like', 'mapped_route', $this->mapped_route])
-                ->andFilterWhere(['like', 'rc_book_no', $this->rc_book_no])
-                ->andFilterWhere(['like', 'average', $this->average])
-                ->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'delete_by', $this->delete_by]);
+        $query->andFilterWhere(['like', 'tbl_vehicle_master.vehicle_code', $this->vehicle_code])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.registration_no', $this->registration_no])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.applicable_rto', $this->applicable_rto])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.driver_name', $this->driver_name])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.driver_contact_no', $this->driver_contact_no])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.driving_license_number', $this->driving_license_number])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.transporter_code', $this->transporter_code])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.mapped_route', $this->mapped_route])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.rc_book_no', $this->rc_book_no])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.average', $this->average])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.union_code', $this->union_code]);
 
         return $dataProvider;
     }
