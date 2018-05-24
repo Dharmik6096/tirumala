@@ -104,8 +104,7 @@ class DefaultController extends \app\controllers\ChildController {
         if ($out_type != 'html') {
             $type = $out_type;
         }
-        $cryatal_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web\utility\CrystalReportsNinja-master\Deployment\CrystalReportsNinja';
-        $cmd = $cryatal_path . " -U sa -P !!EiPl@2017 -S 182.73.178.90,14033 -D TIRUMALA";
+        $cmd = "F:\Hardik\Software\CrystalReportsNinja-master\Deployment\CrystalReportsNinja -U sa -P !!EiPl@2017 -S 182.73.178.90,14033 -D TIRUMALA";
         $cmd .= " -F " . $report_path . '\\' . $this->data['report_name'] . ".rpt -O C:\wamp64\www\\tirumala\modules\crystalreports\html";
         $cmd .= "\\" . $file_name . '.' . $out_type . ' -E ' . $type;
         $data['date1'] = date('Y-m-d', strtotime($data['date1'])) . ' ' . Yii::$app->general->getshift($data['from_shift']);
@@ -113,9 +112,7 @@ class DefaultController extends \app\controllers\ChildController {
         foreach ($data as $key => $value) {
             $cmd.= ' -a "@' . str_replace('p_', '', $key) . ':' . $value . '"';
         }
-//        echo $cmd;die;
         exec($cmd, $out, $retval);
-        var_dump($out);die;
         if (!empty($out) && isset($out[2]) && $out[2] == 'Completed') {
             if ($out_type != 'html') {
                 $file = 'C:\wamp64\www\tirumala\modules\crystalreports\html' . '/' . $file_name . '.' . $out_type;
@@ -147,84 +144,84 @@ class DefaultController extends \app\controllers\ChildController {
                 'report_name' => 'rptBMCCollectionReport',
                 'file_name' => 'bmc_collection',
                 'scenario' => 'BmcCollection',
-                'title' => '312 - Bmc Collection',
+                'title' => 'Bmc Collection',
             ],
             'ActualBmcCollection' => [
-                'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,MCCId,bmcid,routeid',
+                'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,routeid',
                 'report_name' => 'rptPPWiseActualBMCCollection',
                 'file_name' => 'actual_bmc_collection',
                 'scenario' => 'ActualBmcCollection',
-                'title' => '301 - Actual Bmc Collection',
+                'title' => 'Actual Bmc Collection',
             ],
             'RmrdMilkCollection' => [
-                'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid,CattleType,MilkQualityType,VLCTotal',
+                'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid,CattleType,MilkQualityType',
                 'report_name' => 'rptRMRDMilkCollection',
                 'file_name' => 'rmrd_milk_collection',
                 'scenario' => 'RmrdMilkCollection',
-                'title' => '302 - RMRD Milk Collection',
+                'title' => 'RMRD Milk Collection',
             ],
             'BmcSummaryReport' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid,CattleType,MilkQualityType',
                 'report_name' => 'rptBMCSummaryReport',
                 'file_name' => 'bmc_summary_report',
                 'scenario' => 'BmcSummaryReport',
-                'title' => '303 - Bmc Summary Report',
+                'title' => 'Bmc Summary Report',
             ],
             'VariationMilkTypeDateWise' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptVariationReportVLCCToMCCMilkType',
                 'file_name' => 'variation_milk_type_date_wise',
                 'scenario' => 'VariationMilkTypeDateWise',
-                'title' => '304 - Milk Type Variation Date Wise',
+                'title' => 'Variation Milk Type Date Wise',
             ],
             'VariationMilkTypeVillageWise' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptVariationReportVLCCToMCCVillageWiseMilkType',
                 'file_name' => 'variation_milk_type_village_wise',
                 'scenario' => 'VariationMilkTypeVillageWise',
-                'title' => '305 - Milk Type Variation Village Wise',
+                'title' => 'Variation Milk Type Village Wise',
             ],
             'VariationDateWise' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptVariationReportVLCCToMCC',
                 'file_name' => 'variation_date_wise',
                 'scenario' => 'VariationDateWise',
-                'title' => '306 - Date Wise Variation',
+                'title' => 'Variation Date Wise',
             ],
             'VariationVillageWise' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptVariationReportVLCCToMCCVillageWise',
                 'file_name' => 'variation_village_wise',
                 'scenario' => 'VariationVillageWise',
-                'title' => '307 - Village Wise Variation',
+                'title' => 'Variation Village Wise',
             ],
             'VariationPercentageWise' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptVariationReportVLCCToMCCFATSNF',
                 'file_name' => 'variation_percentage_wise',
                 'scenario' => 'VariationPercentageWise',
-                'title' => '308 - Percentage Wise Variation',
+                'title' => 'Variation Percentage Wise',
             ],
             'DifferenceReport' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptDifferenceReportVLCCToMCCForBMC',
                 'file_name' => 'difference_report',
                 'scenario' => 'DifferenceReport',
-                'title' => '309 - Difference Report',
+                'title' => 'Difference Report',
             ],
             'DifferenceReportDateWise' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptDifferenceReportVLCCToMCC',
                 'file_name' => 'difference_report_date_wise',
                 'scenario' => 'DifferenceReportDateWise',
-                'title' => '310 - Date Wise Difference Report',
+                'title' => 'Difference Report Date Wise',
             ],
             'DifferenceReportVillageWise' => [
                 'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid,vlccid,routeid',
                 'report_name' => 'rptDifferenceReportVLCCToMCCVillageWise',
                 'file_name' => 'difference_report_village_wise',
                 'scenario' => 'DifferenceReportVillageWise',
-                'title' => '311 - Village Wise Difference Report',
+                'title' => 'Difference Report Village Wise',
             ],
         ];
         return $label[$l];

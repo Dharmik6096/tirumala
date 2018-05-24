@@ -59,7 +59,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disable); ?>
     </div>
     <div class="col-sm-3">
-        <?= $form->field($model, 'dcs_code_ex')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'dcs_code_ex')->textInput(['maxlength' => true, 'readonly' => $disabled]) ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>

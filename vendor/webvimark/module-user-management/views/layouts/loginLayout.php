@@ -8,7 +8,7 @@ use yii\helpers\Html;
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-$this->title = UserManagementModule::t('front', 'PCDF Application');
+$this->title = UserManagementModule::t('front', 'Everest');
 LoginAsset::register($this);
 BootstrapAsset::register($this);
 ?>

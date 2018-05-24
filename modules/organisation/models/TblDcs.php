@@ -30,6 +30,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_dcs".
@@ -90,6 +91,7 @@ class TblDcs extends ChildModel {
     public $bipl_code;
     public $vendor;
     public $society_status;
+    public $download_status;
 
     /**
      * @inheritdoc
@@ -648,6 +650,18 @@ class TblDcs extends ChildModel {
                     $dcs[] = $value->dcs_code;
                 }
                 return $dcs;
+            }
+
+            public function getDownloadStatus() {
+                $member_model = new TblMember();
+                $data = $member_model->find()
+                        ->where(['dcs_code' => $this->dcs_code, 'is_download' => '1'])
+                        ->all();
+                if(count($data) == 0){
+                    return Yii::t('app', 'Downloaded');
+                } else {
+                    return Yii::t('app', 'Pending');
+                }
             }
 
         }

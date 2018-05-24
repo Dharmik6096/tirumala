@@ -148,6 +148,7 @@ $attribute = [
         }
     ],
     ['attribute' => 'bipl_code', 'label' => Yii::t('app', 'Reference Code'), 'value' => 'societyCodes.bipl_code', 'filter' => false, 'visible' => false],
+    ['attribute' => 'download_status', 'value' => function($model) { return $model->downloadStatus; }, 'filter' => false],
 ];
 
 $grid_option = [

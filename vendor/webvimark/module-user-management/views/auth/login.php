@@ -122,11 +122,8 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="login-content text-center">
-                                        <h3>Welcome to Admin Portal</h3>
+                                        <h3>Welcome to EIPL Milk Procurement Portal</h3>
                                         <div class="tbl">
-                                            <div class="tbl-cell">
-                                                <img src="<?= Url::to('themes/pcdf/assets/images/pcdf_smiley.png') ?>" alt="" class="img-responsive"/>
-                                            </div>
                                             <div class="tbl-cell">
                                                 <h4>Pradeshik Cooperative Dairy Federation, Uttar Pradesh</h4>
                                             </div>

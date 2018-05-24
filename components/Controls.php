@@ -32,7 +32,7 @@ class Controls extends Component {
         else
             $url_path[] = $action;
         $url = Url::to($url_path);
-        return GhostHtml::a(Yii::t('app', '<i class="fa fa-plus"></i> Add ' . Yii::t('app',ucfirst($name))), $url, ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']);
+        return GhostHtml::a(Yii::t('app', '<i class="fa fa-plus"></i> Add ' . Yii::t('app', ucfirst($name))), $url, ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']);
     }
 
     public function save($value, $model, $class = '') {
@@ -66,16 +66,16 @@ class Controls extends Component {
         // }
     }
 
-    public function custombutton($name, $action = 'create', $sideButton = false , $class='') {
+    public function custombutton($name, $action = 'create', $sideButton = false, $class = '') {
         if (is_array($action))
             $url_path = $action;
         else
             $url_path[] = $action;
         $url = Url::to(array_values($url_path));
         $sideclass = $sideButton ? 'btn-block' : '';
-        $class=empty($class)?'':$class.' ';
+        $class = empty($class) ? '' : $class . ' ';
         //$url=str_replace('1%5B', '%5B', $url);
-        return GhostHtml::a(Yii::t('app', ucfirst($name)), $url, ['class' => 'btn btn-danger apply-shortcut '.$class.$sideclass, 'shortcut_key' => 'ctrl+alt+c']);
+        return GhostHtml::a(Yii::t('app', ucfirst($name)), $url, ['class' => 'btn btn-danger apply-shortcut ' . $class . $sideclass, 'shortcut_key' => 'ctrl+alt+c']);
     }
 
     public function search() {
@@ -121,13 +121,12 @@ class Controls extends Component {
         echo $form->field($model, $field)->textArea(['maxlength' => true, 'class' => 'form-control local-control']);
     }
 
-    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label=true, $id=false) {
+    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label = true, $id = false) {
         $maxdate_value = '';
         $mindate_value = '';
-        $options=['class' => 'form-control'];
-        if($id!==false)
-        {
-            $options['id']=$id;
+        $options = ['class' => 'form-control'];
+        if ($id !== false) {
+            $options['id'] = $id;
         }
         if ($maxdate)
             $maxdate_value = date('d-m-Y');
@@ -137,25 +136,24 @@ class Controls extends Component {
 
         if (isset($model->{$name}))
             $model->{$name} = Yii::$app->formatter->asDate($model->{$name}, 'php:d-m-Y');
-            
-        $control=$form->field($model, $name)->widget(DatePicker::className(), [
-                    'model' => $model,
-                    'attribute' => $name,
-                    'value' => date('Y-m-d'),
+
+        $control = $form->field($model, $name)->widget(DatePicker::className(), [
+            'model' => $model,
+            'attribute' => $name,
+            'value' => date('Y-m-d'),
 //            'convertFormat'=>TRUE,
-                    'pluginOptions' => [
-                        'format' => 'dd-mm-yyyy',
-                        'todayHighlight' => true,
-                        'autoclose' => true,
-                        'endDate' => $maxdate_value,
-                        'startDate' => $mindate_value
-                    ],
-                    'disabled' => $disabled,
-                    'options' => $options
+            'pluginOptions' => [
+                'format' => 'dd-mm-yyyy',
+                'todayHighlight' => true,
+                'autoclose' => true,
+                'endDate' => $maxdate_value,
+                'startDate' => $mindate_value
+            ],
+            'disabled' => $disabled,
+            'options' => $options
         ]);
-        if(!$label)
-        {
-          $control = $control->label(false);  
+        if (!$label) {
+            $control = $control->label(false);
         }
         return $control;
     }
@@ -195,7 +193,7 @@ class Controls extends Component {
     }
 
     public function view_date($value) {
-        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDate($value, 'php:d-m-Y');
+        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDate($value . Yii::$app->getTimeZone(), 'php:d-m-Y');
     }
 
     public function daterange($name, $value = '') {
@@ -269,7 +267,7 @@ class Controls extends Component {
         ]);
     }
 
-    public function active_min_max_date($form, $model, $minName, $maxName,$id1=false,$id2=false) {
+    public function active_min_max_date($form, $model, $minName, $maxName, $id1 = false, $id2 = false) {
         $layout = "
             {input1}
             {separator}
@@ -277,15 +275,13 @@ class Controls extends Component {
             <span class=\"input-group-addon kv-date-remove\">
                 <i class=\"glyphicon glyphicon-remove\"></i>
             </span>";
-        $options=['placeholder' => 'From date'];
-        $options2=['placeholder' => 'To date'];
-        if($id1!==false)
-        {
-            $options['id']=$id1;
+        $options = ['placeholder' => 'From date'];
+        $options2 = ['placeholder' => 'To date'];
+        if ($id1 !== false) {
+            $options['id'] = $id1;
         }
-        if($id2!==false)
-        {
-            $options2['id']=$id2;
+        if ($id2 !== false) {
+            $options2['id'] = $id2;
         }
         return DatePicker::widget([
                     'model' => $model,

@@ -65,7 +65,7 @@ class TblClusterSearch extends TblCluster {
 
         $query->andFilterWhere(['like', 'cluster_code', $this->cluster_code])
                 ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-                ->andFilterWhere(['like', 'name', $this->name])
+                ->andFilterWhere(['like', 'tbl_cluster.name', $this->name])
                 ->andFilterWhere(['like', 'local_name', $this->local_name])
                 ->andFilterWhere(['like', 'address', $this->address])
                 ->andFilterWhere(['like', 'local_address', $this->local_address])

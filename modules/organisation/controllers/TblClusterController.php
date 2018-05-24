@@ -99,7 +99,6 @@ class TblClusterController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
 
             $this->model->load(Yii::$app->request->post());
-            $this->setModel($this->model);
             $this->model->name = ucwords($this->model->name);
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique($this->model, 'name', $_POST['TblCluster']['name']);
