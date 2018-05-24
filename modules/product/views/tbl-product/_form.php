@@ -8,7 +8,7 @@ use yii\web\View;
 /* @var $model app\modules\product\models\TblProduct */
 /* @var $form yii\widgets\ActiveForm */
 
-$readonly=$type=='create'?FALSE:TRUE;
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -24,10 +24,13 @@ $form = ActiveForm::begin([
 <?= $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-3" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union',$readonly); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('product_group_code', $model, $form, '', 'Product Group', false, 'product_group_code'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', 'Unit', false, 'unit_code'); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'product_name')->textInput() ?>
@@ -39,7 +42,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'description')->textarea() ?>
     </div>
-     <div class="col-sm-3 mt35">
+    <div class="col-sm-3 mt35">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>   
     <div class="clearfix"></div>
