@@ -107,13 +107,18 @@ class AppActivationController extends ChildController {
         $data['village_name'] = $dcsInfo->villageCode->village_name;
 
         $app_data = $appModel->activationDetail();
-        $data['c_rate_code'] = $app_data['c_rate_code_a'];
-        $data['b_rate_code'] = $app_data['b_rate_code_a'];
-        $data['m_rate_code'] = $app_data['m_rate_code_a'];
-        $data['m_id'] = $app_data['m_id_a'];
-//        $response[] = $data;
-        $this->response['data'] = $data;
-        return $this->response;
+        if (!empty($app_data)) {
+            $data['c_rate_code'] = $app_data['c_rate_code_a'];
+            $data['b_rate_code'] = $app_data['b_rate_code_a'];
+            $data['m_rate_code'] = $app_data['m_rate_code_a'];
+            $data['m_id'] = $app_data['m_id_a'];
+            $this->response['data'] = $data;
+            return $this->response;
+        } else {
+            $message[] = 'Authentication Failed.';
+            Yii::$app->apiError->error($message, 'error');
+            return FALSE;
+        }
     }
 
     public function actionAcknowledgement() {

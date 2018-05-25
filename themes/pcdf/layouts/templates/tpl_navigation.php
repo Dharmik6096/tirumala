@@ -266,7 +266,7 @@ echo GhostMenu::widget([
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" ><i class="fa fa-user"></i> <b class="caret"></b></a>',
             'items' => [
                 ['label' => "<span class='user'><b>" . Yii::t('app', 'User: ') . "</b>" . explode('#', Yii::$app->session->get('UserName'))[1] . "</span>"],
-                ['label' => "<span class='user'><b>" . Yii::t('app', 'Org.Type: ') . "</b>" . Yii::$app->session->get('organizations_type') . "</span>"],
+                ['label' => "<span class='user'><b>" . Yii::t('app', 'Org.Type: ') . "</b>" . Yii::t('app', Yii::$app->session->get('organizations_type')) . "</span>"],
                 ['label' => 'Change password', 'url' => ['/user-management/auth/change-own-password']],
                 ['label' => 'Logout', 'url' => $logout_url],
             ],

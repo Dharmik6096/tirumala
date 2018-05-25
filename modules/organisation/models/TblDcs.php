@@ -92,6 +92,7 @@ class TblDcs extends ChildModel {
     public $vendor;
     public $society_status;
     public $download_status;
+    public $tmcc_code;
 
     /**
      * @inheritdoc
@@ -169,6 +170,9 @@ class TblDcs extends ChildModel {
 //            [['branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
+                    [['tmcc_code'], 'string', 'max' => 10],
+                    [['tmcc_code'], 'number', 'min' => 0],
+                    [['tmcc_code'], 'required'],
                 ];
             }
 
@@ -260,6 +264,7 @@ class TblDcs extends ChildModel {
                     'bipl_code' => Yii::t('app', 'BIPL Code'),
                     'society_status' => Yii::t('app', 'Collection Status'),
                     'bmc_code' => Yii::t('app', 'BMC'),
+                    'tmcc_code' => Yii::t('app', 'TMCC Code'),
                 ];
             }
 
@@ -272,7 +277,8 @@ class TblDcs extends ChildModel {
             }
 
             public function getCode() {
-                return $this->district_code . $this->village_code . $this->dcs_code_ex;
+                return '00'.$this->tmcc_code;
+//                return $this->district_code . $this->village_code . $this->dcs_code_ex;
 //                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
 //                if ((int) $data['dcs_code'] < 9) {
 //                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
@@ -657,7 +663,7 @@ class TblDcs extends ChildModel {
                 $data = $member_model->find()
                         ->where(['dcs_code' => $this->dcs_code, 'is_download' => '1'])
                         ->all();
-                if(count($data) == 0){
+                if (count($data) == 0) {
                     return Yii::t('app', 'Downloaded');
                 } else {
                     return Yii::t('app', 'Pending');

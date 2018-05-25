@@ -36,7 +36,7 @@ class TblMilkCollectionController extends \yii\web\Controller {
                 $route_model = new TblRouteMappingSources();
                 $route_model->from_dest = $dcs->dcs_code;
                 $route_data = $route_model->getRouteDcsData();
-
+                
                 if (!empty($route_data)) {
                     $route['id'] = $route_data->route_code;
                     $route['name'] = Yii::$app->general->getforeignkey($route_data->routeCode, 'route_name');
@@ -63,10 +63,10 @@ class TblMilkCollectionController extends \yii\web\Controller {
 
                         $metadata['collectionCenter'] = $collectionCenter;
                         $metadata['date'] = !empty($milk_coll->date_time_of_collection) ? date('Y-m-d', strtotime($milk_coll->date_time_of_collection)) : '';
-                        $metadata['shift'] = strtoupper(substr(Yii::$app->general->getforeignkey($milk_coll->shiftCode, 'shift'), 0, 1));
+                        $metadata['shift'] = strtoupper(Yii::$app->general->getforeignkey($milk_coll->shiftCode, 'shift'));
 
                         $collectionEntryList['farmerId'] = $milk_coll->member_code;
-                        $collectionEntryList['milkType'] = strtoupper(substr(Yii::$app->general->getforeignkey($milk_coll->milkTypeCode, 'animal_type_name'), 0, 1));
+                        $collectionEntryList['milkType'] = strtoupper(Yii::$app->general->getforeignkey($milk_coll->milkTypeCode, 'animal_type_name'));
                         $collectionEntryList['milkQuantity'] = $milk_coll->qty;
                         $collectionEntryList['fat'] = $milk_coll->fat;
                         $collectionEntryList['snf'] = $milk_coll->snf;
@@ -76,14 +76,14 @@ class TblMilkCollectionController extends \yii\web\Controller {
                         $collectionEntryList['awm'] = '';
                         $collectionEntryList['clr'] = $milk_coll->clr;
                         $collectionEntryList['status'] = $milk_coll->status;
-                        $collectionEntryList['mode'] = array_search($milk_coll->qty_auto, $ref_att['qty_auto']['data_mapping']);
+                        $collectionEntryList['mode'] = $milk_coll->qty_auto == 0 ? 'Auto' : 'Manual';
                         $collectionEntryList['qualityTime'] = !empty($milk_coll->qlty_time) ? strtotime($milk_coll->qlty_time) : '';
                         $collectionEntryList['quantityTime'] = !empty($milk_coll->qty_time) ? strtotime($milk_coll->qty_time) : '';
-                        $collectionEntryList['uom'] = array_search($milk_coll->qty_mode, $ref_att['qty_mode']['data_mapping']);
+                        $collectionEntryList['uom'] = $milk_coll->qty_mode == 0 ? 'LTR' : 'KG';
                         $collectionEntryList['numberOfCans'] = $milk_coll->no_of_can;
-                        $collectionEntryList['milkQuality'] = strtoupper(substr(Yii::$app->general->getforeignkey($milk_coll->milkQualityCode, 'milk_quality_type_name'), 0, 1));
-                        $collectionEntryList['qualityMode'] = array_search($milk_coll->qlty_auto, $ref_att['qlty_auto']['data_mapping']);
-                        $collectionEntryList['quantityMode'] = array_search($milk_coll->qty_auto, $ref_att['qty_auto']['data_mapping']);
+                        $collectionEntryList['milkQuality'] = strtoupper(Yii::$app->general->getforeignkey($milk_coll->milkQualityCode, 'milk_quality_type_name'));
+                        $collectionEntryList['qualityMode'] = $milk_coll->qlty_auto == 0 ? 'Auto' : 'Manual';
+                        $collectionEntryList['quantityMode'] = $milk_coll->qty_auto == 0 ? 'Auto' : 'Manual';
                         $collectionEntryList['conductivity'] = '';
                         $collectionEntryList['density'] = '';
                         $collectionEntryList['salt'] = '';

@@ -69,7 +69,7 @@ $form = ActiveForm::begin([
                                                             'url'=>$chart_url, 'container'=>'container1',
                                                             'date_range'=>false,'range2'=>false,
                                                             'range_id1'=>'dt1',
-                                                            'shift'=>true,'type'=>'column','title'=>'Unionwise Milk Collection']);?>
+                                                            'shift'=>true,'type'=>'column','title'=>Yii::t('app', 'Unionwise Milk Collection')]);?>
                     <div id="container1" class="cont"></div>
                 </div>
             </div>
