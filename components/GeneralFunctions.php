@@ -875,5 +875,21 @@ class GeneralFunctions extends Component {
             return true;
         }
     }
+    
+    public function getmultiforeignkey($value, $relations = [], $field) {
+        $data = '';
+        if (isset($value)) {
+            foreach ($relations as $key => $rel) {
+                $value = $value->$rel;
+                if (!isset($value)) {
+                    $data = 'error';
+                    break;
+                }
+            }
+        } else {
+            $data = 'error';
+        }
+        return $data == '' ? (!empty($value->$field) ? $value->$field : 'N/A') : 'N/A';
+    }
 
 }

@@ -28,6 +28,7 @@ $form = ActiveForm::begin(['options' => [
             <thead>
                 <tr>
                     <th><?php echo $model[0]->getAttributeLabel('dcs_code') ?></th>
+                    <th><?php echo Yii::t('app', 'DCS Name') ?></th>
                     <th><?php echo $model[0]->getAttributeLabel('PPCode') ?></th>
                     <th><?php echo $model[0]->getAttributeLabel('bmc_code') ?></th>
                     <th><?php echo $model[0]->getAttributeLabel('AdminPwd') ?></th>
@@ -44,6 +45,7 @@ $form = ActiveForm::begin(['options' => [
                     ?>
                     <tr>
                         <td><?= $models->dcs_code ?><?= Html::activeHiddenInput($models, '[' . $i . ']dcs_code') ?></td>
+                        <td><?= Yii::$app->general->getforeignkey($models->dcsCode, 'dcs_name'); ?></td>
                         <td><?= $models->PPCode ?><?= Html::activeHiddenInput($models, '[' . $i . ']PPCode') ?></td>
                         <td><?= $models->bmc_code ?><?= Html::activeHiddenInput($models, '[' . $i . ']bmc_code') ?></td>
                         <td><?= $form->field($models, '[' . $i . ']AdminPwd')->textInput(['multiple' => true])->label(false) ?></td>

@@ -95,5 +95,6 @@ return [
     'UNION' => 'COMPANY',
     'DCS' => 'TMCC',
     'DCS Code' => 'TMCC Code',
-    'Unionwise Milk Collection' => 'Company wise Milk Collection'
+    'Unionwise Milk Collection' => 'Company wise Milk Collection',
+    'DCS Name' => 'TMCC Name',
 ];
