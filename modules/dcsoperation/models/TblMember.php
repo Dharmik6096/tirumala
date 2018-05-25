@@ -100,7 +100,7 @@ class TblMember extends ChildModel {
             [['is_download'], 'default', 'value' => '0'],
             [['is_active'], 'default', 'value' => '1'],
             [['member_type_code'], 'default', 'value' => '1'],
-            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport']],
+            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport']],
             [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport']],
             [['member_name'], 'required', 'except' => ['customImport']],
             [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
@@ -108,7 +108,7 @@ class TblMember extends ChildModel {
               return ($model->isNewRecord)?true:false;
               },'skipOnEmpty'=> true], */
             [['email'], 'email'],
-            [['member_code', 'dcs_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string'],
+            [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string'],
             [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
             [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date'], 'safe'],
             [['ifsc', 'pan_no'], 'trim'],
@@ -160,6 +160,8 @@ class TblMember extends ChildModel {
             [['dob'], function ($attribute, $params) {
             Yii::$app->general->validateAge($this, $attribute, $params);
         }, 'skipOnEmpty' => true],
+            [['ex_member_code'], 'integer', 'min' => 1],
+            [['ex_member_code'], 'string', 'min' => 4, 'max' => 4],
         ];
     }
 
@@ -317,7 +319,7 @@ class TblMember extends ChildModel {
     }
 
     public function getCode() {
-
+        return $this->dcs_code.$this->ex_member_code;
         $data = $this->find()->select(["MAX(CONVERT(INT,substring(member_code,13,4))) AS member_code"])->where(['dcs_code' => $this->dcs_code])->one();
         return $this->dcs_code . str_pad((int) $data['member_code'] + 1, 4, '0', STR_PAD_LEFT);
     }
