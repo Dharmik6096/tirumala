@@ -171,7 +171,7 @@ class TblDcs extends ChildModel {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
                     [['tmcc_code'], 'string', 'max' => 10],
-                    [['tmcc_code'], 'number', 'min' => 0],
+                    [['tmcc_code'], 'number', 'min' => 1],
                     [['tmcc_code'], 'required'],
                 ];
             }

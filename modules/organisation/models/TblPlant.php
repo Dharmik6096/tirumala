@@ -48,7 +48,7 @@ class TblPlant extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['name', 'hamlet_code', 'union_code'], 'required'],
+            [['name', 'hamlet_code', 'union_code', 'plant_code'], 'required'],
             [['plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
             [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
             [['email'], 'email'],
@@ -65,6 +65,8 @@ class TblPlant extends \app\models\ChildModel {
             [['mobile_no'], 'string', 'max' => 10],
             [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
             [['capacity'], 'integer'],
+            [['plant_code'], 'integer', 'min' => 1],
+            [['plant_code'], 'string', 'max' => 6],
         ];
     }
 
@@ -155,6 +157,7 @@ class TblPlant extends \app\models\ChildModel {
     }
 
     public function getCode() {
+        return $this->plant_code;
         $data = $this->find()->select(["MAX(CONVERT(INT,substring(plant_code,4,3))) AS plant_code"])->where(['union_code' => $this->union_code])->one();
         return $this->union_code . str_pad((int) $data['plant_code'] + 1, 3, '0', STR_PAD_LEFT);
 

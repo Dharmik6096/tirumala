@@ -72,6 +72,8 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['local_name'], function ($attribute, $params) {
             Yii::$app->general->vaildateLocalField($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
+            [['bmc_code'], 'integer', 'min' => 1],
+            [['bmc_code'], 'string', 'max' => 5],
         ];
     }
 
@@ -183,6 +185,7 @@ class TblDcsBmc extends \app\models\ChildModel {
     }
 
     public function getCode() {
+        return $this->bmc_code;
         $data = $this->find()->select(["max(convert(int,bmc_code)) as bmc_code"])->one();
         return str_pad((int) $data['bmc_code'] + 1, 5, '0', STR_PAD_LEFT);
     }
@@ -265,11 +268,11 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         return $query->all();
     }
-    
-    public function bmcData(){
+
+    public function bmcData() {
         return $this->find()->select(['bmc_code', 'bmc_name'])->where(['bmc_code' => $this->bmc_code])->one();
     }
-    
+
     public function bmcInfo() {
         return $this->find()->where(['bmc_code' => $this->bmc_code,])->andWhere(['is_active' => 1])->one();
     }
