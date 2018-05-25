@@ -473,7 +473,7 @@ class TblMember extends ChildModel {
                 ->one();
         
         if(!empty($data)){
-            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' has already been taken test.'));
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' has already been taken.'));
         }
     }
 
