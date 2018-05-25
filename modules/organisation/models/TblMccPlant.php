@@ -61,7 +61,7 @@ class TblMccPlant extends \app\models\ChildModel {
             [['capacity'], 'integer'],
 //            [['is_active'], 'boolean'],
             [['mcc_plant_code'], 'unique'],
-            [['mcc_plant_code', 'village_code'], 'string', 'max' => 6],
+            [['village_code'], 'string', 'max' => 6],
             [['contact_person'], 'string', 'max' => 100],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['description'], 'string', 'max' => 250],
@@ -78,6 +78,8 @@ class TblMccPlant extends \app\models\ChildModel {
             [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
             Yii::$app->general->vaildateLocalField($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
+            [['mcc_plant_code'], 'integer', 'min' => 1],
+            [['mcc_plant_code'], 'string', 'max' => 6],
         ];
     }
 
@@ -194,7 +196,7 @@ class TblMccPlant extends \app\models\ChildModel {
     }
 
     public function getCode() {
-
+        return $this->mcc_plant_code;
         $data = $this->find()->select(["MAX(CONVERT(bigint,mcc_plant_code)) as mcc_plant_code"])->one();
         return str_pad(((int) $data['mcc_plant_code'] + 1), 6, '0', STR_PAD_LEFT);
     }

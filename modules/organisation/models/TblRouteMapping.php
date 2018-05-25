@@ -59,7 +59,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'route_code', 'route_name', 'to_dest', 'route_type', 'morning_start_time', 'morning_end_time', 'evening_start_time', 'evening_end_time', 'route_length_kms', 'capacity', 'vehicle_type_code', 'valid_from'], 'required'],
-            [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
+            [['morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
             [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
             [['route_length_kms'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', 'Route Length Kms must be greater than 0.')],
             [['morning_end_time'], 'morningTimeValidate'],
@@ -72,7 +72,9 @@ class TblRouteMapping extends \app\models\ChildModel {
         }, 'skipOnEmpty' => false],
             [['local_name'], function ($attribute, $params) {
             Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false]
+        }, 'skipOnEmpty' => false],
+            [['route_code'], 'integer', 'min' => 1],
+            [['route_code'], 'string', 'max' => 8],
         ];
     }
 
@@ -210,6 +212,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function getCode() {
+        return $this->route_code;
         $data = $this->find()->select(["MAX(CONVERT(bigint,route_code)) as route_code"])->one();
         return str_pad(((int) $data['route_code'] + 1), 8, '0', STR_PAD_LEFT);
     }

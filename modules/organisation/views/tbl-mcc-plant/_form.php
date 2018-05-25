@@ -36,6 +36,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '',$disabled); ?>
     </div>
+     <div class="col-sm-3">  
+        <?= $form->field($model, 'mcc_plant_code')->textInput(['readonly' => $readonly]) ?>
+    </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>

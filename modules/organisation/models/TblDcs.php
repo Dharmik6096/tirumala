@@ -107,7 +107,7 @@ class TblDcs extends ChildModel {
     public function rules() {
         return [
             [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
+            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank')],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => 'importCsv'],
             [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => 'importCsv'],
@@ -171,8 +171,8 @@ class TblDcs extends ChildModel {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
                     [['tmcc_code'], 'string', 'max' => 10],
-                    [['tmcc_code'], 'number', 'min' => 0],
-                    [['tmcc_code'], 'required'],
+                    [['tmcc_code'], 'number', 'min' => 1],
+                        //     [['tmcc_code'], 'required'],
                 ];
             }
 
@@ -277,7 +277,7 @@ class TblDcs extends ChildModel {
             }
 
             public function getCode() {
-                return '00'.$this->tmcc_code;
+                return '00' . $this->tmcc_code;
 //                return $this->district_code . $this->village_code . $this->dcs_code_ex;
 //                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
 //                if ((int) $data['dcs_code'] < 9) {

@@ -9,10 +9,9 @@ use yii\helpers\Url;
 /* @var $model app\modules\organisation\models\TblRouteMapping */
 /* @var $form yii\widgets\ActiveForm */
 //$url= ($model->isNewRecord) ? '' : Url::to(['../../organisation/tbl-unions/view','id'=>$model->union_code]);
-
 //$checkChild = ($model->getCheckDcsExist()) ? ' disabled' : '';
 //$disable = ($model->isNewRecord) ? false : true;
-$summary_model=$type=='create'?[$model,$contactDetails]:$model;
+$summary_model = $type == 'create' ? [$model, $contactDetails] : $model;
 
 $nameWarning = 0;
 $codeWarning = 0;
@@ -20,7 +19,7 @@ if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
 }
-$readonly=$type=='create'?FALSE:TRUE;
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -38,33 +37,36 @@ $form = ActiveForm::begin([
 
 <div class="row">
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union',$readonly); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+    </div>
+    <div class="col-sm-3">  
+        <?= $form->field($model, 'route_code')->textInput(['readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'route_name')->textInput() ?>
     </div>
-     <div class="col-sm-3">
+    <div class="col-sm-3">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
-    
+
     <div class="col-sm-3">
-        <?= $form->field($model, 'route_type')->dropDownList(['Can'=>'Can','Tanker'=>'Tanker'],['prompt'=>'Select Route Type']); ?>
+        <?= $form->field($model, 'route_type')->dropDownList(['Can' => 'Can', 'Tanker' => 'Tanker'], ['prompt' => 'Select Route Type']); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->routedestinationtype($model, $form, 'tblroutemapping-route_type,tblroutemapping-union_code', 'to_dest', 'To',FALSE,'to'); ?>
-         <?= $form->field($model, 'to_type')->hiddenInput()->label(false) ?>
+        <?= Yii::$app->dropdown->routedestinationtype($model, $form, 'tblroutemapping-route_type,tblroutemapping-union_code', 'to_dest', 'To', FALSE, 'to'); ?>
+        <?= $form->field($model, 'to_type')->hiddenInput()->label(false) ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Vehicle Capacity(Ltr)',false,'capacity'); ?>
+        <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Vehicle Capacity(Ltr)', false, 'capacity'); ?>
     </div>
-     <div class="col-sm-3">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('vehicle_type_code', $model, $form, 'form-group col-sm-3', 'Vehicle'); ?>
     </div>
-     <div class="col-sm-3">
+    <div class="col-sm-3">
         <?= $form->field($model, 'route_length_kms')->textInput() ?>
     </div>
-    
-   
+
+
     <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'valid_from'); ?>
     </div>
@@ -92,31 +94,32 @@ $form = ActiveForm::begin([
             'mask' => '99:99',])->label('Evening End Time (24 Hrs)');
         ?>
     </div>
-   
-       
-    
-    
+
+
+
+
     <div class="clearfix"></div>
-    <?php if($type=='create') { ?>
-    <div class="col-sm-12">
-        <p class="form-subtitle">Contact Details</p>
-        <hr class="hr10">
-    </div>
-      <?=
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-12">
+            <p class="form-subtitle">Contact Details</p>
+            <hr class="hr10">
+        </div>
+        <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
             'form' => $form
         ])
         ?>
-    
-    <div class="clearfix"></div>
-   
-<!--    <div class="col-sm-12">
-        <p class="form-subtitle">Bank   Details</p>
-        <hr class="hr10">
-    </div>-->
-    <?php //Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-3','Bank');   ?>
-   <?php // =
+
+        <div class="clearfix"></div>
+
+        <!--    <div class="col-sm-12">
+                <p class="form-subtitle">Bank   Details</p>
+                <hr class="hr10">
+            </div>-->
+        <?php //Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-3','Bank');    ?>
+        <?php
+        // =
 //        $this->render('../../../details/views/tbl-bank-details/_form', [
 //            'model' => $bankDetails,
 //            'form' => $form,
@@ -124,7 +127,7 @@ $form = ActiveForm::begin([
 //        ])
         ?>
     <?php } ?>
-    
+
     <div class="col-sm-3">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
