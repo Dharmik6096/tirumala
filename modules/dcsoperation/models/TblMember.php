@@ -162,6 +162,7 @@ class TblMember extends ChildModel {
         }, 'skipOnEmpty' => true],
             [['ex_member_code'], 'integer', 'min' => 1],
             [['ex_member_code'], 'string', 'min' => 4, 'max' => 4],
+            [['ex_member_code'], 'unique'],
         ];
     }
 
