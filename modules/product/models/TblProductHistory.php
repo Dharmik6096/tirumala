@@ -21,33 +21,30 @@ use Yii;
  * @property string $updated_by
  * @property string $local_name
  */
-class TblProductHistory extends \yii\db\ActiveRecord
-{
+class TblProductHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_product_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
 //            [['product_code', 'product_group_code', 'is_active'], 'integer'],
 //            [['product_name', 'description', 'created_by', 'operation_type', 'updated_by', 'local_name'], 'string'],
-            [['product_code', 'product_group_code', 'is_active', 'product_name', 'description', 'created_by', 'operation_type', 'updated_by', 'local_name', 'created_at', 'history_created_at', 'updated_at','union_code'], 'safe'],
+            [['product_code', 'product_group_code', 'is_active', 'product_name', 'description', 'created_by', 'operation_type', 'updated_by', 'local_name', 'created_at', 'history_created_at', 'updated_at', 'union_code', 'unit_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'product_code' => Yii::t('app', 'Product Code'),
@@ -64,4 +61,5 @@ class TblProductHistory extends \yii\db\ActiveRecord
             'local_name' => Yii::t('app', 'Local Name'),
         ];
     }
+
 }

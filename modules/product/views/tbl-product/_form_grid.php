@@ -14,6 +14,8 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
     ['attribute' => 'product_group_code',
      'value' => 'productGroupCode.product_group_name'],
+    ['attribute' => 'unit_code',
+     'value' => 'unitCode.unit_name'],
     'product_name',
     'description',
 //    'local_name',

@@ -45,8 +45,13 @@ $this->params['menu'][] = Yii::$app->controls->update($model->product_group_code
                 [
                     'columns' => [
                         [
+                            'attribute' => 'unit_code',
+                            'value' => isset($model->unitCode) ? $model->unitCode->unit_name : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
                             'attribute' => 'description',
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
