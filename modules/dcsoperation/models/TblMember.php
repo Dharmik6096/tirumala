@@ -162,7 +162,7 @@ class TblMember extends ChildModel {
         }, 'skipOnEmpty' => true],
             [['ex_member_code'], 'integer', 'min' => 1],
             [['ex_member_code'], 'string', 'min' => 4, 'max' => 4],
-            [['ex_member_code'], 'unique'],
+            [['ex_member_code'], 'validateExMemberCode'],
         ];
     }
 
@@ -465,6 +465,16 @@ class TblMember extends ChildModel {
 
     public function getmember() {
         return $this->find()->where(['member_code' => $this->member_code])->andWhere(['is_active' => 1])->one();
+    }
+    
+    public function validateExMemberCode($attribute, $params){
+        $data = $this->find()
+                ->where(['dcs_code' => $this->dcs_code, 'ex_member_code' => $this->ex_member_code, 'is_active' => 1])
+                ->one();
+        
+        if(!empty($data)){
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' has already been taken test.'));
+        }
     }
 
 }
