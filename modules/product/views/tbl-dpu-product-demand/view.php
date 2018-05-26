@@ -112,6 +112,19 @@ $this->title = Yii::$app->label->title('view', 'DPU Product Demand');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'Status',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'type',
+                                'value' => Yii::$app->general->getmultiforeignkey($model->productCode, ['productGroupCode'], 'product_group_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'ProductStatus',
                                 'value' => !empty($model->ProductStatus) ? $model->ProductStatus : 'DPU',
                                 'valueColOptions' => ['style' => 'width:30%']

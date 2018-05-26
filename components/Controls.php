@@ -193,7 +193,7 @@ class Controls extends Component {
     }
 
     public function view_date($value) {
-        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDate($value . Yii::$app->getTimeZone(), 'php:d-m-Y');
+        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), 'php:d-m-Y');
     }
 
     public function daterange($name, $value = '') {

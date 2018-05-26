@@ -84,7 +84,7 @@ echo GhostMenu::widget([
                 ['label' => 'Product', 'url' => ['/product/tbl-product/index'], 'active' => ($cntrl == 'tbl-product')],
                 ['label' => 'Product Rate', 'url' => ['/product/tbl-product-rate/index'], 'active' => ($cntrl == 'tbl-product-rate')],
                 ['label' => Yii::t('app', 'Product Sale'), 'url' => ['/payment/tbl-product-sale/index'], 'active' => ($cntrl == 'tbl-product-sale')],
-                ['label' => Yii::t('app', 'DPU Product Demand'), 'url' => ['/product/tbl-dpu-product-demand/view'], 'active' => ($cntrl == 'tbl-dpu-product-demand')],
+                ['label' => Yii::t('app', 'DPU Product Demand'), 'url' => ['/product/tbl-dpu-product-demand/index'], 'active' => ($cntrl == 'tbl-dpu-product-demand')],
             ],
         ],
         [
@@ -166,6 +166,7 @@ echo GhostMenu::widget([
                         ['label' => '310-' . Yii::t('app', 'Date Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-date-wise']],
                         ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/crystalreports/default/difference-report-village-wise']],
                         ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/crystalreports/default/bmc-collection']],
+                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/crystalreports/default/gprs-data-reconciliation']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => $reportUser],

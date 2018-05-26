@@ -32,6 +32,7 @@ class ReportsModel extends Model {
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'DifferenceReport'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'DifferenceReportDateWise'],
             [['union_code', 'mccid', 'bmcid', 'routeid', 'vlccid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'DifferenceReportVillageWise'],
+            [['union_code', 'mccid', 'bmcid', 'date1', 'date2', 'from_shift', 'to_shift', 'plant_code'], 'required', 'on' => 'GprsDataReconciliation'],
         ];
     }
 

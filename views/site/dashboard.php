@@ -5,33 +5,36 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
-$chart_url=  Url::to(['load-chart']);
-$results3=!empty($results3)?$results3:[];
-if(!empty($results4))
-{
-foreach ($results4 as $res)
-{
-    $cal_data[$res['dt']]=[$res['AvgFAT'],$res['AvgSNF'],$res['Qty']];
-}
-}
-else{
-    $cal_data=[];
+$chart_url = Url::to(['load-chart']);
+$results3 = !empty($results3) ? $results3 : [];
+if (!empty($results4)) {
+    foreach ($results4 as $res) {
+        $cal_data[$res['dt']] = [$res['AvgFAT'], $res['AvgSNF'], $res['Qty']];
+    }
+} else {
+    $cal_data = [];
 }
 $villages = array_column(array_values($results3), 'dcs_name');
 $unions = array_column(array_values($results3), 'union_name');
 $combined = array_map(function($a, $b) {
     return $a . '<br/>' . $b;
 }, $villages, $unions);
+
 $collection = array_column(array_values($results3), 'Qty');
+$bmc_collection = array_column(array_values($results6), 'quantity');
+$c_bmc = array_column(array_values($results6), 'bmc_name');
+
+$bmc_dispatch = array_column(array_values($results7), 'quantity');
+$d_bmc = array_column(array_values($results7), 'bmc_name');
 $fat = array_column(array_values($results3), 'AvgFAT');
 $snf = array_column(array_values($results3), 'AvgSNF');
-$cal_data= json_encode($cal_data);
+$cal_data = json_encode($cal_data);
 ?>
 <div class="panel-group row panel-fixed" id="filter">
     <div class="panel panel-default">
         <div class="panel-heading text-center">
             <h4 class="panel-title">
-                <?= Yii::t('app', 'Data for PCDF').' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
+<?= Yii::t('app', 'Data for PCDF') . ' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
                 <a data-toggle="collapse" href="#collapse1" class="setting"><i class="fa fa-gear"></i></a>
             </h4>
         </div>
@@ -45,7 +48,7 @@ $form = ActiveForm::begin([
 ?>
                 <div class="filt">
                     <div class="">
-                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                     </div>
                     <div class="">
                         <?= Yii::$app->controls->date($model, $form, 'date'); ?>
@@ -54,7 +57,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->controls->search(); ?>
                     </div>
                 </div>
-<?php ActiveForm::end(); ?>
+                        <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
@@ -62,54 +65,64 @@ $form = ActiveForm::begin([
 <div class="panel panel-default panel-main panel-dashboard">
     <div class="panel-body">
         <div class="row">
-        <?php  if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
-            <div class="col-sm-6">
-                <div class="flt">
-                    <?= $this->render('_dashborad_filter', ['model' => $model,'id'=>'fed_union',
-                                                            'url'=>$chart_url, 'container'=>'container1',
-                                                            'date_range'=>false,'range2'=>false,
-                                                            'range_id1'=>'dt1',
-                                                            'shift'=>true,'type'=>'column','title'=>Yii::t('app', 'Unionwise Milk Collection')]);?>
-                    <div id="container1" class="cont"></div>
+<?php if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
+                <div class="col-sm-6">
+                    <div class="flt">
+                <?=
+                $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
+                    'url' => $chart_url, 'container' => 'container1',
+                    'date_range' => false, 'range2' => false,
+                    'range_id1' => 'dt1',
+                    'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
+                ?>
+                        <div id="container1" class="cont"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="flt">
-                    <?= $this->render('_dashborad_filter', ['model' => $model,'id'=>'fed_comparison',
-                                                            'url'=>$chart_url, 'container'=>'container2',
-                                                            'date_range'=>true,'range2'=>true,
-                                                            'range_id1'=>'comp1','range_id2'=>'comp2',
-                                                            'shift'=>false,'type'=>'column',
-                                                            'title'=>'Compare Milk Collection']);?>
-                    <div id="container2" class="cont"></div>
+                <div class="col-sm-6">
+                    <div class="flt">
+                        <?=
+                        $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_comparison',
+                            'url' => $chart_url, 'container' => 'container2',
+                            'date_range' => true, 'range2' => true,
+                            'range_id1' => 'comp1', 'range_id2' => 'comp2',
+                            'shift' => false, 'type' => 'column',
+                            'title' => 'Compare Milk Collection']);
+                        ?>
+                        <div id="container2" class="cont"></div>
+                    </div>
                 </div>
-            </div>
-			<div class="clearfix"></div>
-            <div class="col-sm-12">
-                <div class="flt">
-                    <?= $this->render('_dashborad_filter', ['model' => $model,'id'=>'fed_datewise','url'=>$chart_url, 'container'=>'container3','date_range'=>true,'range2'=>false,'shift'=>false,'type'=>'column','title'=>'Datewise Milk Collection']);?>
-                    <div id="container3" class="cont"></div>
+                <div class="clearfix"></div>
+                <div class="col-sm-12">
+                    <div class="flt">
+    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
+                        <div id="container3" class="cont"></div>
+                    </div>
                 </div>
-            </div>
-        <?php } else {?>
-            <div class="col-sm-6">
-                <div class="flt">
-                    <?= $this->render('_dashborad_filter', ['model' => $model,'id'=>'union_comparison','url'=>$chart_url, 'container'=>'container1','date_range'=>true,'range2'=>true,'shift'=>false,'type'=>'column','title'=>'Compare Milk Collection']);?>
-                    <div id="container1" class="cont"></div>
+<?php } else { ?>
+                <div class="col-sm-6">
+                    <div class="flt">
+    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => 'Compare Milk Collection']); ?>
+                        <div id="container1" class="cont"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="flt">
-                    <?= $this->render('_dashborad_filter', ['model' => $model,'id'=>'union_datewise','url'=>$chart_url, 'container'=>'container2','date_range'=>true,'range2'=>false,'range_id1'=>'comp1','range_id2'=>'comp2','shift'=>false,'type'=>'column','title'=>'Datewise Milk Collection']);?>
-                    <div id="container2" class="cont"></div>
+                <div class="col-sm-6">
+                    <div class="flt">
+    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
+                        <div id="container2" class="cont"></div>
+                    </div>
                 </div>
-            </div>
-         <?php } ?>
+<?php } ?>
         </div>
-<div class="clearfix mt25"></div>      
-	  <div class="row">
+        <div class="clearfix mt25"></div>      
+        <div class="row">
             <div class="col-sm-6">
                 <div id="container5" class="cont"></div>
+            </div>
+            <div class="col-sm-6">
+                <div id="container6" class="cont"></div>
+            </div>
+            <div class="col-sm-6">
+                <div id="container7" class="cont"></div>
             </div>
             <div class="col-sm-6">
                 <div class="milk-collection">
@@ -128,19 +141,21 @@ $form = ActiveForm::begin([
                                     <th>Monthly Milk Collection(ltr)</th>
                                 </tr>
                             </thead>
-                            <?php if(!empty($results)){
-                                foreach ($results as $result) { ?>
-                                <tr>
-                                    <td><?= $result['union_name'] ?></td>
-                                    <td><?= $result['dcs_name'] ?></td>
-                                    <td><?= $result['Member_Count'] ?></td>
-                                    <td><?= $result['Qty'] ?></td>
-                                </tr>
-                                <?php }
+                            <?php if (!empty($results)) {
+                                foreach ($results as $result) {
+                                    ?>
+                                    <tr>
+                                        <td><?= $result['union_name'] ?></td>
+                                        <td><?= $result['dcs_name'] ?></td>
+                                        <td><?= $result['Member_Count'] ?></td>
+                                        <td><?= $result['Qty'] ?></td>
+                                    </tr>
+                                <?php
+                                }
                             } else {
                                 ?>
-                                    <tr><td colspan="4">Data not available.</td></tr>
-                    <?php } ?>
+                                <tr><td colspan="4">Data not available.</td></tr>
+<?php } ?>
 
                         </table>
                     </div>
@@ -217,7 +232,7 @@ $script = "
     var collection = a.map(function (x) { 
         return parseFloat(x, 10); 
     });
-    barChart('container5','" . Yii::$app->controls->view_date($date) . " Milk Collection ',".json_encode($combined).",collection);
+    barChart('container5','" . Yii::$app->controls->view_date($date) . " Milk Collection '," . json_encode($combined) . ",collection);
     function barChart(cont,text,xdata,ydata){
     var bar_chart = $('#'+cont);
         if (bar_chart.length) {
@@ -333,7 +348,7 @@ $script = "
       }
       
 //calender functions
-var cal_data=".$cal_data.";
+var cal_data=" . $cal_data . ";
 var chartModal = $('#chartModal').modal({
         show: false
     });
@@ -418,5 +433,144 @@ var chartModal = $('#chartModal').modal({
         chartModal.modal('show');
     }
 });
+
+
+
+var bmc_c = " . json_encode($bmc_collection) . ";
+var bmc_collection = bmc_c.map(function (x) { 
+    return parseFloat(x, 10); 
+});
+barChart('container6','" . Yii::$app->controls->view_date($date) . " BMC Collection '," . json_encode($c_bmc) . ",bmc_collection);
+function barChart(cont,text,xdata,ydata){
+var bar_chart = $('#'+cont);
+    if (bar_chart.length) {
+        Highcharts.chart(cont, {
+            chart: {
+                zoomType: 'xy'
+            },
+            title: {
+                text: text
+            },
+            xAxis: [{
+                    categories: xdata,
+                    crosshair: true
+                }],
+            yAxis: [{// Primary yAxis
+                    labels: {
+                        format: '{value}',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+                    title: {
+                        text: '',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    }
+                }, {// Secondary yAxis
+                    title: {
+                        text: '',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    opposite: false,
+                }
+            ],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 120,
+                verticalAlign: 'top',
+                y: 100,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+            },
+            series: [{
+                        name: 'Quantity(ltr)',
+                        type: 'column',
+                        color: '#3a7bd5',
+                        yAxis: 1,
+                        data: ydata,
+                        tooltip: {
+                            valueSuffix: ' lt'
+                        }
+
+                }]
+        });
+    }
+}
+var bmc_d = " . json_encode($bmc_dispatch) . ";
+var bmc_dispatch = bmc_d.map(function (x) { 
+    return parseFloat(x, 10); 
+});
+barChart('container7','" . Yii::$app->controls->view_date($date) . " BMC Dispatch '," . json_encode($d_bmc) . ",bmc_dispatch);
+function barChart(cont,text,xdata,ydata){
+var bar_chart = $('#'+cont);
+    if (bar_chart.length) {
+        Highcharts.chart(cont, {
+            chart: {
+                zoomType: 'xy'
+            },
+            title: {
+                text: text
+            },
+            xAxis: [{
+                    categories: xdata,
+                    crosshair: true
+                }],
+            yAxis: [{// Primary yAxis
+                    labels: {
+                        format: '{value}',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+                    title: {
+                        text: '',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    }
+                }, {// Secondary yAxis
+                    title: {
+                        text: '',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    opposite: false,
+                }
+            ],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 120,
+                verticalAlign: 'top',
+                y: 100,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+            },
+            series: [{
+                        name: 'Quantity(ltr)',
+                        type: 'column',
+                        color: '#3a7bd5',
+                        yAxis: 1,
+                        data: ydata,
+                        tooltip: {
+                            valueSuffix: ' lt'
+                        }
+
+                }]
+        });
+    }
+}
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');

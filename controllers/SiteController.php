@@ -129,13 +129,26 @@ class SiteController extends Controller {
         }
 
         $model->date = $end_date;
+        $bmc_str = !empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0;
         $month = date('Y-m', strtotime($end_date));
         $results = $this->callDashboardSp($union_str, $start_date, $end_date, $dcs_str);
         $results2 = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
         $results3 = $this->callDashboardSp($union_str, $end_date, $end_date, $dcs_str);
         $results4 = $this->callDashboardCalSp($union_str, $month);
         $results5 = $this->getSpResult('fed_union');
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5]);
+        $results6 = $this->getBmcSpResult('sp_Portal_BMC_Collection', $union_str, $end_date, $end_date, $bmc_str);
+        $results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7]);
+    }
+
+    private function getBmcSpResult($sp_name, $union_str, $sdate, $edate, $bmc_str) {
+        $query = \Yii::$app->db->createCommand("{CALL " . $sp_name . "(:union_code,:bmc_code,:startdate,:enddate)}")
+                ->bindValue(':union_code', ',' . $union_str . ',')
+                ->bindValue(':startdate', $sdate)
+                ->bindValue(':enddate', $edate)
+                ->bindValue(':bmc_code', $bmc_str);
+        $results = $query->queryAll();
+        return $results;
     }
 
     private function callDashboardSp($union_str, $sdate, $edate, $dcs_str) {

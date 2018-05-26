@@ -2109,3 +2109,12 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 .floatThead-wrapper .kv-grid-table.kv-table-wrap.kv-table-float {
     width: 99.9044% !important;
 }
+
+.panel-body > div.crystalstyle {
+    top: auto !important;
+    left: auto !important;
+}
+
+div.crystalstyle{
+    margin: 0px !important
+}

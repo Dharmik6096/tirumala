@@ -92,6 +92,11 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'DifferenceReportVillageWise';
         return $this->actionIndex();
     }
+    
+    public function actionGprsDataReconciliation() {
+        $this->report = 'GprsDataReconciliation';
+        return $this->actionIndex();
+    }
 
     /* Call Crystal Report */
 
@@ -226,6 +231,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'file_name' => 'difference_report_village_wise',
                 'scenario' => 'DifferenceReportVillageWise',
                 'title' => '311 - Village Wise Difference Report',
+            ],
+            'GprsDataReconciliation' => [
+                'param' => 'date1:string:from_shift,date2:string:to_shift,union_code,mccid,bmcid',
+                'report_name' => 'rptDPUGPRSDataReconciliation',
+                'file_name' => 'gprs_data_reconciliation',
+                'scenario' => 'GprsDataReconciliation',
+                'title' => '313 - DPU-GPRS Data Reconciliation',
             ],
         ];
         return $label[$l];

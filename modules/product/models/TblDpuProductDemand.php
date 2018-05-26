@@ -32,7 +32,7 @@ use app\modules\dcsoperation\models\TblShift;
  */
 class TblDpuProductDemand extends \app\models\ChildModel
 {
-    public $bmc_name, $dcs_name, $member_name, $product_name, $unit_code;
+    public $bmc_name, $dcs_name, $member_name, $product_name, $unit_code, $type;
     /**
      * @inheritdoc
      */
@@ -82,6 +82,7 @@ class TblDpuProductDemand extends \app\models\ChildModel
             'dcs_name' => Yii::t('app', 'DCS Name'),
             'product_name' => Yii::t('app', 'Product Name'),
             'unit_code' => Yii::t('app', 'Unit'),
+            'type' => Yii::t('app', 'Type'),
         ];
     }
     

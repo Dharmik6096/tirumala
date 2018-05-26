@@ -20,6 +20,8 @@ $attribute = [
     ['attribute' => 'PAmount', 'visible' => false, 'filter'=>false],
     ['attribute' => 'trDate', 'visible' => false, 'value' => function ($model) { return Yii::$app->controls->view_date($model->trDate); }, 'filter'=>false],
     ['attribute' => 'shift', 'visible' => false, 'value' => function($model) { return Yii::$app->general->getforeignkey($model->shiftCode, 'shift'); }, 'filter'=>false],
+    ['attribute' => 'Status', 'visible' => false, 'filter'=>false],
+    ['attribute' => 'type', 'value' => function($model) { return Yii::$app->general->getmultiforeignkey($model->productCode, ['productGroupCode'], 'product_group_name'); }, 'visible' => false, 'filter'=>false],
     ['attribute' => 'ProductStatus', 'visible' => false, 'value' => function($model) { return !empty($model->ProductStatus) ? $model->ProductStatus : 'DPU'; }, 'filter'=>false],
     ['attribute' => 'unit_code', 'visible' => false, 'value' => function($model) { return Yii::$app->general->getmultiforeignkey($model->productCode, ['unitCode'], 'unit_name'); }, 'filter'=>false],
 ];

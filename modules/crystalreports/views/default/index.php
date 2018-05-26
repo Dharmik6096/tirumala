@@ -130,7 +130,7 @@ $model->date2 = empty($model->date2) ? date('d-m-Y') : $model->date2;
 
                 <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                     <?= GhostHtml::submitButton('<i class="text-danger fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
-                    <?= GhostHtml::submitButton('<i class="text-primary fa fa-file-code-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
+                    <?php // GhostHtml::submitButton('<i class="text-primary fa fa-file-code-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
                     <?= GhostHtml::submitButton('<i class="text-success fa fa-file-excel-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>
                     <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="text-success fa fa-search"></i></a>
                 </div>
@@ -165,7 +165,7 @@ $script = "
             $('#reportsmodel-milkqualitytype').val('ALL');
         }
     }
-    if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='ActualBmcCollection'){
+    if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='ActualBmcCollection' || '" . $report . "'=='GprsDataReconciliation'){
         $('#reportsmodel-bmcid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
             $('#reportsmodel-bmcid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
             if('" . $model->bmcid . "'=='0'){
@@ -188,7 +188,7 @@ $script = "
         });
     }
     
-    if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise'){
+    if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='GprsDataReconciliation'){
         $('#reportsmodel-mccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
             $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
             if('" . $model->mccid . "'=='0'){
@@ -224,7 +224,7 @@ $script = "
         var image = $('div.crystalstyle img').attr('src');
         $('div.crystalstyle img').attr('src','../../modules/crystalreports/html/'+report+'/'+image);        
     }
-    $('div.crystalstyle').removeAttr('style');
+//    $('div.crystalstyle').removeAttr('style');
 ";
 ?>
 
