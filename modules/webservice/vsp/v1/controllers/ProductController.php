@@ -25,15 +25,9 @@ class ProductController extends ChildController {
     public function actionProductSale() {
         $model = new Product();
         $model->setAttributes($this->post_data);
-
         $product_info = $this->post_data['content'];
-
         $product_list = $product_info['product_list'];
-
-
-
         $products = [];
-
         $product_sale = new TblProductSale();
         $product_sale_code = (string) Yii::$app->general->getCodeAutoIncrement($product_sale);
         $product_sale->product_sale_code = $product_sale_code;
@@ -113,10 +107,12 @@ class ProductController extends ChildController {
                 } else {
                     $data = ['message' => 'Credit Not Available'];
                     $this->response['data'] = $data;
+                    return $this->response;
                 }
             } else {
                 $data = ['message' => 'Payment Cycle is not available.'];
                 $this->response['data'] = $data;
+                return $this->response;
             }
         }
         array_push($products, $product_sale);
