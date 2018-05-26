@@ -40,6 +40,7 @@ use app\modules\payment\models\TblReversePaymentFileLog;
 use app\modules\payment\models\TblTransporterPayment;
 use app\modules\payment\models\TblTransporterPaymentHistory;
 use app\modules\webservice\models\TblAppNotification;
+use app\models\TblSms;
 
 class SiteController extends Controller {
 
@@ -129,7 +130,7 @@ class SiteController extends Controller {
         }
 
         $model->date = $end_date;
-        $bmc_str = !empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0;
+        $bmc_str = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
         $month = date('Y-m', strtotime($end_date));
         $results = $this->callDashboardSp($union_str, $start_date, $end_date, $dcs_str);
         $results2 = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
@@ -443,29 +444,22 @@ class SiteController extends Controller {
         try {
             $collectionModel = new TblMilkCollection();
             $collectionModel = $collectionModel->find()->innerJoinWith('memberCode')->where(['sms_status' => 'n'])->andWhere(['and', ['IS NOT', 'tbl_member.mobile_no', NULL], ['<>', 'tbl_member.mobile_no', '']])->limit(2000)->all();
-            foreach ($collectionModel as $collection) {
-                $mobile = '91' . $collection->memberCode->mobile_no;
-                $msg = "Dear " . $collection->memberCode->member_name . ",\n";
-                $msg.="Collection Received\n";
-                $msg.="S.CODE:" . $collection->dcs_code . "\n";
-                $msg.="DATE:" . date('d-m-Y', strtotime($collection->date_time_of_collection)) . "\n";
-                $msg.="SHIFT:" . $collection->shiftCode->shift . "\n";
-                $msg.="M.CODE:" . substr($collection->member_code, -4) . "\n";
-                $msg.="TYPE:" . $collection->milkTypeCode->animal_type_name . "\n";
-                $msg.="FAT:" . $collection->fat . "\n";
-                $msg.="SNF:" . $collection->snf . "\n";
-                $msg.="QTY:" . $collection->qty . "\n";
-                $msg.="AMT:" . $collection->amount . "\n";
+            $smsModel = new TblSms();
+            $smsModel = $smsModel->getData();
+            foreach ($smsModel as $sms) {
+                $mobile = '91' . $sms->mobile_no;
+                $msg = $sms->sms_txt;
                 $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $msg);
                 $sent = json_decode($sent);
                 $res = $sent->results;
                 $res = $res[0];
-                $collection->sms_status = $res->status;
-                $collection->sms_msgid = $res->messageid;
-                $collection->sms_mobile = $res->destination;
+                $sms->sms_status = 'Y';
+                $sms->sms_msgid = $res->messageid;
+                $sms->sms_mobile = $res->destination;
+                $sms->sms_result = $res->status;
                 //$collection->sms_errorlog=Yii::$app->bsmartsms->getStatusMsg($res->status);
-                $collection->sms_timestamp = date('Y-m-d H:i:s');
-                $collection->save(false);
+                $sms->updated_at = date('Y-m-d H:i:s');
+                $sms->save(false);
             }
             $paymentModel = new TblPaymentTransaction();
             $paymentModel = $paymentModel->getSmsRecords();
