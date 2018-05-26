@@ -42,6 +42,13 @@ class ProductController extends ChildController {
         $product_sale->amount_due = 0;
         $product_sale->is_installment = 0;
         $product_sale->no_of_installment = 0;
+        if ($product_info['payment_type'] == 1) {
+            $product_sale->paid_amount = 0;
+            $product_sale->amount_due = $product_sale->amount;
+            $product_sale->is_installment = 1;
+            $product_sale->no_of_installment = 1;
+        }
+        array_push($products, $product_sale);
 
         $i = 0;
         foreach ($product_list as $product) {
@@ -62,12 +69,7 @@ class ProductController extends ChildController {
         if ($product_info['payment_type'] == 1) {
             $appCycleModel = new TblDcsPaymentCycleApplicability();
             $data = $appCycleModel->apiCurrentDcsPaymentCycle($product_sale->dcs_code, date('Y-m-d'));
-            if (!empty($data)) {              
-                $product_sale->paid_amount = 0;
-                $product_sale->amount_due = $product_sale->amount;
-                $product_sale->is_installment = 1;
-                $product_sale->no_of_installment = 1;
-                
+            if (!empty($data)) {
                 $installmentModel = new TblSaleInstallments();
                 $installmentModel->installment_code = Yii::$app->general->getCodeAutoIncrement($installmentModel);
                 $installmentModel->sale_type = 'product';
@@ -79,10 +81,10 @@ class ProductController extends ChildController {
                 $installmentModel->installment_amount = $product_sale->amount_due;
                 $installmentModel->installment_status = 0;
                 $installmentModel->is_active = 1;
-                $installmentModel->dcs_payment_cycle_code = $data->payment_cycle_code;
+                $installmentModel->dcs_payment_cycle_code = $data->dcs_payment_cycle_code;
                 $installmentModel->payment_cycle_applicabilty_code = $appCycleModel->dcsPaymentCycleAppCode($product_sale->dcs_code);
                 array_push($products, $installmentModel);
-                
+
                 $payment_mode = 'Credit';
                 $credit_limit_model = new TblMemberCreditLimit();
                 $credit_limit_data = $credit_limit_model->find()->where(['member_code' => $product_info['member_code']])->one();
@@ -115,8 +117,6 @@ class ProductController extends ChildController {
                 return $this->response;
             }
         }
-        array_push($products, $product_sale);
-
         $transaction = $this->generalModel->saveTransaction($products, $credit_limit, ['Product Sale', 'edit']);
         if ($transaction == 'customRedirect') {
             $data = ['message' => 'Product sale done in ' . $payment_mode . ' mode successfully'];
