@@ -42,6 +42,7 @@ class ProductController extends ChildController {
         $product_sale->amount_due = 0;
         $product_sale->is_installment = 0;
         $product_sale->no_of_installment = 0;
+        $product_sale->type = 'MEMBER';
         if ($product_info['payment_type'] == 1) {
             $product_sale->paid_amount = 0;
             $product_sale->amount_due = $product_sale->amount;
