@@ -16,7 +16,7 @@ class BsmartSmsApi extends Component {
     private $serverUrl = '193.105.74.58';
     private $username = 'Everest_Instru';
     private $password = 'voda1234';
-    private $sender = 'PCDFLK';
+    private $sender = 'EIPLMC';
     private $msgs = ['0' => 'Successfully Sent'];
 
     public function sendSmsPOST($mobileNumber, $message, $language = FALSE) {
