@@ -11,6 +11,7 @@ class BmcDispatchController extends ChildController {
     public function actionAddDispatch() {
         $model = new TblBmcDispatch();
         $model->setAttributes($this->post_data['content']);
+        $model->dispatch_datetime = $model->dispatch_datetime.' '.\Yii::$app->general->getshift($model->dispatch_shift);
         $transaction = $this->generalModel->saveTransaction([$model], ['Bmc Dispatch', 'create']);
         if ($transaction == 'customRedirect') {
             $data = ['message' => 'Bmc Dispatch Added Successfully'];
