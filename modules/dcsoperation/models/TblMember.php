@@ -162,7 +162,9 @@ class TblMember extends ChildModel {
         }, 'skipOnEmpty' => true],
             [['ex_member_code'], 'integer', 'min' => 1],
             [['ex_member_code'], 'string', 'min' => 4, 'max' => 4],
-            [['ex_member_code'], 'validateExMemberCode'],
+            [['ex_member_code'], 'unique', 'targetAttribute' => ['ex_member_code', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+                return $this->is_active;
+            }],
         ];
     }
 
@@ -320,7 +322,7 @@ class TblMember extends ChildModel {
     }
 
     public function getCode() {
-        return $this->dcs_code.$this->ex_member_code;
+        return $this->dcs_code . $this->ex_member_code;
         $data = $this->find()->select(["MAX(CONVERT(INT,substring(member_code,13,4))) AS member_code"])->where(['dcs_code' => $this->dcs_code])->one();
         return $this->dcs_code . str_pad((int) $data['member_code'] + 1, 4, '0', STR_PAD_LEFT);
     }
@@ -465,16 +467,6 @@ class TblMember extends ChildModel {
 
     public function getmember() {
         return $this->find()->where(['member_code' => $this->member_code])->andWhere(['is_active' => 1])->one();
-    }
-    
-    public function validateExMemberCode($attribute, $params){
-        $data = $this->find()
-                ->where(['dcs_code' => $this->dcs_code, 'ex_member_code' => $this->ex_member_code, 'is_active' => 1])
-                ->one();
-        
-        if(!empty($data)){
-            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' has already been taken.'));
-        }
     }
 
 }
