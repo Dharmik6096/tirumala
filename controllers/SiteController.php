@@ -442,8 +442,6 @@ class SiteController extends Controller {
 
     public function actionSendCollectionSms() {
         try {
-            $collectionModel = new TblMilkCollection();
-            $collectionModel = $collectionModel->find()->innerJoinWith('memberCode')->where(['sms_status' => 'n'])->andWhere(['and', ['IS NOT', 'tbl_member.mobile_no', NULL], ['<>', 'tbl_member.mobile_no', '']])->limit(2000)->all();
             $smsModel = new TblSms();
             $smsModel = $smsModel->getData();
             foreach ($smsModel as $sms) {

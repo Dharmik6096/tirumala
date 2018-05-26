@@ -66,6 +66,7 @@ class TblSms extends \yii\db\ActiveRecord {
     public function getData() {
         return $this->find()
                         ->where(['sms_status' => 'N'])
+                        ->andWhere(['and', ['IS NOT', 'mobile_no', NULL], ['<>', 'mobile_no', '']])
                         ->all();
     }
 
