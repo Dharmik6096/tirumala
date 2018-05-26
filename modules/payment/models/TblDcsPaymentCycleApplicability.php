@@ -186,4 +186,12 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
     }
 
+    public function apiCurrentDcsPaymentCycle($dcs_code, $date) {
+        return $this->find()
+                        ->where(['is_lock' => 0, 'dcs_code' => $dcs_code])
+                        ->andFilterWhere(['<=', 'from_date', $date])
+                        ->andFilterWhere(['>=', 'to_date', $date])
+                        ->one();
+    }
+
 }
