@@ -116,11 +116,19 @@ class TblProductSaleDetails extends \app\models\ChildModel {
         $sale_product = [];
         if (!empty($sale_detail)) {
             foreach ($sale_detail as $product_detail) {
-                $member_name = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->memberCode, 'member_name');
                 $product_name = Yii::$app->general->getforeignkey($product_detail->productCode, 'product_name');
                 $sale_product['dcs_code'] = $product_detail['productSaleCode']->dcs_code;
-                $sale_product['dcs_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->dcsCode, 'dcs_name');
-                $sale_product['member_name'] = $member_name;
+                $type = Yii::$app->general->getforeignkey($product_detail->productSaleCode, 'type');
+                $sale_product['dcs_name'] = '';
+                $sale_product['member_name'] = '';
+                if($type = 'MEMBER'){
+                    $sale_product['dcs_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->dcsCode, 'dcs_name');
+                    $sale_product['member_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->memberCode, 'member_name');
+                }
+                if($type = 'DCS'){
+                    $sale_product['dcs_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->dcsBmcCode, 'bmc_name');
+                    $sale_product['member_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->memberDcsCode, 'dcs_name');
+                }
                 $sale_product['product_name'] = $product_name;
                 $sale_product['rate'] = $product_detail->rate;
                 $sale_product['quantity'] = $product_detail->qty;

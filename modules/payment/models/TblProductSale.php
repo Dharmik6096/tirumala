@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\payment\models\TblMemberCreditLimit;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_product_sale".
@@ -51,7 +52,7 @@ class TblProductSale extends \app\models\ChildModel {
         return [
             [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required'],
             [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
-            [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit'], 'safe'],
+            [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
             [['other_amount', 'discount', 'paid_amount'], 'number', 'min' => 0],
             [['discount'], 'validateDisccount'],
@@ -192,5 +193,17 @@ class TblProductSale extends \app\models\ChildModel {
                             'dcs_code', 'union_code', 'member_code'])
                         ->where(['member_code' => $this->member_code])->andWhere("sale_date_time between '$from_date' and '$to_date' ")->asArray()->all();
     }
+    
+
+    public function getDcsBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'dcs_code']);
+    }
+
+    
+
+    public function getMemberDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'member_code']);
+    }
+
 
 }

@@ -27,5 +27,16 @@ class ProductController extends ChildController {
         $sale_detail = $model->productSaleDetail($product_info, $dcs_code);
         $this->response['data'] = $sale_detail;
     }
+    
+    public function actionDcsProductSaleDetail() {
+        $model = new TblProductSaleDetails();
+        $model->setAttributes($this->post_data);
+        $product_info = $this->post_data['content'];
+        $dcs_model = new TblDcs();
+        $dcs_model->bmc_code = $this->post_data['bmc_code'];
+        $dcs_code = $dcs_model->getBmcDcsData();
+        $sale_detail = $model->productSaleDetail($product_info, $this->post_data['bmc_code']);
+        $this->response['data'] = $sale_detail;
+    }
 
 }
