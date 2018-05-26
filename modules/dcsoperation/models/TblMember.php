@@ -162,9 +162,7 @@ class TblMember extends ChildModel {
         }, 'skipOnEmpty' => true],
             [['ex_member_code'], 'integer', 'min' => 1],
             [['ex_member_code'], 'string', 'min' => 4, 'max' => 4],
-            [['ex_member_code'], 'unique', 'targetAttribute' => ['ex_member_code', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                return $this->is_active;
-            }],
+            [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.')],
         ];
     }
 
