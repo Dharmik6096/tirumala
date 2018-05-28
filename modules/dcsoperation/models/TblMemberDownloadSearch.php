@@ -42,7 +42,6 @@ class TblMemberDownloadSearch extends TblMemberDownload {
     public function search($params) {
         $query = TblMemberDownload::find();
         $query->joinWith(['dcsCode']);
-        $query->where(['is_download'=>1]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

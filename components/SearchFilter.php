@@ -95,6 +95,9 @@ class SearchFilter {
             'TblDpuShiftEndSummarySearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
             ],
+            'TblPurchaseRateApplicabilitySearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
