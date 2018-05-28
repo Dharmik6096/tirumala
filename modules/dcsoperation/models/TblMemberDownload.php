@@ -45,7 +45,7 @@ class TblMemberDownload extends \app\models\ChildModel {
         return [
             'download_id' => Yii::t('app', 'Download ID'),
             'dcs_code' => Yii::t('app', 'Society'),
-            'is_download' => Yii::t('app', 'Is Download'),
+            'is_download' => Yii::t('app', 'Download Status'),
             'download_datetime' => Yii::t('app', 'Download Datetime'),
             'upload_datetime' => Yii::t('app', 'Upload Date'),
             'created_at' => Yii::t('app', 'Created At'),

@@ -34,21 +34,21 @@ $cal_data = json_encode($cal_data);
     <div class="panel panel-default">
         <div class="panel-heading text-center">
             <h4 class="panel-title">
-<?= Yii::t('app', 'Data for PCDF') . ' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
+                <?= Yii::t('app', 'Data for PCDF') . ' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
                 <a data-toggle="collapse" href="#collapse1" class="setting"><i class="fa fa-gear"></i></a>
             </h4>
         </div>
         <div id="collapse1" class="panel-collapse collapse">
             <div class="panel-body">
-<?php
-$form = ActiveForm::begin([
-            'action' => ['index'],
-            'method' => 'post',
-        ]);
-?>
+                <?php
+                $form = ActiveForm::begin([
+                            'action' => ['index'],
+                            'method' => 'post',
+                ]);
+                ?>
                 <div class="filt">
                     <div class="">
-                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                     </div>
                     <div class="">
                         <?= Yii::$app->controls->date($model, $form, 'date'); ?>
@@ -57,7 +57,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->controls->search(); ?>
                     </div>
                 </div>
-                        <?php ActiveForm::end(); ?>
+                <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
@@ -65,16 +65,16 @@ $form = ActiveForm::begin([
 <div class="panel panel-default panel-main panel-dashboard">
     <div class="panel-body">
         <div class="row">
-<?php if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
+            <?php if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
                 <div class="col-sm-6">
                     <div class="flt">
-                <?=
-                $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
-                    'url' => $chart_url, 'container' => 'container1',
-                    'date_range' => false, 'range2' => false,
-                    'range_id1' => 'dt1',
-                    'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
-                ?>
+                        <?=
+                        $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
+                            'url' => $chart_url, 'container' => 'container1',
+                            'date_range' => false, 'range2' => false,
+                            'range_id1' => 'dt1',
+                            'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
+                        ?>
                         <div id="container1" class="cont"></div>
                     </div>
                 </div>
@@ -94,24 +94,24 @@ $form = ActiveForm::begin([
                 <div class="clearfix"></div>
                 <div class="col-sm-12">
                     <div class="flt">
-    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
+                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
                         <div id="container3" class="cont"></div>
                     </div>
                 </div>
-<?php } else { ?>
+            <?php } else { ?>
                 <div class="col-sm-6">
                     <div class="flt">
-    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => 'Compare Milk Collection']); ?>
+                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => 'Compare Milk Collection']); ?>
                         <div id="container1" class="cont"></div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="flt">
-    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
+                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
                         <div id="container2" class="cont"></div>
                     </div>
                 </div>
-<?php } ?>
+            <?php } ?>
         </div>
         <div class="clearfix mt25"></div>      
         <div class="row">
@@ -141,7 +141,8 @@ $form = ActiveForm::begin([
                                     <th>Monthly Milk Collection(ltr)</th>
                                 </tr>
                             </thead>
-                            <?php if (!empty($results)) {
+                            <?php
+                            if (!empty($results)) {
                                 foreach ($results as $result) {
                                     ?>
                                     <tr>
@@ -150,57 +151,78 @@ $form = ActiveForm::begin([
                                         <td><?= $result['Member_Count'] ?></td>
                                         <td><?= $result['Qty'] ?></td>
                                     </tr>
-                                <?php
+                                    <?php
                                 }
                             } else {
                                 ?>
                                 <tr><td colspan="4">Data not available.</td></tr>
 <?php } ?>
-
                         </table>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="collection">
-                            <div class="tbl-cell">
-                                <p><?= Yii::t('app', 'No. of Societies') ?></p>
-                                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                                <h3><?= !empty($results) ? $results[0]['Dcs_Count'] : 0 ?></h3>
-                                <p><b>M:</b> <?= !empty($results) ? $results[0]['Dcs_Count_M'] : 0 ?> | <b>E:</b> <?= !empty($results) ? $results[0]['Dcs_Count_E'] : 0 ?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="collection">                                
-                            <div class="tbl-cell">
-                                <p>No. of Pourers</p>
-                                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                                <h3><?= !empty($results) ? $results[0]['Total_Member'] : 0 ?></h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="collection">
-                            <div class="tbl-cell">
-                                <p>Total Milk Collection(ltr)</p>
-                                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                                <h3><?= !empty($results) ? $results[0]['UnionQty'] : 0 ?></h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="collection">
-                            <div class="tbl-cell">
-                                <p>Total Milk Dispatch(ltr)</p>
-                                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                                <h3><?= !empty($results) ? $results[0]['UnionDisQty'] : 0 ?></h3>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p><?= Yii::t('app', 'No. of Societies') ?></p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <h3><?= !empty($results) ? $results[0]['Dcs_Count'] : 0 ?></h3>
+                        <p><b>M:</b> <?= !empty($results) ? $results[0]['Dcs_Count_M'] : 0 ?> | <b>E:</b> <?= !empty($results) ? $results[0]['Dcs_Count_E'] : 0 ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="collection">                                
+                    <div class="tbl-cell">
+                        <p>No. of Pourers</p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <h3><?= !empty($results) ? $results[0]['Total_Member'] : 0 ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p>Total Milk Collection(ltr)</p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <h3><?= !empty($results) ? $results[0]['UnionQty'] : 0 ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p>Total Milk Dispatch(ltr)</p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <h3><?= !empty($results) ? $results[0]['UnionDisQty'] : 0 ?></h3>
+                        <p><b>M:</b> <?= !empty($results) ? $results[0]['Dcs_DisQty_M'] : 0 ?> | <b>E:</b> <?= !empty($results) ? $results[0]['Dcs_DisQty_E'] : 0 ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p>Total BMC Collection(ltr)</p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <h3><?= !empty($results) ? $results[0]['BmcQty'] : 0 ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p><?= Yii::t('app', 'Collection vs Installed') ?></p>
+                        <p><h4><?= (!empty($results) ? $results[0]['Dcs_Count'] : 0) . '/' . (!empty($results) ? $results[0]['Install_Count'] : 0) ?></h4></p>
+                        <p><?= Yii::t('app', 'Collection vs Dispatch') ?></p>
+                        <p><h4><?= (!empty($results) ? $results[0]['Dcs_Count'] : 0) . '/' . (!empty($results) ? $results[0]['Dcs_DisQty_M'] + $results[0]['Dcs_DisQty_E'] : 0) ?></h4></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="cal-header">Avg. FAT, Avg. SNF and Qty for</div>

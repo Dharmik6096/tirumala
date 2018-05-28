@@ -28,7 +28,7 @@ class TblPurchaseRateApplicabilityController extends \app\controllers\ChildContr
     public function actionIndex()
     {
         $searchModel = new TblPurchaseRateApplicabilitySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->downloadSearch(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,

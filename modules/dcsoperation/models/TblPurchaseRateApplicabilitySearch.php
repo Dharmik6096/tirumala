@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use yii\db\Query;
 
 /**
  * TblPurchaseRateApplicabilitySearch represents the model behind the search form about `app\modules\dcsoperation\models\TblPurchaseRateApplicability`.
@@ -98,6 +99,42 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        return $dataProvider;
+    }
+
+    public function downloadSearch($params) {
+        $subQuery1 = TblPurchaseRateApplicability::find()->select(['tbl_purchase_rate_applicability.dcs_code as dcscode', 'max_date = max( wef_date )']);
+        $subQuery1->joinWith(['dcsCode']);
+        $subQuery1->groupBy(['tbl_purchase_rate_applicability.dcs_code']);
+        $this->load($params);
+        $subQuery1->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code]);
+        Yii::$app->general->filterByOrg($subQuery1, $this, 'tbl_dcs');
+        
+        $query = TblPurchaseRateApplicability::find()->select(['purchase_rate_code', 'u.dcscode as dcs_code', 'u.max_date as wef_date', 'is_download'])->from(['u' => $subQuery1]);
+        $query->join('inner join', 'tbl_purchase_rate_applicability', 'wef_date=u.max_date and tbl_purchase_rate_applicability.dcs_code=u.dcscode');
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        //$query->joinWith(['rateType','dcsCode','rateMethod']);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        //Yii::$app->general->filterByOrg($query,$this);
+        if (!empty($this->download_date_time))
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
+        // grid filtering conditions
+
+
+        if (!empty($this->wef_date))
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), wef_date, 126)', date('Y-m-d', strtotime($this->wef_date))]);
+
         return $dataProvider;
     }
 

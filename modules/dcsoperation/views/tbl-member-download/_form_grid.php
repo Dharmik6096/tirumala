@@ -7,6 +7,9 @@ use kartik\grid\GridView;
 
 $attribute = [
     ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name'],
+    ['attribute' => 'is_download', 'value' => function($model) {
+            return $model->is_download == 0 ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
+        }, 'filter' => false],
     ['attribute' => 'upload_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

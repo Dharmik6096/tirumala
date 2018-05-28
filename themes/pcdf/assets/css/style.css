@@ -2118,3 +2118,8 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 div.crystalstyle{
     margin: 0px !important
 }
+
+.collection h4 {
+    color: rgb(58, 123, 213);
+    margin-bottom: 0;
+}

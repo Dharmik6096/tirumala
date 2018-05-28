@@ -244,6 +244,7 @@ echo GhostMenu::widget([
                         ['label' => 'Dpu Calibration', 'url' => ['/tbl-dpu-calibration/index']],
                         ['label' => 'Dpu Cleaning', 'url' => ['/tbl-cleaning-dpu/index']],
                         ['label' => 'Member Acknowledgement', 'url' => ['/dcsoperation/tbl-member-download/index']],
+                        ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                     ]
                 ],
 //                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],
