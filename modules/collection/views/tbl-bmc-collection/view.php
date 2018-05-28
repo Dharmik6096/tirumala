@@ -89,7 +89,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                     'columns' => [
                         [
                             'attribute' => 'collection_type',
-                            'value' => (Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] != '') ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
+                            'value' => !empty($model->collection_type) ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [

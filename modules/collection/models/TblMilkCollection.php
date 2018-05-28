@@ -101,7 +101,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'snf' => Yii::t('app', 'SNF'),
             'water' => Yii::t('app', 'Water'),
             'qty' => Yii::t('app', 'Qty'),
-            'rtpl' => Yii::t('app', 'Rtpl'),
+            'rtpl' => Yii::t('app', 'RTPL'),
             'amount' => Yii::t('app', 'Amount'),
             'auto_flag' => Yii::t('app', 'Auto Flag'),
             'shift' => Yii::t('app', 'Shift'),
@@ -120,6 +120,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'sms_errorlog' => Yii::t('app', 'SMS Error Log'),
             'sms_timestamp' => Yii::t('app', 'SMS Timestamp'),
             'union_code' => Yii::t('app', 'Union'),
+            'clr' => Yii::t('app', 'CLR'),
         ];
     }
 
