@@ -27,7 +27,6 @@ class MemberController extends ChildController {
             $appModel->imei_no = $this->post_data['imei'];
             $appModel->code = $mdata[0]->member_code;
             $appModel->otp_code = rand(1000, 9999);
-            $appModel->otp_code = 1234;
             $appModel->hash_key = Yii::$app->security->generateRandomString(20);
             $appModel->orignating_timestamp = date('Y-m-d H:i:s');
             $message = 'Dear Your OTP Pin is ' . $appModel->otp_code . '.Enter this pin to login your account.';
