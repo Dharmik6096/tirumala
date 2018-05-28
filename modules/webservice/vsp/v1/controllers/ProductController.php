@@ -52,6 +52,7 @@ class ProductController extends ChildController {
         array_push($products, $product_sale);
 
         $i = 0;
+        $credit_limit = [];
         foreach ($product_list as $product) {
             $product_sale_detail = new TblProductSaleDetails();
             $product_sale_detail_code = (int) Yii::$app->general->getCodeAutoIncrement($product_sale_detail) + $i;
@@ -63,16 +64,15 @@ class ProductController extends ChildController {
             $product_sale_detail->rate = round($product['rate']);
             $product_sale_detail->qty = round($product['qty']);
             $product_sale_detail->amount = round($product['amount']);
-            array_push($products, $product_sale_detail);
+            array_push($credit_limit, $product_sale_detail);
         }
-        $credit_limit = [];
         $payment_mode = 'Cash';
         if ($product_info['payment_type'] == 1) {
             $appCycleModel = new TblDcsPaymentCycleApplicability();
             $data = $appCycleModel->apiCurrentDcsPaymentCycle($product_sale->dcs_code, date('Y-m-d'));
             if (!empty($data)) {
                 $installmentModel = new TblSaleInstallments();
-                $installmentModel->installment_code = Yii::$app->general->getCodeAutoIncrement($installmentModel);
+//                $installmentModel->installment_code = Yii::$app->general->getCodeAutoIncrement($installmentModel);
                 $installmentModel->sale_type = 'product';
                 $installmentModel->sale_code = $product_sale_code;
                 $installmentModel->member_code = $product_sale->member_code;
@@ -84,12 +84,12 @@ class ProductController extends ChildController {
                 $installmentModel->is_active = 1;
                 $installmentModel->dcs_payment_cycle_code = $data->dcs_payment_cycle_code;
                 $installmentModel->payment_cycle_applicabilty_code = $appCycleModel->dcsPaymentCycleAppCode($product_sale->dcs_code);
-                array_push($products, $installmentModel);
+                array_push($credit_limit, $installmentModel);
 
                 $payment_mode = 'Credit';
                 $credit_limit_model = new TblMemberCreditLimit();
                 $credit_limit_data = $credit_limit_model->find()->where(['member_code' => $product_info['member_code']])->one();
-                if (!empty($credit_limit_data)) {
+                if (!empty($credit_limit_data) && $credit_limit_data->balance >= $product_info['payable_amount']) {
                     $credit_limit_history_model = new TblMemberCreditLimitHistory();
                     Yii::$app->operation->history($credit_limit_data, $credit_limit_history_model, 'UPDATE');
 
