@@ -17,7 +17,8 @@ class AppActivationController extends ChildController {
         $model->password_hash = $this->post_data['content']['password_hash'];
         $identityModel = new \app\models\IdentityMaster();
         $identity = $identityModel->getIdentity();
-        $model->username = $identity->organization_code . '#' . $model->username;
+        $username = $model->username;
+        $model->username = $identity->organization_code . '#' . $username;
         $user_data = $model->find()->where(['username' => $model->username])->one();
         $data = [];
         if (!empty($user_data)) {
@@ -25,7 +26,7 @@ class AppActivationController extends ChildController {
             if ($validate) {
                 $appModel = new TblAppActivation();
                 $appModel->setAttributes($this->post_data);
-                $appModel->code = $model->password_hash;
+                $appModel->code = $username;
                 $appModel->imei_no = $this->post_data['imei'];
                 $appModel->hash_key = Yii::$app->security->generateRandomString(20);
                 $appModel->orignating_timestamp = date('Y-m-d H:i:s');
@@ -39,7 +40,15 @@ class AppActivationController extends ChildController {
                     return FALSE;
                 }
                 $data['token'] = $appModel->hash_key;
+            } else {
+                $message[] = 'Username or password is invalid .';
+                Yii::$app->apiError->error($message, 'error');
+                return FALSE;
             }
+        } else {
+            $message[] = 'Username or password is invalid .';
+            Yii::$app->apiError->error($message, 'error');
+            return FALSE;
         }
         $this->response['data'] = $data;
         return $this->response;
