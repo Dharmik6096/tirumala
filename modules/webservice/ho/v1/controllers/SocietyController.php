@@ -15,7 +15,7 @@ class SocietyController extends ChildController {
         $mcc = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
         $bmc = !empty($content['bmc_code']) ? ',' . $content['bmc_code'] . ',' : 0;
         $dcs = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
-        $sp = 'sp_app_ho_dcs_data';
+        $sp = !empty($content['bmc_code']) ? 'sp_app_ho_bmc_dcs_data' : 'sp_app_ho_dcs_data';
         return $this->response['data'] = $this->getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $content['from_datetime'], $content['to_datetime']);
     }
 
