@@ -29,6 +29,16 @@ $d_bmc = array_column(array_values($results7), 'bmc_name');
 $fat = array_column(array_values($results3), 'AvgFAT');
 $snf = array_column(array_values($results3), 'AvgSNF');
 $cal_data = json_encode($cal_data);
+
+$dcs = array_column(array_values($results8), 'VillageName');
+$unions = array_column(array_values($results8), 'union_name');
+$graph_chart_dcs = array_map(function($a, $b) {
+    return $a;
+}, $dcs, $unions);
+$DPUCount = array_column(array_values($results8), 'DPUCount');
+$DPUCount = json_encode($DPUCount);
+$CFCount = array_column(array_values($results8), 'CFCount');
+$CFCount = json_encode($CFCount);
 ?>
 <div class="panel-group row panel-fixed" id="filter">
     <div class="panel panel-default">
@@ -156,7 +166,7 @@ $cal_data = json_encode($cal_data);
                             } else {
                                 ?>
                                 <tr><td colspan="4">Data not available.</td></tr>
-<?php } ?>
+                            <?php } ?>
                         </table>
                     </div>
                 </div>
@@ -221,6 +231,12 @@ $cal_data = json_encode($cal_data);
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="row">            
+            <div class="col-sm-12">
+                <div id="reconciliation" class="cont"></div>
+            </div>            
         </div>
 
         <div class="row">
@@ -594,5 +610,90 @@ var bar_chart = $('#'+cont);
         });
     }
 }
+
+    var dcount = " . $DPUCount . ";
+    var dc = dcount.map(function (x) { 
+        return parseFloat(x, 10); 
+    });
+    
+    var cfcount = " . $CFCount . ";
+    var cfc = cfcount.map(function (x) { 
+        return parseFloat(x, 10); 
+    });
+    
+
+    /* Bar and Line dual chart */
+    var line_chart = $('#reconciliation');
+    if (line_chart.length) {
+        Highcharts.chart('reconciliation', {
+            chart: {
+                zoomType: 'xy',
+                height: '530px'
+            },
+            title: {
+                text: '" . Yii::$app->controls->view_date($date) . ' ' . Yii::t('app', 'Reconciliation Chart') . "',
+                y: 9,
+
+            },
+
+            xAxis: [{
+                    categories: " . json_encode($graph_chart_dcs) . ",
+                    crosshair: true
+                }],
+            yAxis: [{// Primary yAxis
+                    labels: {
+                        format: '{value}',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+                    title: {
+                        text: '',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    }
+                }, {// Secondary yAxis
+                    title: {
+                        text: '',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    labels: {
+                        format: '{value} mm',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    opposite: true
+                }],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 400,
+                verticalAlign: 'top',
+                y: 10,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+            },
+            series: [
+                {
+                    name: '" . Yii::t('app', 'DPU Farmer') . "',                     
+                    type: 'spline',
+                    color: '#3a7bd5',
+                    data: dc,
+                },{
+                    name: '" . Yii::t('app', 'Collection Farmer') . "',                     
+                    type: 'spline',
+                    color: '#117856',
+                    data: cfc,
+                }
+            ]
+        });
+    }
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');
