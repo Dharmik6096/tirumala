@@ -72,7 +72,7 @@ class TblClusterController extends \app\controllers\ChildController {
                 $validate = Yii::$app->warning->unique($this->model, 'name', $this->model->name);
             if ($validate == 1) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], [$this->contactDetails], ['Cluster', 'create']);
-                if ($transaction !== FALSE) {
+                if ($transaction == 'customRedirect') {
                     return $this->{$transaction}();
                 }
             }
@@ -104,7 +104,7 @@ class TblClusterController extends \app\controllers\ChildController {
                 $validate = Yii::$app->warning->unique($this->model, 'name', $_POST['TblCluster']['name']);
             if ($validate == 1) {
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Cluster', 'edit']);
-                if ($transaction !== FALSE) {
+                if ($transaction == 'customRedirect') {
                     return $this->{$transaction}();
                 }
             }
