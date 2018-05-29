@@ -670,6 +670,14 @@ class TblDcs extends ChildModel {
                     return Yii::t('app', 'Pending');
                 }
             }
+            
+            public function getSocietyData(){
+                return $this->find()
+                        ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_contact_details.mobile_no'])
+                        ->joinWith(['defaultContactDetail'])
+                        ->where(['bmc_code' => $this->bmc_code, 'tbl_dcs.is_active' => 1])
+                        ->all();
+            }
 
         }
         

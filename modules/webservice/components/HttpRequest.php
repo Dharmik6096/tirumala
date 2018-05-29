@@ -28,8 +28,13 @@ class HttpRequest extends \yii\base\Component {
         $post_data = Json::decode(Yii::$app->request->getRawBody());
         $request = $this->camelCaseToUnderscore($post_data);
         $request['dcs_code'] = $request['identity_code'];
-        if (isset($request['type']) && $request['type'] == 3) {
-            $request['bmc_code'] = $request['identity_code'];
+        if (isset($request['type'])) {
+            if($request['type'] == 3){
+                $request['bmc_code'] = $request['identity_code'];
+            }
+            if($request['type'] == 4){
+                $request['username'] = $request['identity_code'];
+            }
         }
         $this->request = $request;
         $this->allow_call = $this->AuthenticateRequest();
@@ -83,6 +88,8 @@ class HttpRequest extends \yii\base\Component {
                     $model->code = $this->request['member_code'];
                 } else if ($model->type == 3) {
                     $model->code = $this->request['bmc_code'];
+                } else if ($model->type == 4) {
+                    $model->code = $this->request['username'];
                 }
                 if ($model->getActiveRecord() == 1) {
                     return TRUE;

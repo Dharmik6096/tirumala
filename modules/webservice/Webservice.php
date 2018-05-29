@@ -27,6 +27,9 @@ class Webservice extends \yii\base\Module {
             'vsp' => [
                 'class' => 'app\modules\webservice\vsp\Vsp',
             ],
+            'ho' => [
+                'class' => 'app\modules\webservice\ho\Ho',
+            ],
         ];
     }
 

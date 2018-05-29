@@ -423,7 +423,7 @@ class TblUserOrganizationMapping extends ChildModel {
     }
 
     public function getUserOrgs($userCode) {
-        $records = $this->find()->select(['organization_code'])->where(['user_id' => $userCode, 'is_active' => 1])->asArray()->all();
+        $records = $this->find()->select(['organization_code','organization_type'])->where(['user_id' => $userCode, 'is_active' => 1])->asArray()->all();
         return $records;
     }
 

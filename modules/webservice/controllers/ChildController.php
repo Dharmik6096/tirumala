@@ -4,6 +4,10 @@ namespace app\modules\webservice\controllers;
 
 use Yii;
 use app\models\GeneralModel;
+use app\modules\installation\models\InstallationIdentity;
+use webvimark\modules\UserManagement\models\User;
+use app\models\TblUserOrganizationMapping;
+use app\models\IdentityMaster;
 
 /**
  * Default controller for the `restservices` module
@@ -33,6 +37,59 @@ class ChildController extends RestController {
             $model[$key] = $val;
         }
         return $model;
+    }
+
+    public function getOrgCodes($content) {
+        $data = [];
+        $model = new User();
+        $model->setAttributes($content);
+        $identityModel = new IdentityMaster();
+        $identity = $identityModel->getIdentity();
+        $model->username = $identity->organization_code . '#' . $model->username;
+        $user_data = $model->find()->where(['username' => $model->username])->one();
+        $mapping_model = new TblUserOrganizationMapping();
+        $mapping_model->user_id = $user_data->id;
+        $map_data = $mapping_model->getUserOrgs($user_data->id);
+        $union = [];
+        $bmc = [];
+        $dcs = [];
+        $mcc = [];
+        $plant = [];
+        foreach ($map_data as $key => $value) {
+            if ($value['organization_type'] == 'UNION') {
+                $union[] = $value['organization_code'];
+            }
+            if ($value['organization_type'] == 'BMC') {
+                $bmc[] = $value['organization_code'];
+            }
+            if ($value['organization_type'] == 'MCC') {
+                $mcc[] = $value['organization_code'];
+            }
+            if ($value['organization_type'] == 'PLANT') {
+                $plant[] = $value['organization_code'];
+            }
+            if ($value['organization_type'] == 'DCS') {
+                $dcs[] = $value['organization_code'];
+            }
+        }
+        $data['union'] = $union;
+        $data['bmc'] = $bmc;
+        $data['dcs'] = $dcs;
+        $data['mcc'] = $mcc;
+        $data['plant'] = $plant;
+        return $data;
+    }
+
+    public function getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $from_datetime, $to_datetime) {
+        $query = \Yii::$app->db->createCommand("{CALL " . $sp . "(:date_from,:date_to,:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code)}")
+                ->bindValue(':date_from', $from_datetime)
+                ->bindValue(':date_to', $to_datetime)
+                ->bindValue(':union_code', $union)
+                ->bindValue(':plant_code', $plant)
+                ->bindValue(':mcc_code', $mcc)
+                ->bindValue(':bmc_code', $bmc)
+                ->bindValue(':dcs_code', $dcs);
+        return $query->queryAll();
     }
 
 }
