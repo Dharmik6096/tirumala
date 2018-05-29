@@ -21,7 +21,7 @@ class AppActivationController extends ChildController {
         $model->username = $identity->organization_code . '#' . $username;
         $user_data = $model->find()->where(['username' => $model->username])->one();
         $data = [];
-        if (!empty($user_data)) {
+        if (!empty($user_data) && !empty($model->password_hash)) {
             $validate = Yii::$app->security->validatePassword($model->password_hash, $user_data->password_hash);
             if ($validate) {
                 $appModel = new TblAppActivation();
