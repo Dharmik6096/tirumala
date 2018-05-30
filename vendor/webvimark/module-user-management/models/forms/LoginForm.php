@@ -141,6 +141,7 @@ class LoginForm extends Model {
         $mcc = '';
         $bmc = '';
         $dcs = '';
+        $states = $_POST['state'];
         switch ($main_org_type) {
             case 'PCDF':
                 $name = models\TblFederations::find()->select('federation_name as name,federation_code')->where(['is_active' => 1])->one();
@@ -192,11 +193,12 @@ class LoginForm extends Model {
                         return FALSE;
                         break;
                 }
-                $name = models\TblUnions::find()->select('union_name as name, union_code, logo')->where(['union_code' => explode(',', $union), 'is_active' => 1])->all();
+                $name = models\TblUnions::find()->select('union_name as name, union_code, logo,state_code')->where(['union_code' => explode(',', $union), 'is_active' => 1])->all();
                 $union_names = ArrayHelper::getColumn($name, 'name');
                 $union_names = implode(',', $union_names);
                 if (count($name) == 1) {
                     $organization_logo = !empty($name[0]->logo) ? array_reverse(explode('/', $name[0]->logo))[0] : '';
+                    $states = $name[0]->state_code;
                 }
                 $district = $this->getDistrict($_POST['state'], explode(',', $union));
                 $orgType = 'UNION';
@@ -207,7 +209,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('Federations', $federation);
         Yii::$app->session->set('Unions', $union);
         Yii::$app->session->set('Dcs', $dcs);
-        Yii::$app->session->set('States', $_POST['state']);
+        Yii::$app->session->set('States', $states);
         Yii::$app->session->set('Districts', $district);
         Yii::$app->session->set('organizations_type', $orgType);
         Yii::$app->session->set('organizations_code', $organization);
