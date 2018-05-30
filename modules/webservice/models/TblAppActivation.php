@@ -28,21 +28,19 @@ use Yii;
  * @property string $expired_datetime
  * @property string $device_id
  */
-class TblAppActivation extends \app\models\ChildModel
-{
+class TblAppActivation extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_app_activation';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['type', 'sms_sent', 'otp_code', 'is_active', 'is_delete'], 'required'],
             [['type', 'sms_sent', 'otp_code', 'is_active', 'is_delete', 'is_expired'], 'integer'],
@@ -54,8 +52,7 @@ class TblAppActivation extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'activation_id' => Yii::t('app', 'Activation ID'),
             'type' => Yii::t('app', 'Type'),
@@ -79,7 +76,7 @@ class TblAppActivation extends \app\models\ChildModel
             'device_id' => Yii::t('app', 'Device ID'),
         ];
     }
-    
+
     /**
      * @inheritdoc
      * @return TblAppActivationQuery the active query used by this AR class.
@@ -99,27 +96,28 @@ class TblAppActivation extends \app\models\ChildModel
     public function getOldRecord($encryptedmobile) {
         return $this->find()->where(['mobile_no' => $encryptedmobile, 'type' => $this->type, 'imei_no' => $this->imei_no, 'is_expired' => 0])->all();
     }
-    
-    
-    public function getCount($field_name,$value) {
-        return $this->find()->where(['type' => $this->type, 'hash_key' => $this->hash_key, 'imei_no' => $this->imei_no,$field_name => $value])->count();
+
+    public function getCount($field_name, $value) {
+        return $this->find()->where(['type' => $this->type, 'hash_key' => $this->hash_key, 'imei_no' => $this->imei_no, $field_name => $value])->count();
     }
-    
+
     public function activationDetail() {
         return $this->find()->where(['type' => $this->type, 'code' => $this->code, 'imei_no' => $this->imei_no, 'hash_key' => $this->hash_key, 'is_active' => 1, 'is_expired' => 0])->one();
     }
-    
-    
-    public function rateChartDetail($field,$purchase_rate_code) {
+
+    public function rateChartDetail($field, $purchase_rate_code) {
         return $this->find()->where([$field => $purchase_rate_code])->one();
     }
-    
-    public function activationData($encryptedmobile){
+
+    public function activationData($encryptedmobile) {
         return $this->find()
-                    ->where(['code' => $this->code])
-                    ->andWhere(['or',['mobile_no'=>$this->mobile_no],['mobile_no'=>$encryptedmobile]])
-                    ->one();
+                        ->where(['code' => $this->code])
+                        ->andWhere(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => $encryptedmobile]])
+                        ->one();
     }
-    
+
+    public function userActivationInfo($data) {
+        return $this->find()->where(['imei_no' => $data['imei'], 'type' => $data['type'], 'hash_key' => $data['token'], 'is_active' => 1, 'is_expired' => 0])->one();
+    }
 
 }
