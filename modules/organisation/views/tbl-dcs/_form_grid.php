@@ -25,9 +25,6 @@ $attribute = [
     ['attribute' => 'dcs_short_name', 'value' => 'dcs_short_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'local_name', 'filter' => false],
     ['attribute' => 'local_short_name', 'filter' => false],
-    ['attribute' => 'society_status', 'value' => function($model) {
-            return (isset($model->societyStatus) && $model->societyStatus->status == 1) ? 'Started' : 'Stopped';
-        }, 'filter' => false],
     ['attribute' => 'phone_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'registration_code', 'visible' => false, 'filter' => false],
     [
