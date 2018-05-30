@@ -80,15 +80,16 @@ class ChildController extends RestController {
         return $data;
     }
 
-    public function getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $from_datetime, $to_datetime) {
-        $query = \Yii::$app->db->createCommand("{CALL " . $sp . "(:date_from,:date_to,:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code)}")
+    public function getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $from_datetime, $to_datetime, $data_type) {
+        $query = \Yii::$app->db->createCommand("{CALL " . $sp . "(:date_from,:date_to,:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code,:data_type)}")
                 ->bindValue(':date_from', $from_datetime)
                 ->bindValue(':date_to', $to_datetime)
                 ->bindValue(':union_code', $union)
                 ->bindValue(':plant_code', $plant)
                 ->bindValue(':mcc_code', $mcc)
                 ->bindValue(':bmc_code', $bmc)
-                ->bindValue(':dcs_code', $dcs);
+                ->bindValue(':dcs_code', $dcs)
+                ->bindValue(':data_type', $data_type);
         return $query->queryAll();
     }
 

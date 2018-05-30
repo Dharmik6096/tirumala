@@ -41,17 +41,35 @@ class AppActivationController extends ChildController {
                 }
                 $data['token'] = $appModel->hash_key;
             } else {
-                $message[] = 'Username or password is invalid .';
+                $message[] = Yii::t('app', 'Username or password is invalid.');
                 Yii::$app->apiError->error($message, 'error');
                 return FALSE;
             }
         } else {
-            $message[] = 'Username or password is invalid .';
+            $message[] = Yii::t('app', 'Username or password is invalid.');
             Yii::$app->apiError->error($message, 'error');
             return FALSE;
         }
         $this->response['data'] = $data;
         return $this->response;
+    }
+
+    public function actionLogout() {
+        $data = [];
+        $appModel = new TblAppActivation();
+        $appModel->setAttributes($this->post_data);
+        $appModel = $appModel->userActivationInfo($this->post_data);
+        if (!empty($appModel)) {
+            $appModel->is_active = 0;
+            $appModel->is_expired = 1;
+            $appModel->expired_datetime = date('Y-m-d H:i:s');
+            $transaction = $this->generalModel->saveTransaction([$appModel], ['app verification', 'edit']);
+            if ($transaction !== 'customRedirect') {
+                return FALSE;
+            }
+            $data['message'] = Yii::t('app', 'Logout Successfully.');
+        }
+        return $this->response['data'] = $data;
     }
 
 }

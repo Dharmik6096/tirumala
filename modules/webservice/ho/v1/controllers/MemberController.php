@@ -15,8 +15,11 @@ class MemberController extends ChildController {
         $mcc = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
         $bmc = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
         $dcs = !empty($content['dcs_code']) ? ',' . $content['dcs_code'] . ',' : 0;
+        $data_type = !empty($content['data_type']) ? $content['data_type'] : 'P';
+        $from_datetime = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
+        $to_datetime = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
         $sp = 'sp_app_ho_member_data';
-        return $this->response['data'] = $this->getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $content['from_datetime'], $content['to_datetime']);
+        return $this->response['data'] = $this->getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $from_datetime, $to_datetime, $data_type);
     }
 
 }
