@@ -409,12 +409,12 @@ class LoginForm extends Model {
     public function getDistrict($stateCode, $unionCode) {
 
         $model = new models\TblUnionsDistrictMapping();
-        $districts = $model->getUnionDistrict($unionCode, $stateCode);
+        $districts = $model->getUnionDistrict($unionCode, explode(',', $stateCode));
         return implode(',', array_map(function($a) {
                     return $a['district_code'];
                 }, $districts));
     }
-    
+
     private function getFedStates($fed_code = []) {
         $query = TblFederationsStateMapping::find();
         $query->select(['distinct(state_code)']);
@@ -428,8 +428,8 @@ class LoginForm extends Model {
             return 0;
         }
     }
-    
-    private function getUnionStates($union_code = []){
+
+    private function getUnionStates($union_code = []) {
         $query = TblUnionsDistrictMapping::find();
         $query->select(['distinct(district_code)']);
         $query->where([ 'union_code' => $union_code, 'is_active' => 1]);
