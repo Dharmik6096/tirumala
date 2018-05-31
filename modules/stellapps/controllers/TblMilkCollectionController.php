@@ -68,20 +68,20 @@ class TblMilkCollectionController extends \yii\web\Controller {
 
                         $collectionEntryList['farmerId'] = substr($milk_coll->member_code, -4);
                         $collectionEntryList['milkType'] = strtoupper(Yii::$app->general->getforeignkey($milk_coll->milkTypeCode, 'animal_type_name'));
-                        $collectionEntryList['milkQuantity'] = $milk_coll->qty;
-                        $collectionEntryList['fat'] = $milk_coll->fat;
-                        $collectionEntryList['snf'] = $milk_coll->snf;
-                        $collectionEntryList['rate'] = $milk_coll->rtpl;
-                        $collectionEntryList['amount'] = $milk_coll->amount;
+                        $collectionEntryList['milkQuantity'] = !empty($milk_coll->qty) ? $milk_coll->qty : '';
+                        $collectionEntryList['fat'] = !empty($milk_coll->fat) ? $milk_coll->fat : '';
+                        $collectionEntryList['snf'] = !empty($milk_coll->snf) ? $milk_coll->snf : '';
+                        $collectionEntryList['rate'] = !empty($milk_coll->rtpl) ? $milk_coll->rtpl : '';
+                        $collectionEntryList['amount'] = !empty($milk_coll->amount) ? $milk_coll->amount : '';
                         $collectionEntryList['collectionTime'] = !empty($milk_coll->date_time_of_collection) ? strtotime($milk_coll->date_time_of_collection) : '';
                         $collectionEntryList['awm'] = '';
-                        $collectionEntryList['clr'] = $milk_coll->clr;
-                        $collectionEntryList['status'] = $milk_coll->status;
+                        $collectionEntryList['clr'] = !empty($milk_coll->clr) ? $milk_coll->clr : '';
+                        $collectionEntryList['status'] = !empty($milk_coll->status) ? $milk_coll->status : '';
                         $collectionEntryList['mode'] = $milk_coll->qty_auto == 0 ? 'Auto' : 'Manual';
                         $collectionEntryList['qualityTime'] = !empty($milk_coll->qlty_time) ? strtotime($milk_coll->qlty_time) : '';
                         $collectionEntryList['quantityTime'] = !empty($milk_coll->qty_time) ? strtotime($milk_coll->qty_time) : '';
                         $collectionEntryList['uom'] = $milk_coll->qty_mode == 0 ? 'LTR' : 'KG';
-                        $collectionEntryList['numberOfCans'] = $milk_coll->no_of_can;
+                        $collectionEntryList['numberOfCans'] = !empty($milk_coll->no_of_can) ? $milk_coll->no_of_can : '';
                         $collectionEntryList['milkQuality'] = strtoupper(Yii::$app->general->getforeignkey($milk_coll->milkQualityCode, 'milk_quality_type_name'));
                         $collectionEntryList['qualityMode'] = $milk_coll->qlty_auto == 0 ? 'Auto' : 'Manual';
                         $collectionEntryList['quantityMode'] = $milk_coll->qty_auto == 0 ? 'Auto' : 'Manual';
@@ -90,7 +90,7 @@ class TblMilkCollectionController extends \yii\web\Controller {
                         $collectionEntryList['salt'] = '';
                         $collectionEntryList['lactose'] = '';
                         $collectionEntryList['pH'] = '';
-                        $collectionEntryList['sampleNumber'] = $milk_coll->sample_no;
+                        $collectionEntryList['sampleNumber'] = !empty($milk_coll->sample_no) ? $milk_coll->sample_no : '';
                         $body['metadata'] = $metadata;
                         $body['collectionEntryList'][] = $collectionEntryList;
                         $api = new WebApi();
