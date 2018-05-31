@@ -115,9 +115,4 @@ class TblAppActivation extends \app\models\ChildModel {
                         ->andWhere(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => $encryptedmobile]])
                         ->one();
     }
-
-    public function userActivationInfo($data) {
-        return $this->find()->where(['imei_no' => $data['imei'], 'type' => $data['type'], 'hash_key' => $data['token'], 'is_active' => 1, 'is_expired' => 0])->one();
-    }
-
 }

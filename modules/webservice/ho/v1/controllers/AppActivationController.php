@@ -58,7 +58,10 @@ class AppActivationController extends ChildController {
         $data = [];
         $appModel = new TblAppActivation();
         $appModel->setAttributes($this->post_data);
-        $appModel = $appModel->userActivationInfo($this->post_data);
+        $appModel->imei_no = $this->post_data['imei'];
+        $appModel->code = $this->post_data['identity_code'];
+        $appModel->hash_key = $this->post_data['token'];
+        $appModel = $appModel->activationDetail();
         if (!empty($appModel)) {
             $appModel->is_active = 0;
             $appModel->is_expired = 1;
