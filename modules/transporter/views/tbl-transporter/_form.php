@@ -126,7 +126,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'security_amount')->textInput() ?>
     </div>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3 mt25">
         <?= Yii::$app->controls->active($model, $form); ?>

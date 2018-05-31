@@ -128,7 +128,6 @@ class TblDcsController extends ChildController {
             $modelCodes->dcs_code = $this->model->dcs_code;
             $modelCodes->bipl_code = $modelCodes->getBiplCode($this->model->village_code);
             $modelCodes->union_code = $this->model->union_code;
-            $modelCodes->bmc_code = NULL;
             //$modelCodes->pooling_point_code = $modelCodes->getPpCode();
             array_push($mapList, $modelCodes);
             //$mapList[0] = $modelMapping;

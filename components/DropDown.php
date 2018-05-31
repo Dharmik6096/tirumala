@@ -32,12 +32,20 @@ class DropDown extends Component {
 
         $this->setClass($form, $name);
         $state = new TblStates;
-        $model->{$name} = Yii::$app->session->get('States');
+        
+        $selected = '';
+        if (!empty(Yii::$app->session->get('States')) && count(explode(',', Yii::$app->session->get('States'))) == 1) {
+            $selected = explode(',', Yii::$app->session->get('States'));
+        }
+        $model->{$name} = !empty($selected) ? $selected : $model->{$name};
+                
         echo $form->field($model, $name)->dropDownList($state->getActiveStates($model->$name), ['prompt' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple])->label($islable);
-        $script = "$(document).ready(function() {
-                $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
-                });";
-        Yii::$app->view->registerJs($script, View::POS_END, 'state-hide');
+        if (!empty($selected)) {
+            $script = "$(document).ready(function() {
+                    $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
+                    });";
+            Yii::$app->view->registerJs($script, View::POS_END, 'state-hide');
+        }
     }
 
     public function district($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false) {

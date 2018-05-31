@@ -42,7 +42,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'registration_date'); ?>
     </div>
     <div class="col-sm-3 <?= $checkChild; ?>">
-        <?= Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?= Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3 <?php// echo $checkChild; ?>">
         <?= Yii::$app->dropdown->district($model, $form, 'tblfederations-state_code', 'district_code', 'District',FALSE,$readonly); ?>

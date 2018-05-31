@@ -6,6 +6,7 @@ use yii\web\View;
 use yii\helpers\Url;
 
 $disable = (!$model->isNewRecord) ? ' disabled' : '';
+$readonly = $type == 'create' ? FALSE : TRUE;
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
             'validateOnEnter' => TRUE,
@@ -22,7 +23,7 @@ echo Html::hiddenInput('warning', 0, ['id' => 'warning']);
 ?>
 <div class="row">
     <div class="col-sm-3 <?= $disable ?>">
-        <?php Yii::$app->dropdown->state($model, $form, 'state', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3 <?= $disable ?>">
         <?= Yii::$app->dropdown->district($model, $form, 'tblhamlets-state', 'district', 'District'); ?>

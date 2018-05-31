@@ -16,6 +16,8 @@ if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
 }
+
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -138,7 +140,7 @@ if ($model->isNewRecord) {
         <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
     </div>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmember-union_code,tblmember-state_code', 'district_code', 'District'); ?>

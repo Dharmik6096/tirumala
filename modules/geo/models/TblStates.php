@@ -195,11 +195,15 @@ class TblStates extends ChildModel
     }
 
     public function getActiveStates($state_code=''){
+            $selected = '';
+            if (!empty(Yii::$app->session->get('States'))) {
+                $selected = explode(',', Yii::$app->session->get('States'));
+            }
             if(!empty($state_code)){
                 $subQuery=$this->find()->select(['state_code','state_name','local_name'])->where(['state_code'=>$state_code]);
-                $array= $this->find()->select(['state_code','state_name','local_name'])->where(['is_active'=>1])->andWhere(['like', 'tbl_states.state_code', Yii::$app->session->get('States')])->union($subQuery)->all();
+                $array= $this->find()->select(['state_code','state_name','local_name'])->where(['state_code'=>$selected, 'is_active'=>1])->union($subQuery)->all();
             }else{
-                $array= $this->find()->select(['state_code','state_name','local_name'])->where(['is_active'=>1])->andWhere(['like', 'tbl_states.state_code', Yii::$app->session->get('States')])->all();                
+                $array= $this->find()->select(['state_code','state_name','local_name'])->where(['state_code'=>$selected, 'is_active'=>1])->all();                
             }
             $data = \yii\helpers\ArrayHelper::map($array, 'state_code',function($array, $key) {
                     if (!empty($array['local_name']))

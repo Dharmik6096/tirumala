@@ -1,6 +1,7 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -28,7 +29,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'ifsc')->textInput(['maxlength' => 11]) ?>
     </div>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->bankdistrict($model, $form, 'tblbranch-state_code,tblbranch-bank_code', 'district_code', 'District'); ?>

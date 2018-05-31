@@ -95,7 +95,7 @@ $form = ActiveForm::begin([
         <hr class="hr10">
     </div>
     <div class="col-sm-3 <?//= $checkChild; ?>">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3 <?//= $checkChild; ?>">
         <?= Yii::$app->dropdown->district($model, $form, 'tblunions-state_code', 'district_code', 'District', FALSE, $readonly); ?>

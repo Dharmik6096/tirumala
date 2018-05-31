@@ -68,7 +68,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmccplant-union_code,tblmccplant-state_code', 'district_code', 'District',FALSE,$readonly); ?>

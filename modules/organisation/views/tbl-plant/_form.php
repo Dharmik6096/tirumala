@@ -62,7 +62,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'description')->textarea() ?>
     </div>
     <div class="col-sm-3"> 
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3"> 
         <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblplant-union_code,tblplant-state_code', 'district_code', 'District', FALSE, $readonly); ?>

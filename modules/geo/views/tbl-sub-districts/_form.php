@@ -3,6 +3,7 @@
 use yii\bootstrap\ActiveForm;
 
 $nameWarning = 0;
+$readonly = $type == 'create' ? FALSE : TRUE;
 if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
 }
@@ -23,7 +24,7 @@ $form = ActiveForm::begin([
 <?php Yii::$app->warning->hiddenfields($nameWarning, ''); ?>
 <div class="row">
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->state($model, $form, 'state', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->district($model, $form, 'tblsubdistricts-state', 'district_code', 'District'); ?>

@@ -17,6 +17,9 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblFederationsStateMapping;
+use app\modules\organisation\models\TblUnionsDistrictMapping;
+use app\modules\geo\models\TblDistricts;
 
 class LoginForm extends Model {
 
@@ -141,8 +144,9 @@ class LoginForm extends Model {
         $mcc = '';
         $bmc = '';
         $dcs = '';
-        $states = $_POST['state'];
+        $states = '';
         switch ($main_org_type) {
+
             case 'PCDF':
                 $name = models\TblFederations::find()->select('federation_name as name,federation_code')->where(['is_active' => 1])->one();
                 $union_names = !(empty($name)) ? $name['name'] : '';
@@ -155,6 +159,7 @@ class LoginForm extends Model {
                 }
                 $orgType = 'FEDERATION';
                 $organization = $name['federation_code'];
+                $states = $this->getFedStates($organization);
                 break;
 
             case 'UNION':
@@ -198,9 +203,9 @@ class LoginForm extends Model {
                 $union_names = implode(',', $union_names);
                 if (count($name) == 1) {
                     $organization_logo = !empty($name[0]->logo) ? array_reverse(explode('/', $name[0]->logo))[0] : '';
-                    $states = $name[0]->state_code;
                 }
-                $district = $this->getDistrict($_POST['state'], explode(',', $union));
+                $states = $this->getUnionStates(explode(',', $union));
+                $district = $this->getDistrict($states, explode(',', $union));
                 $orgType = 'UNION';
                 $organization = $union;
                 break;
@@ -408,6 +413,38 @@ class LoginForm extends Model {
         return implode(',', array_map(function($a) {
                     return $a['district_code'];
                 }, $districts));
+    }
+    
+    private function getFedStates($fed_code = []) {
+        $query = TblFederationsStateMapping::find();
+        $query->select(['distinct(state_code)']);
+        $query->where([ 'federation_code' => $fed_code, 'is_active' => 1]);
+        $list = $query->asArray()->all();
+        if (count($list) > 0) {
+            return implode(',', array_map(function($a) {
+                        return $a['state_code'];
+                    }, $list));
+        } else {
+            return 0;
+        }
+    }
+    
+    private function getUnionStates($union_code = []){
+        $query = TblUnionsDistrictMapping::find();
+        $query->select(['distinct(district_code)']);
+        $query->where([ 'union_code' => $union_code, 'is_active' => 1]);
+        $list = $query->asArray()->all();
+        if (count($list) > 0) {
+            $state_query = TblDistricts::find();
+            $state_query->select(['distinct(state_code)']);
+            $state_query->where([ 'district_code' => $list, 'is_active' => 1]);
+            $state_list = $state_query->asArray()->all();
+            return implode(',', array_map(function($a) {
+                        return $a['state_code'];
+                    }, $state_list));
+        } else {
+            return 0;
+        }
     }
 
 }

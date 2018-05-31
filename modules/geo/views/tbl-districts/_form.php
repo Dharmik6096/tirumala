@@ -7,6 +7,7 @@ if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
 }
 
+$readonly = $type == 'create' ? FALSE : TRUE;
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
             'validateOnEnter' => TRUE,
@@ -30,7 +31,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->controls->local($model, $form); ?>
         </div>
         <div class="col-sm-3">
-            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>       
         <div class="col-sm-3 mt25">
             <?= Yii::$app->controls->active($model, $form); ?>

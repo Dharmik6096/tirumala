@@ -68,7 +68,7 @@ $form = ActiveForm::begin([
     </div> 
     <div class="clearfix"></div>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsbmc-union_code,tbldcsbmc-state_code', 'district_code', 'District', FALSE, $readonly); ?>

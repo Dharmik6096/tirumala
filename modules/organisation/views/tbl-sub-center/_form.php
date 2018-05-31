@@ -12,6 +12,7 @@ $this->title = Yii::t('app', $title);
 $milkType = $model->getMilkTypes();
 $nameWarning = 0;
 $codeWarning = 0;
+$readonly = $type == 'create' ? FALSE : TRUE;
 if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
@@ -63,7 +64,7 @@ $form = ActiveForm::begin([
     </div>
     <?= Html::activeHiddenInput($model, 'destination_type') ?>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State'); ?>
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblsubcenter-union_code,tblsubcenter-state_code', 'district_code', 'District'); ?>
