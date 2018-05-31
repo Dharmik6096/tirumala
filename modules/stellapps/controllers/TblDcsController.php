@@ -18,6 +18,7 @@ class TblDcsController extends \yii\web\Controller {
         $dcs_codes = array_column($dcs_data, 'dcs_code');
         $update = $dcs_model->updateDcs($dcs_codes);
         foreach ($dcs_data as $dcs) {
+            $dcs->scenario = 'deactivate';
             try {
                 $body = [];
                 $metadata = [];

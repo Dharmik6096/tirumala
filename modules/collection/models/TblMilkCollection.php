@@ -70,7 +70,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag'], 'string'],
-            [['milk_type_code', 'shift', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'rtpl', 'qty', 'amount'], 'required'],
+            [['milk_type_code', 'shift', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'rtpl', 'qty', 'amount'], 'required', 'except' => ['portal_data_post']],
             [['milk_type_code', 'sample_no', 'ack'], 'integer'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number'],
             //[['sms_status'],'default','n'],
@@ -197,6 +197,8 @@ class TblMilkCollection extends \app\models\ChildModel {
                         ->joinWith(['societyVendorCode'])
                         ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
                         ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
+                        ->limit(1)
+                        ->orderby('date_time_of_collection ASC')
                         ->all();
     }
 

@@ -114,7 +114,7 @@ class TblDcs extends ChildModel {
             [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => 'importCsv'],
             [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => 'importCsv'],
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
-            [['dcs_code', 'dcs_code_ex', 'dcs_short_name', 'gst_no'], 'unique'],
+            [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
             [['allow_multi_family_member', /* 'destination_type', */ 'dcs_type_code'], 'integer'],
             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
@@ -172,7 +172,7 @@ class TblDcs extends ChildModel {
 //                },'skipOnEmpty'=> false],
                     [['tmcc_code'], 'string', 'max' => 10],
                     [['tmcc_code'], 'number', 'min' => 1],
-                        //     [['tmcc_code'], 'required'],
+                    ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')]
                 ];
             }
 
@@ -670,13 +670,13 @@ class TblDcs extends ChildModel {
                     return Yii::t('app', 'Pending');
                 }
             }
-            
-            public function getSocietyData(){
+
+            public function getSocietyData() {
                 return $this->find()
-                        ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_contact_details.mobile_no'])
-                        ->joinWith(['defaultContactDetail'])
-                        ->where(['bmc_code' => $this->bmc_code, 'tbl_dcs.is_active' => 1])
-                        ->all();
+                                ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_contact_details.mobile_no'])
+                                ->joinWith(['defaultContactDetail'])
+                                ->where(['bmc_code' => $this->bmc_code, 'tbl_dcs.is_active' => 1])
+                                ->all();
             }
 
         }
