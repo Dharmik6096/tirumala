@@ -5,6 +5,7 @@ namespace app\components;
 use yii;
 use GuzzleHttp;
 use GuzzleHttp\RequestOptions;
+use app\models\TblPortalDataPostLog;
 
 class WebApi {
 
@@ -41,7 +42,15 @@ class WebApi {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "Content-length: " . strlen($data)));
         $result = curl_exec($ch);
         curl_close($ch);
-        return json_decode($result);
+        $res = json_decode($result);
+        $log_model = new TblPortalDataPostLog();
+        $log_model->status = ($res->msg == 'Success!') ? 1: 0;
+        $log_model->vendor_code = 'STELLAPPS';
+        $log_model->url = $url;
+        $log_model->request = $data;
+        $log_model->response = $result;
+        $log_model->save();
+        return $res;
     }
 
 }
