@@ -22,6 +22,7 @@ class TblMilkCollectionController extends \yii\web\Controller {
         $stellaps_model = new StellappsModel();
         $ref_att = $stellaps_model->reference_att;
         foreach ($milk_coll_data as $milk_coll) {
+            $milk_coll->scenario = 'portal_data_post';
             $dcs = $milk_coll->dcsCode;
             try {
                 $body = [];
@@ -36,7 +37,7 @@ class TblMilkCollectionController extends \yii\web\Controller {
                 $route_model = new TblRouteMappingSources();
                 $route_model->from_dest = $dcs->dcs_code;
                 $route_data = $route_model->getRouteDcsData();
-                
+
                 if (!empty($route_data)) {
                     $route['id'] = $route_data->route_code;
                     $route['name'] = Yii::$app->general->getforeignkey($route_data->routeCode, 'route_name');
@@ -65,7 +66,7 @@ class TblMilkCollectionController extends \yii\web\Controller {
                         $metadata['date'] = !empty($milk_coll->date_time_of_collection) ? date('Y-m-d', strtotime($milk_coll->date_time_of_collection)) : '';
                         $metadata['shift'] = strtoupper(Yii::$app->general->getforeignkey($milk_coll->shiftCode, 'shift'));
 
-                        $collectionEntryList['farmerId'] = $milk_coll->member_code;
+                        $collectionEntryList['farmerId'] = substr($milk_coll->member_code, -4);
                         $collectionEntryList['milkType'] = strtoupper(Yii::$app->general->getforeignkey($milk_coll->milkTypeCode, 'animal_type_name'));
                         $collectionEntryList['milkQuantity'] = $milk_coll->qty;
                         $collectionEntryList['fat'] = $milk_coll->fat;
