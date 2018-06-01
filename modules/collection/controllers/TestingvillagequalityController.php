@@ -15,21 +15,6 @@ use yii\filters\VerbFilter;
 class TestingvillagequalityController extends \app\controllers\ChildController
 {
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all Testingvillagequality models.
      * @return mixed
      */
