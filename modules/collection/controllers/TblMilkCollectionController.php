@@ -57,7 +57,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->name = Yii::$app->general->getforeignkey($this->model->memberCode, 'member_name');
             $this->model->village_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code');
             $datetime = date('Y-m-d H:i:s');
-            $this->model->date_time_of_collection = $datetime;
+            $this->model->date_time_of_collection = date('Y-m-d') . ' ' . Yii::$app->general->getshift($this->model->shift);
             $this->model->date_time_of_recieve = $datetime;
             $this->model->dt_date = $datetime;
             $this->model->qlty_time = $datetime;
@@ -66,7 +66,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->status = 'Accept';
             $this->model->qty_mode = 1;
             $this->model->qlty_auto = 1;
-            $this->model->qty_auto = 1;            
+            $this->model->qty_auto = 1;
             $this->model->sms_status = 'n';
             $this->model->sample_no = $this->model->getSampleNo();
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Milk Collection', 'create']);
