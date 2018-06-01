@@ -494,6 +494,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Collection Type'),
                 'data' => [1 => Yii::t('app', 'Self'), 2 => Yii::t('app', 'Transporter')],
             ],
+            'shift' => [
+                'name' => 'shift',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['M' => Yii::t('app', 'Morning'), 'E' => Yii::t('app', 'Evening')],
+            ],
+            'milktype' => [
+                'name' => 'milktype',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['C' => Yii::t('app', 'Cow'), 'B' => Yii::t('app', 'Buffalo'), 'M' => Yii::t('app', 'Mix')],
+            ],
         ];
         return $records[$l];
     }

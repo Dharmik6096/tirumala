@@ -68,6 +68,8 @@ echo GhostMenu::widget([
                 ['label' => 'BMC Dispatch', 'url' => ['/collection/tbl-bmc-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch')],
                 ['label' => 'Local Milk Sale', 'url' => ['/collection/tbl-tab-local-sale/index'], 'active' => ($cntrl == 'tbl-tab-local-sale')],
                 ['label' => 'DPU Shift End Summary', 'url' => ['/collection/tbl-dpu-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-dpu-shift-end-summary')],
+                ['label' => 'BMC Testing Data', 'url' => ['/collection/testingvillagequality/index'], 'active' => ($cntrl == 'testingvillagequality')],
+                ['label' => 'BMC Weight Data', 'url' => ['/collection/testingvillageweight/index'], 'active' => ($cntrl == 'testingvillageweight')],
             ],
         ],
         [
