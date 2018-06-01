@@ -18,23 +18,21 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblPortalDataPostLog extends ChildModel
-{
+class TblPortalDataPostLog extends ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_portal_data_post_log';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['vendor_code', 'url', 'request', 'response', 'created_by', 'updated_by'], 'safe'],
+            [['vendor_code', 'url', 'request', 'response', 'created_by', 'updated_by', 'request_original', 'request_ip', 'error_log'], 'safe'],
             [['status'], 'safe'],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -43,8 +41,7 @@ class TblPortalDataPostLog extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'log_id' => Yii::t('app', 'Log ID'),
             'vendor_code' => Yii::t('app', 'Vendor Code'),
@@ -58,4 +55,5 @@ class TblPortalDataPostLog extends ChildModel
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
+
 }

@@ -15,10 +15,11 @@ use app\modules\dcsoperation\models\TblPurchaseRateBased;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblQualityParam;
+use app\models\TblPortalDataPostLog;
 
 class StellappsModel {
 
-    private $data, $model, $username = "STA", $password = "STA", $path = 'C:\STELLAPPSFTP\ErrorLogs';
+    private $data, $model, $username = "STA", $password = "STA", $path = 'C:\STELLAPPSFTP\ErrorLogs', $org_data;
     public $change_att = array('member_code' => 'ex_member_code', 'rate_id' => 'reference_code');
     public $reference_att = [
         'milk_type' => [
@@ -74,6 +75,7 @@ class StellappsModel {
 
     public function manipulation($data) {
         $this->data = $data;
+        $this->org_data = $data;
         $this->parseData();
         switch (1) {
             case empty($this->data['svc']):
@@ -124,10 +126,12 @@ class StellappsModel {
     private function saveBmcCollection() {
         $this->model = new StellappsCollection();
         $this->model->scenario = 'default';
+        $this->data['type_of_data_receive'] = 'STELLAPPS';
         return $this->saveData();
     }
 
     private function saveData() {
+        $error_text = '';
         $generalModel = new GeneralModel();
         $saveData = [];
         $reponse = 0;
@@ -176,6 +180,7 @@ class StellappsModel {
                     $logs['errors'][] = $smodel->getErrors();
                 }
                 $text = json_encode($logs);
+                $error_text = isset($logs['errors']) ? json_encode($logs['errors']) : '';
                 $this->createCpLogFile($this->path, $text, $this->data['cp_code']);
             }
             $reponse = 0;
@@ -190,16 +195,18 @@ class StellappsModel {
                 $dir = $this->checkDirectory($this->path);
                 if ($dir) {
                     $text = 'Error ocuured while saving data!!';
+                    $error_text = $text;
                     $this->createCpLogFile($this->path, $text, $this->data['cp_code']);
                 }
             } else {
                 $reponse = 1;
             }
         }
-        return $this->responseData($reponse, $fileName);
+        return $this->responseData($reponse, $error_text);
     }
 
     private function savePriceData() {
+        $error_text = '';
         $generalModel = new GeneralModel();
         $saveData = [];
         $reponse = 0;
@@ -297,6 +304,7 @@ class StellappsModel {
                     $logs['errors'][] = $smodel->getErrors();
                 }
                 $text = json_encode($logs);
+                $error_text = isset($logs['errors']) ? json_encode($logs['errors']) : '';
                 $this->createCpLogFile($this->path, $text, $this->data['cp_code']);
             }
             $reponse = 0;
@@ -307,16 +315,19 @@ class StellappsModel {
                 $dir = $this->checkDirectory($this->path);
                 if ($dir) {
                     $text = 'Error ocuured while saving data!!';
+                    $error_text = $text;
+
                     $this->createCpLogFile($this->path, $text, $this->data['cp_code']);
                 }
             } else {
                 $reponse = 1;
             }
         }
-        return $this->responseData($reponse, $fileName);
+        return $this->responseData($reponse, $error_text);
     }
 
     private function responseData($status, $error = '') {
+        $txt = '';
         $message = [
             1 => 'Successfully Saved!',
             0 => 'Unable to save!',
@@ -352,7 +363,18 @@ class StellappsModel {
                 $this->createGenLogFile($this->path, $txt);
             }
         }
-        return ["status" => $status, "msg" => $message[$status]];
+        $response = ["status" => $status, "msg" => $message[$status]];
+        $log_model = new TblPortalDataPostLog();
+        $log_model->vendor_code = 'STELLAPPS';
+        $log_model->url = Yii::$app->request->absoluteUrl;
+        $log_model->request = json_encode($this->data);
+        $log_model->request_original = json_encode($this->org_data);
+        $log_model->request_ip = $_SERVER['REMOTE_ADDR'];
+        $log_model->status = $status;
+        $log_model->response = json_encode($response);
+        $log_model->error_log = $error . ' - ' . $txt;
+        $log_model->save();
+        return $response;
     }
 
     protected function checkDirectory($path) {
