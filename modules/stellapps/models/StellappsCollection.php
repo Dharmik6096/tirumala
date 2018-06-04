@@ -21,7 +21,7 @@ class StellappsCollection extends TblBmcCollection {
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code']],
-            [['qty_mode', 'qty_auto', 'qlty_auto'], 'in', 'range' => [0,1]]
+            [['qty_mode', 'qty_auto', 'qlty_auto'], 'in', 'range' => [0, 1]]
         ];
         foreach ($rules as $row) {
             array_push($array, $row);
@@ -30,10 +30,12 @@ class StellappsCollection extends TblBmcCollection {
     }
 
     public function AddAutoData($attribute, $params) {
-        $this->date_time_of_collection = date('Y-m-d', strtotime($this->date)) . ' ' . $this->weigh_time;
+        $this->date_time_of_collection = date('Y-m-d', strtotime($this->date)) . ' ' . \Yii::$app->general->getshift($this->shift_code);
         $this->date_time_of_recieve = date('Y-m-d h:i:s');
         $this->date_time_of_testing = date('Y-m-d', strtotime($this->date)) . ' ' . $this->testing_time;
         $this->village_code = $this->dcsCode->village_code;
+        $this->qty_time = date('Y-m-d', strtotime($this->date)) . ' ' . $this->weigh_time;
+        $this->qlty_time = date('Y-m-d', strtotime($this->date)) . ' ' . $this->testing_time;
     }
 
 }
