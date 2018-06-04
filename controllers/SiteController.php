@@ -462,6 +462,8 @@ class SiteController extends Controller {
         try {
             $smsModel = new TblSms();
             $smsModel = $smsModel->getData();
+            $sms_ids = array_column($smsModel, 'sms_id');
+            $update = $smsModel->updateSmsStatus($sms_ids);
             foreach ($smsModel as $sms) {
                 $mobile = '91' . $sms->mobile_no;
                 $msg = $sms->sms_txt;
@@ -475,6 +477,7 @@ class SiteController extends Controller {
                 $sms->sms_result = $res->status;
                 //$collection->sms_errorlog=Yii::$app->bsmartsms->getStatusMsg($res->status);
                 $sms->updated_at = date('Y-m-d H:i:s');
+                $sms->status = 2;                
                 $sms->save(false);
             }
             $paymentModel = new TblPaymentTransaction();

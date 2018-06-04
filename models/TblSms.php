@@ -37,7 +37,7 @@ class TblSms extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['module_name', 'module_code', 'mobile_no', 'sms_txt', 'sms_status', 'sms_result', 'union_code', 'created_by', 'updated_by', 'sms_msgid', 'sms_mobile'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'status'], 'safe'],
         ];
     }
 
@@ -66,8 +66,15 @@ class TblSms extends \yii\db\ActiveRecord {
     public function getData() {
         return $this->find()
                         ->where(['sms_status' => 'N'])
+                        ->where(['or', ['status' => 0], ['status' => NULL]])
                         ->andWhere(['and', ['IS NOT', 'mobile_no', NULL], ['<>', 'mobile_no', '']])
+                        ->limit(2000)
+                        ->orderby('created_at ASC')
                         ->all();
+    }
+    
+    public function updateSmsStatus($value) {
+        return $this->updateAll(['status' => 1], ['sms_id' => $value]);
     }
 
 }
