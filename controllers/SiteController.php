@@ -461,10 +461,10 @@ class SiteController extends Controller {
     public function actionSendCollectionSms() {
         try {
             $smsModel = new TblSms();
-            $smsModel = $smsModel->getData();
-            $sms_ids = array_column($smsModel, 'sms_id');
+            $smsData = $smsModel->getData();
+            $sms_ids = array_column($smsData, 'sms_id');
             $update = $smsModel->updateSmsStatus($sms_ids);
-            foreach ($smsModel as $sms) {
+            foreach ($smsData as $sms) {
                 $mobile = '91' . $sms->mobile_no;
                 $msg = $sms->sms_txt;
                 $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $msg);
