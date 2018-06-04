@@ -19,6 +19,7 @@ class RestController extends ActiveController {
     ];
     public $modelClass = 'app\modules\webservice\models';
     public $post_data = [];
+    public $apply_camel_case = TRUE;
 
     public function actions() {
         return [];
@@ -47,6 +48,7 @@ class RestController extends ActiveController {
         } else {
             //$result = parent::afterAction($action, $result);
             $response = new HttpResponse();
+            $response->apply_camel_case = $this->apply_camel_case;
             return $response->BindResponse($this->response);
         }
     }

@@ -13,10 +13,11 @@ class HttpResponse extends \yii\base\Component {
         'error' => ['code' => '', 'message' => []],
         'data' => [],
     ];
+    public $apply_camel_case = TRUE;
 
     public function BindResponse($response) {
         if (!empty($response['data'])) {
-            $this->response['data'] = $this->underscoreToCamelCase($response['data']);
+            $this->response['data'] = ($this->apply_camel_case) ? $this->underscoreToCamelCase($response['data']) : $response['data'];
             $this->response['error']['message'] = $response['message'];
         } else {
             $this->response['error']['message'] = ['Data Not Available'];

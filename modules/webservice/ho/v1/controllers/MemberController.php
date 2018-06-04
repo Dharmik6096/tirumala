@@ -19,6 +19,9 @@ class MemberController extends ChildController {
         $from_datetime = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
         $to_datetime = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
         $sp = 'sp_app_ho_member_data';
+        if ($data_type == 'A') {
+            $this->apply_camel_case = FALSE;
+        }
         return $this->response['data'] = $this->getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $from_datetime, $to_datetime, $data_type);
     }
 
@@ -43,6 +46,7 @@ class MemberController extends ChildController {
                 ->bindValue(':bmc_code', $bmc)
                 ->bindValue(':dcs_code', $dcs)
                 ->bindValue(':member_code', $member_code);
+        $this->apply_camel_case = FALSE;
         return $this->response['data'] = $query->queryAll();
     }
 

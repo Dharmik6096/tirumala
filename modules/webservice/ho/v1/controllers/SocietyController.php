@@ -22,7 +22,9 @@ class SocietyController extends ChildController {
             $sp = 'sp_app_ho_bmc_dcs_data';
         else
             $sp = 'sp_app_ho_dcs_data';
-
+        if ($data_type == 'A') {
+            $this->apply_camel_case = FALSE;
+        }
         return $this->response['data'] = $this->getSpData($sp, $union, $plant, $mcc, $bmc, $dcs, $from_datetime, $to_datetime, $data_type);
     }
 
