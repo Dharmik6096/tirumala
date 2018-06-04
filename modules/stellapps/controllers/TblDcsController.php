@@ -61,8 +61,8 @@ class TblDcsController extends \yii\web\Controller {
                         $collectionCenterList['operatorMobileNum'] = $contact_data->mobile_no;
                         $collectionCenterList['operatorCode'] = '';
                         $collectionCenterList['operatorEmailId'] = $contact_data->email;
-                        $collectionCenterList['createdTime'] = !empty($contact_data->created_at) ? strtotime($contact_data->created_at) : '';
-                        $collectionCenterList['lastModifiedTime'] = !empty($contact_data->updated_at) ? strtotime($contact_data->updated_at) : '';
+                        $collectionCenterList['createdTime'] = !empty($contact_data->created_at) ? strtotime($contact_data->created_at) * 1000 : '';
+                        $collectionCenterList['lastModifiedTime'] = !empty($contact_data->updated_at) ? strtotime($contact_data->updated_at) * 1000 : '';
                         $body['collectionCenterList'][] = $collectionCenterList;
                         $api = new WebApi();
                         $api->apiurl = 'tmccs';
