@@ -66,7 +66,7 @@ class TblSms extends \yii\db\ActiveRecord {
     public function getData() {
         return $this->find()
                         ->where(['sms_status' => 'N'])
-                        ->where(['or', ['status' => 0], ['status' => NULL]])
+                        ->andWhere(['or', ['status' => 0], ['status' => NULL]])
                         ->andWhere(['and', ['IS NOT', 'mobile_no', NULL], ['<>', 'mobile_no', '']])
                         ->limit(2000)
                         ->orderby('created_at ASC')
