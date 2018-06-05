@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\webservice\ho\v1\controllers;
+namespace app\modules\webservice\ho\v2\controllers;
 
 use app\modules\webservice\controllers\ChildController;
 use Yii;

@@ -18,7 +18,7 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['v1/society/society-data', 'v1/app-activation/register', 'v1/app-activation/verification', 'v1/app-activation/initialization', 'v1/member/register', 'v1/member/verification', 'v1/member/initialization', 'v1/bmc-dispatch/add-dispatch'];
+    public $is_free = ['v1/society/society-data', 'v1/app-activation/register', 'v1/app-activation/verification', 'v1/app-activation/initialization', 'v1/member/register', 'v1/member/verification', 'v1/member/initialization', 'v1/bmc-dispatch/add-dispatch', 'v2/app-activation/register'];
     public $request;
     public $allow_call = FALSE;
 
@@ -29,10 +29,10 @@ class HttpRequest extends \yii\base\Component {
         $request = $this->camelCaseToUnderscore($post_data);
         $request['dcs_code'] = $request['identity_code'];
         if (isset($request['type'])) {
-            if($request['type'] == 3){
+            if ($request['type'] == 3) {
                 $request['bmc_code'] = $request['identity_code'];
             }
-            if($request['type'] == 4){
+            if ($request['type'] == 4) {
                 $request['username'] = $request['identity_code'];
             }
         }
@@ -66,7 +66,7 @@ class HttpRequest extends \yii\base\Component {
         $log = new TblApiRequestLog();
         $log->setAttributes($this->request);
         $log->content = Yii::$app->request->getRawBody();
-        $log->request_url = Yii::$app->controller->module->module->id.'/'.$this->req_url;
+        $log->request_url = Yii::$app->controller->module->module->id . '/' . $this->req_url;
         $log->request_time = date('Y-m-d H:i:s');
         $log->is_called = $this->allow_call;
         $log->save();
