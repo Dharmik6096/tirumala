@@ -8,8 +8,9 @@ use Yii;
 class WidgetController extends ChildController {
 
     
-    public function actionSocietyCollection() {
+    public function actionSocietyWidgets() {
         $param = [];
+        $response = [];
         $content = $this->post_data['content'];
         $data = $this->getOrgCodes($this->post_data);
         $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
@@ -20,11 +21,15 @@ class WidgetController extends ChildController {
         $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
         $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $sp = 'sp_app_ho_widget_society_collection';
-        return $this->response['data'] = $this->getSpData($sp, $param);
+        $response['society_collection'] = $this->getSpData($sp, $param);
+        $sp = 'sp_app_ho_widget_member_diff';
+        $response['member_diff'] = $this->getSpData($sp, $param);
+        return $this->response['data'] = $response;
     }
     
-    public function actionBmcCollection() {
+    public function actionBmcWidgets() {
         $param = [];
+        $response = [];
         $content = $this->post_data['content'];
         $data = $this->getOrgCodes($this->post_data);
         $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
@@ -35,37 +40,10 @@ class WidgetController extends ChildController {
         $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
         $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $sp = 'sp_app_ho_widget_bmc_collection';
-        return $this->response['data'] = $this->getSpData($sp, $param);
+        $response['bmc_collection'] = $this->getSpData($sp, $param);
+        $sp = 'sp_app_ho_widget_society_diff';
+        $response['society_diff'] = $this->getSpData($sp, $param);
+        return $this->response['data'] = $response;
     }
     
-    public function actionMemberDiff() {
-        $param = [];
-        $content = $this->post_data['content'];
-        $data = $this->getOrgCodes($this->post_data);
-        $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
-        $param[] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
-        $param[] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
-        $param[] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
-        $param[] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
-        $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
-        $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
-        $sp = 'sp_app_ho_widget_member_diff';
-        return $this->response['data'] = $this->getSpData($sp, $param);
-    }
-       
-    public function actionSocietyDiff() {
-        $param = [];
-        $content = $this->post_data['content'];
-        $data = $this->getOrgCodes($this->post_data);
-        $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
-        $param[] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
-        $param[] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
-        $param[] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
-        $param[] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
-        $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
-        $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
-        $sp = 'sp_app_ho_widget_society_diff';
-        return $this->response['data'] = $this->getSpData($sp, $param);
-    }
-
 }
