@@ -12,13 +12,13 @@ class WidgetController extends ChildController {
         $param = [];
         $content = $this->post_data['content'];
         $data = $this->getOrgCodes($this->post_data);
-        $param['date_from'] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
-        $param['date_to'] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
-        $param['union_code'] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
-        $param['plant_code'] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
-        $param['mcc_code'] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
-        $param['bmc_code'] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
-        $param['dcs_code'] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
+        $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
+        $param[] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
+        $param[] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
+        $param[] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
+        $param[] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
+        $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
+        $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $sp = 'sp_app_ho_widget_society_collection';
         return $this->response['data'] = $this->getSpData($sp, $param);
     }
@@ -27,13 +27,13 @@ class WidgetController extends ChildController {
         $param = [];
         $content = $this->post_data['content'];
         $data = $this->getOrgCodes($this->post_data);
-        $param['date_from'] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
-        $param['date_to'] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
-        $param['union_code'] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
-        $param['plant_code'] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
-        $param['mcc_code'] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
-        $param['bmc_code'] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
-        $param['dcs_code'] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
+        $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
+        $param[] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
+        $param[] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
+        $param[] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
+        $param[] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
+        $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
+        $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $sp = 'sp_app_ho_widget_bmc_collection';
         return $this->response['data'] = $this->getSpData($sp, $param);
     }
@@ -42,13 +42,13 @@ class WidgetController extends ChildController {
         $param = [];
         $content = $this->post_data['content'];
         $data = $this->getOrgCodes($this->post_data);
-        $param['date_from'] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
-        $param['date_to'] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
-        $param['union_code'] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
-        $param['plant_code'] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
-        $param['mcc_code'] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
-        $param['bmc_code'] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
-        $param['dcs_code'] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
+        $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
+        $param[] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
+        $param[] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
+        $param[] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
+        $param[] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
+        $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
+        $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $sp = 'sp_app_ho_widget_member_diff';
         return $this->response['data'] = $this->getSpData($sp, $param);
     }
@@ -57,13 +57,13 @@ class WidgetController extends ChildController {
         $param = [];
         $content = $this->post_data['content'];
         $data = $this->getOrgCodes($this->post_data);
-        $param['date_from'] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
-        $param['date_to'] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
-        $param['union_code'] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
-        $param['plant_code'] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
-        $param['mcc_code'] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
-        $param['bmc_code'] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
-        $param['dcs_code'] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
+        $param[] = !empty($content['from_datetime']) ? $content['from_datetime'] : '';
+        $param[] = !empty($content['to_datetime']) ? $content['to_datetime'] : '';
+        $param[] = !empty($data['union']) ? ',' . implode(',', $data['union']) . ',' : 0;
+        $param[] = !empty($data['plant']) ? ',' . implode(',', $data['plant']) . ',' : 0;
+        $param[] = !empty($data['mcc']) ? ',' . implode(',', $data['mcc']) . ',' : 0;
+        $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
+        $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $sp = 'sp_app_ho_widget_society_diff';
         return $this->response['data'] = $this->getSpData($sp, $param);
     }

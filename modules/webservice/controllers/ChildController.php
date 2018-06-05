@@ -79,17 +79,17 @@ class ChildController extends RestController {
         $data['plant'] = $plant;
         return $data;
     }
-    
+
     public function getSpData($sp, $param) {
         $str = '';
-        $coutn = count($param);
-        foreach ($param as $key => $value) {
-            $str.=':' . $key . ',';
+        $count = count($param);
+        for ($i = 1; $i <= $count; $i++) {
+            $str.=':paramName' . $i . ',';
         }
         $str = substr($str, 0, -1);
         $command = \Yii::$app->db->createCommand("{CALL {$sp}({$str})}");
         foreach ($param as $key => $value) {
-            $command->bindValue(':' . $key, $value);
+            $command->bindValue(':paramName' . ($key + 1), $value);
         }
         return $command->queryAll();
     }
