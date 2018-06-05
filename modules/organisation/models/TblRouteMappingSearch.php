@@ -42,6 +42,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
      */
     public function search($params) {
         $query = TblRouteMapping::find();
+        $query->distinct('tbl_route_mapping.route_code');
 
         // add conditions that should always apply here
 

@@ -39,6 +39,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
     public function search($params) {
 
         $query = $this->find();
+        $query->distinct('tbl_dcs_subcenter_bmc_info.bmc_code');
 
         // add conditions that should always apply here
 

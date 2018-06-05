@@ -56,22 +56,20 @@ class TblClusterSearch extends TblCluster {
             return $dataProvider;
         }
 
+        if (Yii::$app->session->get('Unions') !== '')
+            $query->andFilterWhere([ 'tbl_cluster.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+
         // grid filtering conditions
         $query->andFilterWhere([
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'tbl_cluster.is_active' => $this->is_active,
         ]);
 
         $query->andFilterWhere(['like', 'cluster_code', $this->cluster_code])
-                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
                 ->andFilterWhere(['like', 'tbl_cluster.name', $this->name])
                 ->andFilterWhere(['like', 'local_name', $this->local_name])
                 ->andFilterWhere(['like', 'address', $this->address])
                 ->andFilterWhere(['like', 'local_address', $this->local_address])
                 ->andFilterWhere(['like', 'description', $this->description])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'union_code', $this->union_code])
                 ->andFilterWhere(['like', 'tbl_plant.name', $this->plant_code]);
 

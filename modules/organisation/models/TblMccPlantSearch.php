@@ -41,7 +41,7 @@ class TblMccPlantSearch extends TblMccPlant {
      */
     public function search($params) {
         $query = TblMccPlant::find();
-
+        $query->distinct('tbl_mcc_plant.mcc_plant_code');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
