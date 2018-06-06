@@ -56,8 +56,7 @@ class WidgetController extends ChildController {
         $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
         $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $sp = 'sp_app_ho_collection_vs_completed';
-        $response[] = $this->getSpData($sp, $param);
-        return $this->response['data'] = $response;
+        return $this->response['data'] = $this->getSpData($sp, $param);
     }
 
 }
