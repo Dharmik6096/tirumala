@@ -5,8 +5,8 @@ namespace app\modules\webservice\ho;
 /**
  * bmc module definition class
  */
-class Ho extends \yii\base\Module
-{
+class Ho extends \yii\base\Module {
+
     /**
      * @inheritdoc
      */
@@ -20,6 +20,9 @@ class Ho extends \yii\base\Module
         $this->modules = [
             'v1' => [
                 'class' => 'app\modules\webservice\ho\v1\V1',
+            ],
+            'v2' => [
+                'class' => 'app\modules\webservice\ho\v2\V2',
             ],
         ];
     }
