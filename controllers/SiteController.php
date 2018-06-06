@@ -46,6 +46,16 @@ class SiteController extends Controller {
 
     public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification'];
 
+    public function init() {
+        parent::init();
+        $language = (!empty(Yii::$app->session->get('Unions')) && count(explode(',',Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
+        \Yii::$app->language = $language;
+        $path = Yii::$app->basePath . '/messages/' . $language;
+        if (!file_exists($path)) {
+            \Yii::$app->language = Yii::$app->session->get('LanguageCode');
+        }
+    }
+    
     /**
      * @inheritdoc
      */
