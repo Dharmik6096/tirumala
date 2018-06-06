@@ -128,7 +128,7 @@ class TblProductSaleController extends \app\controllers\ChildController
                         }
                         
                         $installmentModel=new TblSaleInstallments();
-                        $installmentModel->installment_code=Yii::$app->general->getCodeAutoIncrement($installmentModel)+$i;
+//                        $installmentModel->installment_code=Yii::$app->general->getCodeAutoIncrement($installmentModel)+$i;
                         $installmentModel->sale_type='product';
                         $installmentModel->sale_code=$this->model->product_sale_code;
                         $installmentModel->member_code=$this->model->member_code;
