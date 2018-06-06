@@ -598,7 +598,7 @@ class TblDcs extends ChildModel {
                                 ->joinWith(['societyVendors'])
                                 ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
                                 ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
-                                ->limit(2000)
+                                ->limit(200)
                                 ->orderby('created_at ASC')
                                 ->all();
             }
