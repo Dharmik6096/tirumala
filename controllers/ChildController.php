@@ -29,7 +29,13 @@ class ChildController extends Controller {
 
     public function init() {
         parent::init();
-        \Yii::$app->language = Yii::$app->session->get('LanguageCode');
+        $language = (!empty(Yii::$app->session->get('organizations_code')) && Yii::$app->session->get('organizations_type') == 'UNION' && count(explode(',', Yii::$app->session->get('organizations_code')) == 1)) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
+        \Yii::$app->language = $language;
+        $path = Yii::$app->basePath . '/messages/' . $language;
+        if (!file_exists($path)) {
+            \Yii::$app->language = Yii::$app->session->get('LanguageCode');
+        }
+        
         if (!defined('DATE_FORMAT'))
             define('DATE_FORMAT', 'php:Y-m-d');
         if (!defined('INSERT'))
@@ -39,11 +45,10 @@ class ChildController extends Controller {
         if (!defined('DELETE'))
             define('DELETE', 'DELETE');
         if (!defined('IMPORT_PATH'))
-            define('IMPORT_PATH',Yii::$app->basePath . '/web/import/');
-        if (!defined('QUALITY_PARAM'))
-        {
+            define('IMPORT_PATH', Yii::$app->basePath . '/web/import/');
+        if (!defined('QUALITY_PARAM')) {
             $model = new TblQualityParam();
-            define('QUALITY_PARAM',$model->getParams());
+            define('QUALITY_PARAM', $model->getParams());
         }
         $this->generalModel = new GeneralModel();
     }
@@ -55,13 +60,12 @@ class ChildController extends Controller {
             ],
             'access' => [
                 'class' => 'yii\filters\AccessControl',
-                'rules' => [                   
+                'rules' => [
                     [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                 ],
-                
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -77,9 +81,9 @@ class ChildController extends Controller {
     }
 
     protected function customRender() {
-        $childModel=new ChildModel();
-        $attrs=$this->model;
-        $attrs=$childModel->decryptModel($attrs);
+        $childModel = new ChildModel();
+        $attrs = $this->model;
+        $attrs = $childModel->decryptModel($attrs);
         $this->model->load($attrs);
         return $this->render($this->viewFile, ['model' => $this->model]);
     }
