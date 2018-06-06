@@ -88,8 +88,10 @@ class ChildController extends RestController {
         }
         $str = substr($str, 0, -1);
         $command = \Yii::$app->db->createCommand("{CALL {$sp}({$str})}");
+        $i = 1;
         foreach ($param as $key => $value) {
-            $command->bindValue(':paramName' . ($key + 1), $value);
+            $command->bindValue(':paramName' . $i, $value);
+            $i++;
         }
         return $command->queryAll();
     }
