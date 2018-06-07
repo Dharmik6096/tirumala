@@ -1,4 +1,5 @@
 <?php
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -6,10 +7,12 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+
 ?>
 <?php
+
 $attribute = [
-    ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'vAlign' => 'middle', 'filter'=>true],
+    ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'vAlign' => 'middle', 'filter' => true],
     [
         'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
@@ -21,19 +24,28 @@ $attribute = [
     return Yii::$app->controls->view_date($model->date_time_of_collection);
 }],
     //['attribute' => 'date_time_of_collection', 'value' => function($model){ return Yii::$app->controls->view_date($model->date_time_of_collection); }, 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'milk_type_code', 'value' => function($model){ return isset($model->milkType) ? $model->milkType->animal_type_name:''; }, 'vAlign' => 'middle', 'visible'=>false, 'filter'=>false],
-    ['attribute' => 'milk_quality_type_code', 'value' => function($model){ return isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name:''; }, 'vAlign' => 'middle', 'visible'=>false, 'filter'=>false],
-    ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'transporter_code', 'value' => function($model){ return isset($model->transporter) ? $model->transporter->transporter_name:''; }, 'vAlign' => 'middle', 'filter'=>false],
-    ['attribute' => 'vehicle_code', 'value' => function($model){ return isset($model->vehicle) ? $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name : ''; }, 'vAlign' => 'middle', 'filter'=>false],
+    ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'milk_type_code', 'value' => function($model) {
+            return isset($model->milkType) ? $model->milkType->animal_type_name : '';
+        }, 'vAlign' => 'middle', 'visible' => false, 'filter' => false],
+    ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+            return isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name : '';
+        }, 'vAlign' => 'middle', 'visible' => false, 'filter' => false],
+    ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'transporter_code', 'value' => function($model) {
+            return isset($model->transporter) ? $model->transporter->transporter_name : '';
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'vehicle_code', 'value' => function($model) {
+            return isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '';
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'collection_type', 'value' => function($model) {
-        return (Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] != '') ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '';}, 'vAlign' => 'middle', 'filter'=>false,'visible'=>false],
-    ['attribute' => 'remarks', 'value' => 'remarks', 'vAlign' => 'middle', 'filter'=>false,'visible'=>false],
+            return !empty($model->collection_type) ? ((Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] != '') ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '') : '';
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'remarks', 'value' => 'remarks', 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
 ];
 
 $grid_option = [
