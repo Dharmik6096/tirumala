@@ -64,7 +64,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             [['transporter_code', 'vehicle_code'], 'required', 'on' => 'transporter'],
             [['dcs_code'], 'validateDcs'],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+            [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
             return $this->shift_code;
         }],
             [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'collection_type', 'milk_quality_type_code'], 'required'],
