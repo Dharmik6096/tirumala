@@ -36,6 +36,7 @@ $attribute = [
     ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'type_of_data_receive', 'vAlign' => 'middle'],
     ['attribute' => 'transporter_code', 'value' => function($model) {
             return isset($model->transporter) ? $model->transporter->transporter_name : '';
         }, 'vAlign' => 'middle', 'filter' => false],
