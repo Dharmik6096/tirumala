@@ -44,18 +44,18 @@ use app\models\TblSms;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer'];
 
     public function init() {
         parent::init();
-        $language = (!empty(Yii::$app->session->get('Unions')) && count(explode(',',Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
+        $language = (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
         \Yii::$app->language = $language;
         $path = Yii::$app->basePath . '/messages/' . $language;
         if (!file_exists($path)) {
             \Yii::$app->language = Yii::$app->session->get('LanguageCode');
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -487,7 +487,7 @@ class SiteController extends Controller {
                 $sms->sms_result = $res->status;
                 //$collection->sms_errorlog=Yii::$app->bsmartsms->getStatusMsg($res->status);
                 $sms->updated_at = date('Y-m-d H:i:s');
-                $sms->status = 2;                
+                $sms->status = 2;
                 $sms->save(false);
             }
             $paymentModel = new TblPaymentTransaction();
@@ -956,6 +956,24 @@ class SiteController extends Controller {
                     $data->save();
                 }
             }
+        }
+    }
+
+    public function actionTxFarmer() {
+        $model = \Yii::$app->db_rmrd->createCommand("SELECT * FROM txfarmer where farmerid != '' ");
+        $users = $model->queryAll();
+        foreach ($users as $data) {
+            $result = Yii::$app->db_rmrd->createCommand("UPDATE txfarmer SET txflag=txflag WHERE "
+                            . "farmerid='" . $data['farmerid'] . "' "
+                            . "and vlccid='" . $data['vlccid'] . "' "
+                            . "and mccid='" . $data['mccid'] . "' "
+                            . "and sampleno='" . $data['sampleno'] . "' "
+                            . "and dtdate='" . $data['dtdate'] . "' "
+                            . "and shift='" . $data['shift'] . "' "
+                            . "and sampletime='" . $data['sampletime'] . "'")
+                    ->execute();
+            Yii::$app->db_rmrd->createCommand()
+                    ->insert('txfarmer_temp', $data)->execute();
         }
     }
 
