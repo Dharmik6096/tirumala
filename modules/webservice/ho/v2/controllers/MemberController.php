@@ -20,7 +20,7 @@ class MemberController extends \app\modules\webservice\ho\v1\controllers\MemberC
         $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
         $param[] = !empty($content['dcs_code']) ? ',' . $content['dcs_code'] . ',' : 0;
         $param[] = !empty($content['data_type']) ? $content['data_type'] : 'P';
-        $sp = 'sp_app_ho_v2_member_data';
+        $sp = 'sp_app_ho_member_data';
         return $this->response['data'] = $this->getSpData($sp, $param);
     }
 
@@ -36,7 +36,7 @@ class MemberController extends \app\modules\webservice\ho\v1\controllers\MemberC
         $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
         $param[] = !empty($content['dcs_code']) ? ',' . $content['dcs_code'] . ',' : 0;
         $param[] = !empty($content['member_code']) ? ',' . $content['dcs_code'] . $content['member_code'] . ',' : 0;
-        $sp = 'sp_app_ho_v2_member_collection_details';
+        $sp = 'sp_app_ho_member_collection_details';
         return $this->response['data'] = $this->getSpData($sp, $param);
     }
 
