@@ -72,12 +72,12 @@ class TblDcsController extends \yii\web\Controller {
                         } else {
                             $dcs->data_post_status = 3;
                         }
-                        $dcs->save();
+                        $dcs->save(FALSE);
                     }
                 }
             } catch (\Exception $e) {
                 $dcs->data_post_status = 3;
-                $dcs->save();
+                $dcs->save(FALSE);
             }
         }
     }

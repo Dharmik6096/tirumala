@@ -145,7 +145,15 @@ class StellappsModel {
                 $merge_key = !empty($update_label['merge_key']) ? $this->data[$update_label['merge_key']] : '';
                 $data_key = !empty($update_label['data_key']) ? $value[$update_label['data_key']] : '';
                 $pkValue = $merge_key . $data_key;
-                $check_exist = $saveModel->find()->where([$primaryKey => $pkValue])->one();
+                if(is_array($primaryKey)){
+                    $where = [];
+                    foreach ($primaryKey as $keys){
+                        $where[$keys] = $this->data[$keys];
+                    }
+                    $check_exist = $saveModel->find()->where($where)->one();
+                } else {
+                    $check_exist = $saveModel->find()->where([$primaryKey => $pkValue])->one();
+                }
                 if (!empty($check_exist)) {
                     $saveModel = $check_exist;
                     $model_name = Yii::$app->path->define($update_label['history_model']);

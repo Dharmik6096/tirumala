@@ -315,7 +315,7 @@ class TblUnionsController extends ChildController {
                     unlink($exist_logo);
                 }
             }
-            $logo_name = 'logo_' . Yii::$app->session->get('organizations_type') . '_' . $this->model->union_code . '.' . explode('.', $file_name)[1];
+            $logo_name = 'logo_UNION_' . $this->model->union_code . '.' . explode('.', $file_name)[1];
             $upload = copy($file, $path . $logo_name);
             if ($upload) {
                 if (file_exists($file)) {

@@ -25,6 +25,13 @@ class Stellapps extends \yii\base\Module {
             'data_key' => '',
             'history_model' => 'TblDcsConfigHistory',
             'update_on' => 'dcs_code',
+        ],
+        'save_bmc_milk_collection' => [
+            'allow_update' => TRUE,
+            'merge_key' => '',
+            'data_key' => '',
+            'history_model' => 'TblBmcCollectionHistory',
+            'update_on' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'],
         ]
     ];
 

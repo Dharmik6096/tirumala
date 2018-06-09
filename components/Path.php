@@ -15,7 +15,7 @@ class Path extends Component {
         ['TblDpuCalibration','TblDpuCalibrationSearch'],
         
         '\\app\modules\collection\models\\' =>
-        ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory','TblMilkDispatch','TblMilkDispatchSearch','TblMilkDispatchHistory'],
+        ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory','TblMilkDispatch','TblMilkDispatchSearch','TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory'],
         
         '\\app\modules\geo\models\\' =>
         ['TblStates', 'TblStatesHistory',

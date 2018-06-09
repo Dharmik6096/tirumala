@@ -101,12 +101,12 @@ class TblMilkCollectionController extends \yii\web\Controller {
                         } else {
                             $milk_coll->data_post_status = 3;
                         }
-                        $milk_coll->save();
+                        $milk_coll->save(FALSE);
                     }
                 }
             } catch (\Exception $e) {
                 $milk_coll->data_post_status = 3;
-                $milk_coll->save();
+                $milk_coll->save(FALSE);
             }
         }
     }
