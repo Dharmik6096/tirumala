@@ -29,9 +29,9 @@ class Stellapps extends \yii\base\Module {
         'save_bmc_milk_collection' => [
             'allow_update' => TRUE,
             'merge_key' => '',
-            'data_key' => '',
+            'data_key' => ['shift_code', 'date', 'dcs_code', 'sample_no'],
             'history_model' => 'TblBmcCollectionHistory',
-            'update_on' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'],
+            'update_on' => ['shift_code', 'date_time_of_collection', 'dcs_code', 'sample_no'],
         ]
     ];
 

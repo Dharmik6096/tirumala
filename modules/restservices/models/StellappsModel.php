@@ -142,16 +142,26 @@ class StellappsModel {
             $saveModel = $tmp->newInstanceArgs();
             if ($check_update) {
                 $primaryKey = $update_label['update_on'];
-                $merge_key = !empty($update_label['merge_key']) ? $this->data[$update_label['merge_key']] : '';
-                $data_key = !empty($update_label['data_key']) ? $value[$update_label['data_key']] : '';
-                $pkValue = $merge_key . $data_key;
-                if(is_array($primaryKey)){
+                if (is_array($primaryKey)) {
                     $where = [];
-                    foreach ($primaryKey as $keys){
-                        $where[$keys] = $this->data[$keys];
+                    foreach ($primaryKey as $key => $val) {
+                        $api_data = (isset($value[$update_label['data_key'][$key]])) ? $value[$update_label['data_key'][$key]] : $this->data[$update_label['data_key'][$key]];
+                        if ($update_label['data_key'][$key] == 'date' && !empty($value[$update_label['data_key'][$key]])) {
+                            $dt = new \DateTime($value[$update_label['data_key'][$key]]);
+                            if (in_array('shift_code', $update_label['data_key'])) {
+                                $a = $dt->format('Y-m-d') . ' ' . Yii::$app->general->getshift($where['shift_code']);
+                            } else {
+                                $a = $dt->format('Y-m-d');
+                            }
+                            $api_data = $a;
+                        }
+                        $where[$val] = $api_data;
                     }
                     $check_exist = $saveModel->find()->where($where)->one();
                 } else {
+                    $merge_key = !empty($update_label['merge_key']) ? $this->data[$update_label['merge_key']] : '';
+                    $data_key = !empty($update_label['data_key']) ? $value[$update_label['data_key']] : '';
+                    $pkValue = $merge_key . $data_key;
                     $check_exist = $saveModel->find()->where([$primaryKey => $pkValue])->one();
                 }
                 if (!empty($check_exist)) {
