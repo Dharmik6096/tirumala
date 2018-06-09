@@ -18,7 +18,7 @@ class BmcController extends \app\modules\webservice\ho\v1\controllers\BmcControl
         $param[] = !empty($data['bmc']) ? ',' . implode(',', $data['bmc']) . ',' : 0;
         $param[] = !empty($data['dcs']) ? ',' . implode(',', $data['dcs']) . ',' : 0;
         $param[] = !empty($content['data_type']) ? $content['data_type'] : 'P';
-        $sp = 'sp_app_ho_bmc_data';
+        $sp = 'sp_app_ho_v2_bmc_data';
         $this->apply_camel_case = FALSE;
         return $this->response['data'] = $this->getSpData($sp, $param);
     }
