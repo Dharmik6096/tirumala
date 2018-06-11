@@ -7,19 +7,22 @@ $model_class = (new \ReflectionClass($model))->getShortName();
 $field_class = strtolower($model_class);
 $filter_model = new SearchFilter();
 $filter_data = $filter_model->getRecord($model_class);
-if (!empty($filter_data)) {
-    $aciton = isset($filter_data['action']) ? $filter_data['action'] : ['index'];
-    $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
-    $filters = $filter_data['filter'];
-    $count = count($filters);
-    if (!empty($filters) && Yii::$app->controller->action->id == $aciton[0] && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
-        $f_cnt = 0;
-        $form = \yii\widgets\ActiveForm::begin([
-                    'action' => $aciton,
-                    'method' => $method,
-        ]);
-        ?>
-        <div class="grid-search search-filter">
+?>
+
+<div class="grid-search search-filter">
+    <?php
+    if (!empty($filter_data)) {
+        $aciton = isset($filter_data['action']) ? $filter_data['action'] : ['index'];
+        $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
+        $filters = $filter_data['filter'];
+        $count = count($filters);
+        if (!empty($filters) && Yii::$app->controller->action->id == $aciton[0] && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
+            $f_cnt = 0;
+            $form = \yii\widgets\ActiveForm::begin([
+                        'action' => $aciton,
+                        'method' => $method,
+            ]);
+            ?>
             <?php
             foreach ($filters as $key => $value) {
                 $value_array = explode(':', $value);
@@ -29,7 +32,7 @@ if (!empty($filter_data)) {
                         $f_cnt++
                         ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->federation_union($model, $form, 'f_union_code'); ?>
+                    <?= Yii::$app->dropdown->federation_union($model, $form, 'f_union_code'); ?>
                     </div>
                 <?php } ?>          
                 <?php
@@ -37,7 +40,7 @@ if (!empty($filter_data)) {
                     $f_cnt++
                     ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->union_plant($model, $form, $field_class . '-f_union_code', 'f_plant_code'); ?>
+                    <?= Yii::$app->dropdown->union_plant($model, $form, $field_class . '-f_union_code', 'f_plant_code'); ?>
                     </div>
                 <?php } ?>
                 <?php
@@ -45,7 +48,7 @@ if (!empty($filter_data)) {
                     $f_cnt++
                     ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->plant_mcc($model, $form, $field_class . '-f_plant_code', 'f_mcc_code'); ?>
+                    <?= Yii::$app->dropdown->plant_mcc($model, $form, $field_class . '-f_plant_code', 'f_mcc_code'); ?>
                     </div>
                 <?php } ?>
                 <?php
@@ -53,7 +56,7 @@ if (!empty($filter_data)) {
                     $f_cnt++
                     ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->mcc_bmc($model, $form, $field_class . '-f_mcc_code', 'f_bmc_code'); ?>
+                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, $field_class . '-f_mcc_code', 'f_bmc_code'); ?>
                     </div>
                 <?php } ?>         
                 <?php
@@ -68,7 +71,7 @@ if (!empty($filter_data)) {
                     $f_cnt++
                     ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->bmc_society($model, $form, $field_class . '-f_bmc_code', 'f_dcs_code'); ?>         
+                    <?= Yii::$app->dropdown->bmc_society($model, $form, $field_class . '-f_bmc_code', 'f_dcs_code'); ?>         
                     </div>
                 <?php } ?>
 
@@ -88,7 +91,7 @@ if (!empty($filter_data)) {
                     ?>
                     <div class="col-sm-4">
                         <div class="form-group">
-                            <?= Yii::$app->controls->min_max_date('min_date', 'max_date', $min_date, $max_date); ?>
+                <?= Yii::$app->controls->min_max_date('min_date', 'max_date', $min_date, $max_date); ?>
                         </div>
                     </div>
                 <?php } ?>
@@ -98,7 +101,7 @@ if (!empty($filter_data)) {
                     $f_cnt++;
                     ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, $value); ?>
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, $value); ?>
                     </div>
                 <?php } ?>
 
@@ -107,7 +110,7 @@ if (!empty($filter_data)) {
                     $f_cnt++
                     ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->controls->unit_conversion($model, [1, 2], 1, 'Select capacity unit'); ?>
+                    <?= Yii::$app->controls->unit_conversion($model, [1, 2], 1, 'Select capacity unit'); ?>
                     </div>
                 <?php } ?>
 
@@ -117,11 +120,11 @@ if (!empty($filter_data)) {
                     if (isset($value_array[1]) && $value_array[1] == 'f_union_code') {
                         ?>
                         <div class="col-sm-2">
-                            <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, $field_class . '-f_union_code', 'form-group col-sm-2 padding-right-5 padding-left-0'); ?>
+                        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, $field_class . '-f_union_code', 'form-group col-sm-2 padding-right-5 padding-left-0'); ?>
                         </div>
-                    <?php } else { ?>
+                        <?php } else { ?>
                         <div class="col-sm-2">
-                            <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', false, false, 'transporter_code'); ?>
+                        <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', false, false, 'transporter_code'); ?>
                         </div>
                         <?php
                     }
@@ -134,11 +137,11 @@ if (!empty($filter_data)) {
                     if (isset($value_array[1]) && $value_array[1] == 'transporter_code') {
                         ?>
                         <div class="col-sm-2">
-                            <?= Yii::$app->dropdown->vehicletransporter($model, $form, $field_class . '-transporter_code', 'vehicle_code'); ?>
+                        <?= Yii::$app->dropdown->vehicletransporter($model, $form, $field_class . '-transporter_code', 'vehicle_code'); ?>
                         </div>
-                    <?php } else { ?>
+                        <?php } else { ?>
                         <div class="col-sm-2">
-                            <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code'); ?>
+                        <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code'); ?>
                         </div>
                         <?php
                     }
@@ -150,21 +153,21 @@ if (!empty($filter_data)) {
                     $f_cnt++;
                     ?>
                     <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->dropdown('transporter_payment_head_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', false, false, 'transporter_payment_head_code'); ?>
+                    <?= Yii::$app->dropdown->dropdown('transporter_payment_head_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', false, false, 'transporter_payment_head_code'); ?>
                     </div>
                 <?php } ?>
 
             <?php } ?>
 
-            <?php if ($f_cnt > 0) { ?>
+                <?php if ($f_cnt > 0) { ?>
                 <div class="col-sm-2">
-                    <?= Yii::$app->controls->search(); ?>
+                <?= Yii::$app->controls->search(); ?>
                 </div>
             <?php } ?>
             <?php \yii\widgets\ActiveForm::end(); ?>
 
-        </div>
-        <?php
+            <?php
+        }
     }
-}
-?>
+    ?>
+</div>
