@@ -905,7 +905,7 @@ class SiteController extends Controller {
 
     public function actionSendNotification() {
         $url = \Yii::$app->params['notification_url'];
-        $types = ['1', '2', '3'];
+        $types = ['1', '2', '3', '4'];
         foreach ($types as $type) {
             $serverKey = '';
             if ($type == '1') {
@@ -914,6 +914,8 @@ class SiteController extends Controller {
                 $serverKey = \Yii::$app->params['member_notification_key'];
             } else if ($type == '3') {
                 $serverKey = \Yii::$app->params['bmc_notification_key'];
+            } else if ($type == '4') {
+                $serverKey = \Yii::$app->params['ho_notification_key'];
             }
             $headers = array();
             $headers[] = 'Content-Type: application/json';
@@ -923,7 +925,14 @@ class SiteController extends Controller {
             foreach ($model->getRecord() as $data) {
                 $reg_id = [];
                 $activation_id = [];
-                foreach ($data->activeMobile as $notif) {
+                $notification_data = [];
+                if (in_array($type, ['1', '2', '3'])){
+                    $notification_data = $data->activeMobile;
+                }
+                if (in_array($type, ['4'])){
+                    $notification_data = $data->activeUser;
+                }
+                foreach ($notification_data as $notif) {
                     if ($model->app_type == $notif->type) {
                         $reg_id[] = $notif->device_id;
                         $activation_id[] = $notif->activation_id;

@@ -39,7 +39,7 @@ class TblAppNotification extends \app\models\ChildModel {
         return [
             [['notification_text'], 'string'],
             [['is_send', 'is_active', 'is_delete'], 'boolean'],
-            [['created_at', 'updated_at', 'sync_timestamp', 'device_count', 'activation_id', 'success_count'], 'safe'],
+            [['created_at', 'updated_at', 'sync_timestamp', 'device_count', 'activation_id', 'success_count', 'user_id'], 'safe'],
             [['mobile_no'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['sync_status', 'flg_sentbox_entry'], 'string', 'max' => 1],
@@ -87,4 +87,7 @@ class TblAppNotification extends \app\models\ChildModel {
         return $this->find()->where(['is_send' => 0, 'app_type' => $this->app_type])->all();
     }
 
+    public function getActiveUser() {
+        return $this->hasMany(TblAppActivation::className(), ['user_id' => 'user_id'])->where([ 'is_active' => 1, 'is_delete' => 0, 'is_expired' => 0]);
+    }
 }

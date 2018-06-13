@@ -45,7 +45,7 @@ class TblAppActivation extends \app\models\ChildModel {
             [['type', 'sms_sent', 'otp_code', 'is_active', 'is_delete'], 'required'],
             [['type', 'sms_sent', 'otp_code', 'is_active', 'is_delete', 'is_expired'], 'integer'],
             [['code', 'mobile_no', 'imei_no', 'sms_log', 'hash_key', 'flg_sentbox_entry', 'sync_status', 'device_id'], 'string'],
-            [['orignating_timestamp', 'posting_timestamp', 'sync_timestamp', 'updated_at', 'expired_datetime'], 'safe'],
+            [['orignating_timestamp', 'posting_timestamp', 'sync_timestamp', 'updated_at', 'expired_datetime', 'user_id'], 'safe'],
         ];
     }
 
