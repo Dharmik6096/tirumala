@@ -6,10 +6,11 @@ use webvimark\modules\UserManagement\models\User;
 $cntrl = Yii::$app->controller->id;
 $action = Yii::$app->controller->action->id;
 $reportUser = User::canRoute('report/*');
-$url_action[] = '/organisation/tbl-unions/index';
 if (Yii::$app->session->get('Unions') != '' && count(explode(',', Yii::$app->session->get('Unions'))) == 1) {
     $url_action[] = '/organisation/tbl-unions/view';
     $url_action['id'] = Yii::$app->session->get('Unions');
+} else {
+    $url_action[] = '/organisation/tbl-unions/index';
 }
 $logout_url[] = '/user-management/auth/logout';
 
@@ -278,7 +279,7 @@ echo GhostMenu::widget([
             'options' => ['class' => 'dropdown user'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" ><i class="fa fa-user"></i> <b class="caret"></b></a>',
             'items' => [
-                ['label' => (Yii::$app->session->get('UserName') != NULL && isset(explode('#', Yii::$app->session->get('UserName'))[1])) ? "<span class='user'><b>" . Yii::t('app', 'User: ') . "</b>" . explode('#', Yii::$app->session->get('UserName'))[1]. "</span>" : ''],
+                ['label' => (Yii::$app->session->get('UserName') != NULL && isset(explode('#', Yii::$app->session->get('UserName'))[1])) ? "<span class='user'><b>" . Yii::t('app', 'User: ') . "</b>" . explode('#', Yii::$app->session->get('UserName'))[1] . "</span>" : ''],
                 ['label' => "<span class='user'><b>" . Yii::t('app', 'Org.Type: ') . "</b>" . Yii::t('app', Yii::$app->session->get('organizations_type')) . "</span>"],
                 ['label' => 'Change password', 'url' => ['/user-management/auth/change-own-password']],
                 ['label' => 'Logout', 'url' => $logout_url],

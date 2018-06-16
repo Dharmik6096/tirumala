@@ -18,7 +18,16 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Local Name' => 'Hindi Name',
+    'Local Name' => 'Regional Name',
+    'Local Short Name' => 'Regional Short Name',
+    'Hindi Name' => 'Regional Name',
+    'Hindi Short Name' => 'Regional Short Name',
+    'Hindi Address' => 'Regional Address',
+    'Contact Person Hindi Name' => 'Contact Person Regional Name',
+    'Hindi First Name' => 'Regional First Name',
+    'Hindi Middle Name' => 'Regional Middle Name',
+    'Hindi Surname' => 'Regional Surname',
+    'Society Secretory Hindi Name' => 'Society Secretory Regional Name',
     'Union' => 'Company',
     'PCDF' => 'EVEREST',
     'Union Code' => 'Company Code',
