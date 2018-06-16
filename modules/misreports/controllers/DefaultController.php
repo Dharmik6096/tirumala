@@ -61,9 +61,9 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionSapReport() {
         $this->report = 'VmReportSap';
-        if (Yii::$app->request->post()) {
-            if (Yii::$app->request->post('ReportsModel')['report_type'] == '1') {
-                $this->report = 'VqReportSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'WqReportSap';
             }
         }
         return $this->actionIndex();
@@ -176,17 +176,17 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'VmReportSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'rpt_MIS_VmReportSap',
+                'sp_name' => 'rpt_MIS_VMSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP Data Export',
-                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'VQ')],
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
             ],
-            'VqReportSap' => [
+            'WqReportSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'rpt_MIS_VqReportSap',
+                'sp_name' => 'rpt_MIS_WQSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP Data Export',
-                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'VQ')],
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
             ],
         ];
         return $label[$l];
