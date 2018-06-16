@@ -169,6 +169,15 @@ class DefaultController extends \app\controllers\ChildController {
     /* Jasper Call */
 
     private function LoadReport($model) {
+        if(isset($model->p_plant_code) && $model->p_plant_code == 0 && !empty(Yii::$app->session->get('Plant'))){
+            $model->p_plant_code = Yii::$app->session->get('Plant');
+        }
+        if(isset($model->p_mcc_code) && $model->p_mcc_code == 0 && !empty(Yii::$app->session->get('MCC'))){
+            $model->p_mcc_code = Yii::$app->session->get('MCC');
+        }
+        if(isset($model->p_bmc_code) && $model->p_bmc_code == 0 && !empty(Yii::$app->session->get('BMC'))){
+            $model->p_bmc_code = Yii::$app->session->get('BMC');
+        }
         $this->type = Yii::$app->request->post('submit');
         $controls = [];
         $param = explode(',', $this->data['param']);
@@ -219,32 +228,32 @@ class DefaultController extends \app\controllers\ChildController {
         $label = [
 
             'MemberMilkCollectionSummary' => [
-                'param' => 'p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_union_code,p_report_name,p_member_type',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_union_code,p_report_name,p_member_type',
                 'path' => 'milkcollection/MemberMilkCollectionRegister',
                 'scenario' => 'MemberMilkCollectionSummary',
                 'title' => '101 - Member Milk Collection Summary',
             ],
             'MemberMilkCollectionRegister' => [
-                'param' => 'p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/MemberMilkCollectionSummary',
                 'scenario' => 'MemberMilkCollectionRegister',
                 'title' => '104 - Member Milk Collection Register',
             ],
             'ShiftReportNameWise' => [
-                'param' => 'p_dcs_code,p_collection_date:string:shift,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_collection_date:string:shift,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/ShiftReportNameWise',
                 'scenario' => 'ShiftReportNameWise',
                 'title' => '103 - Shift Report (Name Wise)',
             ],
             'ConsolidatedMilkCollectionDate' => [
-                'param' => 'p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/SocietyWiseMilkCollectionDate',
                 'scenario' => 'ConsolidatedMilkCollection',
                 'title' => '102 - Consolidated Milk Collection',
                 'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
             ],
             'ConsolidatedMilkCollectionDateShift' => [
-                'param' => 'p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/SocietyWiseMilkCollectonDateAndShiftWise',
                 'scenario' => 'ConsolidatedMilkCollection',
                 'title' => '102 - Consolidated Milk Collection',
@@ -329,7 +338,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '107 - Society Wise Collection and Dispatch Difference Report',
             ],
             'DcsCollectionVsDispatchGraph' => [
-                'param' => 'p_dcs_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_union_code,p_report_name',
                 'path' => 'milkcollection/MilkCollectionVsDispatchChart',
                 'scenario' => 'CollectionVsDispatchGraph',
                 'title' => '116 - Society Wise Collection vs Dispatch - Graph', 
@@ -348,7 +357,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '108 - Union Wise Collection and Dispatch Difference Report',
             ],
             'SocietyWiseMemberRegister' => [
-                'param' => 'p_dcs_code:union_code,p_dcs_payment,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code:union_code,p_dcs_payment,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/SocietyWisePayMentRegister',
                 'scenario' => 'MemberRegister',
                 'title' => '109 - Society Wise Payment Register',
@@ -360,31 +369,31 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '115 - Payment Authorization',
             ],
             'UnionWiseMemberRegister' => [
-                'param' => 'p_dcs_code:union_code,p_dcs_payment,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code:union_code,p_dcs_payment,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/UnionWisePayMentRegister',
                 'scenario' => 'MemberRegister',
                 'title' => '110 - Union Wise Payment Register',
             ],
             'MemberWisePaymentRegister' => [
-                'param' => 'p_dcs_code:union_code,p_member_code:p_dcs_code,p_dcs_payment,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code:union_code,p_member_code:p_dcs_code,p_dcs_payment,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/MemberWisePayMentRegister',
                 'scenario' => 'MemberWisePaymentRegister',
                 'title' => '111 - Member Wise Payment Register',
             ],
             'MemberClassificationRegister' => [
-                'param' => 'p_dcs_code:union_code,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code:union_code,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/MemberClassificationRegister',
                 'scenario' => 'MemberClassificationRegister',
                 'title' => '112 - Member Classification Register',
             ],
             'MemberPaymentHeldup' => [
-                'param' => 'p_dcs_code:union_code,p_member_code:p_dcs_code,p_dcs_payment,p_language_code,p_union_code,p_is_bank,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code:union_code,p_member_code:p_dcs_code,p_dcs_payment,p_language_code,p_union_code,p_is_bank,p_report_name',
                 'path' => 'milkcollection/MemberPaymentHeldUp',
                 'scenario' => 'MemberPaymentHeldup',
                 'title' => '113 - Member Payment Held Up',
             ],
             'SocietyDetails' => [
-                'param' => 'p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_union_code,p_report_name,p_member_type,p_no_of_pouring_day,p_pouring_qty',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_union_code,p_report_name,p_member_type,p_no_of_pouring_day,p_pouring_qty',
                 'path' => 'milkcollection/SocietyDetails',
                 'scenario' => 'SocietyDetails',
                 'title' => '117 - Society Details',

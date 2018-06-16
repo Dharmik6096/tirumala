@@ -32,7 +32,7 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                 <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false); ?>
                 <div class="col-sm-2">
                     <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
-                </div>     
+                </div>  
                 <?php
                 $param = isset($data['param']) ? explode(',', $data['param']) : [];
                 foreach ($param as $key => $value) {
@@ -48,6 +48,7 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                             }
                             $id = 'reportsmodel-' . $value;
                             ?>
+                
                             <div class="col-sm-2">
                                 <?php
                                 echo Yii::$app->dropdown->route_dcs($model, $form, 'reportsmodel-p_route_code', 'p_dcs_code', Yii::t('app', 'Society'), false, $allowmulti, $id);
@@ -55,10 +56,8 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                             </div>
                         <?php } else { ?>
                             <div class="col-sm-2">
-                                <?php
-                                echo Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'reportsmodel-union_code', '', 'Society', $value);
-                                ?>
-                            </div>    
+                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-p_bmc_code', 'p_dcs_code', Yii::t('app', 'Society')); ?>         
+                            </div>
                             <?php
                         }
                     }
@@ -196,6 +195,28 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                             <?= $form->field($model, 'p_no_of_pouring_day')->textInput(['maxlength' => true]) ?>
                         </div>  
                     <?php }
+                    
+                    if (in_array($value, array('p_plant_code'))) {
+                        ?>
+                        <div class="col-sm-2">
+                            <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'p_plant_code', $model->getAttributeLabel('p_plant_code')); ?>
+                        </div>      
+                        <?php
+                    }
+                    if (in_array($value, array('p_mcc_code'))) {
+                        ?>
+                        <div class="col-sm-2">
+                            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-p_plant_code', 'p_mcc_code', $model->getAttributeLabel('p_mcc_code')); ?>
+                        </div>   
+                        <?php
+                    }
+                    if (in_array($value, array('p_bmc_code'))) {
+                        ?>
+                        <div class="col-sm-2">
+                            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-p_mcc_code', 'p_bmc_code', $model->getAttributeLabel('p_bmc_code')); ?>
+                        </div>     
+                        <?php
+                    }
                 }
                 if (isset($data['report_type'])) {
                     echo $form->field($model, 'report_type', [ 'options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
@@ -221,12 +242,12 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
             <?php if ($result != '') { ?>
 
                 <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                    <?= GhostHtml::submitButton('<i class="text-danger fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                    <?= GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
                     <?php if (!isset($data['pdf'])) { ?>
-                        <?= GhostHtml::submitButton('<i class="text-primary fa fa-file-code-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
-                        <?= GhostHtml::submitButton('<i class="text-success fa fa-file-excel-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>
+                        <?= GhostHtml::submitButton('<i class="fa fa-file-code-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
+                        <?= GhostHtml::submitButton('<i class="fa fa-file-excel-o"></i>', ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>
                     <?php } ?>
-                    <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="text-success fa fa-search"></i></a>
+                    <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
                 </div>
             <?php } ?>
         </div>
@@ -310,7 +331,7 @@ $script = "$('#reportsmodel-p_member_code').on('depdrop.afterChange', function(e
     }
 });
 
-if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ConsolidatedMilkCollectionAllshiftData'){
+if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData'){
 $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
     //$('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
 });
@@ -369,30 +390,6 @@ if('" . $report . "'=='UnionCollectionDispatchDifferenceReport' || '" . $report 
         $('#reportsmodel-union_code').val(0);
     }
 }
-if('" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='SocietyDetails'){
-$('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-    $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if('" . $model->p_dcs_code . "'=='0'){
-        $('#reportsmodel-p_dcs_code').val(0);      
-    }
-});
-$('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-    if($('#reportsmodel-p_dcs_code').val()=='0'){ 
-         $('#reportsmodel-p_member_code').prop('disabled',false);
-         $('#reportsmodel-p_member_code').val(0);
-    }
-    
-});
-
-}
-if('" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='SocietyWiseMemberRegister'){
-$('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-    $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
-        if('" . $model->p_dcs_code . "'=='0'){
-        $('#reportsmodel-p_dcs_code').val(0);      
-    }    
-});
-}
 
 if('" . $report . "'=='BlockWiseCollection'){ 
     $('#reportsmodel-p_block_name').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
@@ -405,6 +402,61 @@ if('" . $report . "'=='BlockWiseCollection'){
         }
     });
     
+}
+
+$('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+    if('" . $model->p_plant_code . "'=='0'){
+        $('#reportsmodel-p_plant_code   ').val(0);      
+    }
+    if($('#reportsmodel-p_union_code').val() == '0'){
+        $('#reportsmodel-p_plant_code').removeAttr('disabled', 'false');
+        $('#reportsmodel-p_plant_code').val(0);
+    }
+});
+
+$('#reportsmodel-p_mcc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_mcc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+    if('" . $model->p_mcc_code . "'=='0'){
+        $('#reportsmodel-p_mcc_code').val(0);      
+    }
+    if($('#reportsmodel-p_plant_code').val() == '0'){
+        $('#reportsmodel-p_mcc_code').removeAttr('disabled', 'false');
+        $('#reportsmodel-p_mcc_code').val(0);
+    }
+});
+
+$('#reportsmodel-p_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $('#reportsmodel-p_bmc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+    if('" . $model->p_bmc_code . "'=='0'){
+        $('#reportsmodel-p_bmc_code').val(0);      
+    }
+    if($('#reportsmodel-p_mcc_code').val() == '0'){
+        $('#reportsmodel-p_bmc_code').removeAttr('disabled', 'false');
+        $('#reportsmodel-p_bmc_code').val(0);
+    }
+});
+
+if('" . $report . "'=='MemberMilkCollectionSummary' || '" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ShiftReportNameWise' || '" . $report . "'=='MemberMilkCollectionRegister' || '" . $report . "'=='SocietyWiseMemberRegister' || '" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='DcsCollectionVsDispatchGraph' || '" . $report . "'=='SocietyDetails'){
+    $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+        if('" . $model->p_dcs_code . "'=='0'){
+            $('#reportsmodel-p_dcs_code').val(0);      
+        }
+        if($('#reportsmodel-p_bmc_code').val()=='0'){
+            $('#reportsmodel-p_dcs_code').removeAttr('disabled', 'false');
+            $('#reportsmodel-p_dcs_code').val(0);
+        }
+    });
+}
+
+if('" . $report . "'=='MemberMilkCollectionRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='SocietyDetails'){
+    $('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        if($('#reportsmodel-p_dcs_code').val()=='0'){ 
+            $('#reportsmodel-p_member_code').prop('disabled',false);
+            $('#reportsmodel-p_member_code').val(0);
+        }
+    });
 }
 ";
 $this->registerJs($script, View::POS_READY, 'dep-drop-member');

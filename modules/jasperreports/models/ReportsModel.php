@@ -20,6 +20,7 @@ class ReportsModel extends Model {
     public $p_is_bank;
     public $state_code, $p_district_code, $p_sub_district_code, $p_block_name;
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty;
+    public $p_plant_code, $p_mcc_code, $p_bmc_code;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -36,26 +37,26 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
-            [['union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionSummary'],
-            [['union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionRegister'],
-            [['union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedMilkCollection'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionSummary'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionRegister'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedMilkCollection'],
             [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedDcsMilkCollection'],
             [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'p_type', 'report_type'], 'required', 'on' => 'ConsolidatedUnionMilkCollection'],
             [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'CollectionDispatchDifferenceReport'],
             [['union_code', 'p_route_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type'], 'required', 'on' => 'UnionCollectionDispatchDifferenceReport'],
-            [['union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'CollectionVsDispatchGraph'],
-            [['union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
-            [['union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
-            [['union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'CollectionVsDispatchGraph'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
             [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code'], 'safe'],
-            [['union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
             [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
             [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
             [['p_report_name'], 'safe'],
             [['p_no_of_pouring_day'], 'integer'],
             [['p_pouring_qty'], 'double'],
-            [['union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
         ];
     }
 
@@ -106,6 +107,9 @@ class ReportsModel extends Model {
             'state_code' => \Yii::t('app', 'State'),
             'p_pouring_qty' => \Yii::t('app', 'Pouring Qty >='),
             'p_no_of_pouring_day' => \Yii::t('app', 'No of Pouring Day >='),
+            'p_plant_code' => \Yii::t('app', 'Plant'),
+            'p_mcc_code' => \Yii::t('app', 'MCC'),
+            'p_bmc_code' => \Yii::t('app', 'BMC'),
         ];
     }
 
