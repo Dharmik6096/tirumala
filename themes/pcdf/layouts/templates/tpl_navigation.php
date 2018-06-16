@@ -165,7 +165,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => '301-' . Yii::t('app', 'Actual BMC Collection'), 'url' => ['/crystalreports/default/actual-bmc-collection']],
                         ['label' => '302-' . Yii::t('app', 'RMRD Milk Collection'), 'url' => ['/crystalreports/default/rmrd-milk-collection']],
-                        ['label' => '303-' . Yii::t('app', 'BMC Sumary'), 'url' => ['/crystalreports/default/bmc-summary-report']],
+                        ['label' => '303-' . Yii::t('app', 'BMC Summary'), 'url' => ['/crystalreports/default/bmc-summary-report']],
                         ['label' => '304-' . Yii::t('app', 'Milk Type Variation Date Wise'), 'url' => ['/crystalreports/default/variation-milk-type-date-wise']],
                         ['label' => '305-' . Yii::t('app', 'Milk Type Variation Village Wise'), 'url' => ['/crystalreports/default/variation-milk-type-village-wise']],
                         ['label' => '306-' . Yii::t('app', 'Date Wise Variation'), 'url' => ['/crystalreports/default/variation-date-wise']],

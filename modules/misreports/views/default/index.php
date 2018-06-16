@@ -57,30 +57,30 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                     if (in_array($value, array('union_code'))) {
                         ?>
                         <div class="col-sm-3">
-                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                         </div>   <?php
                     }
                     if (in_array($value, array('mcc_code'))) {
                         ?>
                         <div class="col-sm-3">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant code'); ?>
+                            <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant code'); ?>
                         </div>
                         <div class="col-sm-3">
-                        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC'); ?>
+                            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC'); ?>
                         </div>
                         <?php
                     }
                     if (in_array($value, array('bmc_code'))) {
                         ?>
                         <div class="col-sm-3">
-                        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', 'BMC'); ?>
+                            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', 'BMC'); ?>
                         </div>
                         <?php
                     }
                     if (in_array($value, array('dcs_code'))) {
                         ?>
                         <div class="col-sm-3">
-                        <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+                            <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
                         </div>
                         <?php
                     }
@@ -106,31 +106,23 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                 </div>
             <?php } ?>
             <?php
-            if (!empty($result) && !(isset($data['download_only']))) { 
+            if (!empty($result) && !(isset($data['download_only']))) {
                 $attr = [];
-                $attr[]['class'] = 'yii\grid\SerialColumn';
                 foreach ($result[0] as $att => $value) {
                     $attr_arr = [];
                     $attr_arr['attribute'] = $att;
                     $attr[] = $attr_arr;
                 }
-//                echo $attr;die;
-                echo GridView::widget([
-                    'dataProvider' => $dataProvider,
-                    'filterModel' => $model,
-                    'columns' => $attr,
-                ]);
+                $grid_option = [
+                    'id' => 'mis-report-list',
+                    'attributes' => $attr,
+                    'active_column' => false,
+                ];
+
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option);
             }
             ?>
         </div>
     </div>
 </div>       
 <?php ActiveForm::end(); ?>
-<?php
-$script = "
-";
-?>
-
-<?php
-$this->registerJs($script, View::POS_READY, 'crystal-report');
-?>

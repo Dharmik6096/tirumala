@@ -38,4 +38,8 @@ class ReportsModel extends Model {
         ];
     }
 
+    public function search($params) {
+        
+    }
+
 }
