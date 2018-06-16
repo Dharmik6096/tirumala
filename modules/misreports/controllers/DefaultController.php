@@ -178,14 +178,14 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_VMSAPReport',
                 'scenario' => 'SapReport',
-                'title' => 'SAP Data Export',
+                'title' => 'SAP VM Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
             ],
             'WqReportSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_WQSAPReport',
                 'scenario' => 'SapReport',
-                'title' => 'SAP Data Export',
+                'title' => 'SAP WQ Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
             ],
         ];
