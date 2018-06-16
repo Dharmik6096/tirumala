@@ -118,7 +118,7 @@ $CFCount = json_encode($CFCount);
                             <div id="container1" class="cont"></div>
                         </div>
                         <div id="bmc-compare">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2']); ?>
                             <div id="container3" class="cont"></div>
                         </div>
                     </div>
@@ -132,7 +132,7 @@ $CFCount = json_encode($CFCount);
                             <div id="container2" class="cont"></div>
                         </div>
                         <div id="bmc-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'container4', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'container4', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date']); ?>
                             <div id="container4" class="cont"></div>
                         </div>
                     </div>
