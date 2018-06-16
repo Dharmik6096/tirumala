@@ -44,7 +44,7 @@ use app\models\TblSms;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data'];
 
     public function init() {
         parent::init();
@@ -926,10 +926,10 @@ class SiteController extends Controller {
                 $reg_id = [];
                 $activation_id = [];
                 $notification_data = [];
-                if (in_array($type, ['1', '2', '3'])){
+                if (in_array($type, ['1', '2', '3'])) {
                     $notification_data = $data->activeMobile;
                 }
-                if (in_array($type, ['4'])){
+                if (in_array($type, ['4'])) {
                     $notification_data = $data->activeUser;
                 }
                 foreach ($notification_data as $notif) {
@@ -983,6 +983,15 @@ class SiteController extends Controller {
                     ->execute();
             Yii::$app->db_rmrd->createCommand()
                     ->insert('txfarmer_temp', $data)->execute();
+        }
+    }
+
+    public function actionDecryptData() {
+        $model = \app\modules\details\models\TblBankDetails::find()->select(['ifsc', 'bank_account_no', 'detail_code'])->where("bank_account_no != '' and bank_account_no is not null")->all();
+        foreach ($model as $data) {
+            $result = Yii::$app->db->createCommand("UPDATE tbl_bank_details SET d_ifsc='$data->ifsc',d_bank_account_no='$data->bank_account_no' WHERE "
+                            . "detail_code='" . $data->detail_code . "' ")
+                    ->execute();
         }
     }
 

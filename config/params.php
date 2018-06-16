@@ -8,7 +8,7 @@ return [
     'rateFilesPath' => 'web/ratechart',
     'biplRateUtilityPath' => 'web/utility/BIPL/Rate',
     'biplMemberUtilityPath' => 'web/utility/BIPL/Vendor',
-    'jasper_server' => 'http://52.172.217.39:9098/jasperserver',
+    'jasper_server' => 'http://localhost:13099/jasperserver',
     'jasper_username' => 'jasperadmin',
     'jasper_password' => 'Jasper@PCDF$2017',
     'report_path' => '/Reports/',
