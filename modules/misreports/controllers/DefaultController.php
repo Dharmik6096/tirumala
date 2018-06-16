@@ -28,7 +28,7 @@ class DefaultController extends \app\controllers\ChildController {
                 $model->scenario = $this->data['scenario'];
             }
         }
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadReport($model);
         }
         return $this->render('index', ['result' => $this->output, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);

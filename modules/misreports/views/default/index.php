@@ -22,7 +22,9 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                 $form = ActiveForm::begin(['options' => [
                                 'id' => 'report-form',
                                 'field-class' => 'form-group col-sm-3'
-                            ], 'validateOnBlur' => FALSE,
+                            ], 
+                            'method' => 'get',
+                            'validateOnBlur' => FALSE,
                             'validateOnEnter' => TRUE,
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
