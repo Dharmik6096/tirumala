@@ -109,16 +109,32 @@ $CFCount = json_encode($CFCount);
                     </div>
                 </div>
             <?php } else { ?>
-                <div class="col-sm-6">
+                <div class="col-sm-6 widget-tabbing">
+                    <div class="col-sm-6 text-center widget-tab society-compare active">Society Milk Collection</div>
+                    <div class="col-sm-6 text-center widget-tab bmc-compare">BMC Milk Collection</div>
                     <div class="flt">
-                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => 'Compare Milk Collection']); ?>
-                        <div id="container1" class="cont"></div>
+                        <div id="society-compare">
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <div id="container1" class="cont"></div>
+                        </div>
+                        <div id="bmc-compare">
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <div id="container3" class="cont"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6 widget-tabbing">
+                    <div class="col-sm-6 text-center widget-tab society-datewise active">Society Milk Collection - Date Wise</div>
+                    <div class="col-sm-6 text-center widget-tab bmc-datewise">BMC Milk Collection - Date Wise</div>
                     <div class="flt">
-                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
-                        <div id="container2" class="cont"></div>
+                        <div id="society-datewise">
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <div id="container2" class="cont"></div>
+                        </div>
+                        <div id="bmc-datewise">
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'container4', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <div id="container4" class="cont"></div>
+                        </div>
                     </div>
                 </div>
             <?php } ?>
@@ -695,5 +711,32 @@ var bar_chart = $('#'+cont);
             ]
         });
     }
+$('#bmc-compare').hide();
+$('.society-compare').on('click',function() {
+    $('#society-compare').show();
+    $(this).addClass('active');
+    $('#bmc-compare').hide();
+    $('.bmc-compare').removeClass('active');
+});
+$('.bmc-compare').on('click',function() {
+    $('#bmc-compare').show();
+    $(this).addClass('active');
+    $('#society-compare').hide();
+    $('.society-compare').removeClass('active');
+});
+
+$('#bmc-datewise').hide();
+$('.society-datewise').on('click',function() {
+    $('#society-datewise').show();
+    $(this).addClass('active');
+    $('#bmc-datewise').hide();
+    $('.bmc-datewise').removeClass('active');
+});
+$('.bmc-datewise').on('click',function() {
+    $('#bmc-datewise').show();
+    $(this).addClass('active');
+    $('#society-datewise').hide();
+    $('.society-datewise').removeClass('active');
+});
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');

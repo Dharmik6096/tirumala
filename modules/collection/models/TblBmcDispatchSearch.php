@@ -13,6 +13,7 @@ use app\modules\collection\models\TblBmcDispatch;
 class TblBmcDispatchSearch extends TblBmcDispatch {
 
     public $operator_fat, $operator_snf, $operator_qty;
+    public $from_date, $to_date, $from_shift, $to_shift;
 
     /**
      * @inheritdoc
@@ -21,7 +22,7 @@ class TblBmcDispatchSearch extends TblBmcDispatch {
         return [
             [['bmc_dispatch_code', 'milk_test', 'alcohole_test', 'dispatch_shift', 'milk_type_code', 'milk_quality_type_code'], 'safe'],
             [['fat', 'snf', 'mbrt', 'temprature', 'actual_qty', 'dispatch_qty'], 'safe'],
-            [['vehicle_code', 'vehicle_in_time', 'vehicle_out_time', 'destination_code', 'destination_type', 'dispatch_datetime', 'bmc_code', 'route_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'operator_fat', 'operator_snf', 'operator_qty'], 'safe'],
+            [['vehicle_code', 'vehicle_in_time', 'vehicle_out_time', 'destination_code', 'destination_type', 'dispatch_datetime', 'bmc_code', 'route_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'operator_fat', 'operator_snf', 'operator_qty', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
 
@@ -57,6 +58,22 @@ class TblBmcDispatchSearch extends TblBmcDispatch {
             // $query->where('0=1');
             return $dataProvider;
         }
+        
+        
+        if (!empty($this->from_date) || !empty($this->from_shift)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+            $from_date .=' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'dispatch_datetime', $from_date]);
+        }
+
+        if (!empty($this->to_date) || !empty($this->to_shift)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+            $to_date .=' ' . $to_shift;            
+            $query->andFilterWhere(['<=', 'dispatch_datetime', $to_date]);            
+        }
+        
         if (!empty($this->fat)) {
             $query->andFilterWhere([$this->operator_fat, 'tbl_bmc_dispatch.fat', $this->fat]);
         }

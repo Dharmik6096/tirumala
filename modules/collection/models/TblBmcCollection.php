@@ -9,7 +9,7 @@ use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\dcsoperation\models\TblShift;
-
+use app\modules\organisation\models\TblDcsBmc;
 /**
  * This is the model class for table "tbl_bmc_collection".
  *
@@ -49,6 +49,7 @@ class TblBmcCollection extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $union_code, $date, $weigh_time, $testing_time;
+    public $dcs_name, $bmc_name, $route_name;
 
     public static function tableName() {
         return 'tbl_bmc_collection';
@@ -80,7 +81,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         return [
             'milk_collection_code' => Yii::t('app', 'Milk Collection'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
-            'dcs_code' => Yii::t('app', 'Society'),
+            'dcs_code' => Yii::t('app', 'Society Code'),
             'transporter_code' => Yii::t('app', 'Transporter'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
             'name' => Yii::t('app', 'Name'),
@@ -110,6 +111,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             'sms_errorlog' => Yii::t('app', 'Sms Errorlog'),
             'sms_timestamp' => Yii::t('app', 'Sms Timestamp'),
             'remarks' => Yii::t('app', 'Remarks'),
+            'dcs_name' => Yii::t('app', 'DCS Name'),
+            'bmc_code' => Yii::t('app', 'BMC Code'),
+            'bmc_name' => Yii::t('app', 'BMC Name'),
         ];
     }
 
@@ -151,6 +155,10 @@ class TblBmcCollection extends \app\models\ChildModel {
                         ->andFilterWhere(['>=', 'date_time_of_collection', $from_date])
                         ->andFilterWhere(['<=', 'date_time_of_collection', $to_date])
                         ->where(['bmc_code' => $bmc_code])->all();
+    }
+    
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code'])->andwhere(['is_active' => 1]);
     }
 
 }

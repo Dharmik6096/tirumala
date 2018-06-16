@@ -17,12 +17,13 @@ class TblMilkCollectionSearch extends TblMilkCollection {
      */
     public $union_code;
     public $operator_fat, $operator_snf, $operator_qty, $operator_amount;
+    public $from_date, $to_date, $from_shift, $to_shift;
 
     public function rules() {
         return [
             [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date'], 'safe'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
 
@@ -57,13 +58,18 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
 
-        if (!empty($request['min_date']) && !empty($request['max_date'])) {
-            $start_date = date('Y-m-d', strtotime($request['min_date']));
-            $end_date = date('Y-m-d', strtotime($request['max_date']));
-            if ($start_date != $end_date)
-                $query->andFilterWhere(['between', 'CAST(date_time_of_collection AS DATE)', $start_date, $end_date]);
-            else
-                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), date_time_of_collection, 126)', $start_date]);
+        if (!empty($this->from_date) || !empty($this->from_shift)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+            $from_date .=' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+        }
+
+        if (!empty($this->to_date) || !empty($this->to_shift)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+            $to_date .=' ' . $to_shift;            
+            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);            
         }
 
         if (!$this->validate()) {

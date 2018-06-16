@@ -703,6 +703,14 @@ class SiteController extends Controller {
                 'name' => 'sp_dashboard_union_datewise',
                 'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
             ],
+            'bmc_union_comparison' => [
+                'name' => 'sp_dashboard_bmc_union_comparison',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+            ],
+            'bmc_union_datewise' => [
+                'name' => 'sp_dashboard_bmc_union_datewise',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+            ],
         ];
         return $array[$sp];
     }

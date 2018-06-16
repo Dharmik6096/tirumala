@@ -31,7 +31,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblMember;
-
+use app\modules\organisation\models\TblRouteMapping;
 /**
  * This is the model class for table "tbl_dcs".
  *
@@ -679,6 +679,10 @@ class TblDcs extends ChildModel {
                                 ->joinWith(['defaultContactDetail'])
                                 ->where(['bmc_code' => $this->bmc_code, 'tbl_dcs.is_active' => 1])
                                 ->all();
+            }
+            
+            public function getRouteMapping() {
+                return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
             }
 
         }

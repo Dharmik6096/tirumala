@@ -12,6 +12,7 @@ use app\modules\collection\models\TblMilkDispatch;
  */
 class TblMilkDispatchSearch extends TblMilkDispatch {
 
+    public $from_date, $to_date, $from_shift, $to_shift;
     /**
      * @inheritdoc
      */
@@ -22,7 +23,7 @@ class TblMilkDispatchSearch extends TblMilkDispatch {
         return [
             [['milk_dispatch_code', 'milk_type_code', 'sample_no'], 'integer'],
             [['dcs_code', 'bmc_code', 'shift', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'union_code'], 'safe'],
-            [['fat', 'snf', 'water', 'qty', 'operator_fat', 'operator_snf', 'operator_qty'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'operator_fat', 'operator_snf', 'operator_qty', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
 
@@ -60,16 +61,19 @@ class TblMilkDispatchSearch extends TblMilkDispatch {
         $query->joinWith(['dcsCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
-        if (!empty($request['min_date']) && !empty($request['max_date'])) {
-            $start_date = date('Y-m-d', strtotime($request['min_date']));
-            $end_date = date('Y-m-d', strtotime($request['max_date']));
-            if ($start_date != $end_date)
-                $query->andFilterWhere(['between', 'CAST(tbl_milk_dispatch.date_time_of_collection AS DATE)', $start_date, $end_date]);
-            else
-                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_milk_dispatch.date_time_of_collection, 126)', $start_date]);
+        
+        if (!empty($this->from_date) || !empty($this->from_shift)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+            $from_date .=' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
         }
-        if ($this->shift != 3) {
-            $query->andFilterWhere(['like', 'tbl_milk_dispatch.shift', $this->shift]);
+
+        if (!empty($this->to_date) || !empty($this->to_shift)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+            $to_date .=' ' . $to_shift;            
+            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);            
         }
         // Yii::$app->general->filterByDropdownRange($query, $this, ['fat', 'snf', 'qty']);
         if (!empty($this->fat)) {
