@@ -1928,8 +1928,12 @@ ul.orderable label.checked {
 }
 
 .report-actions {
-    background: #ddd;
+    /*background: #ddd;*/
+    background: -moz-linear-gradient(to right, rgb(0, 210, 255) 0%, rgb(58, 123, 213) 100%);
+    background: -webkit-linear-gradient(to right, rgb(0, 210, 255) 0%, rgb(58, 123, 213) 100%);
+    background: linear-gradient(to right, rgb(0, 210, 255) 0%, rgb(58, 123, 213) 100%) !important;
     border-radius: 0px;
+    padding: 7px 15px 0px !important;
 }
 
 .report-grid {
@@ -2122,4 +2126,13 @@ div.crystalstyle{
 .collection h4 {
     color: rgb(58, 123, 213);
     margin-bottom: 0;
+}
+
+#panel1 {
+    margin: 30px 40px;
+    padding: 20px;
+    /*border: 1px solid #ccc;*/
+    -webkit-box-shadow: 0 0px 10px rgba(0,0,0,0.19), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 0px 10px rgba(0,0,0,0.19), 0 3px 6px rgba(0,0,0,0.23);
+    max-height: 400px;
 }

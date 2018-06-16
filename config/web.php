@@ -203,6 +203,7 @@ $config = [
         'transporter' => ['class' => 'app\modules\transporter\transporter',],
         'rmrd' => ['class' => 'app\modules\rmrd\Rmrd'],
         'stellapps' => ['class' => 'app\modules\stellapps\Stellapps',],
+        'misreports' => [ 'class' => 'app\modules\misreports\MisReports',],
     ],
     'params' => $params,
 ];

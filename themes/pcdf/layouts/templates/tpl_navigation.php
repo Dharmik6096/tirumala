@@ -100,6 +100,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Member Payment Disburse'), 'url' => ['/payment/tbl-member-payment/export-payment-list'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'export-payment-list')],
                 ['label' => Yii::t('app', 'Transporter Payment Process'), 'url' => ['/payment/tbl-transporter-payment/index'], 'active' => ($cntrl == 'tbl-transporter-payment')],
                 ['label' => Yii::t('app', 'Transporter Payment Disburse'), 'url' => ['/payment/tbl-transporter-payment/payment-disburse'], 'active' => ($cntrl == 'tbl-transporter-payment-disburse')],
+                ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
@@ -150,6 +151,10 @@ echo GhostMenu::widget([
                         ['label' => '213-' . Yii::t('app', 'Union Shift Summary Report'), 'url' => ['/report/default/union-shift-summary-report']],
                         ['label' => '214-' . Yii::t('app', 'DPMCU Working Status'), 'url' => ['/report/default/dpmcu-working-status']],
                         ['label' => '215-' . Yii::t('app', 'DPMCU Information'), 'url' => ['/report/default/shift-a-report']],
+                        ['label' => '216-' . Yii::t('app', 'BMC Shift Report'), 'url' => ['/misreports/default/bmc-shift-report']],
+                        ['label' => '217-' . Yii::t('app', 'BMC Consolidate Report'), 'url' => ['/misreports/default/bmc-consolidate-report']],
+                        ['label' => '218-' . Yii::t('app', 'BMC Summary Report'), 'url' => ['/misreports/default/bmc-summary-report']],
+                        ['label' => '219-' . Yii::t('app', 'Society Summary Report'), 'url' => ['/misreports/default/society-summary-report']],
                     //  ['label' => Yii::t('app', 'Cleaning Not Done'), 'url' => ['/report/default/cleaning-not-done']],
                     // ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
                     ]
@@ -236,6 +241,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Escalation'), 'url' => ['/email/tbl-email-rule-master/index']],
                         ['label' => Yii::t('app', 'Union Credit'), 'url' => ['/payment/tbl-union-credit-limit/index']],
                         ['label' => Yii::t('app', 'DPU Passwords'), 'url' => ['/setting/tbl-dpu-passwords/create'], 'active' => ($cntrl == 'tbl-dpu-passwords')],
+                        ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/sap-report'], 'active' => ($cntrl == 'default' && $action == 'sap-report')],
 //                        ['label' => 'Member Credit', 'url' => ['/payment/tbl-member-credit-limit/index']],
                     ]
                 ],

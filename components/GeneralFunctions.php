@@ -891,5 +891,21 @@ class GeneralFunctions extends Component {
         }
         return $data == '' ? (!empty($value->$field) ? $value->$field : 'N/A') : 'N/A';
     }
+    
+    public function getSpData($sp, $param) {
+        $str = '';
+        $count = count($param);
+        for ($i = 1; $i <= $count; $i++) {
+            $str.=':paramName' . $i . ',';
+        }
+        $str = substr($str, 0, -1);
+        $command = \Yii::$app->db->createCommand("{CALL {$sp}({$str})}");
+        $i = 1;
+        foreach ($param as $key => $value) {
+            $command->bindValue(':paramName' . $i, $value);
+            $i++;
+        }
+        return $command->queryAll();
+    }
 
 }
