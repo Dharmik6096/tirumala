@@ -149,11 +149,11 @@ class SiteController extends Controller {
         $results5 = $this->getSpResult('fed_union');
         $results6 = $this->getBmcSpResult('sp_Portal_BMC_Collection', $union_str, $end_date, $end_date, $bmc_str);
         $results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
-        $results8 = $this->getReconciliationSpResult('rptDPU_GPRSDataReconciliation', $end_date, $end_date, $bmc_str);
+        $results8 = $this->getReconciliationSpResult('rptDPU_GPRSDataReconciliation_chart', $end_date, $end_date, $bmc_str, $union_str);
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8]);
     }
 
-    private function getReconciliationSpResult($sp_name, $sdate, $edate, $bmc_str) {
+    private function getReconciliationSpResult($sp_name, $sdate, $edate, $bmc_str, $union_str) {
         $bmc = ($bmc_str == '0') ? $bmc_str : substr($bmc_str, 1, -1);
         $cur_time = date_create(date('H:i:s'));
         $morning_time = date_create('16:00:00');
@@ -162,10 +162,11 @@ class SiteController extends Controller {
         if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
             $time = '18:00:00';
         }
-        $query = \Yii::$app->db->createCommand("{CALL " . $sp_name . "(:bmcid,:date1,:date2)}")
+        $query = \Yii::$app->db->createCommand("{CALL " . $sp_name . "(:bmcid,:union_code,:date1,:date2)}")
                 ->bindValue(':date1', $sdate . ' ' . $time)
                 ->bindValue(':date2', $edate . ' ' . $time)
-                ->bindValue(':bmcid', $bmc);
+                ->bindValue(':bmcid', $bmc)
+                ->bindValue(':union_code', ',' . $union_str . ',');
         $results = $query->queryAll();
         return $results;
     }
