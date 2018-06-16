@@ -45,9 +45,9 @@ $model->date2 = empty($model->date2) ? date('d-m-Y') : $model->date2;
                         <?php
                         if (isset($value_array[2])) {
                             ?>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 shift">
                                 <?php
-                                echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', $model->getAttributeLabel($value_array[2]), false, $value_array[2]);
+                                echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value_array[2]), false, $value_array[2]);
                                 ?>
                             </div>    
                             <?php
