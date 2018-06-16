@@ -72,7 +72,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
             //'capacity' => $this->capacity,
             'tbl_route_mapping.route_length_kms' => $this->route_length_kms,
             'tbl_route_mapping.vehicle_type_code' => $this->vehicle_type_code,
-            'tbl_route_mapping.tbl_route_mapping.is_active' => $this->is_active,
+            'tbl_route_mapping.is_active' => $this->is_active,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_route_mapping.route_code', $this->route_code])
