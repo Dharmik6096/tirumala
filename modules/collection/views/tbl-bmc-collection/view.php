@@ -60,23 +60,21 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                     'columns' => [
                         [
                             'attribute' => 'shift_code',
-                            'value' => isset($model->shiftCode) ? $model->shiftCode->shift:'',
+                            'value' => isset($model->shiftCode) ? $model->shiftCode->shift : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'milk_type_code',
-                            'value' => isset($model->milkType) ? $model->milkType->animal_type_name:'',
+                            'value' => isset($model->milkType) ? $model->milkType->animal_type_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                
-                
                 [
                     'columns' => [
                         [
                             'attribute' => 'milk_quality_type_code',
-                            'value' => isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name:'',
+                            'value' => isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
@@ -114,13 +112,25 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'sample_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'type_of_data_receive',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'collection_type',
                             'value' => !empty($model->collection_type) ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'transporter_code',
-                            'value' => isset($model->transporter) ? $model->transporter->transporter_name:'',
+                            'value' => isset($model->transporter) ? $model->transporter->transporter_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -129,7 +139,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                     'columns' => [
                         [
                             'attribute' => 'vehicle_code',
-                            'value' => isset($model->vehicle) ? $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name : '',
+                            'value' => isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
