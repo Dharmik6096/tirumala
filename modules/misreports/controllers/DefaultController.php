@@ -68,6 +68,16 @@ class DefaultController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
+    public
+            function actionDateShiftBmcCollection() {
+        $this->report = 'DateBmcCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'DateShiftBmcCollection';
+            }
+        }
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -154,25 +164,25 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_BMCShiftReport',
                 'scenario' => '',
-                'title' => 'BMC Shift Report',
+                'title' => '216 - BMC Shift Report',
             ],
             'BmcConsolidateReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_BMCConsolidateReport',
                 'scenario' => '',
-                'title' => 'BMC Consolidate Report',
+                'title' => '217 - BMC Consolidate Report',
             ],
             'BmcSummaryReport' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_BMCSummaryReport',
                 'scenario' => '',
-                'title' => 'BMC Summary Report',
+                'title' => '218 - BMC Summary Report',
             ],
             'SocietySummaryReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_SocietySummaryReport',
                 'scenario' => '',
-                'title' => 'Society Summary Report',
+                'title' => '219 - Society Summary Report',
             ],
             'VmReportSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -187,6 +197,20 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'SapReport',
                 'title' => 'SAP WQ Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
+            ],
+            'DateBmcCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_bmc_wise_soceity_collection_date_wise',
+                'scenario' => 'BmcCollection',
+                'title' => '220 - Date/Shift wise BMC Collection',
+                'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
+            ],
+            'DateShiftBmcCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_bmc_wise_society_collection_date_shift_wise',
+                'scenario' => 'BmcCollection',
+                'title' => '220 - Date/Shift wise BMC Collection',
+                'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
             ],
         ];
         return $label[$l];

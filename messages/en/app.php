@@ -106,4 +106,10 @@ return [
     'DCS Code' => 'TMCC Code',
     'Unionwise Milk Collection' => 'Company wise Milk Collection',
     'DCS Name' => 'TMCC Name',
+    'Society Milk Collection' => 'TMCC Milk Collection',
+    'BMC Milk Collection' => '',
+    'Society Milk Collection - Date Wise' => 'TMCC Milk Collection - Date Wise',
+    'BMC Milk Collection - Date Wise' => '',
+    'Society Summary Report' => 'TMCC Summary Report',
+    '219 - Society Summary Report' => '219 - TMCC Summary Report',
 ];
