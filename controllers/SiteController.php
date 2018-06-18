@@ -140,17 +140,21 @@ class SiteController extends Controller {
         }
 
         $model->date = $end_date;
+        $plant_str = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
+        $mcc_str = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
         $bmc_str = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+        $dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
         $month = date('Y-m', strtotime($end_date));
         $results = $this->callDashboardSp($union_str, $start_date, $end_date, $dcs_str);
         $results2 = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
         $results3 = $this->callDashboardSp($union_str, $end_date, $end_date, $dcs_str);
         $results4 = $this->callDashboardCalSp($union_str, $month);
         $results5 = $this->getSpResult('fed_union');
-        $results6 = $this->getBmcSpResult('sp_Portal_BMC_Collection', $union_str, $end_date, $end_date, $bmc_str);
+        $results6 = $this->getMilkCollectionDetails('sp_Portal_dashboard_bmc_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
         $results8 = $this->getReconciliationSpResult('rptDPU_GPRSDataReconciliation_chart', $end_date, $end_date, $bmc_str, $union_str);
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8]);
+        $milk_collection = $this->getMilkCollectionDetails('sp_Portal_dashboard_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection]);
     }
 
     private function getReconciliationSpResult($sp_name, $sdate, $edate, $bmc_str, $union_str) {
@@ -1002,6 +1006,19 @@ class SiteController extends Controller {
                             . "detail_code='" . $data->detail_code . "' ")
                     ->execute();
         }
+    }
+    
+    private function getMilkCollectionDetails($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_str, $sdate, $edate){
+        $query = \Yii::$app->db->createCommand("{CALL $sp_name(:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code,:startdate,:enddate)}")
+                ->bindValue(':union_code', ',' . $union_str . ',')
+                ->bindValue(':plant_code', $plant_str)
+                ->bindValue(':mcc_code', $mcc_str)
+                ->bindValue(':bmc_code', $bmc_str)
+                ->bindValue(':dcs_code', $dcs_str)
+                ->bindValue(':startdate', $sdate)
+                ->bindValue(':enddate', $edate);
+        $results = $query->queryAll();
+        return $results;
     }
 
 }

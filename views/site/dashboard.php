@@ -21,8 +21,6 @@ $combined = array_map(function($a, $b) {
 }, $villages, $unions);
 
 $collection = array_column(array_values($results3), 'Qty');
-$bmc_collection = array_column(array_values($results6), 'quantity');
-$c_bmc = array_column(array_values($results6), 'bmc_name');
 
 $bmc_dispatch = array_column(array_values($results7), 'quantity');
 $d_bmc = array_column(array_values($results7), 'bmc_name');
@@ -39,6 +37,30 @@ $DPUCount = array_column(array_values($results8), 'DPUCount');
 $DPUCount = json_encode($DPUCount);
 $CFCount = array_column(array_values($results8), 'CFCount');
 $CFCount = json_encode($CFCount);
+
+
+$milk_collection = !empty($milk_collection) ? $milk_collection : [];
+$dcs = array_column(array_values($milk_collection), 'dcs_name');
+$unions = array_column(array_values($milk_collection), 'union_name');
+$bar_chart_dcs = array_map(function($a, $b) {
+    return $a;
+}, $dcs, $unions);
+$dcs_mcollection = array_column(array_values($milk_collection), 'm_quantity');
+$dcs_mcollection = json_encode($dcs_mcollection);
+$dcs_ecollection = array_column(array_values($milk_collection), 'e_quantity');
+$dcs_ecollection = json_encode($dcs_ecollection);
+
+
+$bmc_collection = !empty($results6) ? $results6 : [];
+$bmc_dcs = array_column(array_values($bmc_collection), 'dcs_name');
+$bmc_unions = array_column(array_values($bmc_collection), 'union_name');
+$bar_chart_bmc = array_map(function($a, $b) {
+    return $a;
+}, $bmc_dcs, $bmc_unions);
+$bmc_mcollection = array_column(array_values($bmc_collection), 'm_quantity');
+$bmc_mcollection = json_encode($bmc_mcollection);
+$bmc_ecollection = array_column(array_values($bmc_collection), 'e_quantity');
+$bmc_ecollection = json_encode($bmc_ecollection);
 ?>
 <div class="panel-group row panel-fixed" id="filter">
     <div class="panel panel-default">
@@ -110,8 +132,8 @@ $CFCount = json_encode($CFCount);
                 </div>
             <?php } else { ?>
                 <div class="col-sm-6 widget-tabbing">
-                    <div class="col-sm-6 text-center widget-tab society-compare active">Society Milk Collection</div>
-                    <div class="col-sm-6 text-center widget-tab bmc-compare">BMC Milk Collection</div>
+                    <div class="col-sm-6 text-center widget-tab society-compare active"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
+                    <div class="col-sm-6 text-center widget-tab bmc-compare"><?= Yii::t('app', 'BMC Milk Collection'); ?></div>
                     <div class="flt">
                         <div id="society-compare">
                             <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '']); ?>
@@ -124,8 +146,8 @@ $CFCount = json_encode($CFCount);
                     </div>
                 </div>
                 <div class="col-sm-6 widget-tabbing">
-                    <div class="col-sm-6 text-center widget-tab society-datewise active">Society Milk Collection - Date Wise</div>
-                    <div class="col-sm-6 text-center widget-tab bmc-datewise">BMC Milk Collection - Date Wise</div>
+                    <div class="col-sm-6 text-center widget-tab society-datewise active"><?= Yii::t('app', 'Society Milk Collection - Date Wise'); ?></div>
+                    <div class="col-sm-6 text-center widget-tab bmc-datewise"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
                     <div class="flt">
                         <div id="society-datewise">
                             <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '']); ?>
@@ -282,11 +304,7 @@ $CFCount = json_encode($CFCount);
 </div>
 <?php
 $script = "  
-    var a = " . json_encode($collection) . ";
-    var collection = a.map(function (x) { 
-        return parseFloat(x, 10); 
-    });
-    barChart('container5','" . Yii::$app->controls->view_date($date) . " Milk Collection '," . json_encode($combined) . ",collection);
+    
     function barChart(cont,text,xdata,ydata){
     var bar_chart = $('#'+cont);
         if (bar_chart.length) {
@@ -338,13 +356,13 @@ $script = "
                 },
                 series: [{
                             name: 'QTY(ltr)',
-                            type: 'column',
-                            color: '#3a7bd5',
-                            yAxis: 1,
+                        type: 'column',
+                        color: '#3a7bd5',
+                        yAxis: 1,
                             data: ydata,
-                            tooltip: {
-                                valueSuffix: ' lt'
-                            }
+                        tooltip: {
+                            valueSuffix: ' lt'
+                        }
 
                     }]
             });
@@ -488,13 +506,6 @@ var chartModal = $('#chartModal').modal({
     }
 });
 
-
-
-var bmc_c = " . json_encode($bmc_collection) . ";
-var bmc_collection = bmc_c.map(function (x) { 
-    return parseFloat(x, 10); 
-});
-barChart('container6','" . Yii::$app->controls->view_date($date) . " BMC Collection '," . json_encode($c_bmc) . ",bmc_collection);
 function barChart(cont,text,xdata,ydata){
 var bar_chart = $('#'+cont);
     if (bar_chart.length) {
@@ -725,6 +736,178 @@ $('.bmc-compare').on('click',function() {
     $('.society-compare').removeClass('active');
 });
 
+var a = " . $dcs_mcollection . ";
+var mcollection = a.map(function (x) { 
+    return parseFloat(x, 10); 
+});
+
+var b = " . $dcs_ecollection . ";
+var ecollection = b.map(function (x) { 
+    return parseFloat(x, 10); 
+});
+
+var bar_chart = $('#container5');
+if (bar_chart.length) {      
+    Highcharts.chart('container5', {
+        chart: {
+            zoomType: 'xy'
+        },
+        title: {
+            text: '" . Yii::$app->controls->view_date($date) . ' ' . Yii::t('app', 'Milk Collection') . "'
+        },
+        xAxis: [{
+                categories: " . json_encode($bar_chart_dcs) . ",
+                crosshair: true
+            }],
+        yAxis: [{// Primary yAxis
+                labels: {
+                    format: '{value}',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
+                },
+                title: {
+                    text: '',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
+                }
+            }, {// Secondary yAxis
+                title: {
+                    text: '',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                },
+                labels: {
+                    format: '{value} ltr'
+                },
+                opposite: false,
+                tickInterval: 200
+            }
+        ],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 100,
+            floating: true,
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        },
+        series: [{
+                name: '" . Yii::t('app', 'Morning') . "',
+                type: 'column',
+                color: '#3a7bd5',
+                yAxis: 1,
+                data: mcollection,
+                tooltip: {
+                    valueSuffix: ' lt'
+                }
+
+            },{
+                name: '" . Yii::t('app', 'Evening') . "',
+                type: 'column',
+                color: '#1758',
+                yAxis: 1,
+                data: ecollection,
+                tooltip: {
+                    valueSuffix: ' lt'
+                }
+
+            }]
+    });
+}
+        
+var a_bmc = " . $bmc_mcollection . ";
+var bmc_mcollection = a_bmc.map(function (x) { 
+    return parseFloat(x, 10); 
+});
+
+var b_bmc = " . $bmc_ecollection . ";
+var bmc_ecollection = b_bmc.map(function (x) { 
+    return parseFloat(x, 10); 
+});
+
+var bar_chart = $('#container6');
+if (bar_chart.length) {      
+    Highcharts.chart('container6', {
+        chart: {
+            zoomType: 'xy'
+        },
+        title: {
+            text: '" . Yii::$app->controls->view_date($date) . ' ' . Yii::t('app', 'BMC Collection') . "'
+        },
+        xAxis: [{
+                categories: " . json_encode($bar_chart_bmc) . ",
+                crosshair: true
+            }],
+        yAxis: [{// Primary yAxis
+                labels: {
+                    format: '{value}',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
+                },
+                title: {
+                    text: '',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
+                }
+            }, {// Secondary yAxis
+                title: {
+                    text: '',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                },
+                labels: {
+                    format: '{value} ltr'
+                },
+                opposite: false,
+                tickInterval: 200
+            }
+        ],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 100,
+            floating: true,
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        },
+        series: [{
+                name: '" . Yii::t('app', 'Morning') . "',
+                type: 'column',
+                color: '#3a7bd5',
+                yAxis: 1,
+                data: bmc_mcollection,
+                tooltip: {
+                    valueSuffix: ' lt'
+                }
+
+            },{
+                name: '" . Yii::t('app', 'Evening') . "',
+                type: 'column',
+                color: '#1758',
+                yAxis: 1,
+                data: bmc_ecollection,
+                tooltip: {
+                    valueSuffix: ' lt'
+                }
+
+            }]
+    });
+}
+        
 $('#bmc-datewise').hide();
 $('.society-datewise').on('click',function() {
     $('#society-datewise').show();
