@@ -150,14 +150,16 @@ class SiteController extends Controller {
         $results3 = $this->callDashboardSp($union_str, $end_date, $end_date, $dcs_str);
         $results4 = $this->callDashboardCalSp($union_str, $month);
         $results5 = $this->getSpResult('fed_union');
-        $results6 = $this->getMilkCollectionDetails('sp_Portal_dashboard_bmc_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $results6 = $this->getWidgetDetails('sp_Portal_dashboard_bmc_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
-        $results8 = $this->getReconciliationSpResult('rptDPU_GPRSDataReconciliation_chart', $end_date, $end_date, $bmc_str, $union_str);
-        $milk_collection = $this->getMilkCollectionDetails('sp_Portal_dashboard_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection]);
+        $results8 = $this->getReconciliationSpResult('sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $milk_collection = $this->getWidgetDetails('sp_Portal_dashboard_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $monthly_milk_collection = $this->getWidgetDetails('sp_Portal_dashboard_monthly_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $start_date, $end_date);
+        $dashboard_blocks = $this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks]);
     }
 
-    private function getReconciliationSpResult($sp_name, $sdate, $edate, $bmc_str, $union_str) {
+    private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
         $bmc = ($bmc_str == '0') ? $bmc_str : substr($bmc_str, 1, -1);
         $cur_time = date_create(date('H:i:s'));
         $morning_time = date_create('16:00:00');
@@ -166,11 +168,14 @@ class SiteController extends Controller {
         if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
             $time = '18:00:00';
         }
-        $query = \Yii::$app->db->createCommand("{CALL " . $sp_name . "(:bmcid,:union_code,:date1,:date2)}")
+        $query = \Yii::$app->db->createCommand("{CALL $sp_name(:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code,:date1,:date2)}")
+                ->bindValue(':union_code', ',' . $union_str . ',')
+                ->bindValue(':plant_code', $plant_str)
+                ->bindValue(':mcc_code', $mcc_str)
+                ->bindValue(':bmc_code', $bmc_str)
+                ->bindValue(':dcs_code', $dcs_code)
                 ->bindValue(':date1', $sdate . ' ' . $time)
-                ->bindValue(':date2', $edate . ' ' . $time)
-                ->bindValue(':bmcid', $bmc)
-                ->bindValue(':union_code', ',' . $union_str . ',');
+                ->bindValue(':date2', $edate . ' ' . $time);
         $results = $query->queryAll();
         return $results;
     }
@@ -533,7 +538,7 @@ class SiteController extends Controller {
         if (!empty($results)) {
             $keys = array_keys($results[0]);
             foreach ($keys as $key) {
-                if (in_array($key, ['qty', 'fat', 'snf', 'kgfat', 'kgsnf'])) {
+                if (in_array($key, ['qty', 'fat', 'snf', 'kgfat', 'kgsnf', 'm_qty', 'e_qty', 'm_fat', 'm_snf', 'e_fat', 'e_snf', 'm_kgfat', 'e_kgfat', 'm_kgsnf', 'e_kgsnf'])) {
                     $series[$key] = array_column($results, $key);
                 }
                 if (in_array($key, ['union_short_name', 'collection_date', 'period'])) {
@@ -681,6 +686,11 @@ class SiteController extends Controller {
             $union_str = implode('-', $union_ary);
         }
 
+        $plant_code = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
+        $mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+        $bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+        $dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+
         $union_str = '-' . $union_str . '-';
         $dcs_str = NULL;
         if (!empty(Yii::$app->session->get('Dcs'))) {
@@ -701,20 +711,20 @@ class SiteController extends Controller {
                 'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date',
             ],
             'union_comparison' => [
-                'name' => 'sp_dashboard_union_comparison',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+                'name' => 'sp_portal_dashboard_union_comparison',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
             ],
             'union_datewise' => [
-                'name' => 'sp_dashboard_union_datewise',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+                'name' => 'sp_portal_dashboard_union_datewise',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
             ],
             'bmc_union_comparison' => [
-                'name' => 'sp_dashboard_bmc_union_comparison',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+                'name' => 'sp_portal_dashboard_bmc_union_comparison',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
             ],
             'bmc_union_datewise' => [
-                'name' => 'sp_dashboard_bmc_union_datewise',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list',
+                'name' => 'sp_portal_dashboard_bmc_union_datewise',
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
             ],
         ];
         return $array[$sp];
@@ -1007,8 +1017,8 @@ class SiteController extends Controller {
                     ->execute();
         }
     }
-    
-    private function getMilkCollectionDetails($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_str, $sdate, $edate){
+
+    private function getWidgetDetails($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_str, $sdate, $edate) {
         $query = \Yii::$app->db->createCommand("{CALL $sp_name(:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code,:startdate,:enddate)}")
                 ->bindValue(':union_code', ',' . $union_str . ',')
                 ->bindValue(':plant_code', $plant_str)

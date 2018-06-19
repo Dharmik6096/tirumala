@@ -190,14 +190,14 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                                 </tr>
                             </thead>
                             <?php
-                            if (!empty($results)) {
-                                foreach ($results as $result) {
+                            if (!empty($monthly_milk_collection)) {
+                                foreach ($monthly_milk_collection as $milk_collection) {
                                     ?>
                                     <tr>
-                                        <td><?= $result['union_name'] ?></td>
-                                        <td><?= $result['dcs_name'] ?></td>
-                                        <td><?= $result['Member_Count'] ?></td>
-                                        <td><?= $result['Qty'] ?></td>
+                                        <td><?= $milk_collection['union_name'] ?></td>
+                                        <td><?= $milk_collection['dcs_name'] ?></td>
+                                        <td><?= $milk_collection['Member_Count'] ?></td>
+                                        <td><?= $milk_collection['Qty'] ?></td>
                                     </tr>
                                     <?php
                                 }
@@ -217,8 +217,8 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'No. of Societies') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($results) ? $results[0]['Dcs_Count'] : 0 ?></h3>
-                        <p><b>M:</b> <?= !empty($results) ? $results[0]['Dcs_Count_M'] : 0 ?> | <b>E:</b> <?= !empty($results) ? $results[0]['Dcs_Count_E'] : 0 ?></p>
+                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h3>
+                        <p><b>M:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_M'] : 0 ?> | <b>E:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_E'] : 0 ?></p>
                     </div>
                 </div>
             </div>
@@ -227,7 +227,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                     <div class="tbl-cell">
                         <p>No. of Pourers</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($results) ? $results[0]['Total_Member'] : 0 ?></h3>
+                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h3>
                     </div>
                 </div>
             </div>
@@ -236,7 +236,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                     <div class="tbl-cell">
                         <p>Total Milk Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($results) ? $results[0]['UnionQty'] : 0 ?></h3>
+                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['UnionQty'] : 0 ?></h3>
                     </div>
                 </div>
             </div>
@@ -245,8 +245,8 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                     <div class="tbl-cell">
                         <p>Total Milk Dispatch(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($results) ? $results[0]['UnionDisQty'] : 0 ?></h3>
-                        <p><b>M:</b> <?= !empty($results) ? $results[0]['Dcs_DisQty_M'] : 0 ?> | <b>E:</b> <?= !empty($results) ? $results[0]['Dcs_DisQty_E'] : 0 ?></p>
+                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['UnionDisQty'] : 0 ?></h3>
+                        <p><b>M:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?> | <b>E:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></p>
                     </div>
                 </div>
             </div>
@@ -255,7 +255,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                     <div class="tbl-cell">
                         <p>Total BMC Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($results) ? $results[0]['BmcQty'] : 0 ?></h3>
+                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['BmcQty'] : 0 ?></h3>
                     </div>
                 </div>
             </div>
@@ -263,9 +263,9 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                 <div class="collection">
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Collection vs Installed') ?></p>
-                        <p><h4><?= (!empty($results) ? $results[0]['Dcs_Count'] : 0) . '/' . (!empty($results) ? $results[0]['Install_Count'] : 0) ?></h4></p>
+                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
                         <p><?= Yii::t('app', 'Collection vs Dispatch') ?></p>
-                        <p><h4><?= (!empty($results) ? $results[0]['Dcs_Count'] : 0) . '/' . (!empty($results) ? $results[0]['Dcs_DisQty_M'] + $results[0]['Dcs_DisQty_E'] : 0) ?></h4></p>
+                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_M'] + $dashboard_blocks[0]['Dcs_DisQty_E'] : 0) ?></h4></p>
                     </div>
                 </div>
             </div>
