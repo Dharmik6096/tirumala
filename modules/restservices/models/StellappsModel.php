@@ -500,7 +500,7 @@ class StellappsModel {
     public function validateTmccCode($tmcc_code) {
         $dcs_code = NULL;
         if (!empty($tmcc_code)) {
-            $code = TblSocietyCodes::find()->where(['bipl_code' => $tmcc_code])->one();
+            $code = TblSocietyCodes::find()->where(['bipl_code' => $tmcc_code, 'bmc_code' => '2142'])->one();
             if (!empty($code)) {
                 $dcs_code = $code->dcs_code;
             }
