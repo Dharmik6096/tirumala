@@ -172,7 +172,7 @@ class Grid extends Widget {
                             // 'template'=>'{menu}',
                             'columns' => $export_column,
                             'target' => ExportMenu::TARGET_BLANK,
-                            'filename' => empty($this->view->title) ? 'grid-export' : str_replace(' ', '-', strtolower($this->view->title)),
+                            'filename' => empty($this->view->title) ? 'grid-export' : str_replace(' ', '-', $this->view->title),
                             'clearBuffers' => TRUE,
                             'fontAwesome' => true,
                             'showColumnSelector' => true,

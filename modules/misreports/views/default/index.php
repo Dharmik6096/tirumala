@@ -18,7 +18,7 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
     <?php
         if($data['export_title'] && !empty($result)){
             $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : Yii::t('app', 'WQ');
-            $this->title = $model->bmc_code.'_'.$report_type.'_'.date('d_m_Y').'_'.$model->from_shift;
+            $this->title = $model->bmc_code.'_'.$report_type.'_'.str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)).'_'.$model->from_shift;
         }
     ?>
     <div class="panel-body">
