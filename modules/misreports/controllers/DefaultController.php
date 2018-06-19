@@ -190,6 +190,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'SapReport',
                 'title' => 'SAP VM Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
+                'export_title' => true,
             ],
             'WqReportSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -197,6 +198,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'SapReport',
                 'title' => 'SAP WQ Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
+                'export_title' => true,
             ],
             'DateBmcCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',

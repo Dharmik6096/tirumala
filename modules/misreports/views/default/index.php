@@ -15,6 +15,12 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
 <div class="panel panel-default panel-grid panel-main">
 
     <div class="panel-heading"><?= Html::encode($this->title) ?></div>
+    <?php
+        if($data['export_title'] && !empty($result)){
+            $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : Yii::t('app', 'WQ');
+            $this->title = $model->bmc_code.'_'.$report_type.'_'.date('d_m_Y').'_'.$model->from_shift;
+        }
+    ?>
     <div class="panel-body">
         <div class="report-area">
             <div class="table-responsive mt10 panel-collapse collapse <?= $inclass ?>" id="panel1">

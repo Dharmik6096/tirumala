@@ -20,7 +20,8 @@ class ReportsModel extends Model {
     public function rules() {
         return [
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'safe'],
-            [['report_type'], 'required', 'on' => ['SapReport', 'BmcCollection']],
+            [['report_type'], 'required', 'on' => 'BmcCollection'],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapReport'],
         ];
     }
 
