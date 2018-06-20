@@ -30,7 +30,7 @@ class Grid extends Widget {
         return $this->render('grid', ['id' => $this->id, 'url' => $this->url]);
     }
 
-    public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true) {
+    public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = []) {
         echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
         if (isset($searchModel->tableSchema->fullName)) {
             $table_name = $searchModel->tableSchema->fullName;
@@ -166,30 +166,37 @@ class Grid extends Widget {
                     array_push($columns, $active_column);
                     $export_column[] = $active_column;
                 }
-
-                $fullExportMenu = ExportMenu::widget([
-                            'dataProvider' => $dataProvider,
-                            // 'template'=>'{menu}',
-                            'columns' => $export_column,
-                            'target' => ExportMenu::TARGET_BLANK,
-                            'filename' => empty($this->view->title) ? 'grid-export' : str_replace(' ', '-', $this->view->title),
-                            'clearBuffers' => TRUE,
-                            'fontAwesome' => true,
-                            'showColumnSelector' => true,
-                            'asDropdown' => true, // this is important for this case so we just need to get a HTML list
-                            'dropdownOptions' => [
-                                'label' => '<i class="glyphicon"></i>'
-                            ],
-                            'exportConfig' => [
-                                ExportMenu::FORMAT_HTML => FALSE,
-                                ExportMenu::FORMAT_TEXT => FALSE,
-                                ExportMenu::FORMAT_PDF => FALSE,
-                                ExportMenu::FORMAT_EXCEL => FALSE,
-                                ExportMenu::FORMAT_EXCEL_X => [
-                                    'label' => 'Excel',
-                                ],
-                            ]
-                ]);
+                $exportConfig = [
+                    ExportMenu::FORMAT_HTML => FALSE,
+                    ExportMenu::FORMAT_TEXT => FALSE,
+                    ExportMenu::FORMAT_PDF => FALSE,
+                    ExportMenu::FORMAT_EXCEL => FALSE,
+                    ExportMenu::FORMAT_EXCEL_X => [
+                        'label' => 'Excel',
+                    ]
+                ];
+                foreach ($removeExportType as $type) {
+                    $exportConfig[$type] = FALSE;
+                }
+                $ExportWidget = [
+                    'dataProvider' => $dataProvider,
+                    // 'template'=>'{menu}',
+                    'columns' => $export_column,
+                    'target' => ExportMenu::TARGET_BLANK,
+                    'filename' => empty($this->view->title) ? 'grid-export' : str_replace(' ', '-', $this->view->title),
+                    'clearBuffers' => TRUE,
+                    'fontAwesome' => true,
+                    'showColumnSelector' => true,
+                    'asDropdown' => true, // this is important for this case so we just need to get a HTML list
+                    'dropdownOptions' => [
+                        'label' => '<i class="glyphicon"></i>'
+                    ],
+                    'exportConfig' => $exportConfig
+                ];
+                foreach ($exportEvents as $event => $content) {
+                    $ExportWidget[$event] = $content;
+                }
+                $fullExportMenu = ExportMenu::widget($ExportWidget);
 
                 DynaGrid::begin([
                     'columns' => $columns,
