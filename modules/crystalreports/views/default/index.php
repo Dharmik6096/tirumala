@@ -171,6 +171,10 @@ $script = "
             if('" . $model->bmcid . "'=='0'){
                 $('#reportsmodel-bmcid').val(0);
             }
+            if($('#reportsmodel-mccid').val()=='0'){ 
+                $('#reportsmodel-bmcid').prop('disabled',false);
+                $('#reportsmodel-bmcid').val(0);
+            }
         });
         $('#reportsmodel-routeid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
             $('#reportsmodel-routeid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
@@ -184,6 +188,24 @@ $script = "
         });
     }
         
+    if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='GprsDataReconciliation'){
+        $('#reportsmodel-mccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
+            if('" . $model->mccid . "'=='0'){
+                $('#reportsmodel-mccid').val(0);      
+            }
+        });
+    }
+    
+    if('" . $report . "'=='ActualBmcCollection'){
+        $('#reportsmodel-mccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#reportsmodel-mccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
+            if('" . $model->MCCId . "'=='0'){
+                $('#reportsmodel-mccid').val(0);      
+            }
+        });
+    }
+    
     if('" . $report . "'=='BmcCollection' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise'){
         $('#reportsmodel-vlccid').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
             $('#reportsmodel-vlccid option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'ALL') . "'}));      
