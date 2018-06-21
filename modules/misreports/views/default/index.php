@@ -16,10 +16,17 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
 
     <div class="panel-heading"><?= Html::encode($this->title) ?></div>
     <?php
-        if($data['export_title'] && !empty($result)){
-            $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : Yii::t('app', 'WQ');
-            $this->title = $model->bmc_code.'_'.$report_type.'_'.str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)).'_'.$model->from_shift;
-        }
+    $removeExportType = [];
+    $exportEvents = [];
+    if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
+        $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : Yii::t('app', 'WQ');
+        $this->title = $model->bmc_code . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
+        $removeExportType = ['CSV'];
+        $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
+                $sheet->getProtection()->setSheet(true);
+                $sheet->getProtection()->setPassword("password");
+            },];
+    }
     ?>
     <div class="panel-body">
         <div class="report-area">
@@ -28,7 +35,7 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                 $form = ActiveForm::begin(['options' => [
                                 'id' => 'report-form',
                                 'field-class' => 'form-group col-sm-3'
-                            ], 
+                            ],
                             'method' => 'get',
                             'validateOnBlur' => FALSE,
                             'validateOnEnter' => TRUE,
@@ -127,7 +134,7 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                     'active_column' => false,
                 ];
 
-                Yii::$app->grid->bind($dataProvider, $model, $grid_option);
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index'], true, $removeExportType, $exportEvents);
             }
             ?>
         </div>
