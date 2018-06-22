@@ -178,6 +178,9 @@ class DefaultController extends \app\controllers\ChildController {
         if(isset($model->p_bmc_code) && $model->p_bmc_code == 0 && !empty(Yii::$app->session->get('BMC'))){
             $model->p_bmc_code = Yii::$app->session->get('BMC');
         }
+        if(isset($model->p_dcs_code) && $model->p_dcs_code == 0 && !empty(Yii::$app->session->get('Dcs'))){
+            $model->p_dcs_code = Yii::$app->session->get('Dcs');
+        }
         $this->type = Yii::$app->request->post('submit');
         $controls = [];
         $param = explode(',', $this->data['param']);
