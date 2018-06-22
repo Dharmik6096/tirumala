@@ -107,9 +107,9 @@ class DefaultController extends \app\controllers\ChildController {
         $bmc_code = !empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0;
         $dcs_code = !empty(Yii::$app->session->get('Dcs')) ? Yii::$app->session->get('Dcs') : 0;
         
-        $data['plant_code'] = (!empty($data['plant_code']) && $data['plant_code'] != 0) ? $data['plant_code'] : $dcs_code;
-        $data['mccid'] = (!empty($data['mccid']) && $data['mccid'] != 0) ? $data['mccid'] : $dcs_code;
-        $data['bmcid'] = (!empty($data['bmcid']) && $data['bmcid'] != 0) ? $data['bmcid'] : $dcs_code;
+        $data['plant_code'] = (!empty($data['plant_code']) && $data['plant_code'] != 0) ? $data['plant_code'] : $plant_code;
+        $data['mccid'] = (!empty($data['mccid']) && $data['mccid'] != 0) ? $data['mccid'] : $mcc_code;
+        $data['bmcid'] = (!empty($data['bmcid']) && $data['bmcid'] != 0) ? $data['bmcid'] : $bmc_code;
         $data['vlccid'] = (!empty($data['vlccid']) && $data['vlccid'] != 0) ? $data['vlccid'] : $dcs_code;
         
         $file_name = $data['file_name'];
