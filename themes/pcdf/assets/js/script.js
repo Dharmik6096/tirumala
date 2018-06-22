@@ -93,6 +93,7 @@ var initDepdropMs;
             var type = $(this).attr('method');
             if (type.toLowerCase() === 'get')
             {
+                $(this).find('input[name=q]').remove();
                 encryptData($(this));
                 $(this).unbind().submit();
             }
