@@ -120,6 +120,12 @@ class DefaultController extends \app\controllers\ChildController {
         foreach ($data as $key => $value) {
             $cmd.= ' -a "@' . str_replace('p_', '', $key) . ':' . $value . '"';
         }
+        if(!isset($data['vlccid'])){
+            $cmd.= ' -a "@' . 'vlccid' . ':0"';
+        }
+        if(!isset($data['routeid'])){
+            $cmd.= ' -a "@' . 'routeid' . ':0"';
+        }
         chdir(Yii::$app->params['convert_crystal_report_path']);
         exec($cmd, $out, $retval);
         if (!empty($out) && isset($out[2]) && $out[2] == 'Completed') {
