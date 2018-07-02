@@ -23,11 +23,11 @@ class DefaultController extends \app\controllers\ChildController {
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
             $model->scenario = $this->data['scenario'];
-            if(strpos( $this->data['param'], 'p_milk_type') !== FALSE){
+            if (strpos($this->data['param'], 'p_milk_type') !== FALSE) {
                 $model->p_milk_type = 0;
             }
         }
-        if ($model->load(Yii::$app->request->post()) &&  $model->validate()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $this->LoadReport($model);
         }
         return $this->render('index', ['result' => $this->output, 'report' => $this->report, 'data' => $this->data, 'model' => $model]);
@@ -106,7 +106,7 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'BlockWiseCollection';
         return $this->actionIndex();
     }
-    
+
     public function actionDcsCollectionDispatchDifferenceReport() {
         $this->report = 'DcsCollectionDispatchDifferenceReport';
         if (Yii::$app->request->post()) {
@@ -116,7 +116,7 @@ class DefaultController extends \app\controllers\ChildController {
         }
         return $this->actionIndex();
     }
-    
+
     public function actionDcsCollectionVsDispatchGraph() {
         $this->report = 'DcsCollectionVsDispatchGraph';
         return $this->actionIndex();
@@ -136,7 +136,7 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'SocietyWiseMemberRegister';
         return $this->actionIndex();
     }
-    
+
     public function actionPaymentAuthorization() {
         $this->report = 'PaymentAuthorization';
         return $this->actionIndex();
@@ -166,19 +166,20 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'SocietyDetails';
         return $this->actionIndex();
     }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
-        if(isset($model->p_plant_code) && $model->p_plant_code == 0 && !empty(Yii::$app->session->get('Plant'))){
+        if (isset($model->p_plant_code) && $model->p_plant_code == 0 && !empty(Yii::$app->session->get('Plant'))) {
             $model->p_plant_code = Yii::$app->session->get('Plant');
         }
-        if(isset($model->p_mcc_code) && $model->p_mcc_code == 0 && !empty(Yii::$app->session->get('MCC'))){
+        if (isset($model->p_mcc_code) && $model->p_mcc_code == 0 && !empty(Yii::$app->session->get('MCC'))) {
             $model->p_mcc_code = Yii::$app->session->get('MCC');
         }
-        if(isset($model->p_bmc_code) && $model->p_bmc_code == 0 && !empty(Yii::$app->session->get('BMC'))){
+        if (isset($model->p_bmc_code) && $model->p_bmc_code == 0 && !empty(Yii::$app->session->get('BMC'))) {
             $model->p_bmc_code = Yii::$app->session->get('BMC');
         }
-        if(isset($model->p_dcs_code) && $model->p_dcs_code == 0 && !empty(Yii::$app->session->get('Dcs'))){
+        if (isset($model->p_dcs_code) && $model->p_dcs_code == 0 && !empty(Yii::$app->session->get('Dcs'))) {
             $model->p_dcs_code = Yii::$app->session->get('Dcs');
         }
         $this->type = Yii::$app->request->post('submit');
@@ -232,13 +233,13 @@ class DefaultController extends \app\controllers\ChildController {
 
             'MemberMilkCollectionSummary' => [
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_union_code,p_report_name,p_member_type',
-                'path' => 'milkcollection/MemberMilkCollectionRegister',
+                'path' => 'milkcollection/MemberMilkCollectionSummary',
                 'scenario' => 'MemberMilkCollectionSummary',
                 'title' => '101 - Member Milk Collection Summary',
             ],
             'MemberMilkCollectionRegister' => [
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
-                'path' => 'milkcollection/MemberMilkCollectionSummary',
+                'path' => 'milkcollection/MemberMilkCollectionRegister',
                 'scenario' => 'MemberMilkCollectionRegister',
                 'title' => '104 - Member Milk Collection Register',
             ],
@@ -344,7 +345,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_union_code,p_report_name',
                 'path' => 'milkcollection/MilkCollectionVsDispatchChart',
                 'scenario' => 'CollectionVsDispatchGraph',
-                'title' => '116 - Society Wise Collection vs Dispatch - Graph', 
+                'title' => '116 - Society Wise Collection vs Dispatch - Graph',
                 'pdf' => true,
             ],
             'UnionCollectionDispatchDifferenceReport' => [
