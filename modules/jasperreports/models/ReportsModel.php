@@ -38,8 +38,8 @@ class ReportsModel extends Model {
     public function rules() {
         return [
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionSummary'],
-            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionRegister'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
+            [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionSummary'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedMilkCollection'],
             [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'report_type'], 'required', 'on' => 'ConsolidatedDcsMilkCollection'],
             [['union_code', 'p_route_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'with_and_without_milktype', 'p_milk_type', 'p_type', 'report_type'], 'required', 'on' => 'ConsolidatedUnionMilkCollection'],
