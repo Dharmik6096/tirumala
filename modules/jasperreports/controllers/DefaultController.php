@@ -232,13 +232,13 @@ class DefaultController extends \app\controllers\ChildController {
         $label = [
 
             'MemberMilkCollectionSummary' => [
-                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_union_code,p_report_name,p_member_type',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/MemberMilkCollectionSummary',
                 'scenario' => 'MemberMilkCollectionSummary',
                 'title' => '101 - Member Milk Collection Summary',
             ],
             'MemberMilkCollectionRegister' => [
-                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
+                'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_union_code,p_report_name,p_member_type',
                 'path' => 'milkcollection/MemberMilkCollectionRegister',
                 'scenario' => 'MemberMilkCollectionRegister',
                 'title' => '104 - Member Milk Collection Register',
