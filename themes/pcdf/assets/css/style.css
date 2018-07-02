@@ -1914,7 +1914,8 @@ ul.orderable label.checked {
 }
 
 .report-grid table > tbody> tr > td:first-child, .report-grid table > tbody> tr > td:last-child {
-    display: none;
+    /*display: none;*/
+    width: auto;
 }
 
 .report-grid table > tbody> tr > td > table span {
