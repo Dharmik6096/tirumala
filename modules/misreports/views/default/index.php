@@ -19,7 +19,7 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
     $removeExportType = [];
     $exportEvents = [];
     if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
-        $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : Yii::t('app', 'WQ');
+        $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
         $this->title = $model->bmc_code . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
         $removeExportType = ['CSV'];
         $exportEvents = ['onRenderSheet' => function($sheet, $widget) {

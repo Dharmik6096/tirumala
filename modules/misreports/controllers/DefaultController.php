@@ -64,12 +64,14 @@ class DefaultController extends \app\controllers\ChildController {
         if (Yii::$app->request->queryParams) {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
                 $this->report = 'WqReportSap';
+            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'SdReportSap';
             }
         }
         return $this->actionIndex();
     }
-    public
-            function actionDateShiftBmcCollection() {
+
+    public function actionDateShiftBmcCollection() {
         $this->report = 'DateBmcCollection';
         if (Yii::$app->request->queryParams) {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
@@ -189,7 +191,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'rpt_MIS_VMSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP VM Report',
-                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
             ],
             'WqReportSap' => [
@@ -197,7 +199,15 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'rpt_MIS_WQSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP WQ Report',
-                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
+                'export_title' => true,
+            ],
+            'SdReportSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_SDSAPReport',
+                'scenario' => 'SapReport',
+                'title' => 'SAP SD Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
             ],
             'DateBmcCollection' => [
