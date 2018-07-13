@@ -19,7 +19,7 @@ class TblMemberSearch extends TblMember {
      */
     public function rules() {
         return [
-            [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time'], 'safe'],
+            [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
         ];
     }
 
@@ -44,12 +44,12 @@ class TblMemberSearch extends TblMember {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        
+
         $this->load($params);
 
-        $query->joinWith(['memberTypeCode','dcsCode']);
+        $query->joinWith(['memberTypeCode', 'dcsCode']);
 
-        Yii::$app->general->filterByOrg($query,$this);
+        Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -87,7 +87,7 @@ class TblMemberSearch extends TblMember {
           'is_delete' => $this->is_delete,
           'payment_mode' => $this->payment_mode,
           'animal_type_code' => $this->animal_type_code,
-        ]);*/
+          ]); */
 
         $query->andFilterWhere(['like', 'tbl_member.member_code', $this->member_code])
                 //->andFilterWhere(['like', 'tbl_member.dcs_code', $this->dcs_code])
@@ -121,7 +121,9 @@ class TblMemberSearch extends TblMember {
                 ->andFilterWhere(['like', 'tbl_member.local_surname', $this->local_surname])
                 ->andFilterWhere(['like', 'tbl_member.local_nominee_name', $this->local_nominee_name])
                 ->andFilterWhere(['like', 'tbl_member.is_download', $this->is_download])
-                ->andFilterWhere(['like', 'tbl_member.local_address', $this->local_address]);
+                ->andFilterWhere(['like', 'tbl_member.local_address', $this->local_address])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', substr($this->reference_code,0,3)])
+                ->andFilterWhere(['like', 'RIGHT(tbl_member.member_code,4)', substr($this->reference_code,3,4)]);
 
         return $dataProvider;
     }

@@ -8,10 +8,16 @@ use yii\web\View;
 ?>
 
 <?php
+
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
     ['attribute' => 'member_code', 'value' => 'member_code'],
+    ['attribute' => 'reference_code',
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code;
+        }
+    ],
     ['attribute' => 'ex_member_code', 'value' => 'ex_member_code'],
     ['attribute' => 'member_type_code', 'value' => 'memberTypeCode.member_type_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'member_name', 'value' => 'member_name'],
@@ -57,10 +63,12 @@ $attribute = [
     ['attribute' => 'adhar_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'annual_income', 'visible' => false, 'filter' => false],
     ['attribute' => 'payment_mode', 'visible' => false, 'filter' => false],
-    ['attribute' => 'registration_date','value' => function($model) {
-    return Yii::$app->controls->view_date($model->registration_date);}, 'visible' => false, 'filter' => false],
-    ['attribute' => 'member_class','value' => function($model) {
-    return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');}, 'visible' => false, 'filter' => false],
+    ['attribute' => 'registration_date', 'value' => function($model) {
+            return Yii::$app->controls->view_date($model->registration_date);
+        }, 'visible' => false, 'filter' => false],
+    ['attribute' => 'member_class', 'value' => function($model) {
+            return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
+        }, 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [
@@ -88,6 +96,7 @@ $grid_option = [
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
         ?>
         <?php
+
         $script = "
 $(document).ready(function(){
     $(document).on('click','.deact-member',function(e){

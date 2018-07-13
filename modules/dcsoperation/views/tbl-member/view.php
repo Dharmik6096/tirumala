@@ -33,10 +33,19 @@ if ($model->is_active == 1) {
                         [
                             'attribute' => 'dcs_code',
                             'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'member_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'member_code',
+                            'attribute' => 'reference_code',
+                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],

@@ -83,7 +83,7 @@ use app\modules\verification\models\TblKycRecord;
  */
 class TblMember extends ChildModel {
 
-    public $cnt;
+    public $cnt, $reference_code;
 
     /**
      * @inheritdoc
@@ -230,6 +230,7 @@ class TblMember extends ChildModel {
             'download_date_time' => Yii::t('app', 'Download Date Time'),
             'registration_date' => Yii::t('app', 'Registration Date'),
             'member_class' => Yii::t('app', 'Member Class'),
+            'reference_code' => Yii::t('app', 'Reference Code')
         ];
     }
 
