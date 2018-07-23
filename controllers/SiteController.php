@@ -1074,7 +1074,7 @@ class SiteController extends Controller {
             try {
                 if ($milkCollection->save(FALSE)) {
                     $data->data_post_status = 2;
-                    $data->sale(FALSE);
+                    $data->save(FALSE);
                 } else {
                     $data->data_post_status = 3;
                     $data->save(FALSE);
