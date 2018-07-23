@@ -1045,8 +1045,8 @@ class SiteController extends Controller {
         }
         foreach ($modelData as $data) {
             $milkCollection = new TblMilkCollection();
-            $milkCollection->member_code = (strlen($data->farmerid) > 4) ? $data->farmerid : $data->vlccid . str_pad($data->farmerid, 4, 0, STR_PAD_LEFT);
-            $milkCollection->dcs_code = $data->vlccid;
+            $milkCollection->dcs_code = '00' . $data->vlccid;
+            $milkCollection->member_code = (strlen($data->farmerid) > 4) ? $data->farmerid : $milkCollection->dcs_code . str_pad($data->farmerid, 4, 0, STR_PAD_LEFT);
             $milkCollection->shift = (($data->shift == 'M') ? 1 : 2);
             $milkCollection->date_time_of_collection = date('Y-m-d', strtotime($data->dtdate)) . ' ' . (($data->shift == 'M') ? '06:00:00' : '18:00:00');
             $milkCollection->sample_no = $data->sampleno;
