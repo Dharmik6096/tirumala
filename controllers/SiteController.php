@@ -41,10 +41,11 @@ use app\modules\payment\models\TblTransporterPayment;
 use app\modules\payment\models\TblTransporterPaymentHistory;
 use app\modules\webservice\models\TblAppNotification;
 use app\models\TblSms;
+use app\models\CollectionFarmerCreamy;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy'];
 
     public function init() {
         parent::init();
@@ -1029,6 +1030,63 @@ class SiteController extends Controller {
                 ->bindValue(':enddate', $edate);
         $results = $query->queryAll();
         return $results;
+    }
+
+    public function actionCollectionFarmerCreamy() {
+        $model = new CollectionFarmerCreamy();
+        $modelData = $model->getNewDcs();
+        foreach ($modelData as $data) {
+            $farmer_id = $data['farmerid'];
+            $vlcc_id = $data['vlccid'];
+            $sample_id = $data['sampleno'];
+            $dtdate_id = $data['dtdate'];
+            $shift_id = $data['shift'];
+            $update = $model->updateDcs($farmer_id, $vlcc_id, $sample_id, $dtdate_id, $shift_id);
+        }
+        foreach ($modelData as $data) {
+            $milkCollection = new TblMilkCollection();
+            $milkCollection->member_code = (strlen($data->farmerid) > 4) ? $data->farmerid : $data->vlccid . str_pad($data->farmerid, 4, 0, STR_PAD_LEFT);
+            $milkCollection->dcs_code = $data->vlccid;
+            $milkCollection->shift = (($data->shift == 'M') ? 1 : 2);
+            $milkCollection->date_time_of_collection = date('Y-m-d', strtotime($data->dtdate)) . ' ' . (($data->shift == 'M') ? '06:00:00' : '18:00:00');
+            $milkCollection->sample_no = $data->sampleno;
+            $olddata = $milkCollection->find()->where(['member_code' => $milkCollection->member_code, 'dcs_code' => $milkCollection->dcs_code, 'shift' => $milkCollection->shift, 'date_time_of_collection' => $milkCollection->date_time_of_collection, 'sample_no' => $milkCollection->sample_no])->one();
+            if (!empty($olddata)) {
+                $milkCollection = $olddata;
+            }
+            $milkCollection->attributes = $data->attributes;
+            $milkCollection->shift = (string) (($data->shift == 'M') ? 1 : 2);
+            $milkCollection->milk_type_code = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilktype('$data->milktype')")->queryOne())[0];
+            $milkCollection->milk_quality_type_code = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilkQltytype('$data->milkqtype')")->queryOne())[0];
+            $milkCollection->date_time_of_recieve = $data->createddate;
+            $milkCollection->dt_date = $data->dtdate;
+            $milkCollection->sms_status = 'n';
+            $milkCollection->status = 'Accept';
+            $milkCollection->qlty_time = $data->qltytime;
+            $milkCollection->qty_time = $data->qtytime;
+            $milkCollection->qty_mode = 0;
+            $milkCollection->qty_auto = $data->qtyauto;
+            $milkCollection->qlty_auto = $data->qltyauto;
+            $milkCollection->type_of_data_receive = 'online';
+            //  $milkCollection->rate_code = (string) $data->rateid;
+            $milkCollection->bmc_code = Yii::$app->general->getforeignkey($milkCollection->dcsCode, 'bmc_code');
+            $milkCollection->name = Yii::$app->general->getforeignkey($milkCollection->memberCode, 'member_name');
+            try {
+                if ($milkCollection->save(FALSE)) {
+                    $data->data_post_status = 2;
+                    $data->sale(FALSE);
+                } else {
+                    $data->data_post_status = 3;
+                    $data->save(FALSE);
+                }
+            } catch (UserException $e) {
+                $data->data_post_status = 3;
+                $data->save(FALSE);
+            } catch (\yii\db\Exception $e) {
+                $data->data_post_status = 3;
+                $data->save(FALSE);
+            }
+        }
     }
 
 }
