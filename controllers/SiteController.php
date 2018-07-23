@@ -1071,6 +1071,7 @@ class SiteController extends Controller {
             //  $milkCollection->rate_code = (string) $data->rateid;
             $milkCollection->bmc_code = Yii::$app->general->getforeignkey($milkCollection->dcsCode, 'bmc_code');
             $milkCollection->name = Yii::$app->general->getforeignkey($milkCollection->memberCode, 'member_name');
+            $milkCollection->village_code = Yii::$app->general->getforeignkey($milkCollection->memberCode, 'village_code');
             try {
                 if ($milkCollection->save(FALSE)) {
                     $data->data_post_status = 2;
