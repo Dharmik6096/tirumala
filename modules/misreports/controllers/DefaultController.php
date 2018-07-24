@@ -30,6 +30,9 @@ class DefaultController extends \app\controllers\ChildController {
         }
         if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadReport($model);
+            if (empty($this->output)) {
+                $this->output = Yii::t('app', 'No Data Available.');
+            }
         }
         return $this->render('index', ['result' => $this->output, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
     }
