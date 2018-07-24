@@ -121,7 +121,9 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                 </div>
             <?php } ?>
             <?php
-            if (!empty($result) && !(isset($data['download_only']))) {
+            if (!empty($result) && !is_array($result)) {  
+                echo "<b><p class='text-center mt-50'>" . $result . "</p></b>";
+            } else if (!empty($result) && !(isset($data['download_only']))) {
                 $attr = [];
                 foreach ($result[0] as $att => $value) {
                     $attr_arr = [];
