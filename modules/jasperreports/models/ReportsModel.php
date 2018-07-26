@@ -57,6 +57,19 @@ class ReportsModel extends Model {
             [['p_no_of_pouring_day'], 'integer'],
             [['p_pouring_qty'], 'double'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'ActualBmcCollection'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_milk_class'], 'required', 'on' => 'RmrdMilkCollection'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type'], 'required', 'on' => 'BmcSummaryReport'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeDateWise'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeVillageWise'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationDateWise'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationVillageWise'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationPercentageWise'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReport'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportDateWise'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportVillageWise'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'GprsDataReconciliation'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type'], 'required', 'on' => 'BmcCollection'],
         ];
     }
 

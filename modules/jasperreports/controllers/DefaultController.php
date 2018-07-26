@@ -167,6 +167,74 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    
+    
+    public function actionBmcCollection() {
+        $this->report = 'BmcCollection';
+        return $this->actionIndex();
+    }
+
+    public function actionActualBmcCollection() {
+        $this->report = 'ActualBmcCollection';
+        return $this->actionIndex();
+    }
+
+    public function actionRmrdMilkCollection() {
+        $this->report = 'RmrdMilkCollection';
+        return $this->actionIndex();
+    }
+
+    public function actionVariationMilkTypeDateWise() {
+        $this->report = 'VariationMilkTypeDateWise';
+        return $this->actionIndex();
+    }
+
+    public function actionVariationMilkTypeVillageWise() {
+        $this->report = 'VariationMilkTypeVillageWise';
+        return $this->actionIndex();
+    }
+
+    public function actionVariationDateWise() {
+        $this->report = 'VariationDateWise';
+        return $this->actionIndex();
+    }
+
+    public function actionVariationVillageWise() {
+        $this->report = 'VariationVillageWise';
+        return $this->actionIndex();
+    }
+
+    public function actionVariationPercentageWise() {
+        $this->report = 'VariationPercentageWise';
+        return $this->actionIndex();
+    }
+
+    public function actionDifferenceReport() {
+        $this->report = 'DifferenceReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDifferenceReportDateWise() {
+        $this->report = 'DifferenceReportDateWise';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcSummaryReport() {
+        $this->report = 'BmcSummaryReport';
+        return $this->actionIndex();
+    }
+
+    public function actionDifferenceReportVillageWise() {
+        $this->report = 'DifferenceReportVillageWise';
+        return $this->actionIndex();
+    }
+    
+    public function actionGprsDataReconciliation() {
+        $this->report = 'GprsDataReconciliation';
+        return $this->actionIndex();
+    }
+
+    
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -202,7 +270,7 @@ class DefaultController extends \app\controllers\ChildController {
             } else {
                 $controls[$value] = $model->{$value};
             }
-        }
+        }        
         //$controls['locale'] = Yii::$app->session->get('LanguageCode');
         $controls['locale'] = 'en';
         //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
@@ -401,6 +469,84 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'milkcollection/SocietyDetails',
                 'scenario' => 'SocietyDetails',
                 'title' => '117 - Society Details',
+            ],
+            'ActualBmcCollection' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => '',
+                'scenario' => 'ActualBmcCollection',
+                'title' => '301 - Actual Bmc Collection',
+            ],
+            'RmrdMilkCollection' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_milk_class,p_language_code',
+                'path' => 'bmccollection/RMRDMilkCollection',
+                'scenario' => 'RmrdMilkCollection',
+                'title' => '302 - RMRD Milk Collection',
+            ],
+            'BmcSummaryReport' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code',
+                'path' => 'bmccollection/BMCSummaryReport',
+                'scenario' => 'BmcSummaryReport',
+                'title' => '303 - Bmc Summary Report',
+            ],
+            'VariationMilkTypeDateWise' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/VariationReportDCSToMCCMilkType',
+                'scenario' => 'VariationMilkTypeDateWise',
+                'title' => '304 - Milk Type Variation Date Wise',
+            ],
+            'VariationMilkTypeVillageWise' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/VariationReportDCSToMCCVillageWiseMilkType',
+                'scenario' => 'VariationMilkTypeVillageWise',
+                'title' => '305 - Milk Type Variation Village Wise',
+            ],
+            'VariationDateWise' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/VariationReportDCSToMCC',
+                'scenario' => 'VariationDateWise',
+                'title' => '306 - Date Wise Variation',
+            ],
+            'VariationVillageWise' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/VariationReportDCSToMCCVillageWise',
+                'scenario' => 'VariationVillageWise',
+                'title' => '307 - Village Wise Variation',
+            ],
+            'VariationPercentageWise' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/VariationReportDCSToMCCFATSNF',
+                'scenario' => 'VariationPercentageWise',
+                'title' => '308 - Percentage Wise Variation',
+            ],
+            'DifferenceReport' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => '',
+                'scenario' => 'DifferenceReport',
+                'title' => '309 - Difference Report',
+            ],
+            'DifferenceReportDateWise' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/DifferenceReportVLCCToMCCForBMC',
+                'scenario' => 'DifferenceReportDateWise',
+                'title' => '310 - Date Wise Difference Report',
+            ],
+            'DifferenceReportVillageWise' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/DifferenceReportVLCCToMCCVillageWise',
+                'scenario' => 'DifferenceReportVillageWise',
+                'title' => '311 - Village Wise Difference Report',
+            ],
+            'BmcCollection' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code',
+                'path' => 'bmccollection/BMCCollectionReport',
+                'scenario' => 'BmcCollection',
+                'title' => '312 - Bmc Collection',
+            ],
+            'GprsDataReconciliation' => [
+                'param' => 'union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code',
+                'path' => 'bmccollection/DPUGPRSDataReconciliation',
+                'scenario' => 'GprsDataReconciliation',
+                'title' => '313 - DPU-GPRS Data Reconciliation',
             ],
         ];
         return $label[$l];

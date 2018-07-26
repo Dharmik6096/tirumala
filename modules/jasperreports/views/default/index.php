@@ -217,6 +217,13 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                         </div>     
                         <?php
                     }
+                    if (in_array($value, array('p_milk_class'))) {
+                        ?>
+                        <div class="col-sm-2">
+                            <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('p_milk_class'), false, 'p_milk_class'); ?>
+                        </div>
+                        <?php
+                    }
                 }
                 if (isset($data['report_type'])) {
                     echo $form->field($model, 'report_type', [ 'options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
@@ -331,7 +338,7 @@ $script = "$('#reportsmodel-p_member_code').on('depdrop.afterChange', function(e
     }
 });
 
-if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData'){
+if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData' || '" . $report . "'=='RmrdMilkCollection'){
 $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
     //$('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
 });
@@ -370,7 +377,7 @@ if('" . $report . "'=='DcsCollectionDispatchDifferenceReport' || '" . $report . 
    }
 }
 }
-if('" . $report . "'=='UnionCollectionDispatchDifferenceReport' || '" . $report . "'=='UnionCollectionDispatchDifferenceReportWithOutMilkType'){ 
+if('" . $report . "'=='UnionCollectionDispatchDifferenceReport' || '" . $report . "'=='UnionCollectionDispatchDifferenceReportWithOutMilkType' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='BmcCollection'){ 
     
     $('#reportsmodel-p_route_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
     $('#reportsmodel-p_route_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
@@ -437,7 +444,7 @@ if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCo
         }
     });
 }
-if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ShiftReportNameWise' || '" . $report . "'=='SocietyWiseMemberRegister' || '" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='SocietyDetails'){
+if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ShiftReportNameWise' || '" . $report . "'=='SocietyWiseMemberRegister' || '" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='BmcCollection'){
     $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_dcs_code . "'=='0'){
@@ -457,6 +464,9 @@ if('" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberP
             $('#reportsmodel-p_member_code').val(0);
         }
     });
+}
+if('" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport'){
+    $('#reportsmodel-p_milk_class option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
 }
 ";
 $this->registerJs($script, View::POS_READY, 'dep-drop-member');
