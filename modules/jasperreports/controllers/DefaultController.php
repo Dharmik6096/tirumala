@@ -472,7 +472,7 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'ActualBmcCollection' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:p_union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_report_name',
-                'path' => '',
+                'path' => 'bmccollection/PPWiseActualMilkCollection',
                 'scenario' => 'ActualBmcCollection',
                 'title' => '301 - Actual Bmc Collection',
             ],
