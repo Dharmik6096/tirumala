@@ -76,7 +76,7 @@ class TestingvillagequalitySearch extends Testingvillagequality {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), dtdate, 126)', date('Y-m-d', strtotime($this->dtdate))]);
 
         $query->andFilterWhere([
-            'testingvillageweight.shift' => $this->shift,
+            'testingvillagequality.shift' => $this->shift,
         ]);
         $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->mccid])
                 ->andFilterWhere(['like', 'testingvillagequality.sampleno', $this->sampleno]);
