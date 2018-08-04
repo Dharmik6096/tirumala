@@ -528,6 +528,47 @@ class SiteController extends Controller {
         }
     }
 
+    public function actionSendCollectionSmsNew() {
+        try {
+            $smsModel = new TblSms();
+            $smsData = $smsModel->getData();
+            $sms_ids = array_column($smsData, 'sms_id');
+            $update = $smsModel->updateSmsStatus($sms_ids);
+            foreach ($smsData as $sms) {
+                $mobile = '91' . $sms->mobile_no;
+                $msg = $sms->sms_txt;
+                $sent = Yii::$app->bsmartsms->sendSmsPOSTNew($mobile, $msg);
+                $sms->sms_status = 'Y';
+                $sms->sms_msgid = $sent;
+                $sms->sms_result = '0';
+                $sms->updated_at = date('Y-m-d H:i:s');
+                $sms->status = 2;
+                $sms->save(false);
+            }
+            $paymentModel = new TblPaymentTransaction();
+            $paymentModel = $paymentModel->getSmsRecords();
+            foreach ($paymentModel as $payment) {
+                $mobile = '91' . $payment->mobile_no; //'919712147065';
+                // $message = 'We have initiated your payment of RS.' . $payment->final_amount . '. actual effect is subject to bank realization.';
+                if ($payment->type == 'member') {
+                    $m_code = substr($payment->code, -4);
+                    $message = $m_code . ':,
+ दूध की मात्रा: ' . $payment->qty . ' लि. की धनराशि Rs.' . $payment->final_amount . ' बैंक को भेज दिया';
+                    $sent = Yii::$app->bsmartsms->sendSmsPOSTNew($mobile, $message, TRUE);
+                } else {
+                    $message = 'We have disbursed payment of Rs. ' . $payment->final_amount . ' on ' . date('d-m-Y') . ' to the bank.Subject to realisation.';
+                    $sent = Yii::$app->bsmartsms->sendSmsPOSTNew($mobile, $message);
+                }
+                $payment->sms_status = 'Y';
+                $payment->sms_msgid = $sent;
+                $payment->sms_timestamp = date('Y-m-d H:i:s');
+                $payment->save(false);
+            }
+        } catch (yii\base\Exception $e) {
+            var_dump($e);
+        }
+    }
+
     public function actionLoadChart() {
         $sp = Yii::$app->request->post('sp');
         $results = $this->getSpResult($sp);

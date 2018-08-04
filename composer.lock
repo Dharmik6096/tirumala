@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba7522dc91f9e17af164ff5bd570e272",
+    "content-hash": "aac0a1ff1ee5ad3433e611c6a1b98d8e",
     "packages": [
         {
             "name": "2amigos/yii2-multi-select-widget",
@@ -2533,6 +2533,57 @@
             "time": "2015-12-05T10:37:16+00:00"
         },
         {
+            "name": "linslin/yii2-curl",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/linslin/Yii2-Curl.git",
+                "reference": "54dd37224c56ba8fe6532e458a79586bdf8ce834"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/linslin/Yii2-Curl/zipball/54dd37224c56ba8fe6532e458a79586bdf8ce834",
+                "reference": "54dd37224c56ba8fe6532e458a79586bdf8ce834",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "yiisoft/yii2": "*"
+            },
+            "require-dev": {
+                "codeception/base": "^2.2.3",
+                "codeception/specify": "~0.4.3",
+                "codeception/verify": "~0.3.1",
+                "codeclimate/php-test-reporter": "dev-master",
+                "guzzlehttp/guzzle": ">=4.1.4 <7.0",
+                "mcustiel/phiremock-codeception-extension": "1.2.4"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "linslin\\yii2\\curl\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nils Gajsek",
+                    "email": "info@linslin.org"
+                }
+            ],
+            "description": "Easy and nice cURL extension with RESTful support for Yii2",
+            "keywords": [
+                " curl",
+                "extension",
+                "restful",
+                "yii2"
+            ],
+            "time": "2018-02-28T09:02:49+00:00"
+        },
+        {
             "name": "mpdf/mpdf",
             "version": "6.1.x-dev",
             "source": {
@@ -2687,6 +2738,7 @@
                 "xls",
                 "xlsx"
             ],
+            "abandoned": "phpoffice/phpspreadsheet",
             "time": "2016-10-03T10:33:09+00:00"
         },
         {

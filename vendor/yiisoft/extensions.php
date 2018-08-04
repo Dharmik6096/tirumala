@@ -417,4 +417,13 @@ return array (
       '@softark/duallistbox' => $vendorDir . '/softark/yii2-dual-listbox',
     ),
   ),
+  'linslin/yii2-curl' => 
+  array (
+    'name' => 'linslin/yii2-curl',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@linslin/yii2/curl' => $vendorDir . '/linslin/yii2-curl',
+    ),
+  ),
 );
