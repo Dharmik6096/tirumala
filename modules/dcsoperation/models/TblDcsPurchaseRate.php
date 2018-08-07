@@ -4,6 +4,8 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_dcs_purchase_rate".
@@ -39,6 +41,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
             [['created_at', 'updated_at', 'wef_date'], 'safe'],
             [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
             [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
@@ -50,7 +53,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
+            'purchase_rate_code' => Yii::t('app', 'Rate ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'description' => Yii::t('app', 'Description'),
@@ -61,11 +64,11 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'wef_date' => Yii::t('app', 'Wef Date'),
-            'rate_gen_method_code' => Yii::t('app', 'Rate Gen Method Code'),
+            'rate_gen_method_code' => Yii::t('app', 'Rate Method'),
             'shift_applicability' => Yii::t('app', 'Shift Applicability'),
-            'shift_id' => Yii::t('app', 'Shift ID'),
+            'shift_id' => Yii::t('app', 'Shift'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
 
@@ -95,6 +98,92 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
         }
 
         return $rtpl_data;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPurchaseRateAuto() {
+        return $this->hasOne(TblDcsPurchaseRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPurchaseRateDetail() {
+        return $this->hasOne(TblDcsPurchaseRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPurchaseRateBased() {
+        return $this->hasOne(TblDcsPurchaseRateBased::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryNULL
+     */
+    public function getShiftApplicability() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
+    }
+
+    public function getShiftId() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRateMethod() {
+        return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
+    }
+
+    public function getCode() {
+        $code = (Yii::$app->session->get('organizations_type') == 'UNION') ? Yii::$app->session->get('organizations_code') : '000';
+        $dcs_code = '0000';
+
+        $val = (new \yii\db\Query)
+                ->select("MAX(CAST(trim(SUBSTRING(`purchase_rate_code`, length(`purchase_rate_code`) -7)) AS UNSIGNED)) as purchase_rate_code")
+                ->from('tbl_dcs_purchase_rate')
+                ->where('(CAST(trim(SUBSTRING(purchase_rate_code, 1,3)) AS UNSIGNED)) ="' . trim($code) . '" and originating_org_type="UNION"')
+                ->one();
+        $codeValue = (int) $val['purchase_rate_code'] + 1;
+        return $code . $dcs_code . str_pad($codeValue, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function getRecord($id) {
+        return $this->find()->select(['purchase_rate_code', 'wef_date', 'rate_gen_method_code', 'shift_applicability', 'shift_id'])->where(['purchase_rate_code' => $id])->one();
+    }
+
+    public function addPurchaseRate($jsonData) {
+        $this->attributes = $jsonData;
+        $this->originating_org_code = Yii::$app->session->get('Unions');
+        $this->originating_org_type = 'UNION';
+        $this->purchase_rate_code = $this->getCode();
+        $this->rate_gen_method_code = $jsonData['rate_method'];
+        $this->shift_applicability = $jsonData['shift'];
+        $this->description = $jsonData['description'];
+        $this->shift_id = $jsonData['shift_id'];
+        $this->wef_date = Yii::$app->formatter->asDate($jsonData['wef_date'], DATE_FORMAT);
+        $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_id);
+        $this->is_active = 1;
+//        $this->flg_sentbox_entry = 'E';
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'originating_org_code']);
+    }
+
+    public function getRateChartList($union_code) {
+        $data = $this->find()->where(['originating_org_code' => $union_code, 'originating_org_type' => 'UNION'])->all();
+        return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
+                    return $data->purchase_rate_code . ' (' . $data->description . ')';
+                });
     }
 
 }

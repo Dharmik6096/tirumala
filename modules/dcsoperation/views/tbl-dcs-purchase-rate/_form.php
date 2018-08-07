@@ -1,0 +1,120 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use yii\web\JsExpression;
+use demogorgorn\ajax\AjaxSubmitButton;
+use yii\helpers\Url;
+use yii\web\View;
+use webvimark\modules\UserManagement\components\GhostHtml;
+
+$title = Yii::$app->label->title($type, 'Purchase Rate') . ' (' . Yii::t('app', 'DCS') . ')';
+$button = Yii::$app->label->button($type);
+$this->title = Yii::t('app', $title);
+$selected = Yii::$app->session->get('Unions');
+//$model->union_code = !empty($selected) ? $selected : $model->union_code;
+?>
+
+<?php
+$form = ActiveForm::begin(['id' => 'purchase-rate-form',
+            'validateOnBlur' => FALSE,
+            'validateOnEnter' => TRUE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+            'fieldConfig' => [
+        ]]);
+?>
+
+<div class="row">                      
+    <div class="col-sm-3 change">
+        <?= Yii::$app->dropdown->dropdown('rate_gen_method_code', $model, $form, 'form-group', 'Rate Method'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'wef_date', 'form-group', FALSE); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift', false, 'shift_id'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group', 'Shift Applicability'); ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-6">
+        <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
+    </div>
+    <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>
+
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?php
+            AjaxSubmitButton::begin([
+
+                'label' => Yii::t('app', 'Next'),
+                'id' => 'submit',
+                'ajaxOptions' => [
+                    'type' => 'POST',
+                    'url' => Url::to(['create']),
+                    'beforeSend' => new JsExpression("function(data){  
+                        
+                           var tx=($('#tbldcspurchaserate-rate_gen_method_code option:selected').text()).toLowerCase();                                
+                           if(tx=='import' && ($('#file_name').val())==''){                         
+                               $('#excelImport').modal('toggle');                                                          
+                               return false;
+                           }
+                           $('#loadercontent').show();
+                           $('#pageloader').show();
+                    }"),
+                    'success' => new JsExpression('function(data){                             
+                                    if (data.status == "success"){
+                                            var purchaseRate = [];
+                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id};
+                                            localStorage.setItem("purchaseRate", JSON.stringify(purchaseRate));
+                                            window.location="' . \Yii::$app->request->getHostInfo() . '"+data.url;
+                                    }else{
+                                $(\'#file_name\').val(\'\');
+                                     $(\'#loadercontent\').hide();
+                                     $(\'#pageloader\').hide();
+                                       $("div.help-block").remove();
+                                        var cnt=0;
+                                        $.each(data, function(key, val) {
+                                            $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
+                                            $("#"+key).closest(".form-group").addClass("has-error");
+                                             if(key=="tbldcspurchaserate-originating_org_code"){
+                                                cnt++;
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle text-danger\'></i></div><div class=\'col-sm-10 padding-left-0\'>"+val+"</div></div>",function(){ location.reload() });
+                                            }
+                                        });
+                                        if(cnt==0 && typeof data.message != "undefined")                                           
+                                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle text-danger\'></i></div><div class=\'col-sm-10 padding-left-0\'>"+data.message+"</div></div>",function(){ location.reload() });
+                                            
+                                    }
+                     }'),
+                    'error' => new JsExpression('function(){
+                            $("#importModal").modal("toggle");
+                             $("#import-form")[0].reset();
+                                     bootbox.alert("You have error in your file");
+                     }'),
+                ],
+                'options' => ['class' => 'btn btn-primary',
+                    'type' => 'submit'],
+            ]);
+            AjaxSubmitButton::end();
+            ?>
+            <?= Yii::$app->controls->cancel($model, 'index'); ?>
+        </div>
+    </div>
+</div>
+
+<?php ActiveForm::end(); ?>
+
+<?= $this->render('_excel_popup') ?>
+
+<?php
+$script = "
+   $(document).ready(function() {
+        $('.shift select option:contains(\'All\')').remove();
+    });
+";
+$this->registerJs($script, View::POS_END, 'shift');
+?>

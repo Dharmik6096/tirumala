@@ -79,6 +79,7 @@ echo GhostMenu::widget([
             'items' => [
                 ['label' => 'Rate Formula', 'url' => ['/dcsoperation/formula-master/index'], 'active' => ($cntrl == 'formula-master')],
                 ['label' => 'Milk Purcahse Rate', 'url' => ['/dcsoperation/tbl-purchase-rate/index'], 'active' => ($cntrl == 'tbl-purchase-rate')],
+                ['label' => 'Milk Purcahse Rate (' . Yii::t('app', 'DCS') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate/index'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate')],
             ],
         ],
         [
