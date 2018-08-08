@@ -498,10 +498,10 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             $master = [];
-            $detailHistory = new TblDcsPurchaseRateApplicabitityHistory();
+          //  $detailHistory = new TblDcsPurchaseRateApplicabitityHistory();
             $record = TblDcsPurchaseRateApplicabitity::findOne(Yii::$app->request->post('id'));
-            Yii::$app->operation->history($record, $detailHistory, DELETE);
-            $master[] = $detailHistory->save(FALSE);
+          //  Yii::$app->operation->history($record, $detailHistory, DELETE);
+            //$master[] = $detailHistory->save(FALSE);
             $master[] = $record->delete();
             if (in_array(FALSE, $master)) {
                 $transaction->rollback();
