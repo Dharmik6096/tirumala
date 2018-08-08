@@ -30,6 +30,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
 
     public $purchaseModel;
     public $freeAccessActions = ['chart-list'];
+
     /**
      * Lists all TblDcsPurchaseRate models.
      * @return mixed
@@ -163,6 +164,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             $this->model->is_active = 1;
             $this->model->originating_org_code = Yii::$app->session->get('organizations_code');
             $this->model->originating_org_type = Yii::$app->session->get('organizations_type');
+            $this->model->union_code = Yii::$app->session->get('organizations_code');
+
 //$this->model->scenario = 'create';
             if ($this->model->validate()) {
                 if ($this->model->rate_gen_method_code == 3) {
@@ -173,7 +176,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                 $result = 'success';
                 Yii::$app->response->format = trim(Response::FORMAT_JSON);
                 $url = \yii\helpers\Url::to(['tbl-dcs-purchase-rate-details/create-rate', 'id' => -1, 'method' => $this->model->rate_gen_method_code]);
-                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'wef_date' => $this->model->wef_date, 'shift' => $this->model->shift_applicability, 'description' => $this->model->description, 'shift_id' => $this->model->shift_id];
+                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'wef_date' => $this->model->wef_date, 'shift' => $this->model->shift_applicability, 'description' => $this->model->description, 'shift_id' => $this->model->shift_id, 'union_code' => $this->model->union_code];
             } else {
                 $file = [];
                 if ($_POST['file_name'] != '')
@@ -462,25 +465,30 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         return $this->render('snf_calc');
     }
 
+   
+
     public function actionPurchaseRateApplicability($id) {
-        $purchaserate = $this->findModel($id);
+        $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
-        $appModel->model = new \app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity();
-        $appModel->model->shift_code = $purchaserate->shift_id;
-        $appModel->model->wef_date = $purchaserate->wef_date;
-        $appModel->is_subcenter = FALSE;
+        $appModel->model = new TblDcsPurchaseRateApplicabitity();
+        $appModel->model->shift_code = $model->shift_id;
+        $appModel->model->wef_date = $model->wef_date;
+        $appModel->is_union = false;
+        $appModel->union_code = $model->union_code;
         $appModel->field_name = 'purchase_rate_code';
         $appModel->field_value = $id;
-        $appModel->shift_type = strtolower($purchaserate->shiftApplicability->shift);
-        $appModel->trans_label = Yii::t('app', 'milk rate (Union To DCS) applicability for') . ' ' . $appModel->shift_type . ' Shift';
-        $appModel->delete = ['option' => 'rate_app_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability'];
+        $appModel->trans_label = 'purchase rate applicability';
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
-            'route_name' => ['view' => ['grid'], 'value' => 'dcsCode.routeCode.route_name'],
         ];
+        $appModel->actions = ['delete' => ['option' => 'rate_app_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability']];
+
+        $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
+        $appModel->ratechart = true;
+
         return $appModel->createApp();
     }
 
@@ -515,8 +523,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
-    
-    
+
     public function actionChartList() {
         $out = NULL;
         if (isset($_POST['depdrop_parents'])) {

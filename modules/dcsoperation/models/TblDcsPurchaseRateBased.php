@@ -85,12 +85,12 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
             [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
             [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
             [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
-            [['created_at', 'deleted_at', 'sync_timestamp', 'step', 'updated_at', 'kg_rate', 'is_active', 'is_delete', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type'], 'safe'],
+            [['created_at', 'deleted_at', 'sync_timestamp', 'step', 'updated_at', 'kg_rate', 'is_active', 'is_delete', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type','purchase_rate_code'], 'safe'],
             [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
             [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
             [['deduction_type', 'ref_type'], 'string', 'max' => 50],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['purchase_rate_code'], 'string', 'max' => 255],
+          //  [['purchase_rate_code'], 'string', 'max' => 255],
 //            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
 //            [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityGrade::className(), 'targetAttribute' => ['milk_quality_type_code' => 'grade_code']],
 //            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
@@ -108,8 +108,7 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
     public function RateTypeValidate($attribute, $params) {
 
         if (!empty($this->rate_type) && !empty($this->milk_quality_type_code)) {
-
-            $query = $this->find()->where('purchase_rate_code="' . $this->purchase_rate_code . '"  and milk_type_code="' . $this->milk_type_code . '" ');
+            $query = $this->find()->where('purchase_rate_code=\'' . $this->purchase_rate_code . '\'  and milk_type_code=\'' . $this->milk_type_code . '\'');
             $record = $query->one();
             if (!empty($record) && $this->rate_type != $record->rate_type) {
                 $this->addError($attribute, Yii::t('app/validation', 'Other Rate Type is not allowed.'));
@@ -390,17 +389,8 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
     }
 
     public function getCode() {
-
-        $len = strlen($this->purchase_rate_code);
-        $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`rate_based_code` FROM " . $len . " +1)) AS UNSIGNED)) as rate_based_code")
-                ->from('tbl_dcs_purchase_rate_based')
-                ->where(['purchase_rate_code' => $this->purchase_rate_code])
-                ->one();
-        $code = (int) $val['rate_based_code'] + 1;
-//        var_dump($this->purchase_rate_code.$code);exit;
-
-        return $code;
+        $data = $this->find()->select(["MAX(convert(bigint,rate_based_code)) as rate_based_code"])->one();
+        return (int) $data['rate_based_code'] + 1;
     }
 
     public function setRateSession() {

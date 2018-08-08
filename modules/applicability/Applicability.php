@@ -445,11 +445,19 @@ class Applicability extends \yii\base\Module {
         $cname = explode('_', $model_name);
         $cname = end($cname);
         $nameforid = strtolower($cname);
-        $query = $this->model->find()
-                ->select(['dcs_code', 'tbl_purchase_rate.shift_applicability', 'tbl_purchase_rate.purchase_rate_code'])
-                ->joinWith(['purchaseRateCode.shiftApplicability'])
-                ->where(['dcs_code' => $id, 'convert(date, tbl_purchase_rate.wef_date, 103)' => $wef_date, 'tbl_purchase_rate.originating_org_type' => 'UNION', 'tbl_purchase_rate.union_code' => $union_code])
-                ->andWhere(['tbl_shift.shift' => $shiftarray])->all();
+        if ($nameforid = 'tbldcspurchaserateapplicabitity') {
+            $query = $this->model->find()
+                            ->select(['dcs_code', 'tbl_dcs_purchase_rate.shift_applicability', 'tbl_dcs_purchase_rate.purchase_rate_code'])
+                            ->joinWith(['purchaseRateCode.shiftApplicability'])
+                            ->where(['dcs_code' => $id, 'convert(date, tbl_dcs_purchase_rate.wef_date, 103)' => $wef_date, 'tbl_dcs_purchase_rate.originating_org_type' => 'UNION', 'tbl_dcs_purchase_rate.union_code' => $union_code])
+                            ->andWhere(['tbl_shift.shift' => $shiftarray])->all();
+        } else {
+            $query = $this->model->find()
+                            ->select(['dcs_code', 'tbl_purchase_rate.shift_applicability', 'tbl_purchase_rate.purchase_rate_code'])
+                            ->joinWith(['purchaseRateCode.shiftApplicability'])
+                            ->where(['dcs_code' => $id, 'convert(date, tbl_purchase_rate.wef_date, 103)' => $wef_date, 'tbl_purchase_rate.originating_org_type' => 'UNION', 'tbl_purchase_rate.union_code' => $union_code])
+                            ->andWhere(['tbl_shift.shift' => $shiftarray])->all();
+        }
         $message = [];
         $dcs = [];
         $messagestring = '';

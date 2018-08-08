@@ -139,18 +139,12 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
         return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
     }
 
-    public function getCode() {
-        $code = (Yii::$app->session->get('organizations_type') == 'UNION') ? Yii::$app->session->get('organizations_code') : '000';
-        $dcs_code = '0000';
+  public function getCode() {
 
-        $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`purchase_rate_code`, length(`purchase_rate_code`) -7)) AS UNSIGNED)) as purchase_rate_code")
-                ->from('tbl_dcs_purchase_rate')
-                ->where('(CAST(trim(SUBSTRING(purchase_rate_code, 1,3)) AS UNSIGNED)) ="' . trim($code) . '" and originating_org_type="UNION"')
-                ->one();
-        $codeValue = (int) $val['purchase_rate_code'] + 1;
-        return $code . $dcs_code . str_pad($codeValue, 4, '0', STR_PAD_LEFT);
-    }
+
+                $data = $this->find()->select(["MAX(purchase_rate_code) as purchase_rate_code"])->one();
+                return $data['purchase_rate_code'] + 1;
+            }
 
     public function getRecord($id) {
         return $this->find()->select(['purchase_rate_code', 'wef_date', 'rate_gen_method_code', 'shift_applicability', 'shift_id'])->where(['purchase_rate_code' => $id])->one();

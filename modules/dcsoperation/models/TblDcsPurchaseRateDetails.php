@@ -211,17 +211,10 @@ class TblDcsPurchaseRateDetails extends \yii\db\ActiveRecord {
     }
 
     public function getCode() {
-
-        $len = strlen($this->purchase_rate_code);
-
-        $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`code` FROM " . $len . " +1)) AS UNSIGNED)) as code")
-                ->from('tbl_dcs_purchase_rate_details')
-                ->where(['purchase_rate_code' => $this->purchase_rate_code])
-                ->one();
-        return (int) $val['code'] + 1;
+        $data = $this->find()->select(["MAX(CONVERT(bigint,code)) as code"])->one();
+        $data['code'] = $data['code'] == null ? 0 : $data['code'];
+        return (int) $data['code'] + 1;
     }
-
     public function getPurchaseRateCode() {
         return $this->hasOne(TblDcsPurchaseRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
     }

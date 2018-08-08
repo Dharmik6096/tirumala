@@ -10,8 +10,10 @@ use yii\helpers\Html;
 ?>
 
 <div class="grid-search clearfix">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
+    <?php
+    if (Yii::$app->session->get('organizations_type') !== 'UNION' || count(explode(',', Yii::$app->session->get('Unions'))) > 1)
+        echo $this->render('_search', ['model' => $searchModel]);
+    ?></div>
 
 <?php
 $attribute = [
@@ -29,13 +31,21 @@ $attribute = [
 }],
     ['attribute' => 'shift_id',
         'filter' => false,
-        'value' => function($model) { return Yii::$app->general->getforeignkey($model->shiftId, 'shift'); },],
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftId, 'shift');
+        },],
     ['attribute' => 'shift_applicability',
-        'value' => function($model) { return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift'); },],
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
+        },],
     ['attribute' => 'rate_gen_method_code',
-        'value' => function($model) { return Yii::$app->general->getforeignkey($model->rateMethod, 'method'); },],
-    ['attribute' => 'union_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->unionCode, 'union_name'); }, 'filter' => false],
-    'description',  
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->rateMethod, 'method');
+        },],
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'filter' => false],
+    'description',
 ];
 
 $grid_option = [
@@ -52,25 +62,22 @@ $grid_option = [
     },
             'actions' => [
                 'view' => true,
-                'update_data' => function ($url, $model) {
-                    $disable = ($model->is_active == 0) ? 'disabled' : '';
-                    if ($disable == '') {
-                        $disable = (strtoupper($model->originating_org_type) == 'UNION') ? '' : 'disabled';
-                        if ($model->rate_gen_method_code == 3 || $model->flg_sentbox_entry == 'Y') {
-                            $disable = 'disabled';
-                        }
-                    }
-                    $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-                    return GhostHtml::a('<span class="glyphicon glyphicon-pencil"></span>', ['/dcsoperation/tbl-dcs-purchase-rate-details/create-rate', 'id' => $model->purchase_rate_code, 'method' => $model->rate_gen_method_code], $options);
-                },
-//                        'mapping' => function ($url, $model) {
+//                'update_data' => function ($url, $model) {
 //                    $disable = ($model->is_active == 0) ? 'disabled' : '';
 //                    if ($disable == '') {
 //                        $disable = (strtoupper($model->originating_org_type) == 'UNION') ? '' : 'disabled';
+//                        if ($model->rate_gen_method_code == 3 || $model->flg_sentbox_entry == 'Y') {
+//                            $disable = 'disabled';
+//                        }
 //                    }
-//                    $options = ['title' => Yii::t('app', 'Applicability'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
-//                    return GhostHtml::a('<i class="fa fa-plus"></i>', ['/dcsoperation/tbl-dcs-purchase-rate/purchase-rate-applicability', 'id' => $model->purchase_rate_code], $options);
+//                    $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
+//                    return GhostHtml::a('<span class="glyphicon glyphicon-pencil"></span>', ['/dcsoperation/tbl-dcs-purchase-rate-details/create-rate', 'id' => $model->purchase_rate_code, 'method' => $model->rate_gen_method_code], $options);
 //                },
+                'mapping' => function ($url, $model) {
+                    $disable = ($model->is_active == 0) ? 'disabled' : '';
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
+                    return GhostHtml::a('<i class="fa fa-plus"></i>', ['/dcsoperation/tbl-dcs-purchase-rate/purchase-rate-applicability', 'id' => $model->purchase_rate_code], $options);
+                },
                         'view_rate' => function ($url, $model) {
                     $disable = ($model->is_active == 0) ? 'disabled' : '';
                     $options = ['title' => Yii::t('app', 'Rate Chart'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Rate Chart', 'class' => $disable];

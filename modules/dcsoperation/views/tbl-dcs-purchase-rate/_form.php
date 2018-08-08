@@ -58,7 +58,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                     'beforeSend' => new JsExpression("function(data){  
                         
                            var tx=($('#tbldcspurchaserate-rate_gen_method_code option:selected').text()).toLowerCase();                                
-                           if(tx=='import' && ($('#file_name').val())==''){                         
+                           if(tx=='excel' && ($('#file_name').val())==''){                         
                                $('#excelImport').modal('toggle');                                                          
                                return false;
                            }
@@ -92,7 +92,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                      }'),
                     'error' => new JsExpression('function(){
                             $("#importModal").modal("toggle");
-                             $("#import-form")[0].reset();
+                             $("#purchase-rate-form")[0].reset();
                                      bootbox.alert("You have error in your file");
                      }'),
                 ],
