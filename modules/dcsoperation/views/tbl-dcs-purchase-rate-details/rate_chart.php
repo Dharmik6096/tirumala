@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-$this->title = Yii::t('app', 'Rate Chart') . ' (' . Yii::t('app', 'DCS') . ')';
+$this->title = Yii::t('app', 'Rate Chart') . ' (' . Yii::t('app', 'BMC') . ')';
 ?>
 
 <div class="panel panel-default panel-grid panel-main">

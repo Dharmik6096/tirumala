@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Purchase Rate') . ' (' . Yii::t('app', 'DCS') . ')';
+$this->title = Yii::$app->label->title('create', 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ')';
 ?>
 
 <div class="panel panel-default panel-main">

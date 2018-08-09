@@ -8,7 +8,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$title = Yii::$app->label->title($type, 'Purchase Rate') . ' (' . Yii::t('app', 'DCS') . ')';
+$title = Yii::$app->label->title($type, 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ')';
 $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', $title);
 $selected = Yii::$app->session->get('Unions');

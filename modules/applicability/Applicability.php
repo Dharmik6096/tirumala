@@ -445,7 +445,7 @@ class Applicability extends \yii\base\Module {
         $cname = explode('_', $model_name);
         $cname = end($cname);
         $nameforid = strtolower($cname);
-        if ($nameforid = 'tbldcspurchaserateapplicabitity') {
+        if ($nameforid == 'tbldcspurchaserateapplicabitity') {
             $query = $this->model->find()
                             ->select(['dcs_code', 'tbl_dcs_purchase_rate.shift_applicability', 'tbl_dcs_purchase_rate.purchase_rate_code'])
                             ->joinWith(['purchaseRateCode.shiftApplicability'])

@@ -7,7 +7,7 @@ use app\components\GeneralFunctions;
 /* @var $this yii\web\View */
 /* @var $model app\modules\dcsoperation\models\TblDcsPurchaseRate */
 
-$this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'DCS') . ')' . Yii::t('app', ' Detail View');
+$this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'BMC') . ')' . Yii::t('app', ' Detail View');
 //$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Purchase Rates'), 'url' => ['index']];
 //$this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -60,11 +60,11 @@ $this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'DCS') . '
             </div>
         </div>
 
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'DCS') . ') ' . Yii::t('app', 'Transactions') ?></h5></div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ') ' . Yii::t('app', 'Transactions') ?></h5></div>
         <div class="form-grid">
             <?php echo $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]); ?>
         </div>
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'DCS') . ') ' . Yii::t('app', 'Applicability') ?></h5></div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ') ' . Yii::t('app', 'Applicability') ?></h5></div>
         <div class="form-grid">
             <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
         </div>
