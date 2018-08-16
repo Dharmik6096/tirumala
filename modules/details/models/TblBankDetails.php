@@ -118,7 +118,7 @@ class TblBankDetails extends \app\models\ChildModel {
     public function CheckDuplicate($attribute, $param) {
         if (!empty($this->bank_account_no)) {
             $data = $this->find()->where(['or', ['bank_account_no' => $this->bank_account_no], ['bank_account_no' => \Yii::$app->general->encryptData($this->bank_account_no)]])
-                            ->where(['or', ['ifsc' => $this->ifsc], ['ifsc' => \Yii::$app->general->encryptData($this->ifsc)]])
+                            ->andWhere(['or', ['ifsc' => $this->ifsc], ['ifsc' => \Yii::$app->general->encryptData($this->ifsc)]])
                             ->andWhere(['<>', 'detail_code', $this->detail_code])
                             ->andWhere(['is_active' => 1])->one();
             if (!empty($data)) {
