@@ -18,9 +18,10 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['v1/society/society-data', 'v1/app-activation/register', 'v1/app-activation/verification', 'v1/app-activation/initialization', 'v1/member/register', 'v1/member/verification', 'v1/member/initialization', 'v1/bmc-dispatch/add-dispatch', 'v2/app-activation/register'];
+    public $is_free = ['society/society-data', 'app-activation/register', 'app-activation/verification', 'app-activation/initialization', 'member/register', 'member/verification', 'member/initialization', 'bmc-dispatch/add-dispatch', 'app-activation/register', 'app-activation/register'];
     public $request;
     public $allow_call = FALSE;
+    public $action_url;
 
     public function ParseRequest() {
 
@@ -28,6 +29,12 @@ class HttpRequest extends \yii\base\Component {
         $post_data = Json::decode(Yii::$app->request->getRawBody());
         $request = $this->camelCaseToUnderscore($post_data);
         $request['dcs_code'] = $request['identity_code'];
+        if (!empty($request['type']) && in_array($request['type'], [5])) {
+            $this->action_url = $request['svc'];
+        } else {
+            $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
+            $this->action_url = Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
+        }
         if (isset($request['type'])) {
             if ($request['type'] == 3) {
                 $request['bmc_code'] = $request['identity_code'];
@@ -75,7 +82,7 @@ class HttpRequest extends \yii\base\Component {
     private function AuthenticateRequest() {
         $message = [];
         if (!empty($this->request['imei'])) {
-            if (in_array($this->req_url, $this->is_free)) {
+            if (in_array($this->action_url, $this->is_free)) {
                 return TRUE;
             } else if (!empty($this->request['token'])) {
                 $model = new TblAppActivation();

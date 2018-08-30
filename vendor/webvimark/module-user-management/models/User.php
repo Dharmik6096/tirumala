@@ -663,4 +663,10 @@ class User extends UserIdentity {
         return $this->hasMany(TblUserOrganizationMapping::className(), ['user_id' => 'user_code']);
     }
 
+
+    public function getUserData() {
+        return $this->find()
+                        ->where(['mobile_no' => $this->mobile_no, 'is_active' => 1])
+                        ->one();
+    }
 }

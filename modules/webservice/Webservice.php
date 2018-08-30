@@ -30,6 +30,9 @@ class Webservice extends \yii\base\Module {
             'ho' => [
                 'class' => 'app\modules\webservice\ho\Ho',
             ],
+            'supervisor' => [
+                'class' => 'app\modules\webservice\supervisor\Supervisor',
+            ],
         ];
     }
 

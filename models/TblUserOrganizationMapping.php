@@ -427,4 +427,8 @@ class TblUserOrganizationMapping extends ChildModel {
         return $records;
     }
 
+    public function getUserMapping() {
+        return $this->find()->where(['user_id' => $this->user_id])->all();
+    }
+
 }

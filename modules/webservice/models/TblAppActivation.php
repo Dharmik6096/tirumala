@@ -3,6 +3,7 @@
 namespace app\modules\webservice\models;
 
 use Yii;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_app_activation".
@@ -115,4 +116,11 @@ class TblAppActivation extends \app\models\ChildModel {
                         ->andWhere(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => $encryptedmobile]])
                         ->one();
     }
+    public function getActiveRecordData($data) {
+        return $this->find()->where(['type' => $this->type, 'code' => $data['user_id'], 'imei_no' => $data['imei'], 'hash_key' => $data['token'], 'is_active' => 1, 'is_expired' => 0])->one();
+    }
+     public function getUserCode(){
+        return $this->hasOne(User::className(), ['id' => 'code']);
+    }
+    
 }
