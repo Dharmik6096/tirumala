@@ -83,7 +83,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
     <div class="col-sm-3">
-        <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'disabled' => $readonly]); ?>
+        <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'disabled' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
     </div>
     <div class="clearfix"></div>
     <!--    <div class="col-sm-3">

@@ -264,7 +264,7 @@ class TblDcs extends ChildModel {
                     'bipl_code' => Yii::t('app', 'BIPL Code'),
                     'society_status' => Yii::t('app', 'Collection Status'),
                     'bmc_code' => Yii::t('app', 'BMC'),
-                    'tmcc_code' => Yii::t('app', 'TMCC Code'),
+                    'tmcc_code' => Yii::t('app', 'DCS Code'),
                     'download_status' => Yii::t('app', 'Member Download Status'),
                 ];
             }
