@@ -26,4 +26,5 @@ return [
     'convert_crystal_report_path' => 'web\utility\CrystalReportsNinja-master\Deployment',
     'rptHtmlPath' => '\modules\crystalreports\html',
     'ho_notification_key'=>'AAAATsR3lJw:APA91bEDDapzfO1L7c-7MAV3lxLElNHpf2rHCZrj2dDOUF4io3zCzi1gUS5DcusK3SqPYMecucn7t2YXOP_k5_0eGfSgj34fhxz0T1vsGpXAc30lOXVK_l5d-EW28gA_EIF-rtn3jSBB',
+    'vendorApiErrorLogPath' => 'C:/THIRUMALA/VendorAPI/ErrorLogs',
 ];
