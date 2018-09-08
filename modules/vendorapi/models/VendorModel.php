@@ -90,6 +90,8 @@ class VendorModel {
                         }
                         $text = json_encode($logs);
                         $this->createCpLogFile($path, $text, $svc);
+                        $status = 'Error';
+                        $message = Yii::t('app', 'Unable to save!');
                     }
                 } else {
                     $transaction = $generalModel->saveTransaction($master_model, ['vendor services', 'create']);
