@@ -875,7 +875,7 @@ class GeneralFunctions extends Component {
             return true;
         }
     }
-    
+
     public function getmultiforeignkey($value, $relations = [], $field) {
         $data = '';
         if (isset($value)) {
@@ -891,7 +891,7 @@ class GeneralFunctions extends Component {
         }
         return $data == '' ? (!empty($value->$field) ? $value->$field : 'N/A') : 'N/A';
     }
-    
+
     public function getSpData($sp, $param) {
         $str = '';
         $count = count($param);
@@ -906,6 +906,36 @@ class GeneralFunctions extends Component {
             $i++;
         }
         return $command->queryAll();
+    }
+
+    public function validateGlobalData($model, $attribute, $flag) {
+        $dropDown = new DropDown();
+        $labelData = $dropDown->getLabels($flag);
+        $fields = explode(',', $labelData['fields']);
+        $model_name = Yii::$app->path->define($labelData['model']);
+        $datamodel = new $model_name();
+        $where = [];
+        if ($datamodel->hasAttribute('is_active')) {
+            $where['is_active'] = 1;
+        }
+        $len = strlen($model->$attribute);
+        if (!preg_match('/^[0-9]*$/', $model->$attribute)) {
+            $records = $datamodel->find()
+                            ->select([$fields[0]])
+                            ->where([$fields[1] => strtoupper($model->$attribute)])
+                            ->andWhere($where)->all();
+        } else {
+            $records = $datamodel->find()
+                            ->select([$fields[0]])
+                            ->where([$fields[0] => $model->$attribute])
+                            ->andWhere($where)->all();
+        }
+        if (!empty($records) && count($records) == 1) {
+            $model->$attribute = $records[0]->{$fields[0]};
+        } else {
+            $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
+            return false;
+        }
     }
 
 }

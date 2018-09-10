@@ -27,6 +27,7 @@ $config = [
         'bsmartsms' => [ 'class' => 'app\components\BsmartSmsApi'],
         'EIPLSecurity' => [ 'class' => 'app\components\EIPLSecurity'],
         'apiError' => ['class' => 'app\modules\webservice\components\SetError'],
+        'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,

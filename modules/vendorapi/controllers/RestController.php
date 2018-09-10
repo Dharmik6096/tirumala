@@ -6,12 +6,19 @@ use yii\rest\ActiveController;
 use yii\helpers\Json;
 use Yii;
 use app\models\GeneralModel;
+use app\modules\vendorapi\components\HttpResponse;
+use app\modules\vendorapi\components\HttpRequest;
 
 /**
  * Default controller for the `restservices` module
  */
 class RestController extends ActiveController {
 
+    public $response = [
+        'success_codes' => [],
+        'error_codes' => [],
+    ];
+    public $post_data = [];
     public $generalModel;
 
     public function init() {
@@ -30,15 +37,44 @@ class RestController extends ActiveController {
         ];
     }
 
-    public function response($data) {
-        if (count($data) <= 0)
-            return ['success' => 'No Data Found'];
-        else
-            return ['success' => $data];
+    public function beforeAction($action) {
+        parent::beforeAction($action);
+        $request = new HttpRequest();
+        $this->post_data = $request->ParseRequest();
+        if ($this->post_data === FALSE) {
+            $this->getError();
+        } else {
+            return $this->post_data;
+        }
     }
 
-    public function request() {
-        return Json::decode(Yii::$app->request->getRawBody());
+    public function afterAction($action, $result) {
+        if ($result === FALSE) {
+            $this->getError();
+        } else {
+            $response = new HttpResponse();
+            return $response->BindResponse($this->response);
+        }
+    }
+
+    public function getError() {
+        $type = '';
+        $message = '';
+        $code = '';
+        $master_key = '';
+        if (Yii::$app->getSession()->hasFlash('success')) {
+            $type = Yii::$app->getSession()->getFlash('success')['type'];
+            if ($type == 'success') {
+                $code = 200;
+            } else {
+                $code = 501;
+            }
+            $message = Yii::$app->getSession()->getFlash('success')['message'];
+        }
+        $error = [
+            'response' => ['code' => $code, 'master_key' => $master_key, 'message' => $message],
+        ];
+        echo json_encode($error);
     }
 
 }

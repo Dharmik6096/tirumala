@@ -508,7 +508,7 @@ class DropDown extends Component {
         return $records[$l];
     }
 
-    private function getLabels($l) {
+    public function getLabels($l) {
         $label = [
             'manufacture' => ['name' => 'manufacturer_code', 'fields' => 'id,manufacturer_name', 'prompt' => 'Select Manufacture', 'model' => 'TblManufacturer'],
             'bank' => ['name' => 'bank_code', 'fields' => 'bank_code,bank_name,local_name', 'prompt' => 'Select Bank', 'model' => 'TblBanks'],
