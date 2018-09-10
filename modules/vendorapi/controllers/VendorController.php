@@ -6,7 +6,6 @@ use yii\web\Controller;
 use app\modules\vendorapi\controllers\RestController;
 use Yii;
 use ReflectionClass;
-use app\models\GeneralModel;
 use DateTime;
 use app\modules\vendorapi\models\TblVendorApiData;
 use webvimark\modules\UserManagement\models\User;
@@ -16,12 +15,6 @@ use app\modules\vendorapi\Vendorapi;
  * Default controller for the `vendorapi` module
  */
 class VendorController extends RestController {
-
-    public $generalModel;
-
-    public function init() {
-        $this->generalModel = new GeneralModel();
-    }
 
     /**
      * Renders the index view for the module
@@ -41,6 +34,7 @@ class VendorController extends RestController {
         $user_data = $model->find()->where(['username' => $model->username])->one();
         $status = '';
         $message = '';
+        $response = [];
         if (!empty($user_data) && !empty($model->password_hash)) {
             $validate = Yii::$app->security->validatePassword($model->password_hash, $user_data->password_hash);
             if ($validate) {
@@ -68,7 +62,18 @@ class VendorController extends RestController {
                     $model->password = $data['password'];
                     $model->service_type = $data['svc'];
                     $model->type_of_data = 'JSON';
-                    $valid[] = $model->validate();
+                    $res = [];
+                    if ($model->validate() && $model->save()) {
+                        $res['code'] = '200';
+                        $res['master_key'] = $model->master_code;
+                        $res['message'] = 'Successfully Saved!';
+                    } else {
+                        $res['code'] = '501';
+                        $res['master_key'] = $model->master_code;
+                        $res['message'] = 'Unable to save!';
+                        $valid[] = $model->validate();
+                    }
+                    $response[] = $res;
                     $master_model[] = $model;
                 }
                 $path = Yii::$app->params['vendorApiErrorLogPath'];
@@ -85,29 +90,16 @@ class VendorController extends RestController {
                         $status = 'Error';
                         $message = Yii::t('app', 'Unable to save!');
                     }
-                } else {
-                    $transaction = $this->generalModel->saveTransaction($master_model, ['vendor services', 'create']);
-                    if ($transaction == 'customRedirect') {
-                        $status = 'Success';
-                        $message = Yii::t('app', 'Successfully Saved!');
-                    } else {
-                        $status = 'Error';
-                        $message = Yii::t('app', 'Unable to save!');
-                        $dir = $this->checkDirectory($this->path);
-                        if ($dir) {
-                            $text = 'Error ocuured while saving data!!';
-                            $error_text = $text;
-                            $this->createCpLogFile($path, $text, $svc);
-                        }
-                    }
                 }
             } else {
-                $status = 'Error';
-                $message = Yii::t('app', 'Username or password is invalid.');
+                $res['code'] = '501';
+                $res['master_key'] = '';
+                $res['message'] = 'Invalid Credentials.';
+                $response[] = $res;
             }
         }
-        $response = ["status" => $status, "msg" => $message];
-        return $response;
+        $resp['response'] = $response;
+        return $resp;
     }
 
     protected function createCpLogFile($path, $text, $cp_code) {

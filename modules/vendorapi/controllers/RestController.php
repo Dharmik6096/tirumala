@@ -5,11 +5,18 @@ namespace app\modules\vendorapi\controllers;
 use yii\rest\ActiveController;
 use yii\helpers\Json;
 use Yii;
+use app\models\GeneralModel;
 
 /**
  * Default controller for the `restservices` module
  */
 class RestController extends ActiveController {
+
+    public $generalModel;
+
+    public function init() {
+        $this->generalModel = new GeneralModel();
+    }
 
     public $modelClass = 'app\modules\vendorapi\models';
 

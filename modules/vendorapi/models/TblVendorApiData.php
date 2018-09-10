@@ -3,6 +3,7 @@
 namespace app\modules\vendorapi\models;
 
 use Yii;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_vendor_api_data".
@@ -47,6 +48,8 @@ use Yii;
  */
 class TblVendorApiData extends \yii\db\ActiveRecord {
 
+    public $date_validate;
+
     /**
      * @inheritdoc
      */
@@ -66,6 +69,10 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['master_type'], 'default', 'value' => 'Can', 'on' => 'route_master'],
             [['is_active'], 'default', 'value' => 1],
             [['master_code', 'master_name', 'date_1', 'time_1', 'time_2', 'time_3', 'time_4'], 'required', 'on' => 'route_master'],
+            [['parent_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['parent_code' => 'mcc_plant_code'], 'on' => 'route_master'],
+//            [['date_validate'], 'convertDateDot'],
+//            [['date_validate'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01.12.2018')],
+            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30')],
         ];
     }
 
@@ -113,5 +120,13 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             'password' => Yii::t('app', 'Password'),
         ];
     }
+
+//    public function convertDateDot() {
+//        try {
+//            $this->date_validate = Yii::$app->controls->view_date($this->date_validate, 'php:d.m.Y');
+//        } catch (\Exception $e) {
+//            $this->date_validate = '-';
+//        }
+//    }
 
 }
