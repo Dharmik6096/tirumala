@@ -3,8 +3,7 @@
 namespace app\modules\vendorapi\controllers;
 
 use yii\web\Controller;
-use app\modules\restservices\controllers\RestController;
-use app\modules\vendorapi\models\VendorModel;
+use app\modules\vendorapi\controllers\RestController;
 use Yii;
 use ReflectionClass;
 use app\models\GeneralModel;
