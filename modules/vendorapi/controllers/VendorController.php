@@ -53,6 +53,7 @@ class VendorController extends RestController {
             $model->service_type = $data['svc'];
             $model->type_of_data = 'JSON';
             $model->union_code = $data['union_code'];
+            $model->log_id = $data['log_id'];
             $res = [];
             if ($model->validate() && $model->save()) {
                 $success_codes[] = $model->master_code;

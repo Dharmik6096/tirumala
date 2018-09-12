@@ -6,13 +6,16 @@ use yii\helpers\Json;
 use Yii;
 use webvimark\modules\UserManagement\models\User;
 use app\models\TblUserOrganizationMapping;
+use app\modules\vendorapi\models\TblVendorApiRequestLog;
 
 class HttpRequest extends \yii\base\Component {
 
     public $request;
     public $allow_call = FALSE;
+    public $log_id;
 
     public function ParseRequest() {
+        $this->saveVendorApiLog();
         $request = Json::decode(Yii::$app->request->getRawBody());
         $this->request = $request;
         $this->allow_call = $this->AuthenticateRequest();
@@ -40,6 +43,7 @@ class HttpRequest extends \yii\base\Component {
                 $user_org = $user_org_map->getUserOrgMapping();
                 if (!empty($user_org) && count($user_org) == 1) {
                     $this->request['union_code'] = $user_org[0]->organization_code;
+                    $this->request['log_id'] = $this->log_id;
                     return TRUE;
                 } else {
                     $message = 'Invalid Credentials.';
@@ -52,6 +56,18 @@ class HttpRequest extends \yii\base\Component {
         }
         Yii::$app->vendorApiError->error($message, 'error');
         return FALSE;
+    }
+
+    private function saveVendorApiLog() {
+        $log_model = new TblVendorApiRequestLog();
+        $log_model->url = Yii::$app->request->absoluteUrl;
+        $log_model->request = Yii::$app->request->getRawBody();
+        $log_model->request_original = Yii::$app->request->getRawBody();
+        $log_model->request_ip = $_SERVER['REMOTE_ADDR'];
+        $log_model->status = true;
+        $log_model->created_at = date('Y-m-d H:i:s');
+        $log_model->save();
+        $this->log_id = $log_model->log_id;
     }
 
 }

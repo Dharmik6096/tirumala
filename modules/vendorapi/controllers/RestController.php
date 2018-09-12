@@ -8,7 +8,6 @@ use Yii;
 use app\models\GeneralModel;
 use app\modules\vendorapi\components\HttpResponse;
 use app\modules\vendorapi\components\HttpRequest;
-use app\modules\vendorapi\models\TblVendorApiRequestLog;
 
 /**
  * Default controller for the `restservices` module
@@ -50,18 +49,11 @@ class RestController extends ActiveController {
     }
 
     public function afterAction($action, $result) {
-        $data = '';
-        $return = false;
         if ($result === FALSE) {
             $this->getError();
         } else {
-            $return = true;
             $response = new HttpResponse();
-            $data = $response->BindResponse($this->response);
-        }
-        $this->saveVendorApiLog($data);
-        if ($return) {
-            return $data;
+            return $response->BindResponse($this->response);
         }
     }
 
@@ -83,18 +75,6 @@ class RestController extends ActiveController {
             'response' => ['code' => $code, 'master_key' => $master_key, 'message' => $message],
         ];
         echo json_encode($error);
-    }
-
-    private function saveVendorApiLog($data) {
-        $log_model = new TblVendorApiRequestLog();
-        $log_model->union_code = !empty($this->post_data['union_code']) ? $this->post_data['union_code'] : NULL;
-        $log_model->url = Yii::$app->request->absoluteUrl;
-        $log_model->request = json_encode($this->post_data);
-        $log_model->request_original = Yii::$app->request->getRawBody();
-        $log_model->request_ip = $_SERVER['REMOTE_ADDR'];
-        $log_model->status = true;
-        $log_model->response = json_encode($data);
-        $log_model->save();
     }
 
 }
