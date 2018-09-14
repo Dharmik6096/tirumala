@@ -59,10 +59,14 @@ class HttpRequest extends \yii\base\Component {
     }
 
     private function saveVendorApiLog() {
+        $array = [];
+        $array['server'] = $_SERVER;
+        $array['header'] = getallheaders();
+        $array = json_encode($array);
         $log_model = new TblVendorApiRequestLog();
         $log_model->url = Yii::$app->request->absoluteUrl;
         $log_model->request = Yii::$app->request->getRawBody();
-        $log_model->request_original = Yii::$app->request->getRawBody();
+        $log_model->request_original = $array;
         $log_model->request_ip = $_SERVER['REMOTE_ADDR'];
         $log_model->status = true;
         $log_model->created_at = date('Y-m-d H:i:s');
