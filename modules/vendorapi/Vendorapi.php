@@ -44,6 +44,7 @@ class Vendorapi extends \yii\base\Module {
                 'isactive' => 'is_active',
                 'scenario' => 'scenario',
                 'json_key' => 'MT_Route_Master_IB',
+                'response_master_key' => 'route_code',
             ],
             'dcs_master' => [
                 'mcc_code' => 'parent_code',
@@ -69,6 +70,7 @@ class Vendorapi extends \yii\base\Module {
                 'ifsc_code' => 'ifsc',
                 'scenario' => 'scenario',
                 'json_key' => 'MT_Dcs_Master_IB',
+                'response_master_key' => 'vlcc_code',
             ],
             'mcc_master' => [
                 'plant_code' => 'parent_code',
@@ -90,6 +92,7 @@ class Vendorapi extends \yii\base\Module {
                 'is_active' => 'is_active',
                 'scenario' => 'scenario',
                 'json_key' => 'MT_Mcc_Master_IB',
+                'response_master_key' => 'mcc_code',
             ],
             'route_dcs' => [
                 'route_code' => 'parent_code',
@@ -98,6 +101,7 @@ class Vendorapi extends \yii\base\Module {
                 'to_date' => 'date_2:date',
                 'scenario' => 'scenario',
                 'json_key' => 'MT_Route_Dcs_IB',
+                'response_master_key' => 'vlcc_vendor_code',
             ],
         ];
         return isset($data[$svc]) ? $data[$svc] : [];

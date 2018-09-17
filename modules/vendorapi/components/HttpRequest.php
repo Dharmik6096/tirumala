@@ -7,12 +7,14 @@ use Yii;
 use webvimark\modules\UserManagement\models\User;
 use app\models\TblUserOrganizationMapping;
 use app\modules\vendorapi\models\TblVendorApiRequestLog;
+use app\modules\vendorapi\Vendorapi;
 
 class HttpRequest extends \yii\base\Component {
 
     public $request;
     public $allow_call = FALSE;
     public $log_id;
+    public $response_master_key = 'master_key';
 
     public function ParseRequest() {
         $this->saveVendorApiLog();
@@ -76,6 +78,8 @@ class HttpRequest extends \yii\base\Component {
         $this->request['username'] = !empty($header['username']) ? $header['username'] : NULL;
         $this->request['password'] = !empty($header['password']) ? $header['password'] : NULL;
         $this->request['svc'] = !empty($header['svc']) ? $header['svc'] : NULL;
+        $master_array = Vendorapi::setParam($this->request['svc']);
+        $this->response_master_key = !empty($master_array) ? $master_array['response_master_key'] : 'master_key';
     }
 
 }

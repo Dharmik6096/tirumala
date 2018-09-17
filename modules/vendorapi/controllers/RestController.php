@@ -20,6 +20,7 @@ class RestController extends ActiveController {
     ];
     public $post_data = [];
     public $generalModel;
+    public $response_master_key = 'master_key';
 
     public function init() {
         $this->generalModel = new GeneralModel();
@@ -41,6 +42,7 @@ class RestController extends ActiveController {
         parent::beforeAction($action);
         $request = new HttpRequest();
         $this->post_data = $request->ParseRequest();
+        $this->response_master_key = $request->response_master_key;
         if ($this->post_data === FALSE) {
             $this->getError();
         } else {
@@ -53,6 +55,7 @@ class RestController extends ActiveController {
             $this->getError();
         } else {
             $response = new HttpResponse();
+            $response->response_master_key = $this->response_master_key;
             return $response->BindResponse($this->response);
         }
     }
@@ -72,7 +75,7 @@ class RestController extends ActiveController {
             $message = Yii::$app->getSession()->getFlash('success')['message'];
         }
         $error = [
-            'response' => ['code' => $code, 'master_key' => $master_key, 'message' => $message],
+            'response' => ['status' => $code, $this->response_master_key => $master_key, 'desc' => $message],
         ];
         echo json_encode($error);
     }
