@@ -72,7 +72,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['parent_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['parent_code' => 'mcc_plant_code'], 'on' => 'route_master'],
 //            [['date_validate'], 'convertDateDot'],
 //            [['date_validate'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01.12.2018')],
-            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30')],
+            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i:s', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30')],
             [['type_2'], function ($attribute, $params) {
             Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
         }, 'on' => 'route_master'],
