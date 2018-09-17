@@ -29,52 +29,55 @@ class VendorController extends RestController {
         $success_codes = [];
         $error_codes = [];
         $svc = $data['svc'];
-        $save_data = $data['data'];
-        $master_model = [];
-        $valid = [];
-        foreach ($save_data as $model_data) {
-            $model = new TblVendorApiData();
-            $params = Vendorapi::setParam($svc);
-            if (isset($params['scenario'])) {
-                $model->scenario = $svc;
-            }
-            foreach ($params as $key => $value) {
-                $param = explode(':', $value);
-                if ($key != $param[0]) {
-                    $model_data[$param[0]] = isset($model_data[$key]) ? $model_data[$key] : NULL;
+        $master_array = Vendorapi::setParam($svc);
+        if (!empty($master_array) && isset($data[$master_array['json_key']])) {
+            $save_data = $data[$master_array['json_key']]['data'];
+            $master_model = [];
+            $valid = [];
+            foreach ($save_data as $model_data) {
+                $model = new TblVendorApiData();
+                $params = Vendorapi::setParam($svc);
+                if (isset($params['scenario'])) {
+                    $model->scenario = $svc;
                 }
-                if (isset($param[1]) && $param[1] == 'date') {
-                    $model_data[$param[0]] = !empty($model_data[$param[0]]) ? date('Y-m-d', strtotime($model_data[$param[0]])) : '';
+                foreach ($params as $key => $value) {
+                    $param = explode(':', $value);
+                    if ($key != $param[0]) {
+                        $model_data[$param[0]] = isset($model_data[$key]) ? $model_data[$key] : NULL;
+                    }
+                    if (isset($param[1]) && $param[1] == 'date') {
+                        $model_data[$param[0]] = !empty($model_data[$param[0]]) ? date('Y-m-d', strtotime($model_data[$param[0]])) : '';
+                    }
                 }
-            }
-            $model->setAttributes($model_data);
-            $model->username = $data['username'];
-            $model->password = $data['password'];
-            $model->service_type = $data['svc'];
-            $model->type_of_data = 'JSON';
-            $model->union_code = $data['union_code'];
-            $model->log_id = $data['log_id'];
-            $res = [];
-            if ($model->validate() && $model->save()) {
-                $success_codes[] = $model->master_code;
-            } else {
-                $error_codes[] = $model->master_code;
-                $valid[] = $model->validate();
-            }
-            $response[] = $res;
-            $master_model[] = $model;
-        }
-        $path = Yii::$app->params['vendorApiErrorLogPath'];
-        if (in_array(FALSE, $valid)) {
-            $dir = $this->checkDirectory($path);
-            if ($dir) {
-                $logs = [];
-                foreach ($master_model as $smodel) {
-                    $logs['data'][] = $smodel->getAttributes();
-                    $logs['errors'][] = $smodel->getErrors();
+                $model->setAttributes($model_data);
+                $model->username = $data['username'];
+                $model->password = $data['password'];
+                $model->service_type = $data['svc'];
+                $model->type_of_data = 'JSON';
+                $model->union_code = $data['union_code'];
+                $model->log_id = $data['log_id'];
+                $res = [];
+                if ($model->validate() && $model->save()) {
+                    $success_codes[] = $model->master_code;
+                } else {
+                    $error_codes[] = $model->master_code;
+                    $valid[] = $model->validate();
                 }
-                $text = json_encode($logs);
-                $this->createCpLogFile($path, $text, $svc);
+                $response[] = $res;
+                $master_model[] = $model;
+            }
+            $path = Yii::$app->params['vendorApiErrorLogPath'];
+            if (in_array(FALSE, $valid)) {
+                $dir = $this->checkDirectory($path);
+                if ($dir) {
+                    $logs = [];
+                    foreach ($master_model as $smodel) {
+                        $logs['data'][] = $smodel->getAttributes();
+                        $logs['errors'][] = $smodel->getErrors();
+                    }
+                    $text = json_encode($logs);
+                    $this->createCpLogFile($path, $text, $svc);
+                }
             }
         }
         $this->response['success_codes'] = $success_codes;

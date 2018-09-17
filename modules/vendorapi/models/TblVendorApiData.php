@@ -84,6 +84,9 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['parent_code', 'master_code', 'master_name', 'date_1', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => 'mcc_master'],
             [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'dcs_master'],
             [['parent_code', 'master_code', 'date_1', 'date_2'], 'required', 'on' => 'route_dcs'],
+            [['type_2'], function ($attribute, $params) {
+            Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
+        }, 'on' => 'route_master'],
         ];
     }
 

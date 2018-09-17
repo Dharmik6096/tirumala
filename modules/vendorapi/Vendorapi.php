@@ -36,13 +36,14 @@ class Vendorapi extends \yii\base\Module {
                 'morning_end_time' => 'time_2',
                 'evening_start_time' => 'time_3',
                 'evening_end_time' => 'time_4',
-                'contact_person_fname' => 'contact_first_name',
-                'contact_person_mname' => 'contact_middle_name',
-                'contact_person_lname' => 'contact_last_name',
+                'contact_person_first_name' => 'contact_first_name',
+                'contact_person_middle_name' => 'contact_middle_name',
+                'contact_person_last_name' => 'contact_last_name',
                 'email' => 'email',
-                'mobile_no' => 'mobile_no',
-                'is_active' => 'is_active',
-                'scenario' => 'scenario'
+                'mobileno' => 'mobile_no',
+                'isactive' => 'is_active',
+                'scenario' => 'scenario',
+                'json_key' => 'MT_Route_Master_IB',
             ],
             'dcs_master' => [
                 'mcc_code' => 'parent_code',
@@ -66,7 +67,8 @@ class Vendorapi extends \yii\base\Module {
                 'branch_name' => 'branch_name',
                 'account_no' => 'bank_account_no',
                 'ifsc_code' => 'ifsc',
-                'scenario' => 'scenario'
+                'scenario' => 'scenario',
+                'json_key' => 'MT_Dcs_Master_IB',
             ],
             'mcc_master' => [
                 'plant_code' => 'parent_code',
@@ -86,14 +88,16 @@ class Vendorapi extends \yii\base\Module {
                 'email' => 'email',
                 'mobile_no' => 'mobile_no',
                 'is_active' => 'is_active',
-                'scenario' => 'scenario'
+                'scenario' => 'scenario',
+                'json_key' => 'MT_Mcc_Master_IB',
             ],
             'route_dcs' => [
                 'route_code' => 'parent_code',
                 'vlcc_vendor_code' => 'master_code',
                 'from_date' => 'date_1:date',
                 'to_date' => 'date_2:date',
-                'scenario' => 'scenario'
+                'scenario' => 'scenario',
+                'json_key' => 'MT_Route_Dcs_IB',
             ],
         ];
         return isset($data[$svc]) ? $data[$svc] : [];

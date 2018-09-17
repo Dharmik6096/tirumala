@@ -16,8 +16,6 @@ class HttpRequest extends \yii\base\Component {
 
     public function ParseRequest() {
         $this->saveVendorApiLog();
-        $request = Json::decode(Yii::$app->request->getRawBody());
-        $this->request = $request;
         $this->allow_call = $this->AuthenticateRequest();
         if ($this->allow_call) {
             return $this->request;
@@ -61,7 +59,8 @@ class HttpRequest extends \yii\base\Component {
     private function saveVendorApiLog() {
         $array = [];
         $array['server'] = $_SERVER;
-        $array['header'] = getallheaders();
+        $header = getallheaders();
+        $array['header'] = $header;
         $array = json_encode($array);
         $log_model = new TblVendorApiRequestLog();
         $log_model->url = Yii::$app->request->absoluteUrl;
@@ -72,6 +71,11 @@ class HttpRequest extends \yii\base\Component {
         $log_model->created_at = date('Y-m-d H:i:s');
         $log_model->save();
         $this->log_id = $log_model->log_id;
+        $request = Json::decode(Yii::$app->request->getRawBody());
+        $this->request = $request;
+        $this->request['username'] = !empty($header['username']) ? $header['username'] : NULL;
+        $this->request['password'] = !empty($header['password']) ? $header['password'] : NULL;
+        $this->request['svc'] = !empty($header['svc']) ? $header['svc'] : NULL;
     }
 
 }
