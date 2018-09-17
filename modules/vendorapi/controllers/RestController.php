@@ -75,7 +75,7 @@ class RestController extends ActiveController {
             $message = Yii::$app->getSession()->getFlash('success')['message'];
         }
         $error = [
-            'response' => ['status' => $code, $this->response_master_key => $master_key, 'desc' => $message],
+            'response' => ['status' => $code, 'desc' => $message],
         ];
         echo json_encode($error);
     }
