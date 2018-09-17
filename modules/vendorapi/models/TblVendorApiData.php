@@ -62,7 +62,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['parent_code_other', 'parent_code', 'master_code', 'master_name', 'master_type', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'address', 'address_2', 'email', 'mobile_no', 'bank_name', 'branch_name', 'bank_account_no', 'ifsc', 'type_of_data', 'union_code', 'service_type', 'username', 'password'], 'string'],
+            [['parent_code_other', 'parent_code', 'master_code', 'master_name', 'master_type', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'address', 'address_2', 'email', 'bank_name', 'branch_name', 'bank_account_no', 'ifsc', 'type_of_data', 'union_code', 'service_type', 'username', 'password'], 'string'],
             [['date_1', 'date_2', 'time_1', 'time_2', 'time_3', 'time_4', 'type_2'], 'safe'],
             [['capacity', 'route_length'], 'number'],
             [['is_active'], 'integer'],
@@ -78,8 +78,8 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
         }, 'on' => 'route_master'],
             [['master_code'], 'string', 'max' => 8, 'on' => 'route_master'],
             [['parent_code'], 'string', 'max' => 4, 'on' => 'route_master'],
-            [['mobile_no'], 'number', 'on' => 'route_master'],
-            [['mobile_no'], 'string', 'max' => 12, 'on' => 'route_master'],
+            //[['mobile_no'], 'number', 'on' => 'route_master'],
+            [['mobile_no'], 'string', 'max' => 13, 'on' => 'route_master'],
             [['master_name', 'master_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'email'], 'string', 'max' => 255, 'on' => 'route_master'],
             [['parent_code', 'master_code', 'master_name', 'date_1', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => 'mcc_master'],
             [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'dcs_master'],
