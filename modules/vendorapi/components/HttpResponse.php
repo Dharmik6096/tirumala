@@ -32,7 +32,7 @@ class HttpResponse extends \yii\base\Component {
                 $resp[] = $err_resp;
             }
         }
-        $this->response['response'] = $resp;
+        $this->response['Route_Master_Response']['route_Response'] = $resp;
         return $this->response;
     }
 
