@@ -17,7 +17,7 @@ class HttpResponse extends \yii\base\Component {
         if (!empty($response['success_codes'])) {
             foreach ($response['success_codes'] as $success_codes) {
                 $err_resp = [];
-                $err_resp['status'] = 200;
+                $err_resp['status'] = "200";
                 $err_resp[$this->response_master_key] = $success_codes;
                 $err_resp['desc'] = 'Successfully Saved!';
                 $resp[] = $err_resp;
@@ -26,7 +26,7 @@ class HttpResponse extends \yii\base\Component {
         if (!empty($response['error_codes'])) {
             foreach ($response['error_codes'] as $error_codes) {
                 $err_resp = [];
-                $err_resp['status'] = 501;
+                $err_resp['status'] = "501";
                 $err_resp[$this->response_master_key] = $error_codes;
                 $err_resp['desc'] = 'Unable to save!';
                 $resp[] = $err_resp;

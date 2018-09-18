@@ -68,14 +68,14 @@ class RestController extends ActiveController {
         if (Yii::$app->getSession()->hasFlash('success')) {
             $type = Yii::$app->getSession()->getFlash('success')['type'];
             if ($type == 'success') {
-                $code = 200;
+                $code = "200";
             } else {
-                $code = 501;
+                $code = "501";
             }
             $message = Yii::$app->getSession()->getFlash('success')['message'];
         }
         $error = [
-            'response' => ['status' => $code, 'desc' => $message],
+            'response' => [['status' => $code, 'desc' => $message]],
         ];
         echo json_encode($error);
     }
