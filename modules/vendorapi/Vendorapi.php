@@ -43,7 +43,7 @@ class Vendorapi extends \yii\base\Module {
                 'mobileno' => 'mobile_no',
                 'isactive' => 'is_active',
                 'scenario' => 'scenario',
-                'json_key' => 'MT_Route_Master_IB',
+                'json_key' => 'DT_Route_Master_IB',
                 'response_master_key' => 'route_code',
             ],
             'dcs_master' => [
