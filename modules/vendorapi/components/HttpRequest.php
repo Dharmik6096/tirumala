@@ -15,6 +15,9 @@ class HttpRequest extends \yii\base\Component {
     public $allow_call = FALSE;
     public $log_id;
     public $response_master_key = 'master_key';
+    public $response_main_array_key = 'Master_Response';
+    public $response_inner_array_key = 'Response';
+    public $is_valid_svc = FALSE;
 
     public function ParseRequest() {
         $this->saveVendorApiLog();
@@ -34,7 +37,7 @@ class HttpRequest extends \yii\base\Component {
         $identity = $identityModel->getIdentity();
         $model->username = $identity->organization_code . '#' . $model->username;
         $user_data = $model->find()->where(['username' => $model->username])->one();
-        if (!empty($user_data) && !empty($model->password_hash)) {
+        if ($this->is_valid_svc && !empty($user_data) && !empty($model->password_hash)) {
             $validate = Yii::$app->security->validatePassword($model->password_hash, $user_data->password_hash);
             if ($validate) {
                 $user_org_map = new TblUserOrganizationMapping;
@@ -79,7 +82,10 @@ class HttpRequest extends \yii\base\Component {
         $this->request['password'] = !empty($header['password']) ? $header['password'] : NULL;
         $this->request['svc'] = !empty($header['svc']) ? $header['svc'] : NULL;
         $master_array = Vendorapi::setParam($this->request['svc']);
-        $this->response_master_key = !empty($master_array) ? $master_array['response_master_key'] : 'master_key';
+        $this->response_master_key = !empty($master_array) ? $master_array['response_master_key'] : $this->response_master_key;
+        $this->response_main_array_key = !empty($master_array) ? $master_array['response_main_array_key'] : $this->response_main_array_key;
+        $this->response_inner_array_key = !empty($master_array) ? $master_array['response_inner_array_key'] : $this->response_inner_array_key;
+        $this->is_valid_svc = !empty($master_array) ? TRUE : FALSE;
     }
 
 }

@@ -8,6 +8,7 @@ use Yii;
 use app\models\GeneralModel;
 use app\modules\vendorapi\components\HttpResponse;
 use app\modules\vendorapi\components\HttpRequest;
+use app\modules\vendorapi\Vendorapi;
 
 /**
  * Default controller for the `restservices` module
@@ -21,6 +22,9 @@ class RestController extends ActiveController {
     public $post_data = [];
     public $generalModel;
     public $response_master_key = 'master_key';
+    public $response_main_array_key = 'Master_Response';
+    public $response_inner_array_key = 'Response';
+    public $svc;
 
     public function init() {
         $this->generalModel = new GeneralModel();
@@ -43,6 +47,9 @@ class RestController extends ActiveController {
         $request = new HttpRequest();
         $this->post_data = $request->ParseRequest();
         $this->response_master_key = $request->response_master_key;
+        $this->response_main_array_key = $request->response_main_array_key;
+        $this->response_inner_array_key = $request->response_inner_array_key;
+        $this->svc = $request->request['svc'];
         if ($this->post_data === FALSE) {
             $this->getError();
         } else {
@@ -56,6 +63,8 @@ class RestController extends ActiveController {
         } else {
             $response = new HttpResponse();
             $response->response_master_key = $this->response_master_key;
+            $response->response_main_array_key = $this->response_main_array_key;
+            $response->response_inner_array_key = $this->response_inner_array_key;
             return $response->BindResponse($this->response);
         }
     }
@@ -65,6 +74,7 @@ class RestController extends ActiveController {
         $message = '';
         $code = '';
         $master_key = '';
+        $error_response = [];
         if (Yii::$app->getSession()->hasFlash('success')) {
             $type = Yii::$app->getSession()->getFlash('success')['type'];
             if ($type == 'success') {
@@ -74,9 +84,29 @@ class RestController extends ActiveController {
             }
             $message = Yii::$app->getSession()->getFlash('success')['message'];
         }
-        $error = [
-            'response' => [['status' => $code, 'desc' => $message]],
-        ];
+        $data = Json::decode(Yii::$app->request->getRawBody());
+        $svc = $this->svc;
+        $master_array = Vendorapi::setParam($svc);
+        if (!empty($master_array) && isset($data[$master_array['json_key']])) {
+            $save_data = $data[$master_array['json_key']]['data'];
+            foreach ($save_data as $model_data) {
+                $err_resp = [];
+                $err_resp['status'] = $code;
+                $err_resp[$this->response_master_key] = $model_data[$this->response_master_key];
+                $err_resp['desc'] = $message;
+                $error_response[] = $err_resp;
+            }
+        }
+        if (empty($error_response)) {
+            $err_resp = [];
+            $err_resp['status'] = $code;
+            $err_resp[$this->response_master_key] = '';
+            $err_resp['desc'] = $message;
+            $error_response[] = $err_resp;
+        }
+
+        $error[$this->response_main_array_key][$this->response_inner_array_key] = $error_response;
+
         echo json_encode($error);
     }
 

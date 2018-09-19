@@ -45,6 +45,8 @@ class Vendorapi extends \yii\base\Module {
                 'scenario' => 'scenario',
                 'json_key' => 'DT_Route_Master_IB',
                 'response_master_key' => 'route_code',
+                'response_main_array_key' => 'Route_Master_Response',
+                'response_inner_array_key' => 'route_Response',
             ],
             'dcs_master' => [
                 'mcc_code' => 'parent_code',
@@ -69,8 +71,10 @@ class Vendorapi extends \yii\base\Module {
                 'account_no' => 'bank_account_no',
                 'ifsc_code' => 'ifsc',
                 'scenario' => 'scenario',
-                'json_key' => 'MT_Dcs_Master_IB',
+                'json_key' => 'DT_Dcs_Master_IB',
                 'response_master_key' => 'vlcc_code',
+                'response_main_array_key' => 'Vlcc_Master_Response',
+                'response_inner_array_key' => 'vlcc_Response',
             ],
             'mcc_master' => [
                 'plant_code' => 'parent_code',
@@ -91,8 +95,10 @@ class Vendorapi extends \yii\base\Module {
                 'mobile_no' => 'mobile_no',
                 'is_active' => 'is_active',
                 'scenario' => 'scenario',
-                'json_key' => 'MT_Mcc_Master_IB',
+                'json_key' => 'DT_Mcc_Master_IB',
                 'response_master_key' => 'mcc_code',
+                'response_main_array_key' => 'Mcc_Master_Response',
+                'response_inner_array_key' => 'mcc_Response',
             ],
             'route_dcs' => [
                 'route_code' => 'parent_code',
@@ -100,8 +106,10 @@ class Vendorapi extends \yii\base\Module {
                 'from_date' => 'date_1:date',
                 'to_date' => 'date_2:date',
                 'scenario' => 'scenario',
-                'json_key' => 'MT_Route_Dcs_IB',
+                'json_key' => 'DT_Route_Dcs_IB',
                 'response_master_key' => 'vlcc_vendor_code',
+                'response_main_array_key' => 'Route_Dcs_Master_Response',
+                'response_inner_array_key' => 'route_dcs_Response',
             ],
         ];
         return isset($data[$svc]) ? $data[$svc] : [];

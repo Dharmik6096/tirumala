@@ -11,6 +11,8 @@ class HttpResponse extends \yii\base\Component {
     public $response = [];
     public $apply_camel_case = TRUE;
     public $response_master_key = 'master_key';
+    public $response_main_array_key = 'Master_Response';
+    public $response_inner_array_key = 'Response';
 
     public function BindResponse($response) {
         $resp = [];
@@ -32,7 +34,7 @@ class HttpResponse extends \yii\base\Component {
                 $resp[] = $err_resp;
             }
         }
-        $this->response['Route_Master_Response']['route_Response'] = $resp;
+        $this->response[$this->response_main_array_key][$this->response_inner_array_key] = $resp;
         return $this->response;
     }
 
