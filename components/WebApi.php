@@ -9,15 +9,17 @@ use app\models\TblPortalDataPostLog;
 
 class WebApi {
 
-    private $serverUrl = 'http://52.32.190.89/tpi/eipl/';
-    private $authentication = [
+    public $serverUrl = 'http://52.32.190.89/tpi/eipl/';
+    public $authentication = [
         'user' => ['userName' => 'eipl', 'password' => 'eipl123']
     ];
     public $apiurl = '';
     public $body = [];
 
     public function POSTDATA() {
-        $this->body = array_merge($this->authentication, $this->body);
+        if ($this->authentication) {
+            $this->body = array_merge($this->authentication, $this->body);
+        }
         return $this->PHPCURL();
     }
 
@@ -44,7 +46,7 @@ class WebApi {
         curl_close($ch);
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
-        $log_model->status = ($res->msg == 'Success!') ? 1: 0;
+        $log_model->status = ($res->msg == 'Success!') ? 1 : 0;
         $log_model->vendor_code = 'STELLAPPS';
         $log_model->url = $url;
         $log_model->request = $data;
