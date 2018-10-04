@@ -15,6 +15,7 @@ class WebApi {
     ];
     public $apiurl = '';
     public $body = [];
+    public $vendor_code = 'STELLAPPS';
 
     public function POSTDATA() {
         if ($this->authentication) {
@@ -46,8 +47,8 @@ class WebApi {
         curl_close($ch);
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
-        $log_model->status = ($res->msg == 'Success!') ? 1 : 0;
-        $log_model->vendor_code = 'STELLAPPS';
+        $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
+        $log_model->vendor_code = $this->vendor_code;
         $log_model->url = $url;
         $log_model->request = $data;
         $log_model->response = $result;

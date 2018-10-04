@@ -11,7 +11,7 @@ use app\components\WebApi;
 class PostDataController extends \yii\web\Controller {
 
     public function actionIndex() {
-        $body['data'][] = [ 'uuid' => '004fdcee-58c7-4ef9-bc53-6c7992240676',
+        $body['data'][] = ['uuid' => '004fdcee-58c7-4ef9-bc53-6c7992240676',
             'transaction_date' => '19.09.2018',
             'shift' => 'M',
             'mcc_code' => '1016',
@@ -27,7 +27,7 @@ class PostDataController extends \yii\web\Controller {
             'sampletime' => '19.09.2018 17:29:00',
             'autoflag' => '1'];
 
-        $body['data'][] = [ 'uuid' => '004fdcee-58c7-4ef9-bc53-6c7902240676',
+        $body['data'][] = ['uuid' => '004fdcee-58c7-4ef9-bc53-6c7902240676',
             'transaction_date' => '19.09.2018',
             'shift' => 'M',
             'mcc_code' => '1016',
@@ -43,48 +43,12 @@ class PostDataController extends \yii\web\Controller {
             'sampletime' => '19.09.2018 17:29:00',
             'autoflag' => '1'];
         $api = new WebApi();
-        $api->serverUrl = 'http://rspodevapdb.hec.rsplgroup.com:50000/XISOAPAdapter/MessageServlet?channel=';
-        $api->apiurl = ':BC_Everest:CC_Everest_MilkCollectionData_Rest_Sender';
+        $api->serverUrl = Yii::$app->params['namaste_collection_url'];
         $api->authentication = FALSE;
+        $api->vendor_code='NAMASTEINDIA';
         $api->body = $body;
-        if ($api->POSTDATA()->msg == 'Success!') {
-            
-        }
-        die;
-
-
-
-
-
-
-
-
-
-
-        $milk_coll_model = new TblMilkCollection();
-        $milk_coll_data = $milk_coll_model->getMilkCollData();
-        $milk_coll_codes = array_column($milk_coll_data, 'milk_collection_code');
-        $update = $milk_coll_model->updateMilkColl($milk_coll_codes);
-        foreach ($milk_coll_data as $milk_coll) {
-            $milk_coll->scenario = 'portal_data_post';
-            try {
-                $body = [];
-                $body['metadata'] = $metadata;
-                $body['collectionEntryList'][] = $collectionEntryList;
-                $api = new WebApi();
-                $api->apiurl = 'tmccs/farmercollections';
-                $api->body = $body;
-                if ($api->POSTDATA()->msg == 'Success!') {
-                    $milk_coll->data_post_status = 2;
-                } else {
-                    $milk_coll->data_post_status = 3;
-                }
-                $milk_coll->save(FALSE);
-            } catch (\Exception $e) {
-                $milk_coll->data_post_status = 3;
-                $milk_coll->save(FALSE);
-            }
-        }
+        $response=$api->POSTDATA();
+        var_dump($response);
     }
 
 }
