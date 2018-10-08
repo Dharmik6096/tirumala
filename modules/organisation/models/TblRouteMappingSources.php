@@ -123,8 +123,21 @@ class TblRouteMappingSources extends \app\models\ChildModel {
 
     public function getRouteDcsData() {
         return $this->find()
-                ->where(['from_dest' => $this->from_dest, 'from_type' => 'society'])
-                ->one();
+                        ->where(['from_dest' => $this->from_dest, 'from_type' => 'society'])
+                        ->one();
+    }
+
+    public function getRouteDCS($id, $values) {
+        $query = $this->find()
+                ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])
+                ->where(['tbl_route_mapping_sources.route_code' => $id, 'tbl_route_mapping_sources.is_active' => 1])
+                ->andWhere(['not in', 'tbl_route_mapping_sources.from_dest', $values])
+                ->joinWith(['dcsCode']);
+
+        if (Yii::$app->session->get('Dcs') !== '') {
+            $query->andWhere(['tbl_dcs.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        }
+        return $query->all();
     }
 
 }

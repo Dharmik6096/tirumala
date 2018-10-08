@@ -465,8 +465,6 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         return $this->render('snf_calc');
     }
 
-   
-
     public function actionPurchaseRateApplicability($id) {
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
@@ -488,6 +486,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
 
         $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
+        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
 
         return $appModel->createApp();
     }
@@ -498,9 +497,9 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             $master = [];
-          //  $detailHistory = new TblDcsPurchaseRateApplicabitityHistory();
+            //  $detailHistory = new TblDcsPurchaseRateApplicabitityHistory();
             $record = TblDcsPurchaseRateApplicabitity::findOne(Yii::$app->request->post('id'));
-          //  Yii::$app->operation->history($record, $detailHistory, DELETE);
+            //  Yii::$app->operation->history($record, $detailHistory, DELETE);
             //$master[] = $detailHistory->save(FALSE);
             $master[] = $record->delete();
             if (in_array(FALSE, $master)) {

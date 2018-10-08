@@ -254,7 +254,22 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function getRoutes($unionCode) {
-        $route = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1])->all();
+        $route = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
+        
+        $where_bmc = [];
+        if (Yii::$app->session->get('BMC') !== '') {
+            $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
+            $where_bmc['tbl_route_mapping.to_type'] = 'bmc';
+        }
+
+        $where_mcc = [];
+        if (Yii::$app->session->get('MCC') !== '') {
+            $where_mcc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('MCC'));
+            $where_mcc['tbl_route_mapping.to_type'] = 'mcc';
+        }
+        $route->andWhere(['or', $where_bmc, $where_mcc]);
+        $route = $route->all();
+
         $route = ArrayHelper::map($route, 'route_code', 'route_name');
         asort($route, SORT_NATURAL | SORT_FLAG_CASE);
         return $route;

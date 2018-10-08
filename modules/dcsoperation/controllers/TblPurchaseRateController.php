@@ -471,6 +471,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
 
         $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
+        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
 
         return $appModel->createApp();
     }

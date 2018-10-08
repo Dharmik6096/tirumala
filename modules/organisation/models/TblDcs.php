@@ -32,6 +32,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\organisation\models\TblRouteMapping;
+
 /**
  * This is the model class for table "tbl_dcs".
  *
@@ -680,9 +681,22 @@ class TblDcs extends ChildModel {
                                 ->where(['bmc_code' => $this->bmc_code, 'tbl_dcs.is_active' => 1])
                                 ->all();
             }
-            
+
             public function getRouteMapping() {
                 return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+            }
+
+            public function getMccDCS($mccCode = [], $RLS = 'TRUE', $values = []) {
+                $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
+                if (!empty($mccCode))
+                    $query->andWhere(['mcc_plant_code' => $mccCode]);
+                if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
+                    $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+                }
+                if (!empty($values)) {
+                    $query->andWhere(['not in', 'dcs_code', $values]);
+                }
+                return $query->all();
             }
 
         }

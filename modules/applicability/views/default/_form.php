@@ -12,7 +12,7 @@ $cname = explode('_', $model_name);
 $cname = end($cname);
 $nameforid = strtolower($cname);
 $filter_json = json_encode($filters);
-$model->union_code=$union_code;
+$model->union_code = $union_code;
 Url::remember();
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -142,9 +142,10 @@ $script = "
     });
     
     $(document).on('click', '.dcs-filter',function(event){
-       event.stopPropagation();
-       var fl=$(this).val();
-       $('.flt').each(function(){
+        $('.route-checkbox').prop('checked', false);
+        event.stopPropagation();
+        var fl=$(this).val();
+        $('.flt').each(function(){
             $(this).hide();
         });
         if(fl==='society')
@@ -156,8 +157,8 @@ $script = "
         }
         $('#checkAll').prop('checked', false);
         $('#header').text(fl);
-       $('#'+fl+'-list').show();
-       $('#dcs_code-list').empty();
+        $('#'+fl+'-list').show();
+        $('#dcs_code-list').empty();
     });
     $(document).ready(function(){
         if($('#{$nameforid}-union_code').val() !== '')
@@ -233,10 +234,12 @@ $script = "
                                         });              
                                 }
                                 if((!($.isEmptyObject(chkbx)) && chkbx.checked) || (flag=='society')) {
-                                    $('#dcs_code-list').empty();
-                                    $.each(obj1.data, function(index, value) {
-                                        $('#dcs_code-list').append('<div class=\"col-sm-4 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"{$cname}[dcs_code][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
-                                    });
+                                    var flag_check = $('input[type=\'radio\']:checked').val();
+                                    if(flag_check == flag){
+                                        $.each(obj1.data, function(index, value) {
+                                            $('#dcs_code-list').append('<div class=\"col-sm-4 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"{$cname}[dcs_code][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
+                                        });
+                                    }
                                 }
                                 else if(!($.isEmptyObject(chkbx)) && !(chkbx.checked)){
                                     $.each(obj1.data, function(index, value) {

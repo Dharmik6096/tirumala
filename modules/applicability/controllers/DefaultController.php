@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\helpers\Json;
 use ReflectionClass;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * Default controller for the `applicability` module
@@ -75,11 +76,15 @@ class DefaultController extends Controller {
                 //$routes=new TblRoutes();
                 //$routes=$routes->find(['route_code'=>$id])->one();
                 //$dcs=  TblDcs::find()->where(['route_code'=>$id,'is_active'=>1])->andWhere(['not in','dcs_code',$values])->all();
-                $dcs = TblRouteMappingSources::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])->where(['tbl_route_mapping_sources.route_code' => $id, 'tbl_route_mapping_sources.is_active' => 1])->andWhere(['not in', 'tbl_route_mapping_sources.from_dest', $values])->joinWith(['dcsCode'])->all();
+//                $dcs = TblRouteMappingSources::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])->where(['tbl_route_mapping_sources.route_code' => $id, 'tbl_route_mapping_sources.is_active' => 1])->andWhere(['not in', 'tbl_route_mapping_sources.from_dest', $values])->joinWith(['dcsCode'])->all();
+                $route_model = new TblRouteMappingSources();
+                $dcs = $route_model->getRouteDCS($id, $values);
                 break;
             case 'plants':
                 break;
             case 'mcc':
+                $dcs_model = new TblDcs();
+                $dcs = $dcs_model->getMccDCS($id, TRUE, $values);
                 break;
             default :
         }
@@ -104,6 +109,10 @@ class DefaultController extends Controller {
             case in_array('mcc', $filters):
                 break;
             default :
+        }
+        if (key_exists('mcc', $filters)) {
+            $mcc = new TblMccPlant();
+            $filter_data['mcc'] = $mcc->getMccs($union_code);
         }
         return Json::encode(['status' => 'success', 'data' => $filter_data]);
     }

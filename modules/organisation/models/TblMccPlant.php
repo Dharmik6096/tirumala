@@ -251,4 +251,15 @@ class TblMccPlant extends \app\models\ChildModel {
         return $query->all();
     }
 
+    public function getMccs($unionCode) {
+        $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
+        if (Yii::$app->session->get('MCC') !== '') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        $mcc = $query->all();
+        $mcc = ArrayHelper::map($mcc, 'mcc_plant_code', 'name');
+        asort($mcc, SORT_NATURAL | SORT_FLAG_CASE);
+        return $mcc;
+    }
+
 }
