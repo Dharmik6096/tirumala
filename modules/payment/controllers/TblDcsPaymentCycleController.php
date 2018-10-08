@@ -209,6 +209,7 @@ class TblDcsPaymentCycleController extends ChildController {
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
             'is_lock' => ['view' => ['grid']]
         ];
+        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
         return $appModel->paymentApplicability();
     }
 
