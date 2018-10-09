@@ -282,6 +282,15 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                 <div class="cal-header">Avg. FAT, Avg. SNF and Qty for</div>
                 <div id="calendar"></div>
             </div>
+            <div class="col-sm-6">
+                <div class="cal-header"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
+                <div class="flt">
+                    <div id="society-compare">
+                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc-wise-cross-tab', 'url' => $chart_url, 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-6', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '']); ?>
+                        <div id="BmcWiseCrossTab" class="cont"></div>
+                    </div>
+                </div>
+            </div>
             <!--            <div class="col-sm-6">
                             <div id="map_div"></div>
                         </div>-->

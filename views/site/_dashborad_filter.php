@@ -8,7 +8,7 @@ use yii\web\View;
 /* @var $model app\modules\organisation\models\TblDcsSearch */
 /* @var $form yii\widgets\ActiveForm */
 $quality_params = ['1' => 'Qty', '2' => 'FAT/SNF', '3' => 'FatKg/SNFKg'];
-$model->from_date = empty($model->from_date) ? Yii::$app->controls->view_date(date('Y-m-d', strtotime('-6 days'))) : $model->from_date;
+$model->from_date = empty($model->from_date) ? (!empty($from_date) ? Yii::$app->controls->view_date($from_date) : Yii::$app->controls->view_date(date('Y-m-d', strtotime('-6 days')))) : $model->from_date;
 $model->to_date = empty($model->to_date) ? Yii::$app->controls->view_date(date('Y-m-d')) : $model->to_date;
 $model->from_date2 = empty($model->from_date2) ? Yii::$app->controls->view_date(date('Y-m-d', strtotime('-13 days'))) : $model->from_date2;
 $model->to_date2 = empty($model->to_date2) ? Yii::$app->controls->view_date(date('Y-m-d', strtotime('-7 days'))) : $model->to_date2;
@@ -17,6 +17,7 @@ $id1 = !empty($range_id1) ? $range_id1 : false;
 $id2 = !empty($range_id2) ? $range_id2 : false;
 $id3 = !empty($range_id3) ? $range_id3 : false;
 $id4 = !empty($range_id4) ? $range_id4 : false;
+$date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
 //Yii::$app->controls->view_date($date);
 ?>
 
@@ -26,7 +27,7 @@ $form = ActiveForm::begin([
             'id' => $id
         ]);
 ?>
-<div class="col-sm-3">
+<div class="<?= $date_range_class ?>">
     <?php if ($date_range) { ?>
         <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date', 'to_date', $id1, $id2); ?>
     <?php } else { ?>

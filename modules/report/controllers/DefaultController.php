@@ -367,11 +367,19 @@ class DefaultController extends Controller {
         if (empty($model->union_code)) {
             $model->union_code = Yii::$app->session->get('Unions');
         }
+        if (isset($model->bmc_code) && $model->bmc_code == 0 && !empty(Yii::$app->session->get('BMC'))) {
+            $model->bmc_code = Yii::$app->session->get('BMC');
+        }
+        if (isset($model->dcs_code) && $model->dcs_code == 0 && !empty(Yii::$app->session->get('Dcs'))) {
+            $model->dcs_code = Yii::$app->session->get('Dcs');
+        }
         $query = [];
         $extra = [];
         if (!empty($start_date) && !empty($end_date)) {
-            $result = \Yii::$app->db->createCommand("{CALL rpt_MIS_Shiftwise_CrossTab_1(:Date1,:Date2,:Union_code)}")
+            $result = \Yii::$app->db->createCommand("{CALL rpt_MIS_Shiftwise_CrossTab_1(:Date1,:Date2,:Union_code,:p_bmc_code,:p_dcs_code)}")
                     ->bindValue(':Union_code', $model->union_code)
+                    ->bindValue(':p_bmc_code', $model->bmc_code)
+                    ->bindValue(':p_dcs_code', $model->dcs_code)
                     ->bindValue(':Date1', $start_date . ' 06:00:00 AM')
                     ->bindValue(':Date2', $end_date . ' 18:00:00 PM');
             $query = $result->queryAll();
