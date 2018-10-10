@@ -135,6 +135,8 @@ class TblMilkCollectionTemp extends \app\models\ChildModel {
             'mcc_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'DCS'),
+            'is_approved' => Yii::t('app', 'Status'),
+            'is_updated' => Yii::t('app', 'Record Type'),
         ];
     }
 

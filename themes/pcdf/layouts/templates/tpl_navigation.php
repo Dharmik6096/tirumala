@@ -71,6 +71,8 @@ echo GhostMenu::widget([
                 ['label' => 'DPU Shift End Summary', 'url' => ['/collection/tbl-dpu-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-dpu-shift-end-summary')],
                 ['label' => 'BMC Testing Data', 'url' => ['/collection/testingvillagequality/index'], 'active' => ($cntrl == 'testingvillagequality')],
                 ['label' => 'BMC Weight Data', 'url' => ['/collection/testingvillageweight/index'], 'active' => ($cntrl == 'testingvillageweight')],
+                ['label' => 'Manual Milk Collection', 'url' => ['/collection/tbl-milk-collection-temp/index'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'index')],
+                ['label' => 'Milk Collection Approve', 'url' => ['/collection/tbl-milk-collection-temp/get-temp-data'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'get-temp-data')],
             ],
         ],
         [

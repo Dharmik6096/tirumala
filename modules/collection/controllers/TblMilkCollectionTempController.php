@@ -20,21 +20,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblMilkCollectionTempController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-member'];
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+    public $freeAccessActions = ['validate-member', 'validate-rtpl'];
 
     /**
      * Lists all TblMilkCollectionTemp models.
@@ -97,7 +83,7 @@ class TblMilkCollectionTempController extends \app\controllers\ChildController {
                 $this->model->sms_status = 'n';
                 $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
                 $this->model->sample_no = $this->model->getSampleNo();
-                $transaction = $this->generalModel->saveTransaction([$this->model], ['Milk Collection Temp', 'create']);
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['Manual Milk Collection', 'create']);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'temp_collection_data' => [], 'msg' => $msg];
@@ -218,14 +204,19 @@ class TblMilkCollectionTempController extends \app\controllers\ChildController {
                 'attributes' => [
                     'total_count',
                     'dcs_code',
+                    'dcs',
                     'is_approved',
                     'is_updated',
                     'date_time_of_collection',
+                    'shift_code',
                     'shift',
                 ],
             ],
         ]);
 
+        if (Yii::$app->request->post() && !empty(Yii::$app->request->post('selection'))){
+            
+        }
         return $this->render('_form_grid_dcs', [
                     'model' => $searchModel,
                     'dataProvider' => $dataProvider
