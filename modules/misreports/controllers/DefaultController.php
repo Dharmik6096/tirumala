@@ -62,6 +62,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionShiftWiseAutoManual() {
+        $this->report = 'ShiftWiseAutoManual';
+        return $this->actionIndex();
+    }
+
     public function actionSapReport() {
         $this->report = 'VmReportSap';
         if (Yii::$app->request->queryParams) {
@@ -226,6 +231,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'BmcCollection',
                 'title' => '220 - Date/Shift wise BMC Collection',
                 'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
+            ],
+            'ShiftWiseAutoManual' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_MIS_SocietyRawData',
+                'scenario' => '',
+                'title' => '221 - Shift Wise Auto Manual',
             ],
         ];
         return $label[$l];
