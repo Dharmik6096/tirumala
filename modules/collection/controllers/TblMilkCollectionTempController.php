@@ -20,7 +20,21 @@ use yii\data\ArrayDataProvider;
  */
 class TblMilkCollectionTempController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-member', 'validate-rtpl'];
+    public $freeAccessActions = ['validate-member', 'validate-rtpl', 'milk-collection-list'];
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors() {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
 
     /**
      * Lists all TblMilkCollectionTemp models.
@@ -203,6 +217,7 @@ class TblMilkCollectionTempController extends \app\controllers\ChildController {
                 'defaultOrder' => [],
                 'attributes' => [
                     'total_count',
+                    'total_qty',
                     'dcs_code',
                     'dcs',
                     'is_approved',
@@ -214,13 +229,25 @@ class TblMilkCollectionTempController extends \app\controllers\ChildController {
             ],
         ]);
 
-        if (Yii::$app->request->post() && !empty(Yii::$app->request->post('selection'))){
+        if (Yii::$app->request->post() && !empty(Yii::$app->request->post('selection'))) {
             
         }
         return $this->render('_form_grid_dcs', [
                     'model' => $searchModel,
                     'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionMilkCollectionList() {
+        $data = [];
+        $searchModel = new TblMilkCollectionTempSearch();
+        if (!empty($_POST)) {
+            $data = $_POST;
+        }
+        $searchModel->setAttributes($data);
+        $searchModel->date_time_of_collection = date('Y-m-d', strtotime($searchModel->date_time_of_collection)) . ' ' . Yii::$app->general->getshift($searchModel->shift);
+        $dataProvider = $searchModel->searchDetailMilkColl();
+        return $this->renderAjax('milk_collection_list', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
 }

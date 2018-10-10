@@ -21,9 +21,9 @@ class TblMilkCollectionTempSearch extends TblMilkCollectionTemp {
      */
     public function rules() {
         return [
-            [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack', 'data_post_status', 'qty_mode', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'is_approved'], 'integer'],
+            [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack', 'data_post_status', 'qty_mode', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'is_approved'], 'safe'],
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'status', 'qlty_time', 'qty_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'route_code', 'bmc_code'], 'safe'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'converted_qty'], 'number'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'converted_qty', 'is_updated'], 'safe'],
         ];
     }
 
@@ -138,6 +138,29 @@ class TblMilkCollectionTempSearch extends TblMilkCollectionTemp {
         }
 
         $query->where(['dcs_code' => $this->dcs_code]);
+        return $dataProvider;
+    }
+
+    public function searchDetailMilkColl($params = '') {
+        $this->load($params);
+        $query = TblMilkCollectionTemp::find();
+        $request = Yii::$app->request->queryParams;
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere([
+            'tbl_milk_collection_temp.date_time_of_collection' => $this->date_time_of_collection,
+            'tbl_milk_collection_temp.is_approved' => $this->is_approved,
+            'tbl_milk_collection_temp.is_updated' => $this->is_updated,
+            'tbl_milk_collection_temp.dcs_code' => $this->dcs_code,
+            'tbl_milk_collection_temp.shift' => $this->shift,
+        ]);
+
         return $dataProvider;
     }
 

@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Approve'));
 ?>
@@ -31,11 +32,13 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Ap
                     'checkboxOptions' => function($model) {
                 $status = isset($model['is_approved']) ? Yii::$app->dropdown->getRecords('approval_status')['data'][$model['is_approved']] : '';
                 $status = !empty($status) && $status == 'Pending' ? false : true;
-                return ['value' => $model['dcs_code'].'::'.$model['date_time_of_collection'].'::'.$model['shift_code'].'::'.$model['is_approved'].'::'.$model['is_updated'], 'disabled' => $status];
+                return ['value' => $model['dcs_code'] . '::' . $model['date_time_of_collection'] . '::' . $model['shift_code'] . '::' . $model['is_approved'] . '::' . $model['is_updated'], 'disabled' => $status];
             }],
                 ['attribute' => 'dcs', 'label' => Yii::t('app', 'DCS'), 'filter' => false],
                 ['attribute' => 'date_time_of_collection', 'filter' => false],
                 ['attribute' => 'shift', 'filter' => false],
+                ['attribute' => 'total_count', 'filter' => false],
+                ['attribute' => 'total_qty', 'filter' => false],
                 ['attribute' => 'is_approved', 'value' => function ($model) {
                         return isset($model['is_approved']) ? Yii::$app->dropdown->getRecords('approval_status')['data'][$model['is_approved']] : '';
                     }, 'filter' => false],
@@ -47,28 +50,61 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Ap
                 'id' => 'milk-coll-dcs-list',
                 'attributes' => $attr,
                 'active_column' => false,
-            ];
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['get-temp-data'], true);
-            ?>
-            <div class="col-lg-12" >
-                <?= Html::submitButton(Yii::t('app', 'Approve'), ['class' => 'btn btn-default payment', 'name' => 'approve']); ?>
-                <?= Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default payment', 'name' => 'reject']); ?>
+                'actions' => [
+                    'deactive' => function ($url, $model) {
+//                        $name = $model->member_name;
+//                        $class = ($model->is_active == 1) ? '' : 'link-disable';
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => 'view_data', 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-is_approved' => $model['is_approved'], 'data-shift_code' => $model['shift_code'], 'data-is_updated' => $model['is_updated']];
+                        return GhostHtml::a_alert('<i class="fa fa-eye"></i>', ['/collection/tbl-milk-collection-temp/milk-collection-list'], $options);
+                    },
+                        ],
+                    ];
+                    Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['get-temp-data'], true);
+                    ?>
+                    <div class="col-lg-12" >
+                        <?= Html::submitButton(Yii::t('app', 'Approve'), ['class' => 'btn btn-default payment', 'name' => 'approve']); ?>
+                        <?= Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default payment', 'name' => 'reject']); ?>
+                    </div>
+
+                    <?php ActiveForm::end(); ?>
+
+                </div>
             </div>
-
-            <?php ActiveForm::end(); ?>
-
         </div>
-    </div>
-</div>
-
-<?php
-$script = "
+<div id="milkCollectionDetails"></div>
+        <?php
+        $script = "
     $('.payment').on('click',function(){
        $('form#summary-form').submit();
        $('#pageloader').show();
        $('#loadercontent').show();
     });
-   
+    $(document).ready(function(){
+    $(document).on('click','.view_data',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var dcs_code= $(this).attr('data-dcs_code');
+        var date_time_of_collection= $(this).attr('data-date_time_of_collection');
+        var shift= $(this).attr('data-shift_code');
+        var is_approved= $(this).attr('data-is_approved');
+        var is_updated= $(this).attr('data-is_updated');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/collection/tbl-milk-collection-temp/milk-collection-list']) . "',
+            data:{'dcs_code':dcs_code, 'date_time_of_collection':date_time_of_collection, 'shift' : shift, 'is_approved':is_approved, 'is_updated':is_updated},
+            success: function(data) {     
+                $('#milkCollectionDetails').html(data);
+                $('#crossTabDetailsModal').modal('toggle'); 
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
+});
     ";
-$this->registerJs($script, View::POS_END, 'save-coll-data');
-?>
+        $this->registerJs($script, View::POS_END, 'save-coll-data');
+        ?>

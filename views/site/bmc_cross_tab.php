@@ -10,9 +10,8 @@ use yii\helpers\Url;
         <thead>
             <tr>
                 <th><?= Yii::t('app', 'BMC Code') ?></th>
-                <th><?= Yii::t('app', 'BMC Name') ?></th>
-                <th><?= Yii::t('app', 'Date') ?></th>
-                <th><?= Yii::t('app', 'Shift') ?></th>
+                <th class="w100"><?= Yii::t('app', 'Date') ?></th>
+                <th clas="max_w35"><?= Yii::t('app', 'Shift') ?></th>
                 <th><?= Yii::t('app', 'DCS Count') ?></th>
                 <th><?= Yii::t('app', 'Completed') ?></th>
                 <th><?= Yii::t('app', 'Pending') ?></th>
@@ -28,7 +27,6 @@ use yii\helpers\Url;
                 ?>
                 <tr>
                     <td><?= $data['bmc_code'] ?></td>
-                    <td><?= $data['bmc_name'] ?></td>
                     <td><?= Yii::$app->controls->view_date($data['dtdate']) ?></td>
                     <td><?= $data['Shift'] ?></td>
                     <td><?= $data['DCS_Count'] ?></td>

@@ -2166,3 +2166,11 @@ div.crystalstyle{
     max-height: 450px !important;
     overflow: scroll
 }
+
+.w100{
+    min-width: 100px;
+}
+
+.max_w35{
+    min-width: 35px;
+}

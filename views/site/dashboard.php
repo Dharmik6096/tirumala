@@ -283,7 +283,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                 <div id="calendar"></div>
             </div>
             <div class="col-sm-6">
-                <div class="cal-header"><?= Yii::t('app', 'Society-Shift Crosstab'); ?></div>
+                <div class="cal-header"><?= Yii::t('app', 'BMC Wise Data Receipt Status'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
                         <?= $this->render('_dashborad_filter_cross_tab', ['model' => $model, 'id' => 'BmcWiseCrossTab', 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-6', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'range_id1' => 'cross_tab_dt1', 'range_id2' => 'cross_tab_dt2']); ?>
