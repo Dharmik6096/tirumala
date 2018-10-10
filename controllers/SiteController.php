@@ -1155,7 +1155,7 @@ class SiteController extends Controller {
             $data = $_POST;
             $sp_param = [];
             $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise_Sub';
-            $sp_param[] = $data['p_date'];
+            $sp_param[] = date('Y-m-d', strtotime($data['p_date']));
             $sp_param[] = $data['shift'];
             $sp_param[] = $data['union_Code'];
             $sp_param[] = $data['p_bmc_code'];
