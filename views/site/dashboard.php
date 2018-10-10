@@ -303,7 +303,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" id='modal-title'></h4>
+                <h4 class="modal-title" id='cal_modal-title'></h4>
             </div>
             <div class="modal-body" id='calendar_details'>
             </div>
@@ -474,7 +474,7 @@ var chartModal = $('#chartModal').modal({
     dayClick: function(date, jsEvent, view) {
        var dt=date.format();
        var union= $('#dashboard-union_code').val();
-        $('#modal-title').html('Data for '+date.format('DD-MM-YYYY'));
+        $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
         $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
         $.ajax({
                      type: 'post',
