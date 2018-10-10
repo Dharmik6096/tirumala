@@ -286,7 +286,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                 <div class="cal-header"><?= Yii::t('app', 'Society-Shift Crosstab'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_cross_tab', ['model' => $model, 'id' => 'BmcWiseCrossTab', 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-6', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'range_id1' => 'cross_tab_dt1', 'range_id2' => 'cross_tab_dt1']); ?>
+                        <?= $this->render('_dashborad_filter_cross_tab', ['model' => $model, 'id' => 'BmcWiseCrossTab', 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-6', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'range_id1' => 'cross_tab_dt1', 'range_id2' => 'cross_tab_dt2']); ?>
                         <div id="BmcWiseCrossTab_container" class="cont milk-collection"></div>
                     </div>
                 </div>
@@ -311,6 +311,8 @@ $bmc_ecollection = json_encode($bmc_ecollection);
 
     </div>
 </div>
+
+<div id="crossTabDetails"></div>
 <?php
 $script = "  
     
@@ -929,6 +931,33 @@ $('.bmc-datewise').on('click',function() {
     $(this).addClass('active');
     $('#society-datewise').hide();
     $('.society-datewise').removeClass('active');
+});
+$(document).ready(function(){
+    $(document).on('click','.cross-tab-modal',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var p_date= $(this).attr('data-p_date');
+        var shift= $(this).attr('data-shift');
+        var union_Code= $(this).attr('data-union_Code');
+        var p_bmc_code= $(this).attr('data-p_bmc_code');
+        var p_type= $(this).attr('data-p_type');
+        var bmc_name= $(this).attr('data-bmc_name');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/site/bmc-cross-tab-details']) . "',
+            data:{'p_date':p_date, 'shift':shift, 'bmc_name' : bmc_name, 'union_Code':union_Code, 'p_bmc_code':p_bmc_code, 'p_type':p_type},
+            success: function(data) {     
+                $('#crossTabDetails').html(data);
+                $('#crossTabDetailsModal').modal('toggle'); 
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
 });
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');

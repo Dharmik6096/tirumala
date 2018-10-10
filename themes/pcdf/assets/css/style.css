@@ -2163,6 +2163,6 @@ div.crystalstyle{
 } 
 
 .h450{
-    height: 450px !important;
+    max-height: 450px !important;
     overflow: scroll
 }

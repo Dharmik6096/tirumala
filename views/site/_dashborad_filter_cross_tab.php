@@ -48,7 +48,7 @@ $script = "
         
         function setCrossTab(){  
             var from_date = $('#cross_tab_dt1').val();
-            var to_date = $('#cross_tab_dt1').val();
+            var to_date = $('#cross_tab_dt2').val();
             var union = $('#dashboard-union_code').val();
             if(from_date != '' && to_date != '' && union != ''){
                 $.ajax({

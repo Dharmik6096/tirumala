@@ -5,7 +5,7 @@ use yii\web\View;
 use yii\helpers\Url;
 ?>
 
-<div class="table-responsive">
+<div class="table-responsive h450">
     <table class="table table-striped">
         <thead>
             <tr>
@@ -40,41 +40,8 @@ use yii\helpers\Url;
             }
         } else {
             ?>
-            <tr><td colspan="7">No Data Available.</td>></tr>
+            <tr><td colspan="7">No Data Available.</td></tr>
         <?php }
         ?>
     </table>
 </div>
-<div id="crossTabDetails"></div>
-<?php
-$script = "
-    
-$(document).ready(function(){
-    $(document).on('click','.cross-tab-modal',function(e){
-        $('#pageloader').show();
-        $('#loadercontent').show();
-        var p_date= $(this).attr('data-p_date');
-        var shift= $(this).attr('data-shift');
-        var union_Code= $(this).attr('data-union_Code');
-        var p_bmc_code= $(this).attr('data-p_bmc_code');
-        var p_type= $(this).attr('data-p_type');
-        var bmc_name= $(this).attr('data-bmc_name');
-        $.ajax({
-            type: 'post',
-            url: '" . Url::to(['/site/bmc-cross-tab-details']) . "',
-            data:{'p_date':p_date, 'shift':shift, 'bmc_name' : bmc_name, 'union_Code':union_Code, 'p_bmc_code':p_bmc_code, 'p_type':p_type},
-            success: function(data) {     
-                $('#crossTabDetails').html(data);
-                $('#crossTabDetailsModal').modal('toggle'); 
-                $('#loadercontent').hide();
-                $('#pageloader').hide();
-            },    
-            error: function(data) {    
-                $('#loadercontent').hide();
-                $('#pageloader').hide();
-            }
-        });
-    });
-});";
-$this->registerJs($script, View::POS_END, 'cross-tab-details');
-?>
