@@ -124,6 +124,30 @@ class DefaultController extends \app\controllers\ChildController {
         $sp_name = $this->data['sp_name'];
         $output = \Yii::$app->general->getSpData($sp_name, $controls);
         $this->output = $output;
+
+        if (!empty($this->data['sp_name2'])) {
+            $controls = [];
+            $param = explode(',', $this->data['param2']);
+            foreach ($param as $key => $value) {
+                $value_array = explode(':', $value);
+                $value = $value_array[0];
+                if (isset($value_array[1]) && $value_array[1] == 'string') {
+                    $model->{$value} = !empty($model->{$value}) ? date('Y-m-d', strtotime($model->{$value})) : date('Y-m-d');
+                    if (isset($value_array[2])) {
+                        $shift = !empty($model->{$value_array[2]}) ? \Yii::$app->general->getshift($model->{$value_array[2]}) : '00:00:00';
+                        $model->{$value} .=' ' . $shift . '.000';
+                    }
+                }
+                $controls[$value] = $model->{$value};
+            }
+            $sp_name2 = $this->data['sp_name2'];
+            $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
+            if ((int) $second_output[0]['RecordCount'] > 0) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.']);
+            }
+        }
+
         if (!empty($output)) {
             $attr = '';
             foreach ($output[0] as $att => $value) {
@@ -213,6 +237,8 @@ class DefaultController extends \app\controllers\ChildController {
             'SdReportSap' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_SDSAPReport',
+                'sp_name2' => 'sp_checkDatacompleteness_TMPL',
+                'param2' => 'from_date:string:from_shift,to_date:string:to_shift,union_code,bmc_code',
                 'scenario' => 'SapReport',
                 'title' => 'SAP SD Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
