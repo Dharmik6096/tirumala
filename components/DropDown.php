@@ -504,6 +504,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['C' => Yii::t('app', 'Cow'), 'B' => Yii::t('app', 'Buffalo'), 'M' => Yii::t('app', 'Mix')],
             ],
+            'approval_status' => [
+                'name' => 'is_approved',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Approved'), '2' => Yii::t('app', 'Reject')],
+            ],
+            'update_status' => [
+                'name' => 'is_updated',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Created'), '1' => Yii::t('app', 'Updated')],
+            ],
         ];
         return $records[$l];
     }

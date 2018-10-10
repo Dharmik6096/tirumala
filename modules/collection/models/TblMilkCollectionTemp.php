@@ -62,10 +62,11 @@ use app\modules\general\models\TblSocietyVendor;
  * @property string $bmc_code
  * @property string $converted_qty
  * @property integer $is_approved
+ * @property integer $is_updated
  */
 class TblMilkCollectionTemp extends \app\models\ChildModel {
 
-    public $collection_date, $union_code, $plant_code, $bmc_code, $mcc_code;
+    public $collection_date, $union_code, $plant_code, $mcc_code;
 
     /**
      * @inheritdoc
@@ -84,13 +85,13 @@ class TblMilkCollectionTemp extends \app\models\ChildModel {
             [['milk_type_code', 'sample_no', 'ack', 'is_approved'], 'integer'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number'],
             [['member_code'], 'validateMemberCode'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'plant_code', 'bmc_code', 'mcc_code'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'plant_code', 'bmc_code', 'mcc_code', 'is_updated'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
             [['rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['rate_code' => 'purchase_rate_code']],
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount'], 'default', 'value' => '0'],
-            [['is_approved'], 'default', 'value' => '0'],
+            [['is_approved', 'is_updated'], 'default', 'value' => '0'],
         ];
     }
 
@@ -222,6 +223,10 @@ class TblMilkCollectionTemp extends \app\models\ChildModel {
                 ->one();
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
+    }
+
+    public function search($params) {
+        
     }
 
 }

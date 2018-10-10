@@ -104,6 +104,9 @@ class SearchFilter {
             'TestingvillagequalitySearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'min_date'],
             ],
+            'TblMilkCollectionTempSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

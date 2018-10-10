@@ -16,6 +16,7 @@ use yii\helpers\Url;
                 <th><?= Yii::t('app', 'DCS Count') ?></th>
                 <th><?= Yii::t('app', 'Completed') ?></th>
                 <th><?= Yii::t('app', 'Pending') ?></th>
+                <th><?= Yii::t('app', 'No Collection') ?></th>
             </tr>
         </thead>
         <?php
@@ -35,6 +36,8 @@ use yii\helpers\Url;
                     <td><?= GhostHtml::a_alert($data['Completed'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Completed'], $options); ?></td>
                     <?php $options['data-p_type'] = 'Pending'; ?>
                     <td><?= GhostHtml::a_alert($data['Pending'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Pending'], $options); ?></td>
+                    <?php $options['data-p_type'] = 'No_Collection'; ?>
+                    <td><?= GhostHtml::a_alert($data['No_Collection'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Pending'], $options); ?></td>
                 </tr>
                 <?php
             }
