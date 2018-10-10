@@ -158,6 +158,7 @@ echo GhostMenu::widget([
                         ['label' => '218-' . Yii::t('app', 'BMC Summary Report'), 'url' => ['/misreports/default/bmc-summary-report']],
                         ['label' => '219-' . Yii::t('app', 'Society Summary Report'), 'url' => ['/misreports/default/society-summary-report']],
                         ['label' => '220-' . Yii::t('app', 'Date/Shift wise BMC Collection'), 'url' => ['/misreports/default/date-shift-bmc-collection']],
+                        ['label' => '221-' . Yii::t('app', 'Shift Wise Auto Manual'), 'url' => ['/misreports/default/shift-wise-auto-manual']],
                     //  ['label' => Yii::t('app', 'Cleaning Not Done'), 'url' => ['/report/default/cleaning-not-done']],
                     // ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
                     ]
