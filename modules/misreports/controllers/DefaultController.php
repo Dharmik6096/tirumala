@@ -18,7 +18,7 @@ class DefaultController extends \app\controllers\ChildController {
      * Renders the index view for the module
      * @return string
      */
-    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '';
+    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '';
 
     public function actionIndex() {
         $model = new ReportsModel();
@@ -34,7 +34,7 @@ class DefaultController extends \app\controllers\ChildController {
                 $this->output = Yii::t('app', 'No Data Available.');
             }
         }
-        return $this->render('index', ['result' => $this->output, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
+        return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
     }
 
     public function actionFarmerPaymentReport() {
@@ -143,8 +143,9 @@ class DefaultController extends \app\controllers\ChildController {
             $sp_name2 = $this->data['sp_name2'];
             $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
             if ((int) $second_output[0]['RecordCount'] > 0) {
+                $this->message = 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.';
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.']);
+                    'message' => $this->message]);
             }
         }
 
