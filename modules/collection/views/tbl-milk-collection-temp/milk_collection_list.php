@@ -6,7 +6,7 @@
                 <button type="button" class="close" data-dismiss="modal">×</button>
                 <h4 class="modal-title" id="modal-title">Milk Collection Detail</h4>
             </div>
-            <div class="modal-body" id="modal-body">
+            <div class="modal-body full_width_grid" id="modal-body">
                 <?php
                 $attribute = [
                     ['header' => 'Member Code', 'attribute' => 'member_code', 'value' => function($model) {

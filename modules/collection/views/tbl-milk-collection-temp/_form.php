@@ -158,7 +158,7 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
-<h5 class="panel-heading"><?= Yii::t('app', 'Milk Collection Temp Details') ?></h5>
+<h5 class="panel-heading"><?= Yii::t('app', 'Manual Milk Collection Details') ?></h5>
 <?php
 $attribute = [
     ['header' => 'Member Code', 'attribute' => 'member_code', 'value' => function($model) {

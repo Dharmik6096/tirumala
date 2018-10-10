@@ -2174,3 +2174,8 @@ div.crystalstyle{
 .max_w35{
     min-width: 35px;
 }
+
+.full_width_grid .kv-thead-float{
+    position: relative !important;
+    width: 100% !important
+}
