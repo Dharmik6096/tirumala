@@ -283,11 +283,11 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                 <div id="calendar"></div>
             </div>
             <div class="col-sm-6">
-                <div class="cal-header"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
+                <div class="cal-header"><?= Yii::t('app', 'Society-Shift Crosstab'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc-wise-cross-tab', 'url' => $chart_url, 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-6', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '']); ?>
-                        <div id="BmcWiseCrossTab" class="cont"></div>
+                        <?= $this->render('_dashborad_filter_cross_tab', ['model' => $model, 'id' => 'BmcWiseCrossTab', 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-6', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'range_id1' => 'cross_tab_dt1', 'range_id2' => 'cross_tab_dt1']); ?>
+                        <div id="BmcWiseCrossTab_container" class="cont milk-collection"></div>
                     </div>
                 </div>
             </div>
@@ -305,7 +305,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title" id='modal-title'></h4>
             </div>
-            <div class="modal-body" id='modal-body'>
+            <div class="modal-body" id='calendar_details'>
             </div>
         </div>
 
@@ -475,7 +475,7 @@ var chartModal = $('#chartModal').modal({
        var dt=date.format();
        var union= $('#dashboard-union_code').val();
         $('#modal-title').html('Data for '+date.format('DD-MM-YYYY'));
-        $('#modal-body').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+        $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
         $.ajax({
                      type: 'post',
                      url: '" . Url::to(['/site/load-dcs-data']) . "',
@@ -500,10 +500,10 @@ var chartModal = $('#chartModal').modal({
                              });
                             
                         html=html+'</table></div></div>';
-                       $('#modal-body').html(html);
+                       $('#calendar_details').html(html);
                          }
                          else{
-                            $('#modal-body').html('Data not available.');
+                            $('#calendar_details').html('Data not available.');
                          }
 
                      },

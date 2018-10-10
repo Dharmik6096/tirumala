@@ -2157,3 +2157,12 @@ div.crystalstyle{
     width: 100% !important;
     max-height: 250px !important    
 }
+
+.w750{
+    width: 750px !important
+} 
+
+.h450{
+    height: 450px !important;
+    overflow: scroll
+}

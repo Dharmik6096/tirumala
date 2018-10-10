@@ -113,4 +113,5 @@ return [
     'Society Summary Report' => 'TMCC Summary Report',
     '219 - Society Summary Report' => '219 - TMCC Summary Report',
     'Purchase Rate (DCS)' => 'Purchase Rate (TMCC)',
+    'DCS Count' => 'TMCC Count',
 ];

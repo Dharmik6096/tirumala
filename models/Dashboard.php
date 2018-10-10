@@ -14,7 +14,7 @@ use yii\base\Model;
 class Dashboard extends Model
 {
     public $union_code;
-    public $date, $from_date, $to_date, $from_date2, $to_date2, $qlt_param, $shift;
+    public $date, $from_date, $to_date, $from_date2, $to_date2, $qlt_param, $shift, $from_date3, $to_date3;
     //public $rememberMe = true;
 
     //private $_user = false;

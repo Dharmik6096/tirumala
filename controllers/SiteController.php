@@ -45,7 +45,7 @@ use app\models\CollectionFarmerCreamy;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details'];
 
     public function init() {
         parent::init();
@@ -1129,6 +1129,42 @@ class SiteController extends Controller {
                 $data->save(FALSE);
             }
         }
+    }
+
+    public function actionSetCrossTab() {
+        $output = [];
+        $union = '';
+        if (!empty($_POST)) {
+            $data = $_POST;
+            $sp_param = [];
+            $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
+            $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+            $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+            $sp_param[] = $data['union'];
+            $union = $data['union'];
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
+        return $this->renderAjax('bmc_cross_tab', ['output' => $output, 'union_code' => $union]);
+    }
+
+    public function actionBmcCrossTabDetails() {
+        $output = [];
+        $union = '';
+        $bmc = '';
+        if (!empty($_POST)) {
+            $data = $_POST;
+            $sp_param = [];
+            $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise_Sub';
+            $sp_param[] = $data['p_date'];
+            $sp_param[] = $data['shift'];
+            $sp_param[] = $data['union_Code'];
+            $sp_param[] = $data['p_bmc_code'];
+            $sp_param[] = $data['p_type'];
+            $union = $data['union_Code'];
+            $bmc = $data['bmc_name'];
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
+        return $this->renderAjax('bmc_cross_tab_details', ['output' => $output, 'bmc' => $bmc]);
     }
 
 }
