@@ -13,6 +13,7 @@ use yii\web\Response;
 use yii\helpers\Json;
 use yii\widgets\ActiveForm;
 use app\modules\dcsoperation\models\TblMember;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblMilkCollectionTempController implements the CRUD actions for TblMilkCollectionTemp model.
@@ -94,6 +95,7 @@ class TblMilkCollectionTempController extends \app\controllers\ChildController {
                 $this->model->qlty_auto = 1;
                 $this->model->qty_auto = 1;
                 $this->model->sms_status = 'n';
+                $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
                 $this->model->sample_no = $this->model->getSampleNo();
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['Milk Collection Temp', 'create']);
                 if ($transaction == 'customRedirect') {
@@ -196,6 +198,38 @@ class TblMilkCollectionTempController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Json::encode($data);
+    }
+
+    public function actionGetTempData() {
+        $searchModel = new TblMilkCollectionTemp();
+        $searchModel->load(Yii::$app->request->queryParams);
+        $sp_name = 'sp_milk_collection_temp';
+        $sp_param = [];
+        $sp_param[] = !empty($searchModel->dcs_code) ? $searchModel->dcs_code : NULL;
+        $sp_param[] = !empty($searchModel->is_approved) ? $searchModel->is_approved : NULL;
+        $sp_param[] = !empty($searchModel->is_updated) ? $searchModel->is_updated : NULL;
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $output,
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [],
+                'attributes' => [
+                    'total_count',
+                    'dcs_code',
+                    'is_approved',
+                    'is_updated',
+                    'date_time_of_collection',
+                    'shift',
+                ],
+            ],
+        ]);
+
+        return $this->render('_form_grid_dcs', [
+                    'model' => $searchModel,
+                    'dataProvider' => $dataProvider
+        ]);
     }
 
 }
