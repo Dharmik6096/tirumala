@@ -1,81 +1,157 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use app\components\
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\collection\models\TblMilkCollectionTemp */
+GeneralFunctions;
+use kartik\detail\DetailView;
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Milk Collection Temps'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
-?>
-<div class="tbl-milk-collection-temp-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->milk_collection_code], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->milk_collection_code], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
+$this->title = Yii::$app->label->title('view', 'Milk Collection Temp');
+        ?>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <?php
+                    $attributes = [  [
+                      'columns' => [  [
+            'label' => 'Union',
+                              'value' => isset($model->dcsCode) ? $model->dcsCode->unionCode->union_name : '',
+                    'valueColOptions' => [   'style' => 'width:30%' ]
+                    ],
+            [
+                'attribute' => 'dcs_code',
+            'value' => !empty($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                    'valueColOptions' => [ 'style' => 'width:30%']
             ],
-        ]) ?>
-    </p>
+            ],
+            ],
+            [
+            'columns' => [
+            [
+            'attribute' => 'milk_collection_code',
+            'valueColOptions' => ['style' => 'width:30%']
+            ],
+            [
+            'attribute' => 'member_code',
+            'value' => !empty($model->memberCode) ? $model-> memberCode-> member_name . ' ' . $model-> memberCode->father_name . ' ' . $model->memberCode-> surname : '',
+            'valueColOptions' => ['style' => 'width:30%']
+            ],
+            ],
+            ],
+            [
+            'columns' =>[
+            [
+            'attribute' => 'name',
+            'valueColOptions' =>['style' => 'width:30%']
+            ],
+            [
+            'attribute' => 'mobile_no',
+            'value' => Yii::$app-> general->getforeignkey($model-> memberCode, 'mobile_no'), 
+            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'milk_collection_code',
-            'member_code',
-            'dcs_code',
-            'name',
-            'mobile_no',
-            'milk_type_code',
-            'fat',
-            'snf',
-            'water',
-            'qty',
-            'rtpl',
-            'amount',
-            'auto_flag',
-            'shift',
-            'date_time_of_collection',
-            'date_time_of_recieve',
-            'village_code',
-            'sample_no',
-            'type_of_data_receive',
-            'rate_code',
-            'error_log',
-            'ack',
-            'soc_bmc_flag',
-            'dt_date',
-            'sms_status',
-            'sms_msgid',
-            'sms_mobile',
-            'sms_errorlog',
-            'sms_timestamp',
-            'data_post_status',
-            'clr',
-            'status',
-            'qty_mode',
-            'qlty_time',
-            'qty_time',
-            'no_of_can',
-            'milk_quality_type_code',
-            'qlty_auto',
-            'qty_auto',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'route_code',
-            'bmc_code',
-            'converted_qty',
-            'is_approved',
-        ],
-    ]) ?>
+                        [
+                            'attribute' => 'milk_type_code',
+                            'value' => !empty($model->milkTypeCode) ? $model->milkTypeCode->animal_type_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'shift',
+                            'value' => !empty($model->shiftCode) ? $model->shiftCode->shift : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'fat',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'snf',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'water',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'qty',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'rtpl',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'amount',
+                            'format' => Yii::$app->general->CurrencyFormat(),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'date_time_of_collection',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'date_time_of_recieve',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'village_code',
+                            'value' => !empty($model->villageCode) ? $model->villageCode->village_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'sample_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+            ];
 
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [ // your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
+                ],
+                'container' => ['id' => 'kv-demo'],
+            ]);
+            ?>
+        </div>
+    </div>
 </div>
+
+
