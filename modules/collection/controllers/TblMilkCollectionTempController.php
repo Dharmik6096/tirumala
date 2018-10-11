@@ -14,6 +14,9 @@ use yii\helpers\Json;
 use yii\widgets\ActiveForm;
 use app\modules\dcsoperation\models\TblMember;
 use yii\data\ArrayDataProvider;
+use app\modules\collection\models\TblMilkCollection;
+use app\modules\collection\models\TblMilkCollectionHistory;
+use app\modules\collection\models\TblMilkCollectionTempHistory;
 
 /**
  * TblMilkCollectionTempController implements the CRUD actions for TblMilkCollectionTemp model.
@@ -230,7 +233,76 @@ class TblMilkCollectionTempController extends \app\controllers\ChildController {
         ]);
 
         if (Yii::$app->request->post() && !empty(Yii::$app->request->post('selection'))) {
-            
+            $data = Yii::$app->request->post();
+            $selection = $data['selection'];
+            $master = [];
+            $child = [];
+            $flag = $data['flag'];
+            foreach ($selection as $select) {
+                $array = explode('::', $select);
+                $model = new TblMilkCollectionTemp();
+                $model->dcs_code = !empty($array[0]) ? $array[0] : '';
+                $model->shift = !empty($array[2]) ? $array[2] : '';
+                $model->date_time_of_collection = !empty($array[1]) ? date('Y-m-d', strtotime($array[1])) . ' ' . Yii::$app->general->getshift($model->shift) : '';
+                $model->is_approved = !empty($array[3]) ? $array[3] : '';
+                $model->is_updated = !empty($array[4]) ? $array[4] : '';
+                $model_data = $model->getData();
+                if (!empty($model_data)) {
+                    foreach ($model_data as $temp_coll_data) {
+                        $tempHistoryModel = new TblMilkCollectionTempHistory();
+                        Yii::$app->operation->history($temp_coll_data, $tempHistoryModel, 'UPDATE');
+                        $child[] = $tempHistoryModel;
+                        $temp_coll_data->is_approved = 2;
+                        if ($flag == 'approve') {
+                            $temp_coll_data->is_approved = 1;
+                            $coll_model = new TblMilkCollection();
+                            $coll_model->sample_no = $temp_coll_data->sample_no;
+                            $coll_model->dcs_code = $temp_coll_data->dcs_code;
+                            $coll_model->milk_type_code = $temp_coll_data->milk_type_code;
+                            $coll_model->date_time_of_collection = $temp_coll_data->date_time_of_collection;
+                            $coll_model->shift = $temp_coll_data->shift;
+                            $coll_data = $coll_model->getExistingData();
+                            if (!empty($coll_data)) {
+                                $historyModel = new TblMilkCollectionHistory();
+                                Yii::$app->operation->history($coll_data, $historyModel, 'UPDATE');
+                                $child[] = $historyModel;
+                                $coll_model = $coll_data;
+                            }
+                            $coll_model->member_code = $temp_coll_data->member_code;
+                            $coll_model->milk_quality_type_code = $temp_coll_data->milk_quality_type_code;
+                            $coll_model->name = $temp_coll_data->name;
+                            $coll_model->mobile_no = $temp_coll_data->mobile_no;
+                            $coll_model->fat = $temp_coll_data->fat;
+                            $coll_model->snf = $temp_coll_data->snf;
+                            $coll_model->clr = $temp_coll_data->clr;
+                            $coll_model->water = $temp_coll_data->water;
+                            $coll_model->qty = $temp_coll_data->qty;
+                            $coll_model->rtpl = $temp_coll_data->rtpl;
+                            $coll_model->amount = $temp_coll_data->amount;
+                            $coll_model->auto_flag = $temp_coll_data->auto_flag;
+                            $coll_model->date_time_of_recieve = $temp_coll_data->date_time_of_recieve;
+                            $coll_model->village_code = $temp_coll_data->village_code;
+                            $coll_model->type_of_data_receive = $temp_coll_data->type_of_data_receive;
+                            $coll_model->rate_code = $temp_coll_data->rate_code;
+                            $coll_model->dt_date = $temp_coll_data->dt_date;
+                            $coll_model->qlty_time = $temp_coll_data->qlty_time;
+                            $coll_model->qty_time = $temp_coll_data->qty_time;
+                            $coll_model->qty_mode = 0;
+                            $coll_model->qlty_auto = 0;
+                            $coll_model->qty_auto = 0;
+                            $coll_model->sms_status = 'n';
+                            $coll_model->bmc_code = $temp_coll_data->bmc_code;
+                            $coll_model->route_code = $temp_coll_data->route_code;
+                            $master[] = $coll_model;
+                        }
+                        $master[] = $temp_coll_data;
+                    }
+                }
+            }
+            $transaction = $this->generalModel->saveTransaction($master, $child, ['Milk Collection', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['get-temp-data']);
+            }
         }
         return $this->render('_form_grid_dcs', [
                     'model' => $searchModel,

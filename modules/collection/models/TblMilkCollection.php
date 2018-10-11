@@ -43,6 +43,7 @@ use app\modules\general\models\TblSocietyVendor;
  * @property string $sms_mobile
  * @property string $sms_errorlog
  * @property string $sms_timestamp
+ * @property integer $is_approved
 
  *
  * @property TblAnimalType $milkTypeCode
@@ -75,7 +76,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number'],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
@@ -83,6 +84,7 @@ class TblMilkCollection extends \app\models\ChildModel {
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
 //            [['milk_collection_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkCollection::className(), 'targetAttribute' => ['milk_collection_code' => 'milk_collection_code']],
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount'], 'default', 'value' => '0'],
+            [['is_approved'], 'default', 'value' => '1'],
         ];
     }
 
@@ -237,6 +239,12 @@ class TblMilkCollection extends \app\models\ChildModel {
                 ->one();
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
+    }
+
+    public function getExistingData() {
+        return $this->find()
+                        ->where(['dcs_code' => $this->dcs_code, 'sample_no' => $this->sample_no, 'milk_type_code' => $this->milk_type_code, 'date_time_of_collection' => $this->date_time_of_collection, 'shift' => $this->shift])
+                        ->one();
     }
 
 }

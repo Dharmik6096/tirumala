@@ -23,7 +23,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Ap
                         'action' => $action,
                         'method' => 'post']);
             ?>
-
+            <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
             <?php
             $attr = [
                 ['class' => 'kartik\grid\CheckboxColumn',
@@ -62,8 +62,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Ap
                     Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['get-temp-data'], true);
                     ?>
                     <div class="col-lg-12" >
-                        <?= Html::submitButton(Yii::t('app', 'Approve'), ['class' => 'btn btn-default payment', 'name' => 'approve']); ?>
-                        <?= Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default payment', 'name' => 'reject']); ?>
+                        <?= Html::submitButton(Yii::t('app', 'Approve'), ['class' => 'btn btn-default milk-coll-submit', 'name' => 'approve']); ?>
+                        <?= Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default milk-coll-submit', 'name' => 'reject']); ?>
                     </div>
 
                     <?php ActiveForm::end(); ?>
@@ -71,10 +71,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Ap
                 </div>
             </div>
         </div>
-<div id="milkCollectionDetails"></div>
+        <div id="milkCollectionDetails"></div>
         <?php
         $script = "
-    $('.payment').on('click',function(){
+    $('.milk-coll-submit').on('click',function(){
+        $('#flag').val($(this).prop('name'));
        $('form#summary-form').submit();
        $('#pageloader').show();
        $('#loadercontent').show();

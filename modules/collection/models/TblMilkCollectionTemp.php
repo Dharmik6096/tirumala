@@ -231,4 +231,10 @@ class TblMilkCollectionTemp extends \app\models\ChildModel {
         
     }
 
+    public function getData() {
+        return $this->find()
+                        ->where(['dcs_code' => $this->dcs_code, 'date_time_of_collection' => $this->date_time_of_collection, 'shift' => $this->shift, 'is_approved' => $this->is_approved, 'is_updated' => $this->is_updated])
+                        ->all();
+    }
+
 }
