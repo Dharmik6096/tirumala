@@ -129,7 +129,7 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                     $attr_arr = [];
                     $format = 'raw';
                     if (in_array($att, ['Quantity', 'FAT', 'CLR', 'SNF'])) {
-                        $format = 'decimal';
+                        $format = ['decimal', 2];
                     }
 //                    $attr_arr['attribute'] = $att;
                     $attr[] = ['attribute' => $att, 'format' => $format];
