@@ -7,51 +7,51 @@ GeneralFunctions;
 use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Milk Collection Temp');
-        ?>
+?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
         <?= Yii::$app->controls->cancel($model); ?>
         <?= Html::encode($this->title) ?>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <?php
-                    $attributes = [  [
-                      'columns' => [  [
-            'label' => 'Union',
-                              'value' => isset($model->dcsCode) ? $model->dcsCode->unionCode->union_name : '',
-                    'valueColOptions' => [   'style' => 'width:30%' ]
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [ [
+                    'columns' => [ [
+                            'label' => 'Union',
+                            'value' => isset($model->dcsCode) ? $model->dcsCode->unionCode->union_name : '',
+                            'valueColOptions' => [ 'style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'dcs_code',
+                            'value' => !empty($model->dcsCode) ? $model->dcsCode->dcs_name : '',
+                            'valueColOptions' => [ 'style' => 'width:30%']
+                        ],
                     ],
-            [
-                'attribute' => 'dcs_code',
-            'value' => !empty($model->dcsCode) ? $model->dcsCode->dcs_name : '',
-                    'valueColOptions' => [ 'style' => 'width:30%']
-            ],
-            ],
-            ],
-            [
-            'columns' => [
-            [
-            'attribute' => 'milk_collection_code',
-            'valueColOptions' => ['style' => 'width:30%']
-            ],
-            [
-            'attribute' => 'member_code',
-            'value' => !empty($model->memberCode) ? $model-> memberCode-> member_name . ' ' . $model-> memberCode->father_name . ' ' . $model->memberCode-> surname : '',
-            'valueColOptions' => ['style' => 'width:30%']
-            ],
-            ],
-            ],
-            [
-            'columns' =>[
-            [
-            'attribute' => 'name',
-            'valueColOptions' =>['style' => 'width:30%']
-            ],
-            [
-            'attribute' => 'mobile_no',
-            'value' => Yii::$app-> general->getforeignkey($model-> memberCode, 'mobile_no'), 
-            'valueColOptions' => ['style' => 'width:30%']
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'milk_collection_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'member_code',
+                            'value' => !empty($model->memberCode) ? $model->memberCode->member_name . ' ' . $model->memberCode->father_name . ' ' . $model->memberCode->surname : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'name',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'mobile_no',
+                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'mobile_no'),
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
@@ -111,10 +111,12 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection Temp');
                     'columns' => [
                         [
                             'attribute' => 'date_time_of_collection',
+                            'value' => Yii::$app->controls->view_date($model->date_time_of_collection),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'date_time_of_recieve',
+                            'value' => Yii::$app->controls->view_date($model->date_time_of_recieve),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -128,6 +130,20 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection Temp');
                         ],
                         [
                             'attribute' => 'sample_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'is_approved',
+                            'value' => Yii::$app->dropdown->getRecords('approval_status')['data'][$model->is_approved],
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'is_updated',
+                            'value' => Yii::$app->dropdown->getRecords('update_status')['data'][$model->is_updated],
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
