@@ -135,7 +135,7 @@ class CollectionFarmerCreamy extends \yii\db\ActiveRecord {
     public function getNewDcs() {
         return $this->find()
                         ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
-                        ->andWhere(['vlccid' => ['1011618', '1011647']])
+                        ->andWhere(['vlccid' => ['1011618', '1011647','1011648','1015576']])
                         ->andWhere(['>=', 'dtdate', '2018-07-20 13:00:00'])
                         ->limit(10)
                         ->orderby('dtdate ASC')
