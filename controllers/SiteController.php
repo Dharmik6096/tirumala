@@ -1163,19 +1163,26 @@ class SiteController extends Controller {
             $milkCollection->name = Yii::$app->general->getforeignkey($milkCollection->memberCode, 'member_name');
             $milkCollection->village_code = Yii::$app->general->getforeignkey($milkCollection->memberCode, 'village_code');
             try {
-                if ($milkCollection->save(FALSE)) {
+                $data->modifieddate = date('Y-m-d H:i:s');
+                if ($milkCollection->validate() && $milkCollection->save(FALSE)) {
                     $data->data_post_status = 2;
                     $data->save(FALSE);
                 } else {
                     $data->data_post_status = 3;
                     $data->save(FALSE);
+                    var_dump($milkCollection);
+                    var_dump($milkCollection->getErrors());
                 }
             } catch (UserException $e) {
                 $data->data_post_status = 3;
+                $data->modifieddate = date('Y-m-d H:i:s');
                 $data->save(FALSE);
+                var_dump($milkCollection->getErrors());
             } catch (\yii\db\Exception $e) {
                 $data->data_post_status = 3;
+                $data->modifieddate = date('Y-m-d H:i:s');
                 $data->save(FALSE);
+                var_dump($milkCollection->getErrors());
             }
         }
     }
