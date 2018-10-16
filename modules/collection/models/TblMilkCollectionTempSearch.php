@@ -107,6 +107,8 @@ class TblMilkCollectionTempSearch extends TblMilkCollectionTemp {
             'tbl_milk_collection_temp.date_time_of_recieve' => $this->date_time_of_recieve,
             'tbl_milk_collection_temp.sample_no' => $this->sample_no,
             'tbl_milk_collection_temp.ack' => $this->ack,
+            'tbl_milk_collection_temp.is_approved' => $this->is_approved,
+            'tbl_milk_collection_temp.is_updated' => $this->is_updated,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code])

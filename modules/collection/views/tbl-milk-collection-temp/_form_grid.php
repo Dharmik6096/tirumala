@@ -14,6 +14,7 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 ?>
 
 <?php
+
 $attribute = [
     ['attribute' => 'dcsCode.union_code', 'value' => function($model) {
             return Yii::$app->general->getUnionName($model);
@@ -42,7 +43,7 @@ $attribute = [
     // ['attribute' => 'snf', 'filter' => Html::activeDropDownList($searchModel, 'snf', $snf,['class'=>'form-control','prompt'=>'Select SNF'])],
     //['attribute' => 'qty', 'value' => 'qty', 'filter' => Html::activeDropDownList($searchModel, 'qty', $qty,['class'=>'form-control','prompt'=>'Select Qty'])],
     ['attribute' => 'rtpl', 'filter' => true],
-    ['attribute' => 'amount', 'filter' => false,'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
     //['attribute' => 'amount', 'filter' => Html::activeDropDownList($searchModel, 'amount', $amount,['class'=>'form-control','prompt'=>'Select Amount'])],
 //    ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection', 'value' => function($model) {
 //            return date('d-m-Y', strtotime($model->date_time_of_collection));
@@ -60,6 +61,16 @@ $attribute = [
     ['attribute' => 'mobile_no', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'mobile_no');
         }, 'filter' => false, 'visible' => false],
+    ['attribute' => 'is_approved',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('approval_status', $searchModel, 'is_approved'),
+        'value' => function ($model) {
+            return isset($model->is_approved) ? Yii::$app->dropdown->getRecords('approval_status')['data'][$model->is_approved] : '';
+        },],
+    ['attribute' => 'is_updated',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('update_status', $searchModel, 'is_updated'),
+        'value' => function ($model) {
+            return isset($model->is_updated) ? Yii::$app->dropdown->getRecords('update_status')['data'][$model->is_updated] : '';
+        },],
 ];
 
 $grid_option = [
