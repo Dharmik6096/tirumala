@@ -12,11 +12,9 @@ class Path extends Component {
 
     private $config = [
         '\\app\models\\' =>
-        ['TblDpuCalibration','TblDpuCalibrationSearch'],
-        
+        ['TblDpuCalibration', 'TblDpuCalibrationSearch'],
         '\\app\modules\collection\models\\' =>
-        ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory','TblMilkDispatch','TblMilkDispatchSearch','TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory'],
-        
+        ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale'],
         '\\app\modules\geo\models\\' =>
         ['TblStates', 'TblStatesHistory',
             'TblVillagesHistory', 'TblVillages', 'TblVillageMiscellaneous', 'TblVillagesSearch',
@@ -24,10 +22,9 @@ class Path extends Component {
             'TblSubDistrictsHistory', 'TblSubDistricts', 'TblSubDistrictsSearch',
             'TblHamletsHistory', 'TblHamlets', 'TblHamletsSearch',
             'TblDistrictsHistory', 'TblDistricts', 'TblDistrictsSearch', 'HamletImport'],
-        
         '\\app\modules\globalmaster\models\\' =>
         ['TblDcsTypes', 'TblDcsTypesHistory',
-            'TblCasteCategory', 'TblCasteCategoryHistory','TblCapacity',
+            'TblCasteCategory', 'TblCasteCategoryHistory', 'TblCapacity',
             'TblUnits', 'TblMilkType',
             'TblLandUnit', 'TblLandUnitHistory',
             'TblDesignation', 'TblDesignationHistory',
@@ -39,7 +36,6 @@ class Path extends Component {
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
             'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch'
         ],
-        
         '\\app\modules\organisation\models\\' =>
         ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
             'TblBranch', 'TblBranchHistory', 'TblBranchSearch',
@@ -48,15 +44,13 @@ class Path extends Component {
             'TblFederations', 'TblFederationsHistory', 'TblFederationsSearch', 'TblFederationsStateMapping', 'TblFederationsStateMappingHistory',
             'TblManufacturer', 'TblDcsMilkType', 'TblSubCenterMilkType',
             'BankImport', 'DcsImport', 'SubCenterImport', 'BranchImport', 'TransporterImport', 'MccPlantImport', 'PlantImport', 'UnionImport', 'BmcImport',
-            'TblMccPlant', 'TblMccPlantHistory','TblPlant', 'TblPlantHistory','TblPlantProductGroup','TblPlantProductGroupHistory','TblPlantProductGroupDetails','TblPlantProductGroupDetailsHistory',
-            'TblRoutes', 'TblRoutesHistory', 'TblRoutesLocl', 'TblRoutesSearch','TblRouteMappingSources','TblRouteMappingSourcesHistory','TblRouteMapping','TblRouteMappingHistory',
+            'TblMccPlant', 'TblMccPlantHistory', 'TblPlant', 'TblPlantHistory', 'TblPlantProductGroup', 'TblPlantProductGroupHistory', 'TblPlantProductGroupDetails', 'TblPlantProductGroupDetailsHistory',
+            'TblRoutes', 'TblRoutesHistory', 'TblRoutesLocl', 'TblRoutesSearch', 'TblRouteMappingSources', 'TblRouteMappingSourcesHistory', 'TblRouteMapping', 'TblRouteMappingHistory',
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch', 'TblTransporterHistory',
-            'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch','TblDcsConfigHistory'
+            'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory'
         ],
-        
         '\\app\modules\details\models\\' =>
         ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],
-        
         '\\app\modules\dcsaccounting\models\\' =>
         [ 'TblLedgerGroup', 'TblLedger',
             'TblFinancialYear',
@@ -64,22 +58,22 @@ class Path extends Component {
             'TblUnionBillHead', 'TblUnionBillHeadHistory',
             'TblTax', 'TblTaxStateMapping', 'TblTaxStateMappingHistory', 'TblTaxDepends', 'TblTaxDependsHistory',
             'TblTaxGroup', 'TblTaxGroupHistory', 'TblBasicTax', 'TblSubLedger'],
-        
         '\\app\modules\dcsoperation\models\\' =>
         ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
-          'TblMemberTypes','TblMember','MemberImport','TblMemberHistory',
-          'TblMemberClassification','TblMemberClassificationHistory','MemberClassificationImport','TblPurchaseRateHistory'],
-        
+            'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
+            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory'],
         '\\app\modules\product\models\\' =>
         ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory',
         ],
         '\\app\modules\hardwareconfigutation\models\\' =>
         ['TblDeviceManufacturer', 'TblInterfacingDevice', 'TblInterfacingDeviceHistory',],
         '\\app\components\\' =>
-        ['DcsImportStrategy', 'SubCenterImportStrategy','MemberImportStrategy', 'CommonImportStrategy'],
-        '\\app\modules\general\models\\'=>['TblBloodgroup','TblGender','TblQualification','TblBmcType','TblReligion','TblSchemeType','TblOrganisationType','TblRelationship'],
-        '\\app\modules\email\models\\' => ['TblEmailRuleMaster','TblEmailProcessMaster'],
-        '\\app\modules\transporter\models\\' => ['TblTransporter','TblFuelTypeMaster','TblVehicleMaster','TblBillingType','TblTransporterPaymentHead']
+        ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy'],
+        '\\app\modules\general\models\\' => ['TblBloodgroup', 'TblGender', 'TblQualification', 'TblBmcType', 'TblReligion', 'TblSchemeType', 'TblOrganisationType', 'TblRelationship'],
+        '\\app\modules\email\models\\' => ['TblEmailRuleMaster', 'TblEmailProcessMaster'],
+        '\\app\modules\transporter\models\\' => ['TblTransporter', 'TblFuelTypeMaster', 'TblVehicleMaster', 'TblBillingType', 'TblTransporterPaymentHead'],
+        '\\app\modules\creamy\models\\' =>
+        ['TblDpuProductDemandCreamy', 'TblMACAlibrationCreamy', 'TblMACAlibrationChangeCreamy', 'TblMACleaningCreamy','CollectionFarmerLocalSaleCreamy'],
     ];
 
     public function get($model) {
