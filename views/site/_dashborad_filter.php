@@ -18,46 +18,66 @@ $id2 = !empty($range_id2) ? $range_id2 : false;
 $id3 = !empty($range_id3) ? $range_id3 : false;
 $id4 = !empty($range_id4) ? $range_id4 : false;
 $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
+$table_class = isset($table_class) && !empty($table_class) ? $table_class : '';
+$table_url = isset($table_url) && !empty($table_url) ? $table_url : '';
+$diff_sp_name = isset($diff_sp_name) && !empty($diff_sp_name) ? $diff_sp_name : '';
+$popup_title = isset($popup_title) && !empty($popup_title) ? $popup_title : '';
 //Yii::$app->controls->view_date($date);
 ?>
 
 <?php
-$form = ActiveForm::begin([
-            'action' => ['index'],
-            'id' => $id
-        ]);
-?>
-<div class="<?= $date_range_class ?>">
-    <?php if ($date_range) { ?>
-        <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date', 'to_date', $id1, $id2); ?>
-    <?php } else { ?>
-        <?= Yii::$app->controls->date($model, $form, 'date', 'form-group col-sm-2', true, false, false, false, $id1); ?>
+if (isset($table_pop_up_only) && $table_pop_up_only) {
+    if (isset($table_popup) && $table_popup) {
+        ?>
+        <div class="table_popup_only">
+            <div class="widget_table_popup"><i class="fa fa-plus widget_table_popup_icon <?= $table_class ?>"></i></div>
+        </div>
+        <?php
+    }
+} else {
+    $form = ActiveForm::begin([
+                'action' => ['index'],
+                'id' => $id
+    ]);
+    ?>
+    <div class="<?= $date_range_class ?>">
+        <?php if ($date_range) { ?>
+            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date', 'to_date', $id1, $id2); ?>
+        <?php } else { ?>
+            <?= Yii::$app->controls->date($model, $form, 'date', 'form-group col-sm-2', true, false, false, false, $id1); ?>
+        <?php } ?>
+    </div>
+
+    <?php if ($range2) { ?>
+        <div class="col-sm-3">
+            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date2', 'to_date2', $id3, $id4); ?>
+        </div>
     <?php } ?>
-</div>
 
-<?php if ($range2) { ?>
-    <div class="col-sm-3">
-        <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date2', 'to_date2', $id3, $id4); ?>
+    <?php if ($shift) { ?>
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
+        </div>
+    <?php } ?>
+    <?php if (empty($hide_param)) { ?>
+        <div class="col-sm-3">
+            <?= $form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); ?>
+        </div>
+    <?php } ?>
+    <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);   ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
     </div>
-<?php } ?>
-
-<?php if ($shift) { ?>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
-    </div>
-<?php } ?>
-<?php if (empty($hide_param)) { ?>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); ?>
-    </div>
-<?php } ?>
-<?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);   ?>
-<div class="col-sm-2">
-    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
-</div>
-<?php ActiveForm::end(); ?>
+    <?php if (isset($table_popup) && $table_popup) { ?>
+        <div class="widget_table_popup"><i class="fa fa-plus widget_table_popup_icon <?= $table_class ?>"></i></div>
+    <?php } ?>
+    <?php
+    ActiveForm::end();
+}
+?>
 <?php
-$script = "
+if (!empty($url) && !empty($id)) {
+    $script = "
     barChart('{$container}','{$title}',[],[]);
     drawChart('{$id}','{$container}','{$url}','{$type}');
     $('.{$id}').on('click',function(e) {
@@ -65,7 +85,23 @@ $script = "
         drawChart('{$id}','{$container}','{$url}','{$type}');        
         return false;
     });
-    
-";
-$this->registerJs($script, View::POS_READY, $id);
+    ";
+    $this->registerJs($script, View::POS_READY, $id);
+}
+?>
+<?php
+if (!empty($table_class) && !empty($table_url)) {
+    $second_script = "$('.{$table_class}').on('click',function(e) {
+            var table_class_name = '" . $table_class . "';
+            var diff_sp_name = '" . $diff_sp_name . "';
+            if(table_class_name != 'no_popup'){
+                e.preventDefault();
+                setPopupTable('{$id}','{$container}','{$table_url}','{$type}','{$diff_sp_name}','{$popup_title}');        
+            }
+            return false;;
+        });
+
+    ";
+    $this->registerJs($second_script, View::POS_READY, $table_class . '_second');
+}
 ?>

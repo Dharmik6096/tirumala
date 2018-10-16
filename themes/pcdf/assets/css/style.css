@@ -2145,7 +2145,7 @@ div.crystalstyle{
     cursor: pointer;
     margin-bottom: 10px;
     /*rgb(0, 210, 255) 0%, rgb(58, 123, 213)*/
-    
+
 }
 
 
@@ -2164,7 +2164,7 @@ div.crystalstyle{
 
 .h450{
     max-height: 450px !important;
-    overflow: scroll
+    overflow-y: scroll
 }
 
 .w100{
@@ -2176,6 +2176,47 @@ div.crystalstyle{
 }
 
 .full_width_grid .kv-thead-float{
-    position: relative !important;
-    width: 100% !important
+    /*position: relative !important;*/
+    /*width: 97.6% !important*/
+}
+
+.widget_table_popup .widget_table_popup_icon{
+    max-width: 20px;
+    position: absolute;
+    right: 30px;
+    cursor: pointer;
+    color: rgb(58, 123, 213)
+}
+
+.hide_toolbar_only .kv-panel-before{
+    display: none !important
+}
+
+.hide_filters_only .filters{
+    display: none !important
+}
+
+.center_text {
+    text-align: center;
+}
+
+/*.table_popup_only{
+    backface-visibility: #ccc;
+    padding: 5px !important
+}
+.table_popup_only .widget_table_popup_icon {
+    position: inherit !important;
+}*/
+
+.table_popup_only .widget_table_popup_icon{
+    top: 25px;
+    z-index: 1
+}
+
+.pb10 {
+    padding-bottom: 10px;
+}
+
+.table_dashboard tr td {
+    min-width: 100px;
 }

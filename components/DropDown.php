@@ -241,6 +241,11 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list-union', 'Select BMC', $multiple, $model->$name, $readonly);
     }
+    public function mccDropDown($model, $form, $name = 'mcc_code', $islable = false, $disable = false) {
+        $this->setClass($form, $name);
+        $mcc = new \app\modules\organisation\models\TblMccPlant();
+        echo $form->field($model, $name)->dropDownList($mcc->getMCCList(''), ['prompt' => 'Select MCC', 'disabled' => $disable])->label($islable);
+    }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [

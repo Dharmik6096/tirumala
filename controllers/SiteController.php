@@ -42,10 +42,11 @@ use app\modules\payment\models\TblTransporterPaymentHistory;
 use app\modules\webservice\models\TblAppNotification;
 use app\models\TblSms;
 use app\models\CollectionFarmerCreamy;
+use yii\data\ArrayDataProvider;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'load-table', 'load-table-data'];
 
     public function init() {
         parent::init();
@@ -691,7 +692,7 @@ class SiteController extends Controller {
     private function getSpResult($sp_name) {
 
         $post = Yii::$app->request->post('Dashboard');
-        $input = $this->SpInput($sp_name);
+        $input = $this->SpInput($sp_name, $post);
         $spname = $input['name'];
         $in_array = explode(',', str_replace(' ', '', $input['input']));
         $param_str = '';
@@ -700,12 +701,35 @@ class SiteController extends Controller {
             $variable = explode('~', $data[0]);
             $val_type = explode('|', $data[1]);
             $param = $variable[0];
-
             $param1 = isset($variable[1]) ? $variable[1] : '';
             $value = !empty($post[$param]) ? $post[$param] : $val_type[0];
             $value = (isset($val_type[1]) && $val_type[1] == 'date') ? date('Y-m-d', strtotime($value)) : $value;
             $value = (isset($val_type[1]) && $val_type[1] == 'list') ? str_replace('-', ',', $value) : $value;
-
+            if (!empty($val_type[1])) {
+                $checkshift = explode(':', $val_type[1]);
+                if (isset($checkshift[0]) && $checkshift[0] == 'dateshift') {
+                    if (!empty($post[$checkshift[1]])) {
+                        $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift($post[$checkshift[1]]);
+                    } else {
+                        $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift(3);
+                    }
+                }
+            }
+            if (in_array($param, ['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code'])) {
+                if ($value != 0) {
+                    $value = ',' . $value . ',';
+                }
+            }
+            if (isset($val_type[1]) && $val_type[1] == 'date' && isset($input['appendTime']) && $input['appendTime']) {
+                $cur_time = date_create(date('H:i:s'));
+                $morning_time = date_create('16:00:00');
+                $diff = date_diff($morning_time, $cur_time);
+                $time = '06:00:00';
+                if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
+                    $time = '18:00:00';
+                }
+                $value = $value . ' ' . $time;
+            }
             if ($param1 == 'shift') {
                 $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
             }
@@ -718,7 +742,7 @@ class SiteController extends Controller {
         return $results;
     }
 
-    private function SpInput($sp) {
+    private function SpInput($sp, $post = []) {
         if (!empty(Yii::$app->request->post('union'))) {
             $union_str = Yii::$app->request->post('union');
         } else {
@@ -729,9 +753,12 @@ class SiteController extends Controller {
         }
 
         $plant_code = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
-        $mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
-        $bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
-        $dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+//        $mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : (!empty(Yii::$app->request->post['mcc_code']) ? ',' . Yii::$app->request->post['mcc_code'] . ',' : 0);
+//        $bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : (!empty(Yii::$app->request->post['bmc_code']) ? ',' . Yii::$app->request->post['bmc_code'] . ',' : 0);
+//        $dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : (!empty(Yii::$app->request->post['dcs_code']) ? ',' . Yii::$app->request->post['dcs_code'] . ',' : 0);
+        $mcc_code = (!empty($post['mcc_code']) && $post['mcc_code'] != 0) ? $post['mcc_code'] : (!empty(Yii::$app->session->get('MCC')) ? Yii::$app->session->get('MCC') : 0);
+        $bmc_code = (!empty($post['bmc_code']) && $post['bmc_code'] != 0) ? $post['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0);
+        $dcs_code = (!empty($post['dcs_code']) && $post['dcs_code'] != 0) ? $post['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? Yii::$app->session->get('Dcs') : 0);
 
         $union_str = '-' . $union_str . '-';
         $dcs_str = NULL;
@@ -767,6 +794,28 @@ class SiteController extends Controller {
             'bmc_union_datewise' => [
                 'name' => 'sp_portal_dashboard_bmc_union_datewise',
                 'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+            ],
+            'milk_coll_widget' => [
+                'name' => 'sp_Portal_dashboard_milk_collection',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'bmc_coll_widget' => [
+                'name' => 'sp_Portal_dashboard_bmc_collection',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'bmc_dispatch_widget' => [
+                'name' => 'sp_Portal_BMC_Dispatch',
+                'input' => 'union_code=' . $union_str . '|list,bmc_code=' . $bmc_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'reconciliation_chart_widget' => [
+                'name' => 'sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart',
+                'appendTime' => true,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'table_milk_collection' => [
+                'name' => 'sp_portal_dashboard_milk_collection_table',
+                'appendTime' => true,
+                'input' => 'union_code=' . $union_str . '|list,mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
             ],
         ];
         return $array[$sp];
@@ -1165,6 +1214,45 @@ class SiteController extends Controller {
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
         }
         return $this->renderAjax('bmc_cross_tab_details', ['output' => $output, 'bmc' => $bmc]);
+    }
+
+    public function actionLoadTable() {
+        $model = new Dashboard();
+        $sp = Yii::$app->request->post('sp');
+        $title = !empty(Yii::$app->request->post('title')) ? Yii::$app->request->post('title') : '';
+        $popup = !empty(Yii::$app->request->post('popup')) ? Yii::$app->request->post('popup') : '';
+        $results = $this->getSpResult($sp);
+        $series = [];
+        $labels = [];
+        if (!empty($results)) {
+            $keys = array_keys($results[0]);
+            foreach ($keys as $key) {
+                if (in_array($key, ['qty', 'fat', 'snf', 'kgfat', 'kgsnf', 'm_qty', 'e_qty', 'm_fat', 'm_snf', 'e_fat', 'e_snf', 'm_kgfat', 'e_kgfat', 'm_kgsnf', 'e_kgsnf'])) {
+                    $series[$key] = array_column($results, $key);
+                }
+                if (in_array($key, ['union_short_name', 'collection_date', 'period'])) {
+                    $labels[] = array_column($results, $key);
+                }
+            }
+        }
+        $dataProvider = '';
+        if (!empty($results)) {
+            $attr = '';
+            foreach ($results[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $results,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        return $this->renderAjax('_chart_to_table', ['result' => $results, 'dataProvider' => $dataProvider, 'model' => $model, 'title' => $title, 'popup' => $popup]);
     }
 
 }

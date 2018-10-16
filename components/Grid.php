@@ -30,7 +30,7 @@ class Grid extends Widget {
         return $this->render('grid', ['id' => $this->id, 'url' => $this->url]);
     }
 
-    public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = []) {
+    public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = [], $fixed_header = true) {
         echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
         if (isset($searchModel->tableSchema->fullName)) {
             $table_name = $searchModel->tableSchema->fullName;
@@ -211,8 +211,8 @@ class Grid extends Widget {
                         'tableOptions' => array('class' => 'table table-bordered table-hover'),
                         'filterModel' => $filter ? $searchModel : false,
                         'showPageSummary' => !empty($grid_option->showPageSummary) ? $grid_option->showPageSummary : false,
-                        'floatHeader' => true,
-                        'floatOverflowContainer' => true,
+                        'floatHeader' => $fixed_header,
+                        'floatOverflowContainer' => $fixed_header,
                         'pjax' => false,
                         'panel' => [ 'heading' => false, 'before' => '',
                             'after' => '<div class="text-right padding-right-5">{pager}</div>',

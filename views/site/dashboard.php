@@ -6,6 +6,8 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
 $chart_url = Url::to(['load-chart']);
+$table_url = Url::to(['load-table']);
+$container_url = Url::to(['load-table']);
 $results3 = !empty($results3) ? $results3 : [];
 if (!empty($results4)) {
     foreach ($results4 as $res) {
@@ -136,11 +138,11 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                     <div class="col-sm-6 text-center widget-tab bmc-compare"><?= Yii::t('app', 'BMC Milk Collection'); ?></div>
                     <div class="flt">
                         <div id="society-compare">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
                             <div id="container1" class="cont"></div>
                         </div>
                         <div id="bmc-compare">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2']); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2', 'table_popup' => true, 'table_class' => 'bmc_union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection')]); ?>
                             <div id="container3" class="cont"></div>
                         </div>
                     </div>
@@ -150,11 +152,11 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                     <div class="col-sm-6 text-center widget-tab bmc-datewise"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
                     <div class="flt">
                         <div id="society-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '']); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise')]); ?>
                             <div id="container2" class="cont"></div>
                         </div>
                         <div id="bmc-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'container4', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date']); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'container4', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise')]); ?>
                             <div id="container4" class="cont"></div>
                         </div>
                     </div>
@@ -164,12 +166,15 @@ $bmc_ecollection = json_encode($bmc_ecollection);
         <div class="clearfix mt25"></div>      
         <div class="row">
             <div class="col-sm-6">
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'container5', 'diff_sp_name' => 'milk_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'milk_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Milk Collection')]); ?>
                 <div id="container5" class="cont"></div>
             </div>
             <div class="col-sm-6">
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'container6', 'diff_sp_name' => 'bmc_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Collection')]); ?>
                 <div id="container6" class="cont"></div>
             </div>
             <div class="col-sm-6">
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'container7', 'diff_sp_name' => 'bmc_dispatch_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_dispatch_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Dispatch')]); ?>
                 <div id="container7" class="cont"></div>
             </div>
             <div class="col-sm-6">
@@ -273,6 +278,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
 
         <div class="row">            
             <div class="col-sm-12">
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'reconciliation', 'diff_sp_name' => 'reconciliation_chart_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'reconciliation_chart_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Reconciliation Chart')]); ?>
                 <div id="reconciliation" class="cont"></div>
             </div>            
         </div>
@@ -295,6 +301,17 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                             <div id="map_div"></div>
                         </div>-->
         </div>
+        <div class="row">            
+            <div class="col-sm-12">
+                <div class="cal-header"><?= Yii::t('app', 'Milk Collection'); ?></div>
+                <div class="flt">
+                    <div id="society-compare">
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => true, 'bmc_code' => true, 'dcs_code' => true]); ?>
+                        <div id="table_milk_collection_container"  class="table_dashboard cont"></div>
+                    </div>         
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div id="chartModal" class="modal fade" role="dialog">
@@ -313,6 +330,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
 </div>
 
 <div id="crossTabDetails"></div>
+<div id="chartToTable"></div>
 <?php
 $script = "  
     
@@ -429,7 +447,7 @@ $script = "
                             }
         });
       }
-      
+          
 //calender functions
 var cal_data=" . $cal_data . ";
 var chartModal = $('#chartModal').modal({
@@ -957,7 +975,56 @@ $(document).ready(function(){
                 $('#pageloader').hide();
             }
         });
-    });
+    });  
 });
+function setPopupTable(id,cntr,url,type,diff_sp_name = '', title = ''){
+    $('#pageloader').show();
+    $('#loadercontent').show();
+    var datastring = $('#'+id).serialize();
+    var sp_name = id;
+    if(diff_sp_name != ''){
+        sp_name = diff_sp_name;
+    }
+    var union= $('#dashboard-union_code').val();
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: datastring+'&sp='+sp_name+'&union='+union+'&title='+title,
+        success: function(data) {
+            $('#chartToTable').html(data);
+            $('#chartToTableModal').modal('toggle'); 
+            $('#loadercontent').hide();
+            $('#pageloader').hide();
+        },
+        error:function(data){
+            $('#loadercontent').hide();
+            $('#pageloader').hide();
+        }
+    });
+}
+
+function setHtmlData(id,cntr,url){
+    $('#pageloader').show();
+    $('#loadercontent').show();
+    var datastring = $('#'+id).serialize();
+    var sp_name = id;
+    var union= $('#dashboard-union_code').val();
+    var popup = 'allow_popup';
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: datastring+'&sp='+sp_name+'&union='+union+'&popup='+popup,
+        success: function(data) {
+        console.log(id+'_container');
+            $('#'+id+'_container').html(data);
+            $('#loadercontent').hide();
+            $('#pageloader').hide();
+        },
+        error:function(data){
+            $('#loadercontent').hide();
+            $('#pageloader').hide();
+        }
+    });
+}
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');
