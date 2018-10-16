@@ -815,7 +815,17 @@ class SiteController extends Controller {
             'table_milk_collection' => [
                 'name' => 'sp_portal_dashboard_milk_collection_table',
                 'appendTime' => true,
-                'input' => 'union_code=' . $union_str . '|list,mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
+            ],
+            'manual_vs_auto_collection' => [
+                'name' => 'sp_portal_dashboard_society_raw_data',
+                'appendTime' => true,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
+            ],
+            'dipatch_vs_receipt' => [
+                'name' => 'sp_portal_dashboard_dispatch_vs_receipt',
+                'appendTime' => true,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',hidden_from_date=' . date('Y-m-d') . '|date,hidden_to_date=' . date('Y-m-d') . '|date',
             ],
         ];
         return $array[$sp];

@@ -306,8 +306,32 @@ $bmc_ecollection = json_encode($bmc_ecollection);
                 <div class="cal-header"><?= Yii::t('app', 'Milk Collection'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => true, 'bmc_code' => true, 'dcs_code' => true]); ?>
-                        <div id="table_milk_collection_container"  class="table_dashboard cont"></div>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'milk_coll_mcc', 'bmc_code' => 'milk_coll_bmc', 'dcs_code' => true, 'from_date_id' => 'milk_coll_from_date', 'to_date_id' => 'milk_coll_to_date']); ?>
+                        <div id="table_milk_collection_container"  class="milk-collection mt0 cont"></div>
+                    </div>         
+                </div>
+            </div>
+        </div>
+        <div class="row">            
+            <div class="col-sm-6">
+                <div class="cal-header"><?= Yii::t('app', 'Collection Status Manual vs Auto'); ?></div>
+                <div class="flt">
+                    <div id="society-compare">
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'manual_vs_auto_collection', 'url' => $container_url, 'container' => 'manual_vs_auto_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'coll_status_mcc', 'bmc_code' => 'coll_status_bmc', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-3']); ?>
+                        <div id="manual_vs_auto_collection_container"  class="milk-collection mt0 cont"></div>
+                    </div>         
+                </div>
+            </div>         
+            <div class="col-sm-6">
+                <div class="cal-header">
+                    <?php $search_date = Yii::$app->controls->view_date($date);
+                    echo $search_date . ' ' . Yii::t('app', 'Dispatch vs Receipt');
+                    ?>
+                </div>
+                <div class="flt">
+                    <div id="society-compare">
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'dipatch_vs_receipt', 'url' => $container_url, 'container' => 'dipatch_vs_receipt', 'hidden_from_date' => $search_date, 'hidden_to_date' => $search_date, 'union_code' => true, 'mcc_code' => 'dispatch_vs_receipt', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'mcc_class' => 'col-sm-5']); ?>
+                        <div id="dipatch_vs_receipt_container"  class="milk-collection mt0 cont div_height495"></div>
                     </div>         
                 </div>
             </div>
@@ -1015,7 +1039,7 @@ function setHtmlData(id,cntr,url){
         url: url,
         data: datastring+'&sp='+sp_name+'&union='+union+'&popup='+popup,
         success: function(data) {
-        console.log(id+'_container');
+//            console.log(id+'_container');
             $('#'+id+'_container').html(data);
             $('#loadercontent').hide();
             $('#pageloader').hide();

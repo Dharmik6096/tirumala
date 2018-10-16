@@ -2217,6 +2217,18 @@ div.crystalstyle{
     padding-bottom: 10px;
 }
 
-.table_dashboard tr td {
-    min-width: 100px;
+.auto_width{
+    width: auto !important;
+}
+
+.mt0 {
+    margin-top: 0px !important;
+}
+
+.min_width_100 {
+    min-width: 100px !important;
+}
+
+.div_height495 div.height_div {
+    max-height: 495px !important;
 }

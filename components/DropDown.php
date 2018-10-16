@@ -32,13 +32,13 @@ class DropDown extends Component {
 
         $this->setClass($form, $name);
         $state = new TblStates;
-        
+
         $selected = '';
         if (!empty(Yii::$app->session->get('States')) && count(explode(',', Yii::$app->session->get('States'))) == 1) {
             $selected = explode(',', Yii::$app->session->get('States'));
         }
         $model->{$name} = !empty($selected) ? $selected : $model->{$name};
-                
+
         echo $form->field($model, $name)->dropDownList($state->getActiveStates($model->$name), ['prompt' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple])->label($islable);
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
@@ -227,9 +227,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple);
     }
 
-    public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false) {
+    public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '') {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', false, $id);
     }
 
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false) {
@@ -241,10 +241,11 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list-union', 'Select BMC', $multiple, $model->$name, $readonly);
     }
-    public function mccDropDown($model, $form, $name = 'mcc_code', $islable = false, $disable = false) {
+
+    public function mccDropDown($model, $form, $name = 'mcc_code', $islable = false, $disable = false, $id = '') {
         $this->setClass($form, $name);
         $mcc = new \app\modules\organisation\models\TblMccPlant();
-        echo $form->field($model, $name)->dropDownList($mcc->getMCCList(''), ['prompt' => 'Select MCC', 'disabled' => $disable])->label($islable);
+        echo $form->field($model, $name)->dropDownList($mcc->getMCCList(''), ['prompt' => 'Select MCC', 'id' => $id, 'disabled' => $disable])->label($islable);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
@@ -276,9 +277,15 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false) {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '') {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
+        $options = [];
+        $options['readonly'] = $readonly;
+        $options['class'] = 'form-control ' . $class;
+        if (!empty($id)) {
+            $options['id'] = $id;
+        }
         if ($multiple)
             $placeholder = FALSE;
 //        $name = ($name == '') ? $data['name'] : $name;
@@ -295,10 +302,7 @@ class DropDown extends Component {
                         'initialize' => true,
                         'allowClear' => true,
                     ],
-                    'options' => [
-                        'readonly' => $readonly,
-                        'class' => 'form-control ' . $class
-                    ]
+                    'options' => $options
                 ])->label($islable);
     }
 
