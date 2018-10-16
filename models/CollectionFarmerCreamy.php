@@ -133,13 +133,23 @@ class CollectionFarmerCreamy extends \yii\db\ActiveRecord {
     }
 
     public function getNewDcs() {
-        return $this->find()
-                        ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
-                        ->andWhere(['vlccid' => ['1011618', '1011647','1011648','1015576']])
-                        ->andWhere(['>=', 'dtdate', '2018-07-20 13:00:00'])
-                        ->limit(100)
-                        ->orderby('dtdate ASC')
-                        ->all();
+        $date = date('Y-m-d H:i:s', strtotime('-3 hours'));
+        $data1 = $this->find()
+                ->where(['or', ['data_post_status' => 0], ['data_post_status' => NULL]])
+                ->andWhere(['vlccid' => ['1011618', '1011647', '1011648', '1015576']])
+                ->andWhere(['>=', 'dtdate', '2018-07-20 13:00:00'])
+                ->limit(80)
+                ->orderby('dtdate ASC')
+                ->all();
+        $data2 = $this->find()
+                ->where(['data_post_status' => 3])
+                ->andWhere(['vlccid' => ['1011618', '1011647', '1011648', '1015576']])
+                ->andWhere(['<=', 'modifieddate', $date])
+                ->limit(20)
+                ->orderby('dtdate ASC')
+                ->all();
+        $result = array_merge($data1, $data2);
+        return $result;
     }
 
     public function updateDcs($farmer_id, $vlcc_id, $sample_id, $dtdate_id, $shift_id) {
