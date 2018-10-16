@@ -209,6 +209,7 @@ $config = [
         'stellapps' => ['class' => 'app\modules\stellapps\Stellapps',],
         'misreports' => [ 'class' => 'app\modules\misreports\MisReports',],
         'vendorapi' => [ 'class' => 'app\modules\vendorapi\Vendorapi',],
+        'creamy' => ['class' => 'app\modules\creamy\modules',],
     ],
     'params' => $params,
 ];
