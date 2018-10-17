@@ -217,60 +217,77 @@ $bmc_ecollection = json_encode($bmc_ecollection);
         </div>
 
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                 <div class="collection">
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'No. of Societies') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h3>
+                        <h4><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h4>
                         <p><b>M:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_M'] : 0 ?> | <b>E:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_E'] : 0 ?></p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                 <div class="collection">                                
                     <div class="tbl-cell">
                         <p>No. of Pourers</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h3>
+                        <h4><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h4>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p><?= Yii::t('app', 'Collection vs Installed') ?></p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p><?= Yii::t('app', 'Collection vs Dispatch') ?></p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) ?></h4></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="collection">
+                    <div class="tbl-cell">
+                        <p><?= Yii::t('app', 'Dispatch vs Receipt') ?></p>
+                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                        <p><h3><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
                 <div class="collection">
                     <div class="tbl-cell">
                         <p>Total Milk Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['UnionQty'] : 0 ?></h3>
+                        <h3><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_avg_snf'] . '</span>' : 0 ?></h3>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                 <div class="collection">
                     <div class="tbl-cell">
                         <p>Total Milk Dispatch(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['UnionDisQty'] : 0 ?></h3>
-                        <p><b>M:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?> | <b>E:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></p>
+                        <h3><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionDisQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionDisQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_dis_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_dis_avg_snf'] . '</span>' : 0 ?></h3>
+                        <p><b>M:</b> <?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['Dcs_DisQty_M']) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?> | <b>E:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                 <div class="collection">
                     <div class="tbl-cell">
                         <p>Total BMC Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['BmcQty'] : 0 ?></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p><?= Yii::t('app', 'Collection vs Installed') ?></p>
-                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
-                        <p><?= Yii::t('app', 'Collection vs Dispatch') ?></p>
-                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_M'] + $dashboard_blocks[0]['Dcs_DisQty_E'] : 0) ?></h4></p>
+                        <h4><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['BmcQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['BmcQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['bmc_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['bmc_avg_snf'] . '</span>' : 0 ?></h4>
                     </div>
                 </div>
             </div>
@@ -324,7 +341,8 @@ $bmc_ecollection = json_encode($bmc_ecollection);
             </div>         
             <div class="col-sm-6">
                 <div class="cal-header">
-                    <?php $search_date = Yii::$app->controls->view_date($date);
+                    <?php
+                    $search_date = Yii::$app->controls->view_date($date);
                     echo $search_date . ' ' . Yii::t('app', 'Dispatch vs Receipt');
                     ?>
                 </div>
