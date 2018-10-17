@@ -35,9 +35,9 @@ class TblMACleaning extends \app\models\ChildModel
     public function rules()
     {
         return [
-            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'cleaningdatetime', 'CleaningCycles', 'Measuring', 'counter', 'updatedby', 'updateddate'], 'required'],
+//            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'cleaningdatetime', 'CleaningCycles', 'Measuring', 'counter', 'updatedby', 'updateddate'], 'required'],
             [['BMCCode', 'PPCode', 'shift', 'updatedby'], 'string'],
-            [['dtdate', 'cleaningdatetime', 'updateddate'], 'safe'],
+            [['dtdate', 'cleaningdatetime', 'updateddate','BMCCode', 'PPCode','CleaningCycles', 'Measuring', 'counter', 'updatedby', 'updateddate'], 'safe'],
             [['CleaningCycles', 'Measuring', 'counter'], 'integer'],
         ];
     }

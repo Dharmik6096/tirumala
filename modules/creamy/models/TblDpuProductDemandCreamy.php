@@ -26,26 +26,23 @@ use Yii;
  * @property string $ProductStatus
  * @property integer $data_post_status
  */
-class TblDpuProductDemandCreamy extends \app\models\ChildModel
-{
+class TblDpuProductDemandCreamy extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    
     public static function getDb() {
         return Yii::$app->get('db_creamy'); // second database
     }
-    
-    public static function tableName()
-    {
+
+    public static function tableName() {
         return 'tbl_dpu_product_demand';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['trDate', 'shift', 'BMCCode', 'VillageCode', 'MemberCode', 'ProductId', 'PPrice', 'PQty', 'PAmount', 'CreateOnUtc', 'CreatedBy'], 'required'],
             [['trDate', 'ApprovedDate', 'CreateOnUtc', 'UpdateOnUtc'], 'safe'],
@@ -58,8 +55,7 @@ class TblDpuProductDemandCreamy extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'Id' => 'ID',
             'trDate' => 'Tr Date',
@@ -81,4 +77,29 @@ class TblDpuProductDemandCreamy extends \app\models\ChildModel
             'data_post_status' => 'Data Post Status',
         ];
     }
+
+    public function getData($vlccid = []) {
+        $date = date('Y-m-d H:i:s', strtotime('-3 hours'));
+        $data1 = $this->find()
+                ->where(['or', ['data_post_status' => 0], ['data_post_status' => NULL]])
+                ->andWhere(['VillageCode' => $vlccid])
+//                ->andWhere(['>=', 'dtdate', '2018-07-20 13:00:00'])
+                ->limit(80)
+//                ->orderby('dtdate ASC')
+                ->all();
+        $data2 = $this->find()
+                ->where(['data_post_status' => 3])
+                ->andWhere(['VillageCode' => $vlccid])
+//                ->andWhere(['<=', 'modifieddate', $date])
+                ->limit(20)
+//                ->orderby('dtdate ASC')
+                ->all();
+        $result = array_merge($data1, $data2);
+        return $result;
+    }
+
+    public function updateData($farmer_id) {
+        return $this->updateAll(['data_post_status' => 1], ['farmerid' => $farmer_id]);
+    }
+
 }

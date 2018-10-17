@@ -48,35 +48,33 @@ use Yii;
  * @property string $RateRecalType
  * @property integer $farmerstatus
  */
-class CollectionFarmerLocalSale extends \app\models\ChildModel
-{
+class CollectionFarmerLocalSale extends \app\models\ChildModel {
+
+    public $setdcs;
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'CollectionFarmerLocalSale';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['farmerid', 'vlccid', 'bmcid', 'sampleno', 'dtdate', 'shift'], 'required'],
+//            [['farmerid', 'vlccid', 'bmcid', 'sampleno', 'dtdate', 'shift'], 'required'],
             [['farmerid', 'vlccid', 'routeid', 'bmcid', 'shift', 'qtymode', 'qtydecimals', 'qltydecimals', 'milktype', 'milkqtype', 'createdby', 'modifiedby', 'syncdirection', 'usbflag', 'RateType', 'RateRecalType'], 'string'],
             [['sampleno', 'rateid', 'qtyauto', 'qltyauto', 'paymentid', 'farmerstatus'], 'integer'],
             [['qty', 'fat', 'snf', 'water', 'clr', 'rtpl', 'amount', 'kgltrconst', 'ltrkgconst', 'StdRate', 'KgFatRate', 'KgSnfRate'], 'number'],
-            [['dtdate', 'qtytime', 'qltytime', 'createddate', 'modifieddate', 'lastsynchronized'], 'safe'],
+            [['dtdate', 'qtytime', 'qltytime', 'createddate', 'modifieddate', 'lastsynchronized','farmerid', 'vlccid', 'bmcid', 'sampleno', 'dtdate', 'shift'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'farmerid' => 'Farmerid',
             'vlccid' => 'Vlccid',
@@ -120,4 +118,5 @@ class CollectionFarmerLocalSale extends \app\models\ChildModel
             'farmerstatus' => 'Farmerstatus',
         ];
     }
+
 }
