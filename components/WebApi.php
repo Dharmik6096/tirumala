@@ -16,6 +16,7 @@ class WebApi {
     public $apiurl = '';
     public $body = [];
     public $vendor_code = 'STELLAPPS';
+    public $header_info = [];
 
     public function POSTDATA() {
         if ($this->authentication) {
@@ -37,12 +38,14 @@ class WebApi {
     public function PHPCURL() {
         $url = $this->serverUrl . $this->apiurl;
         $data = json_encode($this->body);
+        $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
+        $header = array_merge($main_header, $this->header_info);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, FALSE);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "Content-length: " . strlen($data)));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $result = curl_exec($ch);
         curl_close($ch);
         $res = json_decode($result);
