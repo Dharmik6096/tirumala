@@ -142,7 +142,7 @@ class MastervillageCreamy extends \app\models\ChildModel {
     }
 
     public function updateData($farmer_id) {
-        return $this->updateAll(['data_post_status' => 1], ['farmerid' => $farmer_id]);
+        return $this->updateAll(['data_post_status' => 1], ['villageid' => $farmer_id]);
     }
 
 }
