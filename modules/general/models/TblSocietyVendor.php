@@ -36,6 +36,8 @@ class TblSocietyVendor extends \app\models\ChildModel {
             [['is_active'], 'integer'],
             [['vendor_code'], 'string'],
             [['dcs_code'], 'required'],
+            [['vendor_code'], 'default', 'value' => 'EIPL', 'on' => ['saveCreamyData']],
+            [['is_active'], 'default', 'value' => 1, 'on' => ['saveCreamyData']],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
                 //[['vendor_code'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['vendor_code' => 'id']],
         ];

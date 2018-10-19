@@ -107,13 +107,13 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping']],
-            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank')],
-            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => 'importCsv'],
-            [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => 'importCsv'],
-            [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => 'importCsv'],
-            [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => 'importCsv'],
+            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData']],
+            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData']],
+            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
+            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
+            [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
+            [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
+            [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
             [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
             [['allow_multi_family_member', /* 'destination_type', */ 'dcs_type_code'], 'integer'],
@@ -127,20 +127,20 @@ class TblDcs extends ChildModel {
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['registration_code'], 'string', 'max' => 20],
             [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
-            [['dcs_code_ex'], 'string', 'max' => 3, 'min' => '3'],
+            [['dcs_code_ex'], 'string', 'max' => 3, 'min' => '3', 'except' => ['saveCreamyData']],
             [['gst_no'], 'string', 'max' => 15],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['ifsc', 'pan_no'], 'trim'],
             //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
             [['mobile_no'], function ($attribute, $params) {
             Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['gst_no'], function ($attribute, $params) {
             $this->validateGstNo($attribute, $params);
-        }, 'skipOnEmpty' => false],
+        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['phone_no'], function ($attribute, $params) {
             Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
 //            [['service_tax'], function ($attribute, $params) {
 //                    Yii::$app->general->vaildateServiceTax($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
@@ -148,19 +148,19 @@ class TblDcs extends ChildModel {
             ['bank_account_no', 'unique', 'when' => function($model) {
                     $data = $this->find()->where(['ifsc' => $model->ifsc])->andWhere(['<>', 'dcs_code', $model->dcs_code])->one();
                     return ($data) ? true : false;
-                }/* , 'targetAttribute' => 'bank_code' */],
+                }, 'except' => ['saveCreamyData']/* , 'targetAttribute' => 'bank_code' */],
                     [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
                     [['dcs_name', 'contact_person'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
                     [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
                     [['registration_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateNumericField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
                     [['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
                     return $model->is_registered == 1;
                 },
@@ -173,7 +173,7 @@ class TblDcs extends ChildModel {
 //                },'skipOnEmpty'=> false],
                     [['tmcc_code'], 'string', 'max' => 10],
                     [['tmcc_code'], 'number', 'min' => 1],
-                    ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')]
+                    ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']]
                 ];
             }
 

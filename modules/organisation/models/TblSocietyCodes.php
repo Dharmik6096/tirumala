@@ -24,49 +24,44 @@ use app\modules\organisation\models\TblDcsBmc;
  * @property TblDcs $dcsCode
  * @property TblUnions $unionCode
  */
-class TblSocietyCodes extends \app\models\ChildModel
-{
-    
-    public $vendor_code;
+class TblSocietyCodes extends \app\models\ChildModel {
 
+    public $vendor_code;
 
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_society_codes';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['dcs_code','union_code'], 'required'],
-            [['route_code'],'required','on'=>'societycode'],
+            [['dcs_code', 'union_code'], 'required', 'except' => 'saveCreamyData'],
+            [['route_code'], 'required', 'on' => 'societycode'],
             //[['imei_no'],'required','on'=>'societycode'],
-            /*[['imei_no'],'unique','skipOnEmpty'=>'true','on'=>'societycode','when' => function ($model, $attribute) {
-               return $model->{$attribute} !== $model->getOldAttribute($attribute);
-           },],*/
+            /* [['imei_no'],'unique','skipOnEmpty'=>'true','on'=>'societycode','when' => function ($model, $attribute) {
+              return $model->{$attribute} !== $model->getOldAttribute($attribute);
+              },], */
             [['imei_no'], function ($attribute, $params) {
-                    $this->valiadteUniqueImei($this, $attribute,$params);
-                },'skipOnEmpty'=> true],
+            $this->valiadteUniqueImei($this, $attribute, $params);
+        }, 'skipOnEmpty' => true, 'except' => 'saveCreamyData'],
             [['dcs_code', 'bmc_code', 'union_code', 'pooling_point_code', 'imei_no', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at','vendor_code','imei_no', 'bipl_code','route_code'], 'safe']
-            
-            //[['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
-            //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-            //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            [['created_at', 'updated_at', 'vendor_code', 'imei_no', 'bipl_code', 'route_code'], 'safe']
+
+                //[['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
+                //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
+                //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'code' => Yii::t('app', 'Code'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
@@ -85,65 +80,63 @@ class TblSocietyCodes extends \app\models\ChildModel
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBmcCode()
-    {
+    public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
+
     public function getImi($code) {
 
-                $record = $this->find()->where(['dcs_code' => $code])->one();
-                if(!empty($record))
-                    return $record->imei_no;
-                else
-                    return '';
-            }
-    public function getPpCode(){
+        $record = $this->find()->where(['dcs_code' => $code])->one();
+        if (!empty($record))
+            return $record->imei_no;
+        else
+            return '';
+    }
 
-        $data=$this->find()->select(["MAX(CONVERT(INT,pooling_point_code)) AS pooling_point_code"])->where(['bmc_code'=> $this->bmc_code])->one();   
-        if(!empty($data))
-            return ((int)$data['pooling_point_code'] + 1);
+    public function getPpCode() {
+
+        $data = $this->find()->select(["MAX(CONVERT(INT,pooling_point_code)) AS pooling_point_code"])->where(['bmc_code' => $this->bmc_code])->one();
+        if (!empty($data))
+            return ((int) $data['pooling_point_code'] + 1);
         else
             return 1;
-            
     }
 
     /**
      * @inheritdoc
      * @return TblSocietyCodesQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblSocietyCodesQuery(get_called_class());
     }
-    
-     public function getBiplCode($code) {
-        $data=  $this->find()->select(["convert(int,MAX(substring(bipl_code,7,2))) as bipl_code"])->where(['substring(bipl_code,1,6)'=>trim($code)])->one();
+
+    public function getBiplCode($code) {
+        $data = $this->find()->select(["convert(int,MAX(substring(bipl_code,7,2))) as bipl_code"])->where(['substring(bipl_code,1,6)' => trim($code)])->one();
         $new_code = isset($data['bipl_code']) ? ($data['bipl_code'] + 1) : 1;
-        return trim($code).str_pad($new_code,2,'0',STR_PAD_LEFT);
+        return trim($code) . str_pad($new_code, 2, '0', STR_PAD_LEFT);
     }
-    
-    public function valiadteUniqueImei($model,$attribute,$params) {
+
+    public function valiadteUniqueImei($model, $attribute, $params) {
 
         $primaryKey = $model->tableSchema->primaryKey[0];
-        $values = $model->find()->joinWith('dcsCode')->where(['imei_no' => $model->imei_no,'tbl_dcs.is_active'=>1])->andWhere(['<>', $primaryKey, $model->$primaryKey])->count();
+        $values = $model->find()->joinWith('dcsCode')->where(['imei_no' => $model->imei_no, 'tbl_dcs.is_active' => 1])->andWhere(['<>', $primaryKey, $model->$primaryKey])->count();
         if ($values != 0) {
             $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . " '" . $model->imei_no . "'" . ' is already taken.'));
         }
     }
+
 }

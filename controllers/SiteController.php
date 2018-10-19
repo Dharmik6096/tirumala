@@ -43,6 +43,7 @@ use app\modules\webservice\models\TblAppNotification;
 use app\models\TblSms;
 use app\models\CollectionFarmerCreamy;
 use yii\data\ArrayDataProvider;
+use app\modules\creamy\models\TblDcsPortalCreamy;
 
 class SiteController extends Controller {
 
@@ -1136,7 +1137,9 @@ class SiteController extends Controller {
 
     public function actionCollectionFarmerCreamy() {
         $model = new CollectionFarmerCreamy();
-        $modelData = $model->getNewDcs();
+        $vlcc_model = new TblDcsPortalCreamy();
+        $vlccid = $vlcc_model->getVlcc();
+        $modelData = $model->getNewDcs($vlccid);
         foreach ($modelData as $data) {
             $farmer_id = $data['farmerid'];
             $vlcc_id = $data['vlccid'];
@@ -1147,7 +1150,7 @@ class SiteController extends Controller {
         }
         foreach ($modelData as $data) {
             $milkCollection = new TblMilkCollection();
-            $milkCollection->dcs_code = '00' . $data->vlccid;
+            $milkCollection->dcs_code = in_array($data->vlccid, ['1011618', '1011647', '1011648', '1015576']) ? '00' . $data->vlccid : $data->vlccid;
             $milkCollection->member_code = (strlen($data->farmerid) > 4) ? $data->farmerid : $milkCollection->dcs_code . str_pad($data->farmerid, 4, 0, STR_PAD_LEFT);
             $milkCollection->shift = (($data->shift == 'M') ? 1 : 2);
             $milkCollection->date_time_of_collection = date('Y-m-d', strtotime($data->dtdate)) . ' ' . (($data->shift == 'M') ? '06:00:00' : '18:00:00');
@@ -1237,10 +1240,11 @@ class SiteController extends Controller {
 
     public function actionCreamyDataProcess() {
         $processlist = $this->creamymodel();
+        $vlcc_model = new TblDcsPortalCreamy();
+        $vlccid = $vlcc_model->getVlcc();
         foreach ($processlist as $process) {
             $model_name = Yii::$app->path->define($process['master_model']);
             $model = new $model_name();
-            $vlccid = ['1011618', '1011647', '1011648', '1015576'];
             $modelData = $model->getData($vlccid);
             foreach ($modelData as $data) {
                 $key1 = '';
@@ -1255,26 +1259,103 @@ class SiteController extends Controller {
                 }
                 $update = $model->updateData($key1, $key2, $key3, $key4, $key5);
             }
+
             foreach ($modelData as $data) {
                 $model_name = Yii::$app->path->define($process['slave_model']);
                 $saveModel = new $model_name();
-                $where = [];
-                foreach ($process['primary_key'] as $pk) {
-                    $where[$pk] = $data[$pk];
-                }
-                $olddata = $saveModel->find()->where($where)->one();
                 $saveModel->setAttributes($data->attributes);
                 if (!empty($process['replace_key_array'])) {
                     foreach ($process['replace_key_array'] as $creamy_key => $model_key) {
                         $saveModel->$model_key = $data->$creamy_key;
                     }
                 }
+                if (!empty($process['validateFields'])) {
+                    foreach ($process['validateFields'] as $fields) {
+                        $field = explode(':', $fields);
+                        $chage_field = !empty($field[1]) ? $field[1] : '';
+                        if (!empty($chage_field)) {
+                            if ($field[0] == 'dcs_code') {
+                                $saveModel->$chage_field = '00' . substr($saveModel->$chage_field, -7);
+                            }
+                            if ($field[0] == 'shift') {
+                                $saveModel->$chage_field = (($saveModel->$chage_field == 'M') ? '1' : '2');
+                            }
+                            if ($field[0] == 'milk_type') {
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilktype('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                            }
+                            if ($field[0] == 'dateshift') {
+                                $saveModel->$chage_field = date('Y-m-d', strtotime($data->$chage_field));
+                                if (!empty($field[2])) {
+                                    $shift_field = $field[2];
+                                    $saveModel->$chage_field = $saveModel->$chage_field . ' ' . Yii::$app->general->getshift($saveModel->$shift_field);
+                                }
+                            }
+                            if ($field[0] == 'member_code') {
+                                $saveModel->$chage_field = str_pad($saveModel->$chage_field, 4, '0', STR_PAD_LEFT);
+                                if (!empty($field[2])) {
+                                    $dcs_field = $field[2];
+                                    $saveModel->$chage_field = $saveModel->$dcs_field . $saveModel->$chage_field;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (isset($process['getCode']) && $process['getCode']) {
+                    $key = $process['getCodeKey'];
+                    $saveModel->$key = $saveModel->getCode();
+                }
+                $where = [];
+                $primary_key = $process['primary_key'];
+                $primary_key = !empty($process['slave_primary_key']) ? $process['slave_primary_key'] : $primary_key;
+//                'slave_primary_key'
+                foreach ($primary_key as $pk) {
+                    $primary_key = explode(':', $pk);
+                    $model_key = $primary_key[0];
+                    $creamy_key = !empty($primary_key[1]) ? $primary_key[1] : $primary_key[0];
+                    $where[$model_key] = $saveModel->$model_key;
+                }
+                $olddata = $saveModel->find()->where($where)->one();
                 if (!empty($olddata)) {
                     $saveModel = $olddata;
                 }
-
+                if (isset($process['scenario'])) {
+                    $saveModel->scenario = $process['scenario'];
+                }
                 try {
                     if ($saveModel->validate() && $saveModel->save(FALSE)) {
+                        if (!empty($process['childModel'])) {
+                            foreach ($process['childModel'] as $childmodels) {
+                                $child_model_name = Yii::$app->path->define($childmodels);
+                                $childModel = new $child_model_name();
+                                if (!empty($process['childModelKey'][$childmodels])) {
+                                    $childModelArray = $process['childModelKey'][$childmodels];
+                                    foreach ($childModelArray['key'] as $model_key => $creamy_key) {
+                                        $childModel->$model_key = $data->$creamy_key;
+                                        if (isset($childModelArray['scenario']) && $childModelArray['scenario']) {
+                                            $childModel->scenario = $process['scenario'];
+                                        }
+                                    }
+                                    $savechildModel = true;
+                                    $primary_key = !empty($childModelArray['primaryKeyCheck']) ? $childModelArray['primaryKeyCheck'] : [];
+                                    if (!empty($primary_key)) {
+                                        $where = [];
+                                        foreach ($primary_key as $pk) {
+                                            $where[$model_key] = $childModel->$model_key;
+                                        }
+                                        $oldChildModelData = $childModel->find()->where($where)->one();
+                                        if (!empty($oldChildModelData)) {
+                                            $savechildModel = false;
+                                        }
+                                    }
+                                    if ($savechildModel) {
+                                        if($childModel->validate() && $childModel->save(FALSE)){
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         $data->data_post_status = 2;
                         $data->save(FALSE);
                     } else {
@@ -1299,32 +1380,74 @@ class SiteController extends Controller {
 
     public function creamymodel($l = '') {
         $label = [
-            'ProductSale' => [
-                'master_model' => 'TblDpuProductDemandCreamy',
-                'slave_model' => 'TblDpuProductDemand',
-                'primary_key' => ['Id'],
-                'replace_key_array' => ['BMCCode' => 'bmc_code', 'VillageCode' => 'dcs_code', 'MemberCode' => 'member_code', 'ProductId' => 'product_code', '' => ''],
+            'DCS' => [
+                'master_model' => 'MastervillageCreamy',
+                'slave_model' => 'TblDcs',
+                'primary_key' => ['villageid'],
+                'scenario' => 'saveCreamyData',
+                'slave_primary_key' => ['dcs_code:villageid'],
+                'replace_key_array' => ['villageid' => 'dcs_code', 'villagename' => 'dcs_name', 'routeid' => 'route_code', 'mccid' => 'mcc_plant_code', 'villagestatus' => 'is_active'],
+                'childModel' => ['TblSocietyCodes', 'TblSocietyVendor', 'TblContactDetails'],
+                'childModelKey' => [
+                    'TblSocietyCodes' => [
+                        'key' => ['dcs_code' => 'villageid', 'bipl_code' => 'villageid'],
+                        'primaryKeyCheck' => ['dcs_code'],
+                        'scenario' => true
+                    ],
+                    'TblSocietyVendor' => [
+                        'key' => ['dcs_code' => 'villageid'],
+                        'primaryKeyCheck' => ['dcs_code'],
+                        'scenario' => true
+                    ],
+                    'TblContactDetails' => [
+                        'key' => ['module_code' => 'villageid', 'contact_person' => 'villageagentname', 'mobile_no' => 'villageagentcontact'],
+                        'default_value' => ['module_name' => 'society'],
+                        'scenario' => true
+                    ]
+                    
+                ]
             ],
-            'Cleaning' => [
-                'master_model' => 'TblMACleaningCreamy',
-                'slave_model' => 'TblMACleaning',
-                'primary_key' => ['id'],
-            ],
-            'Calibration' => [
-                'master_model' => 'TblMACAlibrationCreamy',
-                'slave_model' => 'TblMACAlibration',
-                'primary_key' => ['id'],
-            ],
-            'CalibrationChange' => [
-                'master_model' => 'TblMACAlibrationChangeCreamy',
-                'slave_model' => 'TblMACAlibrationChange',
-                'primary_key' => ['id'],
+            'Member' => [
+                'master_model' => 'MasterfarmerCreamy',
+                'slave_model' => 'TblMember',
+                'primary_key' => ['farmerid', 'villageid'],
+                'getCode' => true,
+                'getCodeKey' => 'member_code',
+                'scenario' => 'saveCreamyData',
+                'slave_primary_key' => ['member_code:farmerid'],
+                'replace_key_array' => ['farmername' => 'member_name', 'farmerid' => 'ex_member_code', 'farmeraddress' => 'address', 'farmergender' => 'gender_code', 'farmercontact' => 'mobile_no', 'farmercow' => 'no_of_cow_cross', 'farmerbuff' => 'no_of_buffalo', 'farmerbankac' => 'bank_account_no', 'farmerstatus' => 'is_active', 'villageid' => 'dcs_code', 'farmeraadharcode' => 'adhar_no', 'farmerpanno' => 'pan_no', 'farmerbankifsccode' => 'ifsc'],
+                'validateFields' => ['member_code:ex_member_code'],
             ],
             'LocalSale' => [
                 'master_model' => 'CollectionFarmerLocalSaleCreamy',
                 'slave_model' => 'CollectionFarmerLocalSale',
                 'primary_key' => ['farmerid', 'vlccid', 'sampleno', 'dtdate', 'shift'],
-            ]
+            ],
+//            'ProductSale' => [
+//                'master_model' => 'TblDpuProductDemandCreamy',
+//                'slave_model' => 'TblDpuProductDemand',
+//                'primary_key' => ['Id'],
+//                'replace_key_array' => ['BMCCode' => 'bmc_code', 'VillageCode' => 'dcs_code', 'MemberCode' => 'member_code', 'ProductId' => 'product_code'],
+//                'validateFields' => ['shift:shift', 'dateshift:trDate:shift', 'member_code:member_code:dcs_code'],
+//            ],
+//            'Cleaning' => [
+//                'master_model' => 'TblMACleaningCreamy',
+//                'slave_model' => 'TblMACleaning',
+//                'primary_key' => ['id'],
+//                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift'],
+//            ],
+//            'Calibration' => [
+//                'master_model' => 'TblMACAlibrationCreamy',
+//                'slave_model' => 'TblMACAlibration',
+//                'primary_key' => ['id'],
+//                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+//            ],
+//            'CalibrationChange' => [
+//                'master_model' => 'TblMACAlibrationChangeCreamy',
+//                'slave_model' => 'TblMACAlibrationChange',
+//                'primary_key' => ['id'],
+//                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+//            ],
         ];
         return isset($label[$l]) ? $label[$l] : $label;
     }

@@ -100,13 +100,16 @@ class TblMember extends ChildModel {
             [['is_download'], 'default', 'value' => '0'],
             [['is_active'], 'default', 'value' => '1'],
             [['member_type_code'], 'default', 'value' => '1'],
-            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport']],
-            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport']],
-            [['member_name'], 'required', 'except' => ['customImport']],
+            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData']],
+            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData']],
+            [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData']],
             [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
             /* [['member_name'],'unique', 'when' => function($model) {
               return ($model->isNewRecord)?true:false;
               },'skipOnEmpty'=> true], */
+            [['gender_code'], function ($attribute, $params) {
+            Yii::$app->general->validateGlobalData($this, $attribute, 'gender', false);
+        }, 'on' => 'saveCreamyData'],
             [['email'], 'email'],
             [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string'],
             [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
@@ -114,10 +117,10 @@ class TblMember extends ChildModel {
             [['ifsc', 'pan_no'], 'trim'],
             [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
             Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['mobile_no'], function ($attribute, $params) {
             Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => true],
+        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
             [['mobile_no', 'religion_code'], 'integer'],
             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
@@ -135,34 +138,35 @@ class TblMember extends ChildModel {
               }], */
             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
             return $this->is_active;
-        }],
+        }, 'except' => ['saveCreamyData']],
             [['bank_account_no'], function ($attribute, $params) {
             $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
             if ($error !== TRUE)
                 $this->addError($attribute, $error);
-        }],
+        }, 'except' => ['saveCreamyData']],
             [['pan_no'], function ($attribute, $params) {
             Yii::$app->general->validatePancard($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['adhar_no'], function ($attribute, $params) {
             Yii::$app->general->validateAadharcard($this, $attribute, $params);
-        }, 'skipOnEmpty' => true],
+        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
             [['ifsc'], function ($attribute, $params) {
             Yii::$app->general->validateIfsc($this, $attribute, $params);
         }, 'skipOnEmpty' => false, 'when' => function() {
             return (!empty($this->branch_code) || (in_array($this->scenario, ['importLimitedCsv', 'importCsv']) && !empty($this->ifsc)));
-        }],
+        }, 'except' => ['saveCreamyData']],
             [['local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address'], function ($attribute, $params) {
             Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['voter_id'], 'string', 'max' => 15, 'skipOnEmpty' => true],
             [['payment_mode'], 'string', 'max' => 10, 'skipOnEmpty' => true],
             [['dob'], function ($attribute, $params) {
             Yii::$app->general->validateAge($this, $attribute, $params);
-        }, 'skipOnEmpty' => true],
+        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
             [['ex_member_code'], 'integer', 'min' => 1],
             [['ex_member_code'], 'string', 'min' => 4, 'max' => 4],
             [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.')],
+            [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData']],
         ];
     }
 
@@ -466,6 +470,16 @@ class TblMember extends ChildModel {
 
     public function getmember() {
         return $this->find()->where(['member_code' => $this->member_code])->andWhere(['is_active' => 1])->one();
+    }
+
+    public function validateCreamyData($attribute, $params) {
+        $this->state_code = Yii::$app->general->getforeignkey($this->dcsCode, 'state_code');
+        $this->district_code = Yii::$app->general->getforeignkey($this->dcsCode, 'district_code');
+        $this->sub_district_code = Yii::$app->general->getforeignkey($this->dcsCode, 'sub_district_code');
+        $this->hamlet_code = Yii::$app->general->getforeignkey($this->dcsCode, 'hamlet_code');
+        $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
+        $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+        $this->federation_code = Yii::$app->general->getforeignkey($this->unionCode, 'federation_code');
     }
 
 }

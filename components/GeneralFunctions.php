@@ -908,7 +908,7 @@ class GeneralFunctions extends Component {
         return $command->queryAll();
     }
 
-    public function validateGlobalData($model, $attribute, $flag) {
+    public function validateGlobalData($model, $attribute, $flag, $show_error = true) {
         $dropDown = new DropDown();
         $labelData = $dropDown->getLabels($flag);
         $fields = explode(',', $labelData['fields']);
@@ -933,8 +933,12 @@ class GeneralFunctions extends Component {
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->{$fields[0]};
         } else {
-            $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
-            return false;
+            if($show_error){
+                $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
+                return false;
+            } else {
+                $model->$attribute = NULL;
+            }
         }
     }
 
