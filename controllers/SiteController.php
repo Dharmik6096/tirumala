@@ -1387,7 +1387,7 @@ class SiteController extends Controller {
                 'scenario' => 'saveCreamyData',
                 'slave_primary_key' => ['dcs_code:villageid'],
                 'replace_key_array' => ['villageid' => 'dcs_code', 'villagename' => 'dcs_name', 'routeid' => 'route_code', 'mccid' => 'mcc_plant_code', 'villagestatus' => 'is_active'],
-                'childModel' => ['TblSocietyCodes', 'TblSocietyVendor', 'TblContactDetails'],
+                'childModel' => ['TblSocietyCodes', 'TblSocietyVendor'],
                 'childModelKey' => [
                     'TblSocietyCodes' => [
                         'key' => ['dcs_code' => 'villageid', 'bipl_code' => 'villageid'],
@@ -1397,11 +1397,6 @@ class SiteController extends Controller {
                     'TblSocietyVendor' => [
                         'key' => ['dcs_code' => 'villageid'],
                         'primaryKeyCheck' => ['dcs_code'],
-                        'scenario' => true
-                    ],
-                    'TblContactDetails' => [
-                        'key' => ['module_code' => 'villageid', 'contact_person' => 'villageagentname', 'mobile_no' => 'villageagentcontact'],
-                        'default_value' => ['module_name' => 'society'],
                         'scenario' => true
                     ]
                     
