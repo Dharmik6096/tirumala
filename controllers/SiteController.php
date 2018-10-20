@@ -1269,8 +1269,8 @@ class SiteController extends Controller {
                     $where = [];
                     foreach ($process['primary_key'] as $pk) {
                         $where[$pk] = $data[$pk];
-                        $model->updateAll(['data_post_status' => 1], $where);
                     }
+                    $model->updateAll(['data_post_status' => 1], $where);
                 }
             }
 
