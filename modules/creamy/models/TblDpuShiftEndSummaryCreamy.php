@@ -20,21 +20,23 @@ use Yii;
  * @property string $updatedby
  * @property string $updateddate
  */
-class TblDpuShiftEndSummaryCreamy extends \yii\db\ActiveRecord
-{
+class TblDpuShiftEndSummaryCreamy extends \yii\db\ActiveRecord {
+
+    public static function getDb() {
+        return Yii::$app->get('db_creamy'); // second database
+    }
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_DPUShiftEndSummary';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['BMCCode', 'VillageCode', 'dtdate', 'shift', 'samplecount', 'Qty', 'fat', 'snf', 'amount', 'updatedby', 'updateddate'], 'required'],
             [['BMCCode', 'VillageCode', 'shift', 'updatedby'], 'string'],
@@ -47,8 +49,7 @@ class TblDpuShiftEndSummaryCreamy extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'Id' => Yii::t('app', 'ID'),
             'BMCCode' => Yii::t('app', 'Bmccode'),
@@ -64,4 +65,5 @@ class TblDpuShiftEndSummaryCreamy extends \yii\db\ActiveRecord
             'updateddate' => Yii::t('app', 'Updateddate'),
         ];
     }
+
 }

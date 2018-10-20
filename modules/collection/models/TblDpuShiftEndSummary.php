@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblShift;
+
 /**
  * This is the model class for table "tbl_DPUShiftEndSummary".
  *
@@ -36,9 +37,9 @@ class TblDpuShiftEndSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['BMCCode', 'VillageCode', 'dtdate', 'shift', 'samplecount', 'Qty', 'fat', 'snf', 'amount', 'updatedby', 'updateddate'], 'required'],
+            [['BMCCode', 'VillageCode', 'dtdate', 'shift', 'samplecount', 'Qty', 'fat', 'snf', 'amount', 'updatedby', 'updateddate'], 'safe'],
             [['BMCCode', 'VillageCode', 'shift', 'updatedby'], 'string'],
-            [['dtdate', 'updateddate'], 'safe'],
+            [['dtdate', 'updateddate', 'ref_id'], 'safe'],
             [['samplecount'], 'integer'],
             [['Qty', 'fat', 'snf', 'amount'], 'number'],
         ];
@@ -62,7 +63,7 @@ class TblDpuShiftEndSummary extends \app\models\ChildModel {
             'updatedby' => Yii::t('app', 'Updatedby'),
             'updateddate' => Yii::t('app', 'Updateddate'),
         ];
-    }    
+    }
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'VillageCode']);

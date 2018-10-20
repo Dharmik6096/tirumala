@@ -1259,7 +1259,6 @@ class SiteController extends Controller {
                     ->limit(20)
                     ->all();
             $modelData = array_merge($data1, $data2);
-
             if (count($process['primary_key']) == 1) {
                 $update_key = $process['primary_key'][0];
                 $update_ids = array_column($modelData, $update_key);
@@ -1484,6 +1483,15 @@ class SiteController extends Controller {
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
                 'replace_key_array' => ['id' => 'ref_id'],
+                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'slave_primary_key' => ['ref_id:id'],
+            ],
+            'DpuShiftEndSummary' => [
+                'master_model' => 'TblDpuShiftEndSummaryCreamy',
+                'slave_model' => 'TblDpuShiftEndSummary',
+                'primary_key' => ['Id'],
+                'master_model_dcs_key' => 'VillageCode',
+                'replace_key_array' => ['Id' => 'ref_id'],
                 'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
