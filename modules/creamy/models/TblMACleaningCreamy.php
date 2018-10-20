@@ -65,4 +65,28 @@ class TblMACleaningCreamy extends \app\models\ChildModel {
         ];
     }
 
+    public function getData($vlccid = []) {
+        $date = date('Y-m-d H:i:s', strtotime('-3 hours'));
+        $data1 = $this->find()
+                ->where(['or', ['data_post_status' => 0], ['data_post_status' => NULL]])
+                ->andWhere(['PPCode' => $vlccid])
+//                ->andWhere(['>=', 'dtdate', '2018-07-20 13:00:00'])
+                ->limit(80)
+//                ->orderby('dtdate ASC')
+                ->all();
+        $data2 = $this->find()
+                ->where(['data_post_status' => 3])
+                ->andWhere(['PPCode' => $vlccid])
+//                ->andWhere(['<=', 'modifieddate', $date])
+                ->limit(20)
+//                ->orderby('dtdate ASC')
+                ->all();
+        $result = array_merge($data1, $data2);
+        return $result;
+    }
+
+    public function updateData($id) {
+        return $this->updateAll(['data_post_status' => 1], [ 'id' => $id]);
+    }
+
 }

@@ -46,7 +46,7 @@ use yii\data\ArrayDataProvider;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'load-table', 'load-table-data'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table'];
 
     public function init() {
         parent::init();
@@ -701,10 +701,12 @@ class SiteController extends Controller {
             $variable = explode('~', $data[0]);
             $val_type = explode('|', $data[1]);
             $param = $variable[0];
+
             $param1 = isset($variable[1]) ? $variable[1] : '';
             $value = !empty($post[$param]) ? $post[$param] : $val_type[0];
             $value = (isset($val_type[1]) && $val_type[1] == 'date') ? date('Y-m-d', strtotime($value)) : $value;
             $value = (isset($val_type[1]) && $val_type[1] == 'list') ? str_replace('-', ',', $value) : $value;
+
             if (!empty($val_type[1])) {
                 $checkshift = explode(':', $val_type[1]);
                 if (isset($checkshift[0]) && $checkshift[0] == 'dateshift') {
@@ -730,6 +732,7 @@ class SiteController extends Controller {
                 }
                 $value = $value . ' ' . $time;
             }
+
             if ($param1 == 'shift') {
                 $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
             }
@@ -759,7 +762,6 @@ class SiteController extends Controller {
         $mcc_code = (!empty($post['mcc_code']) && $post['mcc_code'] != 0) ? $post['mcc_code'] : (!empty(Yii::$app->session->get('MCC')) ? Yii::$app->session->get('MCC') : 0);
         $bmc_code = (!empty($post['bmc_code']) && $post['bmc_code'] != 0) ? $post['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0);
         $dcs_code = (!empty($post['dcs_code']) && $post['dcs_code'] != 0) ? $post['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? Yii::$app->session->get('Dcs') : 0);
-
         $union_str = '-' . $union_str . '-';
         $dcs_str = NULL;
         if (!empty(Yii::$app->session->get('Dcs'))) {
@@ -1231,6 +1233,100 @@ class SiteController extends Controller {
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
         }
         return $this->renderAjax('bmc_cross_tab_details', ['output' => $output, 'bmc' => $bmc]);
+    }
+
+    public function actionCreamyDataProcess() {
+        $processlist = $this->creamymodel();
+        foreach ($processlist as $process) {
+            $model_name = Yii::$app->path->define($process['master_model']);
+            $model = new $model_name();
+            $vlccid = ['1011618', '1011647', '1011648', '1015576'];
+            $modelData = $model->getData($vlccid);
+            foreach ($modelData as $data) {
+                $key1 = '';
+                $key2 = '';
+                $key3 = '';
+                $key4 = '';
+                $key5 = '';
+                $i = 1;
+                foreach ($process['primary_key'] as $pk) {
+                    ${'key' . $i} = $data[$pk];
+                    $i++;
+                }
+                $update = $model->updateData($key1, $key2, $key3, $key4, $key5);
+            }
+            foreach ($modelData as $data) {
+                $model_name = Yii::$app->path->define($process['slave_model']);
+                $saveModel = new $model_name();
+                $where = [];
+                foreach ($process['primary_key'] as $pk) {
+                    $where[$pk] = $data[$pk];
+                }
+                $olddata = $saveModel->find()->where($where)->one();
+                $saveModel->setAttributes($data->attributes);
+                if (!empty($process['replace_key_array'])) {
+                    foreach ($process['replace_key_array'] as $creamy_key => $model_key) {
+                        $saveModel->$model_key = $data->$creamy_key;
+                    }
+                }
+                if (!empty($olddata)) {
+                    $saveModel = $olddata;
+                }
+
+                try {
+                    if ($saveModel->validate() && $saveModel->save(FALSE)) {
+                        $data->data_post_status = 2;
+                        $data->save(FALSE);
+                    } else {
+                        $data->data_post_status = 3;
+                        $data->save(FALSE);
+                        var_dump($saveModel);
+                        var_dump($saveModel->getErrors());
+                    }
+                } catch (UserException $e) {
+                    $data->data_post_status = 3;
+                    $data->save(FALSE);
+                    var_dump($saveModel->getErrors());
+                } catch (\yii\db\Exception $e) {
+                    $data->data_post_status = 3;
+
+                    $data->save(FALSE);
+                    var_dump($saveModel->getErrors());
+                }
+            }
+        }
+    }
+
+    public function creamymodel($l = '') {
+        $label = [
+            'ProductSale' => [
+                'master_model' => 'TblDpuProductDemandCreamy',
+                'slave_model' => 'TblDpuProductDemand',
+                'primary_key' => ['Id'],
+                'replace_key_array' => ['BMCCode' => 'bmc_code', 'VillageCode' => 'dcs_code', 'MemberCode' => 'member_code', 'ProductId' => 'product_code', '' => ''],
+            ],
+            'Cleaning' => [
+                'master_model' => 'TblMACleaningCreamy',
+                'slave_model' => 'TblMACleaning',
+                'primary_key' => ['id'],
+            ],
+            'Calibration' => [
+                'master_model' => 'TblMACAlibrationCreamy',
+                'slave_model' => 'TblMACAlibration',
+                'primary_key' => ['id'],
+            ],
+            'CalibrationChange' => [
+                'master_model' => 'TblMACAlibrationChangeCreamy',
+                'slave_model' => 'TblMACAlibrationChange',
+                'primary_key' => ['id'],
+            ],
+            'LocalSale' => [
+                'master_model' => 'CollectionFarmerLocalSaleCreamy',
+                'slave_model' => 'CollectionFarmerLocalSale',
+                'primary_key' => ['farmerid', 'vlccid', 'sampleno', 'dtdate', 'shift'],
+            ]
+        ];
+        return isset($label[$l]) ? $label[$l] : $label;
     }
 
     public function actionLoadTable() {
