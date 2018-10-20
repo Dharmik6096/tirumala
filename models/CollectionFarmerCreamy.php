@@ -132,11 +132,11 @@ class CollectionFarmerCreamy extends \yii\db\ActiveRecord {
         return new CollectionFarmerCreamyQuery(get_called_class());
     }
 
-    public function getNewDcs() {
+    public function getNewDcs($vlccid = []) {
         $date = date('Y-m-d H:i:s', strtotime('-3 hours'));
         $data1 = $this->find()
                 ->where(['or', ['data_post_status' => 0], ['data_post_status' => NULL]])
-                ->andWhere(['vlccid' => ['1011618', '1011647', '1011648', '1015576']])
+                ->andWhere(['vlccid' => $vlccid])
                 ->andWhere(['>=', 'dtdate', '2018-07-20 13:00:00'])
                 ->limit(80)
                 ->orderby('dtdate ASC')
