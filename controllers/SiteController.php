@@ -1262,7 +1262,7 @@ class SiteController extends Controller {
 
             if (count($process['primary_key']) == 1) {
                 $update_key = $process['primary_key'][0];
-                $update_ids = array_column($smsData, $update_key);
+                $update_ids = array_column($modelData, $update_key);
                 $model->updateAll(['data_post_status' => 1], [$update_key => $update_ids]);
             } else {
                 foreach ($modelData as $data) {
@@ -1446,40 +1446,40 @@ class SiteController extends Controller {
                 'validateFields' => ['shift:shift_code', 'dateshift:date_time_of_collection:shift_code', 'qty_mode:qty_mode', 'milk_type:milk_type_code', 'milk_qlty_type:milk_quality_type_code', 'qty_mode:qty_mode'],
                 'slave_primary_key' => ['date_time_of_collection', 'bmc_code', 'shift_code', 'dcs_code', 'sample_no'],
             ],
-            'LocalSale' => [
-                'master_model' => 'CollectionFarmerLocalSaleCreamy',
-                'slave_model' => 'CollectionFarmerLocalSale',
-                'primary_key' => ['farmerid', 'vlccid', 'sampleno', 'dtdate', 'shift'],
-                'master_model_dcs_key' => 'vlccid',
-                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'member_code:farmerid:vlccid', 'milk_type:milktype', 'milk_qlty_type:milkqtype', 'qty_mode:qtymode'],
-            ],
-            'Calibration' => [
-                'master_model' => 'TblMACAlibrationCreamy',
-                'slave_model' => 'TblMACAlibration',
-                'primary_key' => ['id'],
-                'master_model_dcs_key' => 'PPCode',
-                'replace_key_array' => ['id' => 'id'],
-                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
-                'slave_primary_key' => ['ref_id:ref_id'],
-            ],
-            'CalibrationChange' => [
-                'master_model' => 'TblMACAlibrationChangeCreamy',
-                'slave_model' => 'TblMACAlibrationChange',
-                'primary_key' => ['id'],
-                'master_model_dcs_key' => 'PPCode',
-                'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
-                'slave_primary_key' => ['ref_id:id'],
-            ],
-            'Cleaning' => [
-                'master_model' => 'TblMACleaningCreamy',
-                'slave_model' => 'TblMACleaning',
-                'primary_key' => ['id'],
-                'master_model_dcs_key' => 'PPCode',
-                'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift'],
-                'slave_primary_key' => ['ref_id:id'],
-            ],
+//            'LocalSale' => [
+//                'master_model' => 'CollectionFarmerLocalSaleCreamy',
+//                'slave_model' => 'CollectionFarmerLocalSale',
+//                'primary_key' => ['farmerid', 'vlccid', 'sampleno', 'dtdate', 'shift'],
+//                'master_model_dcs_key' => 'vlccid',
+//                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'member_code:farmerid:vlccid', 'milk_type:milktype', 'milk_qlty_type:milkqtype', 'qty_mode:qtymode'],
+//            ],
+//            'Calibration' => [
+//                'master_model' => 'TblMACAlibrationCreamy',
+//                'slave_model' => 'TblMACAlibration',
+//                'primary_key' => ['id'],
+//                'master_model_dcs_key' => 'PPCode',
+//                'replace_key_array' => ['id' => 'id'],
+//                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+//                'slave_primary_key' => ['ref_id:ref_id'],
+//            ],
+//            'CalibrationChange' => [
+//                'master_model' => 'TblMACAlibrationChangeCreamy',
+//                'slave_model' => 'TblMACAlibrationChange',
+//                'primary_key' => ['id'],
+//                'master_model_dcs_key' => 'PPCode',
+//                'replace_key_array' => ['id' => 'ref_id'],
+//                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+//                'slave_primary_key' => ['ref_id:id'],
+//            ],
+//            'Cleaning' => [
+//                'master_model' => 'TblMACleaningCreamy',
+//                'slave_model' => 'TblMACleaning',
+//                'primary_key' => ['id'],
+//                'master_model_dcs_key' => 'PPCode',
+//                'replace_key_array' => ['id' => 'ref_id'],
+//                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift'],
+//                'slave_primary_key' => ['ref_id:id'],
+//            ],
 //            'ProductSale' => [
 //                'master_model' => 'TblDpuProductDemandCreamy',
 //                'slave_model' => 'TblDpuProductDemand',
