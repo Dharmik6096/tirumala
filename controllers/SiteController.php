@@ -1318,11 +1318,14 @@ class SiteController extends Controller {
                             if ($field[0] == 'qty_mode') {
                                 $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getQtyMode('" . $saveModel->$chage_field . "')")->queryOne())[0];
                             }
+                            if ($field[0] == 'bmc_code') {
+                                $saveModel->$chage_field = Yii::$app->general->getforeignkey($saveModel->dcsCode, 'bmc_code');
+                            }
                             $changed_data[$chage_field] = $saveModel->$chage_field;
                         }
                     }
                 }
-
+                
                 if (isset($process['getCode']) && $process['getCode']) {
                     $key = $process['getCodeKey'];
                     $saveModel->$key = $saveModel->getCode();
@@ -1346,6 +1349,9 @@ class SiteController extends Controller {
                 }
                 if (isset($process['scenario'])) {
                     $saveModel->scenario = $process['scenario'];
+                }
+                if($saveModel->hasAttribute('union_code')){
+                    $saveModel->union_code = '006';
                 }
                 try {
                     if ($saveModel->validate() && $saveModel->save(FALSE)) {
@@ -1444,7 +1450,7 @@ class SiteController extends Controller {
                 'primary_key' => ['vlccid', 'bmcid', 'sampleno', 'dtdate', 'shift'],
                 'master_model_dcs_key' => 'vlccid',
                 'replace_key_array' => ['vlccid' => 'dcs_code', 'bmcid' => 'bmc_code', 'sampleno' => 'sample_no', 'shift' => 'shift_code', 'dtdate' => 'date_time_of_collection', 'routeid' => 'route_code', 'can' => 'no_of_can', 'rateid' => 'rate_code', 'qtyauto' => 'qty_auto', 'qltyauto' => 'qlty_auto', 'qtytime' => 'qty_time', 'qltytime' => 'qlty_time', 'qtymode' => 'qty_mode', 'milktype' => 'milk_type_code', 'milkqtype' => 'milk_quality_type_code'],
-                'validateFields' => ['shift:shift_code', 'dateshift:date_time_of_collection:shift_code', 'qty_mode:qty_mode', 'milk_type:milk_type_code', 'milk_qlty_type:milk_quality_type_code', 'qty_mode:qty_mode'],
+                'validateFields' => ['shift:shift_code', 'dateshift:date_time_of_collection:shift_code', 'qty_mode:qty_mode', 'milk_type:milk_type_code', 'milk_qlty_type:milk_quality_type_code', 'qty_mode:qty_mode', 'bmc_code:bmc_code'],
                 'slave_primary_key' => ['date_time_of_collection', 'bmc_code', 'shift_code', 'dcs_code', 'sample_no'],
             ],
             'LocalSale' => [
@@ -1460,7 +1466,7 @@ class SiteController extends Controller {
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
                 'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:ref_id'],
             ],
             'CalibrationChange' => [
@@ -1469,7 +1475,7 @@ class SiteController extends Controller {
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
                 'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
             'Cleaning' => [
@@ -1478,7 +1484,7 @@ class SiteController extends Controller {
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
                 'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift'],
+                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
 //            'ProductSale' => [

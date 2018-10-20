@@ -60,8 +60,9 @@ abstract class AbstractItem extends ActiveRecord
 
 		$item->type = static::ITEM_TYPE;
 		$item->name = $name;
-		$item->description = ( $description === null AND static::ITEM_TYPE != static::TYPE_ROUTE ) ? Inflector::titleize($name) : $description;
-		$item->rule_name = $ruleName;
+		//$item->description = ( $description === null AND static::ITEM_TYPE != static::TYPE_ROUTE ) ? Inflector::titleize($name) : $description;
+                $item->description = ($description === null) ? Inflector::titleize($name) : $description;
+                $item->rule_name = $ruleName;
 		$item->group_code = $groupCode;
 		$item->data = $data;
 

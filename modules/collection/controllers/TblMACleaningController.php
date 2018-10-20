@@ -12,35 +12,19 @@ use yii\filters\VerbFilter;
 /**
  * TblMACleaningController implements the CRUD actions for TblMACleaning model.
  */
-class TblMACleaningController extends Controller
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblMACleaningController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblMACleaning models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblMACleaningSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -52,10 +36,9 @@ class TblMACleaningController extends Controller
      * @param string $PPCode
      * @return mixed
      */
-    public function actionView($BMCCode, $cleaningdatetime, $dtdate, $PPCode)
-    {
+    public function actionView($BMCCode, $cleaningdatetime, $dtdate, $PPCode) {
         return $this->render('view', [
-            'model' => $this->findModel($BMCCode, $cleaningdatetime, $dtdate, $PPCode),
+                    'model' => $this->findModel($BMCCode, $cleaningdatetime, $dtdate, $PPCode),
         ]);
     }
 
@@ -64,15 +47,14 @@ class TblMACleaningController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new TblMACleaning();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'BMCCode' => $model->BMCCode, 'cleaningdatetime' => $model->cleaningdatetime, 'dtdate' => $model->dtdate, 'PPCode' => $model->PPCode]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -86,15 +68,14 @@ class TblMACleaningController extends Controller
      * @param string $PPCode
      * @return mixed
      */
-    public function actionUpdate($BMCCode, $cleaningdatetime, $dtdate, $PPCode)
-    {
+    public function actionUpdate($BMCCode, $cleaningdatetime, $dtdate, $PPCode) {
         $model = $this->findModel($BMCCode, $cleaningdatetime, $dtdate, $PPCode);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'BMCCode' => $model->BMCCode, 'cleaningdatetime' => $model->cleaningdatetime, 'dtdate' => $model->dtdate, 'PPCode' => $model->PPCode]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -108,8 +89,7 @@ class TblMACleaningController extends Controller
      * @param string $PPCode
      * @return mixed
      */
-    public function actionDelete($BMCCode, $cleaningdatetime, $dtdate, $PPCode)
-    {
+    public function actionDelete($BMCCode, $cleaningdatetime, $dtdate, $PPCode) {
         $this->findModel($BMCCode, $cleaningdatetime, $dtdate, $PPCode)->delete();
 
         return $this->redirect(['index']);
@@ -125,12 +105,12 @@ class TblMACleaningController extends Controller
      * @return TblMACleaning the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($BMCCode, $cleaningdatetime, $dtdate, $PPCode)
-    {
+    protected function findModel($BMCCode, $cleaningdatetime, $dtdate, $PPCode) {
         if (($model = TblMACleaning::findOne(['BMCCode' => $BMCCode, 'cleaningdatetime' => $cleaningdatetime, 'dtdate' => $dtdate, 'PPCode' => $PPCode])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

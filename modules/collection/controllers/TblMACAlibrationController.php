@@ -15,20 +15,6 @@ use yii\filters\VerbFilter;
 class TblMACAlibrationController extends \app\controllers\ChildController {
 
     /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all TblMACAlibration models.
      * @return mixed
      */
