@@ -1459,7 +1459,7 @@ class SiteController extends Controller {
                 'slave_model' => 'TblMACAlibration',
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
-                'replace_key_array' => ['id' => 'id'],
+                'replace_key_array' => ['id' => 'ref_id'],
                 'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
                 'slave_primary_key' => ['ref_id:ref_id'],
             ],
