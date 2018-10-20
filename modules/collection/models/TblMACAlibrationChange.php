@@ -37,7 +37,7 @@ class TblMACAlibrationChange extends \app\models\ChildModel
         return [
 //            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'MilkType'], 'required'],
             [['BMCCode', 'PPCode', 'shift', 'MilkType', 'updatedby'], 'string'],
-            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'MilkType', 'updateddate'], 'safe'],
+            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'MilkType', 'updateddate', 'ref_id'], 'safe'],
             [['CalibrationFat', 'CalibrationSnf', 'CalibrationWater'], 'number'],
         ];
     }

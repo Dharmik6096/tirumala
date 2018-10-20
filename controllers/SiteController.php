@@ -1269,6 +1269,7 @@ class SiteController extends Controller {
                         $saveModel->$model_key = $data->$creamy_key;
                     }
                 }
+                $changed_data = [];
                 if (!empty($process['validateFields'])) {
                     foreach ($process['validateFields'] as $fields) {
                         $field = explode(':', $fields);
@@ -1297,6 +1298,13 @@ class SiteController extends Controller {
                                     $saveModel->$chage_field = $saveModel->$dcs_field . $saveModel->$chage_field;
                                 }
                             }
+                            if ($field[0] == 'milk_qlty_type') {
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilkQltytype('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                            }
+                            if ($field[0] == 'qty_mode') {
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getQtyMode('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                            }
+                            $changed_data[$chage_field] = $saveModel->$chage_field;
                         }
                     }
                 }
@@ -1318,6 +1326,10 @@ class SiteController extends Controller {
                 $olddata = $saveModel->find()->where($where)->one();
                 if (!empty($olddata)) {
                     $saveModel = $olddata;
+                    $saveModel->setAttributes($data->attributes);
+                    if (!empty($changed_data)) {
+                        $saveModel->setAttributes($changed_data);
+                    }
                 }
                 if (isset($process['scenario'])) {
                     $saveModel->scenario = $process['scenario'];
@@ -1349,7 +1361,7 @@ class SiteController extends Controller {
                                         }
                                     }
                                     if ($savechildModel) {
-                                        if($childModel->validate() && $childModel->save(FALSE)){
+                                        if ($childModel->validate() && $childModel->save(FALSE)) {
                                             
                                         }
                                     }
@@ -1361,7 +1373,7 @@ class SiteController extends Controller {
                     } else {
                         $data->data_post_status = 3;
                         $data->save(FALSE);
-                        var_dump($saveModel);
+//                        var_dump($saveModel);
                         var_dump($saveModel->getErrors());
                     }
                 } catch (UserException $e) {
@@ -1417,6 +1429,7 @@ class SiteController extends Controller {
                 'master_model' => 'CollectionFarmerLocalSaleCreamy',
                 'slave_model' => 'CollectionFarmerLocalSale',
                 'primary_key' => ['farmerid', 'vlccid', 'sampleno', 'dtdate', 'shift'],
+                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'member_code:farmerid:vlccid', 'milk_type:milktype', 'milk_qlty_type:milkqtype', 'qty_mode:qtymode'],
             ],
 //            'ProductSale' => [
 //                'master_model' => 'TblDpuProductDemandCreamy',
@@ -1425,24 +1438,30 @@ class SiteController extends Controller {
 //                'replace_key_array' => ['BMCCode' => 'bmc_code', 'VillageCode' => 'dcs_code', 'MemberCode' => 'member_code', 'ProductId' => 'product_code'],
 //                'validateFields' => ['shift:shift', 'dateshift:trDate:shift', 'member_code:member_code:dcs_code'],
 //            ],
-//            'Cleaning' => [
-//                'master_model' => 'TblMACleaningCreamy',
-//                'slave_model' => 'TblMACleaning',
-//                'primary_key' => ['id'],
-//                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift'],
-//            ],
-//            'Calibration' => [
-//                'master_model' => 'TblMACAlibrationCreamy',
-//                'slave_model' => 'TblMACAlibration',
-//                'primary_key' => ['id'],
-//                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
-//            ],
-//            'CalibrationChange' => [
-//                'master_model' => 'TblMACAlibrationChangeCreamy',
-//                'slave_model' => 'TblMACAlibrationChange',
-//                'primary_key' => ['id'],
-//                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
-//            ],
+            'Calibration' => [
+                'master_model' => 'TblMACAlibrationCreamy',
+                'slave_model' => 'TblMACAlibration',
+                'primary_key' => ['id'],
+                'replace_key_array' => ['id' => 'id'],
+                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+                'slave_primary_key' => ['ref_id:ref_id'],
+            ],
+            'CalibrationChange' => [
+                'master_model' => 'TblMACAlibrationChangeCreamy',
+                'slave_model' => 'TblMACAlibrationChange',
+                'primary_key' => ['id'],
+                'replace_key_array' => ['id' => 'ref_id'],
+                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift'],
+                'slave_primary_key' => ['ref_id:id'],
+            ],
+            'Cleaning' => [
+                'master_model' => 'TblMACleaningCreamy',
+                'slave_model' => 'TblMACleaning',
+                'primary_key' => ['id'],
+                'replace_key_array' => ['id' => 'ref_id'],
+                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift'],
+                'slave_primary_key' => ['ref_id:id'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : $label;
     }

@@ -37,7 +37,7 @@ class TblMACleaning extends \app\models\ChildModel
         return [
 //            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'cleaningdatetime', 'CleaningCycles', 'Measuring', 'counter', 'updatedby', 'updateddate'], 'required'],
             [['BMCCode', 'PPCode', 'shift', 'updatedby'], 'string'],
-            [['dtdate', 'cleaningdatetime', 'updateddate','BMCCode', 'PPCode','CleaningCycles', 'Measuring', 'counter', 'updatedby', 'updateddate'], 'safe'],
+            [['dtdate', 'cleaningdatetime', 'updateddate','BMCCode', 'PPCode','CleaningCycles', 'Measuring', 'counter', 'updatedby', 'updateddate', 'ref_id'], 'safe'],
             [['CleaningCycles', 'Measuring', 'counter'], 'integer'],
         ];
     }

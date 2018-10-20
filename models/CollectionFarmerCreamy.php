@@ -143,7 +143,7 @@ class CollectionFarmerCreamy extends \yii\db\ActiveRecord {
                 ->all();
         $data2 = $this->find()
                 ->where(['data_post_status' => 3])
-                ->andWhere(['vlccid' => ['1011618', '1011647', '1011648', '1015576']])
+                ->andWhere(['vlccid' => $vlccid])
                 ->andWhere(['<=', 'modifieddate', $date])
                 ->limit(20)
                 ->orderby('dtdate ASC')
