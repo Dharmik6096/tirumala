@@ -51,6 +51,7 @@ class TblMACAlibrationSearch extends TblMACAlibration {
 
         $this->load($params);
         $query->joinWith(['dcsCode', 'bmcCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -69,7 +70,7 @@ class TblMACAlibrationSearch extends TblMACAlibration {
 //            $to_date .=' ';
             $query->andFilterWhere(['<=', 'cast(dtdate as date)', $to_date]);
         }
-         if (!empty($this->dtdate))
+        if (!empty($this->dtdate))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), dtdate, 126)', date('Y-m-d', strtotime($this->dtdate))]);
 
         // grid filtering conditions

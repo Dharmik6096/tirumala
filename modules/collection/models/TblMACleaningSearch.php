@@ -50,7 +50,7 @@ class TblMACleaningSearch extends TblMACleaning {
 
         $this->load($params);
         $query->joinWith(['dcsCode', 'bmcCode']);
-        
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
