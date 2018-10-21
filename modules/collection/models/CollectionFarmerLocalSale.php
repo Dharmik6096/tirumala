@@ -3,7 +3,11 @@
 namespace app\modules\collection\models;
 
 use Yii;
-
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblDcs;
 /**
  * This is the model class for table "CollectionFarmerLocalSale".
  *
@@ -51,6 +55,7 @@ use Yii;
 class CollectionFarmerLocalSale extends \app\models\ChildModel {
 
     public $setdcs;
+
     /**
      * @inheritdoc
      */
@@ -67,7 +72,7 @@ class CollectionFarmerLocalSale extends \app\models\ChildModel {
             [['farmerid', 'vlccid', 'routeid', 'bmcid', 'shift', 'qtymode', 'qtydecimals', 'qltydecimals', 'milktype', 'milkqtype', 'createdby', 'modifiedby', 'syncdirection', 'usbflag', 'RateType', 'RateRecalType'], 'string'],
             [['sampleno', 'rateid', 'qtyauto', 'qltyauto', 'paymentid', 'farmerstatus'], 'integer'],
             [['qty', 'fat', 'snf', 'water', 'clr', 'rtpl', 'amount', 'kgltrconst', 'ltrkgconst', 'StdRate', 'KgFatRate', 'KgSnfRate'], 'number'],
-            [['dtdate', 'qtytime', 'qltytime', 'createddate', 'modifieddate', 'lastsynchronized','farmerid', 'vlccid', 'bmcid', 'sampleno', 'dtdate', 'shift'], 'safe'],
+            [['dtdate', 'qtytime', 'qltytime', 'createddate', 'modifieddate', 'lastsynchronized', 'farmerid', 'vlccid', 'bmcid', 'sampleno', 'dtdate', 'shift'], 'safe'],
         ];
     }
 
@@ -76,47 +81,67 @@ class CollectionFarmerLocalSale extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'farmerid' => 'Farmerid',
-            'vlccid' => 'Vlccid',
-            'routeid' => 'Routeid',
-            'bmcid' => 'Bmcid',
-            'sampleno' => 'Sampleno',
-            'qty' => 'Qty',
-            'fat' => 'Fat',
-            'snf' => 'Snf',
-            'water' => 'Water',
-            'clr' => 'Clr',
-            'rtpl' => 'Rtpl',
-            'amount' => 'Amount',
-            'rateid' => 'Rateid',
-            'dtdate' => 'Dtdate',
-            'shift' => 'Shift',
-            'qtyauto' => 'Qtyauto',
-            'qltyauto' => 'Qltyauto',
-            'qtytime' => 'Qtytime',
-            'qltytime' => 'Qltytime',
-            'kgltrconst' => 'Kgltrconst',
-            'ltrkgconst' => 'Ltrkgconst',
-            'qtymode' => 'Qtymode',
-            'qtydecimals' => 'Qtydecimals',
-            'qltydecimals' => 'Qltydecimals',
-            'milktype' => 'Milktype',
-            'milkqtype' => 'Milkqtype',
-            'createddate' => 'Createddate',
-            'createdby' => 'Createdby',
-            'modifieddate' => 'Modifieddate',
-            'modifiedby' => 'Modifiedby',
-            'lastsynchronized' => 'Lastsynchronized',
-            'syncdirection' => 'Syncdirection',
-            'usbflag' => 'Usbflag',
-            'paymentid' => 'Paymentid',
-            'StdRate' => 'Std Rate',
-            'RateType' => 'Rate Type',
-            'KgFatRate' => 'Kg Fat Rate',
-            'KgSnfRate' => 'Kg Snf Rate',
-            'RateRecalType' => 'Rate Recal Type',
-            'farmerstatus' => 'Farmerstatus',
+            'farmerid' => Yii::t('app', 'Member'),
+            'vlccid' => Yii::t('app', 'DCS'),
+            'routeid' => Yii::t('app', 'Route Id'),
+            'bmcid' => Yii::t('app', 'BMC'),
+            'sampleno' => Yii::t('app', 'Sample No.'),
+            'qty' => Yii::t('app', 'Qty'),
+            'fat' => Yii::t('app', 'FAT'),
+            'snf' => Yii::t('app', 'SNF'),
+            'water' => Yii::t('app', 'Water'),
+            'clr' => Yii::t('app', 'Clr'),
+            'rtpl' => Yii::t('app', 'Rtpl'),
+            'amount' => Yii::t('app', 'Amount'),
+            'rateid' => Yii::t('app', 'Rate Id'),
+            'dtdate' => Yii::t('app', 'Date'),
+            'shift' => Yii::t('app', 'Shift'),
+            'qtyauto' => Yii::t('app', 'Qtyauto'),
+            'qltyauto' => Yii::t('app', 'Qltyauto'),
+            'qtytime' => Yii::t('app', 'Qtytime'),
+            'qltytime' => Yii::t('app', 'Qltytime'),
+            'kgltrconst' => Yii::t('app', 'Kgltrconst'),
+            'ltrkgconst' => Yii::t('app', 'Ltrkgconst'),
+            'qtymode' => Yii::t('app', 'Qtymode'),
+            'qtydecimals' => Yii::t('app', 'Qtydecimals'),
+            'qltydecimals' => Yii::t('app', 'Qltydecimals'),
+            'milktype' => Yii::t('app', 'Milk Type'),
+            'milkqtype' => Yii::t('app', 'Milkqtype'),
+            'createddate' => Yii::t('app', 'Createddate'),
+            'createdby' => Yii::t('app', 'Createdby'),
+            'modifieddate' => Yii::t('app', 'Modifieddate'),
+            'modifiedby' => Yii::t('app', 'Modifiedby'),
+            'lastsynchronized' => Yii::t('app', 'Lastsynchronized'),
+            'syncdirection' => Yii::t('app', 'Syncdirection'),
+            'usbflag' => Yii::t('app', 'Usbflag'),
+            'paymentid' => Yii::t('app', 'Paymentid'),
+            'StdRate' => Yii::t('app', 'Std Rate'),
+            'RateType' => Yii::t('app', 'Rate Type'),
+            'KgFatRate' => Yii::t('app', 'Kg Fat Rate'),
+            'KgSnfRate' => Yii::t('app', 'Kg Snf Rate'),
+            'RateRecalType' => Yii::t('app', 'Rate Recal Type'),
+            'farmerstatus' => Yii::t('app', 'Farmerstatus'),
         ];
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milktype']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmcid']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'vlccid']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'farmerid']);
     }
 
 }
