@@ -1289,13 +1289,13 @@ class SiteController extends Controller {
                         $chage_field = !empty($field[1]) ? $field[1] : '';
                         if (!empty($chage_field)) {
                             if ($field[0] == 'dcs_code') {
-                                $saveModel->$chage_field = substr($saveModel->$chage_field, -7);
+                                $saveModel->$chage_field = substr(trim($saveModel->$chage_field), -7);
                             }
                             if ($field[0] == 'shift') {
-                                $saveModel->$chage_field = (($saveModel->$chage_field == 'M') ? '1' : '2');
+                                $saveModel->$chage_field = ((trim($saveModel->$chage_field) == 'M') ? '1' : '2');
                             }
                             if ($field[0] == 'milk_type') {
-                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilktype('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilktype('" . trim($saveModel->$chage_field) . "')")->queryOne())[0];
                             }
                             if ($field[0] == 'dateshift') {
                                 $saveModel->$chage_field = date('Y-m-d', strtotime($saveModel->$chage_field));
@@ -1312,10 +1312,10 @@ class SiteController extends Controller {
                                 }
                             }
                             if ($field[0] == 'milk_qlty_type') {
-                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilkQltytype('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilkQltytype('" . trim($saveModel->$chage_field) . "')")->queryOne())[0];
                             }
                             if ($field[0] == 'qty_mode') {
-                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getQtyMode('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getQtyMode('" . trim($saveModel->$chage_field) . "')")->queryOne())[0];
                             }
                             if ($field[0] == 'bmc_code') {
                                 $saveModel->$chage_field = Yii::$app->general->getforeignkey($saveModel->dcsCode, 'bmc_code');
@@ -1324,7 +1324,7 @@ class SiteController extends Controller {
                         }
                     }
                 }
-                
+
                 if (isset($process['getCode']) && $process['getCode']) {
                     $key = $process['getCodeKey'];
                     $saveModel->$key = $saveModel->getCode();
@@ -1349,7 +1349,7 @@ class SiteController extends Controller {
                 if (isset($process['scenario'])) {
                     $saveModel->scenario = $process['scenario'];
                 }
-                if($saveModel->hasAttribute('union_code')){
+                if ($saveModel->hasAttribute('union_code')) {
                     $saveModel->union_code = '006';
                 }
                 try {
@@ -1489,10 +1489,19 @@ class SiteController extends Controller {
             'DpuShiftEndSummary' => [
                 'master_model' => 'TblDpuShiftEndSummaryCreamy',
                 'slave_model' => 'TblDpuShiftEndSummary',
-                'primary_key' => ['Id'],
+                'primary_key' => ['BMCCode', 'VillageCode', 'dtdate'],
                 'master_model_dcs_key' => 'VillageCode',
                 'replace_key_array' => ['Id' => 'ref_id'],
                 'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'slave_primary_key' => ['ref_id:id'],
+            ],
+            'MaSerialNo' => [
+                'master_model' => 'TblMASerialNoCreamy',
+                'slave_model' => 'TblMASerialNo',
+                'primary_key' => ['BMCCode', 'PPCode', 'DtDate', 'serialno'],
+                'master_model_dcs_key' => 'PPCode',
+                'replace_key_array' => ['id' => 'ref_id'],
+                'validateFields' => ['shift:shift', 'dateshift:DtDate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
 //            'ProductSale' => [
