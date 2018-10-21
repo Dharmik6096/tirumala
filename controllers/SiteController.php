@@ -1150,7 +1150,7 @@ class SiteController extends Controller {
         }
         foreach ($modelData as $data) {
             $milkCollection = new TblMilkCollection();
-            $milkCollection->dcs_code = in_array($data->vlccid, ['1011618', '1011647', '1011648', '1015576']) ? '00' . $data->vlccid : $data->vlccid;
+            $milkCollection->dcs_code = in_array($data->vlccid, ['1011618', '1011647', '1011648', '1015576']) ? '00' . substr($data->vlccid, -7) : substr($data->vlccid, -7);
             $milkCollection->member_code = (strlen($data->farmerid) > 4) ? $data->farmerid : $milkCollection->dcs_code . str_pad($data->farmerid, 4, 0, STR_PAD_LEFT);
             $milkCollection->shift = (($data->shift == 'M') ? 1 : 2);
             $milkCollection->date_time_of_collection = date('Y-m-d', strtotime($data->dtdate)) . ' ' . (($data->shift == 'M') ? '06:00:00' : '18:00:00');
@@ -1289,13 +1289,14 @@ class SiteController extends Controller {
                         $chage_field = !empty($field[1]) ? $field[1] : '';
                         if (!empty($chage_field)) {
                             if ($field[0] == 'dcs_code') {
-                                $saveModel->$chage_field = substr($saveModel->$chage_field, -7);
+                                $dcs_code = substr(trim($saveModel->$chage_field), -7);
+                                $saveModel->$chage_field = in_array($dcs_code, ['1011618', '1011647', '1011648', '1015576']) ? '00' . $dcs_code : $dcs_code;
                             }
                             if ($field[0] == 'shift') {
-                                $saveModel->$chage_field = (($saveModel->$chage_field == 'M') ? '1' : '2');
+                                $saveModel->$chage_field = ((trim($saveModel->$chage_field) == 'M') ? '1' : '2');
                             }
                             if ($field[0] == 'milk_type') {
-                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilktype('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilktype('" . trim($saveModel->$chage_field) . "')")->queryOne())[0];
                             }
                             if ($field[0] == 'dateshift') {
                                 $saveModel->$chage_field = date('Y-m-d', strtotime($saveModel->$chage_field));
@@ -1312,10 +1313,10 @@ class SiteController extends Controller {
                                 }
                             }
                             if ($field[0] == 'milk_qlty_type') {
-                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilkQltytype('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getMilkQltytype('" . trim($saveModel->$chage_field) . "')")->queryOne())[0];
                             }
                             if ($field[0] == 'qty_mode') {
-                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getQtyMode('" . $saveModel->$chage_field . "')")->queryOne())[0];
+                                $saveModel->$chage_field = array_values(Yii::$app->db->createCommand("SELECT dbo.getQtyMode('" . trim($saveModel->$chage_field) . "')")->queryOne())[0];
                             }
                             if ($field[0] == 'bmc_code') {
                                 $saveModel->$chage_field = Yii::$app->general->getforeignkey($saveModel->dcsCode, 'bmc_code');
@@ -1324,7 +1325,7 @@ class SiteController extends Controller {
                         }
                     }
                 }
-                
+
                 if (isset($process['getCode']) && $process['getCode']) {
                     $key = $process['getCodeKey'];
                     $saveModel->$key = $saveModel->getCode();
@@ -1349,7 +1350,7 @@ class SiteController extends Controller {
                 if (isset($process['scenario'])) {
                     $saveModel->scenario = $process['scenario'];
                 }
-                if($saveModel->hasAttribute('union_code')){
+                if ($saveModel->hasAttribute('union_code')) {
                     $saveModel->union_code = '006';
                 }
                 try {
@@ -1419,12 +1420,12 @@ class SiteController extends Controller {
                 'childModel' => ['TblSocietyCodes', 'TblSocietyVendor'],
                 'childModelKey' => [
                     'TblSocietyCodes' => [
-                        'key' => ['dcs_code' => 'villageid', 'bipl_code' => 'villageid'],
+                        'key' => ['dcs_code' => 'dcs_code', 'bipl_code' => 'dcs_code'],
                         'primaryKeyCheck' => ['dcs_code'],
                         'scenario' => true
                     ],
                     'TblSocietyVendor' => [
-                        'key' => ['dcs_code' => 'villageid'],
+                        'key' => ['dcs_code' => 'dcs_code'],
                         'primaryKeyCheck' => ['dcs_code'],
                         'scenario' => true
                     ]
@@ -1440,7 +1441,7 @@ class SiteController extends Controller {
                 'scenario' => 'saveCreamyData',
                 'slave_primary_key' => ['member_code:farmerid'],
                 'replace_key_array' => ['farmername' => 'member_name', 'farmerid' => 'ex_member_code', 'farmeraddress' => 'address', 'farmergender' => 'gender_code', 'farmercontact' => 'mobile_no', 'farmercow' => 'no_of_cow_cross', 'farmerbuff' => 'no_of_buffalo', 'farmerbankac' => 'bank_account_no', 'farmerstatus' => 'is_active', 'villageid' => 'dcs_code', 'farmeraadharcode' => 'adhar_no', 'farmerpanno' => 'pan_no', 'farmerbankifsccode' => 'ifsc'],
-                'validateFields' => ['member_code:ex_member_code'],
+                'validateFields' => ['dcs_code:dcs_code', 'member_code:ex_member_code'],
             ],
             'BmcCollection' => [
                 'master_model' => 'CollectionvillageCreamy',
@@ -1449,7 +1450,7 @@ class SiteController extends Controller {
                 'primary_key' => ['vlccid', 'bmcid', 'sampleno', 'dtdate', 'shift'],
                 'master_model_dcs_key' => 'vlccid',
                 'replace_key_array' => ['vlccid' => 'dcs_code', 'bmcid' => 'bmc_code', 'sampleno' => 'sample_no', 'shift' => 'shift_code', 'dtdate' => 'date_time_of_collection', 'routeid' => 'route_code', 'can' => 'no_of_can', 'rateid' => 'rate_code', 'qtyauto' => 'qty_auto', 'qltyauto' => 'qlty_auto', 'qtytime' => 'qty_time', 'qltytime' => 'qlty_time', 'qtymode' => 'qty_mode', 'milktype' => 'milk_type_code', 'milkqtype' => 'milk_quality_type_code'],
-                'validateFields' => ['shift:shift_code', 'dateshift:date_time_of_collection:shift_code', 'qty_mode:qty_mode', 'milk_type:milk_type_code', 'milk_qlty_type:milk_quality_type_code', 'qty_mode:qty_mode', 'bmc_code:bmc_code'],
+                'validateFields' => ['dcs_code:dcs_code', 'shift:shift_code', 'dateshift:date_time_of_collection:shift_code', 'qty_mode:qty_mode', 'milk_type:milk_type_code', 'milk_qlty_type:milk_quality_type_code', 'qty_mode:qty_mode', 'bmc_code:bmc_code'],
                 'slave_primary_key' => ['date_time_of_collection', 'bmc_code', 'shift_code', 'dcs_code', 'sample_no'],
             ],
             'LocalSale' => [
@@ -1457,7 +1458,7 @@ class SiteController extends Controller {
                 'slave_model' => 'CollectionFarmerLocalSale',
                 'primary_key' => ['farmerid', 'vlccid', 'sampleno', 'dtdate', 'shift'],
                 'master_model_dcs_key' => 'vlccid',
-                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'member_code:farmerid:vlccid', 'milk_type:milktype', 'milk_qlty_type:milkqtype', 'qty_mode:qtymode'],
+                'validateFields' => ['dcs_code:vlccid', 'shift:shift', 'dateshift:dtdate:shift', 'member_code:farmerid:vlccid', 'milk_type:milktype', 'milk_qlty_type:milkqtype', 'qty_mode:qtymode'],
             ],
             'Calibration' => [
                 'master_model' => 'TblMACAlibrationCreamy',
@@ -1465,7 +1466,7 @@ class SiteController extends Controller {
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
                 'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'validateFields' => ['dcs_code:PPCode', 'shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:ref_id'],
             ],
             'CalibrationChange' => [
@@ -1474,7 +1475,7 @@ class SiteController extends Controller {
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
                 'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'validateFields' => ['dcs_code:PPCode', 'shift:shift', 'milk_type:MilkType', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
             'Cleaning' => [
@@ -1483,16 +1484,25 @@ class SiteController extends Controller {
                 'primary_key' => ['id'],
                 'master_model_dcs_key' => 'PPCode',
                 'replace_key_array' => ['id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'validateFields' => ['dcs_code:PPCode', 'shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
             'DpuShiftEndSummary' => [
                 'master_model' => 'TblDpuShiftEndSummaryCreamy',
                 'slave_model' => 'TblDpuShiftEndSummary',
-                'primary_key' => ['Id'],
+                'primary_key' => ['BMCCode', 'VillageCode', 'dtdate'],
                 'master_model_dcs_key' => 'VillageCode',
                 'replace_key_array' => ['Id' => 'ref_id'],
-                'validateFields' => ['shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'validateFields' => ['dcs_code:PPCode', 'shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'slave_primary_key' => ['ref_id:id'],
+            ],
+            'MaSerialNo' => [
+                'master_model' => 'TblMASerialNoCreamy',
+                'slave_model' => 'TblMASerialNo',
+                'primary_key' => ['BMCCode', 'PPCode', 'DtDate', 'serialno'],
+                'master_model_dcs_key' => 'PPCode',
+                'replace_key_array' => ['id' => 'ref_id'],
+                'validateFields' => ['dcs_code:PPCode', 'shift:shift', 'dateshift:DtDate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
 //            'ProductSale' => [
@@ -1501,7 +1511,7 @@ class SiteController extends Controller {
 //                'primary_key' => ['Id'],
 //                'master_model_dcs_key' => 'VillageCode',
 //                'replace_key_array' => ['BMCCode' => 'bmc_code', 'VillageCode' => 'dcs_code', 'MemberCode' => 'member_code', 'ProductId' => 'product_code'],
-//                'validateFields' => ['shift:shift', 'dateshift:trDate:shift', 'member_code:member_code:dcs_code'],
+//                'validateFields' => ['dcs_code:dcs_code', 'shift:shift', 'dateshift:trDate:shift', 'member_code:member_code:dcs_code'],
 //            ],
         ];
         return isset($label[$l]) ? $label[$l] : $label;

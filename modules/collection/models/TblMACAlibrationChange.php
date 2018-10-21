@@ -3,6 +3,7 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_MA_CAlibration_Change".
@@ -19,21 +20,19 @@ use Yii;
  * @property string $updatedby
  * @property string $updateddate
  */
-class TblMACAlibrationChange extends \app\models\ChildModel
-{
+class TblMACAlibrationChange extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_MA_CAlibration_Change';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
 //            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'MilkType'], 'required'],
             [['BMCCode', 'PPCode', 'shift', 'MilkType', 'updatedby'], 'string'],
@@ -45,8 +44,7 @@ class TblMACAlibrationChange extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'BMCCode' => 'Bmccode',
@@ -61,4 +59,9 @@ class TblMACAlibrationChange extends \app\models\ChildModel
             'updateddate' => 'Updateddate',
         ];
     }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'PPCode']);
+    }
+
 }
