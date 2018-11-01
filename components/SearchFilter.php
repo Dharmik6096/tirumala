@@ -116,6 +116,9 @@ class SearchFilter {
             'CollectionFarmerLocalSaleSearch' => [
                 'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
+             'TblMACAlibrationChangeSearch' => [
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

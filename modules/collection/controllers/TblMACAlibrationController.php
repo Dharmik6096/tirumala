@@ -8,6 +8,8 @@ use app\modules\collection\models\TblMACAlibrationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\collection\models\TblMACAlibrationChange;
+use app\modules\collection\models\TblMACAlibrationChangeSearch;
 
 /**
  * TblMACAlibrationController implements the CRUD actions for TblMACAlibration model.
@@ -19,7 +21,7 @@ class TblMACAlibrationController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblMACAlibrationSearch();
+        $searchModel = new TblMACAlibrationChangeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -110,7 +112,7 @@ class TblMACAlibrationController extends \app\controllers\ChildController {
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($BMCCode, $dtdate, $MilkType, $PPCode, $shift) {
-        if (($model = TblMACAlibration::findOne(['BMCCode' => $BMCCode, 'dtdate' => $dtdate, 'MilkType' => $MilkType, 'PPCode' => $PPCode, 'shift' => $shift])) !== null) {
+        if (($model = TblMACAlibrationChange::findOne(['BMCCode' => $BMCCode, 'dtdate' => $dtdate, 'MilkType' => $MilkType, 'PPCode' => $PPCode, 'shift' => $shift])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -4,6 +4,9 @@ namespace app\modules\collection\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_MA_CAlibration_Change".
@@ -46,22 +49,34 @@ class TblMACAlibrationChange extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'id' => 'ID',
-            'BMCCode' => 'Bmccode',
-            'PPCode' => 'Ppcode',
-            'dtdate' => 'Dtdate',
-            'shift' => 'Shift',
-            'CalibrationFat' => 'Calibration Fat',
-            'CalibrationSnf' => 'Calibration Snf',
-            'CalibrationWater' => 'Calibration Water',
-            'MilkType' => 'Milk Type',
-            'updatedby' => 'Updatedby',
-            'updateddate' => 'Updateddate',
+            'id' => Yii::t('app', 'ID'),
+            'BMCCode' => Yii::t('app', 'BMC'),
+            'PPCode' => Yii::t('app', 'DCS'),
+            'dtdate' => Yii::t('app', 'Date'),
+            'shift' => Yii::t('app', 'Shift'),
+            'CalibrationFat' => Yii::t('app', 'FAT'),
+            'CalibrationSnf' => Yii::t('app', 'SNF'),
+            'CalibrationWater' => Yii::t('app', 'Calibration Water'),
+            'MilkType' => Yii::t('app', 'Milk Type'),
+            'updatedby' => Yii::t('app', 'Updatedby'),
+            'updateddate' => Yii::t('app', 'Updateddate'),
         ];
     }
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'PPCode']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'MilkType']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'BMCCode']);
     }
 
 }
