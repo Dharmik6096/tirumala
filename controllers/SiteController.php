@@ -1493,7 +1493,7 @@ class SiteController extends Controller {
                 'primary_key' => ['BMCCode', 'VillageCode', 'dtdate'],
                 'master_model_dcs_key' => 'VillageCode',
                 'replace_key_array' => ['Id' => 'ref_id'],
-                'validateFields' => ['dcs_code:PPCode', 'shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
+                'validateFields' => ['dcs_code:VillageCode', 'shift:shift', 'dateshift:dtdate:shift', 'bmc_code:BMCCode'],
                 'slave_primary_key' => ['ref_id:id'],
             ],
             'MaSerialNo' => [
