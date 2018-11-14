@@ -933,13 +933,35 @@ class GeneralFunctions extends Component {
         if (!empty($records) && count($records) == 1) {
             $model->$attribute = $records[0]->{$fields[0]};
         } else {
-            if($show_error){
+            if ($show_error) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
                 return false;
             } else {
                 $model->$attribute = NULL;
             }
         }
+    }
+
+    public function PrepareDsn($model) {
+        $dsn = '';
+        switch ($model->db_type) {
+            case 'mysql':
+                $dsn = 'mysql:host=' . $model->db_host;
+                $dsn .=(!empty($model->db_port) && $model->db_port != '3306' ) ? ':' . $model->db_port : '';
+                $dsn.=';dbname=' . $model->db_name;
+            case 'sql' :
+                $dsn = 'sqlsrv:server=' . $model->db_host;
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn.=';Database=' . $model->db_name . ';ConnectionPooling=0';
+        }
+        return $dsn;
+    }
+
+    public function SetDBConnection($db, $connection) {
+        \Yii::$app->{$db}->close();
+        Yii::$app->{$db}->dsn = \Yii::$app->general->PrepareDsn($connection);
+        Yii::$app->{$db}->username = $connection->db_username;
+        Yii::$app->{$db}->password = $connection->db_password;
     }
 
 }
