@@ -56,7 +56,7 @@ class TblMACAlibrationChange extends \app\models\ChildModel {
             'shift' => Yii::t('app', 'Shift'),
             'CalibrationFat' => Yii::t('app', 'FAT'),
             'CalibrationSnf' => Yii::t('app', 'SNF'),
-            'CalibrationWater' => Yii::t('app', 'Calibration Water'),
+            'CalibrationWater' => Yii::t('app', 'Water'),
             'MilkType' => Yii::t('app', 'Milk Type'),
             'updatedby' => Yii::t('app', 'Updatedby'),
             'updateddate' => Yii::t('app', 'Updateddate'),

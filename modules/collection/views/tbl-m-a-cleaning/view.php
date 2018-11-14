@@ -52,7 +52,7 @@ $this->title = Yii::$app->label->title('view', 'Cleaning');
                         [
                             'attribute' => 'cleaningdatetime',
                             'valueColOptions' => ['style' => 'width:30%'],
-                            'value' => Yii::$app->controls->view_date($model->cleaningdatetime)
+                            'value' => Yii::$app->controls->view_datetime($model->cleaningdatetime)
                         ],
                     ],
                 ],
@@ -68,15 +68,14 @@ $this->title = Yii::$app->label->title('view', 'Cleaning');
                         ],
                     ],
                 ],
-//                  [
-//                    'columns' => [
-//                        [
-//                            'attribute' => 'counter',
-//                            'valueColOptions' => ['style' => 'width:99%']
-//                        ],
-//                        
-//                    ],
-//                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'counter',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget

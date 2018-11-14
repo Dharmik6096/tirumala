@@ -6,8 +6,10 @@ use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\ArrayHelper;
 use kartik\widgets\Select2
+
 ?>
 <?php
+
 $attribute = [
     ['attribute' => 'id'],
     ['attribute' => 'BMCCode',
@@ -20,6 +22,7 @@ $attribute = [
         }],
     ['attribute' => 'CalibrationFat', 'filter' => false],
     ['attribute' => 'CalibrationSnf', 'filter' => false],
+    ['attribute' => 'CalibrationWater', 'filter' => false],
     ['attribute' => 'MilkType',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');

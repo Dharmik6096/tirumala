@@ -6,8 +6,10 @@ use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\ArrayHelper;
 use kartik\widgets\Select2
+
 ?>
 <?php
+
 $attribute = [
     ['attribute' => 'id'],
     ['attribute' => 'BMCCode',
@@ -31,6 +33,15 @@ $attribute = [
     return Yii::$app->controls->view_date($model->dtdate);
 }],
     ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
+    [
+        'attribute' => 'cleaningdatetime',
+        'filter' => FALSE,
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->cleaningdatetime);
+        }],
+    ['attribute' => 'CleaningCycles', 'filter' => false],
+    ['attribute' => 'Measuring', 'filter' => false],
+    ['attribute' => 'counter', 'filter' => false],
 ];
 $grid_option = [
     'id' => 'cleaning-list',
