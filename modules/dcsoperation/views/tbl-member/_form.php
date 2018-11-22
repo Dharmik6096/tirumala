@@ -49,7 +49,7 @@ if ($model->isNewRecord) {
         <?= $form->field($model, 'ex_member_code')->textInput() ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', 'Member Type'); ?>
+        <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '',$model->getAttributeLabel('member_type_code')); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'member_name')->textInput() ?>

@@ -118,6 +118,7 @@ return [
     'TMCC' => 'Village',
     'Total TMCC' => 'Total Village',
     'Member Type' => 'Farmer Type',
+    'Member Class' => 'Farmer Class',
     'Member' => 'Farmer',
     'Member Code' => 'Farmer Code',
     'Old Soc. Code' => 'Old Village Code',
@@ -146,4 +147,7 @@ return [
     'Dpu Cleaning' => 'Milk Analyzer Cleaning',
     'MIS' => ' Farmer reports',
     'No Collection Society Report' => 'No Collection Village Report',
+    'Ex Member Code' => 'Ex Farmer Code',
+    'Member Name' => 'Farmer Name',
+    'Allow Multi Family Member' => 'Allow Multi Family Farmer',
 ];

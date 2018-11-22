@@ -8,25 +8,28 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
+
 Url::remember();
-if($searchModel->module_name == 'society') { 
-    $contact_person_lable = 'Society Secretory';
-    $local_contact_person_lable = Yii::t('app','Society Secretory Hindi Name');
+if ($searchModel->module_name == 'society') {
+    $contact_person_lable = Yii::t('app', 'Society Secretory');
+    $local_contact_person_lable = Yii::t('app', 'Society Secretory Hindi Name');
 } else {
     $contact_person_lable = 'Contact Person';
-    $local_contact_person_lable = Yii::t('app','Contact Person Hindi Name');
+    $local_contact_person_lable = Yii::t('app', 'Contact Person Hindi Name');
 }
 $attribute = [
 //    'contact_person',
 //    'local_contact_person',
-    ['label' => $contact_person_lable, 'value' => 'fullname','filter'=>false],
-    ['label' => $local_contact_person_lable, 'value' => 'localfullname','filter'=>false],
+    ['label' => $contact_person_lable, 'value' => 'fullname', 'filter' => false],
+    ['label' => $local_contact_person_lable, 'value' => 'localfullname', 'filter' => false],
 //    'fullname',
 //    'localfullname',
     'email:email',
     'mobile_no',
     'department',
-    ['attribute' => 'is_default','value'=>function($model){return $model->is_default==1?'Yes':'No';}, 'filter'=>false],
+    ['attribute' => 'is_default', 'value' => function($model) {
+            return $model->is_default == 1 ? 'Yes' : 'No';
+        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -38,20 +41,22 @@ $grid_option = [
 //      'update' => true,
 //      'delete' => ['option' => 'contact_person,detail_code,/details/tbl-contact-details/delete'],
         'disable' => function ($url, $model) {
-            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Deactivate','class'=>'deactive','data-is-default'=>$model->is_default];
+            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
 //            die('here');
-            return $model->is_active==1?Html::a('<i class="fa fa-times"></i>', ['/details/tbl-contact-details/deactivate','id' => $model->detail_code], $options):'';
+            return $model->is_active == 1 ? Html::a('<i class="fa fa-times"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options) : '';
         },
-        'default' => function ($url, $model) {
-            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Set as Default','class'=>'set-default'];
-            return ($model->is_default==0 && $model->is_active==1)?Html::a('<i class="fa fa-check"></i>', ['/details/tbl-contact-details/set-default','id' => $model->detail_code], $options):'';
+                'default' => function ($url, $model) {
+            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default'];
+            return ($model->is_default == 0 && $model->is_active == 1) ? Html::a('<i class="fa fa-check"></i>', ['/details/tbl-contact-details/set-default', 'id' => $model->detail_code], $options) : '';
         },
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option,[Yii::$app->controller->action->id,'id'=>Yii::$app->request->get('id')]);
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
 ?>
-<?php $script = <<< JS
+        <?php
+
+        $script = <<< JS
               
         $(".deactive").on('click',function(event){
             event.preventDefault();
@@ -84,4 +89,5 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option,[Yii::$app->cont
         });
         
 JS;
-$this->registerJs($script, View::POS_READY); ?>
+        $this->registerJs($script, View::POS_READY);
+        ?>
