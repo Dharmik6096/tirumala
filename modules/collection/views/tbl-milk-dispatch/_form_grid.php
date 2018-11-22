@@ -13,15 +13,16 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 ?>
 
 <?php
+
 $attribute = [
     ['attribute' => 'dcsCode.union_code', 'value' => function($model) {
             return Yii::$app->general->getUnionName($model);
         }, 'visible' => true, 'filter' => false],
-    ['header' => 'Old Soc. Code', 'attribute' => 'dcs_code',
+    ['label' => Yii::t('app', 'Old Soc. Code'), 'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
         }, 'filter' => false],
-    ['header' => 'Soc. Code', 'attribute' => 'dcs_code',
+    ['label' => Yii::t('app', 'Soc. Code'), 'attribute' => 'dcs_code',
         'value' => 'dcs_code', 'filter' => true],
     ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
     ['attribute' => 'milk_type_code', 'value' => 'milkTypeCode.animal_type_name', 'filter' => Html::activeDropDownList($searchModel, 'milk_type_code', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],

@@ -131,7 +131,7 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                         ?>
                         <div class="col-sm-2">
                             <?php
-                            echo Yii::$app->dropdown->depend_dropdown('member', $model, $form, $depends, 'form-group col-sm-3 padding-right-5 padding-left-5', 'Member', 'p_member_code');
+                            echo Yii::$app->dropdown->depend_dropdown('member', $model, $form, $depends, 'form-group col-sm-3 padding-right-5 padding-left-5', $model->getAttributeLabel($value), 'p_member_code');
                             ?>
                         </div>
 
@@ -179,7 +179,7 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                         ?>
 
                         <div class="col-sm-2">
-                            <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', 'Member Type',false,'p_member_type'); ?>
+                            <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel($value),false,'p_member_type'); ?>
                         </div>   
                         <?php
                     }

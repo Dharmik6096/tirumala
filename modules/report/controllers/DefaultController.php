@@ -14,7 +14,7 @@ use app\modules\report\models\TblDpuRequestSearch;
 /**
  * Default controller for the `modules` module
  */
-class DefaultController extends Controller {
+class DefaultController extends \app\controllers\ChildController {
 
     /**
      * Renders the index view for the module

@@ -141,7 +141,7 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">MIS <b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'MIS') . '<b class="caret"></b></a>',
                     'items' => [
                         ['label' => '201-' . Yii::t('app', 'Union Collection Report'), 'url' => ['/report/default/union-count']],
                         ['label' => '202-' . Yii::t('app', 'Society Collection Data Report'), 'url' => ['/report/default/list']],
@@ -170,7 +170,7 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">BMC Collection <b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
                     'items' => [
                         /*                       ['label' => '301-' . Yii::t('app', 'Actual BMC Collection'), 'url' => ['/crystalreports/default/actual-bmc-collection']],
                           ['label' => '302-' . Yii::t('app', 'RMRD Milk Collection'), 'url' => ['/crystalreports/default/rmrd-milk-collection']],
@@ -271,8 +271,8 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">DPU Log <b class="caret"></b></a>',
                     'items' => [
-                        ['label' => 'Dpu Calibration', 'url' => ['/tbl-dpu-calibration/index']],
-                        ['label' => 'Dpu Cleaning', 'url' => ['/tbl-cleaning-dpu/index']],
+                        ['label' => Yii::t('app', 'Dpu Calibration'), 'url' => ['/tbl-dpu-calibration/index']],
+                        ['label' => Yii::t('app', 'Dpu Cleaning'), 'url' => ['/tbl-cleaning-dpu/index']],
                         ['label' => 'Member Acknowledgement', 'url' => ['/dcsoperation/tbl-member-download/index']],
                         ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                     ]

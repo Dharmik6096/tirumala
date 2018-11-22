@@ -5,8 +5,11 @@ use app\components\GeneralFunctions;
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\ArrayHelper;
-use kartik\widgets\Select2
+use kartik\widgets\Select2;
+use app\modules\globalmaster\models\TblAnimalType;
 
+$milkType = new TblAnimalType();
+$milk_type = $milkType->getAnimalMilkTypeArray();
 ?>
 <?php
 
@@ -23,10 +26,7 @@ $attribute = [
     ['attribute' => 'CalibrationFat', 'filter' => false],
     ['attribute' => 'CalibrationSnf', 'filter' => false],
     ['attribute' => 'CalibrationWater', 'filter' => false],
-    ['attribute' => 'MilkType',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
-        }, 'filter' => false],
+    ['attribute' => 'MilkType', 'value' => 'milkTypeCode.animal_type_name', 'filter' => Html::activeDropDownList($searchModel, 'MilkType', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
     [
         'attribute' => 'dtdate',
         'vAlign' => 'middle',
@@ -42,7 +42,7 @@ $attribute = [
     ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
 ];
 $grid_option = [
-    'id' => 'cleaning-list',
+    'id' => 'calibration-list',
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [

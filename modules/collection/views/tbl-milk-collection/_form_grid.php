@@ -14,18 +14,19 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 ?>
 
 <?php
+
 $attribute = [
     ['attribute' => 'dcsCode.union_code', 'value' => function($model) {
             return Yii::$app->general->getUnionName($model);
         }, 'visible' => FALSE, 'filter' => false],
-    ['header' => 'Member Code', 'attribute' => 'member_code', 'value' => function($model) {
+    ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($model) {
             return substr($model->member_code, -4);
         }, 'filter' => false],
     ['attribute' => 'member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'filter' => true],
-    ['header' => 'Soc. Code', 'attribute' => 'dcs_code', 'filter' => true],
-    ['header' => 'Old Soc. Code', 'attribute' => 'dcs_code',
+    ['label' => Yii::t('app', 'Soc. Code'), 'attribute' => 'dcs_code', 'filter' => true],
+    ['label' => Yii::t('app', 'Old Soc. Code'), 'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
         }, 'filter' => false],
@@ -42,7 +43,7 @@ $attribute = [
     // ['attribute' => 'snf', 'filter' => Html::activeDropDownList($searchModel, 'snf', $snf,['class'=>'form-control','prompt'=>'Select SNF'])],
     //['attribute' => 'qty', 'value' => 'qty', 'filter' => Html::activeDropDownList($searchModel, 'qty', $qty,['class'=>'form-control','prompt'=>'Select Qty'])],
     ['attribute' => 'rtpl', 'filter' => true],
-    ['attribute' => 'amount', 'filter' => false,'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
     //['attribute' => 'amount', 'filter' => Html::activeDropDownList($searchModel, 'amount', $amount,['class'=>'form-control','prompt'=>'Select Amount'])],
 //    ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection', 'value' => function($model) {
 //            return date('d-m-Y', strtotime($model->date_time_of_collection));

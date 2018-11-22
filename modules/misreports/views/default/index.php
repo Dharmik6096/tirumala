@@ -88,7 +88,7 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                     if (in_array($value, array('bmc_code'))) {
                         ?>
                         <div class="col-sm-3">
-                            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', 'BMC'); ?>
+                            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
                         </div>
                         <?php
                     }

@@ -20,7 +20,7 @@ class TblMACAlibrationChangeSearch extends TblMACAlibrationChange {
     public function rules() {
         return [
             [['id', 'ref_id'], 'integer'],
-            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'MilkType', 'updatedby', 'updateddate'], 'safe'],
+            [['BMCCode', 'PPCode', 'dtdate', 'shift', 'MilkType', 'updatedby', 'updateddate', 'from_date', 'to_date'], 'safe'],
             [['CalibrationFat', 'CalibrationSnf', 'CalibrationWater'], 'number'],
         ];
     }
@@ -48,7 +48,7 @@ class TblMACAlibrationChangeSearch extends TblMACAlibrationChange {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'bmcCode']);
+        $query->joinWith(['dcsCode', 'bmcCode', 'milkTypeCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
 
         if (!$this->validate()) {
@@ -80,6 +80,7 @@ class TblMACAlibrationChangeSearch extends TblMACAlibrationChange {
         $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->BMCCode])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->PPCode])
                 ->andFilterWhere(['like', 'tbl_MA_CAlibration_Change.shift', $this->shift]);
+//                ->andFilterWhere(['like', 'tbl_MA_CAlibration_Change.milkType', $this->milkType]);
 
         return $dataProvider;
     }
