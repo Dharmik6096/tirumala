@@ -99,7 +99,7 @@ class DcsImport extends TblDcs {
                     }
                 }
                 //$this->dcs_code = $this->getCode();
-                $this->dcs_code = (strlen($this->dcs_code) <= 10) ? '00' . $this->dcs_code : $this->dcs_code;
+                $this->dcs_code = (strlen($this->dcs_code) <= 10 && (in_array($this->union_code, ['001', '002']))) ? '00' . $this->dcs_code : $this->dcs_code;
                 $this->valid_from = date('Y-m-d');
             }
         }
