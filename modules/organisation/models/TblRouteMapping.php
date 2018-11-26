@@ -67,13 +67,13 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'unit', 'valid_from'], 'safe'],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             ['to_dest', 'compare', 'compareAttribute' => 'from_dest', 'operator' => '!=', 'message' => 'Source and destination can not be same'],
-            [['route_name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+//            [['route_name'], function ($attribute, $params) {
+//            Yii::$app->general->validateName($this, $attribute, $params);
+//        }, 'skipOnEmpty' => false],
             [['local_name'], function ($attribute, $params) {
             Yii::$app->general->vaildateLocalField($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
-            [['route_code'], 'integer', 'min' => 1],
+            [['route_code'], 'string', 'min' => 1],
             [['route_code'], 'string', 'max' => 8],
         ];
     }
@@ -255,7 +255,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
     public function getRoutes($unionCode) {
         $route = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
-        
+
         $where_bmc = [];
         if (Yii::$app->session->get('BMC') !== '') {
             $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));

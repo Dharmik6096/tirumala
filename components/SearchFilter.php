@@ -33,7 +33,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code'],
             ],
             'TblRouteMappingSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'unit'],
+                'filter' => ['f_union_code', 'unit'],
             ],
             'TblFormulaMasterSearch' => [
                 'filter' => ['f_union_code'],
@@ -116,7 +116,7 @@ class SearchFilter {
             'CollectionFarmerLocalSaleSearch' => [
                 'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
-             'TblMACAlibrationChangeSearch' => [
+            'TblMACAlibrationChangeSearch' => [
                 'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
         ];
