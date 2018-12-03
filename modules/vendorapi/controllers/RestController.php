@@ -89,6 +89,10 @@ class RestController extends ActiveController {
         $master_array = Vendorapi::setParam($svc);
         if (!empty($master_array) && isset($data[$master_array['json_key']])) {
             $save_data = $data[$master_array['json_key']]['data'];
+            $array = [];
+            $array[] = $save_data;
+            $convert_array = isset($save_data[0]) ? $save_data : $array;
+            $save_data = $convert_array;
             foreach ($save_data as $model_data) {
                 $err_resp = [];
                 $err_resp['status'] = $code;
