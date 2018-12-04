@@ -48,7 +48,7 @@ class Vendorapi extends \yii\base\Module {
                 'response_main_array_key' => 'Route_Master_Response',
                 'response_inner_array_key' => 'route_Response',
             ],
-            'dcs_master' => [
+            'vlcc_master' => [
                 'mcc_code' => 'parent_code',
                 'parent_route' => 'parent_code_other',
                 'vlcc_code' => 'master_code',
@@ -71,7 +71,7 @@ class Vendorapi extends \yii\base\Module {
                 'account_no' => 'bank_account_no',
                 'ifsc_code' => 'ifsc',
                 'scenario' => 'scenario',
-                'json_key' => 'DT_Dcs_Master_IB',
+                'json_key' => 'DT_Vlcc_Master_IB',
                 'response_master_key' => 'vlcc_code',
                 'response_main_array_key' => 'Vlcc_Master_Response',
                 'response_inner_array_key' => 'vlcc_Response',
@@ -100,16 +100,16 @@ class Vendorapi extends \yii\base\Module {
                 'response_main_array_key' => 'Mcc_Master_Response',
                 'response_inner_array_key' => 'mcc_Response',
             ],
-            'route_dcs' => [
+            'route_vlcc' => [
                 'route_code' => 'parent_code',
                 'vlcc_vendor_code' => 'master_code',
                 'from_date' => 'date_1:date',
                 'to_date' => 'date_2:date',
                 'scenario' => 'scenario',
-                'json_key' => 'DT_Route_Dcs_IB',
+                'json_key' => 'DT_Route_Vlcc_IB',
                 'response_master_key' => 'vlcc_vendor_code',
-                'response_main_array_key' => 'Route_Dcs_Master_Response',
-                'response_inner_array_key' => 'route_dcs_Response',
+                'response_main_array_key' => 'Route_Vlcc_Master_Response',
+                'response_inner_array_key' => 'route_vlcc_Response',
             ],
         ];
         return isset($data[$svc]) ? $data[$svc] : [];
