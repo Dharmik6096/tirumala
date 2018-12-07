@@ -7,6 +7,7 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
+$disabled_class = $readonly ? 'disabled' : '';
 //$model->is_plant=$model->isNewRecord?0:$model->is_plant;
 //$nameWarning = 0;
 //$codeWarning = 0;
@@ -19,8 +20,8 @@ $list = array('0' => 'No', '1' => 'Yes');
 
 <?php
 $form = ActiveForm::begin([
-    
-    'options'=>['id'=>'bmc-form'],
+
+            'options' => ['id' => 'bmc-form'],
             'validateOnBlur' => FALSE,
             'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
@@ -31,7 +32,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-3 rtpl_validate">
-        <?= $form->field($model, 'dcs_code')->textInput() ?>
+        <?= $form->field($model, 'dcs_code')->textInput(['readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-3 rtpl_validate">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type'); ?>
@@ -41,9 +42,9 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-3 rtpl_validate">
-        <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'),false,false,true); ?>
+        <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'),false,$readonly,true); ?> 
     </div>
-    <div class="col-sm-3 shift rtpl_validate">
+    <div class="col-sm-3 shift rtpl_validate <?= $disabled_class ?>">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift_code'); ?>
     </div>
     <div class="clearfix"></div>
@@ -54,14 +55,14 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'snf')->textInput() ?>
     </div>
     <div class="col-sm-1">
-        <?= $form->field($model, 'rtpl')->textInput(['readOnly'=>true]) ?>
-        <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly'=>true])->label(false) ?>
+        <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
+        <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
     </div>
     <div class="col-sm-1">
         <?= $form->field($model, 'qty')->textInput() ?>
     </div>
     <div class="col-sm-3">
-        <?= $form->field($model, 'amount')->textInput(['readOnly'=>true]) ?>
+        <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-3">
@@ -72,10 +73,10 @@ $form = ActiveForm::begin([
     </div>
     <div class="transporter">
         <div class="col-sm-3">
-            <?= Yii::$app->dropdown->dropdown('transporter_code',$model, $form,'form-group col-sm-2 padding-right-5 padding-left-0',true,true,'transporter_code');  ?>
+            <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', true, true, 'transporter_code'); ?>
         </div>
         <div class='col-sm-3'>
-            <?= Yii::$app->dropdown->vehicletransporter($model, $form, 'tblbmccollection-transporter_code', 'vehicle_code','Vehicle'); ?>
+            <?= Yii::$app->dropdown->vehicletransporter($model, $form, 'tblbmccollection-transporter_code', 'vehicle_code', 'Vehicle'); ?>
         </div>
     </div>
     <div class="clearfix"></div>
@@ -93,7 +94,6 @@ $form = ActiveForm::begin([
 
 
 <?php
-
 $script = "
     visible();
     $('#tblbmccollection-collection_type').change(function(){
