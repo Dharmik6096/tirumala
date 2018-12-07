@@ -66,7 +66,7 @@ $attribute = [
             'active_column' => false,
             'actions' => [
                 'view' => TRUE,
-//        'update' => true,
+                'update' => true,
             ]
         ];
 

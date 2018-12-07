@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblDcs;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\dcsoperation\models\TblDcsPurchaseRate;
+use app\modules\collection\models\TblBmcCollectionHistory;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
@@ -55,12 +56,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
-            if ($this->model->collection_type == 2) {
-                $this->model->scenario = 'transporter';
-            }
             $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
-
             $this->model->bmc_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'bmc_code');
             $this->model->qty_mode = 1;
             $this->model->qlty_auto = 1;
@@ -83,6 +80,28 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     'dataProvider' => $dataProvider,
         ]);
 //        return $this->customRender();
+    }
+
+    public function actionUpdate($id) {
+        $this->model = $this->findModel($id);
+        if (Yii::$app->request->post()) {
+            $master_model = [];
+            $historyModel = new TblBmcCollectionHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $master_model[] = $historyModel;
+            $this->model->load(Yii::$app->request->post());
+            $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
+            $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
+            $master_model[] = $this->model;
+
+            $transaction = $this->generalModel->saveTransaction($master_model, ['BMC Collection', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
+        }
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
