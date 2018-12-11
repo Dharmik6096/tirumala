@@ -191,19 +191,19 @@ class TblRouteMapping extends \app\models\ChildModel {
         switch ($module) {
             case 'society':
                 $name = TblDcs::find()->select('dcs_name')->where(['dcs_code' => $code])->one();
-                $name = $name->dcs_name;
+                $name = !empty($name->dcs_name) ? $name->dcs_name : 'N/A';
                 break;
             case 'plant':
                 $name = TblPlant::find()->select('name')->where(['plant_code' => $code])->one();
-                $name = $name->name;
+                $name = !empty($name->name) ? $name->name : 'N/A';
                 break;
             case 'mcc':
                 $name = TblMccPlant::find()->select('name')->where(['mcc_plant_code' => $code])->one();
-                $name = $name->name;
+                $name = !empty($name->name) ? $name->name : 'N/A';
                 break;
             case 'bmc':
                 $name = TblDcsBmc::find()->select('bmc_name')->where(['bmc_code' => $code])->one();
-                $name = $name->bmc_name;
+                $name = !empty($name->bmc_name) ? $name->bmc_name : 'N/A';
                 break;
             default :
                 $name = '';
