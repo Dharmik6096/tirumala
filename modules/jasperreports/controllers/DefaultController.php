@@ -471,19 +471,19 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '117 - Society Details',
             ],
             'ActualBmcCollection' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:p_union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:p_union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_ltr_kg,p_language_code,p_report_name',
                 'path' => 'bmccollection/PPWiseActualMilkCollection',
                 'scenario' => 'ActualBmcCollection',
                 'title' => '301 - Actual Bmc Collection',
             ],
             'RmrdMilkCollection' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:p_union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_milk_class,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:p_union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_milk_class,p_ltr_kg,p_language_code,p_report_name',
                 'path' => 'bmccollection/RMRDMilkCollection',
                 'scenario' => 'RmrdMilkCollection',
                 'title' => '302 - RMRD Milk Collection',
             ],
             'BmcSummaryReport' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_ltr_kg,p_language_code,p_report_name',
                 'path' => 'bmccollection/BMCSummaryReport',
                 'scenario' => 'BmcSummaryReport',
                 'title' => '303 - Bmc Summary Report',
@@ -537,7 +537,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '311 - Village Wise Difference Report',
             ],
             'BmcCollection' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:p_union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_route_code:p_union_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_milk_type,p_ltr_kg,p_language_code,p_report_name',
                 'path' => 'bmccollection/BMCCollectionReport',
                 'scenario' => 'BmcCollection',
                 'title' => '312 - Bmc Collection',

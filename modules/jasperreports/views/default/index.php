@@ -224,6 +224,9 @@ $model->p_collection_date = empty($model->p_collection_date) ? date('d-m-Y') : $
                         </div>
                         <?php
                     }
+                    if (in_array($value, array('p_ltr_kg'))) {
+                        echo Yii::$app->dropdown->dropdownStatic('p_ltr_kg', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel($value), false, $value, false);
+                    }
                 }
                 if (isset($data['report_type'])) {
                     echo $form->field($model, 'report_type', [ 'options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);

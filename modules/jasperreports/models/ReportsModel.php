@@ -20,7 +20,7 @@ class ReportsModel extends Model {
     public $p_is_bank;
     public $state_code, $p_district_code, $p_sub_district_code, $p_block_name;
     public $p_report_name, $p_no_of_pouring_day, $p_pouring_qty;
-    public $p_plant_code, $p_mcc_code, $p_bmc_code;
+    public $p_plant_code, $p_mcc_code, $p_bmc_code, $p_ltr_kg;
 
     function __construct() {
         if (Yii::$app->session->get('LanguageId') == 0) {
@@ -57,9 +57,9 @@ class ReportsModel extends Model {
             [['p_no_of_pouring_day'], 'integer'],
             [['p_pouring_qty'], 'double'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift', 'p_pouring_qty', 'p_no_of_pouring_day', 'p_member_type'], 'required', 'on' => 'SocietyDetails'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'ActualBmcCollection'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_milk_class'], 'required', 'on' => 'RmrdMilkCollection'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type'], 'required', 'on' => 'BmcSummaryReport'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_ltr_kg'], 'required', 'on' => 'ActualBmcCollection'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_milk_class', 'p_ltr_kg'], 'required', 'on' => 'RmrdMilkCollection'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcSummaryReport'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeDateWise'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationMilkTypeVillageWise'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'VariationDateWise'],
@@ -69,7 +69,7 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportDateWise'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'DifferenceReportVillageWise'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'GprsDataReconciliation'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type'], 'required', 'on' => 'BmcCollection'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcCollection'],
         ];
     }
 
@@ -123,6 +123,7 @@ class ReportsModel extends Model {
             'p_plant_code' => \Yii::t('app', 'Plant'),
             'p_mcc_code' => \Yii::t('app', 'MCC'),
             'p_bmc_code' => \Yii::t('app', 'BMC'),
+            'p_ltr_kg' => \Yii::t('app', 'Quantity Mode'),
         ];
     }
 
