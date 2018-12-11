@@ -45,6 +45,12 @@ $attribute = [
             ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'qty_mode',
+                'filter' => Yii::$app->dropdown->dropdownfilterStatic('p_ltr_kg', $searchModel, 'qty_mode'),
+                'value' => function ($model) {
+                    return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
+                },],
+            ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'sample_no', 'vAlign' => 'middle'],
             ['attribute' => 'type_of_data_receive', 'vAlign' => 'middle'],

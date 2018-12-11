@@ -523,6 +523,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'Created'), '1' => Yii::t('app', 'Updated')],
             ],
+            'p_ltr_kg' => [
+                'name' => 'p_ltr_kg',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Ltr'), '1' => Yii::t('app', 'Kg')],
+            ],
         ];
         return $records[$l];
     }

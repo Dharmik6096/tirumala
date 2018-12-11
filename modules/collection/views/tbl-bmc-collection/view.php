@@ -104,6 +104,19 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
+                            'attribute' => 'qty_mode',
+                            'value' => isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'converted_qty',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'amount',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
