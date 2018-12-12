@@ -150,4 +150,5 @@ return [
     'Ex Member Code' => 'Ex Farmer Code',
     'Member Name' => 'Farmer Name',
     'Allow Multi Family Member' => 'Allow Multi Family Farmer',
+    'DCS Incharge' => 'Village Incharge',
 ];

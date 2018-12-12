@@ -113,4 +113,5 @@ return [
     'Society Summary Report' => 'VLCC Summary Report',
     '219 - Society Summary Report' => '219 - VLCC Summary Report',
     'Purchase Rate (DCS)' => 'Purchase Rate (VLCC)',
+    'DCS Incharge' => 'VLCC Incharge',
 ];

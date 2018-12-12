@@ -20,6 +20,10 @@ $attribute = [
     ['attribute' => 'dcs_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'dcs_incharge_name', 'value' => function($model) {
+            $data = Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society');
+            return !empty($data) ? $data->firstname . ' ' . $data->lastname . ' ' . $data->surname : 'N/A';
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'route_name', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
         }, 'vAlign' => 'middle', 'filter' => false],

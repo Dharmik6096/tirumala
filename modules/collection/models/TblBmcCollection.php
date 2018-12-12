@@ -122,7 +122,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC Code'),
             'bmc_name' => Yii::t('app', 'BMC Name'),
             'converted_qty' => Yii::t('app', 'Converted Qty'),
-            'dcs_incharge_name' => Yii::t('app', 'DCS Incharge Name'),
+            'dcs_incharge_name' => Yii::t('app', 'DCS Incharge'),
         ];
     }
 
