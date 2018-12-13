@@ -288,4 +288,10 @@ class TblRouteMapping extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['route_code' => 'route_code']);
     }
 
+    public function getData() {
+        return $this->find()
+                        ->where(['route_code' => $this->route_code])
+                        ->one();
+    }
+
 }

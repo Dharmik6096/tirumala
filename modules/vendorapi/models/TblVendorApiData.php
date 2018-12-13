@@ -4,6 +4,13 @@ namespace app\modules\vendorapi\models;
 
 use Yii;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblRouteMapping;
+use app\modules\organisation\models\TblDcs;
+use app\modules\geo\models\TblStates;
+use app\modules\geo\models\TblDistricts;
+use app\modules\geo\models\TblSubDistricts;
+use app\modules\geo\models\TblVillages;
+use app\modules\geo\models\TblHamlets;
 
 /**
  * This is the model class for table "tbl_vendor_api_data".
@@ -63,13 +70,12 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['parent_code_other', 'parent_code', 'master_code', 'master_name', 'master_type', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'address', 'address_2', 'email', 'bank_name', 'branch_name', 'bank_account_no', 'ifsc', 'type_of_data', 'union_code', 'service_type', 'username', 'password'], 'string'],
-            [['date_1', 'date_2', 'time_1', 'time_2', 'time_3', 'time_4', 'type_2'], 'safe'],
+            [['date_1', 'date_2', 'time_1', 'time_2', 'time_3', 'time_4', 'type_2', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
             [['capacity', 'route_length'], 'number'],
             [['is_active'], 'integer'],
             [['master_type'], 'default', 'value' => 'Can', 'on' => 'route_master'],
             [['is_active'], 'default', 'value' => 1],
             [['master_code', 'master_name', 'date_1', 'time_1', 'time_2', 'time_3', 'time_4'], 'required', 'on' => 'route_master'],
-            [['parent_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['parent_code' => 'mcc_plant_code'], 'on' => 'route_master'],
 //            [['date_validate'], 'convertDateDot'],
 //            [['date_validate'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01.12.2018')],
             [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i:s', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30')],
@@ -84,9 +90,15 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['parent_code', 'master_code', 'master_name', 'date_1', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => 'mcc_master'],
             [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'vlcc_master'],
             [['parent_code', 'master_code', 'date_1', 'date_2'], 'required', 'on' => 'route_vlcc'],
-            [['type_2'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
-        }, 'on' => 'route_master'],
+            [['parent_code'], 'validateRouteCode', 'on' => 'route_vlcc'],
+            [['master_code'], 'validateVlccCode', 'on' => 'route_vlcc'],
+            [['parent_code'], 'validateMccCode', 'on' => 'route_master'],
+            [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+            [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
+            [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
+            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
+            [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code']],
+//            [['parent_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['parent_code' => 'mcc_plant_code'], 'on' => 'route_master'],
         ];
     }
 
@@ -133,6 +145,33 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             'username' => Yii::t('app', 'Username'),
             'password' => Yii::t('app', 'Password'),
         ];
+    }
+
+    public function validateRouteCode($attribute, $params) {
+        $model = new TblRouteMapping();
+        $model->route_code = $this->union_code . $this->parent_code;
+        $modelData = $model->getData();
+        if (empty($modelData)) {
+            $this->addError($attribute, Yii::t('app', 'Please enter valid Parent Code.'));
+        }
+    }
+
+    public function validateVlccCode($attribute, $params) {
+        $model = new TblDcs();
+        $model->dcs_code = $this->union_code . $this->master_code;
+        $modelData = $model->getData();
+        if (empty($modelData)) {
+            $this->addError($attribute, Yii::t('app', 'Please enter valid Master Code.'));
+        }
+    }
+
+    public function validateMccCode($attribute, $params) {
+        $model = new TblMccPlant();
+        $model->mcc_plant_code = $this->union_code . $this->parent_code;
+        $modelData = $model->getData();
+        if (empty($modelData)) {
+            $this->addError($attribute, Yii::t('app', 'Please enter valid Parent Code.'));
+        }
     }
 
 //    public function convertDateDot() {

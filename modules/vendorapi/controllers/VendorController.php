@@ -31,7 +31,8 @@ class VendorController extends RestController {
         $svc = $data['svc'];
         $master_array = Vendorapi::setParam($svc);
         if (!empty($master_array) && isset($data[$master_array['json_key']])) {
-            $save_data = $data[$master_array['json_key']]['data'];
+            $data_key = $master_array['content_json_key'];
+            $save_data = $data[$master_array['json_key']][$data_key];
             $array = [];
             $array[] = $save_data;
             $convert_array = isset($save_data[0]) ? $save_data : $array;
@@ -62,6 +63,8 @@ class VendorController extends RestController {
                 $model->log_id = $data['log_id'];
                 $model->mobile_no = (string) $model->mobile_no;
                 $model->parent_code = (string) $model->parent_code;
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->created_by = $data['union_code'];
                 $res = [];
                 if ($model->validate() && $model->save()) {
                     $success_codes[] = $model->master_code;

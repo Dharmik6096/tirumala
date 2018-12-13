@@ -262,4 +262,10 @@ class TblMccPlant extends \app\models\ChildModel {
         return $mcc;
     }
 
+    public function getData() {
+        return $this->find()
+                        ->where(['mcc_plant_code' => $this->mcc_plant_code])
+                        ->one();
+    }
+
 }

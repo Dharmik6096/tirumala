@@ -700,5 +700,11 @@ class TblDcs extends ChildModel {
                 return $query->all();
             }
 
+            public function getData() {
+                return $this->find()
+                                ->where(['dcs_code' => $this->dcs_code])
+                                ->one();
+            }
+
         }
         
