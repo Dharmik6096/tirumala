@@ -28,6 +28,7 @@ $config = [
         'EIPLSecurity' => [ 'class' => 'app\components\EIPLSecurity'],
         'apiError' => ['class' => 'app\modules\webservice\components\SetError'],
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
+        'sqlite' => [ 'class' => 'app\components\SqliteCreate'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -210,6 +211,7 @@ $config = [
         'misreports' => [ 'class' => 'app\modules\misreports\MisReports',],
         'vendorapi' => [ 'class' => 'app\modules\vendorapi\Vendorapi',],
         'creamy' => ['class' => 'app\modules\creamy\modules',],
+        'androiddpu' => ['class' => 'app\modules\androiddpu\Androiddpu',],
     ],
     'params' => $params,
 ];

@@ -277,4 +277,8 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->find()->where(['bmc_code' => $this->bmc_code,])->andWhere(['is_active' => 1])->one();
     }
 
+    public function getDcsCodes() {
+        return $this->hasMany(TblDcs::className(), ['bmc_code' => 'bmc_code']);
+    }
+
 }

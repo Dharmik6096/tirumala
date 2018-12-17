@@ -16,6 +16,7 @@ use Yii;
  * @property integer $is_expired
  * @property string $device_id
  * @property string $device_type
+ * @property string $db_path
  * @property string $use_for
  * @property string $lat
  * @property string $long
@@ -40,7 +41,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         return [
             [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'string'],
             [['otp_code', 'is_active', 'is_expired'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'db_path'], 'safe'],
         ];
     }
 
@@ -65,6 +66,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'db_path' => Yii::t('app', 'Db Path'),
         ];
     }
 
@@ -76,6 +78,12 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
     public function getAndroidInstallationCode() {
         return $this->hasOne(TblAndroidInstallation::className(), ['android_installation_id' => 'android_installation_id']);
+    }
+
+    public function getActiveData() {
+        return $this->find()
+                        ->where(['hash_key' => $this->hash_key, 'is_active' => 1, 'is_expired' => 0])
+                        ->one();
     }
 
 }
