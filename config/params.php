@@ -8,7 +8,7 @@ return [
     'rateFilesPath' => 'web/ratechart',
     'biplRateUtilityPath' => 'web/utility/BIPL/Rate',
     'biplMemberUtilityPath' => 'web/utility/BIPL/Vendor',
-    'jasper_server' => 'http://localhost:13099/jasperserver',
+    'jasper_server' => 'http://182.73.178.90:13099/jasperserver',
     'jasper_username' => 'jasperadmin',
     'jasper_password' => 'Jasper@PCDF$2017',
     'report_path' => '/Reports/',
@@ -27,6 +27,6 @@ return [
     'rptHtmlPath' => '\modules\crystalreports\html',
     'ho_notification_key' => 'AAAATsR3lJw:APA91bEDDapzfO1L7c-7MAV3lxLElNHpf2rHCZrj2dDOUF4io3zCzi1gUS5DcusK3SqPYMecucn7t2YXOP_k5_0eGfSgj34fhxz0T1vsGpXAc30lOXVK_l5d-EW28gA_EIF-rtn3jSBB',
     'vendorApiErrorLogPath' => 'C:/THIRUMALA/VendorAPI/ErrorLogs',
-    'namaste_collection_url' => 'http://202.65.156.223:50001/RestAdapter/MilkCollectionData',
+    'namaste_collection_url' => 'http://202.65.156.223:50001/RestAdapter/',
     'namaste_api_header' => ['userid' => 'PO_EVEREST', 'password' => 'Rspl$1234'],
 ];

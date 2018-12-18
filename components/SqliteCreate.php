@@ -183,7 +183,7 @@ class SqliteCreate extends Component {
         }
     }
 
-    public function getDataDcs($android_tables, $dcs_code, $bmc_code, $org_code, $org_type) {
+    public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type) {
         try {
             $sqls = 'SELECT *  FROM tbl_table_list';
             $cmd = Yii::$app->db->createCommand($sqls);
@@ -219,14 +219,23 @@ class SqliteCreate extends Component {
                         $field = $field[0];
                         $fields = str_replace(',', ',' . $field['table_name'] . '.', $tables_fields);
                         $fields = $field['table_name'] . '.' . $fields;
-                        $where = ($field['key_field'] == 'dcs_code') ? $dcs_code : $bmc_code;
+                        $where = '';
+                        if ($field['key_field'] == 'dcs_code') {
+                            $where = $dcs_code;
+                        } else if ($field['key_field'] == 'bmc_code') {
+                            $where = $bmc_code;
+                        } else if ($field['key_field'] == 'mcc_plant_code') {
+                            $where = $mcc_code;
+                        } else if ($field['key_field'] == 'plant_code') {
+                            $where = $plant_code;
+                        }
+//                        $where = ($field['key_field'] == 'dcs_code') ? $dcs_code : $bmc_code;
                         $tableName = $field['table_name'];
                         if ($field['key_field'] == NULL) {
                             $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
                         } else {
                             if ($field['key_field'] == 'from_dest') {
-//                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($dcs_code)) and from_type = 'society'";
-                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
+                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($dcs_code)) and from_type = 'society'";
                             } else if ($field['key_field'] == 'to_dest') {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($bmc_code)) and to_type = 'bmc'";
                             } else {
@@ -535,7 +544,7 @@ class SqliteCreate extends Component {
 
     //use for Android
 //    public function createSqlFileDcs($fileName, $dcs_code, $language_code, $user_code, $organization_code, $language_locale, $sub_center_code) {
-    public function createSqlFileDcs($fileName, $dcs_code, $bmc_code, $org_code, $org_type) {
+    public function createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type) {
         set_time_limit(5400);
         $this->android_db = new SQLite3('installation-identity/' . $fileName);
         $this->db_name = $org_code;
@@ -548,7 +557,7 @@ class SqliteCreate extends Component {
         $this->file_name = Yii::$app->basePath . '/installation-identity/error';
         $this->fp = fopen($this->file_name, 'w+');
 //        foreach ($tables as $tableName) {
-        $this->getDataDcs($android_tables, $dcs_code, $bmc_code, $org_code, $org_type);
+        $this->getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type);
 //        }
 //        $this->AddAttachmentDB($dcs_code, $language_code);
     }

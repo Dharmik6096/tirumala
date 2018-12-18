@@ -281,4 +281,8 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasMany(TblDcs::className(), ['bmc_code' => 'bmc_code']);
     }
 
+    public function singleBmcData() {
+        return $this->find()->where(['bmc_code' => $this->bmc_code])->one();
+    }
+
 }
