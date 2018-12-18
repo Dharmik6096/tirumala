@@ -30,7 +30,7 @@ $config = [
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
         'sqlite' => [ 'class' => 'app\components\SqliteCreate'],
         'urlManager' => [
-//            'class' => 'app\components\UrlManager',
+            'class' => 'app\components\UrlManager',
             'showScriptName' => false,
             'enablePrettyUrl' => true,
             // 'enableStrictParsing' => true,
@@ -45,7 +45,7 @@ $config = [
                 'stellapps-services' => 'restservices/stellapps/stellapps-services',
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
-//                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
+                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
             //  ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
         /* 'urlManager' => [
