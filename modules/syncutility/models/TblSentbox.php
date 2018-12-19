@@ -1,0 +1,234 @@
+<?php
+
+namespace app\modules\syncutility\models;
+
+use Yii;
+use app\modules\syncutility\models\TblAddressbook;
+use yii\helpers\Json;
+
+/**
+ * This is the model class for table "tbl_sentbox".
+ *
+ * @property string $uuid
+ * @property string $sync_status
+ * @property string $source_org_type
+ * @property string $source_org_id
+ * @property string $dest_org_type
+ * @property string $dest_org_id
+ * @property string $message_type
+ * @property string $table_name
+ * @property string $operation
+ * @property string $json_text
+ * @property string $error_log
+ * @property integer $sequence_no
+ * @property string $originating_org_id
+ * @property string $originating_org_type
+ * @property string $posting_timestamp
+ * @property string $sync_timestamp
+ * @property string $source_device_mac
+ * @property string $version_no
+ */
+class TblSentbox extends \yii\db\ActiveRecord {
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName() {
+        return 'tbl_sentbox';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+            [['uuid'], 'required'],
+            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no'], 'string'],
+            [['sequence_no'], 'integer'],
+            [['posting_timestamp', 'sync_timestamp'], 'safe'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'uuid' => Yii::t('app', 'Uuid'),
+            'sync_status' => Yii::t('app', 'Sync Status'),
+            'source_org_type' => Yii::t('app', 'Source Org Type'),
+            'source_org_id' => Yii::t('app', 'Source Org ID'),
+            'dest_org_type' => Yii::t('app', 'Dest Org Type'),
+            'dest_org_id' => Yii::t('app', 'Dest Org ID'),
+            'message_type' => Yii::t('app', 'Message Type'),
+            'table_name' => Yii::t('app', 'Table Name'),
+            'operation' => Yii::t('app', 'Operation'),
+            'json_text' => Yii::t('app', 'Json Text'),
+            'error_log' => Yii::t('app', 'Error Log'),
+            'sequence_no' => Yii::t('app', 'Sequence No'),
+            'originating_org_id' => Yii::t('app', 'Originating Org ID'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'posting_timestamp' => Yii::t('app', 'Posting Timestamp'),
+            'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
+            'source_device_mac' => Yii::t('app', 'Source Device Mac'),
+            'version_no' => Yii::t('app', 'Version No'),
+        ];
+    }
+
+    public function setSentbox($model, $operation, $count = 1) {
+
+        $addressBook = $this->isAddressBook(!empty($this->table_name) ? $this->table_name : $model->tableName());
+
+        foreach ($addressBook as $d) {
+
+            $sentModel = new TblSentbox();
+            $attribute = $this->attributes;
+            $sentModel->setAttributes($attribute);
+            switch ($d->destinations) {
+                case 0: $this->childEntry($model, $operation, $sentModel);
+                    break;
+                case 1:
+                    if ($d->to_child == 1) {
+                        $table = !empty($this->table_name) ? $this->table_name : $model->tableName();
+                        if (in_array($table, ['tbl_user_organization_mapping', 'user'])) {
+                            if ($model->entry_type == 1) {
+                                $this->childEntry($model, $operation, $sentModel);
+                            }
+                        } else {
+                            $this->childEntry($model, $operation, $sentModel);
+                        }
+                    }
+                    if ($d->to_parent == 1 && $count == 1) {
+                        $sentModel = new TblSentbox();
+                        $attribute = $this->attributes;
+                        $sentModel->setAttributes($attribute);
+                        $this->parentEntry($model, $operation, $sentModel);
+                    }
+                    break;
+                case 2: $this->childEntry($model, $operation, $sentModel);
+                    $sentModel = new TblSentbox();
+                    $attribute = $this->attributes;
+                    $sentModel->setAttributes($attribute);
+                    if ($count == 1)
+                        $this->parentEntry($model, $operation, $sentModel);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return TRUE;
+    }
+
+    private function isAddressBook($table_name) {
+        $model = new TblAddressbook();
+        $data = $model->find()->select(['destinations', 'to_child', 'to_parent'])->where(
+                        ['table_name' => $table_name,
+                            'source_org_type' => 'SELF',
+                            'flag_entry' => '1',
+                            'type' => '1'])->all();
+        return $data;
+    }
+
+    private function childEntry($model, $operation, $sentModel) {
+
+        $destination = '';
+        switch (Yii::$app->session->get('organizations_type')) {
+            case 'NATIONAL' : $destination = 'FEDERATION';
+                break;
+            case 'FEDERATION' : $destination = 'UNION';
+                break;
+            case 'UNION' : $destination = 'DCS';
+                break;
+        }
+        $this->entry($model, $operation, $sentModel);
+        $sentModel->dest_org_id = !empty($sentModel->dest_org_id) ? $sentModel->dest_org_id : '0';
+        $sentModel->dest_org_type = !empty($sentModel->dest_org_type) ? $sentModel->dest_org_type : $destination;
+        return $sentModel->save();
+    }
+
+    private function parentEntry($model, $operation, $sentModel) {
+        $this->entry($model, $operation, $sentModel);
+        return $sentModel->save();
+    }
+
+    public function entry($model, $operation, $sentModel) {
+        if (strpos($model->tableName(), 'local') || $model->tableName() == 'tbl_message_property') {
+            $sentModel->language_code = $model->language_code;
+        }
+        $sentModel->uuid = $this->getUUID();
+        $sentModel->table_name = !empty($sentModel->table_name) ? $sentModel->table_name : $model->tableName();
+        $sentModel->operation = $operation;
+        $sentModel->json_text = !empty($sentModel->json_text) ? $sentModel->json_text : Json::encode($this->jsonModel($model), JSON_UNESCAPED_UNICODE);
+        $sentModel->message_type = 'RECORD';
+//        $sentModel->processed = 0;
+        //   $this->column_sequence = implode(',', $model->getTableSchema()->getColumnNames());
+        $sentModel->sync_status = 'U';
+        $sentModel->sync_timestamp = date('Y-m-d H:i:s');
+        $sentModel->posting_timestamp = date('Y-m-d H:i:s');
+//        $sentModel->transmitted = 0;
+//        $sentModel->is_origin = 1;
+        $sentModel->originating_org_id = Yii::$app->session->get('organizations_code');
+        $sentModel->originating_org_type = Yii::$app->session->get('organizations_type');
+        $sentModel->source_org_id = ''; //Yii::$app->session->get('organizations_code');
+        $sentModel->source_org_type = Yii::$app->session->get('organizations_type');
+        $sentModel->sequence_no = 5;
+        $sentModel->source_device_mac = Yii::$app->session->get('MacAddress');
+//        $sentModel->operation_condition = (in_array($model->tableName(), array_keys($this->priority_array))) ? $this->priority_array[$model->tableName()] : '8';
+    }
+
+    public function getUUID() {
+        $connection = Yii::$app->getDb();
+        $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
+        return $command['id'];
+    }
+
+    private function jsonModel($model) {
+        $newModel = null;
+        $scema = $model->getTableSchema();
+        foreach ($model->attributes as $key => $a) {
+            if ($scema->name == 'tbl_ledger' && $key == 'has_sub_ledger') {
+                
+            } else {
+//            if ($key == 'is_active' || $key == 'is_delete' || $key=='is_milch' || $key=='is_default' || $key=='is_balance_sheet' || $key=='is_profit_loss') {
+//                $new_key = str_replace('is_', '', $key);
+//                $new_key = str_replace('_', ' ', $new_key);
+//                $new_key = ucwords($new_key);
+//                $new_key = str_replace(' ', '', $new_key);
+//                $new_key = lcfirst($new_key);
+//                $newModel[$new_key] = ($a==1)?true:false;
+//            } else {
+
+                $type = $scema->columns[$key]->type;
+                if ($type == 'datetime') {
+                    if ($a != '') {
+                        $dt = new \DateTime($a);
+                        $a = $dt->format('Y-m-d\TH:i:s.u');
+                    }
+                } else if ($type == 'timestamp') {
+                    if ($a != '') {
+                        $dt = new \DateTime($a);
+                        $a = $dt->format('Y-m-d\TH:i:s.u');
+                    }
+                } else if ($type == 'boolean') {
+                    $key = str_replace('is_', '', $key);
+                    $a = ($a == 1) ? true : false;
+                } elseif ($type == 'integer') {
+                    $a = (int) $a;
+                } elseif ($type == 'double') {
+                    $a = (double) $a;
+                } elseif ($type == 'bigint') {
+                    $a = (int) $a;
+                }
+                $new_key = str_replace('_', ' ', $key);
+                $new_key = ucwords($new_key);
+                $new_key = str_replace(' ', '', $new_key);
+                $new_key = (in_array($new_key, array('NATIONAL', 'UNION', 'FEDERATION'))) ? $new_key : lcfirst($new_key);
+
+                $newModel[$new_key] = $a;
+                // }
+            }
+        }
+        return(object) $newModel;
+    }
+
+}

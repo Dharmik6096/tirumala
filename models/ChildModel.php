@@ -43,6 +43,14 @@ class ChildModel extends \yii\db\ActiveRecord {
                 if ($this->hasAttribute('updated_at'))
                     $this->updated_at = date('Y-m-d H:i:s');
             }
+            if ($this->hasAttribute('flg_sentbox_entry')) {
+                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                    $this->flg_sentbox_entry = 'Y';
+                }
+            }
+            if ($this->hasAttribute('sync_status')) {
+                $this->sync_status = 'U';
+            }
 
             $encrypt = $this->encryptModel($this->attributes);
             $this->setAttributes($encrypt);
@@ -127,6 +135,19 @@ class ChildModel extends \yii\db\ActiveRecord {
                 $model[$value] = \Yii::$app->general->encryptData($model[$value]);
         }
         return $model;
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        parent::afterSave($insert, $changedAttributes);
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $sentbox = new \app\modules\syncutility\models\TblSentbox();
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            if (!($sentbox->setSentbox($this, $flag))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
+
+        //return true;
     }
 
 }

@@ -212,6 +212,7 @@ $config = [
         'vendorapi' => [ 'class' => 'app\modules\vendorapi\Vendorapi',],
         'creamy' => ['class' => 'app\modules\creamy\modules',],
         'androiddpu' => ['class' => 'app\modules\androiddpu\Androiddpu',],
+        'syncutility' => ['class' => 'app\modules\syncutility\SyncUtility',],
     ],
     'params' => $params,
 ];

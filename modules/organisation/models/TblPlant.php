@@ -9,6 +9,7 @@ use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_plant".
@@ -35,6 +36,8 @@ use yii\helpers\ArrayHelper;
  * @property integer $capacity
  */
 class TblPlant extends \app\models\ChildModel {
+
+    public $is_sentbox;
 
     /**
      * @inheritdoc
@@ -63,7 +66,7 @@ class TblPlant extends \app\models\ChildModel {
             Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
-            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
+            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
             [['capacity'], 'integer'],
             [['plant_code'], 'integer', 'min' => 1],
             [['plant_code'], 'string', 'max' => 6],
@@ -183,6 +186,34 @@ class TblPlant extends \app\models\ChildModel {
             $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
         }
         return $query->all();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+//        $codes = [];
+//        if (!empty($this->dcsCode->tblSubCenters)) {
+//            $sub_center_codes = $this->dcsCode->tblSubCenters;
+//            $codes = ArrayHelper::map($sub_center_codes, 'sub_center_code', 'sub_center_code');
+//            $codes = array_values($codes);
+//        }
+//        $codes[] = $this->dcs_code;
+//        $count = 1;
+//        foreach ($codes as $code) {
+        $sentbox = $this->sentboxModel();
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            if (!($sentbox->setSentbox($this, $flag))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
+    }
+
+    private function sentboxModel() {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $this->plant_code;
+        if (Yii::$app->session->get('organizations_type') == 'UNION') {
+            $sentbox->dest_org_type = 'PLANT'; //($code == $this->dcs_code) ? 'DCS' : 'SUBCENTER';
+        }
+        return $sentbox;
     }
 
 }
