@@ -123,9 +123,9 @@ class TblPlantController extends \app\controllers\ChildController {
                 $validate = Yii::$app->warning->unique($this->model, 'name', $this->model->name);
             if ($validate == 1) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], [$this->contactDetails], ['plant', 'create']);
-//                if ($transaction !== FALSE) {
-//                    return $this->{$transaction}();
-//                }
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
             }
         }
         return $this->customRender();
