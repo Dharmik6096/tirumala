@@ -20,7 +20,7 @@ class HttpRequest extends \yii\base\Component {
     public $device_id;
     public $content = [];
     public $req_url;
-    public $is_free = ['android-dpu/register', 'android-dpu/verification', 'android-dpu/initialization'];
+    public $is_free = ['android-dpu/register', 'android-dpu/verification'];
     public $request;
     public $allow_call = FALSE;
     public $action_url;
@@ -30,7 +30,7 @@ class HttpRequest extends \yii\base\Component {
         $this->req_url = Yii::$app->controller->module->id . '/' . Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
         $post_data = Json::decode(Yii::$app->request->getRawBody());
         $request = $this->camelCaseToUnderscore($post_data);
-        $request['dcs_code'] = $request['identity_code'];
+//        $request['dcs_code'] = $request['identity_code'];
         if (!empty($request['type']) && in_array($request['type'], [5])) {
             $this->action_url = $request['svc'];
         } else {
@@ -79,20 +79,8 @@ class HttpRequest extends \yii\base\Component {
         if (in_array($this->action_url, $this->is_free)) {
             return TRUE;
         } else if (!empty($this->request['token'])) {
-            $model = new TblAppActivation();
-            $model->hash_key = $this->request['token'];
-            $model->imei_no = $this->request['imei'];
-            $model->type = $this->request['type'];
-            if ($model->type == 1) {
-                $model->code = $this->request['dcs_code'];
-            } else if ($model->type == 2) {
-                $model->code = $this->request['member_code'];
-            } else if ($model->type == 3) {
-                $model->code = $this->request['bmc_code'];
-            } else if ($model->type == 4) {
-                $model->code = $this->request['username'];
-            }
-            if ($model->getActiveRecord() == 1) {
+            $model = new TblAndroidInstallationDetails();
+            if ($model->getActiveRecordCount($this->request) == 1) {
                 return TRUE;
             } else {
                 $message[] = 'Authentication Failed.';
@@ -100,9 +88,6 @@ class HttpRequest extends \yii\base\Component {
         } else {
             $message[] = 'Authentication Failed.';
         }
-//        } else {
-//            $message[] = 'Imei Can not be blank.';
-//        }
         Yii::$app->apiError->error($message, 'error');
         return FALSE;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\androiddpu\controllers;
+namespace app\modules\androiddpu\v1\controllers;
 
 use yii\web\Controller;
 //use app\modules\vendorapi\controllers\RestController;
@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\installation\models\TblAndroidInstallation;
 use app\modules\installation\models\TblAndroidInstallationDetails;
+use app\modules\androiddpu\controllers\RestController;
 
 /**
  * Default controller for the `vendorapi` module
@@ -30,8 +31,8 @@ class AndroidDpuController extends RestController {
         $data = $this->post_data;
         if (!empty($data['content'])) {
             $content = $data['content'];
-            if (!empty($content['organization_type'])) {
-                $type = $content['organization_type'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+                $type = $data['organization_type'];
                 $detail_type = '';
                 $code = $data['organization_code'];
                 if ($type == 'AMCS') {
@@ -53,13 +54,14 @@ class AndroidDpuController extends RestController {
                         $andoidIdModel = new TblAndroidInstallation();
                         $andoidIdModel->android_installation_id = $andoidIdModel->getCode();
                         $andoidIdModel->organization_code = $data['organization_code'];
-                        $andoidIdModel->organization_type = $content['organization_type'];
+                        $andoidIdModel->organization_type = $data['organization_type'];
                         $master[] = $andoidIdModel;
                         $andoidIdDetailModel = new TblAndroidInstallationDetails();
                         $andoidIdDetailModel->android_installation_id = $andoidIdModel->android_installation_id;
                         $andoidIdDetailModel->mobile_no = $content['mobile_no'];
                         $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
                         $andoidIdDetailModel->otp_code = 1234;
+                        $andoidIdDetailModel->imei_no = $data['imei'];
                         $andoidIdDetailModel->is_active = 0;
                         $andoidIdDetailModel->is_expired = 0;
                         $andoidIdDetailModel->device_id = $data['device_id'];
@@ -84,6 +86,7 @@ class AndroidDpuController extends RestController {
         $model = new TblAndroidInstallationDetails();
         $model->hash_key = $data['token'];
         $model->otp_code = $content['otp_code'];
+        $model->imei_no = $data['imei'];
         $model = $model->getData();
         if (!empty($model)) {
             $model->is_active = 1;
@@ -91,9 +94,11 @@ class AndroidDpuController extends RestController {
             if ($transaction !== 'customRedirect') {
                 return FALSE;
             }
-            $res_data['token'] = $model->hash_key;
-            $res_data['organization_code'] = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_code');
-            $res_data['organization_type'] = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+            $res_data['message'] = 'OTP Verified.';
+//            $res_data['organization_code'] = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_code');
+//            $res_data['organization_type'] = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+        } else {
+            $res_data['message'] = 'OTP Not Verified.';
         }
         $this->response['data'] = $res_data;
         return $this->response;
@@ -103,14 +108,14 @@ class AndroidDpuController extends RestController {
         $res_data = [];
         $data = $this->post_data;
         $model = new TblAndroidInstallationDetails();
-        $model->hash_key = $data['token'];
-        $id_model = $model->getActiveData();
-        if (!empty($id_model) && !empty($data['content'])) {
-            $content = $data['content'];
-            if (!empty($content['organization_type'])) {
-                $type = $content['organization_type'];
+        $id_model = $model->getActiveData($data);
+        if (!empty($id_model)) {
+            $org_code = $data['organization_code'];
+            $org_type = $data['organization_type'];
+            if (!empty($org_code)) {
+                $type = $org_type;
                 $detail_type = '';
-                $code = $data['organization_code'];
+                $code = $org_code;
                 $dcs_code = [];
                 $mcc_code = [];
                 $plant_code = [];

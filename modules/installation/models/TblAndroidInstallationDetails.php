@@ -41,7 +41,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         return [
             [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'string'],
             [['otp_code', 'is_active', 'is_expired'], 'integer'],
-            [['created_at', 'updated_at', 'db_path'], 'safe'],
+            [['created_at', 'updated_at', 'db_path', 'imei_no'], 'safe'],
         ];
     }
 
@@ -72,7 +72,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
     public function getData() {
         return $this->find()
-                        ->where(['hash_key' => $this->hash_key, 'otp_code' => $this->otp_code])
+                        ->where(['imei_no' => $this->imei_no, 'hash_key' => $this->hash_key, 'otp_code' => $this->otp_code, 'is_expired' => 0])
                         ->one();
     }
 
@@ -80,10 +80,22 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         return $this->hasOne(TblAndroidInstallation::className(), ['android_installation_id' => 'android_installation_id']);
     }
 
-    public function getActiveData() {
+    public function getActiveData($data) {
         return $this->find()
-                        ->where(['hash_key' => $this->hash_key, 'is_active' => 1, 'is_expired' => 0])
+                        ->select('tbl_android_installation_details.*')
+                        ->joinWith(['androidInstallationCode'])
+                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
+                        ->andWhere(['tbl_android_installation.organization_code' => $data['organization_code'], 'tbl_android_installation.organization_type' => $data['organization_type']])
                         ->one();
+    }
+
+    public function getActiveRecordCount($data) {
+        return $this->find()
+                        ->select('tbl_android_installation_details.*')
+                        ->joinWith(['androidInstallationCode'])
+                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
+                        ->andWhere(['tbl_android_installation.organization_code' => $data['organization_code'], 'tbl_android_installation.organization_type' => $data['organization_type']])
+                        ->count();
     }
 
 }

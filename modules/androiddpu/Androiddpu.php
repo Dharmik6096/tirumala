@@ -5,8 +5,8 @@ namespace app\modules\androiddpu;
 /**
  * androiddpu module definition class
  */
-class Androiddpu extends \yii\base\Module
-{
+class Androiddpu extends \yii\base\Module {
+
     /**
      * @inheritdoc
      */
@@ -15,10 +15,14 @@ class Androiddpu extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public function init()
-    {
+    public function init() {
         parent::init();
-
+        $this->modules = [
+            'v1' => [
+                'class' => 'app\modules\androiddpu\v1\V1',
+            ],
+        ];
         // custom initialization code goes here
     }
+
 }
