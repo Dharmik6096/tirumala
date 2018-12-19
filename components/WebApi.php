@@ -36,7 +36,8 @@ class WebApi {
             RequestOptions::JSON => $this->body,
             RequestOptions::HEADERS => $header
         ];
-        $resp = $client->request('POST', $url, $postData);
+		$resp = $client->request('POST', $url, $postData);
+		var_dump(resp);die;
         return $resp->getBody();
     }
     
