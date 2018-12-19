@@ -22,18 +22,33 @@ class WebApi {
         if ($this->authentication) {
             $this->body = array_merge($this->authentication, $this->body);
         }
-        return $this->PHPCURL();
+//        return $this->PHPCURL();
+        return $this->GuzzleCURL();
     }
 
     public function GuzzleCURL() {
         $url = $this->serverUrl . $this->apiurl;
         $client = new GuzzleHttp\Client();
+        $data = json_encode($this->body);
+        $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
+        $header = array_merge($main_header, $this->header_info);
         $postData = [
-            RequestOptions::JSON => $this->body
+            RequestOptions::JSON => $this->body,
+            RequestOptions::HEADERS => $header
         ];
         $resp = $client->request('POST', $url, $postData);
         return $resp->getBody();
     }
+    
+//    public function GuzzleCURL() {
+//        $url = $this->serverUrl . $this->apiurl;
+//        $client = new GuzzleHttp\Client();
+//        $postData = [
+//            RequestOptions::JSON => $this->body
+//        ];
+//        $resp = $client->request('POST', $url, $postData);
+//        return $resp->getBody();
+//    }
 
     public function PHPCURL() {
         $url = $this->serverUrl . $this->apiurl;
