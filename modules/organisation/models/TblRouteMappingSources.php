@@ -6,6 +6,7 @@ use Yii;
 use yii\db\Query;
 use yii\db\Expression;
 use app\modules\organisation\models\TblSocietyCodes;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_route_mapping_sources".
@@ -27,6 +28,7 @@ use app\modules\organisation\models\TblSocietyCodes;
 class TblRouteMappingSources extends \app\models\ChildModel {
 
     public $dcs_code, $dcs_name;
+    public $is_sentbox;
 
     /**
      * @inheritdoc
@@ -41,7 +43,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
     public function rules() {
         return [
             [['route_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
             [['is_active'], 'integer'],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code']],
         ];
@@ -138,6 +140,49 @@ class TblRouteMappingSources extends \app\models\ChildModel {
             $query->andWhere(['tbl_dcs.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
         return $query->all();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $type = '';
+        if ($this->to_type == 'bmc') {
+            $type = 'BMC';
+        } else if ($this->to_type == 'mcc') {
+            $type = 'MCC';
+        } else if ($this->to_type == 'plant') {
+            $type = 'PLANT';
+        }
+        $sentbox = $this->sentboxModel($type);
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            if (!($sentbox->setSentbox($this, $flag))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
+    }
+
+    private function sentboxModel($type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $this->to_dest;
+        $sentbox->source_org_id = Yii::$app->general->getforeignkey($this->societyCode, 'union_code');
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function afterDelete() {
+        $type = '';
+        if ($this->to_type == 'bmc') {
+            $type = 'BMC';
+        } else if ($this->to_type == 'mcc') {
+            $type = 'MCC';
+        } else if ($this->to_type == 'plant') {
+            $type = 'PLANT';
+        }
+        $sentbox = $this->sentboxModel($type);
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
     }
 
 }

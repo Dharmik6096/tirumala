@@ -54,4 +54,10 @@ class TblAndroidInstallation extends \app\models\ChildModel {
         return \Faker\Provider\Uuid::uuid();
     }
 
+    public function getData() {
+        return $this->find()
+                        ->where(['organization_code' => $this->organization_code, 'organization_type' => $this->organization_type])
+                        ->one();
+    }
+
 }

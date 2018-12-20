@@ -5,6 +5,7 @@ namespace app\modules\syncutility\models;
 use Yii;
 use app\modules\syncutility\models\TblAddressbook;
 use yii\helpers\Json;
+use app\modules\installation\models\TblAndroidInstallationDetails;
 
 /**
  * This is the model class for table "tbl_sentbox".
@@ -43,7 +44,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['uuid'], 'required'],
-            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no'], 'string'],
+            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'string'],
             [['sequence_no'], 'integer'],
             [['posting_timestamp', 'sync_timestamp'], 'safe'],
         ];
@@ -143,7 +144,34 @@ class TblSentbox extends \yii\db\ActiveRecord {
         $this->entry($model, $operation, $sentModel);
         $sentModel->dest_org_id = !empty($sentModel->dest_org_id) ? $sentModel->dest_org_id : '0';
         $sentModel->dest_org_type = !empty($sentModel->dest_org_type) ? $sentModel->dest_org_type : $destination;
-        return $sentModel->save();
+        if ($sentModel->table_name == 'tbl_route_mapping') {
+            $sentModel->table_name = 'tbl_route';
+        } else if ($sentModel->table_name == 'tbl_route_mapping_sources') {
+            $sentModel->table_name = 'tbl_route_mapping';
+        } else if ($sentModel->table_name == 'tbl_dcs_subcenter_bmc_info') {
+            $sentModel->table_name = 'tbl_bmc';
+        }
+        $data = $sentModel->attributes;
+        $model = new TblAndroidInstallationDetails();
+        $model_data = $model->getActiveDeviceData($sentModel->dest_org_id, $sentModel->dest_org_type);
+        $save_model = [];
+        $connection = Yii::$app->getDb();
+        if (!empty($model_data)) {
+            foreach ($model_data as $device) {
+                $sent_box_model = new TblSentbox();
+                $sent_box_model->setAttributes($data);
+                $sent_box_model->device_id = $device->device_id;
+                $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
+                $sent_box_model->uuid = $command['id'];
+                $save_model[] = $sent_box_model;
+            }
+            $generalModel = new \app\models\GeneralModel();
+            $transaction = $generalModel->saveTransaction($save_model, ['Sent Box', 'create']);
+            if ($transaction == 'customRedirect') {
+                return true;
+            }
+        }
+        return true;
     }
 
     private function parentEntry($model, $operation, $sentModel) {
@@ -155,7 +183,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
         if (strpos($model->tableName(), 'local') || $model->tableName() == 'tbl_message_property') {
             $sentModel->language_code = $model->language_code;
         }
-        $sentModel->uuid = $this->getUUID();
+//        $sentModel->uuid = $this->getUUID();
         $sentModel->table_name = !empty($sentModel->table_name) ? $sentModel->table_name : $model->tableName();
         $sentModel->operation = $operation;
         $sentModel->json_text = !empty($sentModel->json_text) ? $sentModel->json_text : Json::encode($this->jsonModel($model), JSON_UNESCAPED_UNICODE);
@@ -169,7 +197,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
 //        $sentModel->is_origin = 1;
         $sentModel->originating_org_id = Yii::$app->session->get('organizations_code');
         $sentModel->originating_org_type = Yii::$app->session->get('organizations_type');
-        $sentModel->source_org_id = ''; //Yii::$app->session->get('organizations_code');
+//        $sentModel->source_org_id = ''; //Yii::$app->session->get('organizations_code');
         $sentModel->source_org_type = Yii::$app->session->get('organizations_type');
         $sentModel->sequence_no = 5;
         $sentModel->source_device_mac = Yii::$app->session->get('MacAddress');
@@ -229,6 +257,12 @@ class TblSentbox extends \yii\db\ActiveRecord {
             }
         }
         return(object) $newModel;
+    }
+
+    public function getData() {
+        return $this->find()
+                        ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                        ->all();
     }
 
 }

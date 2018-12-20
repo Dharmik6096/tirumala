@@ -1,4 +1,5 @@
 <?php
+
 /*
  *
  */
@@ -9,8 +10,8 @@ use yii;
 use yii\base\Component;
 
 class Operation extends Component {
-    
-    private $toEncrypt = ['bank_account_no', 'ifsc', 'pan_no', 'mobile_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no','dob'];
+
+    private $toEncrypt = ['bank_account_no', 'ifsc', 'pan_no', 'mobile_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'dob'];
 
     public function defaults($model, $flag) {
 
@@ -35,8 +36,8 @@ class Operation extends Component {
         $model->updated_at = date('Y-m-d H:i:s');
     }
 
-    public function history($model,&$historyModel,$operation,$sentbox=true){
-       
+    public function history($model, &$historyModel, $operation, $sentbox = true) {
+
         $data = $model->attributes;
         $historyModel->setAttributes($data);
         $result = array_intersect($this->toEncrypt, array_keys($historyModel->attributes));
@@ -44,8 +45,12 @@ class Operation extends Component {
             if ($historyModel->hasAttribute($value) && $historyModel->{$value} != '')
                 $historyModel[$value] = \Yii::$app->general->encryptData($historyModel[$value]);
         }
-        $historyModel->history_created_at = date('Y-m-d H:i:s');
-        $historyModel->operation_type=$operation;
+        if ($historyModel->hasAttribute('history_created_at')) {
+            $historyModel->history_created_at = date('Y-m-d H:i:s');
+        }
+        if ($historyModel->hasAttribute('operation_type')) {
+            $historyModel->operation_type = $operation;
+        }
     }
-     
+
 }

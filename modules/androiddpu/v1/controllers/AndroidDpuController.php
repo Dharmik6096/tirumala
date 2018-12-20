@@ -52,25 +52,35 @@ class AndroidDpuController extends RestController {
                     if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
                         $master = [];
                         $andoidIdModel = new TblAndroidInstallation();
-                        $andoidIdModel->android_installation_id = $andoidIdModel->getCode();
                         $andoidIdModel->organization_code = $data['organization_code'];
                         $andoidIdModel->organization_type = $data['organization_type'];
+                        $andoidIdModelData = $andoidIdModel->getData();
+                        if (!empty($andoidIdModelData)) {
+                            $andoidIdModel = $andoidIdModelData;
+                        } else {
+                            $andoidIdModel->android_installation_id = $andoidIdModel->getCode();
+                        }
                         $master[] = $andoidIdModel;
                         $andoidIdDetailModel = new TblAndroidInstallationDetails();
                         $andoidIdDetailModel->android_installation_id = $andoidIdModel->android_installation_id;
-                        $andoidIdDetailModel->mobile_no = $content['mobile_no'];
-                        $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
-                        $andoidIdDetailModel->otp_code = 1234;
-                        $andoidIdDetailModel->imei_no = $data['imei'];
-                        $andoidIdDetailModel->is_active = 0;
-                        $andoidIdDetailModel->is_expired = 0;
                         $andoidIdDetailModel->device_id = $data['device_id'];
-                        $master[] = $andoidIdDetailModel;
-                        $transaction = $this->generalModel->saveTransaction($master, ['app registration', 'create']);
-                        if ($transaction !== 'customRedirect') {
-                            return FALSE;
+                        $andoidIdDetailModel->imei_no = $data['imei'];
+                        $andoidIdDetailModel->mobile_no = $content['mobile_no'];
+                        $andoidIdDetailModelData = $andoidIdDetailModel->getActiveCount();
+                        if (!empty($andoidIdDetailModelData)) {
+                            $res_data['message'] = 'Mobile Number already registered.';
+                        } else {
+                            $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
+                            $andoidIdDetailModel->otp_code = 1234;
+                            $andoidIdDetailModel->is_active = 0;
+                            $andoidIdDetailModel->is_expired = 0;
+                            $master[] = $andoidIdDetailModel;
+                            $transaction = $this->generalModel->saveTransaction($master, ['app registration', 'create']);
+                            if ($transaction !== 'customRedirect') {
+                                return FALSE;
+                            }
+                            $res_data['token'] = $andoidIdDetailModel->hash_key;
                         }
-                        $res_data['token'] = $andoidIdDetailModel->hash_key;
                     }
                 }
             }

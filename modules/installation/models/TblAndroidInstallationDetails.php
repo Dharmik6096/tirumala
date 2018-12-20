@@ -84,7 +84,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         return $this->find()
                         ->select('tbl_android_installation_details.*')
                         ->joinWith(['androidInstallationCode'])
-                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
+                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0, 'tbl_android_installation_details.device_id' => $data['device_id']])
                         ->andWhere(['tbl_android_installation.organization_code' => $data['organization_code'], 'tbl_android_installation.organization_type' => $data['organization_type']])
                         ->one();
     }
@@ -93,9 +93,24 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         return $this->find()
                         ->select('tbl_android_installation_details.*')
                         ->joinWith(['androidInstallationCode'])
-                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
+                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0, 'tbl_android_installation_details.device_id' => $data['device_id']])
                         ->andWhere(['tbl_android_installation.organization_code' => $data['organization_code'], 'tbl_android_installation.organization_type' => $data['organization_type']])
                         ->count();
+    }
+
+    public function getActiveCount() {
+        return $this->find()
+                        ->where(['android_installation_id' => $this->android_installation_id, 'device_id' => $this->device_id, 'mobile_no' => $this->mobile_no, 'is_active' => 1])
+                        ->one();
+    }
+
+    public function getActiveDeviceData($dest_org_id, $dest_org_type) {
+        return $this->find()
+                        ->select('tbl_android_installation_details.device_id')
+                        ->joinWith(['androidInstallationCode'])
+                        ->where(['tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
+                        ->andWhere(['tbl_android_installation.organization_code' => $dest_org_id, 'tbl_android_installation.organization_type' => $dest_org_type])
+                        ->all();
     }
 
 }

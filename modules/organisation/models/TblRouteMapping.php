@@ -13,6 +13,7 @@ use yii\db\Expression;
 use \app\modules\globalmaster\models\TblUnitConversions;
 use app\modules\organisation\models\TblRouteMappingSources;
 use yii\helpers\ArrayHelper;
+use app\modules\syncutility\models\TblSentbox;
 
 //use app\modules\globalmaster\models\TblVehicleType;
 /**
@@ -45,6 +46,7 @@ use yii\helpers\ArrayHelper;
 class TblRouteMapping extends \app\models\ChildModel {
 
     public $unit;
+    public $is_sentbox;
 
     /**
      * @inheritdoc
@@ -64,7 +66,7 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['route_length_kms'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', 'Route Length Kms must be greater than 0.')],
             [['morning_end_time'], 'morningTimeValidate'],
             [['evening_end_time'], 'eveningTimeValidate'],
-            [['created_at', 'updated_at', 'unit', 'valid_from'], 'safe'],
+            [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             ['to_dest', 'compare', 'compareAttribute' => 'from_dest', 'operator' => '!=', 'message' => 'Source and destination can not be same'],
 //            [['route_name'], function ($attribute, $params) {
@@ -292,6 +294,49 @@ class TblRouteMapping extends \app\models\ChildModel {
         return $this->find()
                         ->where(['route_code' => $this->route_code])
                         ->one();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+        $sentbox = $this->sentboxModel();
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            if (!($sentbox->setSentbox($this, $flag))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
+    }
+
+    private function sentboxModel() {
+        $sentbox = new TblSentbox();
+        $type = '';
+        if ($this->to_type == 'bmc') {
+            $type = 'BMC';
+        } else if ($this->to_type == 'mcc') {
+            $type = 'MCC';
+        } else if ($this->to_type == 'plant') {
+            $type = 'PLANT';
+        }
+        $sentbox->dest_org_id = $this->to_dest;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function afterDelete() {
+        $type = '';
+        if ($this->to_type == 'bmc') {
+            $type = 'BMC';
+        } else if ($this->to_type == 'mcc') {
+            $type = 'MCC';
+        } else if ($this->to_type == 'plant') {
+            $type = 'PLANT';
+        }
+        $sentbox = $this->sentboxModel($type);
+        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+            if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            }
+        }
     }
 
 }

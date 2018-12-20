@@ -199,7 +199,7 @@ class SqliteCreate extends Component {
                     $insert_data = '';
                     $results = $this->android_db->query('PRAGMA table_info(' . $tableName . ')');
                     while ($row = $results->fetchArray()) {
-                        if (!in_array($row['name'], ['flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'x_col1', 'x_col2'])) {
+                        if (!in_array($row['name'], ['x_col1', 'x_col2', 'ex_col1', 'ex_col2'])) {
                             $tables_fields[] = $row['name'];
                         }
                     }

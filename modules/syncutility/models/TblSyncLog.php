@@ -5,7 +5,7 @@ namespace app\modules\syncutility\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_inbox".
+ * This is the model class for table "tbl_sync_log".
  *
  * @property string $uuid
  * @property string $sync_status
@@ -25,14 +25,15 @@ use Yii;
  * @property string $sync_timestamp
  * @property string $source_device_mac
  * @property string $version_no
+ * @property string $device_id
  */
-class TblInbox extends \yii\db\ActiveRecord {
+class TblSyncLog extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_inbox';
+        return 'tbl_sync_log';
     }
 
     /**
@@ -41,7 +42,7 @@ class TblInbox extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['uuid'], 'required'],
-            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no'], 'string'],
+            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'string'],
             [['sequence_no'], 'integer'],
             [['posting_timestamp', 'sync_timestamp'], 'safe'],
         ];
@@ -70,6 +71,7 @@ class TblInbox extends \yii\db\ActiveRecord {
             'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
             'source_device_mac' => Yii::t('app', 'Source Device Mac'),
             'version_no' => Yii::t('app', 'Version No'),
+            'device_id' => Yii::t('app', 'Device ID'),
         ];
     }
 

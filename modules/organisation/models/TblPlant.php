@@ -190,15 +190,6 @@ class TblPlant extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-//        $codes = [];
-//        if (!empty($this->dcsCode->tblSubCenters)) {
-//            $sub_center_codes = $this->dcsCode->tblSubCenters;
-//            $codes = ArrayHelper::map($sub_center_codes, 'sub_center_code', 'sub_center_code');
-//            $codes = array_values($codes);
-//        }
-//        $codes[] = $this->dcs_code;
-//        $count = 1;
-//        foreach ($codes as $code) {
         $sentbox = $this->sentboxModel();
         if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
             if (!($sentbox->setSentbox($this, $flag))) {
@@ -210,9 +201,7 @@ class TblPlant extends \app\models\ChildModel {
     private function sentboxModel() {
         $sentbox = new TblSentbox();
         $sentbox->dest_org_id = $this->plant_code;
-        if (Yii::$app->session->get('organizations_type') == 'UNION') {
-            $sentbox->dest_org_type = 'PLANT'; //($code == $this->dcs_code) ? 'DCS' : 'SUBCENTER';
-        }
+        $sentbox->dest_org_type = 'PLANT';
         return $sentbox;
     }
 

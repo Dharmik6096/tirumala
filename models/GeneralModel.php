@@ -404,7 +404,7 @@ class GeneralModel {
         if ($data) {
             foreach ($data as $row) {
                 $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
-                Yii::$app->operation->history($row, $modelMappingHistory, DELETE);
+                Yii::$app->operation->history($row, $modelMappingHistory, 'DELETE');
                 $flag[] = $modelMappingHistory->save();
                 //$row->is_delete = 1;
                 //$row->deleted_by = \Yii::$app->user->identity->user_code;
