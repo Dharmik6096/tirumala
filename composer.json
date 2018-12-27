@@ -40,7 +40,8 @@
         "jaspersoft/rest-client": "dev-master",
         "2amigos/yii2-multi-select-widget": "*",
         "softark/yii2-dual-listbox": "dev-master",
-        "linslin/yii2-curl": "*"
+        "linslin/yii2-curl": "*",
+        "kartik-v/yii2-tabs-x": "1.2.3"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

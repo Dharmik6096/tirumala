@@ -42,6 +42,7 @@ class TestingvillagequalitySearch extends Testingvillagequality {
      */
     public function search($params) {
         $query = Testingvillagequality::find();
+//        $query->select('test');
         $request = Yii::$app->request->queryParams;
         // add conditions that should always apply here
 
@@ -80,6 +81,7 @@ class TestingvillagequalitySearch extends Testingvillagequality {
         ]);
         $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->mccid])
                 ->andFilterWhere(['like', 'testingvillagequality.sampleno', $this->sampleno]);
+        $query->orderBy('dtdate desc');
         return $dataProvider;
     }
 

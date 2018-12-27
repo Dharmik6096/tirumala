@@ -213,6 +213,7 @@ $config = [
         'creamy' => ['class' => 'app\modules\creamy\modules',],
         'androiddpu' => ['class' => 'app\modules\androiddpu\Androiddpu',],
         'syncutility' => ['class' => 'app\modules\syncutility\SyncUtility',],
+        'configuration' => ['class' => 'app\modules\configuration\configuration',],
     ],
     'params' => $params,
 ];

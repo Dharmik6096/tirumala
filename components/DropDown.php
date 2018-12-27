@@ -533,6 +533,51 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['AMCS' => Yii::t('app', 'AMCS'), 'BMC' => Yii::t('app', 'BMC')],
             ],
+            'default_snf' => [
+                'name' => 'default_snf',
+                'prompt' => Yii::t('app', 'Select Default SNF'),
+                'data' => ['0' => Yii::t('app', 'No'), '1' => Yii::t('app', 'Yes')],
+            ],
+            'weight_setting' => [
+                'name' => 'weight_setting',
+                'prompt' => Yii::t('app', 'Select Weight'),
+                'data' => ['1' => Yii::t('app', 'Single Digit Truncate'), '2' => Yii::t('app', 'Double Digit Truncate'), '3' => Yii::t('app', 'Single Digit Round'), '4' => Yii::t('app', 'Double Digit Round')],
+            ],
+            'quality_setting' => [
+                'name' => 'x_col1',
+                'prompt' => Yii::t('app', 'Select Quality'),
+                'data' => ['1' => Yii::t('app', 'Round'), '2' => Yii::t('app', 'Truncate')],
+            ],
+            'collection_mode' => [
+                'name' => 'collection_mode',
+                'prompt' => Yii::t('app', 'Select Collection Mode'),
+                'data' => ['SINGLE_MACHINE' => Yii::t('app', 'SINGLE_MACHINE'), 'DUAL_BY_TYPE' => Yii::t('app', 'DUAL_BY_TYPE'), 'DUAL_SEQ' => Yii::t('app', 'DUAL_SEQ')],
+            ],
+            'qty_mode' => [
+                'name' => 'qty_mode',
+                'prompt' => Yii::t('app', 'Select Qty Mode'),
+                'data' => ['0' => Yii::t('app', 'Liter'), '1' => Yii::t('app', 'kg')],
+            ],
+            'based_on' => [
+                'name' => 'based_on',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Shift' => Yii::t('app', 'Shift'), 'Day' => Yii::t('app', 'Day'), 'Payment Cycle' => Yii::t('app', 'Payment Cycle')],
+            ],
+            'shift_type' => [
+                'name' => 'shift_type',
+                'prompt' => Yii::t('app', 'Select Shift'),
+                'data' => ['0' => Yii::t('app', 'All'), '1' => Yii::t('app', 'Morning/Evening')],
+            ],
+            'based_on_local' => [
+                'name' => 'based_on_local',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Day' => Yii::t('app', 'Day')],
+            ],
+            'disp_in' => [
+                'name' => 'disp_in',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'Can'), '2' => Yii::t('app', 'Tanker')],
+            ],
         ];
         return $records[$l];
     }

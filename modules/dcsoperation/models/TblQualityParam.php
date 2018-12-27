@@ -14,21 +14,19 @@ use Yii;
  * @property TblPurchaseRateBased[] $tblPurchaseRateBaseds
  * @property TblPurchaseRateBasedHistory[] $tblPurchaseRateBasedHistories
  */
-class TblQualityParam extends \yii\db\ActiveRecord
-{
+class TblQualityParam extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_quality_param';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['rate_chart'], 'boolean'],
             [['param'], 'string', 'max' => 25],
@@ -38,8 +36,7 @@ class TblQualityParam extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'param' => Yii::t('app', 'Param'),
@@ -50,16 +47,14 @@ class TblQualityParam extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblPurchaseRateBaseds()
-    {
+    public function getTblPurchaseRateBaseds() {
         return $this->hasMany(TblPurchaseRateBased::className(), ['quality_param_code' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblPurchaseRateBasedHistories()
-    {
+    public function getTblPurchaseRateBasedHistories() {
         return $this->hasMany(TblPurchaseRateBasedHistory::className(), ['quality_param_code' => 'id']);
     }
 
@@ -67,13 +62,17 @@ class TblQualityParam extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblQualityParamQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblQualityParamQuery(get_called_class());
     }
-    
-    public function getParams(){
-        return  \yii\helpers\ArrayHelper::map($this->find()->select('id,param')->all(),'id','param');
+
+    public function getParams() {
+        return \yii\helpers\ArrayHelper::map($this->find()->select('id,param')->all(), 'id', 'param');
     }
-    
+
+     public function getQualityParam(){
+        $data = \yii\helpers\ArrayHelper::map($this->find()->select(['id','param'])->all(),'id','param');
+        return $data;
+    }
+
 }

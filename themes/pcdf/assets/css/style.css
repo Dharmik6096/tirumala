@@ -69,7 +69,7 @@ ul{
     margin-top: 10px;
 }
 .mt25{
-    margin-top: 26px;
+    margin-top: 26px !important;
 }
 .mt35{
     margin-top: 35px;
@@ -2231,4 +2231,8 @@ div.crystalstyle{
 
 .div_height495 div.height_div {
     max-height: 495px !important;
+}
+
+.mt-8 {
+    margin-top: -8px !important
 }
