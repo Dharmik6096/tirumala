@@ -30,6 +30,8 @@ use DateTime;
 use stdClass;
 use SoapClient;
 use app\components\SearchFilter;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
 
 class GeneralFunctions extends Component {
 
@@ -962,6 +964,50 @@ class GeneralFunctions extends Component {
         Yii::$app->{$db}->dsn = \Yii::$app->general->PrepareDsn($connection);
         Yii::$app->{$db}->username = $connection->db_username;
         Yii::$app->{$db}->password = $connection->db_password;
+    }
+
+    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '') {
+        $sentboxArray = [];
+        $mcc = [];
+        $bmc = [];
+        if (!empty($plant_code)) {
+            $model = new TblMccPlant();
+            $model->plant_code = $plant_code;
+            $modelData = $model->getMccRecords();
+            $mcc = array_keys($modelData);
+        }
+        if (!empty($mcc_code)) {
+            $mcc[] = $mcc_code;
+        }
+        if (!empty($mcc)) {
+            $model = new TblDcsBmc();
+            $modelData = $model->getBmcRecords($mcc);
+            $bmc = array_keys($modelData);
+        }
+        if (!empty($bmc_code)) {
+            $bmc[] = $bmc_code;
+            $model = new TblDcsBmc();
+            $model->bmc_code = $bmc_code;
+            $modelData = $model->singleBmcData();
+            if (!empty($modelData)) {
+                $mcc[] = $modelData->mcc_code;
+            }
+        }
+        $mcc = array_unique($mcc);
+        foreach ($mcc as $key => $mccCode) {
+            $array = [];
+            $array['code'] = $mccCode;
+            $array['type'] = 'MCC';
+            $sentboxArray[] = $array;
+        }
+        $bmc = array_unique($bmc);
+        foreach ($bmc as $key => $bmcCode) {
+            $array = [];
+            $array['code'] = $bmcCode;
+            $array['type'] = 'BMC';
+            $sentboxArray[] = $array;
+        }
+        return $sentboxArray;
     }
 
 }

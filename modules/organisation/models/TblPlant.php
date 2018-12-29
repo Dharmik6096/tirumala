@@ -189,20 +189,38 @@ class TblPlant extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-        $sentbox = $this->sentboxModel();
-        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-            if (!($sentbox->setSentbox($this, $flag))) {
-                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes($this->plant_code, '', '');
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
             }
         }
     }
 
-    private function sentboxModel() {
+    private function sentboxModel($code, $type) {
         $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $this->plant_code;
-        $sentbox->dest_org_type = 'PLANT';
+        $sentbox->dest_org_id = $code;
+        $sentbox->dest_org_type = $type;
+        $sentbox->source_org_id = $this->union_code;
         return $sentbox;
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes($this->plant_code, '', '');
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
     }
 
 }

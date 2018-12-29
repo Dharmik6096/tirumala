@@ -15,6 +15,7 @@ use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblSubDistricts;
 use app\modules\general\models\TblBmcType;
 use yii\helpers\ArrayHelper;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_dcs_bmc".
@@ -45,6 +46,8 @@ use yii\helpers\ArrayHelper;
  */
 class TblDcsBmc extends \app\models\ChildModel {
 
+    public $is_sentbox;
+
     /**
      * @inheritdoc
      */
@@ -60,7 +63,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['bmc_name', 'union_code', 'hamlet_code', 'mcc_code'], 'required'],
             [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
             [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from'], 'safe'],
+            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
             Yii::$app->general->validateName($this, $attribute, $params);
@@ -283,6 +286,48 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function singleBmcData() {
         return $this->find()->where(['bmc_code' => $this->bmc_code])->one();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    public function getBmcRecords($mcc_code) {
+        $data = $this->find()
+                ->where(['mcc_code' => $mcc_code])
+                ->all();
+        return ArrayHelper::map($data, 'bmc_code', 'bmc_name');
     }
 
 }

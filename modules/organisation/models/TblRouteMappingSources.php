@@ -143,44 +143,44 @@ class TblRouteMappingSources extends \app\models\ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-        $type = '';
+        $sentboxArray = [];
         if ($this->to_type == 'bmc') {
-            $type = 'BMC';
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->to_dest);
         } else if ($this->to_type == 'mcc') {
-            $type = 'MCC';
-        } else if ($this->to_type == 'plant') {
-            $type = 'PLANT';
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->to_dest, '');
         }
-        $sentbox = $this->sentboxModel($type);
-        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-            if (!($sentbox->setSentbox($this, $flag))) {
-                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
             }
         }
     }
 
-    private function sentboxModel($type) {
+    private function sentboxModel($code, $type) {
         $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $this->to_dest;
+        $sentbox->dest_org_id = $code;
         $sentbox->source_org_id = Yii::$app->general->getforeignkey($this->societyCode, 'union_code');
         $sentbox->dest_org_type = $type;
         return $sentbox;
     }
 
     public function afterDelete() {
-        $type = '';
+        $sentboxArray = [];
         if ($this->to_type == 'bmc') {
-            $type = 'BMC';
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->to_dest);
         } else if ($this->to_type == 'mcc') {
-            $type = 'MCC';
-        } else if ($this->to_type == 'plant') {
-            $type = 'PLANT';
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->to_dest, '');
         }
-        $sentbox = $this->sentboxModel($type);
-        if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-            if (!($sentbox->setSentbox($this, 'DELETE'))) {
-                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
             }
         }
     }
