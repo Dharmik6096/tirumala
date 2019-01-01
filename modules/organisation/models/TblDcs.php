@@ -129,7 +129,7 @@ class TblDcs extends ChildModel {
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['registration_code'], 'string', 'max' => 20],
             [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
-            [['dcs_code_ex'], 'string', 'max' => 3, 'min' => '3', 'except' => ['saveCreamyData']],
+            [['dcs_code_ex'], 'string', 'max' => 6, 'min' => '3', 'except' => ['saveCreamyData']],
             [['gst_no'], 'string', 'max' => 15],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['ifsc', 'pan_no'], 'trim'],
