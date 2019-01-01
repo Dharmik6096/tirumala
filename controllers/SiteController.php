@@ -45,10 +45,12 @@ use app\models\CollectionFarmerCreamy;
 use yii\data\ArrayDataProvider;
 use app\modules\creamy\models\TblDcsPortalCreamy;
 use app\models\TblDbConfig;
+use app\modules\syncutility\models\TblInbox;
+use app\models\GeneralModel;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data'];
 
     public function init() {
         parent::init();
@@ -1566,6 +1568,42 @@ class SiteController extends Controller {
             ]);
         }
         return $this->renderAjax('_chart_to_table', ['result' => $results, 'dataProvider' => $dataProvider, 'model' => $model, 'title' => $title, 'popup' => $popup]);
+    }
+
+    public function actionParseInboxData() {
+        try {
+            $model = new TblInbox();
+            $modelData = $model->getData();
+            $childModel = [];
+
+            if (!empty($modelData)) {
+                $master = [];
+                $childModel = [];
+                foreach ($modelData as $transaction_data) {
+                    $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
+                    $model_name = Yii::$app->path->define($model_name);
+                    $model = new $model_name();
+                    $json = $transaction_data->json_text;
+                    $json = (array) json_decode($json);
+                    $json = Yii::$app->general->camelCaseToUnderscore($json);
+                    $model->setAttributes($json);
+                    if ($model->validate()) {
+                        if (isset($transaction_data->operation) && $transaction_data->operation == 'UPDATE') {
+                            
+                        }
+                        $generalModel = new GeneralModel();
+                        $ids = $json['uuid'];
+//                        echo $ids;die;
+//                        $record = $generalModel->deleteMapping(['TblInbox', 'TblSyncLog'], 'uuid', $ids);
+//                        if ($record == true) {
+                        $transaction = $generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
+//                        }
+                    }
+                }
+            }
+        } catch (yii\base\Exception $e) {
+            var_dump($e);
+        }
     }
 
 }
