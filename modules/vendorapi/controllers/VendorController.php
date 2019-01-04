@@ -48,6 +48,9 @@ class VendorController extends RestController {
                 foreach ($params as $key => $value) {
                     $param = explode(':', $value);
                     if ($key != $param[0]) {
+                        if (!empty($model_data[$key])) {
+                            $model_data[$key] = substr($model_data[$key], 0, 1) == '"' && substr($model_data[$key], -1, 1) == '"' ? substr($model_data[$key], 1, -1) : $model_data[$key];
+                        }
                         $model_data[$param[0]] = isset($model_data[$key]) ? $model_data[$key] : NULL;
                     }
                     if (isset($param[1]) && $param[1] == 'date') {
@@ -65,6 +68,8 @@ class VendorController extends RestController {
                 $model->parent_code = (string) $model->parent_code;
                 $model->created_at = date('Y-m-d H:i:s');
                 $model->created_by = $data['union_code'];
+                $model->master_code = !empty($model->master_code) ? (string) $model->master_code : NULL;
+                $model->bank_account_no = !empty($model->bank_account_no) ? (string) $model->bank_account_no : NULL;
                 $res = [];
                 if ($model->validate() && $model->save()) {
                     $success_codes[] = $model->master_code;

@@ -88,7 +88,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['mobile_no'], 'string', 'max' => 13],
             [['master_name', 'master_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'email'], 'string', 'max' => 255, 'on' => 'route_master'],
             [['parent_code', 'master_code', 'master_name', 'date_1'], 'required', 'on' => 'mcc_master'],
-            [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'vlcc_master'],
+            [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'bank_account_no', 'ifsc'], 'required', 'on' => 'vlcc_master'],
             [['parent_code', 'master_code', 'date_1', 'date_2'], 'required', 'on' => 'route_vlcc'],
             [['parent_code'], 'validateRouteCode', 'on' => 'route_vlcc'],
             [['master_code'], 'validateVlccCode', 'on' => 'route_vlcc'],
@@ -177,7 +177,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
         $model->mcc_plant_code = $this->union_code . $this->parent_code;
         $modelData = $model->getData();
         if (empty($modelData)) {
-            $this->addError($attribute, Yii::t('app', 'Please enter valid Parent Code.'));
+//            $this->addError($attribute, Yii::t('app', 'Please enter valid Parent Code.'));
         }
     }
 
