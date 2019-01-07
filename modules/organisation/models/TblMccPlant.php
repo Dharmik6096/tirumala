@@ -308,9 +308,9 @@ class TblMccPlant extends \app\models\ChildModel {
         }
     }
 
-    public function getMccRecords() {
+    public function getMccRecords($plant = []) {
         $data = $this->find()
-                ->where(['plant_code' => $this->plant_code])
+                ->where(['plant_code' => $plant])
                 ->all();
         return ArrayHelper::map($data, 'mcc_plant_code', 'name');
     }

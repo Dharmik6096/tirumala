@@ -136,6 +136,7 @@ class AndroidDpuController extends RestController {
                 $bmc_code = [];
                 $mcc_code = [];
                 $plant_code = [];
+                $union_code = '';
                 if ($type == 'AMCS') {
                     $model = new TblDcs();
                     $model->dcs_code = $code;
@@ -143,6 +144,7 @@ class AndroidDpuController extends RestController {
                     $dcs_code[] = $code;
                     $model_data = $model->getData();
                     if (!empty($model_data)) {
+                        $union_code = $model_data->union_code;
                         $bmc_code[] = $model_data->bmc_code;
                         $mcc_code[] = Yii::$app->general->getforeignkey($model_data->bmcCode, 'mcc_code');
                         $plant_code[] = Yii::$app->general->getmultiforeignkey($model_data->bmcCode, ['tblMccPlant'], 'plant_code');
@@ -154,6 +156,7 @@ class AndroidDpuController extends RestController {
                     $bmc_code[] = $code;
                     $model_data = $model->singleBmcData();
                     if (!empty($model_data)) {
+                        $union_code = $model_data->union_code;
                         $mcc_code[] = $model_data->mcc_code;
                         $plant_code[] = Yii::$app->general->getforeignkey($model_data->tblMccPlant, 'plant_code');
                     }
@@ -168,6 +171,7 @@ class AndroidDpuController extends RestController {
                     $mcc_code[] = $code;
                     $model_data = $model->getData();
                     if (!empty($model_data)) {
+                        $union_code = $model_data->union_code;
                         $plant_code[] = $model_data->plant_code;
                     }
                     $bmcCodes = $model->bmcCodes;
@@ -206,7 +210,7 @@ class AndroidDpuController extends RestController {
                         $mcc_code = !empty($mcc_code) ? '\'' . $mcc_code . '\'' : $mcc_code;
                         $plant_code = implode('\',\'', $plant_code);
                         $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
-                        \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_code, $plant_code, $code, $type);
+                        \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_code, $plant_code, $code, $type, $union_code);
                         $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
                     }
                 }

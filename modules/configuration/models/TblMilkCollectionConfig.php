@@ -4,6 +4,7 @@ namespace app\modules\configuration\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_milk_collection_config".
@@ -69,7 +70,7 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
             [['can_per_ltr', 'default_snf', 'collection_mode', 'weight_setting', 'collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'based_on', 'based_on_disp', 'based_on_local_sale', 'shift_code', 'shift_code_disp', 'quality_setting'], 'required'],
             [['collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'shift_code', 'shift_code_disp', 'weight_setting'], 'integer'],
             [['variation_in_fat_block', 'variation_in_qty_block', 'variation_in_snf_block'], 'boolean'],
-            [['created_at', 'updated_at', 'quality_setting', 'accept_milk', 'multi_entry_diff_milk_type', 'multi_entry_same_milk_type', 'seperate_can', 'no_disp_local_sale', 'no', 'no_disp'], 'safe'],
+            [['created_at', 'updated_at', 'quality_setting', 'accept_milk', 'multi_entry_diff_milk_type', 'multi_entry_same_milk_type', 'seperate_can', 'no_disp_local_sale', 'no', 'no_disp', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
             [['union_code'], 'string', 'max' => 3],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             [['can_warning_per', 'ltr_to_kg', 'default_snf_value', 'lr1_for_clr', 'lr2_for_clr', 'sample_milk_size', 'variation_in_fat', 'variation_in_qty', 'variation_in_snf', 'per_local_sale'], 'double', 'min' => 0],
@@ -79,8 +80,7 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
             [['based_on', 'based_on_disp'], 'string', 'max' => 255],
             [['based_on_local_sale'], 'string', 'max' => 45],
             [['default_snf_value'], 'validateSnf'],
-            [['union_code'], 'configMilkCollection','skipOnEmpty' => false, 'on' => 'milkCollection'],
-            
+            [['union_code'], 'configMilkCollection', 'skipOnEmpty' => false, 'on' => 'milkCollection'],
         ];
     }
 
@@ -154,6 +154,28 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
         if (empty($this->union_code)) {
             $this->addError('can_per_ltr', 'Something went wrong');
         }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->dest_org_type = $type;
+        $sentbox->source_org_id = $this->union_code;
+        return $sentbox;
     }
 
 }

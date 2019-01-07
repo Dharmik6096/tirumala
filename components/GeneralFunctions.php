@@ -32,6 +32,7 @@ use SoapClient;
 use app\components\SearchFilter;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblPlant;
 
 class GeneralFunctions extends Component {
 
@@ -966,16 +967,33 @@ class GeneralFunctions extends Component {
         Yii::$app->{$db}->password = $connection->db_password;
     }
 
-    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '') {
+    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '') {
         $sentboxArray = [];
         $mcc = [];
         $bmc = [];
+        $plants = [];
+        $plant = [];
+
+        if (!empty($union_code)) {
+            $model = new TblPlant();
+            $model->union_code = $union_code;
+            $modelData = $model->getPlantRecords();
+            $plants = array_keys($modelData);
+        }
         if (!empty($plant_code)) {
+            $plants[] = $plant_code;
+        }
+        if (!empty($plants)) {
+            foreach ($plants as $pl) {
+                $plant[] = (string) $pl;
+            }
+        }
+        if (!empty($plant)) {
             $model = new TblMccPlant();
-            $model->plant_code = $plant_code;
-            $modelData = $model->getMccRecords();
+            $modelData = $model->getMccRecords($plant);
             $mcc = array_keys($modelData);
         }
+
         if (!empty($mcc_code)) {
             $mcc[] = $mcc_code;
         }
@@ -1008,6 +1026,25 @@ class GeneralFunctions extends Component {
             $sentboxArray[] = $array;
         }
         return $sentboxArray;
+    }
+
+    public function &camelCaseToUnderscore(&$post_data) {
+        if (is_array($post_data)) {
+            $post_data = array_combine(array_map(function($str) {
+                        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                    }, array_keys($post_data)), array_values($post_data));
+            foreach ($post_data as $key => $val) {
+                if (is_array($post_data[$key])) {
+                    $arr1 = array_combine(array_map(function($str) {
+                                return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                            }, array_keys($post_data[$key])), array_values($post_data[$key]));
+                    $post_data[$key] = $arr1;
+                    $this->camelCaseToUnderscore($post_data[$key]);
+                }
+            }
+            return $post_data;
+        }
+        return $post_data;
     }
 
 }

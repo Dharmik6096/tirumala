@@ -183,7 +183,7 @@ class SqliteCreate extends Component {
         }
     }
 
-    public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type) {
+    public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type, $union_code = '') {
         try {
             $sqls = 'SELECT *  FROM tbl_table_list';
             $cmd = Yii::$app->db->createCommand($sqls);
@@ -228,8 +228,10 @@ class SqliteCreate extends Component {
                             $where = $mcc_code;
                         } else if ($field['key_field'] == 'plant_code') {
                             $where = $plant_code;
+                        } else if ($field['key_field'] == 'union_code') {
+                            $where = $union_code;
                         }
-//                        $where = ($field['key_field'] == 'dcs_code') ? $dcs_code : $bmc_code;
+                        
                         $tableName = $field['table_name'];
                         if ($field['key_field'] == NULL) {
                             $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
@@ -544,7 +546,7 @@ class SqliteCreate extends Component {
 
     //use for Android
 //    public function createSqlFileDcs($fileName, $dcs_code, $language_code, $user_code, $organization_code, $language_locale, $sub_center_code) {
-    public function createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type) {
+    public function createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type, $union_code = '') {
         set_time_limit(5400);
         $this->android_db = new SQLite3('installation-identity/' . $fileName);
         $this->db_name = $org_code;
@@ -557,7 +559,7 @@ class SqliteCreate extends Component {
         $this->file_name = Yii::$app->basePath . '/installation-identity/error';
         $this->fp = fopen($this->file_name, 'w+');
 //        foreach ($tables as $tableName) {
-        $this->getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type);
+        $this->getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type, $union_code);
 //        }
 //        $this->AddAttachmentDB($dcs_code, $language_code);
     }

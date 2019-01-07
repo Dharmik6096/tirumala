@@ -4,6 +4,7 @@ namespace app\modules\configuration\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_dcs_general_config".
@@ -65,7 +66,7 @@ class TblDcsGeneralConfig extends \app\models\ChildModel {
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             [['allow_multiple_voters', 'backup_per_shift', 'election_alert_day', 'election_term', 'is_backup_user_choice', 'is_backup_on_closing', 'is_backup_disbursement', 'max_share_buy', 'min_share_req', 'nos_of_reminders', 'purchase_rate_with_tax', 'sale_rate_with_tax', 'share_issued', 'milk_dispatch_in', 'headload_km', 'milk_dispatch_quantity_mode', 'milk_receipt_quantity_mode'], 'integer'],
             [['backup_path', 'created_by', 'updated_by', 'union_code', 'product_sale_in_cash', 'share_amount_editable', 'product_billing', 'billing_zero_amount_auto'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
             [['union_code'], 'configShares', 'skipOnEmpty' => false, 'on' => 'shares'],
             [['union_code'], 'configBackup', 'skipOnEmpty' => false, 'on' => 'backup'],
             [['union_code'], 'configElection', 'skipOnEmpty' => false, 'on' => 'electionConfig'],
@@ -150,6 +151,28 @@ class TblDcsGeneralConfig extends \app\models\ChildModel {
         if (empty($this->union_code)) {
             $this->addError('milk_dispatch_in', 'Something went wrong');
         }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->dest_org_type = $type;
+        $sentbox->source_org_id = $this->union_code;
+        return $sentbox;
     }
 
 }

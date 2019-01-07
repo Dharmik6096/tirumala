@@ -223,4 +223,11 @@ class TblPlant extends \app\models\ChildModel {
         }
     }
 
+    public function getPlantRecords() {
+        $data = $this->find()
+                ->where(['union_code' => $this->union_code])
+                ->all();
+        return ArrayHelper::map($data, function($data){ return (string) $data->plant_code; }, 'name');
+    }
+
 }
