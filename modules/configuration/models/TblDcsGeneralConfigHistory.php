@@ -57,10 +57,10 @@ class TblDcsGeneralConfigHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['code', 'allow_multiple_voters', 'backup_per_shift', 'election_alert_day', 'election_term', 'is_backup_user_choice', 'is_backup_on_closing', 'is_backup_disbursement', 'max_share_buy', 'min_share_req', 'nos_of_reminders', 'purchase_rate_with_tax', 'sale_rate_with_tax', 'share_issued', 'milk_dispatch_in', 'headload_km', 'milk_dispatch_quantity_mode', 'milk_receipt_quantity_mode'], 'integer'],
-            [['backup_path', 'created_by', 'updated_by', 'union_code', 'product_sale_in_cash', 'share_amount_editable', 'product_billing', 'billing_zero_amount_auto', 'operation_type', 'history_created_by'], 'string'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['share_unit_cost'], 'number'],
+            [['code', 'allow_multiple_voters', 'backup_per_shift', 'election_alert_day', 'election_term', 'is_backup_user_choice', 'is_backup_on_closing', 'is_backup_disbursement', 'max_share_buy', 'min_share_req', 'nos_of_reminders', 'purchase_rate_with_tax', 'sale_rate_with_tax', 'share_issued', 'milk_dispatch_in', 'headload_km', 'milk_dispatch_quantity_mode', 'milk_receipt_quantity_mode'], 'safe'],
+            [['backup_path', 'created_by', 'updated_by', 'union_code', 'product_sale_in_cash', 'share_amount_editable', 'product_billing', 'billing_zero_amount_auto', 'operation_type', 'history_created_by'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
+            [['share_unit_cost'], 'safe'],
         ];
     }
 
