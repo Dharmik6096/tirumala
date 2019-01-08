@@ -45,14 +45,15 @@ class Grid extends Widget {
 
         $module = Yii::$app->controller->module->id;
         if (isset($searchModel->tableSchema->primaryKey[0]) && !($dataProvider instanceof yii\data\ArrayDataProvider)) {
-            $primary = $searchModel->tableSchema->primaryKey[0];
+            $primary = $searchModel->tableSchema->primaryKey;
+            $sort = [];
+            $sort_type = in_array($module, ['geo', 'organisation', 'globalmaster']) ? SORT_ASC : SORT_DESC;
+            foreach ($primary as $prm) {
+                $sort[$prm] = $sort_type;
+            }
             $select_array = $dataProvider->query->select;
-            if (!empty($primary) && (empty($select_array) || in_array($primary, $select_array))) {
-                if (in_array($module, ['geo', 'organisation', 'globalmaster'])) {
-                    $dataProvider->sort = ['defaultOrder' => [$primary => SORT_ASC]];
-                } else {
-                    $dataProvider->sort = ['defaultOrder' => [$primary => SORT_DESC]];
-                }
+            if (!empty($primary) && (empty($select_array) || in_array($primary[0], $select_array))) {
+                $dataProvider->sort = ['defaultOrder' => $sort];
             }
         }
         $refresh_action = \Yii::$app->request->url;
