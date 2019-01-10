@@ -28,6 +28,7 @@ use Yii;
  * @property string $flg_sentbox_entry
  * @property string $sync_status
  * @property string $sync_timestamp
+ * @property string $device_id
  */
 class TblQualityCollection extends \app\models\ChildModel {
 
@@ -46,7 +47,7 @@ class TblQualityCollection extends \app\models\ChildModel {
             [['uuid'], 'required'],
             [['uuid', 'shift_code', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'string'],
             [['sample_no', 'retest_count'], 'integer'],
-            [['collection_date', 'quality_datetime', 'created_at', 'updated_at', 'sync_timestamp'], 'safe'],
+            [['collection_date', 'quality_datetime', 'created_at', 'updated_at', 'sync_timestamp', 'device_id'], 'safe'],
             [['fat', 'snf', 'clr', 'water'], 'number'],
         ];
     }

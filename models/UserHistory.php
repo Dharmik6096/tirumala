@@ -37,23 +37,21 @@ use Yii;
  * @property string $history_created_at
  * @property string $operation_type
  */
-class UserHistory extends \yii\db\ActiveRecord
-{
+class UserHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'user_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['created_at', 'deleted_at', 'updated_at', 'history_created_at','id','mobile_no','alert_recipient_group_id'], 'safe'],
+            [['created_at', 'deleted_at', 'updated_at', 'history_created_at', 'id', 'mobile_no', 'alert_recipient_group_id', 'device_id'], 'safe'],
             [['email_confirmed', 'is_active', 'is_delete', 'status', 'superadmin', 'user_type_id'], 'integer'],
             [['user_history_id', 'user_code', 'created_by', 'deleted_by', 'updated_by'], 'string', 'max' => 14],
             [['auth_key'], 'string', 'max' => 50],
@@ -68,8 +66,7 @@ class UserHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'user_history_id' => Yii::t('app', 'User ID'),
@@ -82,7 +79,7 @@ class UserHistory extends \yii\db\ActiveRecord
             'email_confirmed' => Yii::t('app', 'Email Confirmed'),
             'is_active' => Yii::t('app', 'Is Active'),
             'is_delete' => Yii::t('app', 'Is Delete'),
-            'mobile_no'          => Yii::t('app', 'Mobile No'),
+            'mobile_no' => Yii::t('app', 'Mobile No'),
             'alert_recipient_group_id' => Yii::t('app', 'alert_recipient_group_id'),
             'name' => Yii::t('app', 'Name'),
             'password_hash' => Yii::t('app', 'Password Hash'),
@@ -107,8 +104,8 @@ class UserHistory extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return UserHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new UserHistoryQuery(get_called_class());
     }
+
 }
