@@ -281,7 +281,7 @@ class TblDcs extends ChildModel {
             }
 
             public function getCode() {
-                return (strlen($this->tmcc_code) <= 10 && (in_array($this->union_code, ['001', '002']))) ? '00' . $this->tmcc_code : $this->tmcc_code;
+                return $this->tmcc_code;
                 //'00' . $this->tmcc_code;
 //                return $this->district_code . $this->village_code . $this->dcs_code_ex;
 //                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
