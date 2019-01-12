@@ -15,26 +15,29 @@ class PostDataController extends \yii\web\Controller {
         foreach ($data as $key => $value) {
             $key = $value['key'];
             $sp_name = $value['sp_name'];
+            $json_array_key = $value['json_array_key'];
             $sp_param = [];
             $sp_param[] = '004';
             $sp_param[] = '2018-05-24';
             $sp_param[] = '2018-05-26';
-            //$output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            $body['milkcollection'][] = ['uuid' => '004fdcee-58c7-4ef9-bc53-6c7992240676',
-            'transaction_date' => '19.09.2018',
-            'shift' => 'M',
-            'mcc_code' => '1016',
-            'vlcc_code' => '0010160121',
-            'farmer_code' => '0001',
-            'milk_type' => 'C',
-            'qty' => '15.00',
-            'fat' => '5.5',
-            'snf' => '6.5',
-            'water' => '0.0',
-            'rtpl' => '20.00',
-            'amount' => '300.00',
-            'sampletime' => '19.09.2018 17:29:00',
-            'autoflag' => '1'];	
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $body[$json_array_key] = $output;
+            $body = json_encode($body);
+//            $body['milkcollection'][] = ['uuid' => '004fdcee-58c7-4ef9-bc53-6c7992240676',
+//            'transaction_date' => '19.09.2018',
+//            'shift' => 'M',
+//            'mcc_code' => '1016',
+//            'vlcc_code' => '0010160121',
+//            'farmer_code' => '0001',
+//            'milk_type' => 'C',
+//            'qty' => '15.00',
+//            'fat' => '5.5',
+//            'snf' => '6.5',
+//            'water' => '0.0',
+//            'rtpl' => '20.00',
+//            'amount' => '300.00',
+//            'sampletime' => '19.09.2018 17:29:00',
+//            'autoflag' => '1'];	
             $api = new WebApi();
             $api->serverUrl = Yii::$app->params['namaste_collection_url'] . $key;
             $api->authentication = FALSE;
@@ -53,15 +56,18 @@ class PostDataController extends \yii\web\Controller {
         $data = [
             'milkCollection' => [
                 'key' => 'MilkCollectionData',
-                'sp_name' => 'sp_vendor_milk_coll_data'
+                'sp_name' => 'sp_vendor_milk_coll_data',
+                'json_array_key' => 'milkcollection'
             ],
             'bmcCollection' => [
                 'key' => 'MCCMilkCollection',
-                'sp_name' => 'sp_vendor_bmc_coll_data'
+                'sp_name' => 'sp_vendor_bmc_coll_data',
+                'json_array_key' => 'mccmilkcollection'
             ],
             'member' => [
                 'key' => 'ProducerMaster',
-                'sp_name' => 'sp_vendor_member_data'
+                'sp_name' => 'sp_vendor_member_data',
+                'json_array_key' => 'producermaster'
             ]
         ];
         return $data;

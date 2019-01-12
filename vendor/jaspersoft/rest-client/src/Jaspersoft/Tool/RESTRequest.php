@@ -34,7 +34,7 @@ class RESTRequest
 		$this->response_body	= null;
 		$this->response_info	= null;
 		$this->file_to_upload	= array();
-        $this->curl_timeout     = 30;
+        $this->curl_timeout     = 1000;
         $this->curl_handle      = curl_init();
         $this->curl_cookiejar   = null;
 
