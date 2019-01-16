@@ -67,7 +67,7 @@ class TblMilkCollectionConfigHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['code', 'accept_milk', 'can_per_ltr', 'collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'default_snf', 'from_machine_clr', 'no_disp_local_sale', 'per_local_sale', 'input_clr', 'multi_entry_diff_milk_type', 'multi_entry_same_milk_type', 'no', 'no_disp', 'seperate_can', 'shift_code', 'shift_code_disp', 'variation_in_fat_block', 'variation_in_qty_block', 'variation_in_snf_block', 'weight_setting'], 'safe'],
+            [['code', 'accept_milk', 'can_per_ltr', 'collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'default_snf', 'from_machine_clr', 'no_disp_local_sale', 'per_local_sale', 'input_clr', 'multi_entry_diff_milk_type', 'multi_entry_same_milk_type', 'no', 'no_disp', 'seperate_can', 'shift_code', 'shift_code_disp', 'variation_in_fat_block', 'variation_in_qty_block', 'variation_in_snf_block', 'weight_setting', 'quality_setting', 'dispatch_setting'], 'safe'],
             [['based_on', 'based_on_disp', 'collection_mode', 'created_by', 'based_on_local_sale', 'updated_by', 'union_code', 'operation_type', 'history_created_by'], 'safe'],
             [['can_warning_per', 'default_snf_value', 'lr1_for_clr', 'lr2_for_clr', 'ltr_to_kg', 'sample_milk_size', 'variation_in_fat', 'variation_in_qty', 'variation_in_snf'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],

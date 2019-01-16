@@ -1592,7 +1592,7 @@ class SiteController extends Controller {
                             
                         }
                         $generalModel = new GeneralModel();
-                        $ids = $json['uuid'];
+                        $ids = $transaction_data['uuid'];
 //                        echo $ids;die;
 //                        $record = $generalModel->deleteMapping(['TblInbox', 'TblSyncLog'], 'uuid', $ids);
 //                        if ($record == true) {

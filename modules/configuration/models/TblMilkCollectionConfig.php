@@ -50,6 +50,8 @@ use app\modules\syncutility\models\TblSentbox;
  * @property integer $variation_in_snf_block
  * @property string $union_code
  * @property integer $weight_setting
+ * @property integer $quality_setting
+ * @property integer $dispatch_setting
  *
  * @property TblUnions $unionCode
  */
@@ -67,7 +69,7 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['can_per_ltr', 'default_snf', 'collection_mode', 'weight_setting', 'collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'based_on', 'based_on_disp', 'based_on_local_sale', 'shift_code', 'shift_code_disp', 'quality_setting'], 'required'],
+            [['can_per_ltr', 'default_snf', 'collection_mode', 'weight_setting', 'collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'based_on', 'based_on_disp', 'based_on_local_sale', 'shift_code', 'shift_code_disp', 'quality_setting', 'dispatch_setting'], 'required'],
             [['collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'shift_code', 'shift_code_disp', 'weight_setting'], 'integer'],
             [['variation_in_fat_block', 'variation_in_qty_block', 'variation_in_snf_block'], 'boolean'],
             [['created_at', 'updated_at', 'quality_setting', 'accept_milk', 'multi_entry_diff_milk_type', 'multi_entry_same_milk_type', 'seperate_can', 'no_disp_local_sale', 'no', 'no_disp', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
@@ -130,6 +132,8 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
             'variation_in_snf_block' => Yii::t('app', 'Block If Exceed'),
             'union_code' => Yii::t('app', 'Union Code'),
             'weight_setting' => Yii::t('app', 'Weight Setting:'),
+            'quality_setting' => Yii::t('app', 'Quality Setting:'),
+            'dispatch_setting' => Yii::t('app', 'Dispatch Setting:'),
         ];
     }
 

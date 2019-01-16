@@ -12,7 +12,7 @@ class Path extends Component {
 
     private $config = [
         '\\app\models\\' =>
-        ['TblDpuCalibration', 'TblDpuCalibrationSearch'],
+        ['TblDpuCalibration', 'TblDpuCalibrationSearch', 'TblUserAndroid', 'TblUserProfile'],
         '\\app\modules\collection\models\\' =>
         ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale', 'TblDpuShiftEndSummary', 'TblMASerialNo', 'TblQualityCollection', 'TblWeightCollection'],
         '\\app\modules\geo\models\\' =>

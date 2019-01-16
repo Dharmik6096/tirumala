@@ -65,6 +65,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'variation_in_snf', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
 
             <?= $form->field($model, 'variation_in_snf_block', ['options' => ['class' => 'form-group col-sm-2 mt25'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('dispatch_setting', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('dispatch_setting'), false, 'dispatch_setting', false); ?>
             <div class='clearfix'></div>
             <?= $form->field($model, 'sample_milk_size', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
 

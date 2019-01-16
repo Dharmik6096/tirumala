@@ -578,6 +578,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => Yii::t('app', 'Can'), '2' => Yii::t('app', 'Tanker')],
             ],
+            'dispatch_setting' => [
+                'name' => 'dispatch_setting',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'Auto Shift Lock'), '2' => Yii::t('app', 'Manual Shift Lock'), '3' => Yii::t('app', 'On Dispatch Shift Lock')],
+            ],
         ];
         return $records[$l];
     }
