@@ -1593,11 +1593,10 @@ class SiteController extends Controller {
                         }
                         $generalModel = new GeneralModel();
                         $ids = $transaction_data['uuid'];
-//                        echo $ids;die;
-//                        $record = $generalModel->deleteMapping(['TblInbox', 'TblSyncLog'], 'uuid', $ids);
-//                        if ($record == true) {
-                        $transaction = $generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
-//                        }
+                        $record = $generalModel->deleteMapping(['TblInbox', 'TblSyncLog'], 'uuid', $ids);
+                        if ($record == true) {
+                            $transaction = $generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
+                        }
                     }
                 }
             }

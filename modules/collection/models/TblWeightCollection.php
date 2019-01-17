@@ -36,6 +36,8 @@ use Yii;
  * @property string $device_id
  * @property string $converted_quantity_mode
  * @property string $converted_quantity
+ * @property integer $doc_no
+ * @property integer $auto_flag
  */
 class TblWeightCollection extends \app\models\ChildModel {
 
@@ -52,7 +54,7 @@ class TblWeightCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['uuid'], 'required'],
-            [['uuid', 'producer_flag', 'shift_code', 'fault_flag', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'route_code', 'dcs_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'device_id', 'converted_quantity_mode', 'converted_quantity'], 'safe'],
+            [['uuid', 'producer_flag', 'shift_code', 'fault_flag', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'route_code', 'dcs_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'device_id', 'converted_quantity_mode', 'converted_quantity', 'auto_flag', 'doc_no'], 'safe'],
             [['sample_no', 'milk_type', 'milk_quality_type', 'quantity_mode', 'rejected_can'], 'safe'],
             [['collection_date', 'created_at', 'updated_at', 'sync_timestamp'], 'safe'],
             [['quantity', 'cans', 'rejected_quantity'], 'safe'],
