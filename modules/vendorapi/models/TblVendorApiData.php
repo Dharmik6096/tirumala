@@ -85,7 +85,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['master_code'], 'string', 'max' => 8, 'on' => 'route_master'],
             [['parent_code'], 'string', 'max' => 4, 'on' => 'route_master'],
             //[['mobile_no'], 'number', 'on' => 'route_master'],
-            [['mobile_no'], 'string', 'max' => 13],
+            [['mobile_no'], 'string', 'max' => 50],
             [['master_name', 'master_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'email'], 'string', 'max' => 255, 'on' => 'route_master'],
             [['parent_code', 'master_code', 'master_name', 'date_1'], 'required', 'on' => 'mcc_master'],
             [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'bank_account_no', 'ifsc'], 'required', 'on' => 'vlcc_master'],
