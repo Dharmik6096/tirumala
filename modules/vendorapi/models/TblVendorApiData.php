@@ -106,6 +106,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['from_fat', 'to_fat'], 'fatRangeValidate', 'on' => 'rate_master'],
             [['from_snf', 'to_snf'], 'snfRangeValidate', 'on' => 'rate_master'],
             [['from_fat', 'to_fat', 'from_snf', 'to_snf', 'fat_price', 'snf_price'], 'number', 'min' => 0, 'on' => 'rate_master'],
+            [['hamlet_code'], 'validateHamlet', 'on' => 'vlcc_master']
         ];
     }
 
@@ -204,6 +205,16 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             if ($this->from_snf > $this->to_snf) {
                 $this->addError($attribute, Yii::t('app', 'End range can not be less than Start range.'));
             }
+        }
+    }
+
+    public function validateHamlet($attribute, $params) {
+        if (!empty($this->hamlet_code) && !preg_match('/^[0-9]*$/', $this->hamlet_code)) {
+            $mccCode = $this->union_code . $this->parent_code;
+            $mccModel = new TblMccPlant();
+            $mccModel->mcc_plant_code = $mccCode;
+            $mccData = $mccModel->getData();
+            $this->hamlet_code = !empty($mccData->hamlet_code) ? $mccData->hamlet_code : '';
         }
     }
 
