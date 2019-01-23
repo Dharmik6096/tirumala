@@ -137,6 +137,7 @@ class Vendorapi extends \yii\base\Module {
                 'snf_price' => 'snf_price',
                 'valid_from_date' => 'date_1:date',
                 'valid_end_date' => 'date_2:date',
+                'approve' => 'type_2',
                 'scenario' => 'scenario',
                 'json_key' => 'MT_Rate_Master_IB',
                 'content_json_key' => 'rate_master',
