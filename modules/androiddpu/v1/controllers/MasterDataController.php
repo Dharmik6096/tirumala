@@ -57,7 +57,7 @@ class MasterDataController extends RestController {
         if (!empty($data['content'])) {
             foreach ($data['content'] as $transaction_data) {
                 $request = new HttpRequest();
-                $request->camelCaseToUnderscore($transaction_data);
+                $transaction_data = $request->camelCaseToUnderscore($transaction_data);
                 $model = new TblInbox();
                 $model->setAttributes($transaction_data);
                 $transaction = $this->generalModel->saveTransaction([$model], ['transactional data', 'create']);
