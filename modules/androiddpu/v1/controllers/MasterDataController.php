@@ -71,7 +71,7 @@ class MasterDataController extends RestController {
         }
         $res_data['success_id'] = implode(',', $success_id);
         $res_data['error_id'] = implode(',', $error_id);
-        $this->response['message'] = $message;
+        $this->response['message'] = [$message];
         $this->response['data'] = $res_data;
         return $this->response;
     }
