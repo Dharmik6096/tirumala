@@ -194,7 +194,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
 
     public function fatRangeValidate($attribute, $params) {
         if (empty($this->getErrors())) {
-            if ($this->from_fat > $this->to_fat) {
+            if ((float)$this->from_fat > (float)$this->to_fat) {
                 $this->addError($attribute, Yii::t('app', 'End range can not be less than Start range.'));
             }
         }
@@ -202,7 +202,8 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
 
     public function snfRangeValidate($attribute, $params) {
         if (empty($this->getErrors())) {
-            if ($this->from_snf > $this->to_snf) {
+
+            if ((float)$this->from_snf > (float) $this->to_snf) {
                 $this->addError($attribute, Yii::t('app', 'End range can not be less than Start range.'));
             }
         }
