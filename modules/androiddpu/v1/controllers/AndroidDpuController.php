@@ -73,20 +73,20 @@ class AndroidDpuController extends RestController {
                         $andoidIdDetailModel->imei_no = $data['imei'];
                         $andoidIdDetailModel->mobile_no = $content['mobile_no'];
                         $andoidIdDetailModelData = $andoidIdDetailModel->getActiveCount();
-                        if (!empty($andoidIdDetailModelData)) {
-                            $res_data['message'] = 'Mobile Number already registered.';
-                        } else {
-                            $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
-                            $andoidIdDetailModel->otp_code = 1234;
-                            $andoidIdDetailModel->is_active = 0;
-                            $andoidIdDetailModel->is_expired = 0;
-                            $master[] = $andoidIdDetailModel;
-                            $transaction = $this->generalModel->saveTransaction($master, ['app registration', 'create']);
-                            if ($transaction !== 'customRedirect') {
-                                return FALSE;
-                            }
-                            $res_data['token'] = $andoidIdDetailModel->hash_key;
+//                        if (!empty($andoidIdDetailModelData)) {
+//                            $res_data['message'] = 'Mobile Number already registered.';
+//                        } else {
+                        $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
+                        $andoidIdDetailModel->otp_code = 1234;
+                        $andoidIdDetailModel->is_active = 0;
+                        $andoidIdDetailModel->is_expired = 0;
+                        $master[] = $andoidIdDetailModel;
+                        $transaction = $this->generalModel->saveTransaction($master, ['app registration', 'create']);
+                        if ($transaction !== 'customRedirect') {
+                            return FALSE;
                         }
+                        $res_data['token'] = $andoidIdDetailModel->hash_key;
+//                        }
                     }
                 }
             }
