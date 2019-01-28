@@ -556,7 +556,7 @@ class SqliteCreate extends Component {
         $android_tables = $this->getTables();
 //        $tables = $this->getMainTables();
 //        $process = $this->getProcessDcs();
-        $this->file_name = Yii::$app->basePath . '/installation-identity/error';
+        $this->file_name = Yii::$app->basePath . '/installation-identity/error.txt';
         $this->fp = fopen($this->file_name, 'w+');
 //        foreach ($tables as $tableName) {
         $this->getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type, $union_code);

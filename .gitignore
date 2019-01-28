@@ -34,3 +34,4 @@ web/uploads/**
 vendor/2amigos/yii2-multi-select-widget/.gitignore
 vendor\kartik-v\yii2-tabs-x\.github
 vendor\kartik-v\bootstrap-tabs-x\.github
+installation-identity/error.txt
