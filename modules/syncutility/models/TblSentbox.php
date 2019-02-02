@@ -263,6 +263,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return $this->find()
                         ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
                         ->orderBy('posting_timestamp')
+                        ->asArray()
                         ->all();
     }
 
