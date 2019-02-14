@@ -260,11 +260,15 @@ class TblSentbox extends \yii\db\ActiveRecord {
     }
 
     public function getData() {
-        return $this->find()
-                        ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
-                        ->orderBy('posting_timestamp')
-                        ->asArray()
-                        ->all();
+        $data = $this->find()
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                ->orderBy('posting_timestamp')
+                ->all();
+        $response = [];
+        foreach ($data as $key => $model) {
+            $response[] = $this->jsonModel($model);
+        }
+        return $response;
     }
 
 }
