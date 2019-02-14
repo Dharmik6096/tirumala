@@ -75,7 +75,7 @@ class TblInbox extends \yii\db\ActiveRecord {
     }
 
     public function getData() {
-        return $this->find()->all();
+        return $this->find()->limit(50)->all();
     }
 
 }

@@ -47,10 +47,10 @@ class TblQualityCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['uuid'], 'required'],
-            [['uuid', 'shift_code', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'string'],
-            [['sample_no', 'retest_count'], 'integer'],
+            [['uuid', 'shift_code', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'safe'],
+            [['sample_no', 'retest_count'], 'safe'],
             [['collection_date', 'quality_datetime', 'created_at', 'updated_at', 'sync_timestamp', 'device_id', 'auto_flag', 'doc_no'], 'safe'],
-            [['fat', 'snf', 'clr', 'water'], 'number'],
+            [['fat', 'snf', 'clr', 'water'], 'safe'],
         ];
     }
 
