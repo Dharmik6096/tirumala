@@ -27,7 +27,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'attribute' => 'union_code',
-                                'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
@@ -143,12 +143,12 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'attribute' => 'dcs_type_code',
-                                'value' => isset($model->dcsTypeCode) ? $model->dcsTypeCode->dcs_type_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->dcsTypeCode, 'dcs_type_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
                                 'attribute' => 'organisation_type_code',
-                                'value' => isset($model->organisationTypeCode) ? $model->organisationTypeCode->organisation_type : '',
+                                'value' => Yii::$app->general->getforeignkey($model->organisationTypeCode, 'organisation_type'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -157,7 +157,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'attribute' => 'scheme_type_code',
-                                'value' => isset($model->schemeTypeCode) ? $model->schemeTypeCode->scheme_type : '',
+                                'value' => Yii::$app->general->getforeignkey($model->schemeTypeCode, 'scheme_type'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
@@ -171,7 +171,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'label' => 'Pours To BMC',
-                                'value' => isset($model->societyCodes->bmcCode) ? $model->societyCodes->bmcCode->bmc_name : '',
+                                'value' =>  Yii::$app->general->getmultiforeignkey($model->societyCodes, ['bmcCode'], 'bmc_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
@@ -212,7 +212,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                             [
                                 'attribute' => 'state_code',
-                                'value' => isset($model->stateCode) ? $model->stateCode->state_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->stateCode, 'state_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -221,12 +221,12 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'attribute' => 'district_code',
-                                'value' => isset($model->districtCode) ? $model->districtCode->district_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
                                 'attribute' => 'sub_district_code',
-                                'value' => isset($model->subDistrictCode) ? $model->subDistrictCode->sub_district_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->subDistrictCode, 'sub_district_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -235,12 +235,12 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'attribute' => 'block_code',
-                                'value' => isset($model->blockCode) ? $model->blockCode->block_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->blockCode, 'block_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
                                 'attribute' => 'village_code',
-                                'value' => isset($model->villageCode) ? $model->villageCode->village_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -309,7 +309,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'attribute' => 'hamlet_code',
-                                'value' => isset($model->hamletCode) ? $model->hamletCode->hamlet_name : '',
+                                'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
@@ -333,7 +333,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                             [
                                 'attribute' => 'bipl_code',
-                                'value' => $model->societyCodes->bipl_code,
+                                'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -359,7 +359,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             [
                                 'attribute' => 'bipl_code',
                                 'label'=>Yii::t('app', 'Reference Code'),
-                                'value' => $model->societyCodes->bipl_code,
+                                'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
                                 'valueColOptions' => ['style' => 'width:80%'],
                             ],
 //                            [
