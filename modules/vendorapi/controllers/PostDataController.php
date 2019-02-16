@@ -17,9 +17,9 @@ class PostDataController extends \yii\web\Controller {
             $sp_name = $value['sp_name'];
             $json_array_key = $value['json_array_key'];
             $sp_param = [];
-            $sp_param[] = '004';
-            $sp_param[] = '2018-05-24';
-            $sp_param[] = '2018-05-26';
+            $sp_param[] = '001';
+            $sp_param[] = date('Y-m-d');
+            $sp_param[] = date('Y-m-d');
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
             $body[$json_array_key] = $output;
             $body = json_encode($body);
@@ -47,28 +47,28 @@ class PostDataController extends \yii\web\Controller {
             foreach ($header_array as $key => $value) {
                 $api->header_info[] = $key . ': ' . $value;
             }
-            $response = $api->POSTDATA();
+			$response = $api->POSTDATA();
             var_dump($response);
         }
     }
 
     public function setDataKey() {
         $data = [
-            'milkCollection' => [
+            /*'milkCollection' => [
                 'key' => 'MilkCollectionData',
                 'sp_name' => 'sp_vendor_milk_coll_data',
                 'json_array_key' => 'milkcollection'
-            ],
+            ],*/
             'bmcCollection' => [
                 'key' => 'MCCMilkCollection',
                 'sp_name' => 'sp_vendor_bmc_coll_data',
                 'json_array_key' => 'mccmilkcollection'
-            ],
-            'member' => [
+            ]
+            /*'member' => [
                 'key' => 'ProducerMaster',
                 'sp_name' => 'sp_vendor_member_data',
                 'json_array_key' => 'producermaster'
-            ]
+            ]*/
         ];
         return $data;
     }
