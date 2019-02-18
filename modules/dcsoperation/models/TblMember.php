@@ -80,6 +80,11 @@ use app\modules\verification\models\TblKycRecord;
  * @property string $bank_name
  * @property string $branch_name
  * @property string $upload
+ * @property integer $data_post_id
+ * @property string $data_post_status
+ * @property string $picked_datetime
+ * @property string $resp_status
+ * @property string $resp_desc
  */
 class TblMember extends ChildModel {
 
@@ -100,9 +105,9 @@ class TblMember extends ChildModel {
             [['is_download'], 'default', 'value' => '0'],
             [['is_active'], 'default', 'value' => '1'],
             [['member_type_code'], 'default', 'value' => '1'],
-            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData']],
-            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData']],
-            [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData']],
+            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data']],
+            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data']],
+            [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data']],
             [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
             /* [['member_name'],'unique', 'when' => function($model) {
               return ($model->isNewRecord)?true:false;
@@ -113,7 +118,7 @@ class TblMember extends ChildModel {
             [['email'], 'email'],
             [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string'],
             [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
-            [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code'], 'safe'],
+            [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['ifsc', 'pan_no'], 'trim'],
             [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
             Yii::$app->general->validateName($this, $attribute, $params);

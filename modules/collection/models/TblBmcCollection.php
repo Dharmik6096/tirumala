@@ -43,6 +43,11 @@ use app\modules\organisation\models\TblDcsBmc;
  * @property string $sms_errorlog
  * @property string $sms_timestamp
  * @property string $remarks
+ * @property integer $data_post_id
+ * @property string $data_post_status
+ * @property string $picked_datetime
+ * @property string $resp_status
+ * @property string $resp_desc
  */
 class TblBmcCollection extends \app\models\ChildModel {
 
@@ -74,9 +79,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
             return $this->shift_code;
         }],
-            [['collection_type'], 'default', 'value' => 1, 'on' => 'saveCreamyData'],
-            [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'collection_type', 'milk_quality_type_code'], 'required'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code'], 'safe'],
+            [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData']],
+            [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => 'saveSapData'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty'], 'safe'],
         ];
     }

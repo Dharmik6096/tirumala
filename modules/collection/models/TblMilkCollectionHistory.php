@@ -33,6 +33,11 @@ use Yii;
  * @property string $soc_bmc_flag
  * @property string $history_created_at
  * @property string $operation_type
+ * @property integer $data_post_id
+ * @property string $data_post_status
+ * @property string $picked_datetime
+ * @property string $resp_status
+ * @property string $resp_desc
  */
 class TblMilkCollectionHistory extends \yii\db\ActiveRecord {
 
@@ -52,7 +57,7 @@ class TblMilkCollectionHistory extends \yii\db\ActiveRecord {
 //            [['milk_collection_code', 'member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag'], 'string'],
 //            [['milk_type_code', 'sample_no', 'ack'], 'integer'],
 //            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-            [['milk_collection_code', 'member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'milk_type_code', 'sample_no', 'ack', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'date_time_of_collection', 'date_time_of_recieve', 'history_created_at', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'dt_date', 'is_approved', 'operation_type'], 'safe'],
+            [['milk_collection_code', 'member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'milk_type_code', 'sample_no', 'ack', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'date_time_of_collection', 'date_time_of_recieve', 'history_created_at', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'dt_date', 'is_approved', 'operation_type', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
         ];
     }
 
