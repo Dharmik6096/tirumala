@@ -60,12 +60,20 @@ class MasterDataController extends RestController {
                 $transaction_data = $request->camelCaseToUnderscore($transaction_data);
                 $model = new TblInbox();
                 $model->setAttributes($transaction_data);
-                $transaction = $this->generalModel->saveTransaction([$model], ['transactional data', 'create']);
-                if ($transaction == 'customRedirect') {
-                    $message = 'Successfully Saved!';
+                $modelData = $model->findOne($model->uuid);
+                $syncModel = new TblSyncLog();
+                $syncModel->uuid = $model->uuid;
+                $syncModelData = $syncModel->findOne($syncModel->uuid);
+                if (!empty($modelData) || !empty($syncModelData)) {
                     $success_id[] = $transaction_data['uuid'];
                 } else {
-                    $error_id[] = $transaction_data['uuid'];
+                    $transaction = $this->generalModel->saveTransaction([$model], ['transactional data', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $message = 'Successfully Saved!';
+                        $success_id[] = $transaction_data['uuid'];
+                    } else {
+                        $error_id[] = $transaction_data['uuid'];
+                    }
                 }
             }
         }
