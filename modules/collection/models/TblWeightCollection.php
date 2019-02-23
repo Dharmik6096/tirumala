@@ -3,6 +3,9 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblDcs;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /**
  * This is the model class for table "tbl_weight_collection".
@@ -70,11 +73,11 @@ class TblWeightCollection extends \app\models\ChildModel {
             'producer_flag' => Yii::t('app', 'Producer Flag'),
             'sample_no' => Yii::t('app', 'Sample No'),
             'collection_date' => Yii::t('app', 'Collection Date'),
-            'shift_code' => Yii::t('app', 'Shift Code'),
+            'shift_code' => Yii::t('app', 'Shift'),
             'milk_type' => Yii::t('app', 'Milk Type'),
             'milk_quality_type' => Yii::t('app', 'Milk Quality Type'),
             'quantity_mode' => Yii::t('app', 'Quantity Mode'),
-            'quantity' => Yii::t('app', 'Quantity'),
+            'quantity' => Yii::t('app', 'Qty'),
             'cans' => Yii::t('app', 'Cans'),
             'fault_flag' => Yii::t('app', 'Fault Flag'),
             'rejected_can' => Yii::t('app', 'Rejected Can'),
@@ -84,7 +87,7 @@ class TblWeightCollection extends \app\models\ChildModel {
             'mcc_code' => Yii::t('app', 'Mcc Code'),
             'bmc_code' => Yii::t('app', 'Bmc Code'),
             'route_code' => Yii::t('app', 'Route Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -93,6 +96,18 @@ class TblWeightCollection extends \app\models\ChildModel {
             'sync_status' => Yii::t('app', 'Sync Status'),
             'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
         ];
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type']);
     }
 
 }

@@ -3,6 +3,8 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\dcsoperation\models\TblShift;
 
 /**
  * This is the model class for table "tbl_quality_collection".
@@ -61,8 +63,8 @@ class TblQualityCollection extends \app\models\ChildModel {
         return [
             'uuid' => Yii::t('app', 'Uuid'),
             'sample_no' => Yii::t('app', 'Sample No'),
-            'collection_date' => Yii::t('app', 'Collection Date'),
-            'shift_code' => Yii::t('app', 'Shift Code'),
+            'collection_date' => Yii::t('app', 'Date'),
+            'shift_code' => Yii::t('app', 'Shift'),
             'fat' => Yii::t('app', 'Fat'),
             'snf' => Yii::t('app', 'Snf'),
             'clr' => Yii::t('app', 'Clr'),
@@ -72,7 +74,7 @@ class TblQualityCollection extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union Code'),
             'plant_code' => Yii::t('app', 'Plant Code'),
             'mcc_code' => Yii::t('app', 'Mcc Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'bmc_code' => Yii::t('app', 'BMC'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -83,4 +85,11 @@ class TblQualityCollection extends \app\models\ChildModel {
         ];
     }
 
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
 }

@@ -119,6 +119,12 @@ class SearchFilter {
             'TblMACAlibrationChangeSearch' => [
                 'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
+            'TblWeightCollectionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'min_date'],
+            ],
+            'TblQualityCollectionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'min_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
