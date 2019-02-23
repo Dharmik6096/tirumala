@@ -17,9 +17,11 @@ class PostDataController extends \yii\web\Controller {
             $sp_name = $value['sp_name'];
             $json_array_key = $value['json_array_key'];
             $sp_param = [];
+            $end_date = date('Y-m-d');
+            $start_date = date('Y-m-d', strtotime("-1 days", strtotime($end_date)));
             $sp_param[] = '001';
-            $sp_param[] = date('Y-m-d');
-            $sp_param[] = date('Y-m-d');
+            $sp_param[] = $start_date;
+            $sp_param[] = $end_date;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
             if (!empty($output)) {
                 $modelName = $value['model_name'];
