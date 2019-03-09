@@ -84,13 +84,13 @@ class PostDataController extends \yii\web\Controller {
 
     public function setDataKey() {
         $data = [
-            /* 'milkCollection' => [
-              'key' => 'MilkCollectionData',
-              'sp_name' => 'sp_vendor_milk_coll_data',
-              'json_array_key' => 'milkcollection',
-              'model_name' => 'TblMilkCollection',
-              'update_key' => 'uuid:data_post_id'
-              ], */
+            'milkCollection' => [
+                'key' => 'MilkCollectionData',
+                'sp_name' => 'sp_vendor_milk_coll_data',
+                'json_array_key' => 'milkcollection',
+                'model_name' => 'TblMilkCollection',
+                'update_key' => 'uuid:data_post_id'
+            ],
             'bmcCollection' => [
                 'key' => 'MCCMilkCollection',
                 'sp_name' => 'sp_vendor_bmc_coll_data',
