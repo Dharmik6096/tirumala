@@ -11,19 +11,19 @@ use app\components\WebApi;
 class PostDataController extends \yii\web\Controller {
 
     public function actionIndex() {
-        $data = $this->setDataKey();
+		$data = $this->setDataKey();
         foreach ($data as $key => $value) {
             $key = $value['key'];
             $sp_name = $value['sp_name'];
             $json_array_key = $value['json_array_key'];
             $sp_param = [];
             $end_date = date('Y-m-d');
-            $start_date = date('Y-m-d', strtotime("-1 days", strtotime($end_date)));
+            $start_date = date('Y-m-d', strtotime("-5 days", strtotime($end_date)));
             $sp_param[] = '001';
             $sp_param[] = $start_date;
             $sp_param[] = $end_date;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-            if (!empty($output)) {
+			if (!empty($output)) {
                 $modelName = $value['model_name'];
                 $model_name = Yii::$app->path->define($modelName);
                 $model = new $model_name();
@@ -35,6 +35,7 @@ class PostDataController extends \yii\web\Controller {
                 $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
                 $body[$json_array_key] = $output;
                 $body = json_encode($body);
+				//var_dump($body);die;
 //            $body['milkcollection'][] = ['uuid' => '004fdcee-58c7-4ef9-bc53-6c7992240676',
 //            'transaction_date' => '19.09.2018',
 //            'shift' => 'M',
@@ -84,13 +85,13 @@ class PostDataController extends \yii\web\Controller {
 
     public function setDataKey() {
         $data = [
-            /* 'milkCollection' => [
+            /*'milkCollection' => [
               'key' => 'MilkCollectionData',
               'sp_name' => 'sp_vendor_milk_coll_data',
               'json_array_key' => 'milkcollection',
               'model_name' => 'TblMilkCollection',
               'update_key' => 'uuid:data_post_id'
-              ], */
+              ],*/
             'bmcCollection' => [
                 'key' => 'MCCMilkCollection',
                 'sp_name' => 'sp_vendor_bmc_coll_data',
