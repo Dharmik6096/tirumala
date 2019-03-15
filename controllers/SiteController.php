@@ -486,47 +486,29 @@ class SiteController extends Controller {
 
     public function actionSendCollectionSms() {
         try {
-            $smsModel = new TblSms();
-            $smsData = $smsModel->getData();
-            $sms_ids = array_column($smsData, 'sms_id');
-            $update = $smsModel->updateSmsStatus($sms_ids);
-            foreach ($smsData as $sms) {
-                $mobile = '91' . $sms->mobile_no;
-                $msg = $sms->sms_txt;
+            $to_date = date('Y-m-d H:i:s');
+            $from_date = date('Y-m-d H:i:s', strtotime('-1' . ' day', strtotime($to_date)));
+            $collectionModel = new TblMilkCollection();
+            $collectionModel = $collectionModel->find()->innerJoinWith('memberCode')->where(['sms_status' => 'n'])->andWhere(['and', ['IS NOT', 'tbl_member.mobile_no', NULL], ['<>', 'tbl_member.mobile_no', '']])->andWhere(['>=', 'date_time_of_collection', $from_date])->andWhere(['<=', 'date_time_of_collection', $to_date])->limit(50)->all();
+            foreach ($collectionModel as $collection) {
+                $mobile = '91' . $collection->memberCode->mobile_no;
+                $msg = "Dear " . $collection->memberCode->member_name . ",\n";
+                $msg.="Collection Received\n";
+                $msg.="S.CODE:" . $collection->dcs_code . "\n";
+                $msg.="DATE:" . date('d-m-Y', strtotime($collection->date_time_of_collection)) . "\n";
+                $msg.="SHIFT:" . $collection->shiftCode->shift . "\n";
+                $msg.="M.CODE:" . substr($collection->member_code, -4) . "\n";
+                $msg.="TYPE:" . $collection->milkTypeCode->animal_type_name . "\n";
+                $msg.="FAT:" . $collection->fat . "\n";
+                $msg.="SNF:" . $collection->snf . "\n";
+                $msg.="QTY:" . $collection->qty . "\n";
+                $msg.="AMT:" . $collection->amount . "\n";
                 $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $msg);
-                $sent = json_decode($sent);
-                $res = $sent->results;
-                $res = $res[0];
-                $sms->sms_status = 'Y';
-                $sms->sms_msgid = $res->messageid;
-                $sms->sms_mobile = $res->destination;
-                $sms->sms_result = $res->status;
-                //$collection->sms_errorlog=Yii::$app->bsmartsms->getStatusMsg($res->status);
-                $sms->updated_at = date('Y-m-d H:i:s');
-                $sms->status = 2;
-                $sms->save(false);
-            }
-            $paymentModel = new TblPaymentTransaction();
-            $paymentModel = $paymentModel->getSmsRecords();
-            foreach ($paymentModel as $payment) {
-                $mobile = '91' . $payment->mobile_no; //'919712147065';
-                // $message = 'We have initiated your payment of RS.' . $payment->final_amount . '. actual effect is subject to bank realization.';
-                if ($payment->type == 'member') {
-                    $m_code = substr($payment->code, -4);
-                    $message = $m_code . ':,
- दूध की मात्रा: ' . $payment->qty . ' लि. की धनराशि Rs.' . $payment->final_amount . ' बैंक को भेज दिया';
-                    $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $message, TRUE);
-                } else {
-                    $message = 'We have disbursed payment of Rs. ' . $payment->final_amount . ' on ' . date('d-m-Y') . ' to the bank.Subject to realisation.';
-                    $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $message);
-                }
-                $sent = json_decode($sent);
-                $res = $sent->results;
-                $res = $res[0];
-                $payment->sms_status = $res->status;
-                $payment->sms_msgid = $res->messageid;
-                $payment->sms_timestamp = date('Y-m-d H:i:s');
-                $payment->save(false);
+                $collection->sms_status = 'Y';
+                $collection->sms_msgid = $sent;
+                $collection->sms_timestamp = date('Y-m-d H:i:s');
+                $collection->scenario = 'sendsms';
+                $collection->save(false);
             }
         } catch (yii\base\Exception $e) {
             var_dump($e);
