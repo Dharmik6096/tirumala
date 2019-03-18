@@ -74,13 +74,13 @@ class TblBmcCollection extends \app\models\ChildModel {
             return $model->collection_type == '2';
         }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
-          }"],
-            [['dcs_code'], 'validateDcs'],
+          }", 'except' => ['post_sap_data']],
+            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data']],
             [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
             return $this->shift_code;
         }],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData']],
-            [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => 'saveSapData'],
+            [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data']],
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty'], 'safe'],
         ];
