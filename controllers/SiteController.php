@@ -494,13 +494,8 @@ class SiteController extends Controller {
                 $mobile = '91' . $sms->mobile_no;
                 $msg = $sms->sms_txt;
                 $sent = Yii::$app->bsmartsms->sendSmsPOST($mobile, $msg);
-                $sent = json_decode($sent);
-                $res = $sent->results;
-                $res = $res[0];
                 $sms->sms_status = 'Y';
-                $sms->sms_msgid = $res->messageid;
-                $sms->sms_mobile = $res->destination;
-                $sms->sms_result = $res->status;
+                $sms->sms_msgid = $sent;
                 $sms->updated_at = date('Y-m-d H:i:s');
                 $sms->status = 2;
                 $sms->save(false);
