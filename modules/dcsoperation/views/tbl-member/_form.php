@@ -45,7 +45,7 @@ if ($model->isNewRecord) {
         <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmember-union_code', '', 'Society', '', $readonly); ?>
     </div>
     <?php //Html::activeHiddenInput($model, 'district_code'); ?>
-    <div class="col-sm-3">
+    <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'ex_member_code')->textInput() ?>
     </div>
     <div class="col-sm-3">

@@ -39,7 +39,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-3">  
+    <div class="col-sm-3 number-validate">  
         <?= $form->field($model, 'route_code')->textInput(['readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-3">

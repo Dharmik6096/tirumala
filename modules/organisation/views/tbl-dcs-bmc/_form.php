@@ -45,7 +45,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('bmc_type', $model, $form, '', 'BMC Type', false, 'bmc_type_code'); ?>        
     </div>
-    <div class="col-sm-3">  
+    <div class="col-sm-3 number-validate">  
         <?= $form->field($model, 'bmc_code')->textInput(['readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-3">
