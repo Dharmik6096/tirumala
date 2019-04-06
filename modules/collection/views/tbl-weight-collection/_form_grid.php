@@ -13,15 +13,14 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 <?php
 
 $attribute = [
+    ['attribute' => 'route_code', 'label' => Yii::t('app', 'Route Code'), 'visible' => false, 'filter' => false],
+    ['attribute' => 'route_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+        }, 'filter' => false],
+    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Society Code'), 'visible' => false, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'vAlign' => 'middle', 'filter' => true],
-    ['attribute' => 'milk_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
-        }
-    ],
-    ['attribute' => 'sample_no', 'value' => 'sample_no', 'vAlign' => 'middle', 'filter' => true],
-    ['attribute' => 'quantity', 'value' => 'quantity', 'vAlign' => 'middle', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'quantity', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_qty', $operator, ['class' => 'form-control'])],
     [
         'attribute' => 'collection_date',
         'filterType' => GridView::FILTER_DATE,
@@ -36,7 +35,18 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }
     ],
-    ['attribute' => 'doc_no']
+    ['attribute' => 'doc_no'],
+    ['attribute' => 'sample_no', 'value' => 'sample_no', 'vAlign' => 'middle', 'filter' => true],
+    ['attribute' => 'milk_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
+        }
+    ],
+    ['attribute' => 'milk_quality_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->milkQualityTypeCode, 'milk_quality_type_name');
+        }, 'visible' => false, 'filter' => false
+    ],
+    ['attribute' => 'quantity', 'value' => 'quantity', 'vAlign' => 'middle', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'quantity', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_qty', $operator, ['class' => 'form-control'])],
+    ['attribute' => 'converted_quantity', 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [

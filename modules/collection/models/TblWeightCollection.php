@@ -6,6 +6,8 @@ use Yii;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\organisation\models\TblRouteMapping;
+use app\modules\globalmaster\models\TblMilkQualityType;
 
 /**
  * This is the model class for table "tbl_weight_collection".
@@ -81,12 +83,12 @@ class TblWeightCollection extends \app\models\ChildModel {
             'cans' => Yii::t('app', 'Cans'),
             'fault_flag' => Yii::t('app', 'Fault Flag'),
             'rejected_can' => Yii::t('app', 'Rejected Can'),
-            'rejected_quantity' => Yii::t('app', 'Rejected Quantity'),
+            'rejected_quantity' => Yii::t('app', 'Rejected Qty'),
             'union_code' => Yii::t('app', 'Union Code'),
             'plant_code' => Yii::t('app', 'Plant Code'),
             'mcc_code' => Yii::t('app', 'Mcc Code'),
             'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
+            'route_code' => Yii::t('app', 'Route'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -95,6 +97,7 @@ class TblWeightCollection extends \app\models\ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'sync_status' => Yii::t('app', 'Sync Status'),
             'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
+            'converted_quantity' => Yii::t('app', 'Converted Qty'),
         ];
     }
 
@@ -108,6 +111,14 @@ class TblWeightCollection extends \app\models\ChildModel {
 
     public function getMilkTypeCode() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getMilkQualityTypeCode() {
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type']);
     }
 
 }

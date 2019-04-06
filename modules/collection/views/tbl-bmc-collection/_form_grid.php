@@ -12,21 +12,17 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'vAlign' => 'middle', 'filter' => true],
+    ['attribute' => 'bmc_code', 'visible' => false, 'value' => 'bmc_code', 'vAlign' => 'middle', 'filter' => true],
     ['attribute' => 'bmc_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'vAlign' => 'middle', 'filter' => true],
-    ['attribute' => 'dcs_name', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'dcs_incharge_name', 'value' => function($model) {
-            $data = Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society');
-            return !empty($data) ? $data->firstname . ' ' . $data->lastname . ' ' . $data->surname : 'N/A';
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'route_name', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
         }, 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'visible' => false, 'vAlign' => 'middle', 'filter' => true],
+            ['attribute' => 'dcs_name', 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                }, 'vAlign' => 'middle', 'filter' => false],
             [
                 'attribute' => 'date_time_of_collection',
                 'filterType' => GridView::FILTER_DATE,
@@ -37,8 +33,9 @@ $attribute = [
                 'value' => function($model) {
             return Yii::$app->controls->view_date($model->date_time_of_collection);
         }],
-            //['attribute' => 'date_time_of_collection', 'value' => function($model){ return Yii::$app->controls->view_date($model->date_time_of_collection); }, 'vAlign' => 'middle', 'filter'=>false],
             ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'doc_no', 'vAlign' => 'middle'],
+            ['attribute' => 'sample_no', 'vAlign' => 'middle'],
             ['attribute' => 'milk_type_code', 'value' => function($model) {
                     return isset($model->milkType) ? $model->milkType->animal_type_name : '';
                 }, 'vAlign' => 'middle', 'visible' => false, 'filter' => false],
@@ -47,7 +44,6 @@ $attribute = [
                 }, 'vAlign' => 'middle', 'visible' => false, 'filter' => false],
             ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'qty_mode',
                 'filter' => Yii::$app->dropdown->dropdownfilterStatic('p_ltr_kg', $searchModel, 'qty_mode'),
@@ -55,9 +51,6 @@ $attribute = [
                     return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
                 },],
             ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'sample_no', 'vAlign' => 'middle'],
-            ['attribute' => 'type_of_data_receive', 'vAlign' => 'middle'],
             ['attribute' => 'transporter_code', 'value' => function($model) {
                     return isset($model->transporter) ? $model->transporter->transporter_name : '';
                 }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
