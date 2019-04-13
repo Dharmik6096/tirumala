@@ -13,17 +13,19 @@ class PostDataController extends \yii\web\Controller {
     public function actionIndex() {
         $data = $this->setDataKey();
         foreach ($data as $key => $value) {
+            $update_ids = [];
             $body = [];
             $key = $value['key'];
             $sp_name = $value['sp_name'];
             $json_array_key = $value['json_array_key'];
             $sp_param = [];
             $end_date = date('Y-m-d');
-            $start_date = date('Y-m-d', strtotime("-5 days", strtotime($end_date)));
+            $start_date = date('Y-m-d', strtotime("-1 days", strtotime($end_date)));
             $sp_param[] = '001';
             $sp_param[] = $start_date;
             $sp_param[] = $end_date;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $data_post_key = $value['key'];
             if (!empty($output)) {
                 $modelName = $value['model_name'];
                 $model_name = Yii::$app->path->define($modelName);
@@ -32,7 +34,13 @@ class PostDataController extends \yii\web\Controller {
                 $updateKeys = explode(':', $updateKey);
                 $sapKey = $updateKeys[0];
                 $modelKey = isset($updateKeys[1]) ? $updateKeys[1] : $updateKeys[0];
-                $update_ids = array_column($output, $sapKey);
+                if ($data_post_key == 'ProducerMaster') {
+                    foreach ($output as $members) {
+                        $update_ids[] = $members['vlcc_code'] . $members['farmer_code'];
+                    }
+                } else {
+                    $update_ids = array_column($output, $sapKey);
+                }
                 $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
                 $body[$json_array_key] = $output;
                 $body = json_encode($body);
@@ -68,10 +76,20 @@ class PostDataController extends \yii\web\Controller {
                 $responseData = json_decode(json_encode($response), true);
                 foreach ($responseData as $resp_data) {
                     foreach ($resp_data as $resp) {
+                        $rv = array_filter($resp, 'is_array');
+                        if (count($rv) == 0) {
+                            $array[] = $resp;
+                            $resp = $array;
+                        }
                         foreach ($resp as $key => $value) {
-                            $status = (isset($value['status']) && strtolower($value['status']) == 'success') ? 2 : 3;
+                            $status = (isset($value['status']) && (strtolower($value['status']) == 'success' || strtolower($value['status']) == 's')) ? 2 : 3;
                             $model = new $model_name();
-                            $model = $model->find()->where([$modelKey => $value[$sapKey]])->one();
+                            if ($data_post_key == 'ProducerMaster') {
+                                $updateValue = substr($value[$sapKey], 5) . substr($value[$sapKey], 1, 4);
+                            } else {
+                                $updateValue = $value[$sapKey];
+                            }
+                            $model = $model->find()->where([$modelKey => $updateValue])->one();
                             if (!empty($model)) {
                                 $model->scenario = 'post_sap_data';
                                 $model->data_post_status = $status;
@@ -101,14 +119,14 @@ class PostDataController extends \yii\web\Controller {
                 'json_array_key' => 'mccmilkcollection',
                 'model_name' => 'TblBmcCollection',
                 'update_key' => 'uuid:data_post_id'
+            ],
+            'member' => [
+                'key' => 'ProducerMaster',
+                'sp_name' => 'sp_vendor_member_data',
+                'json_array_key' => 'producermaster',
+                'model_name' => 'TblMember',
+                'update_key' => 'farmer_code:member_code'
             ]
-                /* 'member' => [
-                  'key' => 'ProducerMaster',
-                  'sp_name' => 'sp_vendor_member_data',
-                  'json_array_key' => 'producermaster',
-                  'model_name' => 'TblMember',
-                  'update_key' => 'uuid:data_post_id'
-                  ] */
         ];
         return $data;
     }
