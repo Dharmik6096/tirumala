@@ -85,7 +85,7 @@ class PostDataController extends \yii\web\Controller {
                             $status = (isset($value['status']) && (strtolower($value['status']) == 'success' || strtolower($value['status']) == 's')) ? 2 : 3;
                             $model = new $model_name();
                             if ($data_post_key == 'ProducerMaster') {
-                                $updateValue = substr($value[$sapKey], 5) . substr($value[$sapKey], 1, 4);
+                                $updateValue = substr($value[$sapKey], 5, 10) . substr($value[$sapKey], 1, 4);
                             } else {
                                 $updateValue = $value[$sapKey];
                             }
