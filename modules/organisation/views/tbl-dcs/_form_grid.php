@@ -145,7 +145,15 @@ $attribute = [
         }
     ],
     ['attribute' => 'bipl_code', 'label' => Yii::t('app', 'Reference Code'), 'value' => 'societyCodes.bipl_code', 'filter' => false, 'visible' => false],
-    ['attribute' => 'download_status', 'value' => function($model) { return $model->downloadStatus; }, 'filter' => false],
+    ['attribute' => 'is_name_request', 'value' => function($model) {
+            return $model->is_name_request == 0 ? 'Downloaded' : 'Not Downloaded';
+        }, 'filter' => false, 'visible' => true],
+    ['attribute' => 'rate_flag', 'value' => function($model) {
+            return $model->rate_flag == 0 ? 'Downloaded' : 'Not Downloaded';
+        }, 'filter' => false, 'visible' => true],
+    ['attribute' => 'updated_at', 'value' => function($model) {
+            return Yii::$app->controls->view_date($model->updated_at, 'php:d-m-Y H:i:s');
+        }, 'filter' => false, 'visible' => true],
 ];
 
 $grid_option = [
