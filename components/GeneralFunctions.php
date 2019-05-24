@@ -967,12 +967,13 @@ class GeneralFunctions extends Component {
         Yii::$app->{$db}->password = $connection->db_password;
     }
 
-    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '') {
+    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '') {
         $sentboxArray = [];
         $mcc = [];
         $bmc = [];
         $plants = [];
         $plant = [];
+        $vlc = [];
 
         if (!empty($union_code)) {
             $model = new TblPlant();
@@ -1011,6 +1012,24 @@ class GeneralFunctions extends Component {
                 $mcc[] = $modelData->mcc_code;
             }
         }
+
+        if (!empty($bmc)) {
+            $model = new TblDcs();
+            $model->bmc_code = $bmc;
+            $modelData = $model->getBmcDcsData();
+            $vlc = array_values($modelData);
+        }
+        if (!empty($vlc_code)) {
+            $vlc[] = $vlc_code;
+            $model = new TblDcs();
+            $model->dcs_code = $vlc_code;
+            $modelData = $model->getData();
+            if (!empty($modelData)) {
+                $bmc[] = $modelData->bmc_code;
+                $mcc[] = Yii::$app->general->getforeignkey($modelData->bmcCode, 'mcc_code');
+            }
+        }
+
         $mcc = array_unique($mcc);
         foreach ($mcc as $key => $mccCode) {
             $array = [];
@@ -1023,6 +1042,13 @@ class GeneralFunctions extends Component {
             $array = [];
             $array['code'] = $bmcCode;
             $array['type'] = 'BMC';
+            $sentboxArray[] = $array;
+        }
+        $vlc = array_unique($vlc);
+        foreach ($vlc as $key => $vlcCode) {
+            $array = [];
+            $array['code'] = $vlcCode;
+            $array['type'] = 'VLC';
             $sentboxArray[] = $array;
         }
         return $sentboxArray;

@@ -3,6 +3,7 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_android_installation_details".
@@ -24,6 +25,8 @@ use Yii;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
+ * @property string $sync_key
+ * @property integer $sync_active
  */
 class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
@@ -41,7 +44,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         return [
             [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'string'],
             [['otp_code', 'is_active', 'is_expired'], 'integer'],
-            [['created_at', 'updated_at', 'db_path', 'imei_no'], 'safe'],
+            [['created_at', 'updated_at', 'db_path', 'imei_no', 'sync_key', 'sync_active'], 'safe'],
         ];
     }
 
@@ -112,6 +115,23 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
                         ->where(['tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
                         ->andWhere(['tbl_android_installation.organization_code' => $dest_org_id, 'tbl_android_installation.organization_type' => $dest_org_type])
                         ->all();
+    }
+
+    public function getRecords() {
+        $data = $this->find()
+                ->where(['android_installation_id' => $this->android_installation_id])
+                ->andWhere(['not in', 'android_installation_details_id', $this->android_installation_details_id])
+                ->all();
+        return ArrayHelper::map($data, 'android_installation_details_id', 'android_installation_details_id');
+    }
+
+    public function getSyncActiveData($data) {
+        return $this->find()
+                        ->select('tbl_android_installation_details.*')
+                        ->joinWith(['androidInstallationCode'])
+                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0, 'tbl_android_installation_details.device_id' => $data['device_id'], 'tbl_android_installation_details.sync_key' => $data['sync_key'], 'tbl_android_installation_details.sync_active' => 1])
+                        ->andWhere(['tbl_android_installation.organization_code' => $data['organization_code'], 'tbl_android_installation.organization_type' => $data['organization_type']])
+                        ->one();
     }
 
 }

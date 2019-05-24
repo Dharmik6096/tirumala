@@ -36,7 +36,7 @@ class AndroidDpuController extends RestController {
                 $type = $data['organization_type'];
                 $detail_type = '';
                 $code = $data['organization_code'];
-                if ($type == 'AMCS') {
+                if ($type == 'VLC') {
                     $model = new TblDcs();
                     $model->dcs_code = $code;
                     $detail_type = 'society';
@@ -137,7 +137,7 @@ class AndroidDpuController extends RestController {
                 $mcc_code = [];
                 $plant_code = [];
                 $union_code = '';
-                if ($type == 'AMCS') {
+                if ($type == 'VLC') {
                     $model = new TblDcs();
                     $model->dcs_code = $code;
                     $detail_type = 'society';

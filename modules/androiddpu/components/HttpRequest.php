@@ -24,6 +24,7 @@ class HttpRequest extends \yii\base\Component {
     public $request;
     public $allow_call = FALSE;
     public $action_url;
+    public $sync_key;
 
     public function ParseRequest() {
 
