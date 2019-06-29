@@ -1072,5 +1072,27 @@ class GeneralFunctions extends Component {
         }
         return $post_data;
     }
+    
+    public function dateRangeValidate($model, $attribute, $params, $fromDateField, $toDateField, $count = 366) {
+        if (!empty($model->$fromDateField) && !empty($model->$toDateField)) {
+            $fDate = date('Y-m-d', strtotime($model->$fromDateField));
+            $tDate = date('Y-m-d', strtotime($model->$toDateField));
+            if ($tDate < $fDate) {
+                $model->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            } else {
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+                $DayCount = $DayCount + 1;
+                if ($DayCount > $count) {
+                    $model->addError($attribute, Yii::t('app/validation', 'Day diff can not be greater than 1 year.'));
+                    return false;
+                }
+            }
+        }
+    }
+
 
 }
