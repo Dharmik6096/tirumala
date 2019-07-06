@@ -11,7 +11,48 @@ use app\components\WebApi;
 class PostDataController extends \yii\web\Controller {
 
     public function actionIndex() {
-        $data = $this->setDataKey();
+        $data = $this->setDataKey('milkCollection');
+        $this->postData($data);
+    }
+
+    public function setDataKey($param) {
+        $data = [
+            'milkCollection' => [
+                'key' => 'MilkCollectionData',
+                'sp_name' => 'sp_vendor_milk_coll_data',
+                'json_array_key' => 'milkcollection',
+                'model_name' => 'TblMilkCollection',
+                'update_key' => 'uuid:data_post_id'
+            ],
+            'bmcCollection' => [
+                'key' => 'MCCMilkCollection',
+                'sp_name' => 'sp_vendor_bmc_coll_data',
+                'json_array_key' => 'mccmilkcollection',
+                'model_name' => 'TblBmcCollection',
+                'update_key' => 'uuid:data_post_id'
+            ],
+            'member' => [
+                'key' => 'ProducerMaster',
+                'sp_name' => 'sp_vendor_member_data',
+                'json_array_key' => 'producermaster',
+                'model_name' => 'TblMember',
+                'update_key' => 'farmer_code:member_code'
+            ]
+        ];
+        return isset($data[$param]) ? $data[$param] : [];
+    }
+
+    public function actionBmcCollection() {
+        $data = $this->setDataKey('bmcCollection');
+        $this->postData($data);
+    }
+
+    public function actionMember() {
+        $data = $this->setDataKey('member');
+        $this->postData($data);
+    }
+
+    public function postData($data) {
         foreach ($data as $key => $value) {
             $update_ids = [];
             $body = [];
@@ -102,33 +143,6 @@ class PostDataController extends \yii\web\Controller {
                 }
             }
         }
-    }
-
-    public function setDataKey() {
-        $data = [
-            'milkCollection' => [
-                'key' => 'MilkCollectionData',
-                'sp_name' => 'sp_vendor_milk_coll_data',
-                'json_array_key' => 'milkcollection',
-                'model_name' => 'TblMilkCollection',
-                'update_key' => 'uuid:data_post_id'
-            ],
-            'bmcCollection' => [
-                'key' => 'MCCMilkCollection',
-                'sp_name' => 'sp_vendor_bmc_coll_data',
-                'json_array_key' => 'mccmilkcollection',
-                'model_name' => 'TblBmcCollection',
-                'update_key' => 'uuid:data_post_id'
-            ],
-            'member' => [
-                'key' => 'ProducerMaster',
-                'sp_name' => 'sp_vendor_member_data',
-                'json_array_key' => 'producermaster',
-                'model_name' => 'TblMember',
-                'update_key' => 'farmer_code:member_code'
-            ]
-        ];
-        return $data;
     }
 
 }
