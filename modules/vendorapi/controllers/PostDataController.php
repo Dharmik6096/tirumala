@@ -39,7 +39,7 @@ class PostDataController extends \yii\web\Controller {
                 'update_key' => 'farmer_code:member_code'
             ]
         ];
-        return isset($data[$param]) ? $data[$param] : [];
+        return isset($data[$param]) ? [$param => $data[$param]] : [];
     }
 
     public function actionBmcCollection() {
