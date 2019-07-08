@@ -89,6 +89,21 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapStatusReport() {
+        $this->report = 'SapStatusReport';
+        return $this->actionIndex();
+    }
+    
+    public function actionSapComparisionReport() {
+        $this->report = 'SapComparisionReportDateWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapComparisionReportDateShiftWise';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -264,6 +279,26 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'rpt_MIS_SocietyRawData',
                 'scenario' => '',
                 'title' => '221 - Shift Wise Auto Manual',
+            ],
+            'SapStatusReport' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_status_report',
+                'scenario' => 'SapStatusReport',
+                'title' => 'SAP Status Report',
+            ],
+            'SapComparisionReportDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_comparision_date_wise',
+                'scenario' => 'SapComparisionReport',
+                'title' => 'SAP Comparision Report',
+                'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
+            ],
+            'SapComparisionReportDateShiftWise' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_comparision_date_shift_wise',
+                'scenario' => 'SapComparisionReport',
+                'title' => 'SAP Comparision Report',
+                'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
             ],
         ];
         return $label[$l];

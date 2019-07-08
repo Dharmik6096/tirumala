@@ -11,6 +11,10 @@ use yii\filters\VerbFilter;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use yii\web\Response;
 use yii\helpers\Json;
+use yii\data\ArrayDataProvider;
+use app\modules\collection\models\TblBmcCollection;
+use app\modules\collection\models\TblMilkCollectionHistory;
+use app\modules\collection\models\TblBmcCollectionHistory;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -141,6 +145,92 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         } else {
             return Json::encode(['status' => 'error']);
         }
+    }
+
+    public function actionRepostSapData() {
+        $searchModel = new TblMilkCollectionSearch();
+        $searchModel->scenario = 'repostSapData';
+        $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->sap_collection_type = !empty($searchModel->sap_collection_type) ? $searchModel->sap_collection_type : 0;
+
+        $output = [];
+        if ($searchModel->validate()) {
+            if (empty($searchModel->f_union_code)) {
+                $searchModel->f_union_code = !empty(Yii::$app->session->get('organizations_code')) ? ',' . Yii::$app->session->get('organizations_code') . ',' : 0;
+            }
+            if (empty($searchModel->f_plant_code)) {
+                $searchModel->f_plant_code = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
+            }
+            if (empty($searchModel->f_mcc_code)) {
+                $searchModel->f_mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            }
+            $searchModel->from_date = !empty($searchModel->from_date) ? $searchModel->from_date : date('d-m-Y');
+            $searchModel->from_shift = !empty($searchModel->from_shift) ? $searchModel->from_shift : 3;
+            $searchModel->to_date = !empty($searchModel->to_date) ? $searchModel->to_date : date('d-m-Y');
+            $searchModel->to_shift = !empty($searchModel->to_shift) ? $searchModel->to_shift : 3;
+            $sp_name = 'sp_sap_data_repost';
+            $sp_param = [];
+            $sp_param[] = '001'; //!empty($searchModel->f_union_code) ? $searchModel->f_union_code : 0;
+            $sp_param[] = !empty($searchModel->f_plant_code) ? $searchModel->f_plant_code : 0;
+            $sp_param[] = !empty($searchModel->f_mcc_code) ? $searchModel->f_mcc_code : 0;
+            $sp_param[] = date('Y-m-d', strtotime($searchModel->from_date)) . ' ' . \Yii::$app->general->getshift($searchModel->from_shift) . '.000';
+            $sp_param[] = date('Y-m-d', strtotime($searchModel->to_date)) . ' ' . \Yii::$app->general->getshift($searchModel->to_shift) . '.000';
+            $sp_param[] = $searchModel->sap_collection_type;
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $output,
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [],
+                'attributes' => [
+                    'data_post_id',
+                    'collection_date',
+                    'shift',
+                    'sample_no',
+                    'sap_status',
+                    'mcc_name'
+                ],
+            ],
+        ]);
+
+        if (Yii::$app->request->post() && !empty(Yii::$app->request->post('selection'))) {
+            $data = Yii::$app->request->post();
+            $selection = $data['selection'];
+            $master = [];
+            $child = [];
+            $flag = $data['flag'];
+            $modelName = $flag == '1' ? 'TblBmcCollection' : 'TblMilkCollection';
+            foreach ($selection as $select) {
+                $model_name = Yii::$app->path->define($modelName);
+                $model = new $model_name();
+                $model->data_post_id = $select;
+                $modelData = $model->find()
+                        ->where(['data_post_id' => $model->data_post_id])
+                        ->one();
+
+                if (!empty($modelData)) {
+                    $hModel = $modelName . 'History';
+                    $h_model_name = Yii::$app->path->define($hModel);
+                    $historyModel = new $h_model_name();
+                    Yii::$app->operation->history($modelData, $historyModel, 'UPDATE');
+                    $child[] = $historyModel;
+                    $model = $modelData;
+                    $model->data_post_status = null;
+                    $master[] = $model;
+                }
+            }
+
+            $transaction = $this->generalModel->saveTransaction($master, $child, ['SAP Data Repost', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['repost-sap-data']);
+            }
+        }
+//        var_dump($searchModel->validate());die;
+        return $this->render('_repost_sap_data', [
+                    'model' => $searchModel,
+                    'dataProvider' => $dataProvider
+        ]);
     }
 
 }

@@ -132,7 +132,7 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
                         $format = ['decimal', 2];
                     }
 //                    $attr_arr['attribute'] = $att;
-                    $attr[] = ['attribute' => $att, 'format' => $format];
+                    $attr[] = ['attribute' => $att, 'format' => $format, 'filter' => false];
                 }
                 $grid_option = [
                     'id' => 'mis-report-list',
