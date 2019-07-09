@@ -7,7 +7,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Approve'));
+$this->title = Yii::t('app', 'SAP Data Repost');
 ?>
 <div class="panel panel-main">
     <div class="panel panel-default panel-grid panel-main">

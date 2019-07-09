@@ -284,20 +284,20 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_status_report',
                 'scenario' => 'SapStatusReport',
-                'title' => 'SAP Status Report',
+                'title' => '401 - SAP Status Report',
             ],
             'SapComparisionReportDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_comparision_date_wise',
                 'scenario' => 'SapComparisionReport',
-                'title' => 'SAP Comparision Report',
+                'title' => '402 - SAP Comparision Report',
                 'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
             ],
             'SapComparisionReportDateShiftWise' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_comparision_date_shift_wise',
                 'scenario' => 'SapComparisionReport',
-                'title' => 'SAP Comparision Report',
+                'title' => '402 - SAP Comparision Report',
                 'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
             ],
         ];

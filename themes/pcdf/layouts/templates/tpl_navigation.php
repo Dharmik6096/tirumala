@@ -63,7 +63,7 @@ echo GhostMenu::widget([
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Collection <b class="caret"></b></a>',
             'items' => [
-                ['label' => 'Milk Collection', 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection')],
+                ['label' => 'Milk Collection', 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                 ['label' => 'Milk Dispatch', 'url' => ['/collection/tbl-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-milk-dispatch')],
                 ['label' => 'BMC Collection', 'url' => ['/collection/tbl-bmc-collection/index'], 'active' => ($cntrl == 'tbl-bmc-collection')],
                 ['label' => 'BMC Dispatch', 'url' => ['/collection/tbl-bmc-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch')],
@@ -76,6 +76,7 @@ echo GhostMenu::widget([
                 ['label' => 'Milk Collection Approve', 'url' => ['/collection/tbl-milk-collection-temp/get-temp-data'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'get-temp-data')],
                 ['label' => 'Cleaning', 'url' => ['/collection/tbl-m-a-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
                 ['label' => 'Calibration', 'url' => ['/collection/tbl-m-a-c-alibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
+                ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
             ],
         ],
         [
@@ -198,6 +199,14 @@ echo GhostMenu::widget([
                         ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/jasperreports/default/difference-report-village-wise']],
                         ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/jasperreports/default/bmc-collection']],
                         ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/jasperreports/default/gprs-data-reconciliation']],
+                    ]
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'SAP') . '<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => '401-' . Yii::t('app', 'SAP Status Report'), 'url' => ['/misreports/default/sap-status-report']],
+                        ['label' => '402-' . Yii::t('app', 'SAP Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => $reportUser],
