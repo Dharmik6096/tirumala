@@ -48,11 +48,18 @@ class TblQualityCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['uuid'], 'required'],
+            [['uuid', 'plant_code', 'mcc_code', 'bmc_code', 'collection_date', 'shift_code', 'sample_no', 'doc_no', 'fat', 'snf'], 'required'],
             [['uuid', 'shift_code', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'safe'],
             [['sample_no', 'retest_count'], 'safe'],
             [['collection_date', 'quality_datetime', 'created_at', 'updated_at', 'sync_timestamp', 'device_id', 'auto_flag', 'doc_no'], 'safe'],
-            [['fat', 'snf', 'clr', 'water'], 'safe'],
+//            [['fat', 'snf', 'clr', 'water'], 'safe'],
+            [['fat', 'snf', 'clr', 'water'], 'number'],
+            [['fat', 'snf', 'clr', 'water'], 'double', 'min' => 0, 'max' => 99],
+            [['fat', 'snf', 'clr', 'water', 'retest_count'], 'default', 'value' => 0],
+            [['flg_sentbox_entry'], 'default', 'value' => 'Y'],
+            [['sync_status'], 'default', 'value' => 'U'],
+            [['auto_flag'], 'default', 'value' => '1'],
+            [['sample_no'], 'unique', 'targetAttribute' => ['collection_date', 'shift_code', 'mcc_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 
@@ -62,18 +69,18 @@ class TblQualityCollection extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'uuid' => Yii::t('app', 'Uuid'),
-            'sample_no' => Yii::t('app', 'Sample No'),
+            'sample_no' => Yii::t('app', 'Sample No.'),
             'collection_date' => Yii::t('app', 'Date'),
             'shift_code' => Yii::t('app', 'Shift'),
-            'fat' => Yii::t('app', 'Fat'),
-            'snf' => Yii::t('app', 'Snf'),
-            'clr' => Yii::t('app', 'Clr'),
+            'fat' => Yii::t('app', 'FAT'),
+            'snf' => Yii::t('app', 'SNF'),
+            'clr' => Yii::t('app', 'CLR'),
             'water' => Yii::t('app', 'Water'),
             'quality_datetime' => Yii::t('app', 'Quality Datetime'),
             'retest_count' => Yii::t('app', 'Retest Count'),
             'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_code' => Yii::t('app', 'Mcc Code'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -82,6 +89,7 @@ class TblQualityCollection extends \app\models\ChildModel {
             'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
             'sync_status' => Yii::t('app', 'Sync Status'),
             'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
+            'doc_no' => Yii::t('app', 'Doc No.'),
         ];
     }
 
@@ -92,4 +100,5 @@ class TblQualityCollection extends \app\models\ChildModel {
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
+
 }

@@ -1072,7 +1072,7 @@ class GeneralFunctions extends Component {
         }
         return $post_data;
     }
-    
+
     public function dateRangeValidate($model, $attribute, $params, $fromDateField, $toDateField, $count = 366) {
         if (!empty($model->$fromDateField) && !empty($model->$toDateField)) {
             $fDate = date('Y-m-d', strtotime($model->$fromDateField));
@@ -1094,5 +1094,10 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function getUuid() {
+        $connection = Yii::$app->getDb();
+        $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
+        return strtolower($command['id']);
+    }
 
 }

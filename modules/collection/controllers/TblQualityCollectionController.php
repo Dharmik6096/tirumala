@@ -43,4 +43,22 @@ class TblQualityCollectionController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionCreate() {
+        $this->model = new TblQualityCollection();
+        $this->viewFile = 'create';
+        if ($this->model->load(Yii::$app->request->post())) {
+            $datetime = date('Y-m-d H:i:s');
+            $this->model->uuid = Yii::$app->general->getUuid();
+            $this->model->collection_date = ($this->model->collection_date) ? date('Y-m-d', strtotime($this->model->collection_date)) : '';
+            $this->model->collection_date = $this->model->collection_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
+            $this->model->bmc_code = $this->model->mcc_code;
+            $this->model->quality_datetime = $datetime;
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['BMC Testing Data', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
+        }
+        return $this->customRender();
+    }
+
 }
