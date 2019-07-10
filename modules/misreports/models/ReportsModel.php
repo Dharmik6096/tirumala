@@ -27,6 +27,7 @@ class ReportsModel extends Model {
         }, 'skipOnEmpty' => false],
             [['union_code', 'plant_code'], 'required', 'on' => 'SapStatusReport'],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
+            [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
         ];
     }
 

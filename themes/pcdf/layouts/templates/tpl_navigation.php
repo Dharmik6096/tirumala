@@ -205,8 +205,9 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'SAP') . '<b class="caret"></b></a>',
                     'items' => [
-                        ['label' => '401-' . Yii::t('app', 'SAP Status Report'), 'url' => ['/misreports/default/sap-status-report']],
-                        ['label' => '402-' . Yii::t('app', 'SAP Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
+                        ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/default/sap-status-report']],
+                        ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
+                        ['label' => '403-' . Yii::t('app', 'Dispatch vs Recceipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => $reportUser],

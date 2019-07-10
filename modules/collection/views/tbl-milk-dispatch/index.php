@@ -1,5 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Dispatches'));
+$this->params['menu'][] = Yii::$app->controls->import('milk_dispatch', $this);
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

@@ -19,8 +19,8 @@ use yii\helpers\Json;
 class DefaultController extends \app\controllers\ChildController {
 
     public $importClass = '\ruskid\csvimporter\ARImportStrategy';
-    public $old_att = array('land_unit,', 'dcs', 'capacity,', 'animal_type_code');
-    public $change_att = array('convert_to,', 'society', 'capacity_code,', 'milk_type_code');
+    public $old_att = array('land_unit,', 'dcs', 'capacity,', 'animal_type_code', 'date_time_of_collection');
+    public $change_att = array('convert_to,', 'society', 'capacity_code,', 'milk_type_code', 'collection_date');
 
     /**
      * Renders the index view for the module

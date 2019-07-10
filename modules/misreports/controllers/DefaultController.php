@@ -93,7 +93,7 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'SapStatusReport';
         return $this->actionIndex();
     }
-    
+
     public function actionSapComparisionReport() {
         $this->report = 'SapComparisionReportDateWise';
         if (Yii::$app->request->queryParams) {
@@ -101,6 +101,11 @@ class DefaultController extends \app\controllers\ChildController {
                 $this->report = 'SapComparisionReportDateShiftWise';
             }
         }
+        return $this->actionIndex();
+    }
+
+    public function actionDispatchVsReceipt() {
+        $this->report = 'DispatchVsReceipt';
         return $this->actionIndex();
     }
 
@@ -284,21 +289,27 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_status_report',
                 'scenario' => 'SapStatusReport',
-                'title' => '401 - SAP Status Report',
+                'title' => '401 - Status Report',
             ],
             'SapComparisionReportDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_comparision_date_wise',
                 'scenario' => 'SapComparisionReport',
-                'title' => '402 - SAP Comparision Report',
+                'title' => '402 - Comparision Report',
                 'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
             ],
             'SapComparisionReportDateShiftWise' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_comparision_date_shift_wise',
                 'scenario' => 'SapComparisionReport',
-                'title' => '402 - SAP Comparision Report',
+                'title' => '402 - Comparision Report',
                 'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
+            ],
+            'DispatchVsReceipt' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_dispatch_vs_receipt',
+                'scenario' => 'DispatchVsReceipt',
+                'title' => '403 - Dispatch vs Recceipt Report',
             ],
         ];
         return $label[$l];

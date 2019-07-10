@@ -21,8 +21,8 @@ use ReflectionClass;
 class DefaultController extends \app\controllers\ChildController {
 
     public $importClass = '\ruskid\csvimporter\CustomARImportStrategy';
-    public $old_att = array('dcs', 'animal_type_code');
-    public $change_att = array('society', 'milk_type_code');
+    public $old_att = [];//array('dcs', 'animal_type_code');
+    public $change_att = [];//array('society', 'milk_type_code');
 
 /**
      * Renders the index view for the module

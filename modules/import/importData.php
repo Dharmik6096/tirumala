@@ -83,6 +83,7 @@ class importData extends \yii\base\Module
             'product-purchase-rate'=>['table_name'=>'tbl_product_purchase_rate','fields'=>'purchase_code,purchase_rate','default_fields'=>'is_active:1'],
             
             'interfacing-device'=>['table_name'=>'tbl_interfacing_device','fields'=>'device_code,baud_rate,bit_rate,device_name,device_type,discard_char,end_char,incoming_data_type,is_snf,length,parity,reading_type,reg_expression,split_char,start_char,stop_bit,tare,device_manufacturer_id,union_code','default_fields'=>'is_active:1'],
+            'milk_dispatch'=>['import_main_class'=>'DispatchImportStrategy','table_name'=>'tbl_milk_dispatch','fields'=>'mcc_code,dcs_code,date_time_of_collection,shift,qty,fat,snf,no_of_can,return_cob,remarks','scenario'=>'importCsv'],
             ];
         return $label[$l];
     }

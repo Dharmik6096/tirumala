@@ -18,6 +18,7 @@ class DcsImport extends TblDcs {
         $array = parent::rules();
 
         $rules = [
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
             [['union_code'], 'validateUnionCode'],
             [['hamlet_code'], 'validateHamlet'],
             [['dcs_type_code'], 'validateDcsType'],

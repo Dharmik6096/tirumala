@@ -111,13 +111,14 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData']],
+            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport']],
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
+            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
-            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
-            [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
-            [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
-            [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData']],
+            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport']],
+            [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport']],
+            [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport']],
+            [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport']],
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
             [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
             [['allow_multi_family_member', /* 'destination_type', */ 'dcs_type_code'], 'integer'],
@@ -179,6 +180,7 @@ class TblDcs extends ChildModel {
                     [['tmcc_code'], 'number', 'min' => 1],
                     ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
                     [['dcs_code_ex'], 'number'],
+                    [['is_active'], 'default', 'value' => 1],
                 ];
             }
 
@@ -746,6 +748,15 @@ class TblDcs extends ChildModel {
                         }
                     }
                 }
+            }
+
+            public function setModel() {
+                $this->dcs_name = ucwords($this->dcs_name);
+                $this->pan_no = strtoupper($this->pan_no);
+                $this->dcs_short_name = ucwords($this->dcs_short_name);
+                $this->route_code = empty($this->route_code) ? null : $this->route_code;
+                $this->registration_date = ($this->registration_date == '') ? null : Yii::$app->formatter->asDate($this->registration_date, 'php:Y-m-d');
+                $this->effective_date = ($this->effective_date == '') ? null : Yii::$app->formatter->asDate($this->effective_date, 'php:Y-m-d');
             }
 
         }
