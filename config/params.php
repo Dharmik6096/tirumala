@@ -27,7 +27,7 @@ return [
     'rptHtmlPath' => '\modules\crystalreports\html',
     'ho_notification_key' => 'AAAATsR3lJw:APA91bEDDapzfO1L7c-7MAV3lxLElNHpf2rHCZrj2dDOUF4io3zCzi1gUS5DcusK3SqPYMecucn7t2YXOP_k5_0eGfSgj34fhxz0T1vsGpXAc30lOXVK_l5d-EW28gA_EIF-rtn3jSBB',
     'vendorApiErrorLogPath' => 'C:/THIRUMALA/VendorAPI/ErrorLogs',
-    'namaste_collection_url' => 'https://rspoqas.hec.rsplgroup.com:50001/RESTAdapter/',
+    'namaste_collection_url' => 'https://rspoappprd.hec.rsplgroup.com:50001/RESTAdapter/',
     //'namaste_api_header' => ['userid' => 'PO_EVEREST', 'password' => 'Rspl$1234'],
-	'namaste_api_header' => ['Authorization' => 'Basic UE9fRVZFUkVTVDpSc3BsQDEyMzQ='],
+	'namaste_api_header' => ['Authorization' => 'Basic UE9fRVZFUkVTVDpyc3BsQDMyMQ=='],
 ];

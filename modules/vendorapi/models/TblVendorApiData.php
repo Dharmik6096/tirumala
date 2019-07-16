@@ -69,8 +69,8 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['parent_code_other', 'parent_code', 'master_code', 'master_name', 'master_type', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'address', 'address_2', 'email', 'bank_name', 'branch_name', 'bank_account_no', 'ifsc', 'type_of_data', 'union_code', 'service_type', 'username', 'password'], 'string'],
-            [['date_1', 'date_2', 'time_1', 'time_2', 'time_3', 'time_4', 'type_2', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_fat', 'to_fat', 'fat_price', 'from_snf', 'to_snf', 'snf_price'], 'safe'],
+            [[ 'parent_code', 'master_code', 'master_name', 'master_type', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'address', 'address_2', 'email', 'bank_name', 'branch_name', 'bank_account_no', 'ifsc', 'type_of_data', 'union_code', 'service_type', 'username', 'password'], 'string'],
+            [['parent_code_other','date_1', 'date_2', 'time_1', 'time_2', 'time_3', 'time_4', 'type_2', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_fat', 'to_fat', 'fat_price', 'from_snf', 'to_snf', 'snf_price'], 'safe'],
             [['capacity', 'route_length'], 'number'],
             [['is_active'], 'integer'],
             [['master_type'], 'default', 'value' => 'Can', 'on' => 'route_master'],
