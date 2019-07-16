@@ -21,6 +21,9 @@ class Androiddpu extends \yii\base\Module {
             'v1' => [
                 'class' => 'app\modules\androiddpu\v1\V1',
             ],
+            'v2' => [
+                'class' => 'app\modules\androiddpu\v2\V2',
+            ],
         ];
         // custom initialization code goes here
     }

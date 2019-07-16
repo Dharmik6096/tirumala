@@ -161,7 +161,7 @@ var initDepdropMs;
             } else {
                 page_height += 28;
             }
-            
+
             if (search_height === null) {
                 search_height = 5;
                 if (toolbar_height === null) {
@@ -193,5 +193,11 @@ var initDepdropMs;
         });
 //window.setInterval(function(){setHeight();}, 1);
 
+        $(".help-block").each(function (i, t) {
+            var errorText = $(this).text();
+            if (errorText != '') {
+                $(this).attr('title', errorText);
+            }
+        });
     });
 })(jQuery);
