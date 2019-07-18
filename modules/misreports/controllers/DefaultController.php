@@ -309,7 +309,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_dispatch_vs_receipt',
                 'scenario' => 'DispatchVsReceipt',
-                'title' => '403 - Dispatch vs Recceipt Report',
+                'title' => '403 - Dispatch vs Receipt Report',
             ],
         ];
         return $label[$l];

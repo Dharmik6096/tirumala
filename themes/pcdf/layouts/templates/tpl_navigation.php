@@ -207,7 +207,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/default/sap-status-report']],
                         ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
-                        ['label' => '403-' . Yii::t('app', 'Dispatch vs Recceipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
+                        ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => $reportUser],
