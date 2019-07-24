@@ -10,6 +10,7 @@ use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_bmc_collection".
@@ -173,6 +174,10 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code'])->andwhere(['is_active' => 1]);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
 
 }

@@ -21,7 +21,7 @@ if ($model->isNewRecord) {
 $model->destination_type = 0;
 $model->is_bmc = 0;
 $model->destination_code = 0;
-$model->route_code = 0;
+//$model->route_code = 0;
 $summary_model = $type == 'create' ? [$model, $bankDetails, $contactDetails] : $model;
 $address = explode(",", $model->address);
 $model->street1 = $address[0];

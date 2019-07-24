@@ -51,7 +51,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         ],
                         [
                             'attribute' => 'route_name',
-                            'value' => Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name'),
+                            'value' => Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],

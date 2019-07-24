@@ -16,9 +16,12 @@ $attribute = [
     ['attribute' => 'bmc_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'route_name', 'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
+    ['attribute' => 'route_code', 'label' => (Yii::t('app', 'Route Name')), 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
         }, 'vAlign' => 'middle', 'filter' => false],
+//    ['attribute' => 'route_name', 'value' => function($model) {
+//            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
+//        }, 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'visible' => false, 'vAlign' => 'middle', 'filter' => true],
             ['attribute' => 'dcs_name', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
