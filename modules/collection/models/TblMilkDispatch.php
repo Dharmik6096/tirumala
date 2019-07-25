@@ -62,7 +62,7 @@ class TblMilkDispatch extends \app\models\ChildModel {
             [['dcs_code', 'bmc_code', 'shift', 'village_code', 'type_of_data_receive'], 'string'],
             [['milk_type_code', 'sample_no'], 'integer'],
             [['fat', 'snf', 'water', 'qty'], 'number'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dcs_code', 'mcc_code', 'return_cob', 'remarks'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'dcs_code', 'mcc_code', 'return_cob', 'remarks', 'route_code'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
