@@ -154,8 +154,8 @@ class TblMilkDispatch extends \app\models\ChildModel {
         $this->village_code = !empty($this->dcs_code) ? substr($this->dcs_code, 0, 6) : null;
         $this->type_of_data_receive = 'Import';
         $dcsData = $this->dcsCode;
-        $this->model->route_code = !empty($dcsData->route_code) && $dcsData->route_code != 'N/A' ? $dcsData->route_code : null;
-        $this->model->bmc_code = !empty($dcsData->bmc_code) && $dcsData->bmc_code != 'N/A' ? $dcsData->bmc_code : null;
+        $this->route_code = !empty($dcsData->route_code) && $dcsData->route_code != 'N/A' ? $dcsData->route_code : null;
+        $this->bmc_code = !empty($dcsData->bmc_code) && $dcsData->bmc_code != 'N/A' ? $dcsData->bmc_code : null;
     }
 
     public function getExistRecord() {
