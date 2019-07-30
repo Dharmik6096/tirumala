@@ -189,7 +189,15 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'shift',
                     'sample_no',
                     'sap_status',
-                    'mcc_name'
+                    'mcc_name',
+                    'society_code',
+                    'dcs_name',
+                    'member_code',
+                    'member_name',
+                    'fat',
+                    'snf',
+                    'quantity',
+                    'response_description'
                 ],
             ],
         ]);

@@ -22,7 +22,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
     public function rules() {
         return [
             [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
-            [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date'], 'safe'],
+            [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type'], 'safe'],
             [['sap_collection_type'], 'required', 'on' => 'repostSapData']
         ];

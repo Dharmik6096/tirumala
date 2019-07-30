@@ -15,7 +15,9 @@ $this->title = Yii::t('app', 'SAP Data Repost');
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-            <?php echo $this->render('_search', ['model' => $model]); ?>
+            <?php 
+            $sap_collection_type = $model->sap_collection_type;
+            echo $this->render('_search', ['model' => $model]); ?>
             <?php
             $action = Url::to(['get-temp-data']);
             $form = ActiveForm::begin([
@@ -36,10 +38,18 @@ $this->title = Yii::t('app', 'SAP Data Repost');
             }],
 //                ['attribute' => 'dcs', 'label' => Yii::t('app', 'DCS'), 'filter' => false],
                 ['attribute' => 'mcc_name', 'filter' => false],
+                ['attribute' => 'society_code', 'filter' => false],
+                ['attribute' => 'dcs_name', 'filter' => false],
+                ['attribute' => 'member_code', 'filter' => false],
+                ['attribute' => 'member_name', 'filter' => false],
                 ['attribute' => 'collection_date', 'filter' => false],
                 ['attribute' => 'shift', 'filter' => false],
                 ['attribute' => 'sample_no', 'filter' => false],
+                ['attribute' => 'fat', 'filter' => false],
+                ['attribute' => 'snf', 'filter' => false],
+                ['attribute' => 'quantity', 'filter' => false],
                 ['attribute' => 'sap_status', 'filter' => false],
+                ['attribute' => 'response_description', 'filter' => false],
 //                ['attribute' => 'is_approved', 'value' => function ($model) {
 //                        return isset($model['is_approved']) ? Yii::$app->dropdown->getRecords('approval_status')['data'][$model['is_approved']] : '';
 //                    }, 'filter' => false],
