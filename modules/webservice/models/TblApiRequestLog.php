@@ -18,33 +18,30 @@ use Yii;
  * @property integer $is_called
  * @property string $content
  */
-class TblApiRequestLog extends \yii\db\ActiveRecord
-{
+class TblApiRequestLog extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_api_request_log';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['hash_key', 'request_url', 'imei', 'identity_code', 'member_code', 'type', 'content'], 'string'],
+            [['hash_key', 'request_url', 'imei', 'identity_code', 'member_code', 'type', 'content'], 'safe'],
             [['request_time'], 'safe'],
-            [['is_called'], 'integer'],
+            [['is_called'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'log_id' => Yii::t('app', 'Log ID'),
             'hash_key' => Yii::t('app', 'Hash Key'),
@@ -58,4 +55,5 @@ class TblApiRequestLog extends \yii\db\ActiveRecord
             'content' => Yii::t('app', 'Content'),
         ];
     }
+
 }

@@ -47,7 +47,7 @@ class TblMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_code', 'mcc_code', 'date_time_of_collection', 'shift', 'fat', 'snf', 'qty', 'no_of_can'], 'required', 'on' => ['importCsv']],
+            [['dcs_code', 'mcc_code', 'date_time_of_collection', 'shift', 'qty', 'no_of_can'], 'required', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDateDot', 'except' => 'convertDate', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
@@ -55,7 +55,7 @@ class TblMilkDispatch extends \app\models\ChildModel {
             return empty($model->getErrors());
         }, 'on' => ['importCsv']],
             [['date_time_of_collection'], 'dateValidate', 'on' => ['importCsv']],
-            [['fat', 'snf', 'qty', 'water'], 'default', 'value' => 0, 'on' => ['importCsv']],
+            [['fat', 'snf', 'qty', 'water'], 'default', 'value' => 0],
             [['qty'], 'double', 'min' => 0, 'max' => 99999, 'on' => ['importCsv']],
             [['fat', 'snf'], 'double', 'max' => 99, 'on' => ['importCsv']],
             [['no_of_can'], 'integer', 'max' => 99, 'on' => ['importCsv']],

@@ -74,6 +74,7 @@ class TblPurchaseRate extends \app\models\ChildModel {
                     'updated_by' => Yii::t('app', 'Updated By'),
                     'union_code' => Yii::t('app', 'Union'),
                     'shift_id' => Yii::t('app', 'Shift'),
+                    'reference_code' => Yii::t('app', 'SAP Rate ID'),
                 ];
             }
 

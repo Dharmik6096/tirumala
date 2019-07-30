@@ -70,7 +70,7 @@ class HttpRequest extends \yii\base\Component {
         $log->content = Yii::$app->request->getRawBody();
         $log->request_url = $this->req_url;
         $log->request_time = date('Y-m-d H:i:s');
-        $log->is_called = $this->allow_call;
+        $log->is_called = (int) $this->allow_call;
         $log->save();
     }
 

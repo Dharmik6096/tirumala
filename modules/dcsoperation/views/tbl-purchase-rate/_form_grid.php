@@ -19,6 +19,7 @@ use yii\helpers\Html;
 <?php
 $attribute = [
     ['attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code',],
+    ['attribute' => 'reference_code', 'value' => 'reference_code',],
     [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
