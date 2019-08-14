@@ -83,7 +83,7 @@ class EiplAppController extends MasterController {
             $model->is_active = 1;
             $model->is_expired = 0;
             $jsonData = Yii::$app->request->getRawBody();
-            $model->device_id = $jsonData['device_id'];
+            $model->device_id = '1234';//$jsonData['device_id'];
             $model->imei_no = $jsonData['imei_no'];
             $modelSave[] = $model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app verification', 'create']);

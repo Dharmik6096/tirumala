@@ -31,7 +31,8 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'plant/master' => [
-                'param' => 'select_param:[union_code],[plant_code],[name] as plant_name#organization_type#organization_code#table:tbl_plant#condition:parent_id is null',
+//                'param' => 'select_param:[union_code],[plant_code],[name] as plant_name#organization_type#organization_code#table:tbl_plant#condition:parent_id is null',
+                'param' => 'select_param:[union_code],[plant_code],[name] as plant_name#organization_type#organization_code#table:tbl_plant',
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'mcc/master' => [
