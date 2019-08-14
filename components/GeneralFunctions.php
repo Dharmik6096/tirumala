@@ -33,6 +33,7 @@ use app\components\SearchFilter;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblPlant;
+use app\modules\sms\models\TblAlertNotification;
 
 class GeneralFunctions extends Component {
 
@@ -657,35 +658,35 @@ class GeneralFunctions extends Component {
             if (in_array('f_union_code', $filters)) {
                 $union_table = !empty($union_table) ? $union_table : $tablename;
                 if (Yii::$app->session->get('Unions') !== '')
-                    $query->andFilterWhere([ $union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+                    $query->andFilterWhere([$union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
                 if (!empty($model->f_union_code))
                     $query->andFilterWhere([$union_table . '.union_code' => $model->f_union_code]);
             }
 
             if (in_array('f_plant_code', $filters)) {
                 if (Yii::$app->session->get('Plant') !== '')
-                    $query->andFilterWhere([ $plant_table . '.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+                    $query->andFilterWhere([$plant_table . '.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
                 if (!empty($model->f_plant_code))
                     $query->andFilterWhere([$plant_table . '.plant_code' => $model->f_plant_code]);
             }
 
             if (in_array('f_mcc_code', $filters)) {
                 if (Yii::$app->session->get('MCC') !== '')
-                    $query->andFilterWhere([ $plant_table . '.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+                    $query->andFilterWhere([$plant_table . '.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
                 if (!empty($model->f_mcc_code))
                     $query->andFilterWhere([$plant_table . '.mcc_plant_code' => $model->f_mcc_code]);
             }
 
             if (in_array('f_bmc_code', $filters)) {
                 if (Yii::$app->session->get('BMC') !== '')
-                    $query->andFilterWhere([ 'tbl_dcs.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+                    $query->andFilterWhere(['tbl_dcs.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
                 if (!empty($model->f_bmc_code))
                     $query->andFilterWhere(['tbl_dcs.bmc_code' => $model->f_bmc_code]);
             }
 
             if (in_array('f_dcs_code', $filters)) {
                 if (Yii::$app->session->get('Dcs') !== '')
-                    $query->andFilterWhere([ $tablename . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+                    $query->andFilterWhere([$tablename . '.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
                 if (!empty($model->f_dcs_code))
                     $query->andFilterWhere([$tablename . '.dcs_code' => $model->f_dcs_code]);
             }
@@ -810,8 +811,8 @@ class GeneralFunctions extends Component {
         $array = [];
         $i = $min_data;
         $j = $min_data;
-        for ($min_data; $min_data <= $max_data; $min_data+=$range) {
-            $array[$i . ',' . $i+=$range] = $j . ' <= ' . $j+=$range;
+        for ($min_data; $min_data <= $max_data; $min_data += $range) {
+            $array[$i . ',' . $i += $range] = $j . ' <= ' . $j += $range;
         }
         return $array;
     }
@@ -899,7 +900,7 @@ class GeneralFunctions extends Component {
         $str = '';
         $count = count($param);
         for ($i = 1; $i <= $count; $i++) {
-            $str.=':paramName' . $i . ',';
+            $str .= ':paramName' . $i . ',';
         }
         $str = substr($str, 0, -1);
         $command = \Yii::$app->db->createCommand("{CALL {$sp}({$str})}");
@@ -950,12 +951,12 @@ class GeneralFunctions extends Component {
         switch ($model->db_type) {
             case 'mysql':
                 $dsn = 'mysql:host=' . $model->db_host;
-                $dsn .=(!empty($model->db_port) && $model->db_port != '3306' ) ? ':' . $model->db_port : '';
-                $dsn.=';dbname=' . $model->db_name;
+                $dsn .= (!empty($model->db_port) && $model->db_port != '3306' ) ? ':' . $model->db_port : '';
+                $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
-                $dsn.=';Database=' . $model->db_name . ';ConnectionPooling=0';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
     }
@@ -1098,6 +1099,26 @@ class GeneralFunctions extends Component {
         $connection = Yii::$app->getDb();
         $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
         return strtolower($command['id']);
+    }
+
+    public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false) {
+        $content_id = '1';
+        $result = Yii::$app->sms->sendSms($content_id, $mobile, $message);
+        if ($save_data) {
+            $model = new TblAlertNotification();
+            $model->setAttributes($sms_data);
+            $datetime = date('Y-m-d H:i:s');
+            $model->content_id = $content_id;
+            $model->receiver_detail = $mobile;
+            $model->receiver_type = 'SMS';
+            $model->message = $message;
+            $model->send_status = '2';
+            $model->entry_datetime = $datetime;
+            $model->pick_datetime = $datetime;
+            $model->response_datetime = $datetime;
+            $model->response_status = $result;
+            $model->save();
+        }
     }
 
 }

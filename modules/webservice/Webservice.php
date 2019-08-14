@@ -36,6 +36,9 @@ class Webservice extends \yii\base\Module {
             'amcs' => [
                 'class' => 'app\modules\webservice\amcs\Amcs',
             ],
+            'eipl' => [
+                'class' => 'app\modules\webservice\eipl\Eipl',
+            ],
         ];
     }
 
