@@ -27,7 +27,7 @@ class V1 extends \yii\base\Module {
     public static function ServiceArray() {
         $label = [
             'union/master' => [
-                'param' => 'select_param:[union_code],[union_name]#organization_type#organization_code#table:tbl_unions',
+                'param' => 'select_param:[union_code],[union_name],[has_bmc]#organization_type#organization_code#table:tbl_unions',
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'plant/master' => [
@@ -269,12 +269,72 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_alert_notification',
             ],
             'menu/master' => [
-                'param' => 'organization_type',
+                'param' => 'login_type#department',
                 'sp' => 'sp_app_eipl_v1_menu_master'
             ],
             'user-widget/list' => [
                 'param' => 'login_type#department',
                 'sp' => 'sp_app_eipl_v1_user_widget',
+            ],
+            'dashboard/bmc-mcc' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_mcc',
+            ],
+            'dashboard/bmc-dsk' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_dsk',
+            ],
+            'dashboard/bmc-avgfat' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_avg_fat',
+            ],
+            'dashboard/bmc-avgsnf' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_avg_snf',
+            ],
+            'dashboard/bmc-totalqty' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_total_quantity',
+            ],
+            'dashboard/bmc-avgrate' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_avg_rate',
+            ],
+            'dashboard/bmc-totalamt' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_total_amount',
+            ],
+            'dashboard/dsk-mcc' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_mcc',
+            ],
+            'dashboard/dsk-dsk' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_dsk',
+            ],
+            'dashboard/dsk-avgfat' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_avg_fat',
+            ],
+            'dashboard/dsk-avgsnf' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_avg_snf',
+            ],
+            'dashboard/dsk-totalqty' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_total_quantity',
+            ],
+            'dashboard/dsk-avgrate' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_avg_rate',
+            ],
+            'dashboard/dsk-totalamt' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_total_amount',
+            ],
+            'dashboard/dsk-totalmember' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_total_member',
             ],
         ];
         return $label;
