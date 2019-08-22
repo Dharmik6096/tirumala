@@ -184,7 +184,7 @@ class TblRoutes extends ChildModel {
     }
     
     public function getTblDcsBmc(){
-        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code'])->andwhere(['tbl_dcs_subcenter_bmc_info.is_active' => 1]);
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code'])->andwhere(['tbl_bmc.is_active' => 1]);
     }
 
     public function getCode(){

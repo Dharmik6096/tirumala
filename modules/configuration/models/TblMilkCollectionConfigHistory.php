@@ -71,6 +71,7 @@ class TblMilkCollectionConfigHistory extends \yii\db\ActiveRecord {
             [['based_on', 'based_on_disp', 'collection_mode', 'created_by', 'based_on_local_sale', 'updated_by', 'union_code', 'operation_type', 'history_created_by'], 'safe'],
             [['can_warning_per', 'default_snf_value', 'lr1_for_clr', 'lr2_for_clr', 'ltr_to_kg', 'sample_milk_size', 'variation_in_fat', 'variation_in_qty', 'variation_in_snf'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

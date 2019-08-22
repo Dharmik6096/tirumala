@@ -57,6 +57,7 @@ class TblPurchaseRateHistory extends \yii\db\ActiveRecord {
 //            [['flg_sentbox_entry', 'sync_status'], 'string', 'max' => 1],
 //            [['operation_type'], 'string', 'max' => 10],
 //            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
+            [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

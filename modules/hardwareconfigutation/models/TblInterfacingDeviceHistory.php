@@ -45,24 +45,22 @@ use app\modules\organisation\models\TblUnions;
  * @property TblDeviceManufacturer $deviceManufacturer
  * @property TblUnions $unionCode
  */
-class TblInterfacingDeviceHistory extends \yii\db\ActiveRecord
-{
+class TblInterfacingDeviceHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_interfacing_device_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
 //            [['bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id'], 'integer'],
-            [['flg_sentbox_entry', 'end_char', 'start_char', 'reg_expression', 'device_manufacturer_id', 'union_code',  'flg_sentbox_entry', 'sync_status', 'discard_char', 'split_char', 'device_code', 'device_name', 'is_active', 'is_delete', 'is_snf','baud_rate', 'operation_type', 'tare', 'bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','created_by', 'deleted_by', 'updated_by'], 'safe'],
+            [['flg_sentbox_entry', 'end_char', 'start_char', 'reg_expression', 'device_manufacturer_id', 'union_code', 'flg_sentbox_entry', 'sync_status', 'discard_char', 'split_char', 'device_code', 'device_name', 'is_active', 'is_delete', 'is_snf', 'baud_rate', 'operation_type', 'tare', 'bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by'], 'safe'],
 //            [['device_name'], 'required'],
 //            [['is_active', 'is_delete', 'is_snf'], 'boolean'],
 //            [['baud_rate', 'operation_type', 'tare'], 'string', 'max' => 10],
@@ -76,14 +74,14 @@ class TblInterfacingDeviceHistory extends \yii\db\ActiveRecord
 //            [['union_code'], 'string', 'max' => 3],
 //            [['device_manufacturer_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblDeviceManufacturer::className(), 'targetAttribute' => ['device_manufacturer_id' => 'id']],
 //            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'baud_rate' => Yii::t('app', 'Baud Rate'),
@@ -124,16 +122,14 @@ class TblInterfacingDeviceHistory extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeviceManufacturer()
-    {
+    public function getDeviceManufacturer() {
         return $this->hasOne(TblDeviceManufacturer::className(), ['id' => 'device_manufacturer_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
@@ -141,8 +137,8 @@ class TblInterfacingDeviceHistory extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblInterfacingDeviceHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblInterfacingDeviceHistoryQuery(get_called_class());
     }
+
 }

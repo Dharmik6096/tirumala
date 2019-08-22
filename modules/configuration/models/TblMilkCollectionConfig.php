@@ -83,6 +83,7 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
             [['based_on_local_sale'], 'string', 'max' => 45],
             [['default_snf_value'], 'validateSnf'],
             [['union_code'], 'configMilkCollection', 'skipOnEmpty' => false, 'on' => 'milkCollection'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

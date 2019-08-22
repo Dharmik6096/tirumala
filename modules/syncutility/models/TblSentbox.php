@@ -148,7 +148,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
             $sentModel->table_name = 'tbl_route';
         } else if ($sentModel->table_name == 'tbl_route_mapping_sources') {
             $sentModel->table_name = 'tbl_route_mapping';
-        } else if ($sentModel->table_name == 'tbl_dcs_subcenter_bmc_info') {
+        } else if ($sentModel->table_name == 'tbl_bmc') {
             $sentModel->table_name = 'tbl_bmc';
         }
         $data = $sentModel->attributes;

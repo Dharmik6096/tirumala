@@ -114,28 +114,28 @@ class TblMember extends ChildModel {
               return ($model->isNewRecord)?true:false;
               },'skipOnEmpty'=> true], */
             [['gender_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'gender', false);
-        }, 'on' => 'saveCreamyData'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'gender', false);
+                }, 'on' => 'saveCreamyData'],
             [['email'], 'email'],
             [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'string'],
             [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
             [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['ifsc', 'pan_no'], 'trim'],
             [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
             [['mobile_no', 'religion_code'], 'integer'],
             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
             [['pan_no'], 'unique', 'targetAttribute' => ['pan_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->is_active;
-        }],
+                    return $this->is_active;
+                }],
             [['email'], 'unique', 'targetAttribute' => ['email', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->is_active;
-        }],
+                    return $this->is_active;
+                }],
             /*    [['adhar_no'], 'unique', 'targetAttribute' => ['adhar_no', 'is_active', 'dcs_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
               return $this->is_active;
               }],
@@ -143,36 +143,37 @@ class TblMember extends ChildModel {
               return $this->is_active;
               }], */
             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->is_active;
-        }, 'except' => ['saveCreamyData']],
+                    return $this->is_active;
+                }, 'except' => ['saveCreamyData']],
             [['bank_account_no'], function ($attribute, $params) {
-            $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
-            if ($error !== TRUE)
-                $this->addError($attribute, $error);
-        }, 'except' => ['saveCreamyData']],
+                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+                    if ($error !== TRUE)
+                        $this->addError($attribute, $error);
+                }, 'except' => ['saveCreamyData']],
             [['pan_no'], function ($attribute, $params) {
-            Yii::$app->general->validatePancard($this, $attribute, $params);
-        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['adhar_no'], function ($attribute, $params) {
-            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
+                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
             [['ifsc'], function ($attribute, $params) {
-            Yii::$app->general->validateIfsc($this, $attribute, $params);
-        }, 'skipOnEmpty' => false, 'when' => function() {
-            return (!empty($this->branch_code) || (in_array($this->scenario, ['importLimitedCsv', 'importCsv']) && !empty($this->ifsc)));
-        }, 'except' => ['saveCreamyData']],
+                    Yii::$app->general->validateIfsc($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'when' => function() {
+                    return (!empty($this->branch_code) || (in_array($this->scenario, ['importLimitedCsv', 'importCsv']) && !empty($this->ifsc)));
+                }, 'except' => ['saveCreamyData']],
             [['local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['voter_id'], 'string', 'max' => 15, 'skipOnEmpty' => true],
             [['payment_mode'], 'string', 'max' => 10, 'skipOnEmpty' => true],
             [['dob'], function ($attribute, $params) {
-            Yii::$app->general->validateAge($this, $attribute, $params);
-        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
+                    Yii::$app->general->validateAge($this, $attribute, $params);
+                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData']],
             [['ex_member_code'], 'integer', 'min' => 1],
             [['ex_member_code'], 'string', 'min' => 4, 'max' => 4],
             [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.')],
             [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData']],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -416,15 +417,15 @@ class TblMember extends ChildModel {
         $text = '';
         $flag = false;
         foreach ($header as $h) {
-            $text.=$h . PHP_EOL;
+            $text .= $h . PHP_EOL;
         }
 
         foreach ($members as $m) {
-            $text.=$m . PHP_EOL;
+            $text .= $m . PHP_EOL;
         }
 
         foreach ($trans as $t) {
-            $text.=$t . PHP_EOL;
+            $text .= $t . PHP_EOL;
         }
         $vfile = fopen($fileName, "w") or die("Unable to open file!");
         if (fwrite($vfile, $text)) {
@@ -460,13 +461,13 @@ class TblMember extends ChildModel {
     public function getKycInfo() {
         $data = $this->find()->where(['member_code' => $this->member_code])->one();
         $address = $data->address . ',' . Yii::$app->general->getforeignkey($data->hamletCode, 'hamlet_name');
-        $address .='<br/>' . Yii::$app->general->getforeignkey($data->villageCode, 'village_name') . ',' . Yii::$app->general->getforeignkey($data->subDistrictCode, 'sub_district_name');
-        $address .='<br/>' . Yii::$app->general->getforeignkey($data->districtCode, 'district_name') . '-' . $data->pincode;
+        $address .= '<br/>' . Yii::$app->general->getforeignkey($data->villageCode, 'village_name') . ',' . Yii::$app->general->getforeignkey($data->subDistrictCode, 'sub_district_name');
+        $address .= '<br/>' . Yii::$app->general->getforeignkey($data->districtCode, 'district_name') . '-' . $data->pincode;
 
         $bankdata = 'A/C No. - ' . $data->bank_account_no;
         $bankdata .= '<br/>Bank - ' . Yii::$app->general->getforeignkey($data->bankCode, 'bank_name');
-        $bankdata.='<br/>Branch - ' . Yii::$app->general->getforeignkey($data->branchCode, 'branch_name');
-        $bankdata .='<br/>IFSC - ' . $data->ifsc;
+        $bankdata .= '<br/>Branch - ' . Yii::$app->general->getforeignkey($data->branchCode, 'branch_name');
+        $bankdata .= '<br/>IFSC - ' . $data->ifsc;
 
         return ['name' => $data->member_name, 'address' => $address, 'bankdetail' => $bankdata, 'panno' => $data->pan_no, 'aadharno' => $data->adhar_no];
     }

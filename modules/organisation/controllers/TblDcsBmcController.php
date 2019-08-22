@@ -128,7 +128,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionDelete() {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_dcs_subcenter_bmc_info', Yii::$app->request->post('id'), 'bmc_code']);
+        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_bmc', Yii::$app->request->post('id'), 'bmc_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
             $historyModel = new TblDcsBmcHistory();

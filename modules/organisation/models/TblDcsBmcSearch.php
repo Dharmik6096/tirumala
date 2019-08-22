@@ -39,7 +39,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
     public function search($params) {
 
         $query = $this->find();
-        $query->distinct('tbl_dcs_subcenter_bmc_info.bmc_code');
+        $query->distinct('tbl_bmc.bmc_code');
 
         // add conditions that should always apply here
 
@@ -86,14 +86,14 @@ class TblDcsBmcSearch extends TblDcsBmc {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'tbl_dcs_subcenter_bmc_info.is_active' => $this->is_active,
+            'tbl_bmc.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_code', $this->bmc_code])
-                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->bmc_name])
-                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.local_name', $this->local_name])
-                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.model', $this->model])
-                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.subcenter_code', $this->subcenter_code]);
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_code', $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_name])
+                ->andFilterWhere(['like', 'tbl_bmc.local_name', $this->local_name])
+                ->andFilterWhere(['like', 'tbl_bmc.model', $this->model])
+                ->andFilterWhere(['like', 'tbl_bmc.subcenter_code', $this->subcenter_code]);
 
         return $dataProvider;
     }

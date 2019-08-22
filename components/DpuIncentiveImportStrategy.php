@@ -1,0 +1,100 @@
+<?php
+
+namespace app\components;
+
+use ruskid\csvimporter\ARImportStrategy;
+use yii\widgets\ActiveForm;
+use Yii;
+use app\modules\general\models\TblDpuIncentiveMaster;
+use app\modules\general\models\TblDpuIncentiveMasterHistory;
+
+class DpuIncentiveImportStrategy extends ARImportStrategy {
+
+    public function import(&$data) {
+        $importedPks = [];
+        $importedData = [];
+        $errors = [];
+        $count = 0;
+
+        $data = array_filter($data, function($var) {
+            return !empty($var[0]) && !is_null($var);
+        });
+        $data = array_filter($data);
+        foreach ($data as $key => $row) {
+            $skipImport = isset($this->skipImport) ? call_user_func($this->skipImport, $row) : false;
+            if ($key == 0)
+                continue;
+
+            if (!$skipImport) {
+                $trans = \Yii::$app->db->beginTransaction();
+                try {
+                    $modelList = [];
+                    $model = new $this->className;
+                    if (!empty($this->scenario)) {
+                        $model->scenario = $this->scenario;
+                    }
+                    $addedAttributes = [];
+                    foreach ($this->configs as $config) {
+                        $value = call_user_func($config['value'], $row);
+                        if (isset($config['attribute']) && ($model->hasAttribute($config['attribute']))) {
+                            //Set value to the model
+                            ($model->hasAttribute($config['attribute'])) ? $model->setAttribute($config['attribute'], $value) : '';
+                            $addedAttributes[$config['attribute']] = $config['attribute'];
+                        } else if (property_exists($model, $config['attribute'])) {
+                            //Set value to the model of public attribute
+                            $model->{$config['attribute']} = $value;
+                            $addedAttributes[$config['attribute']] = $config['attribute'];
+                        }
+                    }
+                    $existData = TblDpuIncentiveMaster::find()->where(['dcs_code' => $model->dcs_code])->one();
+                    if (!empty($existData)) {
+                        $historyModel = new TblDpuIncentiveMasterHistory();
+                        \Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $modelList[] = $historyModel;
+                        //$existData->attributes = array_filter($model->attributes);
+
+                        foreach ($addedAttributes as $row) {
+                            $existData->{$row} = $model->{$row};
+                        }
+                        $existData->scenario = $model->scenario;
+                        $model = $existData;
+                    }
+                    $error = ActiveForm::validate($model);
+                    if (empty($model->getErrors()) && $model->validate()) {
+                        $modelList[] = $model;
+
+                        foreach ($modelList as $modelRow) {
+                            $master[] = $modelRow->save();
+                        }
+                        if (!in_array(FALSE, $master)) {
+                            $trans->commit();
+                            $count++;
+                            $importedPks[] = $model->primaryKey;
+                        } else {
+                            $trans->rollback();
+                            $message = '';
+                            foreach ($model->getErrors() as $errorkey => $value) {
+                                $message.=$value[0] . '<br/>';
+                            }
+                            return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
+                        }
+                    } else {
+                        $message = '';
+                        foreach ($model->getErrors() as $errorkey => $value) {
+                            $message.=$value[0] . '<br/>';
+                        }
+
+                        return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
+                    }
+                } catch (UserException $e) {
+                    $trans->rollback();
+                    return ['total' => 0, 'status' => 'error', 'msg' => $e->getMessage(), 'pk' => 0];
+                }
+            }
+        }
+        if ($count == count($data) - 1) {
+            return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)];
+        }
+    }
+
+}

@@ -79,7 +79,7 @@ class TblMACAlibrationSearch extends TblMACAlibration {
             'tbl_MA_CAlibration.MilkType' => $this->MilkType
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->BMCCode])
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->BMCCode])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->PPCode])
                 ->andFilterWhere(['like', 'tbl_MA_CAlibration.shift', $this->shift]);
 

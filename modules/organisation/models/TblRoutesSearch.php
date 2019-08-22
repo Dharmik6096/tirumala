@@ -67,7 +67,7 @@ class TblRoutesSearch extends TblRoutes
 
         if(!empty($this->bmc_code)){
             $query->joinWith(['tblDcsBmc']);
-            $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->bmc_code]);
+            $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
         }
 
         // grid filtering conditions
