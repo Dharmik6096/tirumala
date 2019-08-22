@@ -86,7 +86,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $model = new TblMccPlant();
             $model->mcc_plant_code = $code;
             $detail_type = 'mccPlant';
-            $mcc_code[] = $code;
+            $mcc_plant_code[] = $code;
             $model_data = $model->getData();
             if (!empty($model_data)) {
                 $parent_code = $model_data->plant_code;
@@ -98,8 +98,9 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $res_data['parent_code'] = $parent_code;
         $res_data['parent_name'] = $parent_name;
     }
-    
+
     public function actionInitialization() {
+        $db_file = 'bmc_app.db';
         $res_data = [];
         $data = $this->post_data;
         $model = new TblAndroidInstallationDetails();
@@ -113,10 +114,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $code = $org_code;
                 $dcs_code = [];
                 $bmc_code = [];
-                $mcc_code = [];
+                $mcc_plant_code = [];
                 $plant_code = [];
                 $union_code = '';
                 if ($type == 'VLC') {
+                    $db_file = 'everest_amcs(2).db';
                     $model = new TblDcs();
                     $model->dcs_code = $code;
                     $detail_type = 'society';
@@ -125,8 +127,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     if (!empty($model_data)) {
                         $union_code = $model_data->union_code;
                         $bmc_code[] = $model_data->bmc_code;
-                        $mcc_code[] = Yii::$app->general->getforeignkey($model_data->bmcCode, 'mcc_code');
-                        $plant_code[] = Yii::$app->general->getmultiforeignkey($model_data->bmcCode, ['tblMccPlant'], 'plant_code');
+                        $mcc_plant_code[] = $model_data->mcc_plant_code;
+                        $plant_code[] = $model_data->plant_code;
                     }
                 } else if ($type == 'BMC') {
                     $model = new TblDcsBmc();
@@ -136,8 +138,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $model_data = $model->singleBmcData();
                     if (!empty($model_data)) {
                         $union_code = $model_data->union_code;
-                        $mcc_code[] = $model_data->mcc_code;
-                        $plant_code[] = Yii::$app->general->getforeignkey($model_data->tblMccPlant, 'plant_code');
+                        $mcc_plant_code[] = $model_data->mcc_plant_code;
+                        $plant_code[] = $model_data->plant_code;
                     }
                     $dcsCodes = $model->dcsCodes;
                     foreach ($dcsCodes as $dcsCode) {
@@ -147,7 +149,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $model = new TblMccPlant();
                     $model->mcc_plant_code = $code;
                     $detail_type = 'mccPlant';
-                    $mcc_code[] = $code;
+                    $mcc_plant_code[] = $code;
                     $model_data = $model->getData();
                     if (!empty($model_data)) {
                         $union_code = $model_data->union_code;
@@ -174,7 +176,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         mkdir($FolderPath, 0777, TRUE);
                         umask($oldmask);
                     }
-                    copy($FolderPath . 'everest_amcs.db', $FolderPath . $fileName);
+                    copy($FolderPath . $db_file, $FolderPath . $fileName);
                     \Yii::$app->sqlite->_path = $FolderPath;
                     \Yii::$app->sqlite->_organisation_code = $code;
                     \Yii::$app->sqlite->_organisation_type = $type;
@@ -185,11 +187,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $dcs_code = !empty($dcs_code) ? '\'' . $dcs_code . '\'' : $dcs_code;
                         $bmc_code = implode('\',\'', $bmc_code);
                         $bmc_code = !empty($bmc_code) ? '\'' . $bmc_code . '\'' : $bmc_code;
-                        $mcc_code = implode('\',\'', $mcc_code);
-                        $mcc_code = !empty($mcc_code) ? '\'' . $mcc_code . '\'' : $mcc_code;
+                        $mcc_plant_code = implode('\',\'', $mcc_plant_code);
+                        $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
                         $plant_code = implode('\',\'', $plant_code);
                         $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
-                        \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_code, $plant_code, $code, $type, $union_code);
+                        \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $code, $type, $union_code);
                         $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
                     }
                 }

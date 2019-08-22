@@ -183,75 +183,76 @@ class SqliteCreate extends Component {
         }
     }
 
-    public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type, $union_code = '') {
+    public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code = '') {
         try {
             $sqls = 'SELECT *  FROM tbl_table_list';
             $cmd = Yii::$app->db->createCommand($sqls);
             $tables = $cmd->queryAll();
-
             foreach ($tables as $field) {
                 try {
                     $tables_fields = [];
                     $tableName = $field['table_name'];
-                    $tableName = $tableName == 'tbl_dcs_subcenter_bmc_info' ? 'tbl_bmc' : $tableName;
                     $tableName = $tableName == 'tbl_route_mapping' ? 'tbl_route' : $tableName;
                     $tableName = $tableName == 'tbl_route_mapping_sources' ? 'tbl_route_mapping' : $tableName;
                     if (in_array($tableName, $android_tables)) {
-                        $mcc_code_replace = false;
                         $insert_data = '';
                         $results = $this->android_db->query('PRAGMA table_info(' . $tableName . ')');
                         while ($row = $results->fetchArray()) {
-                            if (!in_array($row['name'], ['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ex_col1', 'ex_col2'])) {
-                                if ($row['name'] == 'mcc_code' && $tableName == 'tbl_dcs') {
-                                    $tables_fields[] = 'mcc_plant_code';
-                                    $mcc_code_replace = true;
-                                } else {
-                                    $tables_fields[] = $row['name'];
-                                }
-                            }
+                            $tables_fields[] = $row['name'];
                         }
                         $tables_fields = implode(',', $tables_fields);
-                        if ($tableName == 'tbl_bmc') {
-                            $tableName = 'tbl_dcs_subcenter_bmc_info';
-                        } else if ($tableName == 'tbl_route_mapping') {
+                        if ($tableName == 'tbl_route_mapping') {
                             $tableName = 'tbl_route_mapping_sources';
                         } else if ($tableName == 'tbl_route') {
                             $tableName = 'tbl_route_mapping';
                         }
-//                    if (in_array($tableName, $process)) {
-                        $sqls = 'SELECT *  FROM tbl_table_list where table_name= \'' . $tableName . '\'';
-                        $cmd = Yii::$app->db->createCommand($sqls);
-                        $field = $cmd->queryAll();
-                        if (!empty($field)) {
-                            $field = $field[0];
-                            $fields = str_replace(',', ',' . $field['table_name'] . '.', $tables_fields);
-                            $fields = $field['table_name'] . '.' . $fields;
-                            $where = '';
-                            if ($field['key_field'] == 'dcs_code') {
-                                $where = $dcs_code;
-                            } else if ($field['key_field'] == 'bmc_code') {
-                                $where = $bmc_code;
-                            } else if ($field['key_field'] == 'mcc_plant_code') {
-                                $where = $mcc_code;
-                            } else if ($field['key_field'] == 'plant_code') {
-                                $where = $plant_code;
-                            } else if ($field['key_field'] == 'union_code') {
-                                $where = $union_code;
-                            }
-
-                            $tableName = $field['table_name'];
+                        $fields = str_replace(',', ',' . $field['table_name'] . '.', $tables_fields);
+                        $fields = $field['table_name'] . '.' . $fields;
+                        if ($field['is_main'] == 1) {
                             if ($field['key_field'] == NULL) {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
                             } else {
-                                if ($field['key_field'] == 'from_dest') {
-                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($dcs_code)) and from_type = 'society'";
-                                } else if ($field['key_field'] == 'to_dest') {
-                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($bmc_code)) and to_type = 'bmc'";
-                                } else {
-                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($where))";
-                                }
+                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in (${$field['key_field']})";
+                            }
+                        } else {
+                            $sql = 'SELECT distinct ' . $fields . ' FROM ' . $tableName . ' inner join ' . $field['primary_table'] . ' on ' . $tableName . '.' . $field['child_key'] . '=' . $field['primary_table'] . '.' . $field['child_key'] . ' where ' . $field['primary_table'] . '.' . $field['key_field'] . " in (${$field['key_field']})";
+                        }
+                        print_r($sql.';');
+                        continue;
+
+
+
+
+
+
+//                    if (in_array($tableName, $process)) {
+
+                        $where = '';
+                        if ($field['key_field'] == 'dcs_code') {
+                            $where = $dcs_code;
+                        } else if ($field['key_field'] == 'bmc_code') {
+                            $where = $bmc_code;
+                        } else if ($field['key_field'] == 'mcc_plant_code') {
+                            $where = $mcc_plant_code;
+                        } else if ($field['key_field'] == 'plant_code') {
+                            $where = $plant_code;
+                        } else if ($field['key_field'] == 'union_code') {
+                            $where = $union_code;
+                        }
+
+                        $tableName = $field['table_name'];
+                        if ($field['key_field'] == NULL) {
+                            $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
+                        } else {
+                            if ($field['key_field'] == 'from_dest') {
+                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($dcs_code)) and from_type = 'society'";
+                            } else if ($field['key_field'] == 'to_dest') {
+                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($bmc_code)) and to_type = 'bmc'";
+                            } else {
+                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($where))";
                             }
                         }
+
                         $cmd = $this->export_db->createCommand($sql);
                         $dataReader = $cmd->queryAll();
                         if ($tableName == 'tbl_dcs_subcenter_bmc_info') {
@@ -561,20 +562,19 @@ class SqliteCreate extends Component {
 
     //use for Android
 //    public function createSqlFileDcs($fileName, $dcs_code, $language_code, $user_code, $organization_code, $language_locale, $sub_center_code) {
-    public function createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type, $union_code = '') {
+    public function createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code = '') {
         set_time_limit(5400);
         $this->android_db = new SQLite3('installation-identity/' . $fileName);
         $this->db_name = $org_code;
         $this->back_temp_file = $fileName;
         $this->export_db = Yii::$app->db;
-//        die('test');
         $android_tables = $this->getTables();
 //        $tables = $this->getMainTables();
 //        $process = $this->getProcessDcs();
         $this->file_name = Yii::$app->basePath . '/installation-identity/error.txt';
         $this->fp = fopen($this->file_name, 'w+');
 //        foreach ($tables as $tableName) {
-        $this->getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_code, $plant_code, $org_code, $org_type, $union_code);
+        $this->getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code);
 //        }
 //        $this->AddAttachmentDB($dcs_code, $language_code);
     }

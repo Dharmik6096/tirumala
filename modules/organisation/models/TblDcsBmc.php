@@ -22,7 +22,7 @@ use app\modules\syncutility\models\TblSentbox;
  *
  * @property string $bmc_code
  * @property string $bmc_type_code
- * @property string $mcc_code
+ * @property string $mcc_plant_code
  * @property string $bmc_name
  * @property string $created_at
  * @property integer $is_active
@@ -52,7 +52,7 @@ class TblDcsBmc extends \app\models\ChildModel {
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_dcs_subcenter_bmc_info';
+        return 'tbl_bmc';
     }
 
     /**
@@ -60,7 +60,7 @@ class TblDcsBmc extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['bmc_name', 'union_code', 'hamlet_code', 'mcc_code'], 'required'],
+            [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
             [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
             [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
             [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
@@ -88,7 +88,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC Code'),
             'bmc_name' => Yii::t('app', 'BMC Name'),
             'local_name' => Yii::t('app', 'Hindi Name'),
-            'mcc_code' => Yii::t('app', 'MCC'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_type_code' => Yii::t('app', 'BMC Type'),
             'created_at' => Yii::t('app', 'Created At'),
             'is_active' => Yii::t('app', 'Is Active'),
@@ -137,7 +137,7 @@ class TblDcsBmc extends \app\models\ChildModel {
     }
 
     public function getTblMccPlant() {
-        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_code']);
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
     public function getTblBmcType() {
@@ -265,7 +265,7 @@ class TblDcsBmc extends \app\models\ChildModel {
     public function getBMC($plantCode = [], $RLS = 'TRUE') {
         $query = $this->find()->select(['bmc_code', 'bmc_name'])->where(['is_active' => 1]);
         if (!empty($plantCode))
-            $query->andWhere(['mcc_code' => $plantCode]);
+            $query->andWhere(['mcc_plant_code' => $plantCode]);
         if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
         }
@@ -323,9 +323,9 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
     }
 
-    public function getBmcRecords($mcc_code) {
+    public function getBmcRecords($mcc_plant_code) {
         $data = $this->find()
-                ->where(['mcc_code' => $mcc_code])
+                ->where(['mcc_plant_code' => $mcc_plant_code])
                 ->all();
         return ArrayHelper::map($data, 'bmc_code', 'bmc_name');
     }
