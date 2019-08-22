@@ -7,6 +7,7 @@ use Yii;
 use app\modules\webservice\eipl\v1\V1;
 use app\modules\webservice\components\EiplRequest;
 use yii\helpers\Json;
+use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 
 class RequestMasterController extends MasterController {
 
@@ -102,6 +103,39 @@ class RequestMasterController extends MasterController {
             $model->{$key} = $a;
         }
         return $model;
+    }
+
+    public function actionSaveDpuCollectionData() {
+        $records = Yii::$app->request->getRawBody();
+        $successId = [];
+        $errorId = [];
+        $setData = [];
+        $currentDateTime = date('Y-m-d H:i:s');
+        $identityRecord = !empty(Yii::$app->eiplapp->identity) ? Yii::$app->eiplapp->identity : [];
+        $setData['access_token'] = !empty($identityRecord['access_token']) ? $identityRecord['access_token'] : NULL;
+        $setData['identity_type'] = !empty($identityRecord['login_type']) ? $identityRecord['login_type'] : NULL;
+        $setData['mobile_no'] = !empty($identityRecord['mobile_no']) ? $identityRecord['mobile_no'] : NULL;
+        $setData['device_id'] = !empty($identityRecord['device_id']) ? $identityRecord['device_id'] : NULL;
+        $setData['entry_type'] = 'HTTP';
+        $setData['status'] = 0;
+        $setData['entry_datetime'] = $currentDateTime;
+        foreach ($records as $record) {
+            $model = new TblDpuCollectionHoData();
+            $model->setAttributes($record);
+            $model->setAttributes($setData);
+            if ($model->save()) {
+                $successId[] = $model->uuid;
+            } else {
+                $errorId[] = $model->uuid;
+            }
+        }
+        $response = [];
+        $response['success_id'] = $successId;
+        $response['error_id'] = $errorId;
+        $this->response->setData($response);
+        $message = 'Successfully Saved!';
+        $this->response->setMessage([$message]);
+        return $this->response;
     }
 
 }
