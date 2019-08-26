@@ -40,7 +40,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $rate_gen_method_code,$rate_description;
+    public $rate_gen_method_code, $rate_description;
     public $rate_type, $reference_code;
 
     public static function tableName() {
@@ -65,8 +65,9 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
             [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
-                //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-                //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
+            //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -232,7 +233,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                     '>VENDOR_RANK=1' . PHP_EOL .
                     '>MILK_TYPE=' . strtoupper($name) . PHP_EOL . '' . PHP_EOL . '' . PHP_EOL;
             $snf = ArrayHelper::getColumn($snf, 'snf');
-            $txt.='*FAT,' . implode(',', $snf) . PHP_EOL;
+            $txt .= '*FAT,' . implode(',', $snf) . PHP_EOL;
             $cnt = 0;
 
             foreach ($fat as $f) {
@@ -246,7 +247,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                         $cnt++;
                     }
                 }
-                $txt.=$f->fat . ',' . implode(',', $rt) . PHP_EOL;
+                $txt .= $f->fat . ',' . implode(',', $rt) . PHP_EOL;
             }
             return $txt;
         }

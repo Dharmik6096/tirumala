@@ -31,31 +31,29 @@ use Yii;
  * @property string $operation_type
  * @property string $capacity
  */
-class TblPlantHistory extends \yii\db\ActiveRecord
-{
+class TblPlantHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_plant_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['is_active', 'plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description','created_at', 'updated_at', 'history_created_at','operation_type','capacity', 'valid_from'], 'safe']
+            [['is_active', 'plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description', 'created_at', 'updated_at', 'history_created_at', 'operation_type', 'capacity', 'valid_from'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
 //            'id' => Yii::t('app', 'ID'),
 //            'plant_code' => Yii::t('app', 'Plant Code'),
@@ -80,4 +78,5 @@ class TblPlantHistory extends \yii\db\ActiveRecord
 //            'description' => Yii::t('app', 'Description'),
         ];
     }
+
 }

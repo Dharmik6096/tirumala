@@ -77,7 +77,7 @@ class TblMACleaningSearch extends TblMACleaning {
             'tbl_MA_Cleaning.shift' => $this->shift,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->BMCCode])
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->BMCCode])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->PPCode])
                 ->andFilterWhere(['like', 'tbl_MA_Cleaning.updatedby', $this->updatedby]);
 

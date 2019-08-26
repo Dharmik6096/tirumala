@@ -1,3 +1,4 @@
+
 <?php
 
 namespace app\modules\syncutility\models;
@@ -45,6 +46,7 @@ class TblSyncLog extends \yii\db\ActiveRecord {
             [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'string'],
             [['sequence_no'], 'integer'],
             [['posting_timestamp', 'sync_timestamp'], 'safe'],
+            [['error_timestamp', 'processed_timestamp'], 'safe'],
         ];
     }
 

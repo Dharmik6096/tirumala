@@ -32,21 +32,19 @@ use Yii;
  * @property TblRateType $rateTypeCode
  * @property TblUnions $unionCode
  */
-class TblFormulaHistory extends \yii\db\ActiveRecord
-{
+class TblFormulaHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_formula_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['formula', 'formula_code', 'formula_description', 'operation_type', 'dcs_code', 'union_code', 'milk_type_code', 'rate_type_code', 'is_active', 'is_delete', 'created_at', 'deleted_at', 'history_created_at', 'updated_at', 'wef_date', 'created_by', 'deleted_by', 'updated_by'], 'safe'],
 //            [['is_active', 'is_delete'], 'boolean'],
@@ -62,14 +60,14 @@ class TblFormulaHistory extends \yii\db\ActiveRecord
 //            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
 //            [['rate_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRateType::className(), 'targetAttribute' => ['rate_type_code' => 'code']],
 //            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -96,32 +94,28 @@ class TblFormulaHistory extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMilkTypeCode()
-    {
+    public function getMilkTypeCode() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRateTypeCode()
-    {
+    public function getRateTypeCode() {
         return $this->hasOne(TblRateType::className(), ['code' => 'rate_type_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
@@ -129,8 +123,8 @@ class TblFormulaHistory extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblFormulaHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblFormulaHistoryQuery(get_called_class());
     }
+
 }

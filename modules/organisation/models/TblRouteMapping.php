@@ -171,13 +171,13 @@ class TblRouteMapping extends \app\models\ChildModel {
 
             case ($route_type == 'Tanker' && $route_dest_type == 'from'):
                 $bmc_sub_query = $subQuery->where('b.bmc_code = rms.from_dest and rms.from_type=\'bmc\'');
-                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname")])->from('tbl_dcs_subcenter_bmc_info b')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $bmc_sub_query])->createCommand()->rawSql;
+                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname")])->from('tbl_bmc b')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $bmc_sub_query])->createCommand()->rawSql;
                 $mcc_sub_query = $subQuery->where('t.mcc_plant_code = rms.from_dest and rms.from_type=\'mcc\'');
                 $results = $mcc_query->andWhere(['not exists', $mcc_sub_query])->union($bmc_query)->all();
                 break;
 
             case ($route_type == 'Can' && $route_dest_type == 'to'):
-                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname")])->from('tbl_dcs_subcenter_bmc_info b')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
+                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname")])->from('tbl_bmc b')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
                 $results = $mcc_query->union($plant_quey)->union($bmc_query)->all();
                 break;
 

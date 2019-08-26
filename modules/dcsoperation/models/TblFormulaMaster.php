@@ -47,6 +47,7 @@ class TblFormulaMaster extends \app\models\ChildModel {
             [['is_active'], 'integer'],
             [['formula_code', 'formula_description', 'formula'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -127,7 +128,7 @@ class TblFormulaMaster extends \app\models\ChildModel {
     }
 
     public function getSameTypeData() {
-        return $this->find()->where(['union_code' => $this->union_code,'milk_type_code' => $this->milk_type_code, 'rate_type_code' => $this->rate_type_code, 'is_active' => 1])->one();
+        return $this->find()->where(['union_code' => $this->union_code, 'milk_type_code' => $this->milk_type_code, 'rate_type_code' => $this->rate_type_code, 'is_active' => 1])->one();
     }
 
 }

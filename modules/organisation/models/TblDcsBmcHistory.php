@@ -42,7 +42,7 @@ class TblDcsBmcHistory extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'tbl_dcs_subcenter_bmc_info_history';
+        return 'tbl_bmc_history';
     }
 
     /**

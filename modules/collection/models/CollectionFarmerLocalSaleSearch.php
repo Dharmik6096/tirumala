@@ -74,7 +74,7 @@ class CollectionFarmerLocalSaleSearch extends CollectionFarmerLocalSale {
 
         // grid filtering conditions
         
-        $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->bmcid])
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmcid])
                 ->andFilterWhere(['like', 'CollectionFarmerLocalSale.shift', $this->shift])
                 ->andFilterWhere(['like', 'tbl_member.member_name', $this->farmerid])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->vlccid]);

@@ -79,7 +79,7 @@ class TestingvillagequalitySearch extends Testingvillagequality {
         $query->andFilterWhere([
             'testingvillagequality.shift' => $this->shift,
         ]);
-        $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->mccid])
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->mccid])
                 ->andFilterWhere(['like', 'testingvillagequality.sampleno', $this->sampleno]);
         $query->orderBy('dtdate desc');
         return $dataProvider;

@@ -82,7 +82,7 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             'tbl_quality_collection.doc_no' => $this->doc_no,
             'tbl_quality_collection.sample_no' => $this->sample_no,
         ]);
-        $query->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->bmc_code]);
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
         $query->orderBy('tbl_quality_collection.collection_date desc');
         return $dataProvider;
     }

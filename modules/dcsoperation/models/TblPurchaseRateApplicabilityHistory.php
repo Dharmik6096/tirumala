@@ -22,31 +22,29 @@ use Yii;
  * @property integer $shift_code
  * @property string $union_code
  */
-class TblPurchaseRateApplicabilityHistory extends \yii\db\ActiveRecord
-{
+class TblPurchaseRateApplicabilityHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_purchase_rate_applicability_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['is_active', 'shift_code','created_at', 'history_created_at', 'updated_at', 'wef_date','created_by', 'operation_type', 'rate_app_code', 'updated_by', 'dcs_code', 'purchase_rate_code', 'union_code','is_download', 'download_date_time'], 'safe'],
+            [['is_active', 'shift_code', 'created_at', 'history_created_at', 'updated_at', 'wef_date', 'created_by', 'operation_type', 'rate_app_code', 'updated_by', 'dcs_code', 'purchase_rate_code', 'union_code', 'is_download', 'download_date_time'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -64,4 +62,5 @@ class TblPurchaseRateApplicabilityHistory extends \yii\db\ActiveRecord
             'union_code' => Yii::t('app', 'Union Code'),
         ];
     }
+
 }

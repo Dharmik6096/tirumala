@@ -97,7 +97,7 @@ class TblBmcDispatchSearch extends TblBmcDispatch {
 
         $query->andFilterWhere(['like', 'tbl_bmc_dispatch.destination_code', $this->destination_code])
                 ->andFilterWhere(['like', 'tbl_bmc_dispatch.destination_type', $this->destination_type])
-                ->andFilterWhere(['like', 'tbl_dcs_subcenter_bmc_info.bmc_name', $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
                 ->andFilterWhere(['like', 'tbl_bmc_dispatch.route_code', $this->route_code]);
 
         return $dataProvider;

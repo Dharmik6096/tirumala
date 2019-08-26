@@ -57,19 +57,20 @@ class TblPlant extends \app\models\ChildModel {
             [['email'], 'email'],
             [['plant_code'], 'unique'],
             [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['local_name', 'local_cantact_person_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
             [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
             [['capacity'], 'integer'],
             [['plant_code'], 'integer', 'min' => 1],
             [['plant_code'], 'string', 'max' => 6],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -227,7 +228,9 @@ class TblPlant extends \app\models\ChildModel {
         $data = $this->find()
                 ->where(['union_code' => $this->union_code])
                 ->all();
-        return ArrayHelper::map($data, function($data){ return (string) $data->plant_code; }, 'name');
+        return ArrayHelper::map($data, function($data) {
+                    return (string) $data->plant_code;
+                }, 'name');
     }
 
 }
