@@ -10,10 +10,11 @@ use app\models\EiplPacketFileLog;
 use app\models\EiplPacketProcess;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 
 class EiplPacketController extends Controller {
 
-    public $freeAccessActions = ['read-folder', 'read-file', 'import-file'];
+    public $freeAccessActions = ['read-folder', 'read-file', 'import-file', 'read-dpu-collection-data'];
 
     public function behaviors() {
         return [
@@ -81,13 +82,13 @@ class EiplPacketController extends Controller {
                     if ($fh = fopen($file->file_path, 'r')) {
                         $cnt = 0;
                         $error_cnt = 0;
-					$no_of_lines = count(file($file->file_path));
+                        $no_of_lines = count(file($file->file_path));
                         if ($file->source_type == 0) {
                             $dateshift = explode('.', $file->file_name)[0];
                             $dtdate = \DateTime::createFromFormat('dmy', substr($dateshift, 12, 6));
                             $dtdate = $dtdate->format('Y-m-d');
                         } else {
-                          
+
                             $main_line = \Yii::$app->EIPLSecurity->Decrypt(file($file->file_path)[0]);
                             $vlccid = substr($main_line, 14, 12);
                             $dateshift = explode('.', $file->file_name)[0];
@@ -274,6 +275,71 @@ class EiplPacketController extends Controller {
             }
         }
         return FALSE;
+    }
+
+    public function actionReadDpuCollectionData() {
+        $model = new TblDpuCollectionHoData();
+        $modelData = $model->getData();
+        if (!empty($modelData)) {
+            $update_ids = array_column($modelData, 'dpu_collection_ho_data_id');
+            $model->updateAll(['status' => 1], ['dpu_collection_ho_data_id' => $update_ids]);
+            foreach ($modelData as $data) {
+                $string = $data->encrypted_string;
+                $string = Yii::$app->EIPLSecurity->Decrypt($string);
+                $this->saveCollectionData($data, $string);
+            }
+        }
+    }
+
+    private function saveCollectionData($data, $packet) {
+        $vlccid = substr($packet, 0, 12);
+        $dtdate = substr($packet, 13, 8);
+        $shift = substr($packet, 21, 1);
+        $farmerid = substr($packet, 23, 4);
+        $milktype = substr($packet, 27, 1);
+        $fat = (float) ((substr($packet, 28, 2)) . '.' . (substr($packet, 30, 1))); // . after 2
+        $snf = (float) ((substr($packet, 31, 2)) . '.' . (substr($packet, 33, 1)));  // . after 2
+        $water = (float) (substr($packet, 34, 2));  // . after 2
+        $qty = (float) ((substr($packet, 36, 3)) . '.' . (substr($packet, 39, 2)));    // . after 3
+        $amt = (float) ((substr($packet, 41, 5)) . '.' . (substr($packet, 46, 2))); // . after 5
+        $sampletime = $dtdate . ' ' . substr($packet, 48, 2) . ':' . substr($packet, 50, 2) . ':00';
+        $rate = (float) ((substr($packet, 52, 2)) . '.' . (substr($packet, 54, 2))); // . after 2
+        $txflag = substr($packet, 56, 3);
+        $farmername = trim(substr($packet, 59));
+        $farmermo = NULL;
+        $mccid = substr($vlccid, 0, 6);
+        $createdtime = date('Y-m-d H:i:s');
+        $createdtime = date('Y-m-d H:i:s');
+        $type = 'HTTP';
+        if (!in_array($farmerid, ['2097', '2098'])) {
+            $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer '$farmerid',
+'$farmername',
+'$farmermo',
+'$vlccid',
+'$mccid',
+'$sampleno',
+'$txflag',
+'$qty',
+'$amt',
+'$rate',
+'$fat',
+'$snf',
+'$water',
+'$dtdate',
+'$shift',
+'$milktype',
+'$sampletime',
+'$createdtime',
+'$type'
+");
+            $query = $result->execute();
+            if ($query == 1) {
+                $data->status = 2;
+            } else {
+                $data->status = 3;
+            }
+            $data->save();
+        }
     }
 
 }
