@@ -286,14 +286,19 @@ class EiplPacketController extends Controller {
             foreach ($modelData as $data) {
                 $string = $data->encrypted_string;
                 $string = Yii::$app->EIPLSecurity->Decrypt($string);
-                $this->saveCollectionData($data, $string);
+                $cnt = $data->dpu_collection_ho_data_id;
+                $this->saveCollectionData($data, $string, $cnt);
             }
         }
     }
 
-    private function saveCollectionData($data, $packet) {
+    private function saveCollectionData($data, $packet, $sampleno) {
         $vlccid = substr($packet, 0, 12);
-        $dtdate = substr($packet, 13, 8);
+        //echo substr($packet, 13, 8);
+
+        $dtdate = \DateTime::createFromFormat('d/m/y', substr($packet, 13, 8));
+        $dtdate = $dtdate->format('Y-m-d');
+        // $dtdate = substr($packet, 13, 8);
         $shift = substr($packet, 21, 1);
         $farmerid = substr($packet, 23, 4);
         $milktype = substr($packet, 27, 1);

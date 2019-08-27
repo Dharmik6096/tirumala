@@ -70,14 +70,14 @@ class TblDpuCollectionHoData extends \app\models\ChildModel {
 
     public function getData() {
         $newRecords = $this->find()
-                        ->where(['or', ['status' => 0], ['status' => NULL]])
-                        ->limit(50)
-                        ->all();
-        
+                ->where(['or', ['status' => 0], ['status' => NULL]])
+                ->limit(100)
+                ->all();
+
         $unprocessedRecords = $this->find()
-                        ->where(['status' => 3])
-                        ->limit(10)
-                        ->all();
+                ->where(['status' => 3])
+                ->limit(10)
+                ->all();
         return array_merge($newRecords, $unprocessedRecords);
     }
 
