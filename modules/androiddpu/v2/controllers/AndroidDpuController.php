@@ -118,7 +118,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $plant_code = [];
                 $union_code = '';
                 if ($type == 'VLC') {
-                    $db_file = 'everest_amcs(2).db';
+                    $db_file = 'everest_amcs.db';
                     $model = new TblDcs();
                     $model->dcs_code = $code;
                     $detail_type = 'society';
@@ -165,7 +165,6 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     }
                 }
                 if (!empty($model_data)) {
-
                     $file = $type . '_' . $code . '_' . date('Y.m.d_H.i.s');
                     $fileName = $file . '.db';
                     $id_model->db_path = '/installation-identity/' . $file . '.db';
@@ -191,8 +190,12 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
                         $plant_code = implode('\',\'', $plant_code);
                         $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
-                        \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $code, $type, $union_code);
-                        $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
+                        $response = \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $code, $type, $union_code);
+                        if ($response) {
+                            $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
+                        } else {
+                            $res_data['db_path'] = NULL;
+                        }
                     }
                 }
             }
