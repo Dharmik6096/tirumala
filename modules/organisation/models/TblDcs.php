@@ -111,9 +111,11 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_short_name', 'dcs_type_code', 'hamlet_code', 'dcs_name', 'dcs_code_ex', 'pincode', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport']],
+            [['union_code', 'dcs_name', 'dcs_code_ex', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport']],
+            [['dcs_short_name', 'hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs']],
             [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
-            [['dcs_code', 'milk_type_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport']],
+            [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport']],
+            [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport']],
             [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport']],
