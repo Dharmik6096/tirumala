@@ -103,7 +103,7 @@ class SqliteCreate extends Component {
                                 $insert_data = '';
                                 if (($i % 100 == 0) || $i == count($dataReader)) {
                                     $insertData = implode(',', $saveData);
-                                    // $I_QUERY = 'insert into ' . $insert_table . ' (' . $tables_fields . ') VALUES ' . $insertData . ';';
+                                    //$I_QUERY = 'insert into ' . $insert_table . ' (' . $tables_fields . ') VALUES ' . $insertData . ';';
                                     $this->android_db->exec('insert into ' . $insert_table . ' (' . $tables_fields . ') VALUES ' . $insertData . ';');
                                     $saveData = [];
                                     if ($i == count($dataReader)) {
@@ -163,11 +163,14 @@ class SqliteCreate extends Component {
 
     public function setInsertData($table_data, $dataType, &$insert_data) {
         foreach ($table_data as $key => $value) {
+            $index = array_search($key, array_column($dataType, 'COLUMN_NAME'));
             if (is_null($value)) {
-                $value = '\'\'';
+                $value = 'NULL';
+                if (in_array($dataType[$index]['DATA_TYPE'], ['bit', 'binary', 'int', 'bigint', 'decimal', 'float', 'numeric', 'smallint'])) {
+                    $value = 0;
+                }
             } else {
-                $index = array_search($key, array_column($dataType, 'COLUMN_NAME'));
-                if ($dataType[$index]['DATA_TYPE'] === 'bit') {
+                if (in_array($dataType[$index]['DATA_TYPE'], ['bit', 'binary'])) {
                     if (ord($value) === 1 || ord($value) === 0) {
                         $value = addslashes(ord($value));
                     } else {
