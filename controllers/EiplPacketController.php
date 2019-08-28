@@ -293,31 +293,32 @@ class EiplPacketController extends Controller {
     }
 
     private function saveCollectionData($data, $packet, $sampleno) {
-        $vlccid = substr($packet, 0, 12);
-        //echo substr($packet, 13, 8);
+        try {
+            $vlccid = substr($packet, 0, 12);
+            //echo substr($packet, 13, 8);
 
-        $dtdate = \DateTime::createFromFormat('d/m/y', substr($packet, 13, 8));
-        $dtdate = $dtdate->format('Y-m-d');
-        // $dtdate = substr($packet, 13, 8);
-        $shift = substr($packet, 21, 1);
-        $farmerid = substr($packet, 23, 4);
-        $milktype = substr($packet, 27, 1);
-        $fat = (float) ((substr($packet, 28, 2)) . '.' . (substr($packet, 30, 1))); // . after 2
-        $snf = (float) ((substr($packet, 31, 2)) . '.' . (substr($packet, 33, 1)));  // . after 2
-        $water = (float) (substr($packet, 34, 2));  // . after 2
-        $qty = (float) ((substr($packet, 36, 3)) . '.' . (substr($packet, 39, 2)));    // . after 3
-        $amt = (float) ((substr($packet, 41, 5)) . '.' . (substr($packet, 46, 2))); // . after 5
-        $sampletime = $dtdate . ' ' . substr($packet, 48, 2) . ':' . substr($packet, 50, 2) . ':00';
-        $rate = (float) ((substr($packet, 52, 2)) . '.' . (substr($packet, 54, 2))); // . after 2
-        $txflag = substr($packet, 56, 3);
-        $farmername = trim(substr($packet, 59));
-        $farmermo = NULL;
-        $mccid = substr($vlccid, 0, 6);
-        $createdtime = date('Y-m-d H:i:s');
-        $createdtime = date('Y-m-d H:i:s');
-        $type = 'HTTP';
-        if (!in_array($farmerid, ['2097', '2098'])) {
-            $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer '$farmerid',
+            $dtdate = \DateTime::createFromFormat('d/m/y', substr($packet, 13, 8));
+            $dtdate = $dtdate->format('Y-m-d');
+            // $dtdate = substr($packet, 13, 8);
+            $shift = substr($packet, 21, 1);
+            $farmerid = substr($packet, 23, 4);
+            $milktype = substr($packet, 27, 1);
+            $fat = (float) ((substr($packet, 28, 2)) . '.' . (substr($packet, 30, 1))); // . after 2
+            $snf = (float) ((substr($packet, 31, 2)) . '.' . (substr($packet, 33, 1)));  // . after 2
+            $water = (float) (substr($packet, 34, 2));  // . after 2
+            $qty = (float) ((substr($packet, 36, 3)) . '.' . (substr($packet, 39, 2)));    // . after 3
+            $amt = (float) ((substr($packet, 41, 5)) . '.' . (substr($packet, 46, 2))); // . after 5
+            $sampletime = $dtdate . ' ' . substr($packet, 50, 2) . ':' . substr($packet, 48, 2) . ':00';
+            $rate = (float) ((substr($packet, 52, 2)) . '.' . (substr($packet, 54, 2))); // . after 2
+            $txflag = substr($packet, 56, 3);
+            $farmername = trim(substr($packet, 59));
+            $farmermo = NULL;
+            $mccid = substr($vlccid, 0, 6);
+            $createdtime = date('Y-m-d H:i:s');
+            $createdtime = date('Y-m-d H:i:s');
+            $type = 'HTTP';
+            if (!in_array($farmerid, ['2097', '2098'])) {
+                $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer '$farmerid',
 '$farmername',
 '$farmermo',
 '$vlccid',
@@ -337,14 +338,17 @@ class EiplPacketController extends Controller {
 '$createdtime',
 '$type'
 ");
-            $query = $result->execute();
-            if ($query == 1) {
-                $data->status = 2;
-            } else {
-                $data->status = 3;
+                $query = $result->execute();
+                if ($query == 1) {
+                    $data->status = 2;
+                } else {
+                    $data->status = 3;
+                }
             }
-            $data->save();
+        } catch (Exception $e) {
+            $data->status = 3;
         }
+        $data->save();
     }
 
 }
