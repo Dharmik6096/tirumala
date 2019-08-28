@@ -282,7 +282,7 @@ class EiplPacketController extends Controller {
         $modelData = $model->getData();
         if (!empty($modelData)) {
             $update_ids = array_column($modelData, 'dpu_collection_ho_data_id');
-            $model->updateAll(['status' => 1], ['dpu_collection_ho_data_id' => $update_ids]);
+            $model->updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['dpu_collection_ho_data_id' => $update_ids]);
             foreach ($modelData as $data) {
                 $string = $data->encrypted_string;
                 $string = Yii::$app->EIPLSecurity->Decrypt($string);
