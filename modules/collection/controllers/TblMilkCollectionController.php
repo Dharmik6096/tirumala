@@ -61,7 +61,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->name = Yii::$app->general->getforeignkey($this->model->memberCode, 'member_name');
             $this->model->village_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code');
             $datetime = date('Y-m-d H:i:s');
-            $this->model->date_time_of_collection = date('Y-m-d') . ' ' . Yii::$app->general->getshift($this->model->shift);
+            $this->model->date_time_of_collection = date('Y-m-d') . ' ' . Yii::$app->general->getshift($this->model->shift_code);
             $this->model->date_time_of_recieve = $datetime;
             $this->model->dt_date = $datetime;
             $this->model->qlty_time = $datetime;
@@ -132,7 +132,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $data['milk_quality_type'] = Yii::$app->request->post('milk_quality_type');
         $data['dt_date'] = Yii::$app->request->post('dt_date');
         $data['dt_date'] = (Yii::$app->request->post('dt_date')) ? Yii::$app->formatter->asDate(Yii::$app->request->post('dt_date'), DATE_FORMAT) : '';
-        $data['shift'] = Yii::$app->request->post('shift');
+        $data['shift'] = Yii::$app->request->post('shift_code');
         $data['dt_date'] = $data['dt_date'] . ' ' . \Yii::$app->general->getshift($data['shift']);
         $data['fat'] = Yii::$app->request->post('fat');
         $data['snf'] = Yii::$app->request->post('snf');

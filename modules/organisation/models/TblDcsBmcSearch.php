@@ -17,7 +17,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
      */
     public function rules() {
         return [
-            [['bmc_code', 'mcc_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name'], 'safe'],
+            [['bmc_code', 'mcc_plant_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name'], 'safe'],
         ];
     }
 
@@ -57,9 +57,9 @@ class TblDcsBmcSearch extends TblDcsBmc {
             // $query->where('0=1');
             return $dataProvider;
         }
-        if (!empty($this->mcc_code)) {
+        if (!empty($this->mcc_plant_code)) {
             $query->joinWith(['tblMccPlant']);
-            $query->andFilterWhere(['like', 'tbl_mcc_plant.name', $this->mcc_code]);
+            $query->andFilterWhere(['like', 'tbl_mcc_plant.name', $this->mcc_plant_code]);
         }
         if (!empty($this->manufacturer_code)) {
             $query->joinWith(['manufacturerCode']);
@@ -101,7 +101,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
     public function bccSearch($params) {
         $query = $this->find();
         $this->load($params);
-        $query->where(['mcc_code' => $this->mcc_code]);
+        $query->where(['mcc_plant_code' => $this->mcc_plant_code]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => ['defaultOrder' => ['bmc_name' => SORT_ASC]],

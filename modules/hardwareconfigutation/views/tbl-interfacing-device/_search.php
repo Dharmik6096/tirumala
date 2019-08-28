@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'device_code') ?>
+    <?= $form->field($model, 'interfacing_device_code') ?>
 
     <?= $form->field($model, 'baud_rate') ?>
 

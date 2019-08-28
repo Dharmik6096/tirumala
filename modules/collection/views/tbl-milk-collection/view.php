@@ -65,7 +65,7 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'shift',
+                            'attribute' => 'shift_code',
                             'value' => !empty($model->shiftCode) ? $model->shiftCode->shift : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],

@@ -12,7 +12,6 @@ $class = $type == 'create' ? '' : 'no_pointer';
 
 <?php
 $form = ActiveForm::begin([
-
             'options' => [],
             'validateOnBlur' => FALSE,
             'validateOnEnter' => TRUE,
@@ -33,7 +32,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbldpuincentivemaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
     </div>  
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldpuincentivemaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, $readonly); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldpuincentivemaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbldpuincentivemaster-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, '', $readonly, TRUE); ?>         

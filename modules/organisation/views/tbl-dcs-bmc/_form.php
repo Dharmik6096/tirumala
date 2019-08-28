@@ -40,7 +40,7 @@ $form = ActiveForm::begin([
     </div>
     <?= Html::activeHiddenInput($model, 'is_mcc') ?>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->depend_dropdown('mcc', $model, $form, 'tbldcsbmc-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'MCC', '', $disabled); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('mcc', $model, $form, 'tbldcsbmc-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'MCC', 'mcc_plant_code', $disabled); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('bmc_type', $model, $form, '', 'BMC Type', false, 'bmc_type_code'); ?>        

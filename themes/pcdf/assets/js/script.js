@@ -199,5 +199,11 @@ var initDepdropMs;
                 $(this).attr('title', errorText);
             }
         });
+        $(document).ajaxStop(function () {
+            $('.depend-control').each(function () {
+                $(this).attr('disabled', 'disabled');
+            })
+        })
     });
 })(jQuery);
+

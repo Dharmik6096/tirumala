@@ -60,7 +60,7 @@ class DcsImportStrategy extends ARImportStrategy {
                     }
 
                     $modelList = [];
-                    $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_code');
+                    $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_plant_code');
                     $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
                     $model->setModel();
                     $error = ActiveForm::validate($model);

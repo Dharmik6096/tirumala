@@ -18,7 +18,7 @@ class TblInterfacingDeviceSearch extends TblInterfacingDevice
     public function rules()
     {
         return [
-            [['device_code', 'baud_rate','bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'device_name', 'discard_char', 'end_char', 'flg_sentbox_entry', 'reg_expression', 'split_char', 'start_char', 'sync_status', 'sync_timestamp', 'tare', 'updated_at', 'updated_by', 'union_code'], 'safe'],
+            [['interfacing_device_code', 'baud_rate','bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'device_name', 'discard_char', 'end_char', 'flg_sentbox_entry', 'reg_expression', 'split_char', 'start_char', 'sync_status', 'sync_timestamp', 'tare', 'updated_at', 'updated_by', 'union_code'], 'safe'],
             //[['bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id'], 'integer'],
             [['is_active', 'is_delete', 'is_snf'], 'boolean'],
         ];
@@ -72,7 +72,7 @@ class TblInterfacingDeviceSearch extends TblInterfacingDevice
             'stop_bit' => $this->stop_bit,
         ]);
 
-        $query->andFilterWhere(['like', 'device_code', $this->device_code])
+        $query->andFilterWhere(['like', 'interfacing_device_code', $this->interfacing_device_code])
             ->andFilterWhere(['like', 'baud_rate', $this->baud_rate])
             ->andFilterWhere(['like', 'incoming_data_type', $this->incoming_data_type])
             ->andFilterWhere(['like', 'device_name', $this->device_name])

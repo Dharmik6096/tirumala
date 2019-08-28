@@ -36,8 +36,8 @@ class TblAddressbook extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['destinations', 'flag_entry', 'to_child', 'to_parent', 'type', 'originating_type'], 'integer'],
-            [['organization_code', 'organization_type', 'source_org_type', 'sync_url', 'table_name', 'originating_org_id', 'originating_org_type'], 'string'],
+            [['destinations', 'flag_entry', 'to_child', 'to_parent', 'type'], 'integer'],
+            [['organization_code', 'organization_type', 'source_org_type', 'sync_url', 'table_name', 'originating_org_id'], 'string'],
         ];
     }
 
@@ -58,8 +58,6 @@ class TblAddressbook extends \yii\db\ActiveRecord {
             'to_parent' => Yii::t('app', 'To Parent'),
             'type' => Yii::t('app', 'Type'),
             'originating_org_id' => Yii::t('app', 'Originating Org ID'),
-            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
-            'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
 

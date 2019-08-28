@@ -14,7 +14,7 @@ use app\components\GeneralFunctions;
 
 <?php
 $attribute = [
-    ['attribute' => 'device_code', 'vAlign' => 'middle',],
+    ['attribute' => 'interfacing_device_code', 'vAlign' => 'middle',],
     ['attribute' => 'baud_rate', 'vAlign' => 'middle',
         'filter' => Html::activeDropDownList($searchModel, 'baud_rate', $searchModel->getBaurdRate(),['class'=>'form-control','prompt'=>'Select']),
         'value' => function($model) {return ($model->baud_rate)?$model->getBaurdRate()[$model->baud_rate]:''; },],
@@ -54,7 +54,7 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'update' => true,
-        'delete' => ['option' => 'device_name,device_code,tbl-interfacing-device/delete'],
+        'delete' => ['option' => 'device_name,interfacing_device_code,tbl-interfacing-device/delete'],
     ]
 ];
 

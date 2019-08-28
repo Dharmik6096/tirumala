@@ -28,13 +28,13 @@ use app\modules\general\models\TblSocietyVendor;
  * @property string $rtpl
  * @property string $amount
  * @property string $auto_flag
- * @property string $shift
+ * @property string $shift_code
  * @property string $date_time_of_collection
  * @property string $date_time_of_recieve
  * @property string $village_code
  * @property integer $sample_no
  * @property string $type_of_data_receive
- * @property string $rate_code
+ * @property string $purchase_rate_code
  * @property string $error_log
  * @property integer $ack
  * @property string $soc_bmc_flag
@@ -75,8 +75,8 @@ class TblMilkCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag'], 'string', 'except' => ['sendsms']],
-            [['milk_type_code', 'shift', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'rtpl', 'qty', 'amount'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms']],
+            [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag'], 'string', 'except' => ['sendsms']],
+            [['milk_type_code', 'shift_code', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'rtpl', 'qty', 'amount'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms']],
             [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['sendsms']],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms']],
             //[['sms_status'],'default','n'],
@@ -85,7 +85,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms']],
             //  [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
-            [['rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['rate_code' => 'purchase_rate_code'], 'except' => ['sendsms']],
+            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code'], 'except' => ['sendsms']],
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
 //            [['milk_collection_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkCollection::className(), 'targetAttribute' => ['milk_collection_code' => 'milk_collection_code']],
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount'], 'default', 'value' => '0'],
@@ -112,13 +112,13 @@ class TblMilkCollection extends \app\models\ChildModel {
             'rtpl' => Yii::t('app', 'RTPL'),
             'amount' => Yii::t('app', 'Amount'),
             'auto_flag' => Yii::t('app', 'Auto Flag'),
-            'shift' => Yii::t('app', 'Shift'),
+            'shift_code' => Yii::t('app', 'Shift'),
             'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
             'date_time_of_recieve' => Yii::t('app', 'Date Time Of Recieve'),
             'village_code' => Yii::t('app', 'Village Name'),
             'sample_no' => Yii::t('app', 'Sample No'),
             'type_of_data_receive' => Yii::t('app', 'Type Of Data Receive'),
-            'rate_code' => Yii::t('app', 'Purchase Rate'),
+            'purchase_rate_code' => Yii::t('app', 'Purchase Rate'),
             'error_log' => Yii::t('app', 'Error Log'),
             'ack' => Yii::t('app', 'Ack'),
             'soc_bmc_flag' => Yii::t('app', 'Soc Bmc Flag'),
@@ -157,7 +157,7 @@ class TblMilkCollection extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getRateCode() {
-        return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'rate_code']);
+        return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
     }
 
     /**
@@ -182,7 +182,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     }
 
     public function getShiftCode() {
-        return $this->hasOne(TblShift::className(), ['id' => 'shift']);
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
 
     /**
@@ -221,17 +221,17 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function getCollection($data) {
         $from_date = $data['from_date'];
         $to_date = $data['to_date'];
-        return $this->find()->select(['member_code', 'fat', 'snf', 'qty', 'amount', 'date_time_of_collection', 'sample_no', 'shift', 'clr', 'rtpl', 'qlty_auto', 'qty_auto', 'milk_type_code'])
-                        ->where(['member_code' => $this->member_code])->andWhere("date_time_of_collection between '$from_date' and '$to_date' ")->orderBy(['date_time_of_collection' => SORT_ASC, 'shift' => SORT_ASC, 'sample_no' => SORT_DESC])->all();
+        return $this->find()->select(['member_code', 'fat', 'snf', 'qty', 'amount', 'date_time_of_collection', 'sample_no', 'shift_code', 'clr', 'rtpl', 'qlty_auto', 'qty_auto', 'milk_type_code'])
+                        ->where(['member_code' => $this->member_code])->andWhere("date_time_of_collection between '$from_date' and '$to_date' ")->orderBy(['date_time_of_collection' => SORT_ASC, 'shift_code' => SORT_ASC, 'sample_no' => SORT_DESC])->all();
     }
 
     public function getCollectionDatewise() {
-        return $this->find()->select(['member_code', 'fat', 'snf', 'qty', 'amount', 'date_time_of_collection', 'sample_no', 'shift', 'clr', 'rtpl', 'qlty_auto', 'qty_auto', 'milk_type_code'])
-                        ->where(['member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->collection_date])->orderBy(['date_time_of_collection' => SORT_ASC, 'shift' => SORT_ASC, 'sample_no' => SORT_DESC])->all();
+        return $this->find()->select(['member_code', 'fat', 'snf', 'qty', 'amount', 'date_time_of_collection', 'sample_no', 'shift_code', 'clr', 'rtpl', 'qlty_auto', 'qty_auto', 'milk_type_code'])
+                        ->where(['member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->collection_date])->orderBy(['date_time_of_collection' => SORT_ASC, 'shift_code' => SORT_ASC, 'sample_no' => SORT_DESC])->all();
     }
 
     public function memberCollectionData($from_date, $to_date, $society_code) {
-        return $this->find()->select(['member_code', 'name', 'milk_type_code', 'fat', 'snf', 'qty', 'rtpl', 'amount', 'shift', 'date_time_of_collection', 'sample_no'])
+        return $this->find()->select(['member_code', 'name', 'milk_type_code', 'fat', 'snf', 'qty', 'rtpl', 'amount', 'shift_code', 'date_time_of_collection', 'sample_no'])
                         ->where(['dcs_code' => $society_code])
                         ->andFilterWhere(['>=', 'date_time_of_collection', $from_date])
                         ->andFilterWhere(['<=', 'date_time_of_collection', $to_date])
@@ -241,7 +241,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function getSampleNo() {
         $data = $this->find()
                 ->select('max(sample_no) as sample_no')
-                ->where(['member_code' => $this->member_code, 'shift' => $this->shift, 'CONVERT(date,date_time_of_collection)' => date('Y-m-d')])
+                ->where(['member_code' => $this->member_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => date('Y-m-d')])
                 ->one();
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
@@ -249,7 +249,7 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function getExistingData() {
         return $this->find()
-                        ->where(['dcs_code' => $this->dcs_code, 'sample_no' => $this->sample_no, 'milk_type_code' => $this->milk_type_code, 'date_time_of_collection' => $this->date_time_of_collection, 'shift' => $this->shift])
+                        ->where(['dcs_code' => $this->dcs_code, 'sample_no' => $this->sample_no, 'milk_type_code' => $this->milk_type_code, 'date_time_of_collection' => $this->date_time_of_collection, 'shift_code' => $this->shift_code])
                         ->one();
     }
 

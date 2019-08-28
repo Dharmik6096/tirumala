@@ -101,7 +101,7 @@ class CommonImportStrategy extends ARImportStrategy{
 
                             $bmcModel=new TblDcsBmc();
                             $bmcModel->scenario='from_mcc';
-                            $bmcModel->mcc_code=$mccModel->mcc_plant_code;
+                            $bmcModel->mcc_plant_code=$mccModel->mcc_plant_code;
                             $bmcModel->bmc_code=$bmcModel->getCode();
                             $bmcModel->bmc_name=  $mccModel->name;
                             $bmcModel->local_name=  $mccModel->local_name;
@@ -121,7 +121,7 @@ class CommonImportStrategy extends ARImportStrategy{
                         if($class == 'app\modules\organisation\models\MccPlantImport') { 
                             $bmcModel=new TblDcsBmc();
                             $bmcModel->scenario='from_mcc';
-                            $bmcModel->mcc_code=$model->mcc_plant_code;
+                            $bmcModel->mcc_plant_code=$model->mcc_plant_code;
                             $bmcModel->bmc_code=$bmcModel->getCode();
                             $bmcModel->bmc_name=  $model->name;
                             $bmcModel->local_name=  $model->local_name;
