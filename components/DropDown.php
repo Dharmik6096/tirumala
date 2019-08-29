@@ -588,6 +588,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => Yii::t('app', 'Auto Shift Lock'), '2' => Yii::t('app', 'Manual Shift Lock'), '3' => Yii::t('app', 'On Dispatch Shift Lock')],
             ],
+            'destination_type' => [
+                'name' => 'destination_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'BMC'), '1' => Yii::t('app', 'MCC'), '2' => Yii::t('app', 'PLANT')],
+            ],
         ];
         return $records[$l];
     }
@@ -691,6 +696,13 @@ class DropDown extends Component {
                         'class' => 'form-control ' . $class
                     ]
                 ])->label($label);
+    }
+
+    public function dropdownfilter($flag, $model, $name = '', $prompt = '', $class = 'form-control') {
+        $data = $this->getLabels($flag);
+        $control_name = ($name == '') ? $data['name'] : $name;
+        $records = $this->withoutLocal($data, $model);
+        return Html::activeDropDownList($model, $control_name, $records, ['class' => $class, 'prompt' => empty($prompt) ? $data['prompt'] : $prompt]);
     }
 
 }

@@ -41,8 +41,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->date_time_of_collection);
-}],
+            return Yii::$app->controls->view_date($model->date_time_of_collection);
+        }],
     ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
     ['attribute' => 'name', 'filter' => false, 'visible' => false],
     ['attribute' => 'milk_type_code', 'value' => 'milkTypeCode.animal_type_name', 'filter' => Html::activeDropDownList($searchModel, 'milk_type_code', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
@@ -60,7 +60,16 @@ $attribute = [
 //        }, 'filter' => true],
     ['attribute' => 'mobile_no', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'mobile_no');
-        }, 'filter' => false, 'visible' => false],
+        }, 'filter' => false, 'visible' => false, 'visible' => false],
+    ['attribute' => 'protein', 'filter' => true, 'visible' => false],
+    ['attribute' => 'density', 'filter' => true, 'visible' => false],
+    ['attribute' => 'lactose', 'filter' => true, 'visible' => false],
+    ['attribute' => 'incentive', 'filter' => true, 'visible' => false],
+    ['attribute' => 'deduction', 'filter' => true, 'visible' => false],
+    ['attribute' => 'total_amount', 'filter' => true, 'visible' => false],
+//    ['attribute' => 'converted_qty_mode'],
+//    ['attribute' => 'milk_analyser_type_code', 'filter' => true],
+//    ['attribute' => 'ws_code', 'filter' => true],
 ];
 
 $grid_option = [

@@ -17,14 +17,15 @@ class TblMilkCollectionSearch extends TblMilkCollection {
      */
     public $union_code;
     public $operator_fat, $operator_snf, $operator_qty, $operator_amount;
-    public $from_date, $to_date, $from_shift, $to_shift,$sap_collection_type;
+    public $from_date, $to_date, $from_shift, $to_shift, $sap_collection_type;
 
     public function rules() {
         return [
             [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type'], 'safe'],
-            [['sap_collection_type'], 'required', 'on' => 'repostSapData']
+            [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
+            [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount'], 'safe'],
         ];
     }
 
@@ -62,15 +63,15 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
             $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-            $from_date .=' ' . $from_shift;
+            $from_date .= ' ' . $from_shift;
             $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
         }
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-            $to_date .=' ' . $to_shift;            
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);            
+            $to_date .= ' ' . $to_shift;
+            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
         }
 
         if (!$this->validate()) {
@@ -126,8 +127,12 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 ->andFilterWhere(['like', 'tbl_milk_collection.purchase_rate_code', $this->purchase_rate_code])
                 ->andFilterWhere(['like', 'tbl_milk_collection.error_log', $this->error_log])
                 ->andFilterWhere(['like', 'tbl_milk_collection.milk_type_code', $this->milk_type_code])
-                ->andFilterWhere(['like', 'tbl_milk_collection.soc_bmc_flag', $this->soc_bmc_flag]);
-
+                ->andFilterWhere(['like', 'tbl_milk_collection.protein', $this->protein])
+                ->andFilterWhere(['like', 'tbl_milk_collection.density', $this->density])
+                ->andFilterWhere(['like', 'tbl_milk_collection.lactose', $this->lactose])
+                ->andFilterWhere(['like', 'tbl_milk_collection.incentive', $this->incentive])
+                ->andFilterWhere(['like', 'tbl_milk_collection.total_amount', $this->total_amount])
+                ->andFilterWhere(['like', 'tbl_milk_collection.deduction', $this->deduction]);
 //        echo $query->createCommand()->getRawSql();die;
         return $dataProvider;
     }
