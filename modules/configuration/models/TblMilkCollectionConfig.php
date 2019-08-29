@@ -72,7 +72,7 @@ class TblMilkCollectionConfig extends \app\models\ChildModel {
             [['can_per_ltr', 'default_snf', 'collection_mode', 'weight_setting', 'collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'based_on', 'based_on_disp', 'based_on_local_sale', 'shift_code', 'shift_code_disp', 'quality_setting', 'dispatch_setting'], 'required'],
             [['collection_quantity_mode', 'bmc_collection_quantity_mode', 'local_milk_sale_quantity_mode', 'sample_milk_quantity_mode', 'shift_code', 'shift_code_disp', 'weight_setting'], 'integer'],
             [['variation_in_fat_block', 'variation_in_qty_block', 'variation_in_snf_block'], 'boolean'],
-            [['created_at', 'updated_at', 'quality_setting', 'accept_milk', 'multi_entry_diff_milk_type', 'multi_entry_same_milk_type', 'seperate_can', 'no_disp_local_sale', 'no', 'no_disp', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
+            [['created_at', 'updated_at', 'quality_setting', 'accept_milk', 'multi_entry_diff_milk_type', 'multi_entry_same_milk_type', 'seperate_can', 'no_disp_local_sale', 'no', 'no_disp', 'mcc_plant_code'], 'safe'],
             [['union_code'], 'string', 'max' => 3],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             [['can_warning_per', 'ltr_to_kg', 'default_snf_value', 'lr1_for_clr', 'lr2_for_clr', 'sample_milk_size', 'variation_in_fat', 'variation_in_qty', 'variation_in_snf', 'per_local_sale'], 'double', 'min' => 0],

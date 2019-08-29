@@ -23,7 +23,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'mcc_code',
+                                'attribute' => 'mcc_plant_code',
                                 'value' => isset($model->tblMccPlant) ? $model->tblMccPlant->name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],

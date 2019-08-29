@@ -66,7 +66,7 @@ class TblPlant extends \app\models\ChildModel {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
-            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
+            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
             [['capacity'], 'integer'],
             [['plant_code'], 'integer', 'min' => 1],
             [['plant_code'], 'string', 'max' => 6],

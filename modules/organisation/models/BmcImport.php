@@ -21,7 +21,7 @@ class BmcImport extends TblDcsBmc
         
         $rules = [
             [['union_code'], 'validateUnionCode'],
-            [['mcc_code'], 'validateMccCode'],
+            [['mcc_plant_code'], 'validateMccCode'],
             [['manufacturer_code'],'validateManufacturerCode'],
             [['bmc_type_code'],'validateBmcTypeCode'],
             [['capacity'],'validateCapacity'],
@@ -121,8 +121,8 @@ class BmcImport extends TblDcsBmc
     }
     
     public function validateMccCode($attribute, $params) {
-        if(!empty($this->mcc_code)){
-		$mcc = Yii::$app->general->validateActiveRelation($this,'TblMccPlant','mcc_plant_code','mcc_code','Mcc Code','Mcc Code','mcc_plant_code');
+        if(!empty($this->mcc_plant_code)){
+		$mcc = Yii::$app->general->validateActiveRelation($this,'TblMccPlant','mcc_plant_code','mcc_plant_code','Mcc Code','Mcc Code','mcc_plant_code');
                 if($mcc['msg']!=''){
                     $this->addError($attribute, Yii::t('app/validation', $mcc['msg']));
                     return false;

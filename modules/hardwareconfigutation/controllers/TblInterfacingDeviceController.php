@@ -56,7 +56,7 @@ class TblInterfacingDeviceController extends \app\controllers\ChildController
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->device_name = ucwords($this->model->device_name);
-            $this->model->device_code = $this->model->getCode();
+            $this->model->interfacing_device_code = $this->model->getCode();
             $this->model->union_code = Yii::$app->session->get('organizations_code');
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Interface Device', 'create']);
             if ($transaction !== FALSE) {
@@ -98,7 +98,7 @@ class TblInterfacingDeviceController extends \app\controllers\ChildController
      */
     public function actionDelete()
     {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_interfacing_device', '', '','','', Yii::$app->request->post('id'), 'device_code']);
+        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_interfacing_device', '', '','','', Yii::$app->request->post('id'), 'interfacing_device_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
             $historyModel=new TblInterfacingDeviceHistory();

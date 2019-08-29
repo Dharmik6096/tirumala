@@ -46,7 +46,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
             [['uuid'], 'required'],
             [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'safe'],
             [['sequence_no'], 'safe'],
-            [['posting_timestamp', 'sync_timestamp'], 'safe'],
+            [['posting_timestamp', 'sync_timestamp', 'error_timestamp'], 'safe'],
         ];
     }
 
@@ -148,8 +148,6 @@ class TblSentbox extends \yii\db\ActiveRecord {
             $sentModel->table_name = 'tbl_route';
         } else if ($sentModel->table_name == 'tbl_route_mapping_sources') {
             $sentModel->table_name = 'tbl_route_mapping';
-        } else if ($sentModel->table_name == 'tbl_bmc') {
-            $sentModel->table_name = 'tbl_bmc';
         }
         $data = $sentModel->attributes;
         $model = new TblAndroidInstallationDetails();

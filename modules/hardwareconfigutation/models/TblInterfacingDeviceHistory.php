@@ -15,7 +15,7 @@ use app\modules\organisation\models\TblUnions;
  * @property string $created_by
  * @property string $deleted_at
  * @property string $deleted_by
- * @property string $device_code
+ * @property string $interfacing_device_code
  * @property string $device_name
  * @property integer $device_type
  * @property string $discard_char
@@ -60,12 +60,12 @@ class TblInterfacingDeviceHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
 //            [['bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id'], 'integer'],
-            [['flg_sentbox_entry', 'end_char', 'start_char', 'reg_expression', 'device_manufacturer_id', 'union_code', 'flg_sentbox_entry', 'sync_status', 'discard_char', 'split_char', 'device_code', 'device_name', 'is_active', 'is_delete', 'is_snf', 'baud_rate', 'operation_type', 'tare', 'bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by'], 'safe'],
+            [['flg_sentbox_entry', 'end_char', 'start_char', 'reg_expression', 'device_manufacturer_id', 'union_code', 'flg_sentbox_entry', 'sync_status', 'discard_char', 'split_char', 'interfacing_device_code', 'device_name', 'is_active', 'is_delete', 'is_snf', 'baud_rate', 'operation_type', 'tare', 'bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by'], 'safe'],
 //            [['device_name'], 'required'],
 //            [['is_active', 'is_delete', 'is_snf'], 'boolean'],
 //            [['baud_rate', 'operation_type', 'tare'], 'string', 'max' => 10],
 //            [['created_by', 'deleted_by', 'updated_by'], 'string', 'max' => 14],
-//            [['device_code'], 'string', 'max' => 9],
+//            [['interfacing_device_code'], 'string', 'max' => 9],
 //            [['device_name'], 'string', 'max' => 255],
 //            [['discard_char', 'split_char'], 'string', 'max' => 15],
 //            [['end_char', 'start_char'], 'string', 'max' => 2],
@@ -90,7 +90,7 @@ class TblInterfacingDeviceHistory extends \yii\db\ActiveRecord {
             'created_by' => Yii::t('app', 'Created By'),
             'deleted_at' => Yii::t('app', 'Deleted At'),
             'deleted_by' => Yii::t('app', 'Deleted By'),
-            'device_code' => Yii::t('app', 'Device Code'),
+            'interfacing_device_code' => Yii::t('app', 'Device Code'),
             'device_name' => Yii::t('app', 'Device Name'),
             'device_type' => Yii::t('app', 'Device Type'),
             'discard_char' => Yii::t('app', 'Discard Char'),

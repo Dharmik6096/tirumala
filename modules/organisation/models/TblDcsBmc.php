@@ -63,20 +63,21 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
             [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
             [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
+            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['local_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['bmc_code'], 'integer', 'min' => 1],
             [['bmc_code'], 'string', 'max' => 5],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code'], 'safe'],
         ];
     }
 

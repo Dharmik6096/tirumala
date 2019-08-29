@@ -8,7 +8,7 @@ use app\modules\organisation\models\TblUnions;
 /**
  * This is the model class for table "tbl_interfacing_device".
  *
- * @property string $device_code
+ * @property string $interfacing_device_code
  * @property string $baud_rate
  * @property integer $bit_rate
  * @property string $created_at
@@ -66,11 +66,11 @@ class TblInterfacingDevice extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['device_code', 'device_name'], 'required'],
+            [['interfacing_device_code', 'device_name'], 'required'],
             [['bit_rate', 'device_type', 'incoming_data_type', 'length', 'parity', 'reading_type', 'stop_bit', 'device_manufacturer_id'], 'integer'],
             [['created_at', 'deleted_at', 'sync_timestamp', 'updated_at'], 'safe'],
             [['is_active', 'is_delete', 'is_snf'], 'boolean'],
-            [['device_code'], 'string', 'max' => 9],
+            [['interfacing_device_code'], 'string', 'max' => 9],
             [['bit_rate'], 'validateBitRate'],
             [['baud_rate'], 'validateBaudRate'],
             [['device_type'], 'validateDeviceType'],
@@ -146,7 +146,7 @@ class TblInterfacingDevice extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'device_code' => Yii::t('app', 'Device Code'),
+            'interfacing_device_code' => Yii::t('app', 'Device Code'),
             'baud_rate' => Yii::t('app', 'Baud Rate'),
             'bit_rate' => Yii::t('app', 'Bit Rate'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -183,70 +183,70 @@ class TblInterfacingDevice extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigs() {
-        return $this->hasMany(TblHardwareConfig::className(), ['card_reader_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfig::className(), ['card_reader_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigs0() {
-        return $this->hasMany(TblHardwareConfig::className(), ['ews_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfig::className(), ['ews_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigs1() {
-        return $this->hasMany(TblHardwareConfig::className(), ['external_display_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfig::className(), ['external_display_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigs2() {
-        return $this->hasMany(TblHardwareConfig::className(), ['milk_test1_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfig::className(), ['milk_test1_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigs3() {
-        return $this->hasMany(TblHardwareConfig::className(), ['milk_test2_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfig::className(), ['milk_test2_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigHistories() {
-        return $this->hasMany(TblHardwareConfigHistory::className(), ['card_reader_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfigHistory::className(), ['card_reader_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigHistories0() {
-        return $this->hasMany(TblHardwareConfigHistory::className(), ['ews_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfigHistory::className(), ['ews_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigHistories1() {
-        return $this->hasMany(TblHardwareConfigHistory::className(), ['external_display_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfigHistory::className(), ['external_display_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigHistories2() {
-        return $this->hasMany(TblHardwareConfigHistory::className(), ['milk_test1_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfigHistory::className(), ['milk_test1_code' => 'interfacing_device_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTblHardwareConfigHistories3() {
-        return $this->hasMany(TblHardwareConfigHistory::className(), ['milk_test2_code' => 'device_code']);
+        return $this->hasMany(TblHardwareConfigHistory::className(), ['milk_test2_code' => 'interfacing_device_code']);
     }
 
     /**
@@ -304,11 +304,11 @@ class TblInterfacingDevice extends \app\models\ChildModel {
 
         $len = strlen($orgCode);
         $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`device_code` FROM " . $len . " +1)) AS UNSIGNED)) as device_code")
+                ->select("MAX(CAST(trim(SUBSTRING(`interfacing_device_code` FROM " . $len . " +1)) AS UNSIGNED)) as interfacing_device_code")
                 ->from('tbl_interfacing_device')
-                ->where('(CAST(trim(SUBSTRING(device_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->where('(CAST(trim(SUBSTRING(interfacing_device_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
                 ->one();
-        $code1 = (int) $val['device_code'] + 1;
+        $code1 = (int) $val['interfacing_device_code'] + 1;
 
         $value = $orgCode . $code1;
 

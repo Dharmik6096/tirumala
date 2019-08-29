@@ -1010,7 +1010,7 @@ class GeneralFunctions extends Component {
             $model->bmc_code = $bmc_code;
             $modelData = $model->singleBmcData();
             if (!empty($modelData)) {
-                $mcc[] = $modelData->mcc_code;
+                $mcc[] = $modelData->mcc_plant_code;
             }
         }
 
@@ -1027,7 +1027,7 @@ class GeneralFunctions extends Component {
             $modelData = $model->getData();
             if (!empty($modelData)) {
                 $bmc[] = $modelData->bmc_code;
-                $mcc[] = Yii::$app->general->getforeignkey($modelData->bmcCode, 'mcc_code');
+                $mcc[] = Yii::$app->general->getforeignkey($modelData->bmcCode, 'mcc_plant_code');
             }
         }
 

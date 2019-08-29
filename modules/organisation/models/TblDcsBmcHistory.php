@@ -35,33 +35,31 @@ use Yii;
  * @property TblManufacturer $manufacturerCode
  * @property User $updatedBy
  */
-class TblDcsBmcHistory extends \yii\db\ActiveRecord
-{
+class TblDcsBmcHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['created_at','created_by','updated_by', 'operation_type', 'history_created_at', 'updated_at','is_active', 'is_mcc', 'valid_from'], 'safe'],
-            [['model','bmc_code','mcc_code','bmc_type_code','extra_tank_capacity','bmc_milk_type','capacity', 'manufacturer_code'], 'safe'],
-            [['state_code', 'district_code', 'sub_district_code','village_code', 'hamlet_code','bmc_name','union_code','local_name'], 'safe'],
+            [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'is_mcc', 'valid_from'], 'safe'],
+            [['model', 'bmc_code', 'mcc_code', 'bmc_type_code', 'extra_tank_capacity', 'bmc_milk_type', 'capacity', 'manufacturer_code'], 'safe'],
+            [['state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bmc_name', 'union_code', 'local_name'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'bmc_code' => Yii::t('app', 'Bmc Code'),
@@ -75,7 +73,7 @@ class TblDcsBmcHistory extends \yii\db\ActiveRecord
             'bmc_milk_type' => Yii::t('app', 'Bmc Milk Type'),
             'capacity' => Yii::t('app', 'Capacity'),
             'created_by' => Yii::t('app', 'Created By'),
-            'subcenter_code'=>Yii::t('app', 'subcenter_code'),
+            'subcenter_code' => Yii::t('app', 'subcenter_code'),
             'manufacturer_code' => Yii::t('app', 'Manufacturer Code'),
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
@@ -84,48 +82,42 @@ class TblDcsBmcHistory extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBmcMilkType()
-    {
+    public function getBmcMilkType() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'bmc_milk_type']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCapacity0()
-    {
+    public function getCapacity0() {
         return $this->hasOne(TblCapacity::className(), ['id' => 'capacity']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
-    {
+    public function getCreatedBy() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeletedBy()
-    {
+    public function getDeletedBy() {
         return $this->hasOne(User::className());
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getManufacturerCode()
-    {
+    public function getManufacturerCode() {
         return $this->hasOne(TblManufacturer::className(), ['id' => 'manufacturer_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
-    {
+    public function getUpdatedBy() {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
 
@@ -133,8 +125,8 @@ class TblDcsBmcHistory extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblDcsBmcHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblDcsBmcHistoryQuery(get_called_class());
     }
+
 }

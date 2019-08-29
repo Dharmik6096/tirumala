@@ -9,7 +9,7 @@ use kartik\grid\GridView;
 
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
-    ['attribute' => 'mcc_code', 'value' => 'tblMccPlant.name', 'visible' => true, 'filter' => true],
+    ['attribute' => 'mcc_plant_code', 'value' => 'tblMccPlant.name', 'visible' => true, 'filter' => true],
     ['attribute' => 'bmc_code', 'value' => 'bmc_code'],
     ['attribute' => 'bmc_name', 'value' => 'bmc_name'],
     ['attribute' => 'local_name', 'filter' => false],

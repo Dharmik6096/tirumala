@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\modules\hardwareconfigutation\models\TblInterfacingDevice */
 
-$this->title = $model->device_code;
+$this->title = $model->interfacing_device_code;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Interfacing Devices'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -15,8 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->device_code], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->device_code], [
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->interfacing_device_code], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->interfacing_device_code], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'device_code',
+            'interfacing_device_code',
             'baud_rate',
             'bit_rate',
             'created_at',

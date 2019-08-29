@@ -46,7 +46,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', 'Milk Quality Type', false, 'milk_quality_type_code'); ?>
     </div>
     <div class="col-sm-2 shift rtpl_validate">
-        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift'); ?>
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift_code'); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-1 rtpl_validate">
@@ -60,7 +60,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-1">
         <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
-        <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
+        <?= $form->field($model, 'purchase_rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
     </div>
     <div class="col-sm-1">
         <?= $form->field($model, 'water')->textInput() ?>
@@ -123,14 +123,14 @@ $script = "
         var milk_type = $('#tblmilkcollection-milk_type_code').val();
         var milk_quality_type = $('#tblmilkcollection-milk_quality_type_code').val();
         var dt_date = '".date('Y-m-d H:i:s')."';
-        var shift = $('#tblmilkcollection-shift').val();
+        var shift = $('#tblmilkcollection-shift_code').val();
         var fat = $('#tblmilkcollection-fat').val();
         var snf = $('#tblmilkcollection-snf').val();
         if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf},
+                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift_code':shift,'fat':fat,'snf':snf},
                 success: function(data) {   
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
