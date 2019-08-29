@@ -9,6 +9,7 @@ use yii\base\Model;
 class ReportsModel extends Model {
 
     public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type;
+    public $calibration_day;
 
     function __construct() {
         
@@ -23,11 +24,14 @@ class ReportsModel extends Model {
             [['report_type'], 'required', 'on' => 'BmcCollection'],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapReport'],
             [['to_date'], function ($attribute, $params) {
-            Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+                }, 'skipOnEmpty' => false],
             [['union_code', 'plant_code'], 'required', 'on' => 'SapStatusReport'],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
             [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
+            [['union_code', 'plant_code', 'mcc_code', 'from_date', 'calibration_day'], 'required', 'on' => ['CalibrationFlag', 'CleaningFlagBmc']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['AnalyzerCleaningReview', 'AnalyzerCleaningPendingActivity', 'AnalyzerPcbReplacement']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date'], 'required', 'on' => ['CleaningFlag', 'EkoMilkCalibration']],
         ];
     }
 

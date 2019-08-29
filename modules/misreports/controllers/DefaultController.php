@@ -109,6 +109,41 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAnalyzerCleaningReview() {
+        $this->report = 'AnalyzerCleaningReview';
+        return $this->actionIndex();
+    }
+
+    public function actionAnalyzerCleaningPendingActivity() {
+        $this->report = 'AnalyzerCleaningPendingActivity';
+        return $this->actionIndex();
+    }
+
+    public function actionAnalyzerPcbReplacement() {
+        $this->report = 'AnalyzerPcbReplacement';
+        return $this->actionIndex();
+    }
+
+    public function actionCleaningFlag() {
+        $this->report = 'CleaningFlag';
+        return $this->actionIndex();
+    }
+
+    public function actionEkoMilkCalibration() {
+        $this->report = 'EkoMilkCalibration';
+        return $this->actionIndex();
+    }
+
+    public function actionCalibrationFlag() {
+        $this->report = 'CalibrationFlag';
+        return $this->actionIndex();
+    }
+
+    public function actionCleaningFlagBmc() {
+        $this->report = 'CleaningFlagBmc';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -136,7 +171,7 @@ class DefaultController extends \app\controllers\ChildController {
                 $model->{$value} = !empty($model->{$value}) ? date('Y-m-d', strtotime($model->{$value})) : date('Y-m-d');
                 if (isset($value_array[2])) {
                     $shift = !empty($model->{$value_array[2]}) ? \Yii::$app->general->getshift($model->{$value_array[2]}) : '00:00:00';
-                    $model->{$value} .=' ' . $shift . '.000';
+                    $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
             $controls[$value] = $model->{$value};
@@ -155,7 +190,7 @@ class DefaultController extends \app\controllers\ChildController {
                     $model->{$value} = !empty($model->{$value}) ? date('Y-m-d', strtotime($model->{$value})) : date('Y-m-d');
                     if (isset($value_array[2])) {
                         $shift = !empty($model->{$value_array[2]}) ? \Yii::$app->general->getshift($model->{$value_array[2]}) : '00:00:00';
-                        $model->{$value} .=' ' . $shift . '.000';
+                        $model->{$value} .= ' ' . $shift . '.000';
                     }
                 }
                 $controls[$value] = $model->{$value};
@@ -310,6 +345,48 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_sap_dispatch_vs_receipt',
                 'scenario' => 'DispatchVsReceipt',
                 'title' => '403 - Dispatch vs Receipt Report',
+            ],
+            'AnalyzerCleaningReview' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_analyzer_cleaning_review',
+                'scenario' => 'AnalyzerCleaningReview',
+                'title' => '701 - Analyzer Cleaning Review',
+            ],
+            'AnalyzerCleaningPendingActivity' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_analyzer_cleaning_pending_activity',
+                'scenario' => 'AnalyzerCleaningPendingActivity',
+                'title' => '702 - Analyzer Cleaning Pending Activity',
+            ],
+            'AnalyzerPcbReplacement' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_analyzer_pcb_replacement',
+                'scenario' => 'AnalyzerPcbReplacement',
+                'title' => '703 - Analyzer PCB Replacement',
+            ],
+            'CleaningFlag' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string',
+                'sp_name' => 'sp_rpt_analyzer_cleaning_flag',
+                'scenario' => 'CleaningFlag',
+                'title' => '704 - Cleaning Flag Report',
+            ],
+            'EkoMilkCalibration' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string',
+                'sp_name' => 'sp_rpt_eko_calibration',
+                'scenario' => 'EkoMilkCalibration',
+                'title' => '705 - Eko Milk Calibration',
+            ],
+            'CalibrationFlag' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,calibration_day:txt',
+                'sp_name' => 'sp_rpt_procurment_calibration_flag',
+                'scenario' => 'CalibrationFlag',
+                'title' => '706 - Calibration Flag',
+            ],
+            'CleaningFlagBmc' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,calibration_day:txt',
+                'sp_name' => 'sp_rpt_procurment_cleaning_flag',
+                'scenario' => 'CleaningFlagBmc',
+                'title' => '707- Cleaning Flag Bmc',
             ],
         ];
         return $label[$l];
