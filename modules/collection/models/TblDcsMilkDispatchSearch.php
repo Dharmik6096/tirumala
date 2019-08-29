@@ -86,13 +86,6 @@ class TblDcsMilkDispatchSearch extends TblDcsMilkDispatch {
                 ->andFilterWhere(['like', 'vehicle_no', $this->vehicle_no])
                 ->andFilterWhere(['like', 'vehicle_in_time', $this->vehicle_in_time])
                 ->andFilterWhere(['like', 'vehicle_out_time', $this->vehicle_out_time]);
-//                ->andFilterWhere(['like', 'union_code', $this->union_code])
-//                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-//                ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-//                ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-//                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-//                ->andFilterWhere(['like', 'date_time_of_dispatch', ($this->date_time_of_dispatch == '') ? '' : Yii::$app->formatter->asDate($this->date_time_of_dispatch, 'php:Y-m-d')]);
-
         return $dataProvider;
     }
 
