@@ -311,7 +311,7 @@ class EiplPacketController extends Controller {
             $sampletime = $dtdate . ' ' . substr($packet, 50, 2) . ':' . substr($packet, 48, 2) . ':00';
             $rate = (float) ((substr($packet, 52, 2)) . '.' . (substr($packet, 54, 2))); // . after 2
             $txflag = substr($packet, 56, 3);
-            $farmername = trim(substr($packet, 59));
+            $farmername = trim(substr($packet, 59, 13));
             $farmermo = NULL;
             $mccid = substr($vlccid, 0, 6);
             $createdtime = date('Y-m-d H:i:s');
