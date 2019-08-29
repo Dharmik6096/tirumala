@@ -16,7 +16,7 @@ use app\modules\geo\models\TblSubDistricts;
 use app\modules\general\models\TblBmcType;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
-
+use app\modules\organisation\models\TblPlant;
 /**
  * This is the model class for table "tbl_dcs_bmc".
  *
@@ -78,6 +78,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['bmc_code'], 'integer', 'min' => 1],
             [['bmc_code'], 'string', 'max' => 5],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code'], 'safe'],
+            [['mcc_plant_code'], 'setField']
         ];
     }
 
@@ -109,6 +110,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'village_code' => Yii::t('app', 'Village'),
             'valid_from' => Yii::t('app', 'Valid From'),
+            'plant_code' => Yii::t('app', 'Plant'),
         ];
     }
 
@@ -329,6 +331,14 @@ class TblDcsBmc extends \app\models\ChildModel {
                 ->where(['mcc_plant_code' => $mcc_plant_code])
                 ->all();
         return ArrayHelper::map($data, 'bmc_code', 'bmc_name');
+    }
+
+    public function setField($attribute, $params) {
+        $this->plant_code = Yii::$app->general->getforeignkey($this->tblMccPlant, 'plant_code');
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }

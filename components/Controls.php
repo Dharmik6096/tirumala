@@ -330,4 +330,8 @@ class Controls extends Component {
         return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), 'php:d-m-Y H:i');
     }
 
+    public function view_time($value) {
+        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), 'php:H:i');
+    }
+
 }

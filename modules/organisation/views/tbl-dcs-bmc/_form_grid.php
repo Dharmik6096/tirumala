@@ -9,6 +9,9 @@ use kartik\grid\GridView;
 
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'mcc_plant_code', 'value' => 'tblMccPlant.name', 'visible' => true, 'filter' => true],
     ['attribute' => 'bmc_code', 'value' => 'bmc_code'],
     ['attribute' => 'bmc_name', 'value' => 'bmc_name'],
@@ -75,17 +78,17 @@ $grid_option = [
             $options = ['data-name' => isset($dcsmodel->subCenterCode) ? $dcsmodel->subCenterCode->sub_center_name : '', 'data-val' => $dcsmodel->subcenter_code, 'title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-dcs-bmc/view', 'id' => $dcsmodel->bmc_code, 'type' => Yii::$app->request->get('type')], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'], $options);
         },
-                'edit' => function ($url, $dcsmodel) {
+        'edit' => function ($url, $dcsmodel) {
             $options = ['data-name' => isset($dcsmodel->subCenterCode) ? $dcsmodel->subCenterCode->sub_center_name : '', 'data-val' => $dcsmodel->subcenter_code, 'title' => 'Update'];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/organisation/tbl-dcs-bmc/update', 'id' => $dcsmodel->bmc_code], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit'], $options);
         },
-                'delete' => ['option' => 'bmc_name,bmc_code,tbl-dcs-bmc/delete'],
-                'contact-details' => function ($url, $model) {
+        'delete' => ['option' => 'bmc_name,bmc_code,tbl-dcs-bmc/delete'],
+        'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-dcs-bmc/contact-details', 'id' => $model->bmc_code], $options);
         },
-            ]
-        ];
+    ]
+];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index', 'dcs' => Yii::$app->request->get('dcs'), 'dcsname' => Yii::$app->request->get('dcsname'), 'subcenter' => Yii::$app->request->get('subcenter'), 'subname' => Yii::$app->request->get('subname'), 'type' => Yii::$app->request->get('type')]);
-        ?>
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index', 'dcs' => Yii::$app->request->get('dcs'), 'dcsname' => Yii::$app->request->get('dcsname'), 'subcenter' => Yii::$app->request->get('subcenter'), 'subname' => Yii::$app->request->get('subname'), 'type' => Yii::$app->request->get('type')]);
+?>
