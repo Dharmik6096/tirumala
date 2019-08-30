@@ -22,8 +22,9 @@ class MasterDataController extends \app\modules\androiddpu\v1\controllers\Master
     public function actionSentbox() {
         $res_data = [];
         $data = $this->post_data;
-        $sync_active_model = $this->syncActiveRecord($data);
-        if (!empty($sync_active_model)) {
+//        $sync_active_model = $this->syncActiveRecord($data);
+//        if (!empty($sync_active_model)) {
+        if (true) {
             $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
             $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
             $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
@@ -61,8 +62,9 @@ class MasterDataController extends \app\modules\androiddpu\v1\controllers\Master
         $success_id = [];
         $error_id = [];
         $data = $this->post_data;
-        $sync_active_model = $this->syncActiveRecord($data);
-        if (!empty($sync_active_model)) {
+//        $sync_active_model = $this->syncActiveRecord($data);
+//        if (!empty($sync_active_model)) {
+        if (true) {
             if (!empty($data['content'])) {
                 foreach ($data['content'] as $transaction_data) {
                     $request = new HttpRequest();
