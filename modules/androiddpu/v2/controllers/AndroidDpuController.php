@@ -17,6 +17,7 @@ use app\modules\installation\models\TblAndroidInstallation;
 use app\modules\installation\models\TblAndroidInstallationDetails;
 use app\modules\androiddpu\controllers\RestController;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\configuration\models\TblUnionConfigResult;
 
 /**
  * Default controller for the `vendorapi` module
@@ -198,6 +199,60 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         }
                     }
                 }
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionStartUp() {
+        $res_data = [];
+        $res_data['config'] = [];
+        $res_data['collectionConfig'] = [];
+        $res_data['rate'] = [];
+        $res_data['rate']['download'] = FALSE;
+        $res_data['rate']['purchaseRateCode'] = "";
+        $res_data['rate']['purchaseRateCodeBlock'] = "";
+        $res_data['memberDownload'] = FALSE;
+        $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
+        $data = $this->post_data;
+        if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
+            $org_code = $data['organization_code'];
+            $org_type = $data['organization_type'];
+            if ($org_type == 'VLC') {
+                $model = new TblDcs();
+                $model->dcs_code = $org_code;
+                $model_data = $model->getData();
+                $res_data['memberDownload'] = (bool) $model->is_name_request;
+                $config = $model->dpuIncentiveMaster;
+                if (!empty($config)) {
+                    $att = $config->attributes;
+                    $res_data['collectionConfig']['m_start_time'] = $att['m_start_time'];
+                    $res_data['collectionConfig']['m_cutoff_time'] = $att['m_cutoff_time'];
+                    $res_data['collectionConfig']['m_lock_time'] = $att['m_lock_time'];
+                    $res_data['collectionConfig']['e_start_time'] = $att['e_start_time'];
+                    $res_data['collectionConfig']['e_cutoff_time'] = $att['e_cutoff_time'];
+                    $res_data['collectionConfig']['e_lock_time'] = $att['e_lock_time'];
+                    $res_data['collectionConfig']['inc_rate'] = $att['inc_rate'];
+                    $res_data['collectionConfig']['inc_deduction'] = $att['inc_deduction'];
+                }
+            } else if ($org_type == 'BMC') {
+                $model = new TblDcsBmc();
+                $model->bmc_code = $org_code;
+                $model_data = $model->singleBmcData();
+            } else if ($org_type == 'MCC') {
+                $model = new TblMccPlant();
+                $model->mcc_plant_code = $org_code;
+                $model_data = $model->getData();
+            }
+            if (!empty($model_data)) {
+                $model = new TblUnionConfigResult();
+                $model->union_code = $model_data->union_code;
+                $model->config_for = $org_type;
+                foreach ($model->getConfigList() as $d) {
+                    $res_data['config'][$d['config_key']] = $d['config_result_key'];
+                }
+                $res_data['welcomeMessage'] = 'Welcome to ' . $model_data->unionCode->union_name . '.';
             }
         }
         $this->response['data'] = $res_data;

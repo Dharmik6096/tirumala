@@ -28,21 +28,21 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblUnionConfigResult extends \app\models\ChildModel
-{
+class TblUnionConfigResult extends \app\models\ChildModel {
+
+    public $config_for;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_union_config_result';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['config_code', 'config_result_code', 'originating_type'], 'integer'],
             [['config_name', 'config_key', 'config_result_key', 'config_result', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
@@ -53,8 +53,7 @@ class TblUnionConfigResult extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'config_txn_code' => Yii::t('app', 'Config Txn Code'),
             'config_code' => Yii::t('app', 'Config Code'),
@@ -78,4 +77,17 @@ class TblUnionConfigResult extends \app\models\ChildModel
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
+    public function getConfigCode() {
+        return $this->hasOne(TblConfig::className(), ['config_code' => 'config_code']);
+    }
+
+    public function getConfigList() {
+        return $this->find()->select(['tbl_union_config_result.config_key', 'tbl_union_config_result.config_result_key'])
+                        ->join('INNER JOIN', 'tbl_config', 'tbl_config.config_code=tbl_union_config_result.config_code')
+                        ->where(['tbl_union_config_result.union_code' => $this->union_code, 'tbl_config.config_for' => $this->config_for])
+                        ->asArray()
+                        ->all();
+    }
+
 }
