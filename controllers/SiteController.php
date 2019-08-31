@@ -47,10 +47,11 @@ use app\modules\creamy\models\TblDcsPortalCreamy;
 use app\models\TblDbConfig;
 use app\modules\syncutility\models\TblInbox;
 use app\models\GeneralModel;
+use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp'];
 
     public function init() {
         parent::init();
@@ -1574,6 +1575,60 @@ class SiteController extends Controller {
             }
         } catch (yii\base\Exception $e) {
             var_dump($e);
+        }
+    }
+
+    public function actionGetCollectionFtp() {
+        $ftp = new FTPConnection();
+        $ftp->ftp_type = 'FTP';
+        $ftp->ftp_host = '182.74.63.142';
+        $ftp->ftp_username = 'hims';
+        $ftp->ftp_password = '12345';
+        $ftp->ftp_port = '9194';
+        $ftp->ftp_path = '/';
+//        $ftp->local_path = $file->unionBankPaymentCode->reverse_server_path;
+        $ftpFiles = $ftp->ListFile();
+        foreach ($ftpFiles as $ftpFile) {
+            $fileName = explode('.', $ftpFile);
+            $count = count($fileName);
+
+//            if ($ftpFile == 'nifpl_b8479908ad2472ad_280819-300819.txt') {
+
+            if (!empty($fileName[$count - 1]) && strtolower($fileName[$count - 1] == 'txt')) {
+//                if(strtolower(substr($ftpFile, 0, 10) != 'nifpl_demo') == 'nifpl_demo') { // uncomment this line for read testing data
+                if (strtolower(substr($ftpFile, 0, 10) != 'nifpl_demo') && strtolower(substr($ftpFile, 0, 5) == 'nifpl')) { //use condition for get live data
+                    $ftp->file_name = $ftpFile;
+                    $contents = $ftp->GetFileContents();
+                    $setData = [];
+                    $currentDateTime = date('Y-m-d H:i:s');
+                    $identityRecord = !empty(Yii::$app->eiplapp->identity) ? Yii::$app->eiplapp->identity : [];
+                    $setData['access_token'] = 'PORTAL';
+                    $setData['identity_type'] = 'FTP';
+                    $setData['mobile_no'] = NULL;
+                    $setData['device_id'] = $ftpFile;
+                    $setData['entry_type'] = 'HTTP';
+                    $setData['status'] = 0;
+                    $setData['entry_datetime'] = $currentDateTime;
+                    $master = [];
+                    $connection = Yii::$app->getDb();
+                    foreach ($contents as $content) {
+                        if (!in_array(trim($content), ['START', 'ENDOK'])) {
+                            $setData['encrypted_string'] = $content;
+                            $model = new TblDpuCollectionHoData();
+                            $model->setAttributes($setData);
+                            $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
+                            $model->uuid = $command['id'];
+                            $master[] = $model;
+                        }
+                    }
+                    $generalModel = new GeneralModel();
+                    $transaction = $generalModel->saveTransaction($master, [], ['FTP Collection HO Data', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $ftp->DeleteFile();
+                    }
+                }
+            }
+//            }
         }
     }
 
