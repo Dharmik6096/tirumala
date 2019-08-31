@@ -308,7 +308,7 @@ class LoginForm extends Model {
         if ($plant != 0)
             $query->andWhere(['plant_code' => explode(',', $plant)]);
         if ($bmc != 0) {
-            $codes = TblDcsBmc::find()->select(['mcc_code As mcc_plant_code'])->where(['bmc_code' => explode(',', $bmc)])->asArray()->all();
+            $codes = TblDcsBmc::find()->select(['mcc_plant_code As mcc_plant_code'])->where(['bmc_code' => explode(',', $bmc)])->asArray()->all();
             $query->andWhere(['mcc_plant_code' => $codes]);
         }
         $list = $query->asArray()->all();

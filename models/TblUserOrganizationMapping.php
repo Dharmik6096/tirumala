@@ -312,7 +312,7 @@ class TblUserOrganizationMapping extends ChildModel {
         $list = $query->asArray()->all();
         $data = ArrayHelper::map($list, 'mcc_plant_code', 'name');
         if ($BMCArray != 0) {
-            $codes = TblDcsBmc::find()->select(['mcc_code As mcc_plant_code'])->where(['bmc_code' => array_flip($BMCArray)])->asArray()->all();
+            $codes = TblDcsBmc::find()->select(['mcc_plant_code As mcc_plant_code'])->where(['bmc_code' => array_flip($BMCArray)])->asArray()->all();
             $query->andWhere(['mcc_plant_code' => $codes]);
             $list = $query->asArray()->all();
             $data = ArrayHelper::map($list, 'mcc_plant_code', 'name');

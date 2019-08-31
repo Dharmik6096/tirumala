@@ -79,7 +79,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $bmc_code[] = $code;
             $model_data = $model->singleBmcData();
             if (!empty($model_data)) {
-                $parent_code = $model_data->mcc_code;
+                $parent_code = $model_data->mcc_plant_code;
                 $parent_type = 'MCC';
                 $parent_name = Yii::$app->general->getforeignkey($model_data->tblMccPlant, 'name');
             }
@@ -210,9 +210,10 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $res_data['config'] = [];
         $res_data['collectionConfig'] = [];
         $res_data['rate'] = [];
-        $res_data['rate']['download'] = FALSE;
-        $res_data['rate']['purchaseRateCode'] = "";
-        $res_data['rate']['purchaseRateCodeBlock'] = "";
+        $res_data['rate']['mPurchaseRateCode'] = "1";
+        $res_data['rate']['mPurchaseRateCodeBlock'] = "5";
+        $res_data['rate']['ePurchaseRateCode'] = "1";
+        $res_data['rate']['ePurchaseRateCodeBlock'] = "5";
         $res_data['memberDownload'] = FALSE;
         $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
         $data = $this->post_data;
@@ -223,18 +224,30 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $model = new TblDcs();
                 $model->dcs_code = $org_code;
                 $model_data = $model->getData();
-                $res_data['memberDownload'] = (bool) $model->is_name_request;
-                $config = $model->dpuIncentiveMaster;
-                if (!empty($config)) {
-                    $att = $config->attributes;
-                    $res_data['collectionConfig']['m_start_time'] = $att['m_start_time'];
-                    $res_data['collectionConfig']['m_cutoff_time'] = $att['m_cutoff_time'];
-                    $res_data['collectionConfig']['m_lock_time'] = $att['m_lock_time'];
-                    $res_data['collectionConfig']['e_start_time'] = $att['e_start_time'];
-                    $res_data['collectionConfig']['e_cutoff_time'] = $att['e_cutoff_time'];
-                    $res_data['collectionConfig']['e_lock_time'] = $att['e_lock_time'];
-                    $res_data['collectionConfig']['inc_rate'] = $att['inc_rate'];
-                    $res_data['collectionConfig']['inc_deduction'] = $att['inc_deduction'];
+                if (!empty($model_data)) {
+                    $collection_status = Yii::$app->general->getSpData('sp_society_collection_status', [$org_code]);
+                    $collection_status = empty($collection_status) ? $model_data->is_active : $collection_status[0]['collection_status'];
+                    $res_data['memberDownload'] = (bool) $model_data->is_name_request;
+                    $res_data['config']['collectionBlock'] = !(bool) $collection_status;
+                    $res_data['config']['dcsBlock'] = !(bool) $model_data->is_active;
+                    $res_data['config']['dispatchMandate'] = (bool) $model_data->is_dispatch_mandate;
+                    $config = $model->dpuIncentiveMaster;
+                    if (!empty($config)) {
+                        $att = $config->attributes;
+                        $res_data['collectionConfig']['m_start_time'] = $att['m_start_time'];
+                        $res_data['collectionConfig']['m_cutoff_time'] = $att['m_cutoff_time'];
+                        $res_data['collectionConfig']['m_lock_time'] = $att['m_lock_time'];
+                        $res_data['collectionConfig']['e_start_time'] = $att['e_start_time'];
+                        $res_data['collectionConfig']['e_cutoff_time'] = $att['e_cutoff_time'];
+                        $res_data['collectionConfig']['e_lock_time'] = $att['e_lock_time'];
+                        $res_data['collectionConfig']['inc_rate'] = $att['inc_rate'];
+                        $res_data['collectionConfig']['inc_deduction'] = $att['inc_deduction'];
+                        $animalType = [];
+                        foreach ($model_data->tblDcsMilkType as $milktype) {
+                            $animalType[] = ['milk_type_code' => $milktype->milk_type_code, 'milk_type_name' => $milktype->milkTypeCode->animal_type_name];
+                        }
+                        $res_data['collectionConfig']['allowedMilkType'] = $animalType;
+                    }
                 }
             } else if ($org_type == 'BMC') {
                 $model = new TblDcsBmc();
