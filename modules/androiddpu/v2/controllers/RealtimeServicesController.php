@@ -7,6 +7,8 @@ use Yii;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\organisation\models\TblDcs;
 
 class RealtimeServicesController extends RestController {
 
@@ -58,7 +60,25 @@ class RealtimeServicesController extends RestController {
     }
 
     public function actionDownloadAcknowledgement() {
-        
+        $data = $this->post_data['content'];
+        $res_data = [];
+        $res_data['message'] = 'Acknowledgement Updated.';
+        if (!empty($data['ack_type'])) {
+            if ($data['ack_type'] == 'RATE') {
+                $model = new TblPurchaseRateApplicability();
+                $model->attributes = $data;
+                $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'download_date_time' => date('Y-m-d H:i:s'), 'is_download' => 0], ['purchase_rate_code' => $model->purchase_rate_code, 'dcs_code' => $model->dcs_code]);
+                $model = new TblDcs();
+                $model->attributes = $data;
+                $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'rate_flag' => 0], ['dcs_code' => $model->dcs_code]);
+            } else if ($data['ack_type'] == 'MEMBER') {
+                $model = new TblDcs();
+                $model->attributes = $data;
+                $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 0], ['dcs_code' => $model->dcs_code]);
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
     }
 
 }

@@ -459,7 +459,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
             'is_download' => ['view' => ['grid'], 'type' => 'yes-no', 'value' => function($model) {
-            return ($model->is_download == 1) ? 'Yes' : 'No';
+            return ($model->is_download == 0) ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
         }],
             'download_date_time' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->download_date_time);

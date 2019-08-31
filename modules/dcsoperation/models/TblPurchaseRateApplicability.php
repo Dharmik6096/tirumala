@@ -52,7 +52,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_download'], 'default', 'value' => '0'],
+            [['is_download'], 'default', 'value' => '1'],
             [['is_active'], 'default', 'value' => '1'],
             [['wef_date', 'shift_code'], 'required'],
             [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
