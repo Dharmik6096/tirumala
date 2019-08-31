@@ -26,7 +26,7 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblPurchaseRate extends \app\models\ChildModel {
 
-    public $federation_code;
+    public $federation_code,$app_org_code;
 
     /**
      * @inheritdoc
@@ -48,163 +48,175 @@ class TblPurchaseRate extends \app\models\ChildModel {
                     $data = $this->find()->where(['originating_org_code' => $model->originating_org_code, 'wef_date' => $model->wef_date, 'shift_applicability' => $model->shift_applicability])->andWhere(['<>', 'purchase_rate_code', $model->purchase_rate_code])->one();
                     return ($data) ? true : false;
                 }, 'message' => Yii::t('app/validation', 'Purchase Rate is already created for inserted inputs.')],
-            [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code'], 'safe'],
-            [['shift_applicability'], 'integer'],
-            [['description', 'originating_org_code'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels() {
-        return [
-            'purchase_rate_code' => Yii::t('app', 'Rate ID'),
-            'wef_date' => Yii::t('app', 'Wef Date'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'description' => Yii::t('app', 'Description'),
-            'is_active' => Yii::t('app', 'Is Active'),
-            'originating_org_type' => Yii::t('app', 'Originating Location'),
-            'originating_org_code' => Yii::t('app', 'Originating Loc ID'),
-            'rate_gen_method_code' => Yii::t('app', 'Rate Method'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'shift_applicability' => Yii::t('app', 'Shift Applicability'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'union_code' => Yii::t('app', 'Union'),
-            'shift_id' => Yii::t('app', 'Shift'),
-            'reference_code' => Yii::t('app', 'SAP Rate ID'),
-        ];
-    }
-
-    public function getCode() {
-
-
-        $data = $this->find()->select(["MAX(purchase_rate_code) as purchase_rate_code"])->one();
-        return $data['purchase_rate_code'] + 1;
-    }
-
-    /**
-     * @inheritdoc
-     * @return TblPurchaseRateQuery the active query used by this AR class.
-     */
-    public static function find() {
-        return new TblPurchaseRateQuery(get_called_class());
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPurchaseRateAuto() {
-        return $this->hasOne(TblPurchaseRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPurchaseRateDetail() {
-        return $this->hasOne(TblPurchaseRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPurchaseRateBased() {
-        return $this->hasOne(TblPurchaseRateBased::className(), ['purchase_rate_code' => 'purchase_rate_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQueryNULL
-     */
-    public function getShiftApplicability() {
-        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
-    }
-
-    public function getShiftId() {
-        return $this->hasOne(TblShift::className(), ['id' => 'shift_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRateMethod() {
-        return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
-    }
-
-    public function getRecord($id) {
-        return $this->find()->select(['purchase_rate_code', 'wef_date', 'rate_gen_method_code', 'shift_applicability', 'union_code'])->where(['purchase_rate_code' => $id])->one();
-    }
-
-    public function addPurchaseRate($jsonData) {
-
-        $this->union_code = $jsonData['union_code'];
-        $this->attributes = $jsonData;
-        $this->purchase_rate_code = $this->getCode();
-        $this->rate_gen_method_code = $jsonData['rate_method'];
-        //    $this->rate_type = $jsonData['rate_type'];
-        $this->shift_applicability = $jsonData['shift'];
-        $this->description = $jsonData['description'];
-        $this->shift_id = $jsonData['shift_id'];
-        $this->wef_date = Yii::$app->formatter->asDate($jsonData['wef_date'], DATE_FORMAT);
-        $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_id);
-        $this->is_active = 1;
-        $this->is_default = 1;
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUnionCode() {
-        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
-    }
-
-    public function getReferenceRecord() {
-        return $this->findOne(['reference_code' => $this->reference_code]);
-    }
-
-    public function UpdateRateMaster($saveModel, $saveData) {
-        $rate_master = TblPurchaseRate::findOne($saveModel->purchase_rate_code);
-        if (!empty($rate_master) && empty($rate_master->union_code)) {
-            $model_name = Yii::$app->path->define('TblPurchaseRateHistory');
-            $historyModel = new $model_name();
-            Yii::$app->operation->history($rate_master, $historyModel, UPDATE);
-            $saveData[] = $historyModel;
-            $rate_master->scenario = 'stellapps';
-            $rate_master->union_code = $saveModel->union_code;
-            $saveData[] = $rate_master;
-        }
-        return $saveData;
-    }
-
-    public function purchaseRate($data) {
-        $rtpl_data = [];
-        $model = new TblDcs();
-        $union = $model->find()->select(['union_code'])->where(['dcs_code' => $data['dcs_code'], 'is_active' => 1])->one();
-
-        if (!empty($union)) {
-            $union_code = $union->union_code;
-
-            $purchase_rate_code = $this->find()
-                    ->where(['union_code' => $union_code, 'shift_applicability' => [3, $data['shift']]])
-                    ->andWhere(['<=', 'wef_date', $data['dt_date']])
-                    ->orderBy('wef_date desc')
-                    ->one();
-
-            if (!empty($purchase_rate_code)) {
-                $purchase_rate_code = $purchase_rate_code->purchase_rate_code;
-
-                $detail_model = new TblPurchaseRateDetails();
-
-                $rtpl_data = $detail_model->find()
-                        ->select(['rtpl', 'purchase_rate_code'])
-                        ->where(['purchase_rate_code' => $purchase_rate_code, 'fat' => $data['fat'], 'snf' => $data['snf'], 'milk_quality_type_code' => $data['milk_quality_type'], 'milk_type_code' => $data['milk_type']])
-                        ->one();
+                    [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code'], 'safe'],
+                    [['shift_applicability'], 'integer'],
+                    [['description', 'originating_org_code'], 'string', 'max' => 255],
+                    [['created_by', 'updated_by'], 'string', 'max' => 14],
+                    [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                ];
             }
+
+            /**
+             * @inheritdoc
+             */
+            public function attributeLabels() {
+                return [
+                    'purchase_rate_code' => Yii::t('app', 'Rate ID'),
+                    'wef_date' => Yii::t('app', 'Wef Date'),
+                    'created_at' => Yii::t('app', 'Created At'),
+                    'description' => Yii::t('app', 'Description'),
+                    'is_active' => Yii::t('app', 'Is Active'),
+                    'originating_org_type' => Yii::t('app', 'Originating Location'),
+                    'originating_org_code' => Yii::t('app', 'Originating Loc ID'),
+                    'rate_gen_method_code' => Yii::t('app', 'Rate Method'),
+                    'updated_at' => Yii::t('app', 'Updated At'),
+                    'created_by' => Yii::t('app', 'Created By'),
+                    'shift_applicability' => Yii::t('app', 'Shift Applicability'),
+                    'updated_by' => Yii::t('app', 'Updated By'),
+                    'union_code' => Yii::t('app', 'Union'),
+                    'shift_id' => Yii::t('app', 'Shift'),
+                    'reference_code' => Yii::t('app', 'SAP Rate ID'),
+                ];
+            }
+
+            public function getCode() {
+
+
+                $data = $this->find()->select(["MAX(purchase_rate_code) as purchase_rate_code"])->one();
+                return $data['purchase_rate_code'] + 1;
+            }
+
+            /**
+             * @inheritdoc
+             * @return TblPurchaseRateQuery the active query used by this AR class.
+             */
+            public static function find() {
+                return new TblPurchaseRateQuery(get_called_class());
+            }
+
+            /**
+             * @return \yii\db\ActiveQuery
+             */
+            public function getPurchaseRateAuto() {
+                return $this->hasOne(TblPurchaseRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+            }
+
+            /**
+             * @return \yii\db\ActiveQuery
+             */
+            public function getPurchaseRateDetail() {
+                return $this->hasOne(TblPurchaseRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+            }
+
+            /**
+             * @return \yii\db\ActiveQuery
+             */
+            public function getPurchaseRateBased() {
+                return $this->hasMany(TblPurchaseRateBased::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+            }
+
+            /**
+             * @return \yii\db\ActiveQuery
+             */
+            public function getPurchaseRateApplicability() {
+                return $this->hasMany(TblPurchaseRateApplicability::className(), ['purchase_rate_code' => 'purchase_rate_code'])->where(['dcs_code'=>  $this->app_org_code]);
+            }
+
+            /**
+             * @return \yii\db\ActiveQueryNULL
+             */
+            public function getShiftApplicability() {
+                return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
+            }
+
+            public function getShiftId() {
+                return $this->hasOne(TblShift::className(), ['id' => 'shift_id']);
+            }
+
+            /**
+             * @return \yii\db\ActiveQuery
+             */
+            public function getRateMethod() {
+                return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
+            }
+
+            public function getRecord($id) {
+                return $this->find()->select(['purchase_rate_code', 'wef_date', 'rate_gen_method_code', 'shift_applicability', 'union_code'])->where(['purchase_rate_code' => $id])->one();
+            }
+
+            public function addPurchaseRate($jsonData) {
+
+                $this->union_code = $jsonData['union_code'];
+                $this->attributes = $jsonData;
+                $this->purchase_rate_code = $this->getCode();
+                $this->rate_gen_method_code = $jsonData['rate_method'];
+                //    $this->rate_type = $jsonData['rate_type'];
+                $this->shift_applicability = $jsonData['shift'];
+                $this->description = $jsonData['description'];
+                $this->shift_id = $jsonData['shift_id'];
+                $this->wef_date = Yii::$app->formatter->asDate($jsonData['wef_date'], DATE_FORMAT);
+                $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_id);
+                $this->is_active = 1;
+                $this->is_default = 1;
+            }
+
+            /**
+             * @return \yii\db\ActiveQuery
+             */
+            public function getUnionCode() {
+                return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+            }
+
+            public function getReferenceRecord() {
+                return $this->findOne(['reference_code' => $this->reference_code]);
+            }
+
+            public function UpdateRateMaster($saveModel, $saveData) {
+                $rate_master = TblPurchaseRate::findOne($saveModel->purchase_rate_code);
+                if (!empty($rate_master) && empty($rate_master->union_code)) {
+                    $model_name = Yii::$app->path->define('TblPurchaseRateHistory');
+                    $historyModel = new $model_name();
+                    Yii::$app->operation->history($rate_master, $historyModel, UPDATE);
+                    $saveData[] = $historyModel;
+                    $rate_master->scenario = 'stellapps';
+                    $rate_master->union_code = $saveModel->union_code;
+                    $saveData[] = $rate_master;
+                }
+                return $saveData;
+            }
+
+            public function purchaseRate($data) {
+                $rtpl_data = [];
+                $model = new TblDcs();
+                $union = $model->find()->select(['union_code'])->where(['dcs_code' => $data['dcs_code'], 'is_active' => 1])->one();
+
+                if (!empty($union)) {
+                    $union_code = $union->union_code;
+
+                    $purchase_rate_code = $this->find()
+                            ->where(['union_code' => $union_code, 'shift_applicability' => [3, $data['shift']]])
+                            ->andWhere(['<=', 'wef_date', $data['dt_date']])
+                            ->orderBy('wef_date desc')
+                            ->one();
+
+                    if (!empty($purchase_rate_code)) {
+                        $purchase_rate_code = $purchase_rate_code->purchase_rate_code;
+
+                        $detail_model = new TblPurchaseRateDetails();
+
+                        $rtpl_data = $detail_model->find()
+                                ->select(['rtpl', 'purchase_rate_code'])
+                                ->where(['purchase_rate_code' => $purchase_rate_code, 'fat' => $data['fat'], 'snf' => $data['snf'], 'milk_quality_type_code' => $data['milk_quality_type'], 'milk_type_code' => $data['milk_type']])
+                                ->one();
+                    }
+                }
+
+                return $rtpl_data;
+            }
+
+            public function getRateRecord() {
+                return $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])->one();
+            }
+
         }
-
-        return $rtpl_data;
-    }
-
-}
+        
