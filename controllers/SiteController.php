@@ -1595,8 +1595,8 @@ class SiteController extends Controller {
 //            if ($ftpFile == 'nifpl_b8479908ad2472ad_280819-300819.txt') {
 
             if (!empty($fileName[$count - 1]) && strtolower($fileName[$count - 1] == 'txt')) {
-//                if(strtolower(substr($ftpFile, 0, 10) != 'nifpl_demo') == 'nifpl_demo') { // uncomment this line for read testing data
-                if (strtolower(substr($ftpFile, 0, 10) != 'nifpl_demo') && strtolower(substr($ftpFile, 0, 5) == 'nifpl')) { //use condition for get live data
+//                if(strtolower(substr($ftpFile, 0, 10)) != 'nifpl_demo') { // uncomment this line for read testing data
+                if (strtolower(substr($ftpFile, 0, 10)) != 'nifpl_demo' && strtolower(substr($ftpFile, 0, 5) == 'nifpl')) { //use condition for get live data
                     $ftp->file_name = $ftpFile;
                     $contents = $ftp->GetFileContents();
                     $setData = [];
