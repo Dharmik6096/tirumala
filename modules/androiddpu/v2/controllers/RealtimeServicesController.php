@@ -12,6 +12,9 @@ class RealtimeServicesController extends RestController {
 
     public function actionPurchaseRate() {
         $res_data = [];
+        $res_data['purchaseRate'] = '';
+        $res_data['purchaseRateBased'] = [];
+        $res_data['purchaseRateApplicability'] = '';
         $data = $this->post_data;
         $org_code = $data['organization_code'];
         $org_type = $data['organization_type'];
@@ -19,7 +22,7 @@ class RealtimeServicesController extends RestController {
         $model->purchase_rate_code = $data['content']['purchase_rate_code'];
         $rate = $model->getRateRecord();
         if (!empty($rate)) {
-            $res_data = $rate->attributes;
+            $res_data['purchaseRate'] = $rate->attributes;
             $based_date = [];
             $base_record = $rate->purchaseRateBased;
             foreach ($base_record as $b) {
@@ -27,7 +30,7 @@ class RealtimeServicesController extends RestController {
             }
             $res_data['purchaseRateBased'] = $based_date;
             $rate->app_org_code = $org_code;
-            $res_data['purchaseRateApplicability'] = $rate->purchaseRateApplicability;
+            $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0] : "";
         }
         $this->response['data'] = $res_data;
         return $this->response;
