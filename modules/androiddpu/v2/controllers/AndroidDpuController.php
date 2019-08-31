@@ -210,10 +210,10 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $res_data['config'] = [];
         $res_data['collectionConfig'] = [];
         $res_data['rate'] = [];
-        $res_data['rate']['mPurchaseRateCode'] = "1";
-        $res_data['rate']['mPurchaseRateCodeBlock'] = "5";
-        $res_data['rate']['ePurchaseRateCode'] = "1";
-        $res_data['rate']['ePurchaseRateCodeBlock'] = "5";
+        $res_data['rate']['mPurchaseRateCode'] = "";
+        $res_data['rate']['mPurchaseRateCodeBlock'] = "";
+        $res_data['rate']['ePurchaseRateCode'] = "";
+        $res_data['rate']['ePurchaseRateCodeBlock'] = "";
         $res_data['memberDownload'] = FALSE;
         $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
         $data = $this->post_data;
@@ -225,6 +225,13 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $model->dcs_code = $org_code;
                 $model_data = $model->getData();
                 if (!empty($model_data)) {
+                    $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
+                    if (!empty($current_rate_detail)) {
+                        $res_data['rate']['mPurchaseRateCode'] = $current_rate_detail[0]['m_rate_code'];
+                        $res_data['rate']['mPurchaseRateCodeBlock'] = $current_rate_detail[0]['m_rate_block'];
+                        $res_data['rate']['ePurchaseRateCode'] = $current_rate_detail[0]['e_rate_code'];
+                        $res_data['rate']['ePurchaseRateCodeBlock'] = $current_rate_detail[0]['e_rate_block'];
+                    }
                     $collection_status = Yii::$app->general->getSpData('sp_society_collection_status', [$org_code]);
                     $collection_status = empty($collection_status) ? $model_data->is_active : $collection_status[0]['collection_status'];
                     $res_data['memberDownload'] = (bool) $model_data->is_name_request;
