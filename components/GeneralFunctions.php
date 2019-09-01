@@ -1121,4 +1121,30 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function getDestRelation($type = '') {
+        switch (strtolower($type)) {
+            case '2':
+                $rel = 'plantCode';
+                break;
+            case '1':
+                $rel = 'mccPlantCode';
+                break;
+            case '0':
+                $rel = 'bmcCode';
+                break;
+            default :
+                $rel = '';
+        }
+        return $rel;
+    }
+
+    public function vaildateCheckBoxValue($model, $attribute, $params) {
+        if (!empty($model->$attribute)) {
+            if (!in_array($model->$attribute, ['0', '1'])) {
+                $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
+                return false;
+            }
+        }
+    }
+
 }
