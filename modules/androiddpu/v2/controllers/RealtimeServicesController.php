@@ -32,7 +32,7 @@ class RealtimeServicesController extends RestController {
             }
             $res_data['purchaseRateBased'] = $based_date;
             $rate->app_org_code = $org_code;
-            $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0] : "";
+            $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0]->attributes : "";
         }
         $this->response['data'] = $res_data;
         return $this->response;
