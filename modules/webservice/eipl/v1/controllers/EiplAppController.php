@@ -11,6 +11,7 @@ use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\webservice\eipl\v1\V1;
+use app\modules\webservice\eipl\models\TblUserAppScheduler;
 
 class EiplAppController extends MasterController {
 
@@ -46,7 +47,7 @@ class EiplAppController extends MasterController {
                 $model->access_token = NULL;
             }
             $model->attributes = $detail[0];
-             $model->otp_code = 1234;
+            $model->otp_code = 1234;
 //            $model->otp_code = rand(1000, 9999);
             if (!empty($model->loginOrg)) {
                 $model->login_type = $model->loginOrg[0]->organization_type;
@@ -83,7 +84,7 @@ class EiplAppController extends MasterController {
             $model->is_active = 1;
             $model->is_expired = 0;
             $jsonData = Yii::$app->request->getRawBody();
-            $model->device_id = '1234';//$jsonData['device_id'];
+            $model->device_id = $jsonData['device_id'];
             $model->imei_no = $jsonData['imei_no'];
             $modelSave[] = $model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app verification', 'create']);
@@ -106,6 +107,12 @@ class EiplAppController extends MasterController {
         $route = [];
         $dcs = [];
         $member = [];
+        $interval = 0;
+        $allowScheduler = 0;
+        $morningStartTime = '';
+        $morningEndTime = '';
+        $eveningStartTime = '';
+        $eveningEndTime = '';
         $identity = Yii::$app->eiplapp->identity;
         if (!empty($identity)) {
             $masterCode = [];
@@ -188,6 +195,18 @@ class EiplAppController extends MasterController {
                     $union = $this->getOrgInfo($unionCode, 'UNION', $union_url);
                     break;
             }
+
+            $schedulerModel = new TblUserAppScheduler();
+            $schedulerModel->user_type = $masterType;
+            $schedulerModelData = $schedulerModel->getRecord();
+            if (!empty($schedulerModelData)) {
+                $interval = $schedulerModelData->interval;
+                $allowScheduler = (int) $schedulerModelData->allow_scheduler;
+                $morningStartTime = $schedulerModelData->m_start_time;
+                $morningEndTime = $schedulerModelData->m_end_time;
+                $eveningStartTime = $schedulerModelData->e_start_time;
+                $eveningEndTime = $schedulerModelData->e_end_time;
+            }
         }
         $resp['login_type'] = $identity->login_type;
         $resp['union'] = count($union) > $countVar ? [] : $union;
@@ -197,6 +216,12 @@ class EiplAppController extends MasterController {
         $resp['dcs'] = count($dcs) > $countVar ? [] : $dcs;
         $resp['route'] = count($route) > $countVar ? [] : $route;
         $resp['member'] = count($member) > $countVar ? [] : $member;
+        $resp['allow_scheduler'] = $allowScheduler;
+        $resp['interval'] = $interval;
+        $resp['morning_start_time'] = $morningStartTime;
+        $resp['morning_end_time'] = $morningEndTime;
+        $resp['evening_start_time'] = $eveningStartTime;
+        $resp['evening_end_time'] = $eveningEndTime;
         $response[] = $resp;
         $this->response->setData($response);
         return $this->response;
