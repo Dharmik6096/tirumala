@@ -29,7 +29,7 @@ if (isset($address[1])) {
     $model->street2 = $address[1];
 }
 
-$vendor = [ 'EIPL' => 'EIPL', 'STELLAPPS' => 'STELLAPPS'];
+$vendor = ['EIPL' => 'EIPL', 'STELLAPPS' => 'STELLAPPS'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
 $disable = !empty($model->bmc_code) ? TRUE : FALSE;
@@ -195,6 +195,9 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
+    </div>
+    <div class="col-sm-3  mt25">
+        <?= $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="clearfix"></div>
     <?php if ($type == 'create') { ?>

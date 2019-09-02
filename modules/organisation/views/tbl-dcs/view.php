@@ -360,20 +360,19 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'bipl_code',
                                 'label'=>Yii::t('app', 'Reference Code'),
                                 'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
 //                            [
 //                                'label' => 'IMEI Number',
 //                                'value' => isset($model->societyCodes) ? $model->societyCodes->imei_no : '',
 //                                'valueColOptions' => ['style' => 'width:30%']
 //                            ],
-//                            [
-//                                'attribute' => 'is_active',
-//                                'label' => 'Status',
-//                                'format' => 'html',
-//                                'value' => GeneralFunctions::getRecordStatus($model->is_active),
-//                                'valueColOptions' => ['style' => 'width:80%'],
-//                            ],
+                            [
+                                'attribute' => 'is_dispatch_mandate',
+                                'format' => 'html',
+                                'value' => GeneralFunctions::getRecordStatus($model->is_dispatch_mandate),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
                         ],
                     ],
                 ];
