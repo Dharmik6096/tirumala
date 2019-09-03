@@ -90,7 +90,6 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
             'milk_collection_summary_code' => $this->milk_collection_summary_code,
             'avg_rate' => $this->avg_rate,
             'shift_code' => $this->shift_code,
-            'total_amount' => $this->total_amount,
             'sample_count' => $this->sample_count,
             'auto_count' => $this->auto_count,
             'manual_count' => $this->manual_count,
@@ -101,8 +100,7 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
                 ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
                 ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-//                ->andFilterWhere(['like', 'avg_fat', $this->avg_fat])
-//                ->andFilterWhere(['like', 'avg_snf', $this->avg_snf])
+                ->andFilterWhere(['like', 'total_amount', $this->total_amount])
                 ->andFilterWhere(['like', 'kg_snf', $this->kg_snf])
                 ->andFilterWhere(['like', 'kg_fat', $this->kg_fat]);
 

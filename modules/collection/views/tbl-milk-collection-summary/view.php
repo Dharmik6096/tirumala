@@ -97,11 +97,11 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection summary');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'sample_count',
+                            'attribute' => 'total_qty',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'total_qty',
+                            'attribute' => 'total_amount',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -115,6 +115,14 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection summary');
                         [
                             'attribute' => 'manual_count',
                             'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'sample_count',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],

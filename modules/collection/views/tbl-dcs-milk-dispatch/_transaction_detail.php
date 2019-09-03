@@ -14,6 +14,9 @@ $attribute = [
     ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
         }, 'filter' => false],
+    ['attribute' => 'avg_fat', 'filter' => false],
+    ['attribute' => 'avg_snf', 'filter' => false],
+    ['attribute' => 'avg_clr', 'filter' => false],
     ['attribute' => 'dispatch_qty', 'filter' => false],
     ['attribute' => 'qty_mode',
         'value' => function ($model) {
@@ -24,10 +27,7 @@ $attribute = [
     ['attribute' => 'converted_qty_mode',
         'value' => function ($model) {
             return isset($model->converted_qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->converted_qty_mode] : '';
-        }, 'filter' => false],
-    ['attribute' => 'avg_fat', 'filter' => false],
-    ['attribute' => 'avg_snf', 'filter' => false],
-    ['attribute' => 'avg_clr', 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
     ['attribute' => 'water', 'filter' => false],
 ];
 

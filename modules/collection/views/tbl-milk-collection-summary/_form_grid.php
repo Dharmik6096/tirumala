@@ -39,6 +39,7 @@ $attribute = [
     ['attribute' => 'avg_fat', 'filter' => Html::activeTextInput($searchModel, 'avg_fat', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_fat', $operator, ['class' => 'form-control'])],
     ['attribute' => 'avg_snf', 'filter' => Html::activeTextInput($searchModel, 'avg_snf', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_snf', $operator, ['class' => 'form-control'])],
     ['attribute' => 'total_qty', 'filter' => Html::activeTextInput($searchModel, 'total_qty', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_qty', $operator, ['class' => 'form-control'])],
+    ['attribute' => 'total_amount'],
     ['attribute' => 'kg_fat', 'filter' => false, 'visible' => FALSE],
     ['attribute' => 'kg_snf', 'filter' => false, 'visible' => FALSE],
     ['attribute' => 'sample_count', 'filter' => false, 'visible' => FALSE],
