@@ -56,7 +56,7 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
 
         $bmcsearchModel = new TblDcsBmcSearch();
-        $bmcsearchModel->mcc_code = $id;
+        $bmcsearchModel->mcc_plant_code = $id;
         $bmcdataProvider = $bmcsearchModel->bccSearch(Yii::$app->request->queryParams);
 
         return $this->render('view', [

@@ -171,7 +171,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'label' => 'Pours To BMC',
-                                'value' =>  Yii::$app->general->getmultiforeignkey($model->societyCodes, ['bmcCode'], 'bmc_name'),
+                                'value' => Yii::$app->general->getmultiforeignkey($model->societyCodes, ['bmcCode'], 'bmc_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
@@ -358,7 +358,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         'columns' => [
                             [
                                 'attribute' => 'bipl_code',
-                                'label'=>Yii::t('app', 'Reference Code'),
+                                'label' => Yii::t('app', 'Reference Code'),
                                 'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
@@ -370,7 +370,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             [
                                 'attribute' => 'is_dispatch_mandate',
                                 'format' => 'html',
-                                'value' => GeneralFunctions::getRecordStatus($model->is_dispatch_mandate),
+                                'value' => $model->is_dispatch_mandate == 1 ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -387,7 +387,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],

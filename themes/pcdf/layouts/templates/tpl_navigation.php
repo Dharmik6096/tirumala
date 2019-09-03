@@ -65,11 +65,13 @@ echo GhostMenu::widget([
             'items' => [
                 ['label' => 'Milk Collection', 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                 ['label' => 'Milk Dispatch', 'url' => ['/collection/tbl-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-milk-dispatch')],
+                ['label' => 'Milk Dispatch - New', 'url' => ['/collection/tbl-dcs-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-dcs-milk-dispatch')],
                 ['label' => 'BMC Collection', 'url' => ['/collection/tbl-bmc-collection/index'], 'active' => ($cntrl == 'tbl-bmc-collection')],
                 ['label' => 'BMC Dispatch', 'url' => ['/collection/tbl-bmc-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch')],
 //                ['label' => 'Local Milk Sale', 'url' => ['/collection/tbl-tab-local-sale/index'], 'active' => ($cntrl == 'tbl-tab-local-sale')],
                 ['label' => 'Local Milk Sale', 'url' => ['/collection/collection-farmer-local-sale/index'], 'active' => ($cntrl == 'collection-farmer-local-sale')],
                 ['label' => 'DPU Shift End Summary', 'url' => ['/collection/tbl-dpu-shift-end-summary/index'], 'active' => ($cntrl == 'tbl-dpu-shift-end-summary')],
+                ['label' => 'Milk Collection Summary', 'url' => ['/collection/tbl-milk-collection-summary/index'], 'active' => ($cntrl == 'tbl-milk-collection-summary')],
                 ['label' => 'BMC Testing Data', 'url' => ['/collection/tbl-quality-collection/index'], 'active' => ($cntrl == 'tbl-quality-collection')],
                 ['label' => 'BMC Weight Data', 'url' => ['/collection/tbl-weight-collection/index'], 'active' => ($cntrl == 'tbl-weight-collection')],
                 ['label' => 'Manual Milk Collection', 'url' => ['/collection/tbl-milk-collection-temp/index'], 'active' => ($cntrl == 'tbl-milk-collection-temp' && $action == 'index')],

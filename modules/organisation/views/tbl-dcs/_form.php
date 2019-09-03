@@ -196,9 +196,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
     </div>
-    <div class="col-sm-3  mt25">
-        <?= $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-    </div>
     <div class="clearfix"></div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-12">
@@ -228,6 +225,9 @@ $form = ActiveForm::begin([
     <?php } ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'allow_multi_family_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-3">
