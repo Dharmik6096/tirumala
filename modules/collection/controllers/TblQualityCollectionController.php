@@ -45,6 +45,7 @@ class TblQualityCollectionController extends \app\controllers\ChildController {
 
     public function actionCreate() {
         $this->model = new TblQualityCollection();
+        $this->model->scenario = 'PortalCreate';
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $datetime = date('Y-m-d H:i:s');
