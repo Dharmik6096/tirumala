@@ -34,6 +34,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblPlant;
 use app\modules\sms\models\TblAlertNotification;
+use app\modules\syncutility\models\TblSecurity;
 
 class GeneralFunctions extends Component {
 
@@ -955,7 +956,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1145,6 +1146,76 @@ class GeneralFunctions extends Component {
                 return false;
             }
         }
+    }
+
+    public function SystemOS() {
+        return PHP_OS;
+    }
+
+    public function ZipOperation($zipfolder, $operation, $ExtractPath = '', $password = '', $ext = 'csv', $type = '7z', $has_psd = TRUE) {
+        $zipexe = Yii::$app->basePath . '/web/utility';
+        if (empty($password) && $has_psd) {
+            $model = new TblSecurity();
+            $data = $model->getRecord();
+            if (!empty($data) && !empty($data->col_f)) {
+                $password = $data->col_f;
+            }
+        }
+        if (!empty($password) || !$has_psd) {
+            $cmd = '';
+            if ($this->SystemOS() == 'Linux') {
+                if ($operation) {
+                    if ($has_psd) {
+                        $cmd = "cd  $zipexe && 7za a -p$password $zipfolder.$type  $zipfolder//*.$ext";
+                    } else {
+                        $cmd = "cd  $zipexe && 7za a -r $zipfolder.$type  $zipfolder//*.$ext";
+                    }
+                } else {
+                    if ($has_psd) {
+                        $cmd = "cd  $zipexe && 7za x -p$password $zipfolder -o$ExtractPath";
+                    } else {
+                        $cmd = "cd  $zipexe && 7za x $zipfolder -o$ExtractPath";
+                    }
+                }
+            } else if ($this->SystemOS() == 'WINNT') {
+                if ($operation) {
+                    if ($has_psd) {
+                        $cmd = "cd  $zipexe && 7za.exe a -p$password $zipfolder.$type  $zipfolder//*.$ext";
+                    } else {
+                        $cmd = "cd  $zipexe && 7za.exe a -r $zipfolder.$type  $zipfolder//*.$ext";
+                    }
+                } else {
+                    if ($has_psd) {
+                        $cmd = "cd  $zipexe && 7za.exe x -p$password $zipfolder -o$ExtractPath";
+                    } else {
+                        $cmd = "cd  $zipexe && 7za.exe x $zipfolder -o$ExtractPath";
+                    }
+                }
+            }
+            exec($cmd);
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function SetSecurityEncryptionKey($org_type, $org_code) {
+        $key = '';
+        switch ($org_type) {
+            case 'NATIONAL':
+                $key = '59867' . $org_code . '976699686';
+                return $key;
+                break;
+            case 'FEDERATION':
+                $key = '8976699' . $org_code . '6598676';
+                return $key;
+                break;
+            case 'UNION':
+                $key = '76599' . $org_code . '88121659';
+                return $key;
+                break;
+        }
+        return $key;
     }
 
 }
