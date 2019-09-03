@@ -11,7 +11,7 @@ use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\webservice\eipl\v1\V1;
-use app\modules\webservice\eipl\models\TblUserAppScheduler;
+//use app\modules\webservice\eipl\models\TblUserAppScheduler;
 
 class EiplAppController extends MasterController {
 
@@ -196,17 +196,17 @@ class EiplAppController extends MasterController {
                     break;
             }
 
-            $schedulerModel = new TblUserAppScheduler();
-            $schedulerModel->user_type = $masterType;
-            $schedulerModelData = $schedulerModel->getRecord();
-            if (!empty($schedulerModelData)) {
-                $interval = $schedulerModelData->interval;
-                $allowScheduler = (int) $schedulerModelData->allow_scheduler;
-                $morningStartTime = $schedulerModelData->m_start_time;
-                $morningEndTime = $schedulerModelData->m_end_time;
-                $eveningStartTime = $schedulerModelData->e_start_time;
-                $eveningEndTime = $schedulerModelData->e_end_time;
-            }
+//            $schedulerModel = new TblUserAppScheduler();
+//            $schedulerModel->user_type = $masterType;
+//            $schedulerModelData = $schedulerModel->getRecord();
+//            if (!empty($schedulerModelData)) {
+//                $interval = $schedulerModelData->interval;
+//                $allowScheduler = (int) $schedulerModelData->allow_scheduler;
+//                $morningStartTime = $schedulerModelData->m_start_time;
+//                $morningEndTime = $schedulerModelData->m_end_time;
+//                $eveningStartTime = $schedulerModelData->e_start_time;
+//                $eveningEndTime = $schedulerModelData->e_end_time;
+//            }
         }
         $resp['login_type'] = $identity->login_type;
         $resp['union'] = count($union) > $countVar ? [] : $union;
@@ -216,12 +216,12 @@ class EiplAppController extends MasterController {
         $resp['dcs'] = count($dcs) > $countVar ? [] : $dcs;
         $resp['route'] = count($route) > $countVar ? [] : $route;
         $resp['member'] = count($member) > $countVar ? [] : $member;
-        $resp['allow_scheduler'] = $allowScheduler;
-        $resp['interval'] = $interval;
-        $resp['morning_start_time'] = $morningStartTime;
-        $resp['morning_end_time'] = $morningEndTime;
-        $resp['evening_start_time'] = $eveningStartTime;
-        $resp['evening_end_time'] = $eveningEndTime;
+//        $resp['allow_scheduler'] = $allowScheduler;
+//        $resp['interval'] = $interval;
+//        $resp['morning_start_time'] = $morningStartTime;
+//        $resp['morning_end_time'] = $morningEndTime;
+//        $resp['evening_start_time'] = $eveningStartTime;
+//        $resp['evening_end_time'] = $eveningEndTime;
         $response[] = $resp;
         $this->response->setData($response);
         return $this->response;
