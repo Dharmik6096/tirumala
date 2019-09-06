@@ -47,7 +47,7 @@ class HttpRequest extends \yii\base\Component {
         return FALSE;
     }
 
-    public function camelCaseToUnderscore($post_data) {
+    public function &camelCaseToUnderscore(&$post_data) {
         if (is_array($post_data)) {
             $post_data = array_combine(array_map(function($str) {
                         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
@@ -58,10 +58,12 @@ class HttpRequest extends \yii\base\Component {
                                 return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
                             }, array_keys($post_data[$key])), array_values($post_data[$key]));
                     $post_data[$key] = $arr1;
+                    $this->camelCaseToUnderscore($post_data[$key]);
                 }
             }
             return $post_data;
         }
+        return $post_data;
     }
 
     private function setRequestLog() {

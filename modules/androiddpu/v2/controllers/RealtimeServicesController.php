@@ -9,6 +9,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\organisation\models\TblDcs;
+use app\modules\syncutility\models\TblRealtimeSyncError;
 
 class RealtimeServicesController extends RestController {
 
@@ -79,6 +80,103 @@ class RealtimeServicesController extends RestController {
         }
         $this->response['data'] = $res_data;
         return $this->response;
+    }
+
+    public function actionSaveJson() {
+        $unique_key = 'x_col1';
+        $data = [];
+        $post_data = $this->post_data;
+        $success_id = [];
+        $error_id = [];
+        if (!empty($post_data['content'])) {
+            $tr_data = $post_data['content'];
+            foreach ($tr_data as $transaction_data) {
+                try {
+                    $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data['table_name'])));
+                    $model_name = Yii::$app->path->define($model_name);
+                    $json = $transaction_data['json'];
+                    $model = new $model_name();
+                    $model->setAttributes($json);
+                    $masterModel = [];
+                    if (isset($transaction_data['operation_type']) && $transaction_data['operation_type'] == 'UPDATE') {
+                        $primaryKey = empty($unique_key) ? $model->tableSchema->primaryKey[0] : $unique_key;
+                        $key = $model->$primaryKey;
+                        $model_data = $model->findOne($key);
+                        if (!empty($model_data)) {
+                            $model = $model_data;
+                            $this->setHistoryModel($model, $model_name, $masterModel);
+                            $model->setAttributes($json);
+                        }
+                    }
+                    $model = $this->SetDataType($model);
+                    $masterModel[] = $model;
+                    $transaction = $this->generalModel->saveTransaction($masterModel, ['transactional data', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $success_id[] = $json[$unique_key];
+                    } else {
+                        $error = true;
+                        $saveErrorLog = false;
+                        $this->setInboxError($post_data, $transaction_data, $model->getErrors(), $transaction, $error, $saveErrorLog);
+                        if ($error || !$saveErrorLog) {
+                            $error_id[] = $json[$unique_key];
+                        } else {
+                            $success_id[] = $json[$unique_key];
+                        }
+                    }
+                } catch (\Throwable $ex) {
+                    $msg = !empty($ex->xdebug_message) ? [$ex->xdebug_message] : [];
+                    $this->setInboxError($post_data, $transaction_data, $msg, 'Exception');
+                    $success_id[] = $json[$unique_key];
+                }
+            }
+        }
+        $data['success_id'] = implode('#', $success_id);
+        $data['error_id'] = implode('#', $error_id);
+        $this->response['data'] = $data;
+        return $this->response;
+    }
+
+    public function SetDataType($model) {
+        $scema = $model->getTableSchema();
+        foreach ($model->attributes as $key => $a) {
+            $type = $scema->columns[$key]->type;
+            if ($type == 'boolean') {
+                $a = ($a == 1) ? true : false;
+            } elseif ($type == 'smallint') {
+                $a = (int) $a;
+            } elseif ($type == 'decimal') {
+                $a = (double) $a;
+            } elseif ($type == 'bigint') {
+                $a = (int) $a;
+            }
+            $model->{$key} = $a;
+        }
+        return $model;
+    }
+
+    private function setHistoryModel($model, $model_name, &$masterModel) {
+        $history = $model_name . 'History';
+        $historyModel = new $history();
+        Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+        $childModel[] = $historyModel;
+    }
+
+    public function setInboxError($post_data, $data, $error_log, $transaction, &$error = true, &$saveErrorLog = true) {
+        $modelErr = json_encode($error_log);
+        $inbox_model = new TblRealtimeSyncError();
+        $inbox_model->attributes = $post_data;
+        $inbox_model->attributes = $data;
+        $inbox_model->json_text = Yii::$app->request->getRawBody();
+        $inbox_model->url = Yii::$app->request->hostInfo . Yii::$app->request->url;
+        $inbox_model->validation_error = $modelErr;
+        $inbox_model->response_status = 0;
+        $msg = Yii::$app->session->getFlash('success');
+        $error_msg = $msg['message'];
+        $inbox_model->transaction_error = 'Type:' . $transaction . ',' . 'Message' . ':' . $msg['type'] . '-' . $error_msg;
+        $transaction = $this->generalModel->saveTransaction([$inbox_model], ['Inbox Error', 'create']);
+        if ($transaction == 'customRedirect') {
+            $saveErrorLog = true;
+        }
     }
 
 }
