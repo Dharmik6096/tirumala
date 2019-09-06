@@ -109,6 +109,7 @@ class RealtimeServicesController extends RestController {
                         }
                     }
                     $model = $this->SetDataType($model);
+                    $model->scenario = 'androidsync';
                     $masterModel[] = $model;
                     $transaction = $this->generalModel->saveTransaction($masterModel, ['transactional data', 'create']);
                     if ($transaction == 'customRedirect') {
@@ -117,16 +118,16 @@ class RealtimeServicesController extends RestController {
                         $error = true;
                         $saveErrorLog = false;
                         $this->setInboxError($post_data, $transaction_data, $model->getErrors(), $transaction, $error, $saveErrorLog);
-                        if ($error || !$saveErrorLog) {
-                            $error_id[] = $json[$unique_key];
-                        } else {
-                            $success_id[] = $json[$unique_key];
-                        }
+                        // if ($error || !$saveErrorLog) {
+                        $error_id[] = $json[$unique_key];
+                        // } else {
+                        //     $success_id[] = $json[$unique_key];
+                        // }
                     }
                 } catch (\Throwable $ex) {
                     $msg = !empty($ex->xdebug_message) ? [$ex->xdebug_message] : [];
                     $this->setInboxError($post_data, $transaction_data, $msg, 'Exception');
-                    $success_id[] = $json[$unique_key];
+                    $error_id[] = $json[$unique_key];
                 }
             }
         }
@@ -139,17 +140,13 @@ class RealtimeServicesController extends RestController {
     public function SetDataType($model) {
         $scema = $model->getTableSchema();
         foreach ($model->attributes as $key => $a) {
-            $type = $scema->columns[$key]->type;
-            if ($type == 'boolean') {
-                $a = ($a == 1) ? true : false;
-            } elseif ($type == 'smallint') {
-                $a = (int) $a;
-            } elseif ($type == 'decimal') {
-                $a = (double) $a;
-            } elseif ($type == 'bigint') {
-                $a = (int) $a;
+            if (!empty($a)) {
+                $type = $scema->columns[$key]->type;
+                if ($type == 'datetime') {
+                    $a = Yii::$app->controls->save_datetime($a);
+                }
+                $model->{$key} = $a;
             }
-            $model->{$key} = $a;
         }
         return $model;
     }

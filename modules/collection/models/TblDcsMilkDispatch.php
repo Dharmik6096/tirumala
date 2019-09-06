@@ -59,9 +59,9 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['challan_no', 'destination_code', 'vehicle_no', 'vehicle_in_time', 'vehicle_out_time', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks'], 'string'],
+            [['challan_no', 'destination_code', 'vehicle_no', 'vehicle_in_time', 'vehicle_out_time', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks'], 'safe'],
             [['date_time_of_dispatch', 'created_at', 'updated_at'], 'safe'],
-            [['shift_code', 'dispatch_type', 'destination_type', 'originating_type'], 'integer'],
+            [['shift_code', 'dispatch_type', 'destination_type', 'originating_type'], 'safe'],
         ];
     }
 
