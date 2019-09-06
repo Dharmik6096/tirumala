@@ -576,7 +576,7 @@ class DropDown extends Component {
             'disp_in' => [
                 'name' => 'disp_in',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['1' => Yii::t('app', 'Can'), '2' => Yii::t('app', 'Tanker')],
+                'data' => ['0' => Yii::t('app', 'Can'), '1' => Yii::t('app', 'Tanker')],
             ],
             'sap_collection_type' => [
                 'name' => 'sap_collection_type',
