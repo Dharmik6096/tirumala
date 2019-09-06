@@ -37,6 +37,16 @@ class ChildModel extends \yii\db\ActiveRecord {
                     $this->created_by = $user;
                 if ($this->hasAttribute('created_at'))
                     $this->created_at = date('Y-m-d H:i:s');
+
+                if ($this->hasAttribute('originating_org_code') && $this->originating_org_code == NULL) {
+                    $this->originating_org_code = \Yii::$app->session->get('organizations_code');
+                }
+                if ($this->hasAttribute('originating_org_type') && $this->originating_org_type == NULL) {
+                    $this->originating_org_type = 'PORTAL';
+                }
+                if ($this->hasAttribute('originating_type') && $this->originating_type == NULL) {
+                    $this->originating_type = 0;
+                }
             } else {
                 if ($this->hasAttribute('updated_by'))
                     $this->updated_by = $user;

@@ -60,6 +60,7 @@ class TblMilkCollectionSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['date_time_of_collection', 'created_at', 'updated_at'], 'safe', 'on' => ['androidsync']],
             [['date_time_of_collection', 'created_at', 'updated_at'], 'safe'],
             [['shift_code', 'sample_count', 'auto_count', 'manual_count'], 'safe'],
             [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount'], 'safe'],
