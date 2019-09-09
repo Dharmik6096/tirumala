@@ -66,8 +66,15 @@ class SqliteCreate extends Component {
                 try {
                     $tables_fields = [];
                     $tableName = $field['table_name'];
-                    $insert_table = $tableName == 'tbl_route_mapping' ? 'tbl_route' : $tableName;
-                    $insert_table = $tableName == 'tbl_route_mapping_sources' ? 'tbl_route_mapping' : $tableName;
+                    $insert_table = $tableName;
+                    //$insert_table = $tableName == 'tbl_route_mapping' ? 'tbl_route' : $tableName;
+                    // $insert_table = $tableName == 'tbl_route_mapping_sources' ? 'tbl_route_mapping' : $tableName;
+                    if ($tableName == 'tbl_route_mapping') {
+                        $insert_table = 'tbl_route';
+                    } else if ($tableName == 'tbl_route_mapping_sources') {
+                        $insert_table = 'tbl_route_mapping';
+                    }
+
                     if (in_array($insert_table, $android_tables)) {
                         $insert_data = '';
                         $results = $this->android_db->query('PRAGMA table_info(' . $insert_table . ')');
