@@ -47,7 +47,7 @@ class MasterDataController extends \app\modules\androiddpu\v1\controllers\Master
         if (!empty($sync_active_model)) {
             $content = $data['content'];
             $ids = $content['uuid'];
-            $record = $this->generalModel->deleteMapping(['TblSentbox', 'TblSyncLog'], 'uuid', $ids);
+            $record = $this->generalModel->deleteMapping(['TblSentbox', 'TblSentboxClone'], 'uuid', $ids);
             if ($record == true) {
                 $res_data['message'] = 'Sentbox Updated Successfully.';
             }

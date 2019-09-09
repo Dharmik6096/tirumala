@@ -5,7 +5,7 @@ namespace app\modules\syncutility\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_inbox".
+ * This is the model class for table "tbl_sentbox_clone".
  *
  * @property string $uuid
  * @property string $sync_status
@@ -26,14 +26,16 @@ use Yii;
  * @property string $source_device_mac
  * @property string $version_no
  * @property string $device_id
+ * @property string $error_timestamp
+ * @property string $file_name
  */
-class TblInbox extends \yii\db\ActiveRecord {
+class TblSentboxClone extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_inbox';
+        return 'tbl_sentbox_clone';
     }
 
     /**
@@ -42,9 +44,10 @@ class TblInbox extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['uuid'], 'required'],
-            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no'], 'string'],
+            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id', 'file_name'], 'string'],
             [['sequence_no'], 'integer'],
-            [['posting_timestamp', 'sync_timestamp', 'device_id', 'error_timestamp'], 'safe'],
+            [['posting_timestamp', 'sync_timestamp', 'error_timestamp'], 'safe'],
+            [['posting_timestamp'], 'default', 'value' => date('Y-m-d H:i:s')]
         ];
     }
 
@@ -71,13 +74,10 @@ class TblInbox extends \yii\db\ActiveRecord {
             'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
             'source_device_mac' => Yii::t('app', 'Source Device Mac'),
             'version_no' => Yii::t('app', 'Version No'),
+            'device_id' => Yii::t('app', 'Device ID'),
+            'error_timestamp' => Yii::t('app', 'Error Timestamp'),
+            'file_name' => Yii::t('app', 'File Name'),
         ];
-    }
-
-    public function getData() {
-        return $this->find()
-                        ->where(['or', ['error_log' => NULL], ['error_log' => '']])
-                        ->limit(50)->all();
     }
 
 }
