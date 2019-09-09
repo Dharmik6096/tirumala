@@ -1562,6 +1562,7 @@ class SiteController extends Controller {
                     $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
                     $model_name = Yii::$app->path->define($model_name);
                     $model = new $model_name();
+                    $model->scenario = 'androidsync';
                     $json = $transaction_data->json_text;
                     $json = (array) json_decode($json);
                     $json = Yii::$app->general->camelCaseToUnderscore($json);
