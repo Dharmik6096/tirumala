@@ -81,7 +81,11 @@ class SqliteCreate extends Component {
                             if ($field['key_field'] == NULL) {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
                             } else {
-                                $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in (${$field['key_field']})";
+                                if ($field['key_field'] == 'to_dest') {
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($bmc_code)) and to_type = 'bmc'";
+                                } else {
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in (${$field['key_field']})";
+                                }
                             }
                         } else {
                             $sql = 'SELECT distinct ' . $fields . ' FROM ' . $tableName . ' inner join ' . $field['primary_table'] . ' on ' . $tableName . '.' . $field['child_key'] . '=' . $field['primary_table'] . '.' . $field['child_key'] . ' where ' . $field['primary_table'] . '.' . $field['key_field'] . " in (${$field['key_field']})";
