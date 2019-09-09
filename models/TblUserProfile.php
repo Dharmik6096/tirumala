@@ -28,9 +28,9 @@ class TblUserProfile extends ChildModel {
      */
     public function rules() {
         return [
-            [['id'], 'required'],
-            [['id', 'user_id', 'flg_sentbox_entry', 'sync_status'], 'string'],
-            [['profile_id'], 'integer'],
+            [['id'], 'required', 'except' => ['androidsync']],
+            [['id', 'user_id', 'flg_sentbox_entry', 'sync_status'], 'safe'],
+            [['profile_id'], 'safe'],
             [['sync_timestamp'], 'safe'],
         ];
     }

@@ -48,7 +48,7 @@ class TblShiftSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['code'], 'required'],
+            [['code'], 'required', 'except' => ['androidsync']],
             [['code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'device_id', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'string'],
             [['shift_date', 'created_at', 'updated_at', 'sync_timestamp', 'shift_code'], 'safe'],
             [['avg_fat', 'avg_snf', 'quantity', 'amount'], 'number'],

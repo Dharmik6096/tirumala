@@ -13,7 +13,6 @@ class RequestMasterController extends MasterController {
 
     public function actionIndex() {
         $req_data = Yii::$app->request->getRawBody();
-        var_dump($req_data);die;
         $endpoint = !empty($req_data['endpoint']) ? $req_data['endpoint'] : NULL;
         $data = V1::getLabels($endpoint);
         $response = [];
@@ -31,7 +30,6 @@ class RequestMasterController extends MasterController {
             $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
         } else {
             $endpoint_array = explode('/', $endpoint);
-            var_dump($endpoint_array);die;
             $cntrlaction = 'webservice/eipl/v1/' . $endpoint_array[0] . '/' . $endpoint_array[1];
             \Yii::$app->request->setRawBody(Json::encode($req_data));
             return Yii::$app->runAction($cntrlaction);

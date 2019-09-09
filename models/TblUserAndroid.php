@@ -38,9 +38,9 @@ class TblUserAndroid extends ChildModel {
      */
     public function rules() {
         return [
-            [['user_id'], 'required'],
-            [['user_id', 'name', 'password', 'mobile_no', 'email', 'bmc_code', 'mcc_plant_code', 'created_by', 'updated_by', 'device_id', 'flg_sentbox_entry', 'sync_status'], 'string'],
-            [['is_active'], 'integer'],
+            [['user_id'], 'required', 'except' => ['androidsync']],
+            [['user_id', 'name', 'password', 'mobile_no', 'email', 'bmc_code', 'mcc_plant_code', 'created_by', 'updated_by', 'device_id', 'flg_sentbox_entry', 'sync_status'], 'safe'],
+            [['is_active'], 'safe'],
             [['created_at', 'updated_at', 'sync_timestamp'], 'safe'],
         ];
     }

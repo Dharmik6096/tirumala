@@ -48,7 +48,7 @@ class TblQualityCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['uuid'], 'required'],
+            [['uuid'], 'required', 'except' => ['androidsync']],
             [['plant_code', 'mcc_code', 'bmc_code', 'collection_date', 'shift_code', 'sample_no', 'doc_no', 'fat', 'snf'], 'required', 'on' => ['PortalCreate']],
             [['uuid', 'shift_code', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'safe'],
             [['sample_no', 'retest_count'], 'safe'],

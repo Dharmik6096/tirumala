@@ -59,7 +59,7 @@ class TblWeightCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['uuid'], 'required'],
+            [['uuid'], 'required', 'except' => ['androidsync']],
             [['dcs_code', 'collection_date', 'sample_no', 'shift_code', 'milk_type', 'milk_quality_type', 'doc_no', 'quantity'], 'required', 'on' => ['PortalCreate']],
             [['uuid', 'producer_flag', 'shift_code', 'fault_flag', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'route_code', 'dcs_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'device_id', 'converted_quantity_mode', 'converted_quantity', 'auto_flag', 'doc_no'], 'safe'],
             [['sample_no', 'milk_type', 'milk_quality_type', 'quantity_mode', 'rejected_can'], 'safe'],
