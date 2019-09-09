@@ -280,7 +280,7 @@ class TblUserOrganizationMapping extends ChildModel {
         }
         $selected = [];
         if ($MCCArray !== 0) {
-            $query->andWhere(['mcc_code' => array_keys($MCCArray)]);
+            $query->andWhere(['mcc_plant_code' => array_keys($MCCArray)]);
         }
         $list = $query->asArray()->all();
         $data = ArrayHelper::map($list, 'bmc_code', 'bmc_name');

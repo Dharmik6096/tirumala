@@ -227,7 +227,7 @@ class TblMccPlant extends \app\models\ChildModel {
     }
 
     public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['mcc_code' => 'mcc_plant_code'])->where(['is_mcc' => 1]);
+        return $this->hasOne(TblDcsBmc::className(), ['mcc_plant_code' => 'mcc_plant_code'])->where(['is_mcc' => 1]);
     }
 
     public function getDcsCode() {
@@ -271,7 +271,7 @@ class TblMccPlant extends \app\models\ChildModel {
     }
 
     public function getBmcCodes() {
-        return $this->hasMany(TblDcsBmc::className(), ['mcc_code' => 'mcc_plant_code']);
+        return $this->hasMany(TblDcsBmc::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
     public function afterSave($insert, $changedAttributes) {
