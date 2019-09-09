@@ -48,6 +48,7 @@ use app\models\TblDbConfig;
 use app\modules\syncutility\models\TblInbox;
 use app\models\GeneralModel;
 use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
+use app\modules\syncutility\models\TblSyncLog;
 
 class SiteController extends Controller {
 
@@ -713,7 +714,7 @@ class SiteController extends Controller {
             if ($param1 == 'shift') {
                 $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
             }
-            $param_str.="'" . $value . "',";
+            $param_str .= "'" . $value . "',";
         }
         $param_str = rtrim($param_str, ",");
         $query = \Yii::$app->db->createCommand("{CALL $spname($param_str)}");
@@ -1550,12 +1551,18 @@ class SiteController extends Controller {
             $childModel = [];
 
             if (!empty($modelData)) {
+                $delete = [];
                 $master = [];
                 $childModel = [];
                 foreach ($modelData as $transaction_data) {
+                    $delete [] = $transaction_data;
+                    $syncLogModel = new TblSyncLog();
+                    $syncLogModel->setAttributes($transaction_data->attributes);
+                    $childModel[] = $syncLogModel;
                     $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
                     $model_name = Yii::$app->path->define($model_name);
                     $model = new $model_name();
+                    $model->scenario = 'androidsync';
                     $json = $transaction_data->json_text;
                     $json = (array) json_decode($json);
                     $json = Yii::$app->general->camelCaseToUnderscore($json);
@@ -1565,11 +1572,16 @@ class SiteController extends Controller {
                             
                         }
                         $generalModel = new GeneralModel();
-                        $ids = $transaction_data['uuid'];
-                        $record = $generalModel->deleteMapping(['TblInbox', 'TblSyncLog'], 'uuid', $ids);
-                        if ($record == true) {
-                            $transaction = $generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
+                        $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
+                        if ($transaction != 'customRedirect') {
+                            $transaction_data->error_log = (string) $transaction;
+                            $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                            $transaction_data->save();
                         }
+                    } else {
+                        $transaction_data->error_log = Json::encode($model->getErrors());
+                        $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                        $transaction_data->save();
                     }
                 }
             }

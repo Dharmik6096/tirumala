@@ -39,7 +39,7 @@ class MasterDataController extends RestController {
         $data = $this->post_data;
         $content = $data['content'];
         $ids = $content['uuid'];
-        $record = $this->generalModel->deleteMapping(['TblSentbox', 'TblSyncLog'], 'uuid', $ids);
+        $record = $this->generalModel->deleteMapping(['TblSentbox', 'TblSentboxClone'], 'uuid', $ids);
         if ($record == true) {
             $res_data['message'] = 'Sentbox Updated Successfully.';
         }

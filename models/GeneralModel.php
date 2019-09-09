@@ -35,6 +35,15 @@ class GeneralModel {
                 case 2 : return;
                 case 3 : return $this->delete3($arguments[0], $arguments[1], $arguments[2]);
             }
+        } else if ($name == 'saveDeleteTransaction') {
+            switch (count($arguments)) {
+                case 0 : return;
+                case 1 : return;
+                case 2 : return;
+                case 3 : return;
+                case 4 : return $this->saveDelete4($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
+                case 5 : return $this->saveDelete5($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
+            }
         }
     }
 
@@ -359,7 +368,7 @@ class GeneralModel {
         try {
             $str = '';
             for ($i = 1; $i <= count($param) + 1; $i++) {
-                $str.='@paramName' . $i . ' =:paramName' . $i . ', ';
+                $str .= '@paramName' . $i . ' =:paramName' . $i . ', ';
             }
 
             $sql = '{ CALL ' . $spname . ' (' . $str . '@out=:out)}';
@@ -386,7 +395,7 @@ class GeneralModel {
     public function callSpOld($spname, $param) {
         $str = '';
         for ($i = 1; $i <= count($param) + 1; $i++) {
-            $str.=':paramName' . $i . ',';
+            $str .= ':paramName' . $i . ',';
         }
         $command = \Yii::$app->db->createCommand("CALL {$spname}({$str}@out)");
         foreach ($param as $key => $value) {
@@ -456,6 +465,54 @@ class GeneralModel {
             return $flag;
         }
         return true;
+    }
+
+    public function saveDelete5($model, $saveChild, $deleteChild, $message, $returnException = false) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            foreach ($model as $m) {
+                $master[] = $m->save();
+            }
+            if (!in_array(FALSE, $master)) {
+                foreach ($saveChild as $m) {
+                    $master[] = $m->save();
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                foreach ($deleteChild as $m) {
+                    $master[] = $m->delete();
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            }
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
+            return 'customRender';
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            if ($returnException) {
+                return $e->getMessage();
+            } else {
+                return false;
+            }
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            $message = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $message]);
+            if ($returnException) {
+                return $message;
+            } else {
+                return false;
+            }
+        }
     }
 
 }
