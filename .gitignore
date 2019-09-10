@@ -25,6 +25,7 @@ runtime/*
 !runtime/.gitkeep
 nbproject
 config/db.php
+config/db_rmrd.php
 web/ratechart/**
 web/import/**
 web/payment/**
