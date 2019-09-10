@@ -1567,6 +1567,7 @@ class SiteController extends Controller {
                     $json = (array) json_decode($json);
                     $json = Yii::$app->general->camelCaseToUnderscore($json);
                     $model->setAttributes($json);
+                    $model = Yii::$app->general->SetDataType($model);
                     if ($model->validate()) {
                         if (isset($transaction_data->operation) && $transaction_data->operation == 'UPDATE') {
                             

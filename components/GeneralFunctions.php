@@ -1218,4 +1218,18 @@ class GeneralFunctions extends Component {
         return $key;
     }
 
+    public function SetDataType($model) {
+        $scema = $model->getTableSchema();
+        foreach ($model->attributes as $key => $a) {
+            if (!empty($a)) {
+                $type = $scema->columns[$key]->type;
+                if ($type == 'datetime') {
+                    $a = Yii::$app->controls->save_datetime($a);
+                }
+                $model->{$key} = $a;
+            }
+        }
+        return $model;
+    }
+
 }
