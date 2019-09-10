@@ -1548,13 +1548,10 @@ class SiteController extends Controller {
         try {
             $model = new TblInbox();
             $modelData = $model->getData();
-            $childModel = [];
-
             if (!empty($modelData)) {
-                $delete = [];
-                $master = [];
-                $childModel = [];
                 foreach ($modelData as $transaction_data) {
+                    $delete = [];
+                    $childModel = [];
                     $delete [] = $transaction_data;
                     $syncLogModel = new TblSyncLog();
                     $syncLogModel->setAttributes($transaction_data->attributes);
