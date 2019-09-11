@@ -19,35 +19,37 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '203 - Society Coll
             </div>
         </div>
         <div class="panel-body">
-            <?php echo $this->render('_search', ['model' => $model]); ?>
+            <div class="report-area">
+                <?php echo $this->render('_search', ['model' => $model]); ?>
 
 
-            <?php
-            $attribute = [
-                ['attribute' => 'dcs_code', 'filter' => false],
-                'dcs_code_ex',
-                'dcs_name',
-                'total_shift',
-                'received_shift_data',
-                'total_qty',
-                'avg_fat',
-                'avg_snf',
-                ['attribute' => 'amount',
-                    'hAlign' => Yii::$app->general->ColoumnAlign(),
-                    'format' => Yii::$app->general->CurrencyFormat(),
-                ],
-            ];
+                <?php
+                $attribute = [
+                    ['attribute' => 'dcs_code', 'filter' => false],
+                    'dcs_code_ex',
+                    'dcs_name',
+                    'total_shift',
+                    'received_shift_data',
+                    'total_qty',
+                    'avg_fat',
+                    'avg_snf',
+                    ['attribute' => 'amount',
+                        'hAlign' => Yii::$app->general->ColoumnAlign(),
+                        'format' => Yii::$app->general->CurrencyFormat(),
+                    ],
+                ];
 
 
-            $grid_option = [
-                'id' => 'report-index',
-                'attributes' => $attribute,
-                'active_column' => false,
-                    //'actions' => []
-            ];
+                $grid_option = [
+                    'id' => 'report-index',
+                    'attributes' => $attribute,
+                    'active_column' => false,
+                        //'actions' => []
+                ];
 
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option, false);
-            ?>
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option, false);
+                ?>
+            </div>
         </div>
     </div>
 </div>

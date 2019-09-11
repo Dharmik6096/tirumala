@@ -1938,7 +1938,7 @@ ul.orderable label.checked {
 }
 
 .report-grid {
-    //max-height: 400px;
+    /*max-height: 400px;*/
     overflow: scroll;
 }
 .formula{
@@ -2235,4 +2235,7 @@ div.crystalstyle{
 
 .mt-8 {
     margin-top: -8px !important
+}
+.report-area .kv-panel-before [title="Personalize grid settings"] {
+    display: none !important;
 }

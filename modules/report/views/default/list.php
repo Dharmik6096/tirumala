@@ -6,6 +6,7 @@ use yii\widgets\Pjax;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use kartik\export\ExportMenu;
+
 $request = Yii::$app->request->queryParams;
 $min_date = empty($request["min_date"]) ? '' : $request["min_date"];
 $max_date = empty($request["max_date"]) ? '' : $request["max_date"];
@@ -18,31 +19,35 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '202 - Society Coll
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-            <?php echo $this->render('_search', ['model' => $model]); ?>
+            <div class="report-area">
+                <?php echo $this->render('_search', ['model' => $model]); ?>
 
-            <?php
-            $attribute = [
-                ['attribute'=>'union_name', 'label' => Yii::t('app', 'Union Name')],
-                'district_name',
-                ['attribute'=>'society_code', 'label' => Yii::t('app', 'Society Code')],
-                ['attribute'=>'dcs_code_ex', 'label' => Yii::t('app', 'Old Soc. Code')],
-                ['attribute'=>'society_name', 'label' => Yii::t('app', 'Society Name')],
-                'first_date_of_data_received',
-                'last_date_of_data_received',
-                'total_shift',
-                'no_of_shift',
-                ['attribute'=>'shift_per','value'=>function($model){ return $model['shift_per'].'%';}]
-            ];
+                <?php
+                $attribute = [
+                    ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name')],
+                    'district_name',
+                    ['attribute' => 'society_code', 'label' => Yii::t('app', 'Society Code')],
+                    ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Old Soc. Code')],
+                    ['attribute' => 'society_name', 'label' => Yii::t('app', 'Society Name')],
+                    'first_date_of_data_received',
+                    'last_date_of_data_received',
+                    'total_shift',
+                    'no_of_shift',
+                    ['attribute' => 'shift_per', 'value' => function($model) {
+                            return $model['shift_per'] . '%';
+                        }]
+                ];
 
-            $grid_option = [
-                'id' => 'report-list',
-                'attributes' => $attribute,
-                'active_column' => false,
-                    //'actions' => []
-            ];
+                $grid_option = [
+                    'id' => 'report-list',
+                    'attributes' => $attribute,
+                    'active_column' => false,
+                        //'actions' => []
+                ];
 
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option);
-            ?>
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option);
+                ?>
+            </div>
         </div>
     </div>
 </div>

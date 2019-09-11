@@ -19,25 +19,27 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '207 - No Network D
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-            <?php echo $this->render('_search_dpu', ['model' => $model]); ?>
+            <div class="report-area">
+                <?php echo $this->render('_search_dpu', ['model' => $model]); ?>
 
-            <?php
-            $attribute = [
-                ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
-                'dcs_code',
-                'dcs_code_ex',
-                'dcs_name',
-            ];
+                <?php
+                $attribute = [
+                    ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                    'dcs_code',
+                    'dcs_code_ex',
+                    'dcs_name',
+                ];
 
-            $grid_option = [
-                'id' => 'report-list-dpu-dcs',
-                'attributes' => $attribute,
-                'active_column' => false,
-                    //'actions' => []
-            ];
+                $grid_option = [
+                    'id' => 'report-list-dpu-dcs',
+                    'attributes' => $attribute,
+                    'active_column' => false,
+                        //'actions' => []
+                ];
 
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option);
-            ?>
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option);
+                ?>
+            </div>
         </div>
     </div>
 </div>

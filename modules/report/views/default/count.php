@@ -15,25 +15,26 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '201 - Union Collec
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-            <?php echo $this->render('_search', ['model' => $model]); ?>
+            <div class="report-area">
+                <?php echo $this->render('_search', ['model' => $model]); ?>
 
-            <?php
-            $attribute = [
-                ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
-                ['attribute' => 'total_society', 'value' => 'total_society', 'label' => Yii::t('app', 'Total Society'), 'filter' => false],
-                ['attribute' => 'data_received_for_society', 'value' => 'data_received_for_society', 'label' => Yii::t('app', 'Data Received For Society'), 'filter' => false],
-            ];
+                <?php
+                $attribute = [
+                    ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                    ['attribute' => 'total_society', 'value' => 'total_society', 'label' => Yii::t('app', 'Total Society'), 'filter' => false],
+                    ['attribute' => 'data_received_for_society', 'value' => 'data_received_for_society', 'label' => Yii::t('app', 'Data Received For Society'), 'filter' => false],
+                ];
 
-            $grid_option = [
-                'id' => 'report-count',
-                'attributes' => $attribute,
-                'active_column' => false,
-                    //'actions' => []
-            ];
+                $grid_option = [
+                    'id' => 'report-count',
+                    'attributes' => $attribute,
+                    'active_column' => false,
+                        //'actions' => []
+                ];
 
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option);
-            ?>
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option);
+                ?>
+            </div>
         </div>
-
     </div>
 </div>

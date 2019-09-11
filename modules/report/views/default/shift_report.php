@@ -15,30 +15,31 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '208 - Society-Shif
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-            <?php echo $this->render('_search_dpu_bmc', ['model' => $model]); ?>
+            <div class="report-area">
+                <?php echo $this->render('_search_dpu_bmc', ['model' => $model]); ?>
 
-            <?php
-            $attribute = [
-                ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
-                ['attribute' => 'district_name', 'filter' => false],
-                ['attribute' => 'dcs_code', 'filter' => false],
-                ['attribute' => 'dcs_name', 'filter' => false],
-                ['attribute' => 'MinDate', 'filter' => false],
-            ];
-            if (!empty($extra))
-                $attribute = array_merge($attribute, $extra);
-            $grid_option = [
-                'id' => 'shift-report',
-                'attributes' => $attribute,
-                'active_column' => false,
-                    //'actions' => []
-            ];
+                <?php
+                $attribute = [
+                    ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                    ['attribute' => 'district_name', 'filter' => false],
+                    ['attribute' => 'dcs_code', 'filter' => false],
+                    ['attribute' => 'dcs_name', 'filter' => false],
+                    ['attribute' => 'MinDate', 'filter' => false],
+                ];
+                if (!empty($extra))
+                    $attribute = array_merge($attribute, $extra);
+                $grid_option = [
+                    'id' => 'shift-report',
+                    'attributes' => $attribute,
+                    'active_column' => false,
+                        //'actions' => []
+                ];
 
 
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option);
-            ?>
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option);
+                ?>
+            </div>
         </div>
-
     </div>
 </div>
 
