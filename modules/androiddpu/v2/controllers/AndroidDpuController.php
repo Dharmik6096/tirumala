@@ -254,7 +254,26 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     }
                     $animalType = [];
                     foreach ($model_data->tblDcsMilkType as $milktype) {
-                        $animalType[] = ['milk_type_code' => $milktype->milk_type_code, 'milk_type_name' => $milktype->milkTypeCode->animal_type_name];
+                        $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = '0.0';
+                        $rate_range = $milktype->rateChartRange;
+                        if (!empty($rate_range)) {
+                            $min_fat = $rate_range->min_fat;
+                            $max_fat = $rate_range->max_fat;
+                            $min_snf = $rate_range->min_snf;
+                            $max_snf = $rate_range->max_snf;
+                            $min_clr = $rate_range->min_clr;
+                            $max_clr = $rate_range->max_clr;
+                        }
+                        $animalType[] = [
+                            'milk_type_code' => $milktype->milk_type_code,
+                            'milk_type_name' => $milktype->milkTypeCode->animal_type_name,
+                            'min_fat' => $min_fat,
+                            'max_fat' => $max_fat,
+                            'min_snf' => $min_snf,
+                            'max_snf' => $max_snf,
+                            'min_clr' => $min_clr,
+                            'max_clr' => $max_clr
+                        ];
                     }
                     $res_data['collectionConfig']['allowedMilkType'] = $animalType;
                 }
