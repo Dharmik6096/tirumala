@@ -40,7 +40,7 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'bmc/master' => [
-                'param' => 'select_param:[mcc_code] as mcc_plant_code,[bmc_code],[bmc_name]#organization_type#organization_code#table:tbl_bmc',
+                'param' => 'select_param:[mcc_plant_code] as mcc_plant_code,[bmc_code],[bmc_name]#organization_type#organization_code#table:tbl_bmc',
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'dcs/master' => [
