@@ -254,7 +254,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     }
                     $animalType = [];
                     foreach ($model_data->tblDcsMilkType as $milktype) {
-                        $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = '0.0';
+                        $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
                         $rate_range = $milktype->rateChartRange;
                         if (!empty($rate_range)) {
                             $min_fat = $rate_range->min_fat;
