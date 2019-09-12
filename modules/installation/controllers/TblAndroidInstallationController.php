@@ -8,39 +8,27 @@ use app\modules\installation\models\TblAndroidInstallationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\installation\models\TblAndroidInstallationDetails;
+use yii\helpers\Json;
 
 /**
  * TblAndroidInstallationController implements the CRUD actions for TblAndroidInstallation model.
  */
-class TblAndroidInstallationController extends Controller
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblAndroidInstallationController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['device-list'];
 
     /**
      * Lists all TblAndroidInstallation models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblAndroidInstallationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -49,10 +37,9 @@ class TblAndroidInstallationController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -61,15 +48,14 @@ class TblAndroidInstallationController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new TblAndroidInstallation();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->android_installation_id]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -80,15 +66,14 @@ class TblAndroidInstallationController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->android_installation_id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -99,8 +84,7 @@ class TblAndroidInstallationController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -113,12 +97,31 @@ class TblAndroidInstallationController extends Controller
      * @return TblAndroidInstallation the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblAndroidInstallation::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionDeviceList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                if (!empty($parents[0]) && !empty($parents[1])) {
+                    $device = new TblAndroidInstallationDetails();
+                    $rows = $device->getActiveDeviceData($parents[0], $parents[1]);
+                    foreach ($rows as $value) {
+                        $out[] = array('id' => $value->device_id, 'name' => $value->device_id);
+                    }
+                    echo Json::encode(['output' => $out, 'selected' => '']);
+                    return;
+                }
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
 }

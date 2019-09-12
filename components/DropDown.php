@@ -248,6 +248,11 @@ class DropDown extends Component {
         echo $form->field($model, $name)->dropDownList($mcc->getMCCList(''), ['prompt' => 'Select MCC', 'id' => $id, 'disabled' => $disable])->label($islable);
     }
 
+    public function androiddevicelist($model, $form, $depends, $name = 'device_id', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/installation/tbl-android-installation/device-list', 'Select Device', $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

@@ -31,6 +31,8 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblPendriveImportExport extends \app\models\ChildModel {
 
+    public $android_installation_id;
+
     /**
      * @inheritdoc
      */
@@ -43,11 +45,11 @@ class TblPendriveImportExport extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_code', 'file_name', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['no_of_records', 'no_of_records_ignore', 'download_counter', 'originating_type'], 'integer'],
+            [['union_code', 'dcs_code', 'file_name', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['no_of_records', 'no_of_records_ignore', 'download_counter', 'originating_type'], 'safe'],
             [['mode', 'created_by'], 'safe'],
-            [['dcs_code'], 'required'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dest_org_type', 'dest_org_id', 'device_id', 'dcs_code'], 'required', 'except' => ['log']],
+            [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dest_org_type', 'dest_org_id', 'device_id'], 'safe'],
         ];
     }
 
@@ -76,6 +78,9 @@ class TblPendriveImportExport extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 

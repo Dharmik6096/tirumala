@@ -77,6 +77,7 @@ class Path extends Component {
         '\\app\modules\syncutility\models\\' => ['TblSentbox', 'TblInbox', 'TblSyncLog', 'TblSentboxClone'],
         '\\app\modules\configuration\models\\' =>
         ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult'],
+        '\\app\modules\installation\models\\' => ['TblAndroidInstallation', 'TblAndroidInstallationDetails'],
     ];
 
     public function get($model) {

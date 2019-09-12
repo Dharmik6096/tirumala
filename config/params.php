@@ -29,5 +29,6 @@ return [
     'vendorApiErrorLogPath' => 'C:/THIRUMALA/VendorAPI/ErrorLogs',
     'namaste_collection_url' => 'https://rspoappprd.hec.rsplgroup.com:50001/RESTAdapter/',
     //'namaste_api_header' => ['userid' => 'PO_EVEREST', 'password' => 'Rspl$1234'],
-	'namaste_api_header' => ['Authorization' => 'Basic UE9fRVZFUkVTVDpyc3BsQDMyMQ=='],
+    'namaste_api_header' => ['Authorization' => 'Basic UE9fRVZFUkVTVDpyc3BsQDMyMQ=='],
+    'pds_path' => '/web/PDS/',
 ];

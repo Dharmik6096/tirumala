@@ -27,7 +27,7 @@ use yii\helpers\Url;
                     Dropzone::widget([
                         'id' => 'mainDrop',
                         'options' => [
-                            'acceptedMimeTypes' => ".7z",
+                            'acceptedMimeTypes' => ".zip",
                             'url' => Url::to(['/syncutility/pendrive-sync/save-zip']),
                             'addRemoveLinks' => true,
                             'autoDiscover' => false,

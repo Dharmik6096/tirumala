@@ -7,7 +7,7 @@ use app\modules\syncutility\models\TblAddressbook;
 use yii\helpers\Json;
 use app\modules\installation\models\TblAndroidInstallationDetails;
 use yii\db\Query;
-use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 
 /**
  * This is the model class for table "tbl_sentbox".
@@ -271,23 +271,12 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return $response;
     }
 
-    public function getExportDataDcsNew($dcs_array, $language_code) {
-        $subQuery1 = TblSentbox::find()->select([ 'dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
-                ->where(['dest_org_id' => $dcs_array, 'dest_org_type' => 'VLC'])
-                ->andWhere(['sync_status' => 'U', 'message_type' => 'RECORD']);
-        /* $oldData = TblSyncHistory::find()->select(['uuid'])
-          ->where(['dest_org_id' => $dcs_array]);
-          $subQuery2 = TblSentbox::find()->select(['column_sequence', 'dest_org_id', 'dest_org_type', 'error_log', 'is_origin', 'json_text', 'language_code', 'message_type', 'operation', 'operation_condition', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'processed', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'transmitted', 'uuid', 'version_no'])
-          ->where(['dest_org_id' => 0])
-          ->andWhere(['not in', 'uuid', $oldData])
-          ->andWhere(['language_code' => [0, $language_code]]);
-          $tmpQuery = $subQuery1->union($subQuery2); */
-        $tmpQuery = $subQuery1;
-        $query = new Query;
-        $query->select([ 'dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
-                ->from(['a' => $tmpQuery])->orderBy('posting_timestamp');
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+    public function getExportDataDcsNew($device_id, $dest_org_id, $dest_org_type) {
+        $query = TblSentbox::find()->select([ 'dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
+                        ->where(['dest_org_id' => $dest_org_id, 'dest_org_type' => $dest_org_type, 'device_id' => $device_id])
+                        ->andWhere(['sync_status' => 'U', 'message_type' => 'RECORD'])->orderBy('posting_timestamp');
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $query->asArray()->all(),
             'pagination' => false,
         ]);
         return $dataProvider;
