@@ -14,11 +14,30 @@ use yii\web\View;
 </div>
 <?php
 $attribute = [
-    ['attribute' => 'file_name', 'vAlign' => 'middle'],
-    ['attribute' => 'no_of_records', 'vAlign' => 'middle'],
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'filter' => FALSE, 'vAlign' => 'middle','visible'=>false],
+    ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'filter' => FALSE, 'vAlign' => 'middle','visible'=>false],
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'filter' => FALSE, 'vAlign' => 'middle','visible'=>false],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'filter' => FALSE, 'vAlign' => 'middle'],
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => FALSE, 'vAlign' => 'middle'],
+    ['attribute' => 'device_id', 'vAlign' => 'middle'],
+    ['attribute' => 'mode',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('file_operation_type', $searchModel, 'mode'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('file_operation_type')['data'][$model->mode]) ? Yii::$app->dropdown->getRecords('file_operation_type')['data'][$model->mode] : '';
+        }, 'vAlign' => 'middle'],
+    ['attribute' => 'file_name', 'vAlign' => 'middle'],
+    ['attribute' => 'no_of_records', 'vAlign' => 'middle'],
+    ['attribute' => 'download_counter', 'vAlign' => 'middle'],
 ];
 
 $grid_option = [
@@ -27,6 +46,9 @@ $grid_option = [
     'active_column' => FALSE,
     'actions' => [
         'download' => function ($url, $model) {
+            if ($model->mode == 0) {
+                return GhostHtml::a_alert('<span class="fa fa-download"></span>', '#', ['class' => 'disabled']);
+            }
             if ($model->download_counter == 0) {
                 $class = 'first-download';
             } else {

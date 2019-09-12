@@ -598,6 +598,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'BMC'), '1' => Yii::t('app', 'MCC'), '2' => Yii::t('app', 'PLANT')],
             ],
+            'file_operation_type' => [
+                'name' => 'file_operation_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Import'), 1 => Yii::t('app', 'Export')],
+            ],
         ];
         return $records[$l];
     }

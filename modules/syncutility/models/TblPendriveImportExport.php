@@ -4,6 +4,10 @@ namespace app\modules\syncutility\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_pendrive_import_export".
@@ -31,8 +35,6 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblPendriveImportExport extends \app\models\ChildModel {
 
-    public $android_installation_id;
-
     /**
      * @inheritdoc
      */
@@ -59,7 +61,7 @@ class TblPendriveImportExport extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'file_name' => Yii::t('app', 'File Name'),
             'no_of_records' => Yii::t('app', 'No Of Records'),
@@ -94,6 +96,22 @@ class TblPendriveImportExport extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }
