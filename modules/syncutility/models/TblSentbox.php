@@ -259,9 +259,10 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return(object) $newModel;
     }
 
-    public function getData() {
+    public function getData($notInTables = []) {
         $data = $this->find()
                 ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                ->andWhere(['NOT IN', 'table_name', $notInTables])
                 ->orderBy('posting_timestamp')
                 ->all();
         $response = [];
