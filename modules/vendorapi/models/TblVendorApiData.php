@@ -90,10 +90,10 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['parent_code', 'master_code', 'master_name', 'date_1'], 'required', 'on' => 'mcc_master'],
             [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'bank_account_no', 'ifsc'], 'required', 'on' => 'vlcc_master'],
             [['parent_code', 'master_code', 'date_1', 'date_2'], 'required', 'on' => 'route_vlcc'],
-            [['parent_code'], 'validateRouteCode', 'on' => 'route_vlcc'],
-            [['master_code'], 'validateVlccCode', 'on' => 'route_vlcc'],
-            [['parent_code'], 'validateMccCode', 'on' => 'route_master'],
-            [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+        //    [['parent_code'], 'validateRouteCode', 'on' => 'route_vlcc'],
+          //  [['master_code'], 'validateVlccCode', 'on' => 'route_vlcc'],
+           // [['parent_code'], 'validateMccCode', 'on' => 'route_master'],
+           // [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
 //            [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
 //            [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
@@ -106,7 +106,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['from_fat', 'to_fat'], 'fatRangeValidate', 'on' => 'rate_master'],
             [['from_snf', 'to_snf'], 'snfRangeValidate', 'on' => 'rate_master'],
             [['from_fat', 'to_fat', 'from_snf', 'to_snf', 'fat_price', 'snf_price'], 'number', 'min' => 0, 'on' => 'rate_master'],
-            [['hamlet_code'], 'validateHamlet', 'on' => 'vlcc_master']
+            //[['hamlet_code'], 'validateHamlet', 'on' => 'vlcc_master']
         ];
     }
 
