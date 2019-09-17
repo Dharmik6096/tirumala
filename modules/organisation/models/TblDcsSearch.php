@@ -49,7 +49,7 @@ class TblDcsSearch extends TblDcs {
             'sort' => ['defaultOrder' => ['dcs_name' => SORT_ASC]],
         ]);
 
-        $query->joinWith(['stateCode', 'districtCode']);
+        $query->joinWith(['stateCode', 'districtCode', 'defaultContactDetail']);
 
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
@@ -82,7 +82,7 @@ class TblDcsSearch extends TblDcs {
                 ->andFilterWhere(['like', 'tbl_dcs.destination_code', $this->destination_code])
                 ->andFilterWhere(['like', 'tbl_dcs.email', $this->email])
                 ->andFilterWhere(['like', 'tbl_dcs.ifsc', $this->ifsc])
-                ->andFilterWhere(['like', 'tbl_dcs.mobile_no', $this->mobile_no])
+//                ->andFilterWhere(['like', 'tbl_dcs.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_dcs.pan_no', $this->pan_no])
                 ->andFilterWhere(['like', 'tbl_dcs.phone_no', $this->phone_no])
                 ->andFilterWhere(['like', 'tbl_dcs.pincode', $this->pincode])
@@ -97,7 +97,8 @@ class TblDcsSearch extends TblDcs {
                 ->andFilterWhere(['like', 'tbl_states.state_name', $this->state_code])
                 ->andFilterWhere(['like', 'sub_district_code', $this->sub_district_code])
                 ->andFilterWhere(['like', 'tbl_dcs.village_code', $this->village_code])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code]);
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_contact_details.mobile_no', $this->mobile_no]);
 
         return $dataProvider;
     }
