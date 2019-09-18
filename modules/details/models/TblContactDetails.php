@@ -40,7 +40,7 @@ class TblContactDetails extends \app\models\ChildModel {
             [['detail_code', 'mobile_no'], 'integer'],
             [['mobile_no'], 'CheckDuplicate'],
             [['mobile_no'], 'required', 'on' => 'additional'],
-            [['department', 'firstname', 'lastname', 'surname'], function ($attribute, $params) {
+            [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
             Yii::$app->general->validateName($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {

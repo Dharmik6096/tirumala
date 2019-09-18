@@ -62,7 +62,10 @@ class EiplAppController extends MasterController {
                 $sms_data['module_type'] = 'app_activation';
 //                Yii::$app->general->saveAlertNotification($model->mobile_no, $message, $sms_data, true);
                 $this->response->setMessage(['OTP Sent Successfuly.']);
-            }
+            }else{
+				  $this->response->setStatusCode($this->eiplResponseCode->statusError);
+				  $this->response->setMessage(['Something went wrong.']);
+			}
         } else {
             $this->response->setStatusCode($this->eiplResponseCode->statusError);
             $this->response->setMessage(['Invalid Mobile No.']);
@@ -86,13 +89,18 @@ class EiplAppController extends MasterController {
             $jsonData = Yii::$app->request->getRawBody();
             $model->device_id = $jsonData['device_id'];
             $model->imei_no = $jsonData['imei_no'];
+			$model->version_no=$jsonData['version_no'];;
+			$model->lat_long=$jsonData['lat_long'];;
             $modelSave[] = $model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app verification', 'create']);
             if ($transaction == 'customRedirect') {
                 $data = [];
                 $data['access_token'] = $model->access_token;
                 $this->response->setData($data);
-            }
+            } else{
+				  $this->response->setStatusCode($this->eiplResponseCode->statusError);
+				  $this->response->setMessage(['Something went wrong.']);
+			}
         }
         return $this->response;
     }
