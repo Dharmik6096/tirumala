@@ -318,7 +318,7 @@ class EiplPacketController extends Controller {
             $createdtime = date('Y-m-d H:i:s');
             $type = 'HTTP';
             if (!in_array($farmerid, ['2097', '2098'])) {
-                $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer '$farmerid',
+                $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer_ho_data '$farmerid',
 '$farmername',
 '$farmermo',
 '$vlccid',
@@ -336,16 +336,16 @@ class EiplPacketController extends Controller {
 '$milktype',
 '$sampletime',
 '$createdtime',
-'$type'
+'$type','0'
 ");
-                $query = $result->execute();
-                if ($query == 1) {
+                $query = $result->queryScalar();
+                if ($query == '1') {
                     $data->status = 2;
                 } else {
                     $data->status = 3;
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $ex) {
             $data->status = 3;
         }
         $data->save();
