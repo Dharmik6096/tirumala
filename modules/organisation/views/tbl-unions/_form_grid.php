@@ -124,17 +124,21 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'union_name,union_code,tbl-unions/delete'],
         'mapping' => function ($url, $model) {
-    $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'District Mapping'];
-    return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-unions/map-districts', 'id' => $model->union_code], $options);
-},
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'District Mapping'];
+            return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-unions/map-districts', 'id' => $model->union_code], $options);
+        },
         'bank-details' => function ($url, $model) {
-    $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details'];
-    return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-unions/bank-details', 'id' => $model->union_code], $options);
-},
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details'];
+            return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-unions/bank-details', 'id' => $model->union_code], $options);
+        },
         'contact-details' => function ($url, $model) {
-    $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
-    return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-unions/contact-details', 'id' => $model->union_code], $options);
-},
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-unions/contact-details', 'id' => $model->union_code], $options);
+        },
+        'union-config' => function ($url, $model) {
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Union Configurations')];
+            return GhostHtml::a('<i class="fa fa-cog"></i>', ['/configuration/tbl-config/create', 'id' => $model->union_code], $options);
+        },
     ]
 ];
 

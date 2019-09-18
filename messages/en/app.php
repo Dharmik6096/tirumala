@@ -115,4 +115,5 @@ return [
     'Purchase Rate (DCS)' => 'Purchase Rate (Society)',
     'DCS Count' => 'Society Count',
     'DCS Incharge' => 'Society Incharge',
+    'Union Configurations' => 'Company Configurations',
 ];

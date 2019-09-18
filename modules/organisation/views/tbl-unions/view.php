@@ -9,6 +9,7 @@ $this->title = Yii::$app->label->title('view', 'union');
 $this->params['menu'][] = Yii::$app->controls->update($model->union_code);
 $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-university"></i> Bank Details'), ['/organisation/tbl-unions/bank-details', 'id' => $model->union_code], ['class' => 'btn btn-danger btn-block']);
 $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-unions/contact-details', 'id' => $model->union_code], ['class' => 'btn btn-danger btn-block']);
+$this->params['menu'][] = GhostHtml::a('<i class="fa fa fa-cog"></i>'.Yii::t('app', 'Union Configurations'), ['/configuration/tbl-config/create', 'id' => $model->union_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -202,7 +203,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],
