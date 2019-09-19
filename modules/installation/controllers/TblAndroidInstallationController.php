@@ -85,6 +85,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             $instDetail->sync_key = rand(1000, 9999);
             $instDetail->sync_active = 1;
             $instDetail->imei_no = '';
+            $instDetail->db_version = $data['TblAndroidInstallation']['db_version'];
             $master[] = $instDetail;
             $transaction = $this->generalModel->saveTransaction($master, ['AMCS Installation', 'create']);
             if ($transaction !== FALSE) {

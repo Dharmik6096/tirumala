@@ -4,6 +4,7 @@ namespace app\modules\installation\models;
 
 use Yii;
 use app\modules\details\models\TblContactDetails;
+
 /**
  * This is the model class for table "tbl_android_installation".
  *
@@ -17,7 +18,7 @@ use app\modules\details\models\TblContactDetails;
  */
 class TblAndroidInstallation extends \app\models\ChildModel {
 
-    public $union_code, $plant_code, $mcc_plant_code, $bmc_code, $dcs_code;
+    public $union_code, $plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $db_version;
 
     /**
      * @inheritdoc
@@ -34,8 +35,8 @@ class TblAndroidInstallation extends \app\models\ChildModel {
             [['android_installation_id'], 'required'],
             [['android_installation_id', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'required']
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'required']
         ];
     }
 
@@ -70,6 +71,10 @@ class TblAndroidInstallation extends \app\models\ChildModel {
 
     public function getDefaultContactDetail() {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'organization_code'])->where(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1]);
+    }
+
+    public function getInstallDetail() {
+        return $this->hasOne(TblAndroidInstallationDetails::className(), ['android_installation_id' => 'android_installation_id']);
     }
 
 }

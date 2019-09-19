@@ -44,7 +44,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         return [
             [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'string'],
             [['otp_code', 'is_active', 'is_expired'], 'integer'],
-            [['created_at', 'updated_at', 'db_path', 'imei_no', 'sync_key', 'sync_active'], 'safe'],
+            [['created_at', 'updated_at', 'db_path', 'imei_no', 'sync_key', 'sync_active', 'db_version'], 'safe'],
         ];
     }
 

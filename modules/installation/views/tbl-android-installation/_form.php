@@ -48,7 +48,9 @@ $form = ActiveForm::begin(['options' => [
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblandroidinstallation-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>         
     </div>
-
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('db_version', $model, $form, 'form-group', $model->getAttributeLabel('db_version'), false, 'db_version', false); ?>
+    </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save($button, $model); ?>
