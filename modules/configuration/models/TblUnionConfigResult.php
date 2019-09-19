@@ -45,6 +45,7 @@ class TblUnionConfigResult extends \app\models\ChildModel {
             [['config_code', 'config_result_code', 'originating_type'], 'safe'],
             [['config_name', 'config_key', 'config_result_key', 'config_result', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['created_at', 'updated_at', 'config_for'], 'safe'],
+            [['config_result_key'], 'required']
         ];
     }
 
@@ -58,7 +59,7 @@ class TblUnionConfigResult extends \app\models\ChildModel {
             'config_name' => Yii::t('app', 'Config Name'),
             'config_key' => Yii::t('app', 'Config Key'),
             'config_result_code' => Yii::t('app', 'Config Result Code'),
-            'config_result_key' => Yii::t('app', 'Config Result Key'),
+            'config_result_key' => Yii::t('app', 'Config Value'),
             'config_result' => Yii::t('app', 'Config Result'),
             'union_code' => Yii::t('app', 'Union Code'),
             'created_at' => Yii::t('app', 'Created At'),

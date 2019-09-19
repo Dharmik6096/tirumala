@@ -25,6 +25,7 @@ use yii\helpers\ArrayHelper;
     ?>
     <div class="panel-body">
         <div class="row">
+            <?php $f_cnt = 0; ?>
             <?php
             foreach ($model as $models) {
                 $key = $models->config_code;
@@ -39,19 +40,25 @@ use yii\helpers\ArrayHelper;
                     </div>
                     <?php
                     if ($fieldType[0]->config_result_key == 'text') {
+                        $f_cnt++
                         ?>
                         <div class="col-sm-4">
                             <?= $form->field($models, '[' . $key . ']config_result_key')->textInput()->label($labels); ?>
                         </div>
                         <?php
                     } else {
-                        $dd_data = ArrayHelper::map($fieldType, 'config_result_key', 'config_result')
+                        $dd_data = ArrayHelper::map($fieldType, 'config_result_key', 'config_result');
+                        $f_cnt++;
                         ?>
                         <div class="col-sm-4">
                             <?php echo $form->field($models, '[' . $key . ']config_result_key', ['options' => ['class' => 'form-group padding-right-5']])->dropDownList($dd_data, ['prompt' => Yii::t('app', 'Select')])->label(Yii::t('app', $labels)); ?>
                             <?php //Yii::$app->dropdown->configDrop($models, $form, 'tblunionconfigresult-' . $key . '-config_code', '[' . $key . ']config_result_key', $label, FALSE, FALSE, $models->config_result_key);  ?>
                         </div>
                         <?php
+                    }
+                    if ($f_cnt == 3) {
+                        echo '<div class="clearfix"></div>';
+                        $f_cnt = 0;
                     }
                 }
             }
