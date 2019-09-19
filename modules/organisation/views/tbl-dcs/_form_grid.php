@@ -25,6 +25,13 @@ $attribute = [
     ['attribute' => 'dcs_short_name', 'value' => 'dcs_short_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'local_name', 'filter' => false],
     ['attribute' => 'local_short_name', 'filter' => false],
+    ['attribute' => 'mobile_no', 'label' => 'Mobile No',
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society');
+            isset($detail->mobile_no) ? $detail = $detail->mobile_no : $detail = '';
+            return $detail;
+        }
+    ],
     ['attribute' => 'phone_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'registration_code', 'visible' => false, 'filter' => false],
     [
@@ -98,13 +105,6 @@ $attribute = [
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society');
             isset($detail->email) ? $detail = $detail->email : $detail = '';
-            return $detail;
-        }
-    ],
-    ['label' => 'Mobile No', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society');
-            isset($detail->mobile_no) ? $detail = $detail->mobile_no : $detail = '';
             return $detail;
         }
     ],

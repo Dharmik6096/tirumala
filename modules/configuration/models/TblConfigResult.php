@@ -3,6 +3,7 @@
 namespace app\modules\configuration\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_config_result".
@@ -13,21 +14,19 @@ use Yii;
  * @property integer $config_code
  * @property integer $is_active
  */
-class TblConfigResult extends \app\models\ChildModel
-{
+class TblConfigResult extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_config_result';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['config_result_key', 'config_result'], 'string'],
             [['config_code', 'is_active'], 'integer'],
@@ -37,8 +36,7 @@ class TblConfigResult extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'config_result_code' => Yii::t('app', 'Config Result Code'),
             'config_result_key' => Yii::t('app', 'Config Result Key'),
@@ -47,4 +45,6 @@ class TblConfigResult extends \app\models\ChildModel
             'is_active' => Yii::t('app', 'Is Active'),
         ];
     }
+ 
+
 }

@@ -253,6 +253,12 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/installation/tbl-android-installation/device-list', 'Select Device', $multiple, $model->$name, $readonly);
     }
 
+    public function configFor($model, $form, $name = 'config_for', $islable = false, $disable = false) {
+        $this->setClass($form, $name);
+        $config = new \app\modules\configuration\models\TblConfig();
+        echo $form->field($model, $name)->dropDownList($config->configForList(), ['prompt' => 'Select App', 'disabled' => $disable])->label($islable);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
