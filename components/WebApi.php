@@ -17,13 +17,14 @@ class WebApi {
     public $body = [];
     public $vendor_code = 'STELLAPPS';
     public $header_info = [];
+    public $return_actual = FALSE;
 
     public function POSTDATA() {
         if ($this->authentication) {
             $this->body = array_merge($this->authentication, $this->body);
         }
- return $this->PHPCURL();
-      //  return $this->GuzzleCURL();
+        return $this->PHPCURL();
+        //  return $this->GuzzleCURL();
     }
 
     public function GuzzleCURL() {
@@ -32,16 +33,16 @@ class WebApi {
         $data = json_encode($this->body);
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
         $header = array_merge($main_header, $this->header_info);
-		//var_dump($header);die;
+        //var_dump($header);die;
         $postData = [
             RequestOptions::JSON => $this->body,
             RequestOptions::HEADERS => $header
         ];
-		$resp = $client->request('POST', $url, $postData);
-		//var_dump(resp);die;
+        $resp = $client->request('POST', $url, $postData);
+        //var_dump(resp);die;
         return $resp->getBody();
     }
-    
+
 //    public function GuzzleCURL() {
 //        $url = $this->serverUrl . $this->apiurl;
 //        $client = new GuzzleHttp\Client();
@@ -54,7 +55,7 @@ class WebApi {
 
     public function PHPCURL() {
         $url = $this->serverUrl . $this->apiurl;
-		$data = $this->body;
+        $data = $this->body;
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
         $header = array_merge($main_header, $this->header_info);
         $ch = curl_init();
@@ -63,8 +64,8 @@ class WebApi {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-		curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
-		$result = curl_exec($ch);        
+        curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
+        $result = curl_exec($ch);
         curl_close($ch);
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
@@ -74,6 +75,9 @@ class WebApi {
         $log_model->request = $data;
         $log_model->response = $result;
         $log_model->save();
+        if ($this->return_actual) {
+            return $result;
+        }
         return $res;
     }
 

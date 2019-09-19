@@ -31,4 +31,6 @@ return [
     //'namaste_api_header' => ['userid' => 'PO_EVEREST', 'password' => 'Rspl$1234'],
     'namaste_api_header' => ['Authorization' => 'Basic UE9fRVZFUkVTVDpyc3BsQDMyMQ=='],
     'pds_path' => '/web/PDS/',
+    'eipl_code' => 'NIFPL',
+    'client_url' => 'http://clients.everestinstruments.com/clients/',
 ];

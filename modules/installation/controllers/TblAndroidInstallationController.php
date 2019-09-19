@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\installation\models\TblAndroidInstallationDetails;
 use yii\helpers\Json;
+use app\components\WebApi;
+use yii\helpers\Url;
 
 /**
  * TblAndroidInstallationController implements the CRUD actions for TblAndroidInstallation model.
@@ -74,6 +76,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
                 }
             }
             $this->model->organization_code = $code;
+            $this->model->organization_type = 'VLC';
             $mobile = Yii::$app->general->getforeignkey($this->model->defaultContactDetail, 'mobile_no');
             $instDetail->android_installation_id = !empty($existData) ? $existData->android_installation_id : $model->android_installation_id;
             $instDetail->mobile_no = $mobile;
@@ -81,14 +84,22 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             $instDetail->hash_key = Yii::$app->security->generateRandomString(20);
             $instDetail->is_active = 1;
             $instDetail->is_expired = 0;
-            $instDetail->device_id = NULL;
+            $instDetail->device_id = '';
             $instDetail->sync_key = rand(1000, 9999);
             $instDetail->sync_active = 1;
             $instDetail->imei_no = '';
             $instDetail->db_version = $data['TblAndroidInstallation']['db_version'];
+            $file = $this->model->organization_type . '_' . $this->model->organization_code . '_' . date('Y.m.d_H.i.s');
+            $instDetail->db_path = '/installation-identity/' . $file . '.zip';
             $master[] = $instDetail;
             $transaction = $this->generalModel->saveTransaction($master, ['AMCS Installation', 'create']);
-            if ($transaction !== FALSE) {
+            if ($transaction == 'customRedirect') {
+                if (!$this->generateIdentity($file, $instDetail->hash_key)) {
+                    $instDetail->delete(FALSE);
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Your transaction is not saved successfully']);
+                    return $this->customRender();
+                }
                 return $this->{$transaction}();
             }
         }
@@ -157,6 +168,99 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function generateIdentity($file, $token) {
+        return FALSE;
+        $fileName = $file . '.db';
+        $dbFilePath = Yii::$app->basePath . '/installation-identity/';
+        $FolderPath = Yii::$app->basePath . '/installation-identity/' . $file . '/';
+        $zipfolder = Yii::$app->basePath . '/installation-identity/' . $file;
+        if (!is_dir($FolderPath)) {
+            $oldmask = umask(0);
+            mkdir($FolderPath, 0777, TRUE);
+            umask($oldmask);
+        } else {
+            $files = glob($FolderPath . '*'); // get all file names
+            foreach ($files as $file) { // iterate files
+                if (is_file($file))
+                    unlink($file); // delete file
+            }
+        }
+        copy($dbFilePath . $this->model->db_version, $FolderPath . $fileName);
+        \Yii::$app->sqlite->_path = $FolderPath;
+        \Yii::$app->sqlite->_organisation_code = $this->model->organization_code;
+        \Yii::$app->sqlite->_organisation_type = $this->model->organization_type;
+
+        $dcs_code = $this->model->dcs_code;
+        $dcs_code = !empty($dcs_code) ? '\'' . $dcs_code . '\'' : $dcs_code;
+        $bmc_code = $this->model->bmc_code;
+        $bmc_code = !empty($bmc_code) ? '\'' . $bmc_code . '\'' : $bmc_code;
+        $mcc_plant_code = $this->model->mcc_plant_code;
+        $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
+        $plant_code = $this->model->plant_code;
+        $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
+        $dbFileName = $file . '/' . $fileName;
+        $response = \Yii::$app->sqlite->createSqlFileDcs($dbFileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $this->model->organization_code, $this->model->organization_type, $this->model->union_code);
+        if ($response) {
+            $body = [];
+            $body['deviceId'] = '';
+            $body['eiplCode'] = Yii::$app->params['eipl_code'];
+            $body['imeiNo'] = '';
+            $body['latLong'] = '';
+            $body['versionNo'] = '';
+            $body = json_encode($body);
+            $api = new WebApi();
+            $api->serverUrl = Yii::$app->params['client_url'];
+            $api->apiurl = 'webservice/eipl/v1/eipl-app/verify-identity';
+            $api->authentication = FALSE;
+            $api->vendor_code = Yii::$app->params['eipl_code'];
+            $api->body = $body;
+            $api->return_actual = TRUE;
+            $result = $api->POSTDATA();
+            $response = json_decode($result);
+            if (!empty($response) && !empty($response->data) && !empty($response->statusCode) && $response->statusCode == 200) {
+                $myfile = fopen($FolderPath . 'client.json', 'w');
+                fwrite($myfile, $result);
+                fclose($myfile);
+
+                $body = [];
+                $body['deviceId'] = '';
+                $body['eiplCode'] = Yii::$app->params['eipl_code'];
+                $body['imei'] = '';
+                $body['latLong'] = '';
+                $body['versionNo'] = '';
+                $body['content'] = [];
+                $body['identityCode'] = '';
+                $body['organizationCode'] = $this->model->organization_code;
+                $body['organizationType'] = $this->model->organization_type;
+                $body['token'] = $token;
+                $body = json_encode($body);
+
+                $api = new WebApi();
+                $api->serverUrl = Url::base(true) . '/';
+                $api->apiurl = 'androiddpu/v2/android-dpu/start-up';
+                $api->authentication = FALSE;
+                $api->vendor_code = Yii::$app->params['eipl_code'];
+                $api->body = $body;
+                $api->return_actual = TRUE;
+                $result = $api->POSTDATA();
+                $response = json_decode($result);
+                if (!empty($response) && !empty($response->data) && !empty($response->status) && $response->status == 'success') {
+                    $myfile = fopen($FolderPath . 'pref.json', 'w');
+                    fwrite($myfile, $result);
+                    fclose($myfile);
+
+                    $myfile = fopen($FolderPath . 'eipl.txt', 'w');
+                    fwrite($myfile, $token);
+                    fclose($myfile);
+                    $pass = 'EI' . $this->model->organization_code . 'PL';
+                    Yii::$app->general->ZipOperation($zipfolder, TRUE, '', $pass, '*', 'zip');
+                    return TRUE;
+                }
+            }
+        }
+        return FALSE;
     }
 
 }
