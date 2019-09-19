@@ -271,30 +271,30 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         $this->purchase_rate_code = $this->referenceCode->purchase_rate_code;
     }
 
-    public function afterSave($insert, $changedAttributes) {
-        parent::afterSave($insert, $changedAttributes);
-        $sentbox = $this->sentboxModel($this->dcs_code, 'VLC');
-
-        $purchaseModel = TblPurchaseRate::findOne($this->purchase_rate_code);
-        $sentbox->setSentbox($purchaseModel, 'INSERT');
-
-        $purchaseBaseModel = TblPurchaseRateBased::find()->where(['purchase_rate_code' => $this->purchase_rate_code])->all();
-        foreach ($purchaseBaseModel as $model) {
-            $sentbox->setSentbox($model, 'INSERT');
-        }
-        $purchaseDetail = TblPurchaseRateDetails::find()->where(['purchase_rate_code' => $this->purchase_rate_code])->all();
-        foreach ($purchaseDetail as $model) {
-            $sentbox->setSentbox($model, 'INSERT');
-        }
-        $sentbox->setSentbox($this, 'INSERT');
-    }
-
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
-    }
+//    public function afterSave($insert, $changedAttributes) {
+//        parent::afterSave($insert, $changedAttributes);
+//        $sentbox = $this->sentboxModel($this->dcs_code, 'VLC');
+//
+//        $purchaseModel = TblPurchaseRate::findOne($this->purchase_rate_code);
+//        $sentbox->setSentbox($purchaseModel, 'INSERT');
+//
+//        $purchaseBaseModel = TblPurchaseRateBased::find()->where(['purchase_rate_code' => $this->purchase_rate_code])->all();
+//        foreach ($purchaseBaseModel as $model) {
+//            $sentbox->setSentbox($model, 'INSERT');
+//        }
+//        $purchaseDetail = TblPurchaseRateDetails::find()->where(['purchase_rate_code' => $this->purchase_rate_code])->all();
+//        foreach ($purchaseDetail as $model) {
+//            $sentbox->setSentbox($model, 'INSERT');
+//        }
+//        $sentbox->setSentbox($this, 'INSERT');
+//    }
+//
+//    private function sentboxModel($code, $type) {
+//        $sentbox = new TblSentbox();
+//        $sentbox->dest_org_id = $code;
+//        $sentbox->source_org_id = $this->union_code;
+//        $sentbox->dest_org_type = $type;
+//        return $sentbox;
+//    }
 
 }
