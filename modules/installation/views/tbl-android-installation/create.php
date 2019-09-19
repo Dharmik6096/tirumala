@@ -2,20 +2,19 @@
 
 use yii\helpers\Html;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\modules\installation\models\TblAndroidInstallation */
 
-$this->title = Yii::t('app', 'Create Tbl Android Installation');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Android Installations'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', Yii::$app->label->title('create', 'AMCS Installation'));
 ?>
-<div class="tbl-android-installation-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model, 'type' => 'create',
+        ])
+        ?>
+    </div>
 </div>
+

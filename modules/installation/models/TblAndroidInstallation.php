@@ -3,7 +3,7 @@
 namespace app\modules\installation\models;
 
 use Yii;
-
+use app\modules\details\models\TblContactDetails;
 /**
  * This is the model class for table "tbl_android_installation".
  *
@@ -16,6 +16,8 @@ use Yii;
  * @property string $updated_by
  */
 class TblAndroidInstallation extends \app\models\ChildModel {
+
+    public $union_code, $plant_code, $mcc_plant_code, $bmc_code, $dcs_code;
 
     /**
      * @inheritdoc
@@ -32,6 +34,8 @@ class TblAndroidInstallation extends \app\models\ChildModel {
             [['android_installation_id'], 'required'],
             [['android_installation_id', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'required']
         ];
     }
 
@@ -46,7 +50,11 @@ class TblAndroidInstallation extends \app\models\ChildModel {
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
         ];
     }
 
@@ -58,6 +66,10 @@ class TblAndroidInstallation extends \app\models\ChildModel {
         return $this->find()
                         ->where(['organization_code' => $this->organization_code, 'organization_type' => $this->organization_type])
                         ->one();
+    }
+
+    public function getDefaultContactDetail() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'organization_code'])->where(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1]);
     }
 
 }
