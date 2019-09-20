@@ -10,13 +10,12 @@ use app\modules\installation\models\TblAndroidInstallation;
 /**
  * TblAndroidInstallationSearch represents the model behind the search form about `app\modules\installation\models\TblAndroidInstallation`.
  */
-class TblAndroidInstallationSearch extends TblAndroidInstallation
-{
+class TblAndroidInstallationSearch extends TblAndroidInstallation {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['android_installation_id', 'organization_code', 'organization_type', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
         ];
@@ -25,8 +24,7 @@ class TblAndroidInstallationSearch extends TblAndroidInstallation
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -38,8 +36,7 @@ class TblAndroidInstallationSearch extends TblAndroidInstallation
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblAndroidInstallation::find();
 
         // add conditions that should always apply here
@@ -63,11 +60,12 @@ class TblAndroidInstallationSearch extends TblAndroidInstallation
         ]);
 
         $query->andFilterWhere(['like', 'android_installation_id', $this->android_installation_id])
-            ->andFilterWhere(['like', 'organization_code', $this->organization_code])
-            ->andFilterWhere(['like', 'organization_type', $this->organization_type])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+                ->andFilterWhere(['like', 'organization_code', $this->organization_code])
+                ->andFilterWhere(['like', 'organization_type', $this->organization_type])
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }
+
 }

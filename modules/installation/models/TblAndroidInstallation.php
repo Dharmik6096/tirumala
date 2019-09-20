@@ -36,7 +36,7 @@ class TblAndroidInstallation extends \app\models\ChildModel {
             [['android_installation_id', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'required']
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'required', 'on' => ['create_portal']]
         ];
     }
 
@@ -56,6 +56,7 @@ class TblAndroidInstallation extends \app\models\ChildModel {
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'DCS'),
+            'db_version' => Yii::t('app', 'Version'),
         ];
     }
 

@@ -612,7 +612,7 @@ class DropDown extends Component {
             'db_version' => [
                 'name' => 'db_version',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['everest_amcs.db' => Yii::t('app', 'everest_amcs.db')],
+                'data' => ['everest_amcs.db' => Yii::t('app', '1')],
             ],
         ];
         return $records[$l];

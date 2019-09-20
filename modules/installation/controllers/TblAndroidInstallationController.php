@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\installation\models\TblAndroidInstallationDetails;
+use app\modules\installation\models\TblAndroidInstallationDetailsSearch;
 use yii\helpers\Json;
 use app\components\WebApi;
 use yii\helpers\Url;
@@ -40,8 +41,13 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
      * @return mixed
      */
     public function actionView($id) {
+        $bsearchModel = new TblAndroidInstallationDetailsSearch();
+        $bsearchModel->android_installation_id = $id;
+        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'bsearchModel' => $bsearchModel,
+                    'bdataProvider' => $bdataProvider,
         ]);
     }
 
@@ -52,6 +58,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
      */
     public function actionCreate() {
         $this->model = new TblAndroidInstallation();
+        $this->model->scenario = 'create_portal';
         $this->viewFile = 'create';
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
@@ -62,6 +69,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             $master = [];
             if (empty($existData)) {
                 $model = new TblAndroidInstallation();
+                $model->scenario = 'create_portal';
                 $model->android_installation_id = $model->getCode();
                 $model->organization_code = $code;
                 $model->organization_type = 'VLC';
@@ -91,6 +99,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             $instDetail->db_version = $data['TblAndroidInstallation']['db_version'];
             $file = $this->model->organization_type . '_' . $this->model->organization_code . '_' . date('Y.m.d_H.i.s');
             $instDetail->db_path = '/installation-identity/' . $file . '.zip';
+            $instDetail->installation_type = 1;
             $master[] = $instDetail;
             $transaction = $this->generalModel->saveTransaction($master, ['AMCS Installation', 'create']);
             if ($transaction == 'customRedirect') {
@@ -171,7 +180,6 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
     }
 
     public function generateIdentity($file, $token) {
-        return FALSE;
         $fileName = $file . '.db';
         $dbFilePath = Yii::$app->basePath . '/installation-identity/';
         $FolderPath = Yii::$app->basePath . '/installation-identity/' . $file . '/';
@@ -261,6 +269,18 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             }
         }
         return FALSE;
+    }
+
+    public function actionDownload($id) {
+        if (file_exists($id) && \Yii::$app->response->sendFile(($id))) {
+            
+        } else {
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'error',
+                'message' => Yii::t('app', 'File not available.'),
+            ]);
+            return $this->redirect(['index']);
+        }
     }
 
 }
