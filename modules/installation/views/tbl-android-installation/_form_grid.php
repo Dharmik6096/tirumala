@@ -4,21 +4,21 @@ use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
-    ['attribute' => 'organization_code', 'filter' => TRUE],
-    ['attribute' => 'organization_type', 'filter' => TRUE],
-    ['attribute' => 'mobile_no', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->installDetail, 'mobile_no');
-        }, 'filter' => FALSE],
-    ['attribute' => 'device_id', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->installDetail, 'device_id');
-        }, 'filter' => FALSE],
-    ['attribute' => 'db_version', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->installDetail, 'db_version');
-        }, 'filter' => FALSE],
-    ['attribute' => 'db_version', 'value' => function($model) {
-            $installType = Yii::$app->general->getforeignkey($model->installDetail, 'installation_type');
-            return $installType == 0 ? 'Online' : 'Offline';
-        }, 'filter' => FALSE],
+    ['label' => Yii::t('app', 'DCS Code'),'attribute' => 'organization_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_code');
+        }, 'filter' => TRUE],
+    ['label' => Yii::t('app', 'DCS'), 'attribute' => 'organization_code', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'dcs_name');
+        }, 'filter' => TRUE],
+//    ['attribute' => 'organization_type', 'value' => function($model) {
+//            return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+//        }, 'filter' => TRUE],
+    ['attribute' => 'mobile_no', 'filter' => TRUE],
+    ['attribute' => 'device_id', 'filter' => TRUE],
+    ['attribute' => 'db_version', 'filter' => TRUE],
+    ['attribute' => 'installation_type', 'value' => function($model) {
+            return $model->installation_type == 0 ? 'Online' : 'Offline';
+        }, 'filter' => TRUE],
 ];
 
 $grid_option = [
@@ -28,8 +28,9 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'download' => function ($url, $model) {
-            $options = ['title' => Yii::t('app', 'Download')];
-            $path = Yii::$app->general->getforeignkey($model->installDetail, 'db_path');
+            $class = $model->installation_type == 1 ? '' : ' disabled ';
+            $options = ['title' => Yii::t('app', 'Download'), 'class' => $class];
+            $path = $model->db_path;
             return GhostHtml::a('<i class="fa fa-download"></i>', ['/installation/tbl-android-installation/download', 'id' => Yii::$app->basePath . $path], $options);
         },
     ]

@@ -71,6 +71,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'db_path' => Yii::t('app', 'Db Path'),
+            'db_version' => Yii::t('app', 'Version'),
         ];
     }
 

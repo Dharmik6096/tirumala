@@ -4,6 +4,7 @@ namespace app\modules\installation\models;
 
 use Yii;
 use app\modules\details\models\TblContactDetails;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_android_installation".
@@ -76,6 +77,10 @@ class TblAndroidInstallation extends \app\models\ChildModel {
 
     public function getInstallDetail() {
         return $this->hasOne(TblAndroidInstallationDetails::className(), ['android_installation_id' => 'android_installation_id']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'organization_code']);
     }
 
 }

@@ -26,7 +26,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblAndroidInstallationSearch();
+        $searchModel = new TblAndroidInstallationDetailsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
