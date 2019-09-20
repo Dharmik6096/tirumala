@@ -103,6 +103,10 @@ class SqliteCreate extends Component {
                         } else {
                             $sql = 'SELECT distinct ' . $fields . ' FROM ' . $tableName . ' inner join ' . $field['primary_table'] . ' on ' . $tableName . '.' . $field['child_key'] . '=' . $field['primary_table'] . '.' . $field['child_key'] . ' where ' . $field['primary_table'] . '.' . $field['key_field'] . " in (${$field['key_field']})";
                         }
+
+                        if (in_array($tableName, ['tbl_purchase_rate_applicability', 'tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'])) {
+                            $sql.= ' and tbl_purchase_rate_applicability.wef_date >= (select TOP(1) wef_date from tbl_purchase_rate_applicability where ' . $field['key_field'] . " in (${$field['key_field']})" . '  and CAST(wef_date as date) <= CAST(GETDATE() as date) order by wef_date DESC)';
+                        }
                         $cmd = $this->export_db->createCommand($sql);
                         $dataReader = $cmd->queryAll();
                         if (!empty($dataReader)) {
