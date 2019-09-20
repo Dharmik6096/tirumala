@@ -614,6 +614,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['everest_amcs.db' => Yii::t('app', '1')],
             ],
+            'installation_type' => [
+                'name' => 'installation_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Online'), 1 => Yii::t('app', 'Offline')],
+            ],
         ];
         return $records[$l];
     }
