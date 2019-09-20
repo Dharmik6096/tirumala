@@ -96,13 +96,13 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
 
     public function getActiveRecordCount($data) {
         if ($data['organization_type'] == 'VLC' && $data['device_id'] != '' && $data['device_id'] != NULL) {
-            $data = $this->find()
+            $record = $this->find()
                     // ->where(['hask_key' => $data['token'], 'organization_type' => 'VLC', 'is_active' => 1, 'is_expired' => 0, 'organization_code' => $data['organization_code']])
                     ->where(['hash_key' => $data['token'], 'is_active' => 1, 'is_expired' => 0])
                     ->one();
-            if (!empty($data) && empty($data->device_id)) {
-                $data->device_id = $data['device_id'];
-                $data->save();
+            if (!empty($record) && empty($record->device_id)) {
+                $record->device_id = $data['device_id'];
+                $record->save();
             }
         }
         return $this->find()
