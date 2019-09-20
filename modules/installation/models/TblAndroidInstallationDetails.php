@@ -42,8 +42,8 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'string'],
-            [['otp_code', 'is_active', 'is_expired'], 'integer'],
+            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'safe'],
+            [['otp_code', 'is_active', 'is_expired'], 'safe'],
             [['created_at', 'updated_at', 'db_path', 'imei_no', 'sync_key', 'sync_active', 'db_version', 'installation_type'], 'safe'],
             [['installation_type'], 'default', 'value' => 0]
         ];
@@ -95,10 +95,19 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
     }
 
     public function getActiveRecordCount($data) {
+        if ($data['organization_type'] == 'VLC' && $data['device_id'] != '' && $data['device_id'] != NULL) {
+            $data = $this->find()
+                    ->where(['hask_key' => $data['token'], 'organization_type' => 'VLC', 'is_active' => 1, 'is_expired' => 0, 'organization_code' => $data['organization_code']])
+                    ->one();
+            if (!empty($data) && empty($data->device_id)) {
+                $data->device_id = $data['device_id'];
+                $data->save();
+            }
+        }
         return $this->find()
                         ->select('tbl_android_installation_details.*')
                         ->joinWith(['androidInstallationCode'])
-                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.imei_no' => $data['imei'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0, 'tbl_android_installation_details.device_id' => $data['device_id']])
+                        ->where(['tbl_android_installation_details.hash_key' => $data['token'], 'tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0, 'tbl_android_installation_details.device_id' => $data['device_id']])
                         ->andWhere(['tbl_android_installation.organization_code' => $data['organization_code'], 'tbl_android_installation.organization_type' => $data['organization_type']])
                         ->count();
     }
