@@ -25,6 +25,7 @@ class SqliteCreate extends Component {
     public $_organisation_code;
     public $_organisation_type;
     public $android_db;
+    public $is_offline = FALSE;
 
     protected function getPath() {
         if (empty($this->_path)) {
@@ -59,7 +60,12 @@ class SqliteCreate extends Component {
 
     public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code = '') {
         try {
-            $sqls = 'SELECT *  FROM tbl_table_list';
+            if ($this->is_offline) {
+                $sqls = 'SELECT *  FROM tbl_table_list';
+            } else {
+                $sqls = 'SELECT *  FROM tbl_table_list where is_offline=0';
+            }
+
             $cmd = Yii::$app->db->createCommand($sqls);
             $tables = $cmd->queryAll();
             foreach ($tables as $field) {

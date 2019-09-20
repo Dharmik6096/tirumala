@@ -199,6 +199,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
         \Yii::$app->sqlite->_path = $FolderPath;
         \Yii::$app->sqlite->_organisation_code = $this->model->organization_code;
         \Yii::$app->sqlite->_organisation_type = $this->model->organization_type;
+        \Yii::$app->sqlite->is_offline = TRUE;
 
         $dcs_code = $this->model->dcs_code;
         $dcs_code = !empty($dcs_code) ? '\'' . $dcs_code . '\'' : $dcs_code;
@@ -264,6 +265,12 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
                     fclose($myfile);
                     $pass = 'EI' . $this->model->organization_code . 'PL';
                     Yii::$app->general->ZipOperation($zipfolder, TRUE, '', $pass, '*', 'zip');
+                    $files = glob($zipfolder . '/*'); // get all file names
+                    foreach ($files as $file) { // iterate files
+                        if (is_file($file))
+                            unlink($file); // delete file
+                    }
+                    rmdir($zipfolder);
                     return TRUE;
                 }
             }
