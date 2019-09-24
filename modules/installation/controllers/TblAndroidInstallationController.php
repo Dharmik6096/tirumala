@@ -70,6 +70,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             if (empty($existData)) {
                 $model = new TblAndroidInstallation();
                 $model->scenario = 'create_portal';
+                $model->load(Yii::$app->request->post());
                 $model->android_installation_id = $model->getCode();
                 $model->organization_code = $code;
                 $model->organization_type = 'VLC';
