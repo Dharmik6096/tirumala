@@ -5,6 +5,9 @@ namespace app\modules\installation\models;
 use Yii;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsMilkType;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\general\models\TblDpuIncentiveMaster;
 
 /**
  * This is the model class for table "tbl_android_installation".
@@ -37,7 +40,10 @@ class TblAndroidInstallation extends \app\models\ChildModel {
             [['android_installation_id', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'required', 'on' => ['create_portal']]
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'required', 'on' => ['create_portal']],
+            [['dcs_code'], 'rateApplicability', 'on' => ['create_portal']],
+            [['dcs_code'], 'exist', 'skipOnError' => false, 'targetClass' => TblDcsMilkType::className(), 'targetAttribute' => ['organization_code' => 'dcs_code'], 'message' => Yii::t('app/validation', 'Milk Type Mapping Missing.'), 'on' => ['create_portal']],
+            [['dcs_code'], 'exist', 'skipOnError' => false, 'targetClass' => TblDpuIncentiveMaster::className(), 'targetAttribute' => ['organization_code' => 'dcs_code'], 'message' => Yii::t('app/validation', 'DPU Incentive config Missing'), 'on' => ['create_portal']],
         ];
     }
 
@@ -81,6 +87,16 @@ class TblAndroidInstallation extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'organization_code']);
+    }
+
+    public function getRateChartApplic() {
+        return $this->hasOne(TblPurchaseRateApplicability::className(), ['dcs_code' => 'organization_code'])->where(['is_active' => 1]);
+    }
+
+    public function rateApplicability($attribute, $params) {
+        if (empty($this->rateChartApplic)) {
+            $this->addError($attribute, Yii::t('app', 'Milk Purchase Rate applicability Missing.'));
+        }
     }
 
 }

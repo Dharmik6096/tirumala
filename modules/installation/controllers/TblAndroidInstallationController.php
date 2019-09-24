@@ -74,8 +74,11 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
                 $model->android_installation_id = $model->getCode();
                 $model->organization_code = $code;
                 $model->organization_type = 'VLC';
+                $this->model = $model;
                 $master[] = $model;
             } else {
+                $this->model = $existData;
+                $this->model->load(Yii::$app->request->post());
                 $existDetailData = $instDetail->getExistData($existData->android_installation_id);
                 if (!empty($existDetailData)) {
                     foreach ($existDetailData as $detail) {
@@ -102,15 +105,17 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             $instDetail->db_path = '/installation-identity/' . $file . '.zip';
             $instDetail->installation_type = 1;
             $master[] = $instDetail;
-            $transaction = $this->generalModel->saveTransaction($master, ['AMCS Installation', 'create']);
-            if ($transaction == 'customRedirect') {
+            if ($this->model->validate()) {
+                $transaction = $this->generalModel->saveTransaction($master, ['AMCS Installation', 'create']);
+                if ($transaction == 'customRedirect') {
                 if (!$this->generateIdentity($file, $instDetail->hash_key)) {
                     $instDetail->delete(FALSE);
                     Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                         'message' => 'Your transaction is not saved successfully']);
                     return $this->customRender();
                 }
-                return $this->{$transaction}();
+                    return $this->{$transaction}();
+                }
             }
         }
         return $this->customRender();
