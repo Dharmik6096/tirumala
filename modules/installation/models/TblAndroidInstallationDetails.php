@@ -125,7 +125,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
                         ->distinct()
                         ->joinWith(['androidInstallationCode'])
                         ->where(['tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])
-                        ->andWhere(['tbl_android_installation.organization_code' => $dest_org_id, 'tbl_android_installation.organization_type' => $dest_org_type])
+                        ->andWhere(['tbl_android_installation.organization_code' => (string) $dest_org_id, 'tbl_android_installation.organization_type' => (string)$dest_org_type])
                         ->all();
     }
 
