@@ -98,16 +98,16 @@ class RealtimeServicesController extends RestController {
                     $model = new $model_name();
                     $model->setAttributes($json);
                     $masterModel = [];
-                    if (isset($transaction_data['operation_type']) && $transaction_data['operation_type'] == 'UPDATE') {
-                        $primaryKey = empty($unique_key) ? $model->tableSchema->primaryKey[0] : $unique_key;
-                        $key = $model->$primaryKey;
-                        $model_data = $model->findOne($key);
-                        if (!empty($model_data)) {
-                            $model = $model_data;
-                            $this->setHistoryModel($model, $model_name, $masterModel);
-                            $model->setAttributes($json);
-                        }
+                    //  if (isset($transaction_data['operation_type']) && $transaction_data['operation_type'] == 'UPDATE') {
+                    $primaryKey = empty($unique_key) ? $model->tableSchema->primaryKey[0] : $unique_key;
+                    $key = $model->$primaryKey;
+                    $model_data = $model->find()->where([$primaryKey => $key])->one();
+                    if (!empty($model_data)) {
+                        $model = $model_data;
+                        $this->setHistoryModel($model, $model_name, $masterModel);
+                        $model->setAttributes($json);
                     }
+                    //  }
                     $model = $this->SetDataType($model);
                     $model->scenario = 'androidsync';
                     $masterModel[] = $model;
@@ -155,7 +155,7 @@ class RealtimeServicesController extends RestController {
         $history = $model_name . 'History';
         $historyModel = new $history();
         Yii::$app->operation->history($model, $historyModel, 'UPDATE');
-        $childModel[] = $historyModel;
+        $masterModel[] = $historyModel;
     }
 
     public function setInboxError($post_data, $data, $error_log, $transaction, &$error = true, &$saveErrorLog = true) {

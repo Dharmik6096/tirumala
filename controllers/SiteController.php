@@ -1546,6 +1546,7 @@ class SiteController extends Controller {
 
     public function actionParseInboxData() {
         try {
+            $unique_key = 'x_col1';
             $model = new TblInbox();
             $modelData = $model->getData();
             if (!empty($modelData)) {
@@ -1559,11 +1560,26 @@ class SiteController extends Controller {
                     $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
                     $model_name = Yii::$app->path->define($model_name);
                     $model = new $model_name();
-                    $model->scenario = 'androidsync';
                     $json = $transaction_data->json_text;
                     $json = (array) json_decode($json);
                     $json = Yii::$app->general->camelCaseToUnderscore($json);
                     $model->setAttributes($json);
+
+                    /* update record if already available */
+                    if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
+                        $unique_value = $model->$unique_key;
+                        $model_data = $model->find()->where([$unique_key => $unique_value])->one();
+                        if (!empty($model_data)) {
+                            $model = $model_data;
+                            $history = $model_name . 'History';
+                            $historyModel = new $history();
+                            Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                            $childModel[] = $historyModel;
+                            $model->setAttributes($json);
+                        }
+                    }
+                    /* update record if already available */
+                    $model->scenario = 'androidsync';
                     $model = Yii::$app->general->SetDataType($model);
                     if ($model->validate()) {
                         if (isset($transaction_data->operation) && $transaction_data->operation == 'UPDATE') {
