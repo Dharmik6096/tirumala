@@ -77,7 +77,7 @@ class TblRouteMapping extends \app\models\ChildModel {
         }, 'skipOnEmpty' => false],
             [['route_code'], 'string', 'min' => 1],
             [['route_code'], 'string', 'max' => 8],
-            [['route_code'], 'number'],
+            [['route_code'], 'safe'],
         ];
     }
 
