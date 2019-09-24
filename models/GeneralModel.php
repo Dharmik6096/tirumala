@@ -59,7 +59,7 @@ class GeneralModel {
             $master = [];
             foreach ($model as $m) {
                 $master[] = $m->save();
-                //var_dump($m->getErrors());
+                var_dump($m->getErrors());
             }
             //exit;
             if (!in_array(FALSE, $master)) {
