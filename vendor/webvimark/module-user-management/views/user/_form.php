@@ -19,10 +19,11 @@ $button = Yii::$app->label->button($type);
 
 $this->title = Yii::t('app', $title);
 $readOnly = false;
-if (!$model->isNewRecord)
+$isNewRecord = (isset($type) && $type == 'create') ? TRUE : FALSE;
+
+if (!$isNewRecord)
     $readOnly = true;
 ?>
-
 <?php
 $form = ActiveForm::begin([
             'id' => 'user',
@@ -50,8 +51,10 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
         </div>
     <?php endif; ?>
-
-    <?php if ($model->isNewRecord): ?>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+    </div>
+    <?php if ($isNewRecord): ?>
         <div class="col-sm-3">
             <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
         </div>
@@ -60,17 +63,20 @@ $form = ActiveForm::begin([
         </div>
     <?php endif; ?>
 
-    <div class="col-sm-3">
-        <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+    <?php /* if ($model->checkNotSelf()) { ?>
+      <div class="col-sm-3 mt25">
+      <?= Yii::$app->controls->active($model, $form); ?>
+      </div>
+      <?php } */ ?>
+    <div class="col-sm-3 mt25 user_type_show">
+        <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+    </div> 
+    <div class="col-sm-3 user_type_show">
+        <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
     </div>
-    <?php /*if ($model->checkNotSelf()) { ?>
-    <div class="col-sm-3 mt25">
-        <?= Yii::$app->controls->active($model, $form); ?>
-    </div>
-    <?php }*/ ?>
     <div class="clearfix"></div>
 
-    <?php if ($model->isNewRecord): ?>
+    <?php if ($isNewRecord): ?>
         <?php
 //                echo $form->field($model, 'organizations', ['options' => ['class' => 'form-group col-sm-6']])
 //                        ->widget(DepDrop::classname(), [

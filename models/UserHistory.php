@@ -51,7 +51,7 @@ class UserHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['created_at', 'deleted_at', 'updated_at', 'history_created_at', 'id', 'mobile_no', 'alert_recipient_group_id', 'device_id'], 'safe'],
+            [['created_at', 'deleted_at', 'updated_at', 'history_created_at', 'id', 'mobile_no', 'alert_recipient_group_id', 'device_id', 'allow_app_login', 'department'], 'safe'],
             [['email_confirmed', 'is_active', 'is_delete', 'status', 'superadmin', 'user_type_id'], 'integer'],
             [['user_history_id', 'user_code', 'created_by', 'deleted_by', 'updated_by'], 'string', 'max' => 14],
             [['auth_key'], 'string', 'max' => 50],

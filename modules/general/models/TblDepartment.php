@@ -31,9 +31,18 @@ class TblDepartment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['department'], 'unique'],
+            [['department'], 'required'],
+            [['department'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
+            [['local_name'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['department', 'department_id', 'local_name', 'created_by', 'updated_by'], 'string'],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
+            [['is_active'], 'default', 'value' => 1]
         ];
     }
 

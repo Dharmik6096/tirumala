@@ -11,6 +11,9 @@ use yii\helpers\Json;
 use app\modules\setting\models\TblUserProfileMapping;
 use app\models\TblUserOrganizationMapping;
 use yii\helpers\FileHelper;
+use app\modules\details\models\TblContactDetails;
+use app\modules\details\models\TblContactDetailsHistory;
+use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -48,9 +51,26 @@ class UserController extends AdminDefaultController {
             $this->model->username = $this->model->user_identity . '#' . $this->model->username;
             $this->model->portal_type = 'portal';
             $this->model->is_active = 1;
+            $this->model->mobile_no = !empty($this->model->mobile_no) ? $this->model->mobile_no : NULL;
+
             //Assign Role
             // $mapList = [];
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['User', 'create']);
+            $master = [];
+            $master[] = $this->model;
+            if ($this->model->allow_app_login == 1 && !empty($this->model->mobile_no)) {
+                $contactModel = new TblContactDetails();
+                $contactModel->mobile_no = $this->model->mobile_no;
+                $contactModelData = $contactModel->getContactDetailsRecord();
+                if (!empty($contactModelData)) {
+                    $contactModel = $contactModelData;
+                } else {
+                    $contactModel->firstname = $this->model->name;
+                    $contactModel->setModel($this->model->department, $this->model->id);
+                }
+                $contactModel->department = $this->model->department;
+                $master[] = $contactModel;
+            }
+            $transaction = $this->generalModel->saveTransaction($master, ['User', 'create']);
             //var_dump($transaction);exit;
             if ($transaction !== FALSE) {
                 if ($roleName) {
@@ -159,7 +179,34 @@ class UserController extends AdminDefaultController {
         if (Yii::$app->session->get('organizations_type') == 'UNION') {
             $model->scenario = 'organizationMappingUnion';
         }
-        $organization = $model->getOrganizationsArray($id, $user->user_type_id);
+        $modelData = $model->getUserOrgs($id);
+        $app_organization = [];
+        $app_org_array = false;
+        if ($user->allow_app_login == 1 && !empty($user->mobile_no)) {
+            $contactModel = new TblContactDetails();
+            $contactModel->mobile_no = $user->mobile_no;
+            $values = $contactModel->getContactDetailsOrg();
+            $app_organization = $model->getOrganizationsArray($id, '', $values);
+            $app_org_array = true;
+        }
+        $stickeyOrgArray = [];
+        $stickeyOrgArray['union'] = [];
+        $stickeyOrgArray['plant'] = [];
+        $stickeyOrgArray['mcc'] = [];
+        $stickeyOrgArray['bmc'] = [];
+        $stickeyOrgArray['dcs'] = [];
+        if ($app_org_array) {
+            $stickeyOrgArray['union'] = !empty($app_organization['union']['selectedArray']) ? $app_organization['union']['selectedArray'] : [];
+            $stickeyOrgArray['plant'] = !empty($app_organization['plant']['selectedArray']) ? $app_organization['plant']['selectedArray'] : [];
+            $stickeyOrgArray['mcc'] = !empty($app_organization['mcc']['selectedArray']) ? $app_organization['mcc']['selectedArray'] : [];
+            $stickeyOrgArray['bmc'] = !empty($app_organization['bmc']['selectedArray']) ? $app_organization['bmc']['selectedArray'] : [];
+            $stickeyOrgArray['dcs'] = !empty($app_organization['dcs']['selectedArray']) ? $app_organization['dcs']['selectedArray'] : [];
+        }
+        if (empty($modelData) && !empty($app_organization)) {
+            $organization = $app_organization;
+        } else {
+            $organization = $model->getOrganizationsArray($id, $user->user_type_id);
+        }
         $federations = $organization['federation'];
         $unions = $organization['union'];
         $plant = $organization['plant'];
@@ -173,19 +220,50 @@ class UserController extends AdminDefaultController {
         $model->union = $unions['selectedArray'];
         $model->federation = ['01'];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $setAppOrgMap = false;
+            $contactModel = new TblContactDetails();
+            if ($user->allow_app_login == 1 && !empty($user->mobile_no)) {
+                $contactModel->mobile_no = $user->mobile_no;
+                $contactModelData = $contactModel->getContactDetailsRecord();
+                if (!empty($contactModelData)) {
+                    $contactModel = $contactModelData;
+                } else {
+                    $contactModel->firstname = $user->name;
+                    $contactModel->setModel($user->department, $user->id);
+                }
+                $contactModel->department = $user->department;
+                $contactModel->save();
+                TblAppOrganizationMapping::deleteAll(['detail_code' => $contactModel->detail_code]);
+                $setAppOrgMap = true;
+            }
+
             TblUserOrganizationMapping::deleteAll(['user_id' => $id]);
             switch ($_POST['user_type']) {
                 case 7 : $this->addUserOrganizationMapping($model->dcs, 'DCS', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->dcs, 'DCS', $contactModel) : '';
+                    $type = 'BMC';
+                    $org_id = $model->bmc;
                     break;
                 case 6 : $this->addUserOrganizationMapping($model->bmc, 'BMC', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->bmc, 'BMC', $contactModel) : '';
+                    $type = 'BMC';
+                    $org_id = $model->bmc;
                     break;
                 case 5 : $this->addUserOrganizationMapping($model->mcc, 'MCC', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->mcc, 'MCC', $contactModel) : '';
+                    $type = 'MCC';
+                    $org_id = $model->mcc;
                     break;
                 case 4 : $this->addUserOrganizationMapping($model->plant, 'PLANT', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->plant, 'PLANT', $contactModel) : '';
+                    $type = 'PLANT';
+                    $org_id = $model->plant;
                     break;
                 case 3 : $this->addUserOrganizationMapping($model->union, 'UNION', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->union, 'UNION', $contactModel) : '';
                     break;
                 case 2 : $this->addUserOrganizationMapping($model->federation, 'FEDERATION', $id, $user->is_active);
+                    $setAppOrgMap ? $this->setAppOrgMapping($model->federation, 'FEDERATION', $contactModel) : '';
                     break;
             }
             $user->user_type_id = $_POST['user_type'];
@@ -193,7 +271,7 @@ class UserController extends AdminDefaultController {
             Yii::$app->display->message(true, 'user', 'edit');
             return $this->redirect(['index']);
         }
-        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs]);
+        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'stickeyOrgArray' => $stickeyOrgArray]);
     }
 
     private function addUserOrganizationMapping($data, $type, $userId, $active) {
@@ -253,4 +331,17 @@ class UserController extends AdminDefaultController {
 
       return $this->renderIsAjax('organization_map',['model'=>$model,'values'=>$data['value'],'selected'=>$data['selected']]);
       } */
+
+    public function setAppOrgMapping($org_codes, $org_type, $contactModel) {
+        foreach ($org_codes as $org_code) {
+            $appOrgMapModel = new TblAppOrganizationMapping();
+            $appOrgMapModel->detail_code = $contactModel->detail_code;
+            $appOrgMapModel->organization_code = $org_code;
+            $appOrgMapModel->organization_type = $org_type;
+            $appOrgMapModel->mobile_no = $contactModel->mobile_no;
+            $appOrgMapModel->is_active = 1;
+            $appOrgMapModel->save();
+        }
+    }
+
 }

@@ -41,14 +41,14 @@ class TblContactDetails extends \app\models\ChildModel {
             [['mobile_no'], 'CheckDuplicate'],
             [['mobile_no'], 'required', 'on' => 'additional'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active'], 'safe'],
         ];
@@ -119,11 +119,34 @@ class TblContactDetails extends \app\models\ChildModel {
             }
         }
     }
-    
+
     public function getContactDetails() {
         return $this->find()
-                ->where(['module_code' => $this->module_code ,'module_name' => $this->module_name, 'is_default' => 1])
-                ->one();
+                        ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name, 'is_default' => 1])
+                        ->one();
+    }
+
+    public function getContactDetailsRecord() {
+        return $this->find()
+                        ->where(['mobile_no' => $this->mobile_no])
+                        ->one();
+    }
+
+    public function getContactDetailsOrg() {
+        return $this->find()
+                        ->select([
+                            'organization_code' => 'module_code',
+                            'organization_type' => 'case when module_name = \'mccPlant\' then \'MCC\' else UPPER(module_name) end',
+                            'organization_type_id' => "CASE WHEN (module_name='union') THEN '3' "
+                            . "WHEN  (module_name='plant') THEN '4' "
+                            . "WHEN  (module_name='mccPlant') THEN '5' "
+                            . "WHEN  (module_name='bmc') THEN '6' "
+                            . "ELSE '7' END"
+                        ])
+                        ->where(['mobile_no' => $this->mobile_no])
+                        ->andWhere(['module_name' => ['union', 'plant', 'society', 'mccPlant', 'bmc']])
+                        ->asArray()
+                        ->all();
     }
 
 }

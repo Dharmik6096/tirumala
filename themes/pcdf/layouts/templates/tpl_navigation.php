@@ -269,6 +269,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Member Classification'), 'url' => ['/dcsoperation/tbl-member-classification/index'], 'active' => ($cntrl == 'tbl-member-classification')],
                         ['label' => Yii::t('app', 'Capacity'), 'url' => ['/globalmaster/tbl-capacity/index'], 'active' => ($cntrl == 'tbl-capacity')],
                         ['label' => Yii::t('app', 'Vehicle Type'), 'url' => ['/globalmaster/tbl-vehicle-type/index'], 'active' => ($cntrl == 'tbl-vehicle-type')],
+                        ['label' => Yii::t('app', 'Department'), 'url' => ['/general/tbl-department/index'], 'active' => ($cntrl == 'tbl-department')],
                         ['label' => Yii::t('app', 'Backend Data'), 'url' => ['/general/default/backend-data'], 'active' => ($cntrl == 'backend-data')],
                     ]
                 ],

@@ -149,7 +149,10 @@ class TblUserOrganizationMapping extends ChildModel {
         return ['value' => $data, 'selected' => $selected];
     }
 
-    public function getOrganizationsArray($id, $orgType) {
+    public function getOrganizationsArray($id, $orgType, $orgArray = []) {
+        if (!empty($orgArray)) {
+            $orgType = !empty($orgArray[0]['organization_type_id']) ? $orgArray[0]['organization_type_id'] : '';
+        }
         $userOrg = User::getSelectedOrganization($orgType);
         $fedModel = new TblFederations();
         $federations = $fedModel->getActiveFederation();
@@ -168,6 +171,9 @@ class TblUserOrganizationMapping extends ChildModel {
             $data[$data_key] = $data_val;
         }
         $values = $this->find()->select('organization_code,organization_type')->where(['user_id' => $id, 'is_active' => 1])->asArray()->all();
+        if (empty($values) && !empty($orgArray)) {
+            $values = $orgArray;
+        }
         $selected = [];
         foreach ($data as $key => $row) {
             if (array_search($key, array_column($values, 'organization_code')) !== FALSE) {
