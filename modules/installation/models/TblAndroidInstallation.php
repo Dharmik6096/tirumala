@@ -90,7 +90,7 @@ class TblAndroidInstallation extends \app\models\ChildModel {
     }
 
     public function getRateChartApplic() {
-        return $this->hasOne(TblPurchaseRateApplicability::className(), ['dcs_code' => 'organization_code'])->where(['is_active' => 1]);
+        return $this->hasOne(TblPurchaseRateApplicability::className(), ['dcs_code' => 'organization_code'])->where(['is_active' => 1])->andWhere(['<=', 'cast(wef_date as date)', date('Y-m-d')]);
     }
 
     public function rateApplicability($attribute, $params) {
