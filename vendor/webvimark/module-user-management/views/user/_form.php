@@ -61,6 +61,12 @@ $form = ActiveForm::begin([
         <div class="col-sm-3">
             <?= $form->field($model, 'repeat_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
         </div>
+        <div class="col-sm-3 mt25 user_type_show">
+            <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+        </div> 
+        <div class="col-sm-3 user_type_show">
+            <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+        </div>
     <?php endif; ?>
 
     <?php /* if ($model->checkNotSelf()) { ?>
@@ -68,12 +74,6 @@ $form = ActiveForm::begin([
       <?= Yii::$app->controls->active($model, $form); ?>
       </div>
       <?php } */ ?>
-    <div class="col-sm-3 mt25 user_type_show">
-        <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
-    </div> 
-    <div class="col-sm-3 user_type_show">
-        <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
-    </div>
     <div class="clearfix"></div>
 
     <?php if ($isNewRecord): ?>

@@ -16,6 +16,7 @@ class UserSearch extends User {
         return [
             [['id', 'superadmin', 'status', 'created_at', 'updated_at', 'email_confirmed', 'is_active'], 'integer'],
             [['username', 'gridRoleSearch', 'registration_ip', 'email', 'user_code', 'name', 'user_type_id'], 'string'],
+            [['department', 'allow_app_login'], 'safe']
         ];
     }
 
@@ -26,7 +27,7 @@ class UserSearch extends User {
 
     public function search($params) {
         $query = User::find();
-        $query->joinWith(['userType']);
+        $query->joinWith(['userType', 'departmentCode']);
         if (!Yii::$app->user->isSuperadmin && Yii::$app->session->get('organizations_type') != 'FEDERATION') {
             $query->joinWith(['organizations']);
             $org_array = [];
@@ -51,13 +52,15 @@ class UserSearch extends User {
             'superadmin' => $this->superadmin,
             'status' => $this->status,
             'user.is_active' => $this->is_active,
+            'user.allow_app_login' => $this->allow_app_login,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
                 ->andFilterWhere(['like', 'name', $this->name])
                 ->andFilterWhere(['like', 'user_code', $this->user_code])
                 ->andFilterWhere(['like', 'tbl_user_types.user_type', $this->user_type_id])
-                ->andFilterWhere(['like', 'email', $this->email]);
+                ->andFilterWhere(['like', 'email', $this->email])
+                ->andFilterWhere(['like', 'tbl_department.department', $this->department]);
 
         return $dataProvider;
     }

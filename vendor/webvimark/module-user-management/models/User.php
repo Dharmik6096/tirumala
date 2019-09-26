@@ -22,6 +22,7 @@ use yii\base\UserException;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\general\models\TblDepartment;
 
 /**
  * This is the model class for table "user".
@@ -672,6 +673,10 @@ class User extends UserIdentity {
         return $this->find()
                         ->where(['mobile_no' => $this->mobile_no, 'is_active' => 1])
                         ->one();
+    }
+
+    public function getDepartmentCode() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }

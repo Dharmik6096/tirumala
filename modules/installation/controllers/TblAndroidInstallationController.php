@@ -79,6 +79,7 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             } else {
                 $this->model = $existData;
                 $this->model->load(Yii::$app->request->post());
+                $this->model->scenario = 'create_portal';
                 $existDetailData = $instDetail->getExistData($existData->android_installation_id);
                 if (!empty($existDetailData)) {
                     foreach ($existDetailData as $detail) {

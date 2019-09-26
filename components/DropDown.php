@@ -619,6 +619,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Online'), 1 => Yii::t('app', 'Offline')],
             ],
+            'allow_app_login' => [
+                'name' => 'allow_app_login',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')],
+            ],
         ];
         return $records[$l];
     }

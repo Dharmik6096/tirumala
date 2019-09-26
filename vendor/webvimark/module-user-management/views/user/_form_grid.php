@@ -64,50 +64,61 @@ $attribute = [
         'value' => 'mobile_no',
         'visible' => false,
     ],
-    /*[
-        'class' => 'webvimark\components\StatusColumn',
-        'attribute' => 'status',
-        'optionsArray' => [
-            [User::STATUS_ACTIVE, UserManagementModule::t('back', 'ACTIVE'), 'success'],
-            [User::STATUS_INACTIVE, UserManagementModule::t('back', 'INACTIVE'), 'warning'],
-            [User::STATUS_BANNED, UserManagementModule::t('back', 'BANNED'), 'danger'],
-        ],
-        'contentOptions' => ['style' => '',
-            'width' => '100px',],
-    ],*/
+    ['attribute' => 'allow_app_login',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('allow_app_login', $searchModel, 'allow_app_login'),
+        'value' => function (User $model) {
+            return isset($model->allow_app_login) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->allow_app_login] : '';
+        },],
+    [
+        'attribute' => 'department',
+        'value' => function(User $model) {
+            return Yii::$app->general->getforeignkey($model->departmentCode, 'department');
+        },
+    ],
+        /* [
+          'class' => 'webvimark\components\StatusColumn',
+          'attribute' => 'status',
+          'optionsArray' => [
+          [User::STATUS_ACTIVE, UserManagementModule::t('back', 'ACTIVE'), 'success'],
+          [User::STATUS_INACTIVE, UserManagementModule::t('back', 'INACTIVE'), 'warning'],
+          [User::STATUS_BANNED, UserManagementModule::t('back', 'BANNED'), 'danger'],
+          ],
+          'contentOptions' => ['style' => '',
+          'width' => '100px',],
+          ], */
 ];
 
-        $grid_option = [
-            'id' => 'user-grid',
-            'attributes' => $attribute,
-            'active_column' => true,
-            'actions' => [
-                'update' => true,
-                'delete_user' => function ($url, $model) {
-                        $disable=($model->checkNotSelf() && $model->is_active==1)?'':'link-disable';
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate','data-val'=>$model->id, 'data-name'=>$model->name, 'class'=>'user-record '.$disable];
-                        return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/user-management/user/deactivate-user'], $options);  
-                },
-                'role' => function ($url, $model) {
-                        $disable=($model->checkNotSelf())?'':'link-disable';
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Role', 'class'=>$disable];
-                        $link = $model->portal_type == 'desktop' ? '/setting/tbl-user-profile-mapping/role-assign' : '/user-management/user-permission/set';
-                        return Html::a('<i class="fa fa-key"></i>', [$link, 'id' => $model->id], $options);
-                },
-                'org-map' => function ($url, $model) {
-                        $disable=($model->checkNotSelf())?'':'link-disable';
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Organization', 'class'=>$disable];
-                        return Html::a('<i class="fa fa-link"></i>', ['/user-management/user/organization-map', 'id' => $model->id], $options);
-                },
-            ]
-        ];
+$grid_option = [
+    'id' => 'user-grid',
+    'attributes' => $attribute,
+    'active_column' => true,
+    'actions' => [
+        'update' => true,
+        'delete_user' => function ($url, $model) {
+            $disable = ($model->checkNotSelf() && $model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'data-val' => $model->id, 'data-name' => $model->name, 'class' => 'user-record ' . $disable];
+            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/user-management/user/deactivate-user'], $options);
+        },
+        'role' => function ($url, $model) {
+            $disable = ($model->checkNotSelf()) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Role', 'class' => $disable];
+            $link = $model->portal_type == 'desktop' ? '/setting/tbl-user-profile-mapping/role-assign' : '/user-management/user-permission/set';
+            return Html::a('<i class="fa fa-key"></i>', [$link, 'id' => $model->id], $options);
+        },
+        'org-map' => function ($url, $model) {
+            $disable = ($model->checkNotSelf()) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Organization', 'class' => $disable];
+            return Html::a('<i class="fa fa-link"></i>', ['/user-management/user/organization-map', 'id' => $model->id], $options);
+        },
+    ]
+];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-        ?> 
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?> 
 
-        <?php
+<?php
 
-        $script = "
+$script = "
             $('#user-grid').on('click','.user-record',function(e){
             //$('.delete-property').on('click',function(){
                    // var id = $(this).attr('value');
@@ -156,5 +167,5 @@ $attribute = [
                         }
                     });
                 });";
-        $this->registerJs($script, View::POS_END, 'delete-manager-user');
-        ?>
+$this->registerJs($script, View::POS_END, 'delete-manager-user');
+?>
