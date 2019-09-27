@@ -330,7 +330,10 @@ class User extends UserIdentity {
             [['department', 'mobile_no'], 'required', 'when' => function($model) {
                     return $model->allow_app_login == 1;
                 }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }"],
-            [['mobile_no'], 'unique']
+            [['mobile_no'], 'unique'],
+            [['name'], function ($attribute, $params) {
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
     }
 

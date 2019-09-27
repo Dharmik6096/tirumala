@@ -37,6 +37,19 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            ['label' => Yii::t('app', 'Route Code'),
+                                'attribute' => 'route_code',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'route_code',
+                                'value' => Yii::$app->general->getforeignkey($model->routeMapping, 'route_name'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
 //                    [
 //                        'columns' => [
 //                            [

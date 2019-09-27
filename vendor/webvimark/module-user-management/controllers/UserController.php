@@ -65,7 +65,7 @@ class UserController extends AdminDefaultController {
                     $contactModel = $contactModelData;
                 } else {
                     $contactModel->firstname = $this->model->name;
-                    $contactModel->setModel($this->model->department, $this->model->id);
+                    $contactModel->setModel($this->model->department, $this->model->id, 0);
                 }
                 $contactModel->department = $this->model->department;
                 $master[] = $contactModel;
@@ -229,7 +229,7 @@ class UserController extends AdminDefaultController {
                     $contactModel = $contactModelData;
                 } else {
                     $contactModel->firstname = $user->name;
-                    $contactModel->setModel($user->department, $user->id);
+                    $contactModel->setModel($user->department, $user->id, 0);
                 }
                 $contactModel->department = $user->department;
                 $contactModel->save();

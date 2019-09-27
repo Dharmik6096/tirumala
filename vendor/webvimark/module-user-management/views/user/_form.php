@@ -52,7 +52,7 @@ $form = ActiveForm::begin([
         </div>
     <?php endif; ?>
     <div class="col-sm-3">
-        <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+        <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off', 'readOnly' => $readOnly]) ?>
     </div>
     <?php if ($isNewRecord): ?>
         <div class="col-sm-3">
