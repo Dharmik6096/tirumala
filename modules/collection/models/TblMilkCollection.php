@@ -61,7 +61,7 @@ use app\modules\general\models\TblSocietyVendor;
  */
 class TblMilkCollection extends \app\models\ChildModel {
 
-    public $collection_date, $union_code;
+    public $collection_date;
 
     /**
      * @inheritdoc
