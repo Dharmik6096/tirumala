@@ -49,7 +49,7 @@ class TblDcsSearch extends TblDcs {
             'sort' => ['defaultOrder' => ['dcs_name' => SORT_ASC]],
         ]);
 
-        $query->joinWith(['stateCode', 'districtCode', 'defaultContactDetail']);
+        $query->joinWith(['stateCode', 'districtCode', 'defaultMobileNo']);
 
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
