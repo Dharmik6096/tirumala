@@ -122,12 +122,24 @@ class DefaultController extends \app\controllers\ChildController {
         if (empty($model->union_code)) {
             $model->union_code = NULL;
         }
+        if (empty($model->plant_code)) {
+            $model->plant_code = NULL;
+        }
+        if (empty($model->mcc_code)) {
+            $model->mcc_code = NULL;
+        }
+        if (empty($model->bmc_code)) {
+            $model->bmc_code = NULL;
+        }
         if (empty($model->dcs_code)) {
             $model->dcs_code = NULL;
         }
 
-        $result = \Yii::$app->db->createCommand("{CALL sp_union_data(:union_code,:dcs_code,:start_date,:end_date)}")
+        $result = \Yii::$app->db->createCommand("{CALL sp_union_data(:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code,:start_date,:end_date)}")
                 ->bindValue(':union_code', $model->union_code)
+                ->bindValue(':plant_code', $model->plant_code)
+                ->bindValue(':mcc_code', $model->mcc_code)
+                ->bindValue(':bmc_code', $model->bmc_code)
                 ->bindValue(':dcs_code', $model->dcs_code)
                 ->bindValue(':start_date', $start_date)
                 ->bindValue(':end_date', $end_date);
@@ -141,6 +153,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'attributes' => [
                     'union_name',
                     'district_name',
+                    'mcc_name',
                     'society_code',
                     'dcs_code_ex',
                     'society_name',

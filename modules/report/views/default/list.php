@@ -20,12 +20,13 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '202 - Society Coll
         </div>
         <div class="panel-body">
             <div class="report-area">
-                <?php echo $this->render('_search', ['model' => $model]); ?>
+                <?php echo $this->render('_search', ['model' => $model, 'orgFilter' => true]); ?>
 
                 <?php
                 $attribute = [
                     ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name')],
                     'district_name',
+                    'mcc_name',
                     ['attribute' => 'society_code', 'label' => Yii::t('app', 'Society Code')],
                     ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Old Soc. Code')],
                     ['attribute' => 'society_name', 'label' => Yii::t('app', 'Society Name')],

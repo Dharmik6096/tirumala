@@ -73,8 +73,8 @@ class TblRouteMapping extends \app\models\ChildModel {
 //            Yii::$app->general->validateName($this, $attribute, $params);
 //        }, 'skipOnEmpty' => false],
             [['local_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['route_code'], 'string', 'min' => 1],
             [['route_code'], 'string', 'max' => 8],
             [['route_code'], 'safe'],
@@ -339,6 +339,19 @@ class TblRouteMapping extends \app\models\ChildModel {
                 }
             }
         }
+    }
+
+    public function routeFromDestination($plant_code, $mcc_code = NULL, $bmc_code = NULL) {
+        $data = $this->find()->select(['route_code', 'route_name', 'to_type'])
+                ->where(['to_dest' => $plant_code, 'to_type' => 'plant']);
+        !empty($mcc_code) ? $data = $data->orWhere(['to_dest' => $mcc_code, 'to_type' => 'mcc']) : '';
+        !empty($bmc_code) ? $data = $data->orWhere(['to_dest' => $bmc_code, 'to_type' => 'bmc']) : '';
+
+        $data = $data->all();
+        $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function ($value) {
+                    return $value['route_name'] . ' - ' . strtoupper($value['to_type']);
+                });
+        return $array;
     }
 
 }

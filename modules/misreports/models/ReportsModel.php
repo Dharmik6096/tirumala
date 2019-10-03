@@ -32,6 +32,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'calibration_day'], 'required', 'on' => ['CalibrationFlag', 'CleaningFlagBmc']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['AnalyzerCleaningReview', 'AnalyzerCleaningPendingActivity', 'AnalyzerPcbReplacement']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date'], 'required', 'on' => ['CleaningFlag', 'EkoMilkCalibration']],
+            [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['TotalMilkCollectionDateShift']],
         ];
     }
 
@@ -46,6 +47,7 @@ class ReportsModel extends Model {
             'from_shift' => \Yii::t('app', 'From Shift'),
             'to_date' => \Yii::t('app', 'To Date'),
             'to_shift' => \Yii::t('app', 'To Shift'),
+            'route_code' => \Yii::t('app', 'Route'),
         ];
     }
 

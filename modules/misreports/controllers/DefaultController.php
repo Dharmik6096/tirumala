@@ -144,6 +144,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTotalMilkCollectionDateShift() {
+        $this->report = 'TotalMilkCollectionDateShift';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -387,6 +392,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_rpt_procurment_cleaning_flag',
                 'scenario' => 'CleaningFlagBmc',
                 'title' => '507- Cleaning Flag Bmc',
+            ],
+            'TotalMilkCollectionDateShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_total_milk_collection_date_shift',
+                'scenario' => 'TotalMilkCollectionDateShift',
+                'title' => '118 - MCC Wise Collection Summary',
             ],
         ];
         return $label[$l];

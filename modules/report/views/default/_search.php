@@ -10,6 +10,8 @@ $max_date = empty($request['max_date']) ? '' : $request['max_date'];
 $model->min_date = empty($model->min_date) ? date('d-m-Y') : $model->min_date;
 $model->max_date = empty($model->max_date) ? date('d-m-Y') : $model->max_date;
 $model->shift = empty($model->shift) ? '3' : $model->shift;
+$model_class = (new \ReflectionClass($model))->getShortName();
+$field_class = strtolower($model_class);
 ?>
 
 <div class="grid-search large-search hidden-print">
@@ -23,9 +25,24 @@ $model->shift = empty($model->shift) ? '3' : $model->shift;
     <div class="col-sm-2 padding-right-5">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
     </div>
-    <div class="col-sm-2 padding-left-0 padding-right-5">
-        <?= Yii::$app->dropdown->depend_dropdown('dcs', $model, $form, 'tblmilkcollectionsearch-union_code'); ?>
-    </div>
+    <?php if (!empty($orgFilter)) { ?>
+        <div class="col-sm-2 padding-right-5">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkcollectionsearch-union_code', 'plant_code'); ?>
+        </div>
+        <div class="col-sm-2 padding-right-5">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkcollectionsearch-plant_code', 'mcc_code'); ?>
+        </div>      
+        <div class="col-sm-2 padding-right-5">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollectionsearch-mcc_code', 'bmc_code'); ?>
+        </div>
+        <div class="col-sm-2 padding-left-0 padding-right-5">
+            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollectionsearch-bmc_code', 'dcs_code'); ?> 
+        </div>
+    <?php } else { ?>
+        <div class="col-sm-2 padding-left-0 padding-right-5">
+            <?= Yii::$app->dropdown->depend_dropdown('dcs', $model, $form, 'tblmilkcollectionsearch-union_code'); ?>
+        </div>
+    <?php } ?>
     <div class="col-sm-4 padding-left-0 padding-right-5">
         <div class="form-group">
             <?= Yii::$app->controls->active_min_max_date($form, $model, 'min_date', 'max_date', $min_date, $max_date); ?>
