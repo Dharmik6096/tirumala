@@ -10,8 +10,6 @@ $max_date = empty($request['max_date']) ? '' : $request['max_date'];
 $model->min_date = empty($model->min_date) ? date('d-m-Y') : $model->min_date;
 $model->max_date = empty($model->max_date) ? date('d-m-Y') : $model->max_date;
 $model->shift = empty($model->shift) ? '3' : $model->shift;
-$model_class = (new \ReflectionClass($model))->getShortName();
-$field_class = strtolower($model_class);
 ?>
 
 <div class="grid-search large-search hidden-print">

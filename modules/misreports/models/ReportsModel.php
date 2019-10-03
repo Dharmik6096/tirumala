@@ -47,7 +47,6 @@ class ReportsModel extends Model {
             'from_shift' => \Yii::t('app', 'From Shift'),
             'to_date' => \Yii::t('app', 'To Date'),
             'to_shift' => \Yii::t('app', 'To Shift'),
-            'route_code' => \Yii::t('app', 'Route'),
         ];
     }
 
