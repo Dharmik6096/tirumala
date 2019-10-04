@@ -114,7 +114,7 @@ class DefaultController extends \app\controllers\ChildController {
 
         $model = new TblMilkCollectionSearch();
         $model->load($request);
-        $model->scenario = 'union_count';
+        $model->scenario = 'society_collection';
 
         $start_date = !empty($model->min_date) ? date('Y-m-d', strtotime($model->min_date)) : '';
         $end_date = !empty($model->max_date) ? date('Y-m-d', strtotime($model->max_date)) : '';
@@ -153,7 +153,9 @@ class DefaultController extends \app\controllers\ChildController {
                 'attributes' => [
                     'union_name',
                     'district_name',
+                    'plant_name',
                     'mcc_name',
+                    'bmc_name',
                     'society_code',
                     'dcs_code_ex',
                     'society_name',

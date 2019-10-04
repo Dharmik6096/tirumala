@@ -26,7 +26,9 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '202 - Society Coll
                 $attribute = [
                     ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name')],
                     'district_name',
-                    'mcc_name',
+                    ['attribute' => 'plant_name', 'label' => Yii::t('app', 'Plant')],
+                    ['attribute' => 'mcc_name', 'label' => Yii::t('app', 'MCC')],
+                    ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'BMC')],
                     ['attribute' => 'society_code', 'label' => Yii::t('app', 'Society Code')],
                     ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Old Soc. Code')],
                     ['attribute' => 'society_name', 'label' => Yii::t('app', 'Society Name')],

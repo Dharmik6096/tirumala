@@ -19,7 +19,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
     public function rules() {
         return [
-            [['union_code'], 'required', 'except' => 'union_count'],
+            [['union_code'], 'required', 'except' => ['union_count', 'society_collection']],
             [['plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => 'union_count'],
             [['min_date', 'max_date'], 'required'],
             [['dcs_code', 'max_date', 'shift', 'milk_type_code', 'vendor', 'plant_code', 'mcc_code', 'bmc_code'], 'safe'],
@@ -75,7 +75,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
         $query->joinWith(['dcsCode']);
         if (Yii::$app->session->get('Unions') !== '' && empty($this->union_code)) {
-            $query->andFilterWhere([ 'tbl_dcs.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+            $query->andFilterWhere(['tbl_dcs.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
             $query->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
         } else {
             $query->andFilterWhere(['tbl_dcs.union_code' => $this->union_code]);
