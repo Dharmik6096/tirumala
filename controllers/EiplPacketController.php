@@ -87,6 +87,8 @@ class EiplPacketController extends Controller {
                             $dateshift = explode('.', $file->file_name)[0];
                             $dtdate = \DateTime::createFromFormat('dmy', substr($dateshift, 12, 6));
                             $dtdate = $dtdate->format('Y-m-d');
+                        } else if ($file->source_type == 2) {
+                            $file->dcs_code = empty($file->dcs_code) ? '' : $file->dcs_code;
                         } else {
 
                             $main_line = \Yii::$app->EIPLSecurity->Decrypt(file($file->file_path)[0]);
@@ -99,11 +101,11 @@ class EiplPacketController extends Controller {
                         }
                         while ($line = fgets($fh)) {
                             $cnt++;
-                            if (!in_array($cnt, [1, $no_of_lines]) || $file->source_type == 0) {
+                            if ((!in_array($cnt, [1, $no_of_lines]) || $file->source_type == 0) || ($file->source_type == 2)) {
                                 $packet = new EiplPacketProcess();
                                 $packet->dcs_code = $file->dcs_code;
                                 $packet->file_name = $file->file_id;
-                                $packet->line_text = \Yii::$app->EIPLSecurity->Decrypt($line);
+                                $packet->line_text = $file->source_type == 2 ? $line : \Yii::$app->EIPLSecurity->Decrypt($line);
                                 $packet->line_no = $cnt;
                                 $packet->is_decrypted = 1;
                                 $packet->main_table = 0;
@@ -112,29 +114,36 @@ class EiplPacketController extends Controller {
                                     $packet->save(FALSE);
                                     try {
                                         $eiplpacket = $packet->line_text;
-                                        if ($file->source_type == 0) {
-                                            $main_line = substr($packet->line_text, 0, 29);
-                                            $eiplpacket = substr($packet->line_text, 29);
+                                        if ($file->source_type == 2) {
+                                            $main_line = $packet->line_text;
                                             $main_line = explode(',', $main_line);
-                                            $main_line = array_reverse($main_line);
-                                            $shift = ($main_line[2] == 'M') ? 1 : 2;
+                                            $result = $this->saveCollectionDetails($file->dcs_code, $main_line);
+                                        } else {
+                                            if ($file->source_type == 0) {
+                                                $main_line = substr($packet->line_text, 0, 29);
+                                                $eiplpacket = substr($packet->line_text, 29);
+                                                $main_line = explode(',', $main_line);
+                                                $main_line = array_reverse($main_line);
+                                                $shift = ($main_line[2] == 'M') ? 1 : 2;
+                                            }
+                                            $result = $this->saveCollection($file->dcs_code, $dtdate, $shift, $cnt, $eiplpacket, $file->source_type);
                                         }
-                                        if ($this->saveCollection($file->dcs_code, $dtdate, $shift, $cnt, $eiplpacket, $file->source_type)) {
+                                        if ($result) {
                                             $packet->main_table = 1;
                                             $packet->save(FALSE);
                                         } else {
                                             var_dump($packet->line_text);
-                                            $error_cnt +=1;
+                                            $error_cnt += 1;
                                         }
                                     } catch (yii\base\Exception $e) {
                                         var_dump($packet->line_text);
-                                        $error_cnt +=1;
+                                        $error_cnt += 1;
                                     }
                                 } catch (yii\base\Exception $e) {
                                     $packet->is_decrypted = 0;
                                     $packet->line_text = $line;
                                     $packet->save(FALSE);
-                                    $error_cnt +=1;
+                                    $error_cnt += 1;
                                 }
                             }
                         }
@@ -349,6 +358,40 @@ class EiplPacketController extends Controller {
             $data->status = 3;
         }
         $data->save();
+    }
+
+    private function saveCollectionDetails($dcs, $packet) {
+        $clt_date = date('Y-m-d', strtotime(str_replace('/', '-', $packet[1])));
+        $shift = isset($packet[2]) ? $packet[2] : '';
+        $member = isset($packet[3]) ? $packet[3] : '';
+        $milktype = isset($packet[4]) ? $packet[4] : '';
+        $fat = isset($packet[5]) ? (float) ($packet[5]) : '';
+        $snf = isset($packet[6]) ? (float) ($packet[6]) : '';
+        $qty = isset($packet[7]) ? (float) ($packet[7]) : '';
+        $rtpl = isset($packet[8]) ? (float) ($packet[8]) : '';
+        $amnt = isset($packet[9]) ? (float) ($packet[9]) : '';
+        $qltyAut = isset($packet[10]) ? (float) ($packet[10]) : '';
+        $qtyAut = isset($packet[11]) ? (float) ($packet[11]) : '';
+        $result = \Yii::$app->db->createCommand("sp_txfarmer_amcs_data '$dcs',
+'$clt_date',
+'$shift',
+'$member',
+'$milktype',
+'$fat',
+'$snf',
+'$qty',
+'$rtpl',
+'$amnt',
+'$qltyAut',
+'$qtyAut','0'
+");
+
+        $query = $result->queryScalar();
+        if ($query == '1') {
+            return TRUE;
+        }
+
+        return FALSE;
     }
 
 }
