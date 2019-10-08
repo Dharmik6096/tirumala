@@ -19,26 +19,20 @@ $form = ActiveForm::begin(['options' => [
 ?>
 <div class="modal-body">
     <div class="row">
-    <?php echo Html::hiddenInput('EiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
-  <!--  <div class="col-sm-3">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'eiplpacketfilelog-union_code'); ?>        
-    </div>-->
-    <div class="col-sm-12">
-        <?=
-        Dropzone::widget([
-            'id' => 'mainDrop',
-            'options' => [
-                'acceptedMimeTypes' => ".txt",
-                'url' => \yii\helpers\Url::to(['/syncutility/pendrive-import/import-file']),
-                'addRemoveLinks' => true,
-                'autoDiscover' => false,
-                'maxFiles' => 10,
-            ],
-            'clientEvents' => [
-                'success' => "function( file, response ){
+        <?php echo Html::hiddenInput('EiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
+        <div class="col-sm-12">
+            <?=
+            Dropzone::widget([
+                'id' => 'mainDrop',
+                'options' => [
+                    'acceptedMimeTypes' => ".txt",
+                    'url' => \yii\helpers\Url::to(['/syncutility/pendrive-import/import-file']),
+                    'addRemoveLinks' => true,
+                    'autoDiscover' => false,
+                    'maxFiles' => 10,
+                ],
+                'clientEvents' => [
+                    'success' => "function( file, response ){
                                             var data=$.parseJSON(response);
                                             if(data.status=='success')
                                             { 
@@ -50,17 +44,17 @@ $form = ActiveForm::begin(['options' => [
                                                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
                                                 
                                         }",
-                'removedfile' => "function(file){
+                    'removedfile' => "function(file){
                           var file_str = $('#file_name').val();
                           var res = file_str.replace(file.name,''); 
                            $('#file_name').val(res);
                                            }",
-                'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
-            ]
-        ]);
-        ?>
+                    'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
+                ]
+            ]);
+            ?>
+        </div>
     </div>
-</div>
 </div>
 <div class="modal-footer">
     <?php
@@ -102,7 +96,7 @@ $form = ActiveForm::begin(['options' => [
                                     }
                              }'),
         ],
-        'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit','disabled'=>true,],
+        'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true,],
     ]);
     AjaxSubmitButton::end();
     ?>

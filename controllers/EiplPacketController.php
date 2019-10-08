@@ -117,7 +117,7 @@ class EiplPacketController extends Controller {
                                         if ($file->source_type == 2) {
                                             $main_line = $packet->line_text;
                                             $main_line = explode(',', $main_line);
-                                            $result = $this->saveCollectionDetails($file->dcs_code, $main_line);
+                                            $result = $this->saveAmcsCollectionDetails($file->dcs_code, $main_line);
                                         } else {
                                             if ($file->source_type == 0) {
                                                 $main_line = substr($packet->line_text, 0, 29);
@@ -360,8 +360,8 @@ class EiplPacketController extends Controller {
         $data->save();
     }
 
-    private function saveCollectionDetails($dcs, $packet) {
-        $clt_date = date('Y-m-d', strtotime(str_replace('/', '-', $packet[1])));
+    private function saveAmcsCollectionDetails($dcs, $packet) {
+        $collectionDate = date('Y-m-d', strtotime(str_replace('/', '-', $packet[1])));
         $shift = isset($packet[2]) ? $packet[2] : '';
         $member = isset($packet[3]) ? $packet[3] : '';
         $milktype = isset($packet[4]) ? $packet[4] : '';
@@ -370,10 +370,10 @@ class EiplPacketController extends Controller {
         $qty = isset($packet[7]) ? (float) ($packet[7]) : '';
         $rtpl = isset($packet[8]) ? (float) ($packet[8]) : '';
         $amnt = isset($packet[9]) ? (float) ($packet[9]) : '';
-        $qltyAut = isset($packet[10]) ? (float) ($packet[10]) : '';
-        $qtyAut = isset($packet[11]) ? (float) ($packet[11]) : '';
+        $qltyAut = isset($packet[10]) ? ($packet[10]) : '';
+        $qtyAut = isset($packet[11]) ? ($packet[11]) : '';
         $result = \Yii::$app->db->createCommand("sp_txfarmer_amcs_data '$dcs',
-'$clt_date',
+'$collectionDate',
 '$shift',
 '$member',
 '$milktype',
