@@ -152,7 +152,7 @@ class EiplPacketController extends Controller {
                             unlink($file->file_path);
                         }
                         $file->file_status = 1; //success read
-                        $file->total_record = ($file->source_type == 0) ? $cnt : $cnt - 2;
+                        $file->total_record = ($file->source_type == 0) ? $cnt : (($file->source_type == 2) ? $cnt : $cnt - 2);
                         $file->processed_record = $file->total_record - $error_cnt;
                     } else {
                         $file->file_status = 3; //currupted
@@ -392,7 +392,7 @@ class EiplPacketController extends Controller {
                 return TRUE;
             }
             return FALSE;
-        } catch (yii\base\Exception $e) {
+        } catch (\Throwable $ex) {
             return false;
         }
     }
