@@ -361,18 +361,19 @@ class EiplPacketController extends Controller {
     }
 
     private function saveAmcsCollectionDetails($dcs, $packet) {
-        $collectionDate = date('Y-m-d', strtotime(str_replace('/', '-', $packet[1])));
-        $shift = isset($packet[2]) ? $packet[2] : '';
-        $member = isset($packet[3]) ? $packet[3] : '';
-        $milktype = isset($packet[4]) ? $packet[4] : '';
-        $fat = isset($packet[5]) ? (float) ($packet[5]) : '';
-        $snf = isset($packet[6]) ? (float) ($packet[6]) : '';
-        $qty = isset($packet[7]) ? (float) ($packet[7]) : '';
-        $rtpl = isset($packet[8]) ? (float) ($packet[8]) : '';
-        $amnt = isset($packet[9]) ? (float) ($packet[9]) : '';
-        $qltyAut = isset($packet[10]) ? ($packet[10]) : '';
-        $qtyAut = isset($packet[11]) ? ($packet[11]) : '';
-        $result = \Yii::$app->db->createCommand("sp_txfarmer_amcs_data '$dcs',
+        try {
+            $collectionDate = date('Y-m-d', strtotime(str_replace('/', '-', $packet[1])));
+            $shift = isset($packet[2]) ? $packet[2] : '';
+            $member = isset($packet[3]) ? $packet[3] : '';
+            $milktype = isset($packet[4]) ? $packet[4] : '';
+            $fat = isset($packet[5]) ? (float) ($packet[5]) : '';
+            $snf = isset($packet[6]) ? (float) ($packet[6]) : '';
+            $qty = isset($packet[7]) ? (float) ($packet[7]) : '';
+            $rtpl = isset($packet[8]) ? (float) ($packet[8]) : '';
+            $amnt = isset($packet[9]) ? (float) ($packet[9]) : '';
+            $qltyAut = isset($packet[10]) ? ($packet[10]) : '';
+            $qtyAut = isset($packet[11]) ? ($packet[11]) : '';
+            $result = \Yii::$app->db->createCommand("sp_txfarmer_amcs_data '$dcs',
 '$collectionDate',
 '$shift',
 '$member',
@@ -386,12 +387,14 @@ class EiplPacketController extends Controller {
 '$qtyAut','0'
 ");
 
-        $query = $result->queryScalar();
-        if ($query == '1') {
-            return TRUE;
+            $query = $result->queryScalar();
+            if ($query == '1') {
+                return TRUE;
+            }
+            return FALSE;
+        } catch (yii\base\Exception $e) {
+            return false;
         }
-
-        return FALSE;
     }
 
 }
