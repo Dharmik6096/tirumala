@@ -99,7 +99,7 @@ $filter_data = $filter_model->getRecord($model_class);
                 <?php
                 if (in_array($value, array('from_date', 'to_date'))) {
                     $request = Yii::$app->request->queryParams;
-                    $model->$value = !empty($model->$value) ? $model->$value : date('d-m-Y');     
+                    $model->$value = !empty($model->$value) ? $model->$value : date('d-m-Y');
                     $f_cnt++;
                     ?>
                     <div class="col-sm-2">
@@ -110,7 +110,7 @@ $filter_data = $filter_model->getRecord($model_class);
                 if (in_array($value, array('shift', 'Shift', 'shift_id', 'shift_code', 'from_shift', 'to_shift'))) {
                     $f_cnt++;
                     ?>
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 shift">
                         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, $value); ?>
                     </div>
                 <?php } ?>
