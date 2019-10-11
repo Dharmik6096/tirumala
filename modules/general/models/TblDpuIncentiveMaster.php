@@ -41,6 +41,7 @@ class TblDpuIncentiveMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['m_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
             [['dcs_code', 'm_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'inc_rate', 'inc_deduction', 'union_code'], 'required'],
             [['dcs_code', 'm_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'union_code', 'created_by', 'updated_by'], 'string'],
             [['inc_rate', 'inc_deduction'], 'number'],

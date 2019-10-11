@@ -47,19 +47,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?=
-        $form->field($model, 'e_start_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
-            'mask' => '99:99',])
-        ?> 
-    </div>
-    <div class="col-sm-2">
-        <?=
         $form->field($model, 'm_cutoff_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
-            'mask' => '99:99',])
-        ?> 
-    </div>
-    <div class="col-sm-2">
-        <?=
-        $form->field($model, 'e_cutoff_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
             'mask' => '99:99',])
         ?> 
     </div>
@@ -69,6 +57,19 @@ $form = ActiveForm::begin([
             'mask' => '99:99',])
         ?> 
     </div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'e_start_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+            'mask' => '99:99',])
+        ?> 
+    </div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'e_cutoff_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+            'mask' => '99:99',])
+        ?> 
+    </div>
+
     <div class="col-sm-2">
         <?=
         $form->field($model, 'e_lock_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
