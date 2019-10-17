@@ -100,11 +100,11 @@ class TblUnions extends ChildModel {
             [['city'], 'string', 'max' => 50],
             [['union_code_ex'], 'string', 'max' => 10],
             [['union_name', 'contact_person'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['local_name', 'local_address'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['contact_person_email'], 'email'],
             [['phone_no'], 'integer'],
             //[['phone_no','contact_person_phone_no','contact_person_mobile_no'], 'integer','message'=>Yii::t('app/validation','{attribute} must be a numeric.')],
@@ -113,12 +113,12 @@ class TblUnions extends ChildModel {
             //  [['contact_person_phone_no','phone_no'], 'integer', 'max' => 16, 'min' => 16, 'tooBig' => 'Please enter a valid Phone No length', 'tooSmall' => 'Please enter a valid Phone No length'],
             [['union_name'], 'string', 'max' => 100],
             [['phone_no', 'fax_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
 //            ['bank_account_no', 'unique', 'targetAttribute' => 'ifsc'],
             [['contact_person_pan_no'], function ($attribute, $params) {
-                    Yii::$app->general->validatePancard($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->validatePancard($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['union_code_ex'], 'integer'],
             [['pincode', 'registration_no'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
@@ -464,6 +464,18 @@ class TblUnions extends ChildModel {
                         ->join('INNER JOIN', 'tbl_federation_state fs', 'fs.state_code=s.state_code')->asArray()->all();
 
         return $unions;
+    }
+
+    public function getTblPlant() {
+        return $this->hasMany(TblPlant::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getTblMccPlant() {
+        return $this->hasMany(TblMccPlant::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getTblBmc() {
+        return $this->hasMany(TblDcsBmc::className(), ['union_code' => 'union_code']);
     }
 
 }

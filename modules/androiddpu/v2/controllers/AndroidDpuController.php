@@ -18,6 +18,7 @@ use app\modules\installation\models\TblAndroidInstallationDetails;
 use app\modules\androiddpu\controllers\RestController;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\configuration\models\TblUnionConfigResult;
+use yii\helpers\ArrayHelper;
 
 /**
  * Default controller for the `vendorapi` module
@@ -101,7 +102,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
     }
 
     public function actionInitialization() {
-        $db_file = 'bmc_app.db';
+        $db_file = 'everest_amcs.db';
         $res_data = [];
         $data = $this->post_data;
         $model = new TblAndroidInstallationDetails();
@@ -119,7 +120,6 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $plant_code = [];
                 $union_code = '';
                 if ($type == 'VLC') {
-                    $db_file = 'everest_amcs.db';
                     $model = new TblDcs();
                     $model->dcs_code = $code;
                     $detail_type = 'society';
@@ -135,34 +135,25 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $model = new TblDcsBmc();
                     $model->bmc_code = $code;
                     $detail_type = 'bmc';
-                    $bmc_code[] = $code;
                     $model_data = $model->singleBmcData();
                     if (!empty($model_data)) {
                         $union_code = $model_data->union_code;
-                        $mcc_plant_code[] = $model_data->mcc_plant_code;
-                        $plant_code[] = $model_data->plant_code;
-                    }
-                    $dcsCodes = $model->dcsCodes;
-                    foreach ($dcsCodes as $dcsCode) {
-                        $dcs_code[] = $dcsCode->dcs_code;
+                        $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                        $mcc_plant_code = ArrayHelper::getColumn($model_data->unionCode->tblMccPlant, 'mcc_plant_code');
+                        $bmc_code = ArrayHelper::getColumn($model_data->unionCode->tblBmc, 'bmc_code');
+                        $dcs_code = ArrayHelper::getColumn($model_data->dcsCodes, 'dcs_code');
                     }
                 } else if ($type == 'MCC') {
                     $model = new TblMccPlant();
                     $model->mcc_plant_code = $code;
                     $detail_type = 'mccPlant';
-                    $mcc_plant_code[] = $code;
                     $model_data = $model->getData();
                     if (!empty($model_data)) {
                         $union_code = $model_data->union_code;
-                        $plant_code[] = $model_data->plant_code;
-                    }
-                    $bmcCodes = $model->bmcCodes;
-                    foreach ($bmcCodes as $bmcCode) {
-                        $bmc_code[] = $bmcCode->bmc_code;
-                        $dcsCodes = $bmcCode->dcsCodes;
-                        foreach ($dcsCodes as $dcsCode) {
-                            $dcs_code[] = $dcsCode->dcs_code;
-                        }
+                        $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                        $mcc_plant_code = ArrayHelper::getColumn($model_data->unionCode->tblMccPlant, 'mcc_plant_code');
+                        $bmc_code = ArrayHelper::getColumn($model_data->unionCode->tblBmc, 'bmc_code');
+                        $dcs_code = ArrayHelper::getColumn($model_data->tblDcs, 'dcs_code');
                     }
                 }
                 if (!empty($model_data)) {
