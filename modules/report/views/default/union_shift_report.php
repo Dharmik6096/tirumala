@@ -15,21 +15,21 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '212 - Union Shift 
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
+            <?php echo $this->render('_search_dpu', ['model' => $model, 'shiftFilter' => true]); ?>
             <div class="report-area">
-                <?php echo $this->render('_search_dpu', ['model' => $model, 'shiftFilter' => true]); ?>
 
                 <?php
                 $attribute = [
-                    ['attribute' => 'union_code', 'label' => Yii::t('app', 'Union Code'), 'filter' => false],
-                    ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
-                    ['attribute' => 'dtdate', 'filter' => false],
-                    ['attribute' => 'qty', 'filter' => false],
-                    ['attribute' => 'avg_fat', 'filter' => false],
-                    ['attribute' => 'avg_snf', 'filter' => false],
-                    ['attribute' => 'kg_fat', 'filter' => false],
-                    ['attribute' => 'kg_snf', 'filter' => false],
-                    ['attribute' => 'avg_rate', 'filter' => false],
-                    ['attribute' => 'total_amount', 'filter' => false,
+                        ['attribute' => 'union_code', 'label' => Yii::t('app', 'Union Code'), 'filter' => false],
+                        ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                        ['attribute' => 'dtdate', 'filter' => false],
+                        ['attribute' => 'qty', 'filter' => false],
+                        ['attribute' => 'avg_fat', 'filter' => false],
+                        ['attribute' => 'avg_snf', 'filter' => false],
+                        ['attribute' => 'kg_fat', 'filter' => false],
+                        ['attribute' => 'kg_snf', 'filter' => false],
+                        ['attribute' => 'avg_rate', 'filter' => false],
+                        ['attribute' => 'total_amount', 'filter' => false,
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],

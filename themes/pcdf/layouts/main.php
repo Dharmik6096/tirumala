@@ -43,16 +43,40 @@ AppAsset::register($this);
         }
         ?>
         <?php require_once('templates/tpl_header.php'); ?>
-
+        <?php
+        if (!empty($this->params['menu'])) {
+            $allMenu = $this->params['menu'];
+            $menuItem = false;
+            ?>
+            <div class="panel panel-button collapse" id="menu_buttons">
+                <div class="panel-body">
+                    <ul>
+                        <?php
+                        foreach ($allMenu as $menu) {
+                            if (!empty($menu)) {
+                                echo '<li>' . $menu . '</li>';
+                                $menuItem = true;
+                            }
+                        }
+                        ?>
+                    </ul>
+                </div>
+            </div>
+            <?php if ($menuItem) { ?>
+                <div class="btn-group btn btn-default actionButtons" data-toggle="collapse" data-target="#menu_buttons"><i class="glyphicon glyphicon-plus"></i></div>
+                <?php
+            }
+        }
+        ?>
         <div class="sidebar-layout">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-9 col-md-10 col-sm-print-12">
+                    <div class="col-sm-12 col-md-12 col-sm-print-12">
                         <?= $content ?>
                     </div>
-                    <div class="col-sm-3 col-md-2 padding-left-0 hidden-print">
-                        <?php require_once('templates/tpl_sidebar.php'); ?>
-                    </div>
+                    <!--                    <div class="col-sm-3 col-md-2 padding-left-0 hidden-print">
+                    <?php require_once('templates/tpl_sidebar.php'); ?>
+                                        </div>-->
                 </div>
             </div>
         </div>

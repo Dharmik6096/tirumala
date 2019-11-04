@@ -19,12 +19,12 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '206 - No Network S
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
+            <?php echo $this->render('_search_dpu', ['model' => $model, 'detailUrl' => '/report/default/dpu-request']); ?>
             <div class="report-area">
-                <?php echo $this->render('_search_dpu', ['model' => $model, 'detailUrl' => '/report/default/dpu-request']); ?>
 
                 <?php
                 $attribute = [
-                    ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                        ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
                     'total_dcs',
                     'dpu_dcs',
                     'col_dcs',

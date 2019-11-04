@@ -15,13 +15,13 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '204 - No Collectio
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
+            <?php echo $this->render('_search_custom', ['model' => $model]); ?>
             <div class="report-area">
-                <?php echo $this->render('_search_custom', ['model' => $model]); ?>
 
                 <?php
                 $attribute = [
-                    ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
-                    ['attribute' => 'total_dcs', 'value' => 'total_dcs', 'label' => Yii::t('app', 'No of Societies'), 'filter' => false],
+                        ['attribute' => 'union_name', 'value' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                        ['attribute' => 'total_dcs', 'value' => 'total_dcs', 'label' => Yii::t('app', 'No of Societies'), 'filter' => false],
                         //['attribute' => 'dcs_code', 'value' => 'dcs_code', 'filter' => false],
                 ];
 

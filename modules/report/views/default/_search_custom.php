@@ -10,54 +10,73 @@ $shift_no = empty($request["shift_no"]) ? 5 : $request["shift_no"];
 $shifts = ['06:00:00' => 'Morning', '18:00:00' => 'Evening'];
 $model_class = (new \ReflectionClass($model))->getShortName();
 $field_class = strtolower($model_class);
+$title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 ?>
 
-<div class="grid-search large-search hidden-print">
-    <?php
-    $form = ActiveForm::begin([
-                'method' => 'get',
-                'id' => 'village-form',
-                'validateOnSubmit' => true,
-    ]);
-    ?>
-    <div class="col-sm-2 padding-right-5">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
-    </div>
-    <?php if (isset($bmc_filter)) { ?>
-        <div class="col-sm-2 padding-right-5">
-            <?= Yii::$app->dropdown->union_plant($model, $form, $field_class . '-union_code', 'plant_code'); ?>
-        </div>      
-        <div class="col-sm-2 padding-right-5">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, $field_class . '-plant_code', 'mcc_code'); ?>
-        </div>      
-        <div class="col-sm-2 padding-right-5">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, $field_class . '-mcc_code', 'bmc_code'); ?>
-        </div>
-    <?php } ?>
+<div class="modal modal-default fade" id="report_search_filter_two" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?php echo $title; ?></h4>
+            </div>
+            <?php
+            $form = ActiveForm::begin([
+                        'method' => 'get',
+                        'id' => 'village-form',
+                        'validateOnSubmit' => true,
+            ]);
+            ?>
+            <div class="row margin_0">
 
-    <div class="col-sm-3 padding-left-0 padding-right-5">
-        <div class="form-group">
-            <?= Yii::$app->controls->date($model, $form, 'max_date')->label(false); ?>
-        </div>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'shift')->dropDownList($shifts)->label(false); ?>
-    </div> 
-    <?php if (!isset($shift_cnt)) { ?>
-        <div class="col-sm-2 padding-left-0 padding-right-5">
-            <div class="form-group">
-                <div class="form-group">
-                    <?= Html::input('number', 'shift_no', $shift_no, ['class' => 'form-control', 'min' => 0]) ?>
+                <div class="modal-body">
+                    <div class="col-sm-6 padding-right-5">
+                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
+                    </div>
+                    <?php if (isset($bmc_filter)) { ?>
+                        <div class="col-sm-6 padding-right-5">
+                            <?= Yii::$app->dropdown->union_plant($model, $form, $field_class . '-union_code', 'plant_code'); ?>
+                        </div>      
+                        <div class="col-sm-6 padding-right-5">
+                            <?= Yii::$app->dropdown->plant_mcc($model, $form, $field_class . '-plant_code', 'mcc_code'); ?>
+                        </div>      
+                        <div class="col-sm-6 padding-right-5">
+                            <?= Yii::$app->dropdown->mcc_bmc($model, $form, $field_class . '-mcc_code', 'bmc_code'); ?>
+                        </div>
+                    <?php } ?>
+
+                    <div class="col-sm-6 padding-left-0 padding-right-5">
+                        <div class="form-group">
+                            <?= Yii::$app->controls->date($model, $form, 'max_date')->label(false); ?>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <?= $form->field($model, 'shift')->dropDownList($shifts)->label(false); ?>
+                    </div> 
+                    <?php if (!isset($shift_cnt)) { ?>
+                        <div class="col-sm-6 padding-left-0 padding-right-5">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <?= Html::input('number', 'shift_no', $shift_no, ['class' => 'form-control', 'min' => 0]) ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <div class="modal-footer mt10 col-sm-12">
+                    <?= Yii::$app->controls->search(); ?>
+                    <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                 </div>
             </div>
+            <?php ActiveForm::end(); ?>
         </div>
-    <?php } ?>
-    <div class="col-sm-2 padding-left-0">
-        <?= Yii::$app->controls->search(); ?>
     </div>
-    <?php ActiveForm::end(); ?>
 </div>
 
+<div class="grid-search search-filter searchBtnReport text-right">
+    <div class="btn-group btn btn-default report_modal_toggle_two"><i class="glyphicon glyphicon-search"></i></div>
+</div>
 <?php
 $script = "
     $('body').on('submit', '#village-form', function() {    
@@ -75,6 +94,11 @@ $script = "
           return false;
        }
     
-});";
+});
+
+        $('.report_modal_toggle_two').on('click', function(){
+            $('#report_search_filter_two').modal('toggle');
+        });
+";
 
 $this->registerJs($script, View::POS_END, 'date-validate');

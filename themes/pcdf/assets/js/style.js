@@ -27,10 +27,10 @@
 
         var window_h = $(window).height();
         var header = $(".menu-wrap").outerHeight();
-        var filterDiv=$("#filter");
-        var filter=0;
+        var filterDiv = $("#filter");
+        var filter = 0;
         if (filterDiv.length) {
-        filter=$("#filter").outerHeight()-9;
+            filter = $("#filter").outerHeight() - 9;
         }
         //console.log(filter);            
         var footer = $("footer").outerHeight();
@@ -50,8 +50,8 @@
         var pgc_body = $(".pgc-modal .modal-body");
         var rparea = $('.panel-main > .panel-body .report-area').outerHeight();
 
-        $(panel_body).css("height", window_h - header - filter - panel_header - panel_margin - footer);
-        $(panel_table).css("height", window_h - header - filter - panel_header - panel_search - panel_table_b - panel_table_a - panel_margin - footer - 2);
+//        $(panel_body).css("height", window_h - header - filter - panel_header - panel_margin - footer);
+//        $(panel_table).css("height", window_h - header - filter - panel_header - panel_search - panel_table_b - panel_table_a - panel_margin - footer - 2);
         $(panel_form_table).css({
             "max-height": "none",
             "height": "auto"
@@ -62,7 +62,7 @@
             "max-height": window_h - 200,
             "overflow-y": "auto"
         });
-        $('.panel-main > .panel-body .report-grid').css("height", window_h - header - filter - panel_header - panel_footer - panel_margin - rparea - 30);
+//        $('.panel-main > .panel-body .report-grid').css("height", window_h - header - filter - panel_header - panel_footer - panel_margin - rparea - 30);
         $(".pgc-modal").on("shown.bs.modal", function () {
             var window_h = $(window).height();
             var pgc_header = $(".pgc-modal .modal-header").outerHeight();
@@ -95,9 +95,9 @@
             var pgc_body = $(".pgc-modal .modal-body");
             var pgc_footer = $(".pgc-modal .modal-footer").outerHeight();
             var rparea = $('.panel-main > .panel-body .report-area').outerHeight();
-            
-            $(panel_body).css("height", window_h - header - filter - panel_header - panel_margin - footer);
-            $(panel_table).css("height", window_h - header - filter - panel_header - panel_search - panel_table_b - panel_table_a - panel_margin - footer - 2);
+
+//            $(panel_body).css("height", window_h - header - filter - panel_header - panel_margin - footer);
+//            $(panel_table).css("height", window_h - header - filter - panel_header - panel_search - panel_table_b - panel_table_a - panel_margin - footer - 2);
             $(panel_form_table).css({
                 "max-height": "none",
                 "height": "auto"
@@ -108,7 +108,7 @@
                 "max-height": window_h - pgc_header - pgc_footer - 65,
                 "overflow-y": "auto"
             });
-            $('.panel-main > .panel-body .report-grid').css("height", window_h - header - filter - panel_header - panel_footer - panel_margin - rparea - 30);
+//            $('.panel-main > .panel-body .report-grid').css("height", window_h - header - filter - panel_header - panel_footer - panel_margin - rparea - 30);
         });
 
         $('.dropdown-submenu a.dropdown-toggle').on("click", function (e) {
@@ -261,13 +261,13 @@
             });
         }
 
-        
+
 
         $("[data-toggle='toggle']").click(function () {
             $("#action").toggleClass('in');
         });
     });
-    $(document).on('ready pjax:success', function(){
-         $('[data-toggle="tooltip"]').tooltip();
-        });
+    $(document).on('ready pjax:success', function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 })(jQuery);

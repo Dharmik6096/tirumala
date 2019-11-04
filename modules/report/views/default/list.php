@@ -19,24 +19,24 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '202 - Society Coll
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
+            <?php echo $this->render('_search', ['model' => $model, 'orgFilter' => true]); ?>
             <div class="report-area">
-                <?php echo $this->render('_search', ['model' => $model, 'orgFilter' => true]); ?>
 
                 <?php
                 $attribute = [
-                    ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name')],
+                        ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name')],
                     'district_name',
-                    ['attribute' => 'plant_name', 'label' => Yii::t('app', 'Plant')],
-                    ['attribute' => 'mcc_name', 'label' => Yii::t('app', 'MCC')],
-                    ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'BMC')],
-                    ['attribute' => 'society_code', 'label' => Yii::t('app', 'Society Code')],
-                    ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Old Soc. Code')],
-                    ['attribute' => 'society_name', 'label' => Yii::t('app', 'Society Name')],
+                        ['attribute' => 'plant_name', 'label' => Yii::t('app', 'Plant')],
+                        ['attribute' => 'mcc_name', 'label' => Yii::t('app', 'MCC')],
+                        ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'BMC')],
+                        ['attribute' => 'society_code', 'label' => Yii::t('app', 'Society Code')],
+                        ['attribute' => 'dcs_code_ex', 'label' => Yii::t('app', 'Old Soc. Code')],
+                        ['attribute' => 'society_name', 'label' => Yii::t('app', 'Society Name')],
                     'first_date_of_data_received',
                     'last_date_of_data_received',
                     'total_shift',
                     'no_of_shift',
-                    ['attribute' => 'shift_per', 'value' => function($model) {
+                        ['attribute' => 'shift_per', 'value' => function($model) {
                             return $model['shift_per'] . '%';
                         }]
                 ];

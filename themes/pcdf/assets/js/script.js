@@ -13,8 +13,7 @@ var initDepdropMs;
             if (value != '')
             {
                 $s2.multiselect('enable');
-            }
-            else
+            } else
             {
                 $s2.multiselect('disable');
             }
@@ -26,6 +25,25 @@ var initDepdropMs;
         });
     };
     $(document).ready(function () {
+        var num;
+        var $tds;
+        var tdsx = $("table.kv-grid-table").children('tbody').children('tr:first-child').children('td').length;
+        $("table.kv-grid-table").each(function (i, t) {
+            $tds = $("td", t);
+            num = $tds.length;
+            if (tdsx > 1) {
+                for (var i = tdsx; i < num; i++) {
+                    var t = $tds.eq(i).text();
+                    if ($tds.eq(i).text().length > 10)
+                    {
+                        $tds.eq(i).text(t.substr(0, 10));
+                        $tds.eq(i).attr("title", t);
+                    }
+
+                }
+            }
+
+        });
 
         $('.shift select option[value=\'3\']').remove();
         var toolbar = $('#importModal');
@@ -155,7 +173,7 @@ var initDepdropMs;
         function setHeight() {
             var page_height = $(".pagination").height();
             var toolbar_height = $(".kv-grid-toolbar").height();
-            var search_height = $(".grid-search").height();
+            var search_height = 0;//$(".grid-search").height();
             if (page_height === null) {
                 page_height = 0;
             } else {
@@ -172,14 +190,14 @@ var initDepdropMs;
             } else {
                 search_height += 70;
             }
-            $(".kv-grid-wrapper").height($(".panel-body").height() - search_height - page_height);
+//            $(".kv-grid-wrapper").height($(".panel-body").height() - search_height - page_height);
         }
 
         $(window).on("load", function () {
             $('.kv-grid-wrapper.kv-grid-container .table.table-bordered.table-hover.kv-grid-table.kv-table-wrap').each(function () {
                 var min_height = $("thead").height();
                 var table_height = $(this).height();
-                $(this).closest($(".kv-grid-wrapper.kv-grid-container")).css({"max-height": table_height + 5, "min-height": min_height + 80});
+//                $(this).closest($(".kv-grid-wrapper.kv-grid-container")).css({"max-height": table_height + 5, "min-height": min_height + 80});
             });
             setHeight();
         });
