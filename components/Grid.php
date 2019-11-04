@@ -67,7 +67,7 @@ class Grid extends Widget {
             'options' => ['class' => 'grid-content',]]);
 
         $columns = [
-            ['class' => 'kartik\grid\SerialColumn', 'order' => DynaGrid::ORDER_FIX_LEFT, 'mergeHeader' => false, 'headerOptions' => ['class' => 'seq-cell'], 'vAlign' => 'top'],
+                ['class' => 'kartik\grid\SerialColumn', 'order' => DynaGrid::ORDER_FIX_LEFT, 'mergeHeader' => false, 'headerOptions' => ['class' => 'seq-cell'], 'vAlign' => 'top'],
         ];
 
         if (isset($grid_option->actions)) {
@@ -101,7 +101,7 @@ class Grid extends Widget {
                             return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
                         }
                     },
-                            'update' => function ($url, $model)use ($grid_option) {
+                    'update' => function ($url, $model)use ($grid_option) {
                         if (isset($grid_option->actions['update']) && $grid_option->actions['update'] !== FALSE) {
                             if (is_callable($grid_option->actions['update'])) {
                                 return $grid_option->actions['update']($url, $model);
@@ -109,7 +109,7 @@ class Grid extends Widget {
                             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
                         }
                     },
-                            'delete' => function ($url, $model) use ($option, $grid_option) {
+                    'delete' => function ($url, $model) use ($option, $grid_option) {
                         $baseurl = Yii::$app->request->baseUrl . '/';
                         $checkUrl = str_replace($baseurl, '', $url);
                         $checkUrl = explode('?', $checkUrl)[0];
@@ -138,218 +138,217 @@ class Grid extends Widget {
                             return Html::a('<i class="fa fa-trash"></i>', 'javascript:void(0)', $options);
                         }
                     },
-                        ]
-                    ];
+                ]
+            ];
 
-                    array_push($columns, $action_column);
-                    foreach ($grid_option->actions as $key => $a) {
-                        if (!($key == 'delete' || $key == 'view' || $key === 'update')) {
-                            $columns[1]['buttons'][$key] = $a;
+            array_push($columns, $action_column);
+            foreach ($grid_option->actions as $key => $a) {
+                if (!($key == 'delete' || $key == 'view' || $key === 'update')) {
+                    $columns[1]['buttons'][$key] = $a;
+                }
+            }
+        }
+
+
+        foreach ($grid_option->attributes as $g) {
+            array_push($columns, $g);
+        }
+        //$export_column = $grid_option->attributes;
+        foreach ($grid_option->attributes as $col) {
+            if (is_array($col))
+                if (array_key_exists('visible', $col)) {
+                    $col['visible'] = true;
+                }
+            $export_column[] = $col;
+        }
+
+        if ($grid_option->active_column) {
+            $active_column = $this->activeColumn($searchModel);
+            array_push($columns, $active_column);
+            $export_column[] = $active_column;
+        }
+        $exportConfig = [
+            ExportMenu::FORMAT_HTML => FALSE,
+            ExportMenu::FORMAT_TEXT => FALSE,
+            ExportMenu::FORMAT_PDF => FALSE,
+            ExportMenu::FORMAT_EXCEL => FALSE,
+            ExportMenu::FORMAT_EXCEL_X => [
+                'label' => 'Excel',
+            ]
+        ];
+        foreach ($removeExportType as $type) {
+            $exportConfig[$type] = FALSE;
+        }
+        $ExportWidget = [
+            'dataProvider' => $dataProvider,
+            // 'template'=>'{menu}',
+            'columns' => $export_column,
+            'target' => ExportMenu::TARGET_BLANK,
+            'filename' => empty($this->view->title) ? 'grid-export' : str_replace(' ', '-', $this->view->title),
+            'clearBuffers' => TRUE,
+            'fontAwesome' => true,
+            'showColumnSelector' => true,
+            'asDropdown' => true, // this is important for this case so we just need to get a HTML list
+            'dropdownOptions' => [
+                'label' => '<i class="glyphicon"></i>'
+            ],
+            'exportConfig' => $exportConfig
+        ];
+        foreach ($exportEvents as $event => $content) {
+            $ExportWidget[$event] = $content;
+        }
+        $fullExportMenu = ExportMenu::widget($ExportWidget);
+
+        DynaGrid::begin([
+            'columns' => $columns,
+            'options' => ['id' => $grid_option->id],
+            'theme' => 'simple-default',
+            'showPersonalize' => true,
+            'storage' => 'cookie',
+            'showSort' => true,
+            'gridOptions' => [
+                'dataProvider' => $dataProvider,
+                'tableOptions' => array('class' => 'table table-bordered table-hover'),
+                'filterModel' => $filter ? $searchModel : false,
+                'showPageSummary' => !empty($grid_option->showPageSummary) ? $grid_option->showPageSummary : false,
+//                        'floatHeader' => $fixed_header,
+//                        'floatOverflowContainer' => $fixed_header,
+                'pjax' => false,
+                'panel' => ['heading' => false, 'before' => '',
+                    'after' => '<div class="text-right padding-right-5">{pager}</div>',
+                    'footer' => false],
+                'toolbar' => [
+                        ['content' =>
+                        Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
+                    ],
+                        ['content' => '{dynagrid}'],
+                    //  '{export}',
+                    $fullExportMenu
+                ],
+            ]
+        ]);
+        DynaGrid::end();
+        Pjax::end();
+        $this->run();
+    }
+
+    private function activeColumn($searchModel) {
+        return ['attribute' => 'is_active',
+            'class' => 'kartik\grid\BooleanColumn',
+            'header' => Yii::t('app', 'Status'), 'width' => '100px', //                    
+            'trueLabel' => 'Active',
+            'falseLabel' => 'In Active',
+            'trueIcon' => '<span>Active</span>',
+            'falseIcon' => '<span>In Active</span>',
+        ];
+    }
+
+    private function getVerificationActions($table_name, $grid_option) {
+        $bind_script = FALSE;
+        $kyc_script = FALSE;
+        $message = '';
+        if (in_array($table_name, array('tbl_bank_details', 'tbl_member', 'tbl_transporter'))) {
+            $bind_script = TRUE;
+            $grid_option['actions']['verify-bank-detail'] = function($url, $model) {
+                if ($model->is_active == 1 && !empty($model->bank_account_no)) {
+                    $flag = Yii::$app->controller->id;
+                    $verification = new TblVerification();
+                    $details = $verification->getBankDetails($flag);
+                    if ($details) {
+                        $checkdata = TblVerification::find()->where(['module_name' => $details['model'], 'module_id' => $model->{$details['field']}, 'module_field' => $details['verify_field']])->all();
+                        if (!$checkdata) {
+                            $bank = '';
+                            $branch = '';
+                            if ($model->bankCode) {
+                                $bank = $model->bankCode->bank_name;
+                            }
+                            if ($model->branchCode) {
+                                $branch = $model->branchCode->branch_name;
+                            }
+                            $name = !empty($model->member_name) ? '<br/> Member Name : ' . $model->member_name : '';
+                            $id = $flag . ',' . $model->{$details['field']};
+                            $VURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '1']);
+                            $RURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '2']);
+                            $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify bank details ?' . $name . '<br/> Bank : ' . $bank . '<br/> Branch : ' . $branch . '<br/> Acc. No. : ' . $model->bank_account_no . '<br/> IFSC : ' . $model->ifsc . '</span></div></div > ';
+                            $options = ['data-name' => $model->bank_account_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Bank Detail',
+                                'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
+                            return GhostHtml::a('<i class="fa fa-bank"></i>', $VURL, $options);
+                        } else {
+                            if ($checkdata[0]->status == 1) {
+                                return GhostHtml::a('<i class="fa fa-bank text-success"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+                                            'data-placement' => 'top',
+                                            'data-original-title' => 'Verified',
+                                ]);
+                            } else if ($checkdata[0]->status == 2) {
+                                return GhostHtml::a('<i class="fa fa-bank text-danger"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+                                            'data-placement' => 'top',
+                                            'data-original-title' => 'Rejected',
+                                ]);
+                            }
                         }
                     }
                 }
+            };
+        }
 
-
-                foreach ($grid_option->attributes as $g) {
-                    array_push($columns, $g);
-                }
-                //$export_column = $grid_option->attributes;
-                foreach ($grid_option->attributes as $col) {
-                    if (is_array($col))
-                        if (array_key_exists('visible', $col)) {
-                            $col['visible'] = true;
-                        }
-                    $export_column[] = $col;
-                }
-
-                if ($grid_option->active_column) {
-                    $active_column = $this->activeColumn($searchModel);
-                    array_push($columns, $active_column);
-                    $export_column[] = $active_column;
-                }
-                $exportConfig = [
-                    ExportMenu::FORMAT_HTML => FALSE,
-                    ExportMenu::FORMAT_TEXT => FALSE,
-                    ExportMenu::FORMAT_PDF => FALSE,
-                    ExportMenu::FORMAT_EXCEL => FALSE,
-                    ExportMenu::FORMAT_EXCEL_X => [
-                        'label' => 'Excel',
-                    ]
-                ];
-                foreach ($removeExportType as $type) {
-                    $exportConfig[$type] = FALSE;
-                }
-                $ExportWidget = [
-                    'dataProvider' => $dataProvider,
-                    // 'template'=>'{menu}',
-                    'columns' => $export_column,
-                    'target' => ExportMenu::TARGET_BLANK,
-                    'filename' => empty($this->view->title) ? 'grid-export' : str_replace(' ', '-', $this->view->title),
-                    'clearBuffers' => TRUE,
-                    'fontAwesome' => true,
-                    'showColumnSelector' => true,
-                    'asDropdown' => true, // this is important for this case so we just need to get a HTML list
-                    'dropdownOptions' => [
-                        'label' => '<i class="glyphicon"></i>'
-                    ],
-                    'exportConfig' => $exportConfig
-                ];
-                foreach ($exportEvents as $event => $content) {
-                    $ExportWidget[$event] = $content;
-                }
-                $fullExportMenu = ExportMenu::widget($ExportWidget);
-
-                DynaGrid::begin([
-                    'columns' => $columns,
-                    'options' => ['id' => $grid_option->id],
-                    'theme' => 'simple-default',
-                    'showPersonalize' => true,
-                    'storage' => 'cookie',
-                    'showSort' => true,
-                    'gridOptions' => [
-
-                        'dataProvider' => $dataProvider,
-                        'tableOptions' => array('class' => 'table table-bordered table-hover'),
-                        'filterModel' => $filter ? $searchModel : false,
-                        'showPageSummary' => !empty($grid_option->showPageSummary) ? $grid_option->showPageSummary : false,
-                        'floatHeader' => $fixed_header,
-                        'floatOverflowContainer' => $fixed_header,
-                        'pjax' => false,
-                        'panel' => [ 'heading' => false, 'before' => '',
-                            'after' => '<div class="text-right padding-right-5">{pager}</div>',
-                            'footer' => false],
-                        'toolbar' => [
-                            ['content' =>
-                                Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
-                            ],
-                            ['content' => '{dynagrid}'],
-                            //  '{export}',
-                            $fullExportMenu
-                        ],
-                    ]
-                ]);
-                DynaGrid::end();
-                Pjax::end();
-                $this->run();
-            }
-
-            private function activeColumn($searchModel) {
-                return ['attribute' => 'is_active',
-                    'class' => 'kartik\grid\BooleanColumn',
-                    'header' => Yii::t('app', 'Status'), 'width' => '100px', //                    
-                    'trueLabel' => 'Active',
-                    'falseLabel' => 'In Active',
-                    'trueIcon' => '<span>Active</span>',
-                    'falseIcon' => '<span>In Active</span>',
-                ];
-            }
-
-            private function getVerificationActions($table_name, $grid_option) {
-                $bind_script = FALSE;
-                $kyc_script = FALSE;
-                $message = '';
-                if (in_array($table_name, array('tbl_bank_details', 'tbl_member', 'tbl_transporter'))) {
-                    $bind_script = TRUE;
-                    $grid_option['actions']['verify-bank-detail'] = function($url, $model) {
-                        if ($model->is_active == 1 && !empty($model->bank_account_no)) {
-                            $flag = Yii::$app->controller->id;
-                            $verification = new TblVerification();
-                            $details = $verification->getBankDetails($flag);
-                            if ($details) {
-                                $checkdata = TblVerification::find()->where(['module_name' => $details['model'], 'module_id' => $model->{$details['field']}, 'module_field' => $details['verify_field']])->all();
-                                if (!$checkdata) {
-                                    $bank = '';
-                                    $branch = '';
-                                    if ($model->bankCode) {
-                                        $bank = $model->bankCode->bank_name;
-                                    }
-                                    if ($model->branchCode) {
-                                        $branch = $model->branchCode->branch_name;
-                                    }
-                                    $name = !empty($model->member_name) ? '<br/> Member Name : ' . $model->member_name : '';
-                                    $id = $flag . ',' . $model->{$details['field']};
-                                    $VURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '1']);
-                                    $RURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '2']);
-                                    $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify bank details ?' . $name . '<br/> Bank : ' . $bank . '<br/> Branch : ' . $branch . '<br/> Acc. No. : ' . $model->bank_account_no . '<br/> IFSC : ' . $model->ifsc . '</span></div></div > ';
-                                    $options = ['data-name' => $model->bank_account_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Bank Detail',
-                                        'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
-                                    return GhostHtml::a('<i class="fa fa-bank"></i>', $VURL, $options);
-                                } else {
-                                    if ($checkdata[0]->status == 1) {
-                                        return GhostHtml::a('<i class="fa fa-bank text-success"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
-                                                    'data-placement' => 'top',
-                                                    'data-original-title' => 'Verified',
-                                        ]);
-                                    } else if ($checkdata[0]->status == 2) {
-                                        return GhostHtml::a('<i class="fa fa-bank text-danger"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
-                                                    'data-placement' => 'top',
-                                                    'data-original-title' => 'Rejected',
-                                        ]);
-                                    }
-                                }
+        if (in_array($table_name, array('tbl_contact_details', 'tbl_member'))) {
+            $bind_script = TRUE;
+            $grid_option['actions']['verify-contact-detail'] = function($url, $model) {
+                if ($model->is_active == 1 && !empty($model->mobile_no)) {
+                    $flag = Yii::$app->controller->id;
+                    $verification = new TblVerification();
+                    $details = $verification->getContactDetails($flag);
+                    if ($details) {
+                        $checkdata = TblVerification::find()->where(['module_name' => $details['model'], 'module_id' => $model->{$details['field']}, 'module_field' => $details['verify_field']])->all();
+                        if (!$checkdata) {
+                            $name = !empty($model->member_name) ? '<br/> Member Name : ' . $model->member_name : '';
+                            $id = $flag . ',' . $model->{$details['field']};
+                            $VURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '1']);
+                            $RURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '2']);
+                            $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify Contact details ?' . $name . '<br/> Mobile No. : ' . $model->mobile_no . '</span></div></div > ';
+                            $options = ['data-name' => $model->mobile_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Contact Detail',
+                                'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
+                            return GhostHtml::a('<i class="fa fa-phone-square"></i>', $VURL, $options);
+                        } else {
+                            if ($checkdata[0]->status == 1) {
+                                return GhostHtml::a('<i class="fa fa-phone-square text-success"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+                                            'data-placement' => 'top',
+                                            'data-original-title' => 'Verified',
+                                ]);
+                            } else if ($checkdata[0]->status == 2) {
+                                return GhostHtml::a('<i class="fa fa-phone-square text-danger"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+                                            'data-placement' => 'top',
+                                            'data-original-title' => 'Rejected',
+                                ]);
                             }
                         }
-                    };
+                    }
                 }
-
-                if (in_array($table_name, array('tbl_contact_details', 'tbl_member'))) {
-                    $bind_script = TRUE;
-                    $grid_option['actions']['verify-contact-detail'] = function($url, $model) {
-                        if ($model->is_active == 1 && !empty($model->mobile_no)) {
-                            $flag = Yii::$app->controller->id;
-                            $verification = new TblVerification();
-                            $details = $verification->getContactDetails($flag);
-                            if ($details) {
-                                $checkdata = TblVerification::find()->where(['module_name' => $details['model'], 'module_id' => $model->{$details['field']}, 'module_field' => $details['verify_field']])->all();
-                                if (!$checkdata) {
-                                    $name = !empty($model->member_name) ? '<br/> Member Name : ' . $model->member_name : '';
-                                    $id = $flag . ',' . $model->{$details['field']};
-                                    $VURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '1']);
-                                    $RURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '2']);
-                                    $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify Contact details ?' . $name . '<br/> Mobile No. : ' . $model->mobile_no . '</span></div></div > ';
-                                    $options = ['data-name' => $model->mobile_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Contact Detail',
-                                        'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
-                                    return GhostHtml::a('<i class="fa fa-phone-square"></i>', $VURL, $options);
-                                } else {
-                                    if ($checkdata[0]->status == 1) {
-                                        return GhostHtml::a('<i class="fa fa-phone-square text-success"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
-                                                    'data-placement' => 'top',
-                                                    'data-original-title' => 'Verified',
-                                        ]);
-                                    } else if ($checkdata[0]->status == 2) {
-                                        return GhostHtml::a('<i class="fa fa-phone-square text-danger"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
-                                                    'data-placement' => 'top',
-                                                    'data-original-title' => 'Rejected',
-                                        ]);
-                                    }
-                                }
-                            }
+            };
+        }
+        if (in_array($table_name, array('tbl_member'))) {
+            $grid_option['actions']['kyc-detail'] = function($url, $model) {
+                if ($model->is_active == 1 && !empty($model->bank_account_no)) {
+                    $flag = Yii::$app->controller->id;
+                    $verification = new TblVerification();
+                    $details = $verification->getBankDetails($flag);
+                    if ($details) {
+                        $checkdata = TblKycRecord::find()->where(['module_name' => $details['model'], 'module_id' => $model->{$details['field']}])->all();
+                        if (!$checkdata) {
+                            $KYCURL = Url::to(['/verification/verification/kyc-detail']);
+                            $options = ['data-name' => $details['model'], 'data-val' => $model->{$details['field']}, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Detail', 'class' => 'kyc-modal'];
+                            return GhostHtml::a_alert('<i class="fa fa-id-badge"></i>', $KYCURL, $options);
+                        } else {
+                            return GhostHtml::a('<i class="fa fa-id-badge text-success"></i>', ['/verification/verification/kyc-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+                                        'data-placement' => 'top',
+                            ]);
                         }
-                    };
+                    }
                 }
-                if (in_array($table_name, array('tbl_member'))) {
-                    $grid_option['actions']['kyc-detail'] = function($url, $model) {
-                        if ($model->is_active == 1 && !empty($model->bank_account_no)) {
-                            $flag = Yii::$app->controller->id;
-                            $verification = new TblVerification();
-                            $details = $verification->getBankDetails($flag);
-                            if ($details) {
-                                $checkdata = TblKycRecord::find()->where(['module_name' => $details['model'], 'module_id' => $model->{$details['field']}])->all();
-                                if (!$checkdata) {
-                                    $KYCURL = Url::to(['/verification/verification/kyc-detail']);
-                                    $options = ['data-name' => $details['model'], 'data-val' => $model->{$details['field']}, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Detail', 'class' => 'kyc-modal'];
-                                    return GhostHtml::a_alert('<i class="fa fa-id-badge"></i>', $KYCURL, $options);
-                                } else {
-                                    return GhostHtml::a('<i class="fa fa-id-badge text-success"></i>', ['/verification/verification/kyc-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
-                                                'data-placement' => 'top',
-                                    ]);
-                                }
-                            }
-                        }
-                    };
-                }
-                if ($bind_script) {
-                    $script = "
+            };
+        }
+        if ($bind_script) {
+            $script = "
       function VerifyAlert(vurl,rurl,message){
        event.preventDefault();
      bootbox.dialog({
@@ -381,10 +380,9 @@ class Grid extends Widget {
 }                
 
 ";
-                    Yii::$app->view->registerJs($script, View::POS_END, 'verify-data');
-                }
-                return $grid_option;
-            }
-
+            Yii::$app->view->registerJs($script, View::POS_END, 'verify-data');
         }
-        
+        return $grid_option;
+    }
+
+}

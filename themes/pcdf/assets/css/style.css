@@ -35,7 +35,7 @@ body{
     padding-top: 70px;
     color: #607188;
     font-family: poppins;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.5;
     font-weight: 400;
 }
@@ -330,7 +330,7 @@ h5 .badge{
     margin-top: 5px;
 }
 .panel-button ul li:last-child .btn{
-    margin-bottom: 15px;
+    /*margin-bottom: 15px;*/
 }
 .panel-button ul li .btn{
     padding: 8px 15px;
@@ -581,12 +581,12 @@ td.action-cell a{
     padding: 0 5px;
 }
 td.action-cell a i{
-    background-color: #E8F0FE;
-    height: 30px;
-    width: 30px;
+    /*background-color: #E8F0FE;*/
+    height: 15px;
+    width: 15px;
     color: #607188;
     text-align: center;
-    line-height: 30px;
+    line-height: 15px;
     font-size: 16px;
     border-radius: 50%;
     margin: 2px 0;
@@ -1939,7 +1939,7 @@ ul.orderable label.checked {
 
 .report-grid {
     /*max-height: 400px;*/
-    overflow: scroll;
+    /*overflow: scroll;*/
 }
 .formula{
     pointer-events: none !important;
@@ -2041,7 +2041,7 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 }
 
 .grid-search.search-filter {
-    position: relative !important;
+    /*position: relative !important;*/
     width: calc(100% - 220px) !important;
 }
 
@@ -2238,4 +2238,67 @@ div.crystalstyle{
 }
 .report-area .kv-panel-before [title="Personalize grid settings"] {
     display: none !important;
+}
+
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding:2px !important;
+}
+
+.panel  {
+    /*min-height: calc(100vH - 100px);*/
+    height: auto;
+    margin: 0;
+    overflow: hidden;
+}
+.panel.panel-default{
+    min-height: calc(100vH - 100px);
+}
+.actionButtons{
+    position: absolute;
+    top: 75px;
+    z-index: 9;
+    right: 25px;
+}
+
+#menu_buttons {
+    position: absolute;
+    top: 117px;
+    z-index: 9;
+    right: 15px;
+}
+
+#menu_buttons ul {
+    padding: 5px;
+    background: #fff;
+    border: 1px solid;
+}
+
+#menu_buttons ul.dropdown-menu{
+    position: relative !important;
+
+}
+
+.margin_0 {
+    margin: 0
+}
+.modal-open{
+    padding-right: 0px !important
+}
+.min_h_0{
+    min-height: auto !important
+}
+
+.height_65 {
+    height: 65px
+}
+
+
+.report-area .grid-search.search-filter {
+    width: calc(100% - 175px) !important;
+}
+
+.grid-search.search-filter.beforeGridLoad{
+    width: calc(100% - 10px) !important;
+    position: relative !important
 }

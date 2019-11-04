@@ -15,14 +15,14 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '215 - DPMCU Inform
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
+            <?php echo $this->render('_search_custom', ['model' => $model, 'bmc_filter' => true, 'shift_cnt' => FALSE]); ?>
             <div class="report-area">
-                <?php echo $this->render('_search_custom', ['model' => $model, 'bmc_filter' => true, 'shift_cnt' => FALSE]); ?>
 
                 <?php
                 $attribute = [
-                    ['attribute' => 'bmc_name', 'filter' => false],
-                    ['attribute' => 'dcs_code', 'filter' => false],
-                    ['attribute' => 'dcs_name', 'filter' => false],
+                        ['attribute' => 'bmc_name', 'filter' => false],
+                        ['attribute' => 'dcs_code', 'filter' => false],
+                        ['attribute' => 'dcs_name', 'filter' => false],
                     'DPU_SerialNo',
                     'DPUVersionNo',
                     'MA_Internal_Number',

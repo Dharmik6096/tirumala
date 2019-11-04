@@ -15,17 +15,17 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '209 - Society-Day 
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
+            <?php echo $this->render('_search_dpu', ['model' => $model]); ?>
             <div class="report-area">
-                <?php echo $this->render('_search_dpu', ['model' => $model]); ?>
 
                 <?php
                 $attribute = [
-                    ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
-                    ['attribute' => 'district_name', 'filter' => false],
-                    ['attribute' => 'dcs_code', 'filter' => false],
-                    ['attribute' => 'dcs_name', 'filter' => false],
-                    ['attribute' => 'MinDate', 'filter' => false],
-                    ['attribute' => 'Summary', 'filter' => false],
+                        ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                        ['attribute' => 'district_name', 'filter' => false],
+                        ['attribute' => 'dcs_code', 'filter' => false],
+                        ['attribute' => 'dcs_name', 'filter' => false],
+                        ['attribute' => 'MinDate', 'filter' => false],
+                        ['attribute' => 'Summary', 'filter' => false],
                 ];
                 if (!empty($extra))
                     $attribute = array_merge($attribute, $extra);

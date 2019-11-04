@@ -65,7 +65,7 @@ $bmc_ecollection = array_column(array_values($bmc_collection), 'e_quantity');
 $bmc_ecollection = json_encode($bmc_ecollection);
 ?>
 <div class="panel-group row panel-fixed" id="filter">
-    <div class="panel panel-default">
+    <div class="panel panel-default min_h_0">
         <div class="panel-heading text-center">
             <h4 class="panel-title">
                 <?= Yii::t('app', 'Data for PCDF') . ' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
