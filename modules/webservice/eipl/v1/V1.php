@@ -336,6 +336,11 @@ class V1 extends \yii\base\Module {
                 'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
                 'sp' => 'sp_app_eipl_v1_dashboard_dsk_total_member',
             ],
+            'dashboard/calendar' => [
+                'param' => 'month#member',
+                'sp' => 'sp_app_eipl_v1_dashboard_member_calendar',
+                'call_action' => TRUE
+            ],
         ];
         return $label;
     }
