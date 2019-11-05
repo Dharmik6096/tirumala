@@ -388,6 +388,22 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'is_weight_manual',
+                                'format' => 'html',
+                                'value' => $model->is_weight_manual == 1 ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'is_quality_manual',
+                                'format' => 'html',
+                                'value' => $model->is_quality_manual == 1 ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget

@@ -184,11 +184,12 @@ class TblDcs extends ChildModel {
             ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
             [['dcs_code_ex'], 'number'],
             [['is_active'], 'default', 'value' => 1],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual'], 'safe'],
             [['is_dispatch_mandate'], 'default', 'value' => 0],
             [['is_dispatch_mandate'], function ($attribute, $params) {
                     Yii::$app->general->vaildateCheckBoxValue($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
         ];
     }
 
@@ -285,6 +286,8 @@ class TblDcs extends ChildModel {
             'is_name_request' => Yii::t('app', 'Member Download Status'),
             'rate_flag' => Yii::t('app', 'Rate Download Status'),
             'is_dispatch_mandate' => Yii::t('app', 'Is Dispatch Mandate'),
+            'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
+            'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
         ];
     }
 
