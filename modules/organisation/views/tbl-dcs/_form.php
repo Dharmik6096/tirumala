@@ -229,6 +229,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-3">
             <?= Yii::$app->controls->active($model, $form); ?>
