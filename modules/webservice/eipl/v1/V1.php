@@ -341,6 +341,42 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_dashboard_member_calendar',
                 'call_action' => TRUE
             ],
+            'dashboard/dsk-memberdiff' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_pie_member_diff',
+            ],
+            'dashboard/dsk-societycollection' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_pie_society_collection',
+            ],
+            'dashboard/bmc-societydiff' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_pie_society_diff',
+            ],
+            'dashboard/bmc-bmccollection' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_pie_bmc_collection',
+            ],
+            'dashboard/society-comparison' => [
+                'param' => 'union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_bar_society_comparison',
+                'call_action' => TRUE
+            ],
+            'dashboard/bmc-comparison' => [
+                'param' => 'union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_bar_bmc_comparison',
+                'call_action' => TRUE
+            ],
+            'dashboard/society-weekly-collection' => [
+                'param' => 'union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_bar_society_weekly_collection',
+                'call_action' => TRUE
+            ],
+            'dashboard/bmc-weekly-collection' => [
+                'param' => 'union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_widget_bar_bmc_weekly_collection',
+                'call_action' => TRUE
+            ],
         ];
         return $label;
     }
