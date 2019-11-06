@@ -29,6 +29,7 @@ $config = [
         'apiError' => ['class' => 'app\modules\webservice\components\SetError'],
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
         'sqlite' => ['class' => 'app\components\SqliteCreate'],
+        'alertnotification' => ['class' => 'app\components\AlertNotification'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -226,6 +227,7 @@ $config = [
         'syncutility' => ['class' => 'app\modules\syncutility\SyncUtility',],
         'configuration' => ['class' => 'app\modules\configuration\configuration',],
         'eipl' => ['class' => 'app\modules\webservice\eipl\Eipl',],
+        'sms' => ['class' => 'app\modules\sms\Sms',],
     ],
     'params' => $params,
 ];
