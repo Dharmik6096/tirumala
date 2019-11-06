@@ -21,13 +21,14 @@ use ReflectionClass;
 class DefaultController extends \app\controllers\ChildController {
 
     public $importClass = '\ruskid\csvimporter\CustomARImportStrategy';
-    public $old_att = [];//array('dcs', 'animal_type_code');
-    public $change_att = [];//array('society', 'milk_type_code');
+    public $old_att = []; //array('dcs', 'animal_type_code');
+    public $change_att = []; //array('society', 'milk_type_code');
 
-/**
+    /**
      * Renders the index view for the module
      * @return string
      */
+
     public function actionIndex($flag, $selected = '', $required = '', $type = 'create') {
         if (Yii::$app->request->post()) {
             $post = Yii::$app->request->post();
@@ -37,7 +38,7 @@ class DefaultController extends \app\controllers\ChildController {
             $data = \app\modules\customimport\importData::getLabels($flag);
             if (!empty($selected)) {
                 $data['fields'] = $selected;
-                $data['scenario']='customImport';
+                $data['scenario'] = 'customImport';
             }
             //var_dump($data['fields']); exit;
             $table = (!empty($data['import_class'])) ? $data['import_class'] : $data['table_name'];
@@ -53,7 +54,7 @@ class DefaultController extends \app\controllers\ChildController {
             }
             $historyClass = !empty($data['history_class']) ? Yii::$app->path->define($data['history_class']) : '';
             $data['history_class'] = !empty($historyClass) ? $historyClass : '';
-            
+
             if ($ext == 'csv') {
                 $values = $this->importCsv($post['file_name'], $className, $data, $post['mapping'], $flag, $required, $type);
             } else if ($ext == 'xls' || $ext == 'xlsx') {
@@ -71,6 +72,10 @@ class DefaultController extends \app\controllers\ChildController {
             if (!empty($data['import_main_class']) && $mappingFlag != 1) {
                 $importClass = Yii::$app->path->get($data['import_main_class']);
                 $this->importClass = $importClass . $data['import_main_class'];
+            }
+            if ($type == 'update' && !empty($data['import_update_class']) && $mappingFlag != 1) {
+                $importClass = Yii::$app->path->get($data['import_update_class']);
+                $this->importClass = $importClass . $data['import_update_class'];
             }
             $importer = new CSVImporter();
             $fields = $data['fields'];
@@ -182,7 +187,7 @@ class DefaultController extends \app\controllers\ChildController {
         $importer = new Importer([
             'filePath' => Yii::$app->basePath . '/web/import/' . trim($fileName),
             'standardModelsConfig' => [
-                [
+                    [
                     'className' => $className::className(),
                     'defalutValues' => $default_value,
                     'standardAttributesConfig' => $config_value

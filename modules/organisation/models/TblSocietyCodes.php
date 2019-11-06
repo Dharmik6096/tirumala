@@ -40,17 +40,17 @@ class TblSocietyCodes extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_code', 'union_code'], 'required', 'except' => 'saveCreamyData'],
-            [['route_code'], 'required', 'on' => 'societycode'],
+                [['dcs_code', 'union_code'], 'required', 'except' => 'saveCreamyData'],
+                [['route_code'], 'required', 'on' => 'societycode'],
             //[['imei_no'],'required','on'=>'societycode'],
             /* [['imei_no'],'unique','skipOnEmpty'=>'true','on'=>'societycode','when' => function ($model, $attribute) {
               return $model->{$attribute} !== $model->getOldAttribute($attribute);
               },], */
-            [['imei_no'], function ($attribute, $params) {
-            $this->valiadteUniqueImei($this, $attribute, $params);
-        }, 'skipOnEmpty' => true, 'except' => 'saveCreamyData'],
-            [['dcs_code', 'bmc_code', 'union_code', 'pooling_point_code', 'imei_no', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'vendor_code', 'imei_no', 'bipl_code', 'route_code'], 'safe']
+                [['imei_no'], function ($attribute, $params) {
+                    $this->valiadteUniqueImei($this, $attribute, $params);
+                }, 'skipOnEmpty' => true, 'except' => 'saveCreamyData'],
+                [['dcs_code', 'bmc_code', 'union_code', 'pooling_point_code', 'imei_no', 'created_by', 'updated_by'], 'string'],
+                [['created_at', 'updated_at', 'vendor_code', 'imei_no', 'bipl_code', 'route_code'], 'safe']
 
                 //[['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
@@ -137,6 +137,12 @@ class TblSocietyCodes extends \app\models\ChildModel {
         if ($values != 0) {
             $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . " '" . $model->imei_no . "'" . ' is already taken.'));
         }
+    }
+
+    public function getRecord() {
+        return $this->find()
+                        ->where(['dcs_code' => $this->dcs_code])
+                        ->one();
     }
 
 }

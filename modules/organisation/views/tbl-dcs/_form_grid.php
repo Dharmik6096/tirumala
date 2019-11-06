@@ -164,6 +164,18 @@ $attribute = [
             return ($model->is_dispatch_mandate == 1) ? 'Yes' : 'No';
         }, 'visible' => FALSE
     ],
+    [
+        'attribute' => 'is_weight_manual', 'filter' => false,
+        'value' => function($model) {
+            return ($model->is_weight_manual == 1) ? 'Yes' : 'No';
+        }, 'visible' => FALSE
+    ],
+    [
+        'attribute' => 'is_quality_manual', 'filter' => false,
+        'value' => function($model) {
+            return ($model->is_quality_manual == 1) ? 'Yes' : 'No';
+        }, 'visible' => FALSE
+    ],
 ];
 
 $grid_option = [
