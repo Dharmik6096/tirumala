@@ -20,7 +20,7 @@ class HttpResponse extends \yii\base\Component {
             $this->response['data'] = ($this->apply_camel_case) ? $this->underscoreToCamelCase($response['data']) : $response['data'];
             $this->response['error']['message'] = $response['message'];
         } else {
-            $this->response['error']['message'] = ['Data Not Available'];
+            $this->response['error']['message'] = !empty($response['message']) ? $response['message'] : ['Data Not Available'];
             $this->response['data'] = new \StdClass();
         }
         $this->response['status'] = 'success';
