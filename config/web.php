@@ -29,6 +29,7 @@ $config = [
         'apiError' => ['class' => 'app\modules\webservice\components\SetError'],
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
         'sqlite' => ['class' => 'app\components\SqliteCreate'],
+        'alertnotification' => ['class' => 'app\components\AlertNotification'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -46,7 +47,7 @@ $config = [
                 'stellapps-services' => 'restservices/stellapps/stellapps-services',
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
-                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
+                    ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
             //  ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
         /* 'urlManager' => [
@@ -227,6 +228,7 @@ $config = [
         'configuration' => ['class' => 'app\modules\configuration\configuration',],
         'eipl' => ['class' => 'app\modules\webservice\eipl\Eipl',],
         'embededdpu' => ['class' => 'app\modules\embededdpu\Embededdpu',],
+        'sms' => ['class' => 'app\modules\sms\Sms',],
     ],
     'params' => $params,
 ];
