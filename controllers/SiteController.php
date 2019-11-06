@@ -49,10 +49,12 @@ use app\modules\syncutility\models\TblInbox;
 use app\models\GeneralModel;
 use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 use app\modules\syncutility\models\TblSyncLog;
+use app\modules\syncutility\models\TblSentbox;
+use app\modules\syncutility\models\TblGenerateSentbox;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox'];
 
     public function init() {
         parent::init();
@@ -77,7 +79,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -1655,6 +1657,63 @@ class SiteController extends Controller {
                 }
             }
 //            }
+        }
+    }
+
+    public function actionGenerateSentbox() {
+        $model = new TblGenerateSentbox();
+        $modelData = $model->getData();
+        if (!empty($modelData)) {
+            $update_ids = array_column($modelData, 'id');
+            $model->updateAll(['status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['id' => $update_ids]);
+            foreach ($modelData as $record) {
+                try {
+                    if (!empty($record->model_name)) {
+                        $modelName = $record->model_name;
+                    } else {
+                        $table = $record->table_name;
+                        $modelName = str_replace(' ', '', ucwords(str_replace('_', ' ', $table)));
+                        $modelName = Yii::$app->path->define($modelName);
+                    }
+                    $model = new $modelName();
+                    $modelData = $model->find()
+                            ->where($record->where_clause)
+                            ->one();
+                    if (!empty($modelData)) {
+                        $union_code = '';
+                        $plant_code = '';
+                        $mcc_plant_code = '';
+                        $bmc_code = '';
+                        $dcs_code = '';
+                        ${$record->sentbox_key} = $record->{$record->sentbox_key};
+                        $sentboxArray = [];
+                        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_plant_code, $bmc_code, $union_code, $dcs_code);
+                        foreach ($sentboxArray as $sent) {
+                            $flag = !empty($record->operation_type) ? $record->operation_type : 'INSERT';
+                            $sentbox = new TblSentbox();
+                            $sentbox->dest_org_id = $sent['code'];
+                            $sentbox->source_org_id = !empty($modelData->union_code) ? $modelData->union_code : $record->union_code;
+                            $sentbox->dest_org_type = $sent['type'];
+                            if (!($sentbox->setSentbox($modelData, $flag))) {
+                                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                            }
+                        }
+                    }
+                    $record->status = 2;
+                    $record->response_datetime = date('Y-m-d H:i:s');
+                    $record->save(FALSE);
+                } catch (\yii\base\UserException $e) {
+                    var_dump($e);die;
+                    $record->status = 3;
+                    $record->response_datetime = date('Y-m-d H:i:s');
+                    $record->save(FALSE);
+                } catch (\yii\db\Exception $e) {
+                    var_dump($e);die;
+                    $record->status = 3;
+                    $record->response_datetime = date('Y-m-d H:i:s');
+                    $record->save(FALSE);
+                }
+            }
         }
     }
 
