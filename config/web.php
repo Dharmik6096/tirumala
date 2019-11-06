@@ -119,7 +119,7 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
-                [
+                    [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning', 'trace', 'info'],
                 ],
@@ -226,6 +226,7 @@ $config = [
         'syncutility' => ['class' => 'app\modules\syncutility\SyncUtility',],
         'configuration' => ['class' => 'app\modules\configuration\configuration',],
         'eipl' => ['class' => 'app\modules\webservice\eipl\Eipl',],
+        'embededdpu' => ['class' => 'app\modules\embededdpu\Embededdpu',],
     ],
     'params' => $params,
 ];
