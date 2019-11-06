@@ -78,6 +78,7 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['route_code'], 'string', 'min' => 1],
             [['route_code'], 'string', 'max' => 8],
             [['route_code'], 'safe'],
+            [['route_code'], 'unique'],
         ];
     }
 
