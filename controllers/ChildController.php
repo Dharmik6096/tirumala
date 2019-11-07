@@ -19,6 +19,7 @@ use Yii;
 use app\models\GeneralModel;
 use app\modules\dcsoperation\models\TblQualityParam;
 use app\models\ChildModel;
+use Jaspersoft\Client\Client;
 
 class ChildController extends Controller {
 
