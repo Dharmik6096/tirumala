@@ -38,6 +38,7 @@ class DefaultController extends Controller {
                             if ($row->has_attachment == 1) {
                                 $controls = [];
                                 $controls['dcs_milk_dispatch_code'] = $row->parent_code;
+                                $controls['p_report_name'] = $row->filename;
                                 $path = $row->file_path;
                                 $filename = $row->filename . '-' . $row->parent_code . '.pdf';
                                 $attachment = ChildController::printDocument($controls, $path, $filename, 'pdf', 'mail');

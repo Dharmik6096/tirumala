@@ -63,7 +63,7 @@ class ChildController extends Controller {
             'access' => [
                 'class' => 'yii\filters\AccessControl',
                 'rules' => [
-                        [
+                    [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -91,6 +91,9 @@ class ChildController extends Controller {
     }
 
     public static function printDocument($controls, $path, $filename, $type, $out = 'web') {
+        $controls['locale'] = 'en';
+        $controls['REPORT_LOCALE'] = 'en';
+        $controls['digit_config'] = 0;
         $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
         $output = $clientJasper->reportService()->runReport(preg_replace('#/+#', '/', Yii::$app->params['report_path'] . $path), $type, null, null, $controls);
         if ($out == 'mail') {
