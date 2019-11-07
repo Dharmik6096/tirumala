@@ -5,6 +5,7 @@ namespace app\modules\sms\controllers;
 use Yii;
 use yii\web\Controller;
 use app\modules\sms\models\TblAlertNotification;
+use app\controllers\ChildController;
 
 /**
  * Default controller for the `sms` module
@@ -33,6 +34,15 @@ class DefaultController extends Controller {
                             $from = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
                             $to = $row->receiver_detail;
                             $cc = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
+                            if ($row->has_attachment == 1) {
+                                $controls = [];
+                                $controls['dcs_milk_dispatch_code'] = $row->parent_code;
+                                $path = $row->file_path;
+                                $filename = $row->filename . '-' . $row->parent_code . '.pdf';
+                                $attachment = ChildController::printDocument($controls, $path, $filename, 'pdf', 'mail');
+                            } else {
+                                $attachment = FALSE;
+                            }
                             $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $row->header_info, $row->message, $attachment, $filename);
                         }
                         $row->response_datetime = date('Y-m-d H:i:s');

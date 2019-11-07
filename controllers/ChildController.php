@@ -35,7 +35,7 @@ class ChildController extends Controller {
         if (!file_exists($path)) {
             \Yii::$app->language = Yii::$app->session->get('LanguageCode');
         }
-        
+
         if (!defined('DATE_FORMAT'))
             define('DATE_FORMAT', 'php:Y-m-d');
         if (!defined('INSERT'))
@@ -63,7 +63,7 @@ class ChildController extends Controller {
             'access' => [
                 'class' => 'yii\filters\AccessControl',
                 'rules' => [
-                    [
+                        [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -88,6 +88,26 @@ class ChildController extends Controller {
         $attrs = $childModel->decryptModel($attrs);
         $this->model->load($attrs);
         return $this->render($this->viewFile, ['model' => $this->model]);
+    }
+
+    public static function printDocument($controls, $path, $filename, $type, $out = 'web') {
+        $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
+        $output = $clientJasper->reportService()->runReport(preg_replace('#/+#', '/', Yii::$app->params['report_path'] . $path), $type, null, null, $controls);
+        if ($out == 'mail') {
+            return $output;
+        }
+        if (strlen($output) > 954) {
+            $date = date('dmY');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Description: File Transfer');
+            header('Content-Disposition: inline; filename=' . $filename . $date . '.pdf');
+            header('Content-Transfer-Encoding: binary');
+            header('Content-Length: ' . strlen($output));
+            header('Content-Type: application/' . $type);
+            echo $output;
+            exit();
+        }
     }
 
 }
