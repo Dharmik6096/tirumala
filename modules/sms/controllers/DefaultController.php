@@ -19,7 +19,7 @@ class DefaultController extends Controller {
             $noti_ids = array_map(function($e) {
                 return $e->alert_notification_id;
             }, $modelData);
-            //$update = $model->updateSmsStatus($noti_ids);
+            $update = $model->updateSmsStatus($noti_ids);
             foreach ($modelData as $row) {
                 if (!empty($row->content_id) && !empty($row->receiver_detail)) {
                     try {
@@ -31,6 +31,7 @@ class DefaultController extends Controller {
                             $url = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
                             $send = Yii::$app->alertnotification->sendNotification($url, $server_key, $row->receiver_detail, $row->header_info, $row->message, $row->parent_code);
                         } else if ($row->receiver_type == 'EMAIL' && $row->send_mail == 1) {
+                            $filename = '';
                             $from = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
                             $to = $row->receiver_detail;
                             $cc = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
