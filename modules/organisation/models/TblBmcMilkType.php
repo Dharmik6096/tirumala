@@ -3,6 +3,9 @@
 namespace app\modules\organisation\models;
 
 use Yii;
+use app\modules\configuration\models\TblUnionRatechartRange;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /**
  * This is the model class for table "tbl_bmc_milk_type".
@@ -15,21 +18,21 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblBmcMilkType extends \app\models\ChildModel
-{
+class TblBmcMilkType extends \app\models\ChildModel {
+
+    public $app_type;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_milk_type';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['bmc_code', 'milk_type_code'], 'required'],
             [['bmc_code', 'created_by', 'updated_by'], 'string'],
@@ -41,8 +44,7 @@ class TblBmcMilkType extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bmc_code' => Yii::t('app', 'Bmc Code'),
             'milk_type_code' => Yii::t('app', 'Milk Type Code'),
@@ -53,4 +55,17 @@ class TblBmcMilkType extends \app\models\ChildModel
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getRateChartRange() {
+        return $this->hasOne(TblUnionRatechartRange::className(), ['animal_type_code' => 'milk_type_code'])->where(['union_code' => $this->bmcCode->union_code, 'config_for' => $this->app_type]);
+    }
+
 }

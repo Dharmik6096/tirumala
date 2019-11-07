@@ -21,34 +21,31 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblUnionRatechartRange extends \yii\db\ActiveRecord
-{
+class TblUnionRatechartRange extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_union_ratechart_range';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['animal_type_code'], 'integer'],
             [['min_fat', 'max_fat', 'min_snf', 'max_snf', 'min_clr', 'max_clr'], 'number'],
             [['union_code', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'config_for'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'ratechart_range_code' => Yii::t('app', 'Ratechart Range Code'),
             'animal_type_code' => Yii::t('app', 'Animal Type Code'),
@@ -70,8 +67,8 @@ class TblUnionRatechartRange extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblUnionRatechartRangeQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblUnionRatechartRangeQuery(get_called_class());
     }
+
 }

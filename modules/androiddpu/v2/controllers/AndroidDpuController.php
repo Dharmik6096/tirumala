@@ -207,11 +207,14 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $res_data['rate']['ePurchaseRateCodeBlock'] = "";
         $res_data['memberDownload'] = FALSE;
         $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
+        $mcc_bmc_config = TRUE;
+        $MappedMilkType = [];
         $data = $this->post_data;
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
             $org_code = $data['organization_code'];
             $org_type = $data['organization_type'];
             if ($org_type == 'VLC') {
+                $mcc_bmc_config = FALSE;
                 $model = new TblDcs();
                 $model->dcs_code = $org_code;
                 $model_data = $model->getData();
@@ -243,40 +246,68 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['collectionConfig']['inc_rate'] = $att['inc_rate'];
                         $res_data['collectionConfig']['inc_deduction'] = $att['inc_deduction'];
                     }
-                    $animalType = [];
-                    foreach ($model_data->tblDcsMilkType as $milktype) {
-                        $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
-                        $rate_range = $milktype->rateChartRange;
-                        if (!empty($rate_range)) {
-                            $min_fat = $rate_range->min_fat;
-                            $max_fat = $rate_range->max_fat;
-                            $min_snf = $rate_range->min_snf;
-                            $max_snf = $rate_range->max_snf;
-                            $min_clr = $rate_range->min_clr;
-                            $max_clr = $rate_range->max_clr;
-                        }
-                        $animalType[] = [
-                            'milk_type_code' => $milktype->milk_type_code,
-                            'milk_type_name' => $milktype->milkTypeCode->animal_type_name,
-                            'min_fat' => $min_fat,
-                            'max_fat' => $max_fat,
-                            'min_snf' => $min_snf,
-                            'max_snf' => $max_snf,
-                            'min_clr' => $min_clr,
-                            'max_clr' => $max_clr
-                        ];
-                    }
-                    $res_data['collectionConfig']['allowedMilkType'] = $animalType;
+                    $MappedMilkType = $model_data->tblDcsMilkType;
                 }
             } else if ($org_type == 'BMC') {
                 $model = new TblDcsBmc();
                 $model->bmc_code = $org_code;
                 $model_data = $model->singleBmcData();
+                $MappedMilkType = $model_data->tblBmcMilkType;
             } else if ($org_type == 'MCC') {
                 $model = new TblMccPlant();
                 $model->mcc_plant_code = $org_code;
                 $model_data = $model->getData();
+                $MappedMilkType = $model_data->tblMccMilkType;
             }
+            if ($mcc_bmc_config) {
+                $res_data['memberDownload'] = FALSE;
+                $res_data['config']['collectionBlock'] = FALSE;
+                $res_data['config']['dcsBlock'] = FALSE;
+                $res_data['config']['dispatchMandate'] = FALSE;
+                $res_data['config']['weightManual'] = FALSE;
+                $res_data['config']['qualityManual'] = FALSE;
+                $res_data['rate']['mPurchaseRateCode'] = "";
+                $res_data['rate']['mPurchaseRateCodeBlock'] = "";
+                $res_data['rate']['ePurchaseRateCode'] = "";
+                $res_data['rate']['ePurchaseRateCodeBlock'] = "";
+                $res_data['rate']['mPurchaseRateCodeBmc'] = "";
+                $res_data['rate']['mPurchaseRateCodeBlockBmc'] = "";
+                $res_data['rate']['ePurchaseRateCodeBmc'] = "";
+                $res_data['rate']['ePurchaseRateCodeBlockBmc'] = "";
+                $res_data['collectionConfig']['m_start_time'] = "";
+                $res_data['collectionConfig']['m_cutoff_time'] = "";
+                $res_data['collectionConfig']['m_lock_time'] = "";
+                $res_data['collectionConfig']['e_start_time'] = "";
+                $res_data['collectionConfig']['e_cutoff_time'] = "";
+                $res_data['collectionConfig']['e_lock_time'] = "";
+                $res_data['collectionConfig']['inc_rate'] = "";
+                $res_data['collectionConfig']['inc_deduction'] = "";
+            }
+            $animalType = [];
+            foreach ($MappedMilkType as $milktype) {
+                $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
+                $milktype->app_type = $org_type;
+                $rate_range = $milktype->rateChartRange;
+                if (!empty($rate_range)) {
+                    $min_fat = $rate_range->min_fat;
+                    $max_fat = $rate_range->max_fat;
+                    $min_snf = $rate_range->min_snf;
+                    $max_snf = $rate_range->max_snf;
+                    $min_clr = $rate_range->min_clr;
+                    $max_clr = $rate_range->max_clr;
+                }
+                $animalType[] = [
+                    'milk_type_code' => $milktype->milk_type_code,
+                    'milk_type_name' => $milktype->milkTypeCode->animal_type_name,
+                    'min_fat' => $min_fat,
+                    'max_fat' => $max_fat,
+                    'min_snf' => $min_snf,
+                    'max_snf' => $max_snf,
+                    'min_clr' => $min_clr,
+                    'max_clr' => $max_clr
+                ];
+            }
+            $res_data['collectionConfig']['allowedMilkType'] = $animalType;
             if (!empty($model_data)) {
                 $model = new TblUnionConfigResult();
                 $model->union_code = $model_data->union_code;

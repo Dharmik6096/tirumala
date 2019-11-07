@@ -23,6 +23,8 @@ use app\modules\configuration\models\TblUnionRatechartRange;
  */
 class TblDcsMilkType extends ChildModel {
 
+    public $app_type;
+
     /**
      * @inheritdoc
      */
@@ -112,7 +114,7 @@ class TblDcsMilkType extends ChildModel {
     }
 
     public function getRateChartRange() {
-        return $this->hasOne(TblUnionRatechartRange::className(), ['animal_type_code' => 'milk_type_code'])->where(['union_code' => $this->dcsCode->union_code]);
+        return $this->hasOne(TblUnionRatechartRange::className(), ['animal_type_code' => 'milk_type_code'])->where(['union_code' => $this->dcsCode->union_code, 'config_for' => $this->app_type]);
     }
 
 }

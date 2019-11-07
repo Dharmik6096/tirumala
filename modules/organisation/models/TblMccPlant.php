@@ -10,6 +10,7 @@ use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblMccMilkType;
 
 /**
  * This is the model class for table "tbl_mcc_plant".
@@ -318,6 +319,10 @@ class TblMccPlant extends \app\models\ChildModel {
 
     public function getTblDcs() {
         return $this->hasMany(TblDcs::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getTblMccMilkType() {
+        return $this->hasMany(TblMccMilkType::className(), ['mcc_plant_code' => 'mcc_plant_code'])->andwhere(['is_active' => 1]);
     }
 
 }
