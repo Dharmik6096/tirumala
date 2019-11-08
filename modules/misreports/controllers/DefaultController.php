@@ -149,6 +149,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRateApplicabilityDetails() {
+        $this->report = 'RateApplicabilityDetails';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -398,6 +403,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_total_milk_collection_date_shift',
                 'scenario' => 'TotalMilkCollectionDateShift',
                 'title' => '118 - MCC Wise Collection Summary',
+            ],
+            'RateApplicabilityDetails' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'sp_name' => 'sp_mis_dcs_wise_rate_applicability_details',
+                'scenario' => 'RateApplicabilityDetails',
+                'title' => '222 - Rate Applicability Details',
             ],
         ];
         return $label[$l];
