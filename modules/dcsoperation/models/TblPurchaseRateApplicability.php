@@ -81,7 +81,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             'wef_date' => Yii::t('app', 'Wef Date'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
-            'purchase_rate_code' => Yii::t('app', 'Purchase Rate'),
+            'purchase_rate_code' => Yii::t('app', 'Rate ID'),
             'created_by' => Yii::t('app', 'Created By'),
             'dcs_code' => Yii::t('app', 'Society Code'),
             'shift_code' => Yii::t('app', 'Shift'),
@@ -91,6 +91,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             'is_download' => Yii::t('app', 'Download Status'),
             'download_date_time' => Yii::t('app', 'Download Date Time'),
             'dcs_name' => Yii::t('app', 'Society Name'),
+            'reference_code' => Yii::t('app', 'SAP Rate ID'),
         ];
     }
 

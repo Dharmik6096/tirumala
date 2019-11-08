@@ -18,7 +18,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
      */
     public function rules() {
         return [
-            [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name'], 'safe'],
+            [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name', 'reference_code'], 'safe'],
             [['is_active'], 'boolean'],
 //            [['shift_code'], 'integer'],
         ];
@@ -108,11 +108,13 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         $subQuery1->joinWith(['dcsCode']);
         $subQuery1->groupBy(['tbl_purchase_rate_applicability.dcs_code']);
         $this->load($params);
-        $subQuery1->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code]);
+        $subQuery1->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name]);
+        $subQuery1->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code]);
         Yii::$app->general->filterByOrg($subQuery1, $this, 'tbl_dcs');
 
-        $query = TblPurchaseRateApplicability::find()->select(['purchase_rate_code', 'u.dcscode as dcs_code', 'u.max_date as wef_date', 'is_download'])->from(['u' => $subQuery1]);
+        $query = TblPurchaseRateApplicability::find()->select(['tbl_purchase_rate.purchase_rate_code as purchase_rate_code', 'u.dcscode as dcs_code', 'u.max_date as wef_date', 'is_download', 'tbl_purchase_rate.reference_code as reference_code'])->from(['u' => $subQuery1]);
         $query->join('inner join', 'tbl_purchase_rate_applicability', 'wef_date=u.max_date and tbl_purchase_rate_applicability.dcs_code=u.dcscode');
+        $query->join('inner join', 'tbl_purchase_rate', 'tbl_purchase_rate.purchase_rate_code=tbl_purchase_rate_applicability.purchase_rate_code');
 
         // add conditions that should always apply here
 
@@ -129,12 +131,14 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         }
         //Yii::$app->general->filterByOrg($query,$this);
         if (!empty($this->download_date_time))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_purchase_rate_applicability.download_date_time, 126)', date('Y-m-d', strtotime($this->download_date_time))]);
         // grid filtering conditions
+        $query->andFilterWhere(['like', 'tbl_purchase_rate.reference_code', $this->reference_code]);
 
+        $query->andFilterWhere(['like', 'tbl_purchase_rate.purchase_rate_code', $this->purchase_rate_code]);
 
         if (!empty($this->wef_date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), wef_date, 126)', date('Y-m-d', strtotime($this->wef_date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_purchase_rate_applicability.wef_date, 126)', date('Y-m-d', strtotime($this->wef_date))]);
 
         return $dataProvider;
     }
