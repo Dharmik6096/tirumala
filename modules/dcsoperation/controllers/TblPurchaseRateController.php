@@ -457,8 +457,9 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
-            'dcs_code' => ['view' => ['grid'],  'value' => function($model) {
-            return \Yii::$app->general->getforeignkey($model->dcsCode,'dcs_name');
+            'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
+            'dcs_code' => ['view' => ['grid'], 'value' => function($model) {
+            return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }],
             'is_download' => ['view' => ['grid'], 'type' => 'yes-no', 'value' => function($model) {
             return ($model->is_download == 0) ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
@@ -469,9 +470,8 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         ];
         $username = explode('#', Yii::$app->session->get('UserName'))[1];
         if (!in_array(strtolower($username), ['bipl', 'reil']))
-            //$appModel->actions = ['delete' => ['option' => 'dcsCode.dcs_name,rate_app_code,tbl-purchase-rate/delete-rate-app,checkVendorDcs()']];
-
-        $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
+        //$appModel->actions = ['delete' => ['option' => 'dcsCode.dcs_name,rate_app_code,tbl-purchase-rate/delete-rate-app,checkVendorDcs()']];
+            $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
         $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
 

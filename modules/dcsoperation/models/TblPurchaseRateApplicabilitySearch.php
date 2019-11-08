@@ -18,7 +18,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
      */
     public function rules() {
         return [
-            [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time'], 'safe'],
+            [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name'], 'safe'],
             [['is_active'], 'boolean'],
 //            [['shift_code'], 'integer'],
         ];
@@ -82,8 +82,8 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         $query->andFilterWhere(['like', 'rate_app_code', $this->rate_app_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
-                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
+                ->andFilterWhere(['like', 'tbl_purchase_rate_applicability.dcs_code', $this->dcs_code])->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
                 ->andFilterWhere(['like', 'is_download', $this->is_download]);
         //->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
         //->andFilterWhere(['like', 'union_code', $this->union_code]);
@@ -109,7 +109,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         $this->load($params);
         $subQuery1->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code]);
         Yii::$app->general->filterByOrg($subQuery1, $this, 'tbl_dcs');
-        
+
         $query = TblPurchaseRateApplicability::find()->select(['purchase_rate_code', 'u.dcscode as dcs_code', 'u.max_date as wef_date', 'is_download'])->from(['u' => $subQuery1]);
         $query->join('inner join', 'tbl_purchase_rate_applicability', 'wef_date=u.max_date and tbl_purchase_rate_applicability.dcs_code=u.dcscode');
 
