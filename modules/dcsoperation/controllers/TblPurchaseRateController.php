@@ -458,7 +458,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
-            'dcs_code' => ['view' => ['grid'], 'value' => function($model) {
+            'dcs_name' => ['view' => ['grid'], 'value' => function($model) {
             return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }],
             'is_download' => ['view' => ['grid'], 'type' => 'yes-no', 'value' => function($model) {

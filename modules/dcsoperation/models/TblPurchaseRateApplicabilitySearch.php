@@ -82,6 +82,7 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
         $query->andFilterWhere(['like', 'rate_app_code', $this->rate_app_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
                 ->andFilterWhere(['like', 'tbl_purchase_rate_applicability.dcs_code', $this->dcs_code])->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
                 ->andFilterWhere(['like', 'is_download', $this->is_download]);
