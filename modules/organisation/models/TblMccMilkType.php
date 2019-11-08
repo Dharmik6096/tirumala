@@ -38,6 +38,12 @@ class TblMccMilkType extends \app\models\ChildModel {
             [['mcc_plant_code', 'created_by', 'updated_by'], 'string'],
             [['milk_type_code', 'is_active'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
+            ['milk_type_code', 'unique', 'targetAttribute' => ['milk_type_code', 'mcc_plant_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['milk_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateMilkType($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code']],
+            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
         ];
     }
 

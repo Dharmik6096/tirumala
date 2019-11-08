@@ -141,11 +141,21 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
+                                'label' => 'Milk Type',
+                                'format' => 'html',
+                                'value' => $model->milkType(),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
                                 'value' => GeneralFunctions::getRecordStatus($model->is_active),
-                                'valueColOptions' => ['style' => 'width:30%'],
+                                'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
                     ],
@@ -167,7 +177,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],
@@ -175,7 +185,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                 ?>
             </div>
         </div>
-        
+
         <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
         <div class="form-grid">
             <?=

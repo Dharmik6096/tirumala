@@ -13,6 +13,8 @@ use app\modules\organisation\models\TblDcsBmcSearch;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\organisation\models\TblMccMilkType;
+use app\modules\organisation\models\TblMccMilkTypeHistory;
 
 /**
  * TblMccPlantController implements the CRUD actions for TblMccPlant model.
@@ -78,7 +80,7 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $validate = 1;
-
+        $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
             $this->model->mcc_plant_code = $this->model->getCode();
@@ -101,10 +103,16 @@ class TblMccPlantController extends \app\controllers\ChildController {
 //            $bmcModel->is_mcc = 1;
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('mccPlant', $this->model->mcc_plant_code);
+            $master[] = $this->model;
+            $modelMilkType = $this->setMilk();
+            if (!empty($modelMilkType)) {
+                $master = array_merge($master, $modelMilkType);
+            }
+
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'name', $this->model->name);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model], [$this->contactDetails], ['MCC', 'create']);
+                $transaction = $this->generalModel->saveTransaction($master, [$this->contactDetails], ['MCC', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -123,7 +131,7 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         $validate = 1;
-
+        $master = [];
         if (Yii::$app->request->post()) {
 
             $historyModel = new TblMccPlantHistory();
@@ -132,10 +140,31 @@ class TblMccPlantController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->setModel($this->model);
             $this->model->name = ucwords($this->model->name);
+            $milkType = TblMccMilkType::find()->where(['mcc_plant_code' => $this->model->mcc_plant_code, 'is_active' => 1])->all();
+            $returnedArray = \yii\helpers\ArrayHelper::map($milkType, 'milk_type_code', 'milk_type_code');
+
+            $toRevoke = array_diff($returnedArray, $this->model->milk_type_code);
+            $toAssign = array_diff($this->model->milk_type_code, $returnedArray);
+
+
+            foreach ($toRevoke as $value) {
+                $milkModel = TblMccMilkType::find()->where(['mcc_plant_code' => $this->model->mcc_plant_code, 'milk_type_code' => $value])->one();
+                $milkHistory = new TblMccMilkTypeHistory();
+                Yii::$app->operation->history($milkModel, $milkHistory, DELETE);
+                array_push($master, $milkHistory);
+                array_push($master, $milkModel);
+            }
+            foreach ($toAssign as $value) {
+                $milkModel = new TblMccMilkType();
+                $milkModel->mcc_plant_code = $this->model->mcc_plant_code;
+                $milkModel->milk_type_code = $value;
+                $milkModel->is_active = $this->model->is_active;
+                array_push($master, $milkModel);
+            }
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique($this->model, 'name', $_POST['TblMccPlant']['name']);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['MCC', 'edit']);
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $master, ['MCC', 'edit']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -236,6 +265,19 @@ class TblMccPlantController extends \app\controllers\ChildController {
             $mccList = $model->getMCCList($palnt, $RLS);
         }
         echo Json::encode(['status' => 'success', 'data' => $mccList]);
+    }
+
+    private function setMilk() {
+        $milkArray = $this->model->milk_type_code;
+        $list = [];
+        foreach ($milkArray as $row) {
+            $modelMilk = new TblMccMilkType();
+            $modelMilk->mcc_plant_code = $this->model->mcc_plant_code;
+            $modelMilk->milk_type_code = $row;
+            $modelMilk->is_active = 1;
+            array_push($list, $modelMilk);
+        }
+        return $list;
     }
 
 }
