@@ -11,6 +11,7 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : '');
 $inclass = !empty($result) ? '' : 'in';
 $model->from_date = empty($model->from_date) ? date('d-m-Y') : $model->from_date;
 $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
+$model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
 ?>
 <div class="panel panel-default panel-grid panel-main">
 
