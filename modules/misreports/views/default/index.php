@@ -13,6 +13,7 @@ $model->from_date = empty($model->from_date) ? date('d-m-Y') : $model->from_date
 $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
 $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
+$model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
 ?>
 <div class="panel panel-default panel-main">
 
