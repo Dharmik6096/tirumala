@@ -6,8 +6,10 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name'],
-    ['attribute' => 'purchase_rate_code', 'filter' => false],
+    ['attribute' => 'dcs_code'],
+    ['attribute' => 'dcs_name', 'value' => 'dcsCode.dcs_name'],
+    ['attribute' => 'purchase_rate_code'],
+    ['attribute' => 'reference_code'],
     ['attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

@@ -42,7 +42,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $rate_gen_method_code, $rate_description;
-    public $rate_type, $reference_code;
+    public $rate_type, $reference_code, $dcs_name;
 
     public static function tableName() {
         return 'tbl_purchase_rate_applicability';
@@ -81,15 +81,17 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             'wef_date' => Yii::t('app', 'Wef Date'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
-            'purchase_rate_code' => Yii::t('app', 'Purchase Rate'),
+            'purchase_rate_code' => Yii::t('app', 'Rate ID'),
             'created_by' => Yii::t('app', 'Created By'),
-            'dcs_code' => Yii::t('app', 'Society'),
+            'dcs_code' => Yii::t('app', 'Society Code'),
             'shift_code' => Yii::t('app', 'Shift'),
             'union_code' => Yii::t('app', 'Union'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'is_download' => Yii::t('app', 'Download Status'),
             'download_date_time' => Yii::t('app', 'Download Date Time'),
+            'dcs_name' => Yii::t('app', 'Society Name'),
+            'reference_code' => Yii::t('app', 'SAP Rate ID'),
         ];
     }
 
@@ -296,5 +298,4 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 //        $sentbox->dest_org_type = $type;
 //        return $sentbox;
 //    }
-
 }
