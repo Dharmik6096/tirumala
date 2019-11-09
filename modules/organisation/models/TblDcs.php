@@ -161,9 +161,9 @@ class TblDcs extends ChildModel {
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
-                [['dcs_name', 'contact_person'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
+//                [['dcs_name', 'contact_person'], function ($attribute, $params) {
+//                    Yii::$app->general->validateName($this, $attribute, $params);
+//                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
                 [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
