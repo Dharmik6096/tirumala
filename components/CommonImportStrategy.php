@@ -81,62 +81,63 @@ class CommonImportStrategy extends ARImportStrategy{
                                         
                     if(empty($model->getErrors()) && $model->validate()){
                         array_push($modelList, $model);
-                        if($class == 'app\modules\organisation\models\PlantImport') {
-                            $mccModel=new TblMccPlant();
-                            $mccModel->plant_code=$model->plant_code;
-                            $mccModel->mcc_plant_code=$mccModel->getCode();
-                            $mccModel->name= $model->name;
-                            $mccModel->local_name= $model->local_name;
-                            $mccModel->capacity= $model->capacity;
-                            $mccModel->is_active= $model->is_active;
-                            $mccModel->state_code= $model->state_code;
-                            $mccModel->district_code= $model->district_code;
-                            $mccModel->sub_district_code= $model->sub_district_code;
-                            $mccModel->village_code= $model->village_code;
-                            $mccModel->hamlet_code= $model->hamlet_code;
-                            $mccModel->union_code= $model->union_code;
-                            $mccModel->valid_from= $model->valid_from;
-                            $mccModel->is_plant=1; 
-                            array_push($modelList, $mccModel);
-
-                            $bmcModel=new TblDcsBmc();
-                            $bmcModel->scenario='from_mcc';
-                            $bmcModel->mcc_plant_code=$mccModel->mcc_plant_code;
-                            $bmcModel->bmc_code=$bmcModel->getCode();
-                            $bmcModel->bmc_name=  $mccModel->name;
-                            $bmcModel->local_name=  $mccModel->local_name;
-                            $bmcModel->capacity=  $mccModel->capacity;
-                            $bmcModel->is_active= $mccModel->is_active;
-                            $bmcModel->state_code= $mccModel->state_code;
-                            $bmcModel->district_code= $mccModel->district_code;
-                            $bmcModel->sub_district_code= $mccModel->sub_district_code;
-                            $bmcModel->village_code= $mccModel->village_code;
-                            $bmcModel->hamlet_code= $mccModel->hamlet_code;
-                            $bmcModel->union_code= $mccModel->union_code;
-                            $bmcModel->valid_from= $model->valid_from;
-                            $bmcModel->is_mcc=1;
-                            array_push($modelList, $bmcModel);
-
-                        }
-                        if($class == 'app\modules\organisation\models\MccPlantImport') { 
-                            $bmcModel=new TblDcsBmc();
-                            $bmcModel->scenario='from_mcc';
-                            $bmcModel->mcc_plant_code=$model->mcc_plant_code;
-                            $bmcModel->bmc_code=$bmcModel->getCode();
-                            $bmcModel->bmc_name=  $model->name;
-                            $bmcModel->local_name=  $model->local_name;
-                            $bmcModel->capacity=  $model->capacity;
-                            $bmcModel->is_active= $model->is_active;
-                            $bmcModel->state_code= $model->state_code;
-                            $bmcModel->district_code= $model->district_code;
-                            $bmcModel->sub_district_code= $model->sub_district_code;
-                            $bmcModel->village_code= $model->village_code;
-                            $bmcModel->hamlet_code= $model->hamlet_code;
-                            $bmcModel->union_code= $model->union_code;
-                            $bmcModel->valid_from= $model->valid_from;
-                            $bmcModel->is_mcc=1;
-                            array_push($modelList, $bmcModel);
-                        }
+//                        if($class == 'app\modules\organisation\models\PlantImport') {
+//                            $mccModel=new TblMccPlant();
+//                            $mccModel->plant_code=$model->plant_code;
+//                            $mccModel->mcc_plant_code=$mccModel->getCode();
+//                            $mccModel->name= $model->name;
+//                            $mccModel->local_name= $model->local_name;
+//                            $mccModel->capacity= $model->capacity;
+//                            $mccModel->is_active= $model->is_active;
+//                            $mccModel->state_code= $model->state_code;
+//                            $mccModel->district_code= $model->district_code;
+//                            $mccModel->sub_district_code= $model->sub_district_code;
+//                            $mccModel->village_code= $model->village_code;
+//                            $mccModel->hamlet_code= $model->hamlet_code;
+//                            $mccModel->union_code= $model->union_code;
+//                            $mccModel->valid_from= $model->valid_from;
+//                            $mccModel->is_plant=1; 
+//                            array_push($modelList, $mccModel);
+//
+//                            $bmcModel=new TblDcsBmc();
+//                            $bmcModel->scenario='from_mcc';
+//                            $bmcModel->mcc_plant_code=$mccModel->mcc_plant_code;
+//                            $bmcModel->bmc_code=$bmcModel->getCode();
+//                            $bmcModel->bmc_name=  $mccModel->name;
+//                            $bmcModel->local_name=  $mccModel->local_name;
+//                            $bmcModel->capacity=  $mccModel->capacity;
+//                            $bmcModel->is_active= $mccModel->is_active;
+//                            $bmcModel->state_code= $mccModel->state_code;
+//                            $bmcModel->district_code= $mccModel->district_code;
+//                            $bmcModel->sub_district_code= $mccModel->sub_district_code;
+//                            $bmcModel->village_code= $mccModel->village_code;
+//                            $bmcModel->hamlet_code= $mccModel->hamlet_code;
+//                            $bmcModel->union_code= $mccModel->union_code;
+//                            $bmcModel->valid_from= $model->valid_from;
+//                            $bmcModel->is_mcc=1;
+//                            array_push($modelList, $bmcModel);
+//
+//                        }
+//                        if($class == 'app\modules\organisation\models\MccPlantImport') { 
+//                            $bmcModel=new TblDcsBmc();
+//                            $bmcModel->scenario='from_mcc';
+//                            $bmcModel->mcc_plant_code=$model->mcc_plant_code;
+//                            $bmcModel->bmc_code=$model->mcc_plant_code;
+//                            $bmcModel->bmc_code=$bmcModel->getCode();
+//                            $bmcModel->bmc_name=  $model->name;
+//                            $bmcModel->local_name=  $model->local_name;
+//                            $bmcModel->capacity=  $model->capacity;
+//                            $bmcModel->is_active= $model->is_active;
+//                            $bmcModel->state_code= $model->state_code;
+//                            $bmcModel->district_code= $model->district_code;
+//                            $bmcModel->sub_district_code= $model->sub_district_code;
+//                            $bmcModel->village_code= $model->village_code;
+//                            $bmcModel->hamlet_code= $model->hamlet_code;
+//                            $bmcModel->union_code= $model->union_code;
+//                            $bmcModel->valid_from= $model->valid_from;
+//                            $bmcModel->is_mcc=1;
+//                            array_push($modelList, $bmcModel);
+//                        }
                         
 //                        var_dump($modelList);exit;
                         foreach ($modelList as $modelRow){

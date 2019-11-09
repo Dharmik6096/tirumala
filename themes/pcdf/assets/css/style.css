@@ -2302,3 +2302,7 @@ div.crystalstyle{
     width: calc(100% - 10px) !important;
     position: relative !important
 }
+.panel.panel-default .panel.panel-default{
+    min-height: auto !important;
+    overflow: visible;
+}

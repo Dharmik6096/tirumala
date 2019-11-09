@@ -21,6 +21,7 @@ if (!empty($_POST)) {
     $codeWarning = $_POST['code_warning'];
 }
 $disabled = ($model->is_mcc == 1) ? TRUE : FALSE;
+$milkType = $model->getMilkTypes();
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -63,10 +64,14 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'model')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, 'form-group padding-right-5 col-sm-3', 'Milk Quality Type', false, 'bmc_milk_type'); ?>
-    </div> 
     <div class="clearfix"></div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
+    </div>
+    <!--    <div class="col-sm-3">
+    <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, 'form-group padding-right-5 col-sm-3', 'Milk Quality Type', false, 'bmc_milk_type'); ?>
+        </div> -->
+    <!--<div class="clearfix"></div>-->
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
@@ -86,7 +91,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
     </div>
-    <div class="col-sm-3 mt35">
+    <div class="col-sm-3 mt25">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <?= Html::hiddenInput('from_bmc', 0, ['id' => 'bmc']); ?>

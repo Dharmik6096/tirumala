@@ -38,6 +38,12 @@ class TblBmcMilkType extends \app\models\ChildModel {
             [['bmc_code', 'created_by', 'updated_by'], 'string'],
             [['milk_type_code', 'is_active'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
+            ['milk_type_code', 'unique', 'targetAttribute' => ['milk_type_code', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['milk_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateMilkType($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
+            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
         ];
     }
 

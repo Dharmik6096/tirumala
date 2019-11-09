@@ -11,7 +11,7 @@ use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblMccMilkType;
-
+use app\modules\globalmaster\models\TblAnimalType;
 /**
  * This is the model class for table "tbl_mcc_plant".
  *
@@ -45,6 +45,8 @@ use app\modules\organisation\models\TblMccMilkType;
  */
 class TblMccPlant extends \app\models\ChildModel {
 
+    public $milk_type_code;
+
     /**
      * @inheritdoc
      */
@@ -58,8 +60,8 @@ class TblMccPlant extends \app\models\ChildModel {
     public function rules() {
         return [
             [['plant_code', 'name', 'hamlet_code', 'union_code'], 'required'],
-            [['mcc_plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant'], 'safe'],
+            [['mcc_plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
+            [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code'], 'safe'],
             [['capacity'], 'integer'],
 //            [['is_active'], 'boolean'],
             [['mcc_plant_code'], 'unique'],
@@ -70,16 +72,16 @@ class TblMccPlant extends \app\models\ChildModel {
             [['email'], 'string', 'max' => 50],
             [['email'], 'email'],
             [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
             [['name',], 'string', 'max' => 255],
             [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mcc_plant_code'], 'integer', 'min' => 1],
             [['mcc_plant_code'], 'string', 'max' => 6],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
@@ -121,6 +123,7 @@ class TblMccPlant extends \app\models\ChildModel {
             'village_code' => Yii::t('app', 'Village'),
             'capacity' => Yii::t('app', 'Capacity (LPD)'),
             'valid_from' => Yii::t('app', 'Valid From'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
         ];
     }
 
@@ -323,6 +326,29 @@ class TblMccPlant extends \app\models\ChildModel {
 
     public function getTblMccMilkType() {
         return $this->hasMany(TblMccMilkType::className(), ['mcc_plant_code' => 'mcc_plant_code'])->andwhere(['is_active' => 1]);
+    }
+
+    public function getMilkTypes() {
+        $milkType = new TblAnimalType();
+        $data = $milkType->getAnimalMilkTypeArray();
+
+        $values = TblMccMilkType::find()->where(['mcc_plant_code' => $this->mcc_plant_code, 'is_active' => 1])->asArray()->all();
+        $selected = [];
+
+        foreach ($data as $key => $row) {
+            if (array_search($key, array_column($values, 'milk_type_code')) !== FALSE) {
+                $selected[$key] = ['selected' => 'selected'];
+            }
+        }
+        return ['value' => $data, 'selected' => $selected];
+    }
+
+    public function milkType() {
+        $out = '';
+        foreach ($this->tblMccMilkType as $row) {
+            $out .= $row->milkTypeCode->animal_type_name . '<br>';
+        }
+        return $out;
     }
 
 }

@@ -48,7 +48,7 @@ use app\modules\organisation\models\TblBmcMilkType;
  */
 class TblDcsBmc extends \app\models\ChildModel {
 
-    public $is_sentbox;
+    public $is_sentbox, $milk_type_code;
 
     /**
      * @inheritdoc
@@ -65,18 +65,19 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
             [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
             [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from'], 'safe'],
+            [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
+            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['local_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['bmc_code'], 'integer', 'min' => 1],
             [['bmc_code'], 'string', 'max' => 5],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code'], 'safe'],
@@ -113,6 +114,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             'village_code' => Yii::t('app', 'Village'),
             'valid_from' => Yii::t('app', 'Valid From'),
             'plant_code' => Yii::t('app', 'Plant'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
         ];
     }
 
@@ -345,6 +347,29 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getTblBmcMilkType() {
         return $this->hasMany(TblBmcMilkType::className(), ['bmc_code' => 'bmc_code'])->andwhere(['is_active' => 1]);
+    }
+
+    public function getMilkTypes() {
+        $milkType = new TblAnimalType();
+        $data = $milkType->getAnimalMilkTypeArray();
+
+        $values = TblBmcMilkType::find()->where(['bmc_code' => $this->bmc_code, 'is_active' => 1])->asArray()->all();
+        $selected = [];
+
+        foreach ($data as $key => $row) {
+            if (array_search($key, array_column($values, 'milk_type_code')) !== FALSE) {
+                $selected[$key] = ['selected' => 'selected'];
+            }
+        }
+        return ['value' => $data, 'selected' => $selected];
+    }
+
+    public function milkType() {
+        $out = '';
+        foreach ($this->tblBmcMilkType as $row) {
+            $out .= $row->milkTypeCode->animal_type_name . '<br>';
+        }
+        return $out;
     }
 
 }

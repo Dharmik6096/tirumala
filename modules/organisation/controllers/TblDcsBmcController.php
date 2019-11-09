@@ -12,6 +12,8 @@ use app\modules\organisation\models\TblRouteMappingSourcesSearch;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\organisation\models\TblBmcMilkTypeHistory;
 
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
@@ -73,17 +75,23 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $validate = 1;
-
+        $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
             $this->model->bmc_code = $this->model->getCode();
             $this->model->bmc_name = ucwords($this->model->bmc_name);
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('bmc', $this->model->bmc_code);
+            $master[] = $this->model;
+            $modelMilkType = $this->setMilk();
+            if (!empty($modelMilkType)) {
+                $master = array_merge($master, $modelMilkType);
+            }
+
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'bmc_name', $this->model->bmc_name);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model], [$this->contactDetails], ['Society BMC', 'create']);
+                $transaction = $this->generalModel->saveTransaction($master, [$this->contactDetails], ['Society BMC', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -102,17 +110,39 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         $validate = 1;
-
+        $master = [];
         if (Yii::$app->request->post()) {
             $historyModel = new TblDcsBmcHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->setModel($this->model);
             $this->model->bmc_name = ucwords($this->model->bmc_name);
+
+            $milkType = TblBmcMilkType::find()->where(['bmc_code' => $this->model->bmc_code, 'is_active' => 1])->all();
+            $returnedArray = \yii\helpers\ArrayHelper::map($milkType, 'milk_type_code', 'milk_type_code');
+
+            $toRevoke = array_diff($returnedArray, $this->model->milk_type_code);
+            $toAssign = array_diff($this->model->milk_type_code, $returnedArray);
+
+
+            foreach ($toRevoke as $value) {
+                $milkModel = TblBmcMilkType::find()->where(['bmc_code' => $this->model->bmc_code, 'milk_type_code' => $value])->one();
+                $milkHistory = new TblBmcMilkTypeHistory();
+                Yii::$app->operation->history($milkModel, $milkHistory, DELETE);
+                array_push($master, $milkHistory);
+                array_push($master, $milkModel);
+            }
+            foreach ($toAssign as $value) {
+                $milkModel = new TblBmcMilkType();
+                $milkModel->bmc_code = $this->model->bmc_code;
+                $milkModel->milk_type_code = $value;
+                $milkModel->is_active = $this->model->is_active;
+                array_push($master, $milkModel);
+            }
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique($this->model, 'bmc_name', $_POST['TblDcsBmc']['bmc_name']);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Society BMC', 'edit']);
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $master, ['Society BMC', 'edit']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -228,6 +258,19 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             $mccList = $model->getBMCList($palnt, $RLS);
         }
         echo Json::encode(['status' => 'success', 'data' => $mccList]);
+    }
+
+    private function setMilk() {
+        $milkArray = $this->model->milk_type_code;
+        $list = [];
+        foreach ($milkArray as $row) {
+            $modelMilk = new TblBmcMilkType();
+            $modelMilk->bmc_code = $this->model->bmc_code;
+            $modelMilk->milk_type_code = $row;
+            $modelMilk->is_active = 1;
+            array_push($list, $modelMilk);
+        }
+        return $list;
     }
 
 }
