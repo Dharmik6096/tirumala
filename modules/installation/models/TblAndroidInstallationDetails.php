@@ -147,7 +147,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
     }
 
     public function getExistData($code) {
-        return $this->find()->where(['android_installation_id' => $code])->all();
+        return $this->find()->where(['android_installation_id' => $code,'is_active'=>1])->all();
     }
 
 }
