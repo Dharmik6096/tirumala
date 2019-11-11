@@ -44,6 +44,7 @@ class TblAndroidInstallation extends \app\models\ChildModel {
             [['dcs_code'], 'rateApplicability', 'on' => ['create_portal']],
             [['dcs_code'], 'exist', 'skipOnError' => false, 'targetClass' => TblDcsMilkType::className(), 'targetAttribute' => ['organization_code' => 'dcs_code'], 'message' => Yii::t('app/validation', 'Milk Type Mapping Missing.'), 'on' => ['create_portal']],
             [['dcs_code'], 'exist', 'skipOnError' => false, 'targetClass' => TblDpuIncentiveMaster::className(), 'targetAttribute' => ['organization_code' => 'dcs_code'], 'message' => Yii::t('app/validation', 'DPU Incentive config Missing'), 'on' => ['create_portal']],
+            [['dcs_code'], 'validateExistData', 'on' => ['create_portal']]
         ];
     }
 
@@ -96,6 +97,21 @@ class TblAndroidInstallation extends \app\models\ChildModel {
     public function rateApplicability($attribute, $params) {
         if (empty($this->rateChartApplic)) {
             $this->addError($attribute, Yii::t('app', 'Milk Purchase Rate applicability Missing.'));
+        }
+    }
+
+    public function getAndroidInstallDetail() {
+        return $this->hasMany(TblAndroidInstallationDetails::className(), ['android_installation_id' => 'android_installation_id'])->where(['is_active' => 1]);
+    }
+
+    public function validateExistData($attribute, $params) {
+        $existData = $this->find()->where(['organization_code' => $this->organization_code, 'organization_type' => 'VLC'])->one();
+        if (!empty($existData)) {
+            $existActiveData = $this->androidInstallDetail;
+            if (!empty($existActiveData)) {
+                $this->addError($attribute, Yii::t('app/validation', 'Installation Identity Is Allready Activated for - ' . Yii::$app->general->getforeignkey($this->dcsCode, 'dcs_name')));
+                return false;
+            }
         }
     }
 
