@@ -173,7 +173,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
     }
 
     public function actionDeleteSource() {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_route_mapping_sources', Yii::$app->request->post('id'), 'route_code']);
+        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_route_mapping_sources', Yii::$app->request->post('id'), 'route_mapping_source_code']);
         if ($valueOut == 0) {
             $this->model = TblRouteMappingSources::findOne(Yii::$app->request->post('id'));
             $historyModel = new TblRouteMappingSourcesHistory();
