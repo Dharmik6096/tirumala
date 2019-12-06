@@ -275,7 +275,20 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                             'max_clr' => $max_clr
                         ];
                     }
+                    $IncentiveDeduction = [];
+                    foreach ($model_data->collectionIncentive as $incentive) {
+                        $IncentiveDeduction[] = [
+                            'from_time' => $incentive->from_time,
+                            'to_time' => $incentive->to_time,
+                            'scheme_type' => $incentive->scheme_type,
+                            'shift_code' => $incentive->shift_code,
+                            'amount' => $incentive->amount,
+                            'from_date' => $incentive->from_time,
+                            'to_date' => $incentive->to_time,
+                        ];
+                    }
                     $res_data['collectionConfig']['allowedMilkType'] = $animalType;
+                    $res_data['collectionConfig']['collectionIncentiveDeduction'] = $IncentiveDeduction;
                 }
             } else if ($org_type == 'BMC') {
                 $model = new TblDcsBmc();
