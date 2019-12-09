@@ -283,8 +283,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                             'scheme_type' => $incentive->scheme_type,
                             'shift_code' => $incentive->shift_code,
                             'amount' => $incentive->amount,
-                            'from_date' => $incentive->from_time,
-                            'to_date' => $incentive->to_time,
+                            'from_date' => $incentive->from_date,
+                            'to_date' => $incentive->to_date,
                         ];
                     }
                     $res_data['collectionConfig']['allowedMilkType'] = $animalType;
