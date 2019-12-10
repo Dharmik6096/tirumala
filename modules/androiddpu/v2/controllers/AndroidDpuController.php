@@ -247,17 +247,20 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['collectionConfig']['inc_deduction'] = $att['inc_deduction'];
                     }
                     $MappedMilkType = $model_data->tblDcsMilkType;
+                    $collectionIncentive = $model_data->collectionIncentive;
                 }
             } else if ($org_type == 'BMC') {
                 $model = new TblDcsBmc();
                 $model->bmc_code = $org_code;
                 $model_data = $model->singleBmcData();
                 $MappedMilkType = $model_data->tblBmcMilkType;
+                $collectionIncentive = [];
             } else if ($org_type == 'MCC') {
                 $model = new TblMccPlant();
                 $model->mcc_plant_code = $org_code;
                 $model_data = $model->getData();
                 $MappedMilkType = $model_data->tblMccMilkType;
+                $collectionIncentive = [];
             }
             if ($mcc_bmc_config) {
                 $res_data['memberDownload'] = FALSE;
@@ -308,7 +311,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 ];
             }
             $IncentiveDeduction = [];
-            foreach ($model_data->collectionIncentive as $incentive) {
+            foreach ($collectionIncentive as $incentive) {
                 $IncentiveDeduction[] = [
                     'from_time' => $incentive->from_time,
                     'to_time' => $incentive->to_time,
