@@ -13,6 +13,8 @@ use app\modules\installation\models\TblAndroidInstallationDetailsSearch;
 use yii\helpers\Json;
 use app\components\WebApi;
 use yii\helpers\Url;
+use app\modules\installation\models\TblAndroidInstallationDetailsHistory;
+use yii\web\Response;
 
 /**
  * TblAndroidInstallationController implements the CRUD actions for TblAndroidInstallation model.
@@ -295,6 +297,22 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             ]);
             return $this->redirect(['index']);
         }
+    }
+
+    public function actionDeactivateIdentity($id) {
+        $existData = TblAndroidInstallationDetails::find()->where(['android_installation_details_id' => $id])->one();
+        $historyModel = new TblAndroidInstallationDetailsHistory();
+        Yii::$app->operation->history($existData, $historyModel, UPDATE);
+        $existData->is_active = 0;
+        $transaction = $this->generalModel->saveTransaction([$existData, $historyModel], ['AMCS Installation', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Identity Deactivated Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Identity Not Deactivated.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }
