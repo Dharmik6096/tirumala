@@ -697,7 +697,7 @@ class DropDown extends Component {
             'transporter_payment_head_code' => ['name' => 'transporter_payment_head_code', 'fields' => 'transporter_payment_head_code,transporter_payment_head', 'prompt' => 'Select Payment Head', 'model' => 'TblTransporterPaymentHead'],
             'village-code' => ['name' => 'village_code', 'fields' => 'village_code,village_name', 'prompt' => 'Select Village', 'model' => 'TblVillages'],
             'department' => ['name' => 'department', 'fields' => 'department_id,department,local_name', 'prompt' => 'Select Department', 'model' => 'TblDepartment'],
-            'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0]],
+            'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
         ];
         return $label[$l];
     }
