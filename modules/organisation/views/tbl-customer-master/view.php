@@ -18,36 +18,25 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'customer_type',
+                            'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'customer_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [
+
                         [
                             'attribute' => 'customer_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'local_name',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'customer_type',
-                            'value' => isset($model->customer_type) ? Yii::$app->dropdown->getRecords('customer_type')['data'][$model->customer_type] : 'N/A',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'gst_no',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'sap_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -67,42 +56,44 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'state_code',
-                            'value' => Yii::$app->general->getforeignkey($model->stateCode, 'state_name'),
-                            'valueColOptions' => ['style' => 'width:30%'],
+                            'attribute' => 'gst_no',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'district_code',
-                            'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
+                            'attribute' => 'state_code',
+                            'value' => Yii::$app->general->getforeignkey($model->stateCode, 'state_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
                 [
                     'columns' => [
+
+                        [
+                            'attribute' => 'district_code',
+                            'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                         [
                             'attribute' => 'sub_district_code',
                             'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'value' => isset($model->subDistrictCode) ? $model->subDistrictCode->sub_district_name : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [
+
                         [
                             'attribute' => 'village_code',
                             'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'hamlet_code',
                             'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                        [
-                            'attribute' => 'refference_code',
-                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

@@ -7,12 +7,10 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
-$class = $type == 'create' ? '' : 'disabled';
 ?>
 
 <?php
 $form = ActiveForm::begin([
-
             'options' => [],
             'validateOnBlur' => FALSE,
             'validateOnEnter' => TRUE,
@@ -26,10 +24,13 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
+    <div class="col-sm-3 ">
+        <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), $readonly); ?>
+    </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'customer_name')->textInput() ?>
     </div>
-    <?= Yii::$app->dropdown->dropdownStatic('customer_type', $model, $form, 'form-group col-sm-3 ' . $class, $model->getAttributeLabel('customer_type'), false, 'customer_type', false); ?>
+
     <div class="col-sm-3">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
@@ -57,12 +58,6 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'gst_no')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'sap_code')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'refference_code')->textInput() ?>
     </div>
 </div>
 

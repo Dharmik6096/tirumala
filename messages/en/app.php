@@ -23,6 +23,7 @@ return [
     'Hindi Name' => 'Regional Name',
     'Hindi Short Name' => 'Regional Short Name',
     'Hindi Address' => 'Regional Address',
+    'Local Address' => 'Regional Address',
     'Contact Person Hindi Name' => 'Contact Person Regional Name',
     'Hindi First Name' => 'Regional First Name',
     'Hindi Middle Name' => 'Regional Middle Name',

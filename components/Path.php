@@ -35,7 +35,7 @@ class Path extends Component {
             'TblMilkQualityType', 'TblMilkQualityTypeHistory',
             'TblLedgerType', 'TblLedgerTypeHistory',
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
-            'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch'
+            'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType'
         ],
         '\\app\modules\organisation\models\\' =>
         ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',

@@ -358,14 +358,19 @@ class DropDown extends Component {
     }
 
     public function withoutLocal($labelData, $old_model) {
-
-
         $fields = explode(',', $labelData['fields']);
         $model_name = Yii::$app->path->define($labelData['model']);
         $model = new $model_name();
+        $where = [];
+        if ($model->hasAttribute('is_active')) {
+            $where['is_active'] = 1;
+        }
+        if (isset($labelData['whereCondition'])) {
+            $where = array_merge($labelData['whereCondition'], $where);
+        }
         $select_fields[] = $fields[0];
         $select_fields[] = $fields[1];
-        //  var_dump($old_model);exit;
+
         if (!empty($fields[2])) {
             array_push($select_fields, $fields[2]);
         }
@@ -374,11 +379,11 @@ class DropDown extends Component {
                             ->select($select_fields)
                             ->where([$fields[0] => $old_model->{$fields[0]}])
                             ->createCommand()->rawSql;
-            $tmp_query = $model->find()->select($select_fields)->where(['is_active' => 1])->union($unionQuery);
+            $tmp_query = $model->find()->select($select_fields)->where($where)->union($unionQuery);
             $query = new Query();
             $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
         } else {
-            $records = $model->find()->select($select_fields)->where(['is_active' => 1])->orderBy($model->tablename() . '.' . $fields[1])->all();
+            $records = $model->find()->select($select_fields)->where($where)->orderBy($model->tablename() . '.' . $fields[1])->all();
         }
 
         return ArrayHelper::map($records, $fields[0], function($array, $key) use ($fields) {
@@ -692,6 +697,7 @@ class DropDown extends Component {
             'transporter_payment_head_code' => ['name' => 'transporter_payment_head_code', 'fields' => 'transporter_payment_head_code,transporter_payment_head', 'prompt' => 'Select Payment Head', 'model' => 'TblTransporterPaymentHead'],
             'village-code' => ['name' => 'village_code', 'fields' => 'village_code,village_name', 'prompt' => 'Select Village', 'model' => 'TblVillages'],
             'department' => ['name' => 'department', 'fields' => 'department_id,department,local_name', 'prompt' => 'Select Department', 'model' => 'TblDepartment'],
+            'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0]],
         ];
         return $label[$l];
     }

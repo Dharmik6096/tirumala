@@ -9,6 +9,7 @@ use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -56,20 +57,15 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['customer_name', 'union_code', 'customer_type'], 'required'],
-            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'string'],
+            [['customer_name', 'union_code', 'address', 'customer_type'], 'required'],
+            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['is_active'], 'default', 'value' => 1],
-            [['gst_no'], function ($attribute, $params) {
-            $this->validateGstNo($attribute, $params);
-        }, 'skipOnEmpty' => false],
+            [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
+                'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
             Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
-            [['sap_code'], 'unique'],
-            [['sap_code', 'refference_code'], function ($attribute, $params) {
-            Yii::$app->general->validateOnlyAlphaNumber($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
         ];
     }
@@ -83,11 +79,11 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'customer_name' => Yii::t('app', 'Customer Name'),
             'address' => Yii::t('app', 'Address'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'state_code' => Yii::t('app', 'State Code'),
-            'district_code' => Yii::t('app', 'District Code'),
-            'sub_district_code' => Yii::t('app', 'Sub District Code'),
-            'village_code' => Yii::t('app', 'Village Code'),
-            'hamlet_code' => Yii::t('app', 'Hamlet Code'),
+            'state_code' => Yii::t('app', 'State'),
+            'district_code' => Yii::t('app', 'District'),
+            'sub_district_code' => Yii::t('app', 'Sub District'),
+            'village_code' => Yii::t('app', 'Village'),
+            'hamlet_code' => Yii::t('app', 'Hamlet'),
             'local_name' => Yii::t('app', 'Local Name'),
             'local_address' => Yii::t('app', 'Local Address'),
             'gst_no' => Yii::t('app', 'Gst No'),
@@ -109,7 +105,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
-  public function getUnionCode() {
+
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
@@ -133,18 +130,15 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $this->hasOne(TblVillages::className(), ['village_code' => 'village_code']);
     }
 
-    public function validateGstNo($attribute, $params) {
-
-        if (!empty($this->gst_no))
-            if (strlen($this->gst_no) != 15) {
-                $this->addError($attribute, Yii::t('app/validation', 'Gst no must contain 15 characters'));
-            }
-        return false;
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type']);
     }
 
     public function getCode() {
-        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,4))) AS customer_code"])->where(['union_code' => $this->union_code])->one();
-        return $this->union_code . str_pad((int) $data['customer_code'] + 1, 4, '0', STR_PAD_LEFT);
+        $code_prefix = $this->customerType->code_prefix;
+        $code_length = $this->customerType->code_length;
+        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,$code_length))) AS customer_code"])->one();
+        return $code_prefix . str_pad((int) $data['customer_code'] + 1, $code_length, '0', STR_PAD_LEFT);
     }
 
     public function getCustomerWithType($unionCode, $customer_type = '', $notIn = []) {

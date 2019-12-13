@@ -40,25 +40,23 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblCustomerMasterHistory extends \yii\db\ActiveRecord
-{
+class TblCustomerMasterHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_customer_master_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['customer_code'], 'required'],
-            [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['is_active', 'originating_type'], 'integer'],
+            [['customer_code'], 'safe'],
+            [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['is_active', 'originating_type'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
         ];
     }
@@ -66,8 +64,7 @@ class TblCustomerMasterHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'customer_code' => Yii::t('app', 'Customer Code'),
@@ -103,4 +100,5 @@ class TblCustomerMasterHistory extends \yii\db\ActiveRecord
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
 }
