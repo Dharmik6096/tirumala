@@ -10,13 +10,12 @@ use app\modules\organisation\models\TblMccPlantGroupMapping;
 /**
  * TblMccPlantGroupMappingSearch represents the model behind the search form about `app\modules\organisation\models\TblMccPlantGroupMapping`.
  */
-class TblMccPlantGroupMappingSearch extends TblMccPlantGroupMapping
-{
+class TblMccPlantGroupMappingSearch extends TblMccPlantGroupMapping {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['mcc_plant_mapping_code', 'is_active'], 'integer'],
             [['mcc_plant_code', 'p_mcc_plant_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
@@ -26,8 +25,7 @@ class TblMccPlantGroupMappingSearch extends TblMccPlantGroupMapping
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblMccPlantGroupMappingSearch extends TblMccPlantGroupMapping
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblMccPlantGroupMapping::find();
 
         // add conditions that should always apply here
@@ -59,17 +56,12 @@ class TblMccPlantGroupMappingSearch extends TblMccPlantGroupMapping
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'mcc_plant_mapping_code' => $this->mcc_plant_mapping_code,
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'mcc_plant_code' => $this->mcc_plant_code,
+            'p_mcc_plant_code' => $this->p_mcc_plant_code,
         ]);
 
-        $query->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'p_mcc_plant_code', $this->p_mcc_plant_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }
+
 }

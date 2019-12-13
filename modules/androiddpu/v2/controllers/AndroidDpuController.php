@@ -139,9 +139,14 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     if (!empty($model_data)) {
                         $union_code = $model_data->union_code;
                         $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
-                        $mcc_plant_code = ArrayHelper::getColumn($model_data->unionCode->tblMccPlant, 'mcc_plant_code');
-                        $bmc_code = ArrayHelper::getColumn($model_data->unionCode->tblBmc, 'bmc_code');
+                        $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlant->tblMccPlantGroup, 'p_mcc_plant_code');
+                        $mcc_plant_code[] = $model_data->mcc_plant_code;
+                        $bmc_code = ArrayHelper::getColumn($model_data->tblBmcGroup, 'p_bmc_code');
+                        $bmc_code[] = $model_data->bmc_code;
                         $dcs_code = ArrayHelper::getColumn($model_data->dcsCodes, 'dcs_code');
+                        foreach ($model_data->tblBmcGroup as $bmc) {
+                            $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
+                        }
                     }
                 } else if ($type == 'MCC') {
                     $model = new TblMccPlant();
@@ -151,9 +156,14 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     if (!empty($model_data)) {
                         $union_code = $model_data->union_code;
                         $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
-                        $mcc_plant_code = ArrayHelper::getColumn($model_data->unionCode->tblMccPlant, 'mcc_plant_code');
-                        $bmc_code = ArrayHelper::getColumn($model_data->unionCode->tblBmc, 'bmc_code');
+                        $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlantGroup, 'p_mcc_plant_code');
+                        $mcc_plant_code[] = $model_data->mcc_plant_code;
+                        $bmc_code = ArrayHelper::getColumn($model_data->bmcCodes, 'bmc_code');
                         $dcs_code = ArrayHelper::getColumn($model_data->tblDcs, 'dcs_code');
+                        foreach ($model_data->tblMccPlantGroup as $mcc) {
+                            $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
+                            $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
+                        }
                     }
                 }
                 if (!empty($model_data)) {

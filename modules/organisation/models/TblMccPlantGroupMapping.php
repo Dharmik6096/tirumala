@@ -61,4 +61,12 @@ class TblMccPlantGroupMapping extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
+    public function getTblBmcCode() {
+        return $this->hasMany(TblDcsBmc::className(), ['mcc_plant_code' => 'p_mcc_plant_code']);
+    }
+
+    public function getTblDcsCode() {
+        return $this->hasMany(TblDcs::className(), ['mcc_plant_code' => 'p_mcc_plant_code']);
+    }
+
 }

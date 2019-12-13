@@ -375,4 +375,8 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $out;
     }
 
+    public function getTblBmcGroup() {
+        return $this->hasMany(TblBmcGroupMapping::className(), ['bmc_code' => 'bmc_code']);
+    }
+
 }
