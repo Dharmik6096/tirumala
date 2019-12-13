@@ -51,6 +51,8 @@ class Operation extends Component {
         if ($historyModel->hasAttribute('operation_type')) {
             $historyModel->operation_type = $operation;
         }
+        if ($historyModel->hasAttribute('history_created_by'))
+            $historyModel->history_created_by = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
     }
 
 }

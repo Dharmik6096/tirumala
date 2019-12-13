@@ -15,6 +15,10 @@ use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\organisation\models\TblMccMilkType;
 use app\modules\organisation\models\TblMccMilkTypeHistory;
+use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblMccPlantGroupMapping;
+use app\modules\organisation\models\TblMccPlantGroupMappingSearch;
+use app\modules\organisation\models\TblMccPlantGroupMappingHistory;
 
 /**
  * TblMccPlantController implements the CRUD actions for TblMccPlant model.
@@ -278,6 +282,48 @@ class TblMccPlantController extends \app\controllers\ChildController {
             array_push($list, $modelMilk);
         }
         return $list;
+    }
+
+    public function actionMccMapping($id) {
+        $MccModel = new TblMccPlant();
+        $mcc_data = $MccModel->getMCCList([]);
+        unset($mcc_data[$id]);
+        $model = new TblMccPlantGroupMapping();
+        $searchModel = new TblMccPlantGroupMappingSearch();
+        $searchModel->mcc_plant_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $exist_data = ArrayHelper::map($dataProvider->getModels(), 'p_mcc_plant_code', 'p_mcc_plant_code');
+        $mcc_data = array_diff_key($mcc_data, $exist_data);
+        if (Yii::$app->request->post() && isset(Yii::$app->request->post()['TblMccPlantGroupMapping'])) {
+            $mcc_code = Yii::$app->request->post()['TblMccPlantGroupMapping']['p_mcc_plant_code'];
+            $master = [];
+            foreach ($mcc_code as $mapped_mcc_code) {
+                $model_mcc = new TblMccPlantGroupMapping();
+                $model_mcc->mcc_plant_code = $id;
+                $model_mcc->p_mcc_plant_code = $mapped_mcc_code;
+                $master[] = $model_mcc;
+            }
+            $transaction = $this->generalModel->saveTransaction($master, ['MCC Mapping', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['index']);
+            }
+        }
+
+        return $this->render('_mcc_mapping', [
+                    'model' => $model, 'mcc_data' => $mcc_data,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDeleteMcc() {
+        $model = TblMccPlantGroupMapping::findOne(Yii::$app->request->post('id'));
+        $record = [];
+        $historyModel = new TblMccPlantGroupMappingHistory();
+        Yii::$app->operation->history($model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

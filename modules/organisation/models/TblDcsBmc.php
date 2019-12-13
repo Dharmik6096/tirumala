@@ -69,15 +69,15 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['local_name'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['bmc_code'], 'integer', 'min' => 1],
             [['bmc_code'], 'string', 'max' => 5],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code'], 'safe'],
@@ -276,7 +276,10 @@ class TblDcsBmc extends \app\models\ChildModel {
         if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
         }
-        return $query->all();
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
+        return $query->orderby('bmc_name asc')->all();
     }
 
     public function bmcData() {

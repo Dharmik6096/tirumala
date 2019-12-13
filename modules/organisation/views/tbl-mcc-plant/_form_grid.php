@@ -78,6 +78,9 @@ $grid_option = [
         'contact-details' => function ($url, $model) {
     $options = ['data-name' => $model->name, 'data-val' => $model->mcc_plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
     return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-mcc-plant/contact-details', 'id' => $model->mcc_plant_code], $options);
+}, 'mapping' => function ($url, $model) {
+    $options = ['data-val' => $model->mcc_plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'MCC Mapping'];
+    return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-mcc-plant/mcc-mapping', 'id' => $model->mcc_plant_code], $options);
 },
     ]
 ];
