@@ -137,7 +137,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     public function getCode() {
         $code_prefix = $this->customerType->code_prefix;
         $code_length = $this->customerType->code_length;
-        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,$code_length))) AS customer_code"])->one();
+        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,$code_length))) AS customer_code"])->where(['customer_type' => $this->customer_type])->one();
         return $code_prefix . str_pad((int) $data['customer_code'] + 1, $code_length, '0', STR_PAD_LEFT);
     }
 
