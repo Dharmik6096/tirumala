@@ -190,7 +190,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $i = 0;
         $cnt = 0;
         $purchaseModel = new TblPurchaseRateDetails();
-        $detailmaxID = $purchaseModel->getCode();
+        // $detailmaxID = $purchaseModel->getCode();
         $based = [];
         $baseCode = 0;
         $error = FALSE;
@@ -291,7 +291,6 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
 //                                    }
                                     if (!$error) {
                                         $data [$i] [] = [
-                                            $detailmaxID + $cnt,
                                             $purchaseRate->purchase_rate_code,
                                             $rate_type_code,
                                             $purchaseBasedModel->milk_quality_type_code,
@@ -336,7 +335,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         $master[] = $error;
                     }
                     foreach ($data as $d) {
-                        \Yii::$app->db->createCommand()->batchInsert('tbl_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'is_active', 'created_by', 'created_at'], $d)->execute();
+                        \Yii::$app->db->createCommand()->batchInsert('tbl_purchase_rate_details', ['purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'is_active', 'created_by', 'created_at'], $d)->execute();
                     }
                     if ($transaction->isActive && !in_array(FALSE, $master)) {
                         $transaction->commit();
