@@ -12,6 +12,10 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateBased;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblSentboxRatechart;
 use yii\helpers\Json;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_dcs_purchase_rate_applicability".
@@ -64,11 +68,11 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
     public function rules() {
         return [
             ['is_active', 'default', 'value' => 1],
-             ['is_download', 'default', 'value' => 0],
-            [['wef_date', 'shift_code', 'dcs_code'], 'required'],
-            [['dcs_code'], 'checkDuplicate'],
+            ['is_download', 'default', 'value' => 0],
+            [['wef_date', 'shift_code', 'applicable_code'], 'required'],
+            [['applicable_code'], 'checkDuplicate'],
 //            [['route_code'], 'required', 'except' => 'applicability'],
-            [['purchase_rate_code','dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date'], 'safe'],
+            [['purchase_rate_code', 'dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date', 'applicable_code', 'applicable_for'], 'safe'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
@@ -99,6 +103,9 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
             'deleted_by' => Yii::t('app', 'Deleted By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'route_name' => Yii::t('app', 'Route Name'),
+            'applicable_code' => Yii::t('app', 'Code'),
+            'applicable_for' => Yii::t('app', 'For'),
+             'mcc_name' => Yii::t('app', 'Name'),
         ];
     }
 
@@ -198,14 +205,13 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
 //        return str_pad($number, 2, '0', STR_PAD_LEFT);
 //    }
 
-      public function getCode() {
+    public function getCode() {
         $data = $this->find()->select(["convert(int,MAX(rate_app_code)) as rate_app_code"])->one();
         return (int) $data['rate_app_code'] + 1;
     }
 
-
     public function checkDuplicate($attribute, $params) {
-        if (is_array($this->dcs_code)) {
+        if (is_array($this->applicable_code)) {
             $shift = strtolower($this->purchaseRateCode->shiftApplicability->shift);
             $wef_date = date('Y-m-d', strtotime($this->wef_date));
             if ($shift == 'all') {
@@ -213,21 +219,30 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
             } else {
                 $shiftarray = ['all', $shift];
             }
-            $check = $this->find()->select(['tbl_dcs_purchase_rate_applicability.dcs_code', 'tbl_dcs_purchase_rate.shift_applicability', 'tbl_dcs_purchase_rate.purchase_rate_code'])->joinWith(['purchaseRateCode.shiftApplicability'])
+            $check = $this->find()->select(['tbl_dcs_purchase_rate_applicability.applicable_code', 'tbl_dcs_purchase_rate.shift_applicability', 'tbl_dcs_purchase_rate.purchase_rate_code', 'tbl_dcs_purchase_rate_applicability.applicable_for'])->joinWith(['purchaseRateCode.shiftApplicability'])
                     ->where(['or',
                         ['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code,
-                            'tbl_dcs_purchase_rate_applicability.dcs_code' => $this->dcs_code],
-                        ['tbl_dcs_purchase_rate_applicability.dcs_code' => $this->dcs_code,
+                            'tbl_dcs_purchase_rate_applicability.applicable_code' => $this->applicable_code],
+                        ['tbl_dcs_purchase_rate_applicability.applicable_code' => $this->applicable_code,
                             'convert(date, tbl_dcs_purchase_rate.wef_date, 103)' => $wef_date,
                             'tbl_dcs_purchase_rate.originating_org_type' => 'UNION',
                             'tbl_dcs_purchase_rate.originating_org_code' => Yii::$app->session->get('organizations_code'),
                             'tbl_shift.shift' => $shiftarray]
                     ])
+                    ->andWhere(['applicable_for' => $this->applicable_for])
                     ->all();
             if (count($check) > 0) {
                 $i = 0;
                 foreach ($check as $data) {
-                    $this->addError('dcs_code[' . $i . ']', $data->dcsCode->dcs_name . ' ' . Yii::t('app/validation', 'applicability already available for given input.'));
+                    $name = Yii::$app->general->getforeignkey($data->customerMasterCode, 'customer_name');
+                    if ($data->applicable_for == 'PLANT') {
+                        $name = Yii::$app->general->getforeignkey($data->plantCode, 'name');
+                    } else if ($data->applicable_for == 'MCC') {
+                        $name = Yii::$app->general->getforeignkey($data->mccPlantCode, 'name');
+                    } else if ($data->applicable_for == 'BMC') {
+                        $name = Yii::$app->general->getforeignkey($data->bmcCode, 'bmc_name');
+                    }
+                    $this->addError('applicable_code[' . $i . ']', $name . ' ' . Yii::t('app/validation', 'applicability already available for given input.'));
                     $i++;
                 }
                 return FALSE;
@@ -287,6 +302,22 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
         $ratesentbox->version_no = 'PORTAL';
         $ratesentbox->purchase_rate_type = 'DCS';
         $ratesentbox->save();
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'applicable_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'applicable_code']);
+    }
+
+    public function getCustomerMasterCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code']);
     }
 
 }

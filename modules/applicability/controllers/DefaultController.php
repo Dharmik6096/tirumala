@@ -12,6 +12,9 @@ use yii\web\Response;
 use yii\helpers\Json;
 use ReflectionClass;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * Default controller for the `applicability` module
@@ -99,6 +102,13 @@ class DefaultController extends Controller {
         $union_code = Yii::$app->request->post('ucode');
         $flag = Yii::$app->request->post('flag');
         $filters = Json::decode(Yii::$app->request->post('filters'));
+        $filter = !empty(Yii::$app->request->post('filter_type')) ? Yii::$app->request->post('filter_type') : '';
+
+        $model_name = str_replace('_', '\\', Yii::$app->request->post('mname'));
+        $field_name = Yii::$app->request->post('field');
+        $field_code = Yii::$app->request->post('fcode');
+        $model = new $model_name();
+        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter]);
         switch (1) {
             case key_exists('routes', $filters):
                 $routs = new TblRouteMapping();
@@ -108,7 +118,25 @@ class DefaultController extends Controller {
                 break;
             case in_array('mcc', $filters):
                 break;
+            case in_array($filter, ['PLANT']):
+                $plantModel = new TblPlant();
+                $filter_data['applicable_code'] = $plantModel->getPlantList($union_code, TRUE, $modelQuery);
+                break;
+            case in_array($filter, ['MCC']):
+                $mccModel = new TblMccPlant();
+                $filter_data['applicable_code'] = $mccModel->getMccs($union_code, $modelQuery);
+                break;
+            case in_array($filter, ['BMC']):
+                $bmcModel = new TblDcsBmc();
+                $filter_data['applicable_code'] = $bmcModel->getBmcs($union_code, $modelQuery);
+                break;
+//            case in_array($filter, ['VENDOR']):
+//                $vendorModel = new TblCustomerMaster();
+//                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, 'VENDOR', $modelQuery);
+//                break;
             default :
+                $vendorModel = new TblCustomerMaster();
+                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, $filter, $modelQuery);
         }
         if (key_exists('mcc', $filters)) {
             $mcc = new TblMccPlant();

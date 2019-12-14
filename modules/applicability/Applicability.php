@@ -15,6 +15,7 @@ use yii\helpers\FileHelper;
 use app\models\TblUserOrganizationMapping;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * applicability module definition class
@@ -36,6 +37,11 @@ class Applicability extends \yii\base\Module {
     public $select_from_all = false;
     public $ratechart = false;
     public $shift_type = '';
+    public $mcc_field_name = 'applicable_code';
+    public $options = ['dcs', 'mcc'];
+    public $default_option = 'dcs';
+    public $script = false;
+    public $header_title = '';
     //put your code here
     protected $generalModel;
 
@@ -57,16 +63,41 @@ class Applicability extends \yii\base\Module {
 
     protected function customRender() {
         $field_name = $this->field_name;
-        $selected = $this->getDcs($this->top_section);
-        $dcs_list = $this->loadUnionDcs($selected, '');
-        $dcs_list = ArrayHelper::map($dcs_list, 'dcs_code', 'dcs_name');
+        $preload = count($this->options) == 1 ? $this->options[0] : (empty($this->options) ? 'none' : $this->default_option);
+        switch ($preload) {
+            case 'dcs':
+                $selected = $this->getDcs($this->top_section);
+                $list = $this->loadUnionDcs($selected, '');
+                $list = ArrayHelper::map($list, 'dcs_code', 'dcs_name');
+                $main_field_name = 'dcs_code';
+                $title = 'Societies';
+                break;
+            case 'mcc':
+                $selected = $this->getMcc();
+                $list = $this->loadUnionMcc($this->union_code);
+                $main_field_name = $this->mcc_field_name;
+                $title = 'MCCs';
+                break;
+            case 'tanker_rate':
+                $selected = $this->getMcc();
+                $list = $this->loadUnionMcc($this->union_code);
+                $main_field_name = $this->mcc_field_name;
+                $title = 'MCCs';
+                break;
+            default :
+                $selected = [];
+                $list = [];
+                $main_field_name = 'dcs_code';
+                $title = 'Societies';
+        }
         $searchModel = $this->searchModel;
         $searchModel->$field_name = $this->field_value;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return Yii::$app->controller->render('/../../applicability/views/default/create', [
                     'model' => $this->model,
                     'field_name' => $field_name,
-                    'dcs_list' => $dcs_list,
+                    'dcs_list' => $list,
+                    'mcc_field_name' => $this->mcc_field_name,
                     'selected' => $selected,
                     'filters' => $this->dcs_filters,
                     'filter_data' => $this->getFilterData(),
@@ -84,6 +115,12 @@ class Applicability extends \yii\base\Module {
                     'select_from_all' => $this->select_from_all,
                     'ratechart' => $this->ratechart,
                     'shift_type' => $this->shift_type,
+                    'main_field_name' => $main_field_name,
+                    'options' => $this->options,
+                    'preload' => $preload,
+                    'title' => $title,
+                    'script' => $this->script,
+                    'header_title' => $this->header_title,
         ]);
     }
 
@@ -96,16 +133,35 @@ class Applicability extends \yii\base\Module {
         $this->historyModel = new $historyName();
 
         $field_name = $this->field_name;
+        $preload = count($this->options) == 1 ? $this->options[0] : (empty($this->options) ? 'none' : $this->default_option);
+        switch ($preload) {
+            case 'dcs':
+                $main_field_name = 'dcs_code';
+                $title = 'Society';
+                break;
+            case 'mcc':
+                $main_field_name = $this->mcc_field_name;
+                $title = 'MCC';
+                break;
+            case 'tanker_rate':
+                $main_field_name = $this->mcc_field_name;
+                $title = 'MCC';
+                break;
+            default :
+                $main_field_name = 'dcs_code';
+                $title = 'Society';
+        }
         if (Yii::$app->request->post()) {
             //$model->union_code = $this->union_code;
             $model->$field_name = $this->field_value;
 
             if ($model->load(Yii::$app->request->post())) {
+                $model->setAttributes(Yii::$app->request->post());
                 if ($model->validate()) {
                     $dataold = $this->model->find()->where([$this->field_name => $this->field_value])->all();
-                    $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, 'dcs_code');
-                    $toRevoke = array_intersect($returnedArray, $model->dcs_code);
-                    $toAssign = $model->dcs_code;
+                    $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);
+                    $toRevoke = array_intersect($returnedArray, $model->{$main_field_name});
+                    $toAssign = $model->{$main_field_name};
                     //$toAssign = array_diff($returnedArray, $model->dcs_code);
                     //$toRevoke = array_diff($model->dcs_code, $returnedArray);
                     $mappingList = [];
@@ -116,7 +172,7 @@ class Applicability extends \yii\base\Module {
                             //echo $value.'<br/>';
                             $r = new ReflectionClass($this->model->className());
                             $appModel = $r->newInstanceArgs();
-                            $appModel = $appModel->find()->where(['dcs_code' => $value, $field_name => $this->field_value])->one();
+                            $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value])->one();
                             $h = new ReflectionClass($this->historyModel->className());
                             $appHistory = $h->newInstanceArgs();
                             Yii::$app->operation->history($appModel, $appHistory, DELETE);
@@ -132,7 +188,7 @@ class Applicability extends \yii\base\Module {
                         $appModel->setAttributes($data);
                         $primaryKey = $model->tableSchema->primaryKey[0];
                         unset($appModel->$primaryKey);
-                        $appModel->dcs_code = $value;
+                        $appModel->{$main_field_name} = $value;
                         $appModel->$field_name = $this->field_value;
                         //$appModel->union_code = $this->union_code;  
 
@@ -140,7 +196,7 @@ class Applicability extends \yii\base\Module {
 
                         $check = $this->checkDuplicate($appModel);
                         if ($check == 1) {
-                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by dcs.');
+                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
                             return $this->customRender();
                         }
 
@@ -148,7 +204,7 @@ class Applicability extends \yii\base\Module {
                         $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
                         $check = $this->checkDuplicate($appModel);
                         if ($check == 1) {
-                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by dcs.');
+                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
                             return $this->customRender();
                         }
 
@@ -470,6 +526,23 @@ class Applicability extends \yii\base\Module {
             $messagestring = 'Following are the current <b>society - purchase rate</b> applicabilities.<br/>' . implode('<br/>', $message);
         }
         return [0 => $messagestring, 1 => $dcs];
+    }
+
+    public function getMcc() {
+        $field_name = $this->field_name;
+        if ($this->select_from_all == false)
+            $query = $this->model->find()->select($this->mcc_field_name)->where([$field_name => $this->field_value]);
+        else
+            $query = $this->model->find()->select($this->mcc_field_name);
+        $values = $query->all();
+        $selected = ArrayHelper::getColumn($values, $this->mcc_field_name);
+        return $selected;
+    }
+
+    public function loadUnionMcc($union_code) {
+        $mccModel = new TblMccPlant();
+        $mccList = $mccModel->getMccs($union_code);
+        return $mccList;
     }
 
 }

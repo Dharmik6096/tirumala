@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
-$divPrefix = '<div class="col-sm-3">';
+$divPrefix = '<div class="col-sm-3 shift">';
 $divPostfix = '</div>';
 ?>
 <?php echo $form->errorSummary($model); ?>
@@ -48,52 +48,71 @@ $divPostfix = '</div>';
             if (!empty($f['type']) && $f['type'] == 'date') {
                 echo $divPrefix . Yii::$app->controls->date($model, $form, $key, '', false) . $divPostfix;
             } else if (!empty($f['type']) && $f['type'] == 'dropdown') {
+                if (isset($f['class'])) {
+                    $divPrefix = '<div class="col-sm-3 ' . $f['class'] . '">';
+                }
                 echo $divPrefix . Yii::$app->dropdown->dropdown($f['flag'], $model, $form, '', 'Shift', false, $key) . $divPostfix;
             }
         }
     }
     ?>
     <div class="clearfix"></div>
-    <div class="col-sm-12 mt10">
-        <h5 class="panel-subtitle">Apply to</h5>
-        <?= Html::radioList('dcs-filter', 'society', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'dcs-filter']]); ?>
-    </div>
-    <div class="col-sm-3">
-        <div class="app-header-list">
-            <h4 class="mt10 mb15" id="header">Society</h4>
-            <?php
-            /* foreach ($filter_data as $key => $data) {
-              ?>
-              <?=
-              $this->render('_checkbox_list', [
-              'field_name' => $key,
-              'list' => $data, 'selected' => [],
-              ])
-              ?>
-              <?php } */
-            foreach ($filters as $key => $data) {
-                if ($key != 'society')
-                    echo '<div id="' . $key . '-list" class="row flt" style="display:none"></div>';
-            }
-            ?>
+    <?php
+    $class = 'col-sm-9';
+    $checkboxClass = 'col-sm-4';
+    if (in_array('dcs', $options)) {
+        ?>
+        <div class="col-sm-12 mt10">
+            <h5 class="panel-subtitle">Apply to</h5>
+            <?= Html::radioList('dcs-filter', 'society', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'dcs-filter']]); ?>
         </div>
-    </div>
-    <div class="col-sm-9">
-        <div class="app-check-list">                   
-            <h4>Society List</h4>
+        <div class="col-sm-3">
+            <div class="app-header-list">
+                <h4 class="mt10 mb15" id="header"><?= $title ?></h4>
+                <?php
+                /* foreach ($filter_data as $key => $data) {
+                  ?>
+                  <?=
+                  $this->render('_checkbox_list', [
+                  'field_name' => $key,
+                  'list' => $data, 'selected' => [],
+                  ])
+                  ?>
+                  <?php } */
+                foreach ($filters as $key => $data) {
+                    if ($key != 'society')
+                        echo '<div id="' . $key . '-list" class="row flt" style="display:none"></div>';
+                }
+                ?>
+            </div>
+        </div>
+        <?php
+    } else if (in_array('tanker_rate', $options)) {
+        $class = 'col-sm-12';
+        $checkboxClass = 'col-sm-3';
+        ?>
+        <div class="col-sm-12 mt10">
+            <h5 class="panel-subtitle">Apply to</h5>
+            <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
+        </div>
+    <?php } ?>
+    <div class="<?= $class ?>">
+        <div class="app-check-list">
+            <h4><?= $title ?> List</h4>
             <div class="form-group">
                 <div class="checkbox app-check-all">
                     <label class="route-text">
                         <?= Html::checkbox('checkall', false, ['id' => 'checkAll', 'class' => 'route-checkbox']) ?>
-                        <label for="checkAll">Check All Societies</label>
+                        <label for="checkAll">Check All <?= $title ?></label>
                     </label>
                 </div>
             </div>
+            <div class="clearfix"></div>
             <div id="dcs-wrap">
                 <?=
                 $this->render('_checkbox_list', [
-                    'model' => $model, 'form' => $form, 'field_name' => 'dcs_code',
-                    'list' => $dcs_list, 'selected' => $selected,
+                    'model' => $model, 'form' => $form, 'field_name' => $main_field_name,
+                    'list' => $dcs_list, 'selected' => $selected, 'checkboxClass' => $checkboxClass,
                 ])
                 ?>
             </div>
@@ -166,6 +185,9 @@ $script = "
             addFilterData($('#{$nameforid}-union_code').val());
             addSociety('society',0,'');
         }
+//        $('#dcs-filter input[type=\'radio\']:first').attr('checked', true);
+        $('#dcs-filter input[type=\'radio\']:first').trigger('click');
+//        addFilterData($('#{$nameforid}-union_code').val(), $('#dcs-filter input[type=\'radio\']:first').val(), 'applicable_code');
     });
     $('#{$nameforid}-union_code').on('change',function(){
         addFilterData($(this).val());
@@ -182,14 +204,23 @@ $script = "
         var id= $(this).val();
         addSociety(flag,id,chkbx);  
     })
-    
-    function addFilterData(ucode)
+    $(document).on('click', '.applicable_for',function(event){
+        $('.getTitleForThis').removeClass('getTitleForThis');
+        $(this).closest('label').addClass('getTitleForThis');
+        $('.app-check-list h4').text($('.getTitleForThis').text() + ' List');
+        $('.app-check-all label label').text('Check All '+$('.getTitleForThis').text());
+        addFilterData($('#{$nameforid}-union_code').val(), $(this).val(), 'applicable_code');
+    });
+    function addFilterData(ucode, filter_type = '', applicable_for = '')
     {
         var flts=JSON.stringify({$filter_json});
+        var fld='{$field_name}';
+        var fldcode='{$field_code}';
+        var mname='{$model_name}';
         $.ajax({
                         type: 'post',
                         url: '{$furl}',
-                        data: {'ucode':ucode,'filters':flts},
+                        data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -197,7 +228,11 @@ $script = "
                                 $.each(obj1.data, function(index, value) {
                                         $('#'+index+'-list').empty();
                                         $.each(value, function(ind, vl) {
-                                           $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+ind+'\"><label class=\"route-text\" for=\"'+ind+'\">'+vl+'</label></div></div>');
+                                            if(applicable_for == ''){
+                                               $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+ind+'\"><label class=\"route-text\" for=\"'+ind+'\">'+vl+'</label></div></div>');
+                                            } else {
+                                                $('#'+index+'-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><label class=\"route-text\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"TblDcsPurchaseRateApplicabitity[applicable_code][]\" value=\"'+ind+'\" id=\"'+ind+'\"><label for=\"'+ind+'\">'+vl+'</label></label></div></div>');
+                                            }
                                         });
                                     });
                             }

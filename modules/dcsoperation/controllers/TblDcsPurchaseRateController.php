@@ -22,6 +22,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitityHistory;
 use yii\helpers\Json;
 use PHPExcel;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblDcsPurchaseRateController implements the CRUD actions for TblDcsPurchaseRate model.
@@ -469,6 +470,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblDcsPurchaseRateApplicabitity();
+        $customerType = new TblCustomerType();
+        $value = $customerType->getCustomerType();
         $appModel->model->shift_code = $model->shift_id;
         $appModel->model->wef_date = $model->wef_date;
         $appModel->is_union = false;
@@ -476,17 +479,34 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->field_name = 'purchase_rate_code';
         $appModel->field_value = $id;
         $appModel->trans_label = 'purchase rate applicability';
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->options = ['tanker_rate'];
+        $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-            return Yii::$app->controls->view_date($model->wef_date);
-        }],
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
-            'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
+            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+                    }
+                }],
+                //'dcs_name' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],           
         ];
-        $appModel->actions = ['delete' => ['option' => 'rate_app_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability']];
+        $appModel->actions = ['delete' => ['option' => 'applicable_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability']];
 
         $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
-        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
+//        $appModel->dcs_filters = ['MCC' => 'MCC', 'PLANT' => 'PLANT', 'VENDOR' => 'VENDOR'];
+        $appModel->dcs_filters = $value;
 
         return $appModel->createApp();
     }

@@ -1,8 +1,8 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Society Mapping');
+$this->title = Yii::$app->label->title('create', 'Mapping');
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading"><?= $this->title ?><?= !empty($title) ? ' (' . $title . ')' : ''; ?></div>
+    <div class="panel-heading"><?= $this->title ?><?= !empty($title) ? ' (' . $title . ')' . $header_title : ''; ?></div>
     <div class="panel-body">
         <?=
         $this->render('_form', [
@@ -22,7 +22,11 @@ $this->title = Yii::$app->label->title('create', 'Society Mapping');
             'payment' => $payment,
             'select_from_all' => $select_from_all,
             'shift_type' => $shift_type,
-            'ratechart'=>$ratechart,
+            'ratechart' => $ratechart,
+            'main_field_name' => $main_field_name,
+            'options' => $options,
+            'preload' => $preload,
+            'title' => $title,
         ])
         ?>
         <div class="row">
@@ -32,7 +36,8 @@ $this->title = Yii::$app->label->title('create', 'Society Mapping');
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
                     'fields' => $fields,
-                    'actions' => $actions
+                    'actions' => $actions,
+                    'script' => $script,
                 ])
                 ?>
             </div>

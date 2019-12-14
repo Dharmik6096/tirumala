@@ -73,16 +73,16 @@ class TblMccPlant extends \app\models\ChildModel {
             [['email'], 'string', 'max' => 50],
             [['email'], 'email'],
             [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
             [['name',], 'string', 'max' => 255],
             [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mcc_plant_code'], 'integer', 'min' => 1],
             [['mcc_plant_code'], 'string', 'max' => 6],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
@@ -258,10 +258,13 @@ class TblMccPlant extends \app\models\ChildModel {
         return $query->all();
     }
 
-    public function getMccs($unionCode) {
+    public function getMccs($unionCode, $notIn = []) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('MCC') !== '') {
             $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        if (!empty($notIn)) {
+            $query->andWhere(['not in', 'mcc_plant_code', $notIn]);
         }
         $mcc = $query->all();
         $mcc = ArrayHelper::map($mcc, 'mcc_plant_code', 'name');

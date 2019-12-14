@@ -173,20 +173,24 @@ class TblPlant extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant' => 1]);
     }
 
-    public function getPlantList($unionCode, $RLS = 'TRUE') {
-        $value = $this->getPlant($unionCode, $RLS);
+    public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = []) {
+        $value = $this->getPlant($unionCode, $RLS, $notIn);
         $value = ArrayHelper::map($value, 'plant_code', 'name');
         return $value;
     }
 
-    public function getPlant($unionCode = [], $RLS = 'TRUE') {
-        $query = $this->find()->select(['plant_code', 'name'])->where(['is_active' => 1]);
+    public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = []) {
+        $query = $this->find()->select(['plant_code', 'name'])
+                ->where(['is_active' => 1]);
         if (!empty($unionCode))
             $query->andWhere(['union_code' => $unionCode]);
         if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
         }
-        return $query->all();
+        if (!empty($notIn)) {
+            $query->andWhere(['not in', 'plant_code', $notIn]);
+        }
+        return $query->orderBy('name asc')->all();
     }
 
     public function afterSave($insert, $changedAttributes) {

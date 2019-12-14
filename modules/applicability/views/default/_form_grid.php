@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 use kartik\grid\GridView;
+use yii\web\View;
 
 ?>
 
@@ -43,4 +44,10 @@ if($actions!=FALSE)
 }
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+
+if($script!=FALSE)
+{
+    $this->registerJs($script, View::POS_END, 'app-script');
+}
+
 ?>
