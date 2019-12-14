@@ -125,7 +125,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                 $rate = $this->calculate($i, $x);
                 $save_array[] = $this->saveData($object, $i, $x, $rate, $key_value);
                 $x = bcadd($x, 0.1, 1);
-                $key_value+=1;
+                $key_value += 1;
             }
             $i = bcadd($i, 0.1, 1);
         }
@@ -283,7 +283,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                                 $rate = $this->calculateManual($lowfat, $lowsnf, $modelfat[$i]->quality_param_code, $modelsnf[$j]->quality_param_code, $QltyParam[0], $QltyParam[1]);
                                 $save_array[] = $this->saveData($modelfat[$i], $lowfat, $lowsnf, $rate, ($key_value));
                                 $lowsnf = floatval(bcadd($lowsnf, 0.1, 1));
-                                $key_value+=1;
+                                $key_value += 1;
                             }
                         }
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
@@ -295,7 +295,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                         $rate = $this->calculateManual($lowfat, '', $modelfat[$i]->quality_param_code, '', $QltyParam[0], '');
                         $save_array[] = $this->saveData($modelfat[$i], $lowfat, 0, $rate, ($key_value));
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
-                        $key_value+=1;
+                        $key_value += 1;
                     }
                 }
             }
@@ -402,7 +402,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
             $fatarray = "($abvpointfat,$blwpointfat)";
             $snfarray = "($prepointsnf,$aftpointsnf)";
             $otherpoints = $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])
-                            ->andWhere(['or', ['or', ['fat' => $this->fat, 'snf' => $prepointsnf], ['fat' => $this->fat, 'snf' => $aftpointsnf]], ['or', [ 'fat' => $abvpointfat, 'snf' => $this->snf], [ 'fat' => $blwpointfat, 'snf' => $this->snf]]])
+                            ->andWhere(['or', ['or', ['fat' => $this->fat, 'snf' => $prepointsnf], ['fat' => $this->fat, 'snf' => $aftpointsnf]], ['or', ['fat' => $abvpointfat, 'snf' => $this->snf], ['fat' => $blwpointfat, 'snf' => $this->snf]]])
                             ->orderBy('fat,snf')->all();
             $prepointval = 0;
             $aftpointval = 0;
@@ -479,6 +479,22 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
 
     public function getExportData($purchaseRateCode) {
         return $this->find()->select(['code', 'fat', 'rtpl', 'snf', 'milk_quality_type_code', 'milk_type_code', 'purchase_rate_code', 'rate_type_code'])->where(['purchase_rate_code' => $purchaseRateCode])->all();
+    }
+
+    public function getPurchasseRateDetailData($data, $rate_type) {
+        if ($rate_type == 'FAT') {
+            $where = ['fat' => $data['fat']];
+        } else if ($rate_type == 'FAT+SNF') {
+            $where = ['fat' => $data['fat'], 'snf' => $data['snf']];
+        } else if ($rate_type == 'FAT+CLR') {
+            $where = ['fat' => $data['fat'], 'snf' => $data['clr']];
+        } else {
+            $where = ['fat' => $data['fat'] + $data['snf']];
+        }
+        return $this->find()
+                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
+                        ->andWhere($where)
+                        ->one();
     }
 
 }

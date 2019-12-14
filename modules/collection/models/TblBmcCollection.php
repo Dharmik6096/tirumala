@@ -72,14 +72,14 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['milk_type_code', 'sample_no', 'ack'], 'integer'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
             [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
-            return $model->collection_type == '2';
-        }, 'whenClient' => "function (attribute, value) { 
+                    return $model->collection_type == '2';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
           }", 'except' => ['post_sap_data']],
             [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data']],
             [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->shift_code;
-        }],
+                    return $this->shift_code;
+                }],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData']],
             [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data']],
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
@@ -178,6 +178,10 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function getRouteCode() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getBmcData() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

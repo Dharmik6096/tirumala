@@ -298,4 +298,17 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 //        $sentbox->dest_org_type = $type;
 //        return $sentbox;
 //    }
+
+
+    public function getPurchaseRateApplicableData($data) {
+        return $this->find()
+                        ->select(['dprd.rate_type_code as rate_app_code', 'tbl_purchase_rate_applicability.purchase_rate_code'])
+                        ->join('LEFT JOIN', 'tbl_purchase_rate_details dprd', 'dprd.purchase_rate_code = tbl_purchase_rate_applicability.purchase_rate_code')
+                        ->where(['tbl_purchase_rate_applicability.is_active' => 1, 'tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code])
+                        ->andWhere(['<=', 'tbl_purchase_rate_applicability.wef_date', $this->wef_date])
+                        ->andWhere(['dprd.milk_type_code' => $data['milk_type'], 'dprd.milk_quality_type_code' => $data['milk_quality_type']])
+                        ->orderBy('tbl_purchase_rate_applicability.wef_date desc')
+                        ->one();
+    }
+
 }

@@ -67,21 +67,22 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
             $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-            $from_date .=' ' . $from_shift;
+            $from_date .= ' ' . $from_shift;
             $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
         }
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-            $to_date .=' ' . $to_shift;
+            $to_date .= ' ' . $to_shift;
             $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
         }
         $query->andFilterWhere([
             'tbl_bmc_collection.qty_mode' => $this->qty_mode,
             'tbl_bmc_collection.doc_no' => $this->doc_no,
         ]);
-        $query->andFilterWhere(['like', 'tbl_bmc_collection.dcs_code', $this->dcs_code]);
+        $query->andFilterWhere(['like', 'tbl_bmc_collection.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.rtpl', $this->rtpl]);
 
         return $dataProvider;
     }

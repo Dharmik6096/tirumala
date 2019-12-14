@@ -15,6 +15,8 @@ use yii\data\ArrayDataProvider;
 use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblMilkCollectionHistory;
 use app\modules\collection\models\TblBmcCollectionHistory;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -127,6 +129,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     }
 
     public function actionValidateRtpl() {
+        $response = [];
+        $response['status'] = 'error';
         $data['dcs_code'] = Yii::$app->request->post('dcs_code');
         $data['milk_type'] = Yii::$app->request->post('milk_type');
         $data['milk_quality_type'] = Yii::$app->request->post('milk_quality_type');
@@ -137,14 +141,25 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $data['fat'] = Yii::$app->request->post('fat');
         $data['snf'] = Yii::$app->request->post('snf');
 
-        $model = new TblPurchaseRate();
-        $rtpl_data['list'] = $model->purchaseRate($data);
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        if (!empty($rtpl_data['list'])) {
-            return Json::encode(['status' => 'success', 'data' => $rtpl_data]);
-        } else {
-            return Json::encode(['status' => 'error']);
+        $model = new TblPurchaseRateApplicability();
+        $model->dcs_code = $data['dcs_code'];
+        $model->wef_date = $data['dt_date'];
+        $model_data = $model->getPurchaseRateApplicableData($data);
+
+        if (!empty($model_data)) {
+            $detail_model = new TblPurchaseRateDetails();
+            $detail_model->rate_type_code = $model_data->rate_app_code;
+            $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+            $rate_type = $detail_model->rateTypeCode->rate_type;
+            $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+          
+            if (!empty($detail_data)) {
+                $response['status'] = 'success';
+                $rtpl_data['list'] = $detail_data;
+                $response['data'] = $rtpl_data;
+            }
         }
+        return Json::encode($response);
     }
 
     public function actionRepostSapData() {
