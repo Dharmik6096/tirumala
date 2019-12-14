@@ -190,10 +190,14 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $i = 0;
         $cnt = 0;
         $purchaseModel = new TblPurchaseRateDetails();
+        $detailmaxID = $purchaseModel->getCode();
         $based = [];
         $baseCode = 0;
         $error = FALSE;
         $errorarray = [];
+
+        $purchaseBasedModel = new TblPurchaseRateBased();
+        $basemaxID = $purchaseBasedModel->getCode();
 
         $qualityModel = new TblQualityParam();
         $animalTypedata = $milkTypeModel->getRecords();
@@ -217,7 +221,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                     } else {
                         $purchaseBasedModel = new TblPurchaseRateBased();
                         $purchaseBasedModel->purchase_rate_code = $purchaseRate->purchase_rate_code;
-                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->getCode() + $baseCode;
+                        $purchaseBasedModel->rate_based_code = $basemaxID + $baseCode;
                         $purchaseBasedModel->milk_type_code = $milk_type_code;
                         $purchaseBasedModel->rate_type_code = $rate_type_code;
                         $purchaseBasedModel->quality_param_code = array_search($quality_param[0], $qualityModel->getParams());
@@ -232,7 +236,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                             $newModel = $h->newInstanceArgs();
                             $attribute = $purchaseBasedModel->attributes;
                             $newModel->setAttributes($attribute);
-                            $newModel->rate_based_code = $newModel->getCode() + $baseCode;
+                            $newModel->rate_based_code = $basemaxID + $baseCode;
                             $newModel->quality_param_code = array_search($quality_param[1], $qualityModel->getParams());
                             $newModel->start_range = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
                             $newModel->end_range = number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
@@ -287,7 +291,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
 //                                    }
                                     if (!$error) {
                                         $data [$i] [] = [
-                                            $purchaseModel->getCode() + $cnt,
+                                            $detailmaxID + $cnt,
                                             $purchaseRate->purchase_rate_code,
                                             $rate_type_code,
                                             $purchaseBasedModel->milk_quality_type_code,
