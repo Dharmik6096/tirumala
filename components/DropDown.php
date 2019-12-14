@@ -443,7 +443,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -628,6 +628,11 @@ class DropDown extends Component {
                 'name' => 'allow_app_login',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')],
+            ],
+            'dpu_type' => [
+                'name' => 'dpu_type',
+                'prompt' => Yii::t('app', 'Select DPU Type'),
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit')],
             ],
         ];
         return $records[$l];

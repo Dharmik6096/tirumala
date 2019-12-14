@@ -85,6 +85,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'disabled' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
     </div>
+    <!--<div class="col-sm-3">-->
+        <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('dpu_type'), false); ?>
+    <!--</div>-->
     <div class="clearfix"></div>
     <!--    <div class="col-sm-3">
             <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
