@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
 use app\models\ChildModel;
 use app\models\GeneralModel;
 use app\modules\details\models\TblBankDetails;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * This is the model class for table "tbl_unions".
@@ -476,6 +477,10 @@ class TblUnions extends ChildModel {
 
     public function getTblBmc() {
         return $this->hasMany(TblDcsBmc::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getTblCustomerType() {
+        return $this->hasMany(TblCustomerType::className(), ['union_code' => 'union_code'])->where(['is_organisation' => 0]);
     }
 
 }
