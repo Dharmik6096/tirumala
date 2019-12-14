@@ -93,6 +93,7 @@ class TblDcsController extends ChildController {
         $this->model = new TblDcs();
 
         $this->viewFile = 'create';
+        $this->model->scenario = 'createDcs';
         $this->bankDetails = new TblBankDetails();
         $this->contactDetails = new TblContactDetails();
         $this->model->district_code = Yii::$app->session->get('Districts');
