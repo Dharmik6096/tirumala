@@ -105,7 +105,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
             'route_name' => Yii::t('app', 'Route Name'),
             'applicable_code' => Yii::t('app', 'Code'),
             'applicable_for' => Yii::t('app', 'For'),
-             'mcc_name' => Yii::t('app', 'Name'),
+            'mcc_name' => Yii::t('app', 'Name'),
         ];
     }
 
@@ -287,7 +287,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
         return $this->find()
                         ->select(['dprd.rate_type_code as rate_app_code', 'tbl_dcs_purchase_rate_applicability.purchase_rate_code'])
                         ->join('LEFT JOIN', 'tbl_dcs_purchase_rate_details dprd', 'dprd.purchase_rate_code = tbl_dcs_purchase_rate_applicability.purchase_rate_code')
-                        ->where(['tbl_dcs_purchase_rate_applicability.is_active' => 1, 'tbl_dcs_purchase_rate_applicability.applicable_code' => $data['appl_code'],'tbl_dcs_purchase_rate_applicability.applicable_for' => $data['appl_for']])
+                        ->where(['tbl_dcs_purchase_rate_applicability.is_active' => 1, 'tbl_dcs_purchase_rate_applicability.applicable_code' => $data['appl_code'], 'tbl_dcs_purchase_rate_applicability.applicable_for' => $data['appl_for'], 'shift_code' => [3, $data['shift']]])
                         ->andWhere(['<=', 'tbl_dcs_purchase_rate_applicability.wef_date', $this->wef_date])
                         ->andWhere(['dprd.milk_type_code' => $data['milk_type'], 'dprd.milk_quality_type_code' => $data['milk_quality_type_code']])
                         ->orderBy('tbl_dcs_purchase_rate_applicability.wef_date desc')
