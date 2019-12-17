@@ -34,7 +34,7 @@ class TblDcsPurchaseRateApplicabitityHistory extends \yii\db\ActiveRecord {
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_dcs_purchase_rate_applicabitity_history';
+        return 'tbl_dcs_purchase_rate_applicability_history';
     }
 
     /**
