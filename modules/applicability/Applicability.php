@@ -158,7 +158,7 @@ class Applicability extends \yii\base\Module {
             if ($model->load(Yii::$app->request->post())) {
                 $model->setAttributes(Yii::$app->request->post());
                 if ($model->validate()) {
-                    $dataold = $this->model->find()->where([$this->field_name => $this->field_value])->all();
+                    $dataold = $this->model->find()->where([$this->field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->all();
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);
                     $toRevoke = array_intersect($returnedArray, $model->{$main_field_name});
                     $toAssign = $model->{$main_field_name};
@@ -172,7 +172,7 @@ class Applicability extends \yii\base\Module {
                             //echo $value.'<br/>';
                             $r = new ReflectionClass($this->model->className());
                             $appModel = $r->newInstanceArgs();
-                            $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value])->one();
+                            $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->one();
                             $h = new ReflectionClass($this->historyModel->className());
                             $appHistory = $h->newInstanceArgs();
                             Yii::$app->operation->history($appModel, $appHistory, DELETE);
@@ -321,7 +321,7 @@ class Applicability extends \yii\base\Module {
 
     public function checkDuplicate($model) {
         $field_name = $this->field_name;
-        $query = $this->model->find()->where(['dcs_code' => $model->dcs_code, $field_name => $this->field_value]);
+        $query = $this->model->find()->where(['dcs_code' => $model->dcs_code, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
         foreach ($this->fields as $key => $f) {
             if (in_array('create', $f['view'])) {
                 $query->where([$key => $model->{$key}]);

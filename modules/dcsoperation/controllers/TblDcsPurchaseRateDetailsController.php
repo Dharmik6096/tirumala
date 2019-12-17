@@ -89,7 +89,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
         if (Yii::$app->request->get('id') != -1) {
             $purchaseRate = new TblDcsPurchaseRate();
             $this->purchaseModel = $purchaseRate->getRecord(Yii::$app->request->get('id'));
-            $re = ['rate_method' => $this->purchaseModel->rate_gen_method_code, 'wef_date' => $this->purchaseModel->wef_date, 'shift' => $this->purchaseModel->shift_applicability, 'description' => $this->purchaseModel->description, 'shift_id' => $this->purchaseModel->shift_id];
+            $re = ['rate_method' => $this->purchaseModel->rate_gen_method_code, 'wef_date' => $this->purchaseModel->wef_date, 'shift' => $this->purchaseModel->shift_applicability, 'description' => $this->purchaseModel->description, 'shift_id' => $this->purchaseModel->shift_id, 'union_code' => $this->purchaseModel->union_code];
 
             $this->jsonEncoded = Json::encode($re);
         }

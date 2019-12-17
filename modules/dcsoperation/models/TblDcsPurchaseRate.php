@@ -139,15 +139,15 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
         return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
     }
 
-  public function getCode() {
+    public function getCode() {
 
 
-                $data = $this->find()->select(["MAX(purchase_rate_code) as purchase_rate_code"])->one();
-                return $data['purchase_rate_code'] + 1;
-            }
+        $data = $this->find()->select(["MAX(purchase_rate_code) as purchase_rate_code"])->one();
+        return $data['purchase_rate_code'] + 1;
+    }
 
     public function getRecord($id) {
-        return $this->find()->select(['purchase_rate_code', 'wef_date', 'rate_gen_method_code', 'shift_applicability', 'shift_id'])->where(['purchase_rate_code' => $id])->one();
+        return $this->find()->select(['purchase_rate_code', 'wef_date', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'union_code'])->where(['purchase_rate_code' => $id])->one();
     }
 
     public function addPurchaseRate($jsonData) {

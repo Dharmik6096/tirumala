@@ -791,7 +791,7 @@ class TblDcs extends ChildModel {
 
     public function getUnionDcs($unionCode, $notIn = []) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
-         if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
+         if (Yii::$app->session->get('Dcs') !== '') {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
         if (!empty($notIn)) {
