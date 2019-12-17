@@ -29,7 +29,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
     public $snf_to;
     public $fat_value;
     public $snf_value;
-    public $formula;
+    public $formula, $rate_type;
 
     /**
      * @inheritdoc
@@ -45,7 +45,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         return [
             [['milk_quality_type_code'], 'default', 'value' => 1],
             //[['milk_type_code', 'fat'/* ,'formula' */], 'required'],
-            [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'purchase_rate_code'], 'safe'],
+            [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'purchase_rate_code', 'rate_type'], 'safe'],
             [['fat', 'rtpl', 'snf'], 'number'],
 //            [['snf_to', 'snf'], 'customValidate','skipOnEmpty'=> false],
 //            [['is_delete', 'milk_quality_type_code'], 'integer'],

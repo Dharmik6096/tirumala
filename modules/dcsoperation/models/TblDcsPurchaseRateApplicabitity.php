@@ -325,4 +325,12 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
+    public function getPendingApplicability($device_id, $hash_key) {
+        return $this->find()->select(['tbl_dcs_purchase_rate_applicability.*'])
+                        ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.purchase_rate_code=tbl_dcs_purchase_rate_applicability.purchase_rate_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for!='MEMBER'")
+                        ->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code])
+                        ->andWhere(['tbl_rate_download_ack.ack_id' => NULL])
+                        ->all();
+    }
+
 }

@@ -10,6 +10,9 @@ use app\modules\dcsoperation\models\TblMember;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblRealtimeSyncError;
+use app\modules\dcsoperation\models\TblDcsPurchaseRate;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 
 class RealtimeServicesController extends RestController {
 
@@ -18,22 +21,45 @@ class RealtimeServicesController extends RestController {
         $res_data['purchaseRate'] = '';
         $res_data['purchaseRateBased'] = [];
         $res_data['purchaseRateApplicability'] = '';
+        $res_data['purchaseRateApplicabilityMultiple'] = [];
         $data = $this->post_data;
         $org_code = $data['organization_code'];
         $org_type = $data['organization_type'];
-        $model = new TblPurchaseRate();
+        $rate_type = !empty($data['content']['rate_type']) ? $data['content']['rate_type'] : NULL;
+        $multi_applicability = TRUE;
+        if ($rate_type == 'MEMBER') {
+            $model = new TblPurchaseRate();
+            $app_model = new TblPurchaseRateApplicability();
+        } else if ($rate_type == 'BMC') {
+            $model = new TblDcsPurchaseRate();
+            $app_model = new TblDcsPurchaseRateApplicabitity();
+        } else {
+            $multi_applicability = FALSE;
+            $model = new TblPurchaseRate();
+            $app_model = new TblPurchaseRateApplicability();
+        }
         $model->purchase_rate_code = $data['content']['purchase_rate_code'];
         $rate = $model->getRateRecord();
         if (!empty($rate)) {
             $res_data['purchaseRate'] = $rate->attributes;
-            $based_date = [];
+            $based_data = [];
             $base_record = $rate->purchaseRateBased;
             foreach ($base_record as $b) {
-                $based_date[] = $b->attributes;
+                $based_data[] = $b->attributes;
             }
-            $res_data['purchaseRateBased'] = $based_date;
-            $rate->app_org_code = $org_code;
-            $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0]->attributes : "";
+            $res_data['purchaseRateBased'] = $based_data;
+            if ($multi_applicability) {
+                $applicability_array = [];
+                $app_model->purchase_rate_code = $rate->purchase_rate_code;
+                $applicability_data = $app_model->getPendingApplicability($data['device_id'], $data['token']);
+                foreach ($applicability_data as $applicability) {
+                    $applicability_array[] = $applicability->attributes;
+                }
+                $res_data['purchaseRateApplicabilityMultiple'] = $applicability_array;
+            } else {
+                $rate->app_org_code = $org_code;
+                $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0]->attributes : "";
+            }
         }
         $this->response['data'] = $res_data;
         return $this->response;
@@ -43,7 +69,7 @@ class RealtimeServicesController extends RestController {
         $data = $this->post_data;
         $model = new TblPurchaseRateDetails();
         $model->attributes = $data['content'];
-        $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$model->purchase_rate_code, $model->milk_quality_type_code, $model->milk_type_code]);
+        $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$model->purchase_rate_code, $model->milk_quality_type_code, $model->milk_type_code, $model->rate_type]);
         if (!empty($res_data)) {
             $res_data = array_column($res_data, 'detail');
         }

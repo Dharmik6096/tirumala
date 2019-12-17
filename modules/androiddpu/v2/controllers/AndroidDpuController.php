@@ -111,63 +111,15 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $org_code = $data['organization_code'];
             $org_type = $data['organization_type'];
             if (!empty($org_code)) {
-                $type = $org_type;
-                $detail_type = '';
-                $code = $org_code;
-                $dcs_code = [];
-                $bmc_code = [];
-                $mcc_plant_code = [];
-                $plant_code = [];
-                $union_code = '';
-                if ($type == 'VLC') {
-                    $model = new TblDcs();
-                    $model->dcs_code = $code;
-                    $detail_type = 'society';
-                    $dcs_code[] = $code;
-                    $model_data = $model->getData();
-                    if (!empty($model_data)) {
-                        $union_code = $model_data->union_code;
-                        $bmc_code[] = $model_data->bmc_code;
-                        $mcc_plant_code[] = $model_data->mcc_plant_code;
-                        $plant_code[] = $model_data->plant_code;
-                    }
-                } else if ($type == 'BMC') {
-                    $model = new TblDcsBmc();
-                    $model->bmc_code = $code;
-                    $detail_type = 'bmc';
-                    $model_data = $model->singleBmcData();
-                    if (!empty($model_data)) {
-                        $union_code = $model_data->union_code;
-                        $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
-                        $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlant->tblMccPlantGroup, 'p_mcc_plant_code');
-                        $mcc_plant_code[] = $model_data->mcc_plant_code;
-                        $bmc_code = ArrayHelper::getColumn($model_data->tblBmcGroup, 'p_bmc_code');
-                        $bmc_code[] = $model_data->bmc_code;
-                        $dcs_code = ArrayHelper::getColumn($model_data->dcsCodes, 'dcs_code');
-                        foreach ($model_data->tblBmcGroup as $bmc) {
-                            $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
-                        }
-                    }
-                } else if ($type == 'MCC') {
-                    $model = new TblMccPlant();
-                    $model->mcc_plant_code = $code;
-                    $detail_type = 'mccPlant';
-                    $model_data = $model->getData();
-                    if (!empty($model_data)) {
-                        $union_code = $model_data->union_code;
-                        $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
-                        $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlantGroup, 'p_mcc_plant_code');
-                        $mcc_plant_code[] = $model_data->mcc_plant_code;
-                        $bmc_code = ArrayHelper::getColumn($model_data->bmcCodes, 'bmc_code');
-                        $dcs_code = ArrayHelper::getColumn($model_data->tblDcs, 'dcs_code');
-                        foreach ($model_data->tblMccPlantGroup as $mcc) {
-                            $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
-                            $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
-                        }
-                    }
-                }
+                $orgDetail = $this->getOrgDetail($org_type, $org_code);
+                $dcs_code = $orgDetail['dcs_code'];
+                $bmc_code = $orgDetail['bmc_code'];
+                $mcc_plant_code = $orgDetail['mcc_plant_code'];
+                $plant_code = $orgDetail['plant_code'];
+                $union_code = $orgDetail['union_code'];
+                $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
-                    $file = $type . '_' . $code . '_' . date('Y.m.d_H.i.s');
+                    $file = $org_type . '_' . $org_code . '_' . date('Y.m.d_H.i.s');
                     $fileName = $file . '.db';
                     $id_model->db_path = '/installation-identity/' . $file . '.db';
                     $FolderPath = Yii::$app->basePath . '/installation-identity/';
@@ -179,20 +131,12 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     }
                     copy($FolderPath . $db_file, $FolderPath . $fileName);
                     \Yii::$app->sqlite->_path = $FolderPath;
-                    \Yii::$app->sqlite->_organisation_code = $code;
-                    \Yii::$app->sqlite->_organisation_type = $type;
+                    \Yii::$app->sqlite->_organisation_code = $org_code;
+                    \Yii::$app->sqlite->_organisation_type = $org_type;
 
                     $transaction = $this->generalModel->saveTransaction([$id_model], ['app initialization', 'create']);
-                    if ($transaction == 'customRedirect') {
-                        $dcs_code = implode('\',\'', $dcs_code);
-                        $dcs_code = !empty($dcs_code) ? '\'' . $dcs_code . '\'' : $dcs_code;
-                        $bmc_code = implode('\',\'', $bmc_code);
-                        $bmc_code = !empty($bmc_code) ? '\'' . $bmc_code . '\'' : $bmc_code;
-                        $mcc_plant_code = implode('\',\'', $mcc_plant_code);
-                        $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
-                        $plant_code = implode('\',\'', $plant_code);
-                        $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
-                        $response = \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $code, $type, $union_code);
+                    if ($transaction == 'customRedirect') {    
+                        $response = \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code);
                         if ($response) {
                             $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
                         } else {
@@ -208,150 +152,165 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
 
     public function actionStartUp() {
         $res_data = [];
-        $res_data['config'] = [];
-        $res_data['collectionConfig'] = [];
-        $res_data['rate'] = [];
-        $res_data['rate']['mPurchaseRateCode'] = "";
-        $res_data['rate']['mPurchaseRateCodeBlock'] = "";
-        $res_data['rate']['ePurchaseRateCode'] = "";
-        $res_data['rate']['ePurchaseRateCodeBlock'] = "";
-        $res_data['memberDownload'] = FALSE;
-        $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
-        $mcc_bmc_config = TRUE;
-        $MappedMilkType = [];
         $data = $this->post_data;
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
-            $org_code = $data['organization_code'];
-            $org_type = $data['organization_type'];
-            if ($org_type == 'VLC') {
-                $mcc_bmc_config = FALSE;
-                $model = new TblDcs();
-                $model->dcs_code = $org_code;
-                $model_data = $model->getData();
-                if (!empty($model_data)) {
-                    $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
-                    if (!empty($current_rate_detail)) {
-                        $res_data['rate']['mPurchaseRateCode'] = $current_rate_detail[0]['m_rate_code'];
-                        $res_data['rate']['mPurchaseRateCodeBlock'] = $current_rate_detail[0]['m_rate_block'];
-                        $res_data['rate']['ePurchaseRateCode'] = $current_rate_detail[0]['e_rate_code'];
-                        $res_data['rate']['ePurchaseRateCodeBlock'] = $current_rate_detail[0]['e_rate_block'];
-                    }
-                    $collection_status = Yii::$app->general->getSpData('sp_society_collection_status', [$org_code]);
-                    $collection_status = empty($collection_status) ? $model_data->is_active : $collection_status[0]['collection_status'];
-                    $res_data['memberDownload'] = (bool) $model_data->is_name_request;
-                    $res_data['config']['collectionBlock'] = !(bool) $collection_status;
-                    $res_data['config']['dcsBlock'] = !(bool) $model_data->is_active;
-                    $res_data['config']['dispatchMandate'] = (bool) $model_data->is_dispatch_mandate;
-                    $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
-                    $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
-                    $config = $model->dpuIncentiveMaster;
-                    if (!empty($config)) {
-                        $att = $config->attributes;
-                        $res_data['collectionConfig']['m_start_time'] = $att['m_start_time'];
-                        $res_data['collectionConfig']['m_cutoff_time'] = $att['m_cutoff_time'];
-                        $res_data['collectionConfig']['m_lock_time'] = $att['m_lock_time'];
-                        $res_data['collectionConfig']['e_start_time'] = $att['e_start_time'];
-                        $res_data['collectionConfig']['e_cutoff_time'] = $att['e_cutoff_time'];
-                        $res_data['collectionConfig']['e_lock_time'] = $att['e_lock_time'];
-                        $res_data['collectionConfig']['inc_rate'] = $att['inc_rate'];
-                        $res_data['collectionConfig']['inc_deduction'] = $att['inc_deduction'];
-                    }
-                    $MappedMilkType = $model_data->tblDcsMilkType;
-                    $collectionIncentive = $model_data->collectionIncentive;
-                }
-            } else if ($org_type == 'BMC') {
-                $model = new TblDcsBmc();
-                $model->bmc_code = $org_code;
-                $model_data = $model->singleBmcData();
-                $MappedMilkType = $model_data->tblBmcMilkType;
-                $collectionIncentive = [];
-            } else if ($org_type == 'MCC') {
-                $model = new TblMccPlant();
-                $model->mcc_plant_code = $org_code;
-                $model_data = $model->getData();
-                $MappedMilkType = $model_data->tblMccMilkType;
-                $collectionIncentive = [];
-            }
-            if ($mcc_bmc_config) {
-                $res_data['memberDownload'] = FALSE;
-                $res_data['config']['collectionBlock'] = FALSE;
-                $res_data['config']['dcsBlock'] = FALSE;
-                $res_data['config']['dispatchMandate'] = FALSE;
-                $res_data['config']['weightManual'] = FALSE;
-                $res_data['config']['qualityManual'] = FALSE;
+            $model = new TblAndroidInstallationDetails();
+            $id_model = $model->getActiveData($data);
+            if (!empty($id_model)) {
+                $res_data['config'] = [];
+                $res_data['collectionConfig'] = [];
+                $res_data['rate'] = [];
                 $res_data['rate']['mPurchaseRateCode'] = "";
                 $res_data['rate']['mPurchaseRateCodeBlock'] = "";
                 $res_data['rate']['ePurchaseRateCode'] = "";
                 $res_data['rate']['ePurchaseRateCodeBlock'] = "";
-                $res_data['rate']['mPurchaseRateCodeBmc'] = "";
-                $res_data['rate']['mPurchaseRateCodeBlockBmc'] = "";
-                $res_data['rate']['ePurchaseRateCodeBmc'] = "";
-                $res_data['rate']['ePurchaseRateCodeBlockBmc'] = "";
-                $res_data['collectionConfig']['m_start_time'] = "";
-                $res_data['collectionConfig']['m_cutoff_time'] = "";
-                $res_data['collectionConfig']['m_lock_time'] = "";
-                $res_data['collectionConfig']['e_start_time'] = "";
-                $res_data['collectionConfig']['e_cutoff_time'] = "";
-                $res_data['collectionConfig']['e_lock_time'] = "";
-                $res_data['collectionConfig']['inc_rate'] = "";
-                $res_data['collectionConfig']['inc_deduction'] = "";
-            }
-            $animalType = [];
-            foreach ($MappedMilkType as $milktype) {
-                $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
-                $milktype->app_type = $org_type;
-                $rate_range = $milktype->rateChartRange;
-                if (!empty($rate_range)) {
-                    $min_fat = $rate_range->min_fat;
-                    $max_fat = $rate_range->max_fat;
-                    $min_snf = $rate_range->min_snf;
-                    $max_snf = $rate_range->max_snf;
-                    $min_clr = $rate_range->min_clr;
-                    $max_clr = $rate_range->max_clr;
+                $res_data['rate']['memberApplicableRate'] = "";
+                $res_data['rate']['bmcApplicableRate'] = "";
+                $res_data['memberDownload'] = FALSE;
+                $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
+                $mcc_bmc_config = TRUE;
+                $MappedMilkType = [];
+                $org_code = $data['organization_code'];
+                $org_type = $data['organization_type'];
+                $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+                $dcs_code = $orgDetail['dcs_code'];
+                $bmc_code = $orgDetail['bmc_code'];
+                $mcc_plant_code = $orgDetail['mcc_plant_code'];
+                $plant_code = $orgDetail['plant_code'];
+                $union_code = $orgDetail['union_code'];
+                $model_data = $orgDetail['model_data'];
+                if (!empty($model_data)) {
+                    if ($org_type == 'VLC') {
+                        $mcc_bmc_config = FALSE;
+                        /*  $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
+                          if (!empty($current_rate_detail)) {
+                          $res_data['rate']['mPurchaseRateCode'] = $current_rate_detail[0]['m_rate_code'];
+                          $res_data['rate']['mPurchaseRateCodeBlock'] = $current_rate_detail[0]['m_rate_block'];
+                          $res_data['rate']['ePurchaseRateCode'] = $current_rate_detail[0]['e_rate_code'];
+                          $res_data['rate']['ePurchaseRateCodeBlock'] = $current_rate_detail[0]['e_rate_block'];
+                          } */
+                        $collection_status = Yii::$app->general->getSpData('sp_society_collection_status', [$org_code]);
+                        $collection_status = empty($collection_status) ? $model_data->is_active : $collection_status[0]['collection_status'];
+                        $res_data['memberDownload'] = (bool) $model_data->is_name_request;
+                        $res_data['config']['collectionBlock'] = !(bool) $collection_status;
+                        $res_data['config']['dcsBlock'] = !(bool) $model_data->is_active;
+                        $res_data['config']['dispatchMandate'] = (bool) $model_data->is_dispatch_mandate;
+                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
+                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
+                        $config = $model_data->dpuIncentiveMaster;
+                        if (!empty($config)) {
+                            $att = $config->attributes;
+                            $res_data['collectionConfig']['m_start_time'] = $att['m_start_time'];
+                            $res_data['collectionConfig']['m_cutoff_time'] = $att['m_cutoff_time'];
+                            $res_data['collectionConfig']['m_lock_time'] = $att['m_lock_time'];
+                            $res_data['collectionConfig']['e_start_time'] = $att['e_start_time'];
+                            $res_data['collectionConfig']['e_cutoff_time'] = $att['e_cutoff_time'];
+                            $res_data['collectionConfig']['e_lock_time'] = $att['e_lock_time'];
+                            $res_data['collectionConfig']['inc_rate'] = $att['inc_rate'];
+                            $res_data['collectionConfig']['inc_deduction'] = $att['inc_deduction'];
+                        }
+                        $MappedMilkType = $model_data->tblDcsMilkType;
+                        $collectionIncentive = $model_data->collectionIncentive;
+                    } else if ($org_type == 'BMC') {
+                        $MappedMilkType = $model_data->tblBmcMilkType;
+                        $collectionIncentive = [];
+                    } else if ($org_type == 'MCC') {
+                        $MappedMilkType = $model_data->tblMccMilkType;
+                        $collectionIncentive = [];
+                    }
+                    if ($mcc_bmc_config) {
+                        $res_data['memberDownload'] = FALSE;
+                        $res_data['config']['collectionBlock'] = FALSE;
+                        $res_data['config']['dcsBlock'] = FALSE;
+                        $res_data['config']['dispatchMandate'] = FALSE;
+                        $res_data['config']['weightManual'] = FALSE;
+                        $res_data['config']['qualityManual'] = FALSE;
+                        $res_data['rate']['mPurchaseRateCode'] = "";
+                        $res_data['rate']['mPurchaseRateCodeBlock'] = "";
+                        $res_data['rate']['ePurchaseRateCode'] = "";
+                        $res_data['rate']['ePurchaseRateCodeBlock'] = "";
+                        $res_data['rate']['mPurchaseRateCodeBmc'] = "";
+                        $res_data['rate']['mPurchaseRateCodeBlockBmc'] = "";
+                        $res_data['rate']['ePurchaseRateCodeBmc'] = "";
+                        $res_data['rate']['ePurchaseRateCodeBlockBmc'] = "";
+                        $res_data['collectionConfig']['m_start_time'] = "";
+                        $res_data['collectionConfig']['m_cutoff_time'] = "";
+                        $res_data['collectionConfig']['m_lock_time'] = "";
+                        $res_data['collectionConfig']['e_start_time'] = "";
+                        $res_data['collectionConfig']['e_cutoff_time'] = "";
+                        $res_data['collectionConfig']['e_lock_time'] = "";
+                        $res_data['collectionConfig']['inc_rate'] = "";
+                        $res_data['collectionConfig']['inc_deduction'] = "";
+                    }
+                    $animalType = [];
+                    foreach ($MappedMilkType as $milktype) {
+                        $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
+                        $milktype->app_type = $org_type;
+                        $rate_range = $milktype->rateChartRange;
+                        if (!empty($rate_range)) {
+                            $min_fat = $rate_range->min_fat;
+                            $max_fat = $rate_range->max_fat;
+                            $min_snf = $rate_range->min_snf;
+                            $max_snf = $rate_range->max_snf;
+                            $min_clr = $rate_range->min_clr;
+                            $max_clr = $rate_range->max_clr;
+                        }
+                        $animalType[] = [
+                            'milk_type_code' => $milktype->milk_type_code,
+                            'milk_type_name' => $milktype->milkTypeCode->animal_type_name,
+                            'min_fat' => $min_fat,
+                            'max_fat' => $max_fat,
+                            'min_snf' => $min_snf,
+                            'max_snf' => $max_snf,
+                            'min_clr' => $min_clr,
+                            'max_clr' => $max_clr
+                        ];
+                    }
+                    $IncentiveDeduction = [];
+                    foreach ($collectionIncentive as $incentive) {
+                        $IncentiveDeduction[] = [
+                            'from_time' => $incentive->from_time,
+                            'to_time' => $incentive->to_time,
+                            'scheme_type' => $incentive->scheme_type,
+                            'shift_code' => $incentive->shift_code,
+                            'amount' => $incentive->amount,
+                            'from_date' => $incentive->from_date,
+                            'to_date' => $incentive->to_date,
+                        ];
+                    }
+                    $res_data['collectionConfig']['allowedMilkType'] = $animalType;
+                    $res_data['collectionConfig']['collectionIncentiveDeduction'] = $IncentiveDeduction;
+
+                    $model = new TblUnionConfigResult();
+                    $model->union_code = $model_data->union_code;
+                    $model->config_for = $org_type;
+                    foreach ($model->getConfigList() as $d) {
+                        $res_data['config'][$d['config_key']] = $d['config_result_key'];
+                    }
+                    $VendorType = [];
+                    foreach ($model_data->unionCode->tblCustomerType as $customer) {
+                        $VendorType[] = [
+                            'customer_type' => $customer->customer_type,
+                            'customer_desc' => $customer->customer_desc,
+                            'code_prefix' => $customer->code_prefix,
+                            'code_length' => $customer->code_length,
+                        ];
+                    }
+                    $res_data['VendorType'] = $VendorType;
+                    $res_data['welcomeMessage'] = 'Welcome to ' . $model_data->unionCode->union_name . '.';
+                    $dcs_code = ',' . implode(',', $dcs_code) . ',';
+                    $bmc_code = ',' . implode(',', $bmc_code) . ',';
+                    $mcc_plant_code = ',' . implode(',', $mcc_plant_code) . ',';
+                    $plant_code = ',' . implode(',', $plant_code) . ',';
+                    $member_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_member', [$dcs_code, $id_model->device_id, $id_model->hash_key]);
+                    if (!empty($member_rate)) {
+                        $res_data['rate']['memberApplicableRate'] = implode(',', array_column($member_rate, 'purchase_rate_code'));
+                    }
+                    $bmc_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_bmc', [$plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $id_model->device_id, $id_model->hash_key]);
+                    if (!empty($bmc_rate)) {
+                        $res_data['rate']['bmcApplicableRate'] = implode(',', array_column($bmc_rate, 'purchase_rate_code'));
+                    }
                 }
-                $animalType[] = [
-                    'milk_type_code' => $milktype->milk_type_code,
-                    'milk_type_name' => $milktype->milkTypeCode->animal_type_name,
-                    'min_fat' => $min_fat,
-                    'max_fat' => $max_fat,
-                    'min_snf' => $min_snf,
-                    'max_snf' => $max_snf,
-                    'min_clr' => $min_clr,
-                    'max_clr' => $max_clr
-                ];
-            }
-            $IncentiveDeduction = [];
-            foreach ($collectionIncentive as $incentive) {
-                $IncentiveDeduction[] = [
-                    'from_time' => $incentive->from_time,
-                    'to_time' => $incentive->to_time,
-                    'scheme_type' => $incentive->scheme_type,
-                    'shift_code' => $incentive->shift_code,
-                    'amount' => $incentive->amount,
-                    'from_date' => $incentive->from_date,
-                    'to_date' => $incentive->to_date,
-                ];
-            }
-            $res_data['collectionConfig']['allowedMilkType'] = $animalType;
-            $res_data['collectionConfig']['collectionIncentiveDeduction'] = $IncentiveDeduction;
-            if (!empty($model_data)) {
-                $model = new TblUnionConfigResult();
-                $model->union_code = $model_data->union_code;
-                $model->config_for = $org_type;
-                foreach ($model->getConfigList() as $d) {
-                    $res_data['config'][$d['config_key']] = $d['config_result_key'];
-                }
-                $VendorType = [];
-                foreach ($model_data->unionCode->tblCustomerType as $customer) {
-                    $VendorType[] = [
-                        'customer_type' => $customer->customer_type,
-                        'customer_desc' => $customer->customer_desc,
-                        'code_prefix' => $customer->code_prefix,
-                        'code_length' => $customer->code_length,
-                    ];
-                }
-                $res_data['VendorType'] = $VendorType;
-                $res_data['welcomeMessage'] = 'Welcome to ' . $model_data->unionCode->union_name . '.';
             }
         }
         $this->response['data'] = $res_data;

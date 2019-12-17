@@ -7,6 +7,10 @@ use Yii;
 use app\modules\androiddpu\components\HttpRequest;
 use app\modules\androiddpu\components\HttpResponse;
 use app\models\GeneralModel;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use yii\helpers\ArrayHelper;
 
 /**
  * Default controller for the `restservices` module
@@ -80,6 +84,70 @@ class RestController extends ActiveController {
             'data' => [],
         ];
         echo json_encode($error);
+    }
+
+    public function getOrgDetail($type, $code, $is_string = TRUE) {
+        $dcs_code = [];
+        $bmc_code = [];
+        $mcc_plant_code = [];
+        $plant_code = [];
+        $union_code = '';
+        $model_data = [];
+        if ($type == 'VLC') {
+            $model = new TblDcs();
+            $model->dcs_code = $code;
+            $dcs_code[] = $code;
+            $model_data = $model->getData();
+            if (!empty($model_data)) {
+                $union_code = $model_data->union_code;
+                $bmc_code[] = $model_data->bmc_code;
+                $mcc_plant_code[] = $model_data->mcc_plant_code;
+                $plant_code[] = $model_data->plant_code;
+            }
+        } else if ($type == 'BMC') {
+            $model = new TblDcsBmc();
+            $model->bmc_code = $code;
+            $model_data = $model->singleBmcData();
+            if (!empty($model_data)) {
+                $union_code = $model_data->union_code;
+                $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlant->tblMccPlantGroup, 'p_mcc_plant_code');
+                $mcc_plant_code[] = $model_data->mcc_plant_code;
+                $bmc_code = ArrayHelper::getColumn($model_data->tblBmcGroup, 'p_bmc_code');
+                $bmc_code[] = $model_data->bmc_code;
+                $dcs_code = ArrayHelper::getColumn($model_data->dcsCodes, 'dcs_code');
+                foreach ($model_data->tblBmcGroup as $bmc) {
+                    $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
+                }
+            }
+        } else if ($type == 'MCC') {
+            $model = new TblMccPlant();
+            $model->mcc_plant_code = $code;
+            $model_data = $model->getData();
+            if (!empty($model_data)) {
+                $union_code = $model_data->union_code;
+                $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlantGroup, 'p_mcc_plant_code');
+                $mcc_plant_code[] = $model_data->mcc_plant_code;
+                $bmc_code = ArrayHelper::getColumn($model_data->bmcCodes, 'bmc_code');
+                $dcs_code = ArrayHelper::getColumn($model_data->tblDcs, 'dcs_code');
+                foreach ($model_data->tblMccPlantGroup as $mcc) {
+                    $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
+                    $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
+                }
+            }
+        }
+        if ($is_string) {
+            $dcs_code = implode('\',\'', $dcs_code);
+            $bmc_code = implode('\',\'', $bmc_code);
+            $mcc_plant_code = implode('\',\'', $mcc_plant_code);
+            $plant_code = implode('\',\'', $plant_code);
+            $dcs_code = !empty($dcs_code) ? '\'' . $dcs_code . '\'' : $dcs_code;
+            $bmc_code = !empty($bmc_code) ? '\'' . $bmc_code . '\'' : $bmc_code;
+            $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
+            $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
+        }
+        return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data];
     }
 
 }

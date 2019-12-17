@@ -118,7 +118,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getPurchaseRateBased() {
-        return $this->hasOne(TblDcsPurchaseRateBased::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+        return $this->hasMany(TblDcsPurchaseRateBased::className(), ['purchase_rate_code' => 'purchase_rate_code']);
     }
 
     /**
@@ -178,6 +178,10 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
         return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
                     return $data->purchase_rate_code . ' (' . $data->description . ')';
                 });
+    }
+
+    public function getRateRecord() {
+        return $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])->one();
     }
 
 }
