@@ -113,42 +113,42 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'dcs_name', 'dcs_code_ex', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                [['dcs_short_name', 'hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-                [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
-                [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
-                [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
-                [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
-                [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-                [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-                [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-                [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            [['union_code', 'dcs_name', 'dcs_code_ex', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+            [['dcs_short_name', 'hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
+            [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
+            [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+            [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
+            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
+            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
             [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
-                [['allow_multi_family_member', /* 'destination_type', */ 'dcs_type_code'], 'integer'],
-                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
+            [['allow_multi_family_member', /* 'destination_type', */ 'dcs_type_code'], 'integer'],
+            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-                [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type'], 'safe'],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
 //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
-                [['registration_code'], 'string', 'max' => 20],
-                [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
-                [['dcs_code_ex'], 'string', 'max' => 6, 'min' => '3', 'except' => ['saveCreamyData']],
-                [['gst_no'], 'string', 'max' => 15],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['ifsc', 'pan_no'], 'trim'],
+            [['registration_code'], 'string', 'max' => 20],
+            [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
+            [['dcs_code_ex'], 'string', 'max' => 6, 'min' => '3', 'except' => ['saveCreamyData']],
+            [['gst_no'], 'string', 'max' => 15],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['ifsc', 'pan_no'], 'trim'],
             //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
             [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
-                [['gst_no'], function ($attribute, $params) {
+            [['gst_no'], function ($attribute, $params) {
                     $this->validateGstNo($attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
-                [['phone_no'], function ($attribute, $params) {
+            [['phone_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
 //            [['service_tax'], function ($attribute, $params) {
@@ -159,7 +159,7 @@ class TblDcs extends ChildModel {
                     $data = $this->find()->where(['ifsc' => $model->ifsc])->andWhere(['<>', 'dcs_code', $model->dcs_code])->one();
                     return ($data) ? true : false;
                 }, 'except' => ['saveCreamyData']/* , 'targetAttribute' => 'bank_code' */],
-                [['pan_no'], function ($attribute, $params) {
+            [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
 //                [['dcs_name', 'contact_person'], function ($attribute, $params) {
@@ -168,31 +168,31 @@ class TblDcs extends ChildModel {
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
-                [['registration_code'], function ($attribute, $params) {
+            [['registration_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateNumericField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
-                [['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
+            [['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
                     return $model->is_registered == 1;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }"],
-                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
-                [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code']],
-                [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
+            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code']],
+            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code']],
 //            [['branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
             [['tmcc_code'], 'string', 'max' => 10],
-                [['tmcc_code'], 'number', 'min' => 1],
-                ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
-                [['dcs_code_ex'], 'number'],
-                [['is_active'], 'default', 'value' => 1],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual'], 'safe'],
-                [['is_dispatch_mandate'], 'default', 'value' => 0],
-                [['is_dispatch_mandate'], function ($attribute, $params) {
+            [['tmcc_code'], 'number', 'min' => 1],
+            ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
+            [['dcs_code_ex'], 'number'],
+            [['is_active'], 'default', 'value' => 1],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+            [['is_dispatch_mandate'], 'default', 'value' => 0],
+            [['is_dispatch_mandate'], function ($attribute, $params) {
                     Yii::$app->general->vaildateCheckBoxValue($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
-                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
-                [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']]
+            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+            [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']]
         ];
     }
 
@@ -787,6 +787,20 @@ class TblDcs extends ChildModel {
         $date = date('Y-m-d');
         return $this->hasMany(TblCollectionIncentiveDeduction::className(), ['dcs_code' => 'dcs_code'])
                         ->andwhere("'$date' BETWEEN [from_date] AND [to_date]")->orderBy('from_time ASC');
+    }
+
+    public function getUnionDcs($unionCode, $notIn = []) {
+        $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
+         if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        }
+        if (!empty($notIn)) {
+            $query->andWhere(['not in', 'dcs_code', $notIn]);
+        }
+        $dcs = $query->all();
+        $dcs = ArrayHelper::map($dcs, 'dcs_code', 'dcs_name');
+        asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
+        return $dcs;
     }
 
 }

@@ -45,10 +45,11 @@ class DefaultController extends Controller {
         $module->field_name = $field_name;
         $module->field_value = $field_code;
         $module->select_from_all = $select_from_all;
-        $values = $module->getDcs($top_section);
         $ratechart = Yii::$app->request->post('ratechart');
         $module->shift_type = Yii::$app->request->post('shift_type');
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
+        $values = $module->getDcs($top_section, $wef_date);
+       
         $dcsalert = [];
         $removedcs = [];
         //echo $payment; exit;
@@ -108,7 +109,9 @@ class DefaultController extends Controller {
         $field_name = Yii::$app->request->post('field');
         $field_code = Yii::$app->request->post('fcode');
         $model = new $model_name();
-        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter]);
+        $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
+
+        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter, 'wef_date' => $wef_date]);
         switch (1) {
             case key_exists('routes', $filters):
                 $routs = new TblRouteMapping();
@@ -129,6 +132,10 @@ class DefaultController extends Controller {
             case in_array($filter, ['BMC']):
                 $bmcModel = new TblDcsBmc();
                 $filter_data['applicable_code'] = $bmcModel->getBmcs($union_code, $modelQuery);
+                break;
+            case in_array($filter, ['DCS']):
+                $bmcModel = new TblDcs();
+                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery);
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();

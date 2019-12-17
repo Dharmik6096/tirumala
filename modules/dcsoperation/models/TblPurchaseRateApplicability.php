@@ -303,8 +303,9 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
     public function getPurchaseRateApplicableData($data) {
         return $this->find()
                         ->select(['dprd.rate_type_code as rate_app_code', 'tbl_purchase_rate_applicability.purchase_rate_code'])
+                        ->joinWith(['purchaseRateCode'])
                         ->join('LEFT JOIN', 'tbl_purchase_rate_details dprd', 'dprd.purchase_rate_code = tbl_purchase_rate_applicability.purchase_rate_code')
-                        ->where(['tbl_purchase_rate_applicability.is_active' => 1, 'tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code, 'shift_code' => [3, $data['shift']]])
+                        ->where(['tbl_purchase_rate_applicability.is_active' => 1, 'tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code, 'tbl_purchase_rate.shift_applicability' => [3, $data['shift']]])
                         ->andWhere(['<=', 'tbl_purchase_rate_applicability.wef_date', $this->wef_date])
                         ->andWhere(['dprd.milk_type_code' => $data['milk_type'], 'dprd.milk_quality_type_code' => $data['milk_quality_type']])
                         ->orderBy('tbl_purchase_rate_applicability.wef_date desc')

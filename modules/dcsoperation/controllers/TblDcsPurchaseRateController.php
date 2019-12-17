@@ -209,6 +209,9 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $errorarray = [];
         $ratearray = [];
 
+        $purchaseBasedModel = new TblDcsPurchaseRateBased();
+        $basemaxID = $purchaseBasedModel->getCode();
+
         $qualityModel = new TblQualityParam();
         $animalTypedata = $milkTypeModel->getRecords();
         $animalTypedata = ArrayHelper::getColumn($animalTypedata, 'oldAttributes');
@@ -238,7 +241,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     } else {
                         $purchaseBasedModel = new TblDcsPurchaseRateBased();
                         $purchaseBasedModel->purchase_rate_code = $purchaseRate->purchase_rate_code;
-                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->purchase_rate_code . ($purchaseBasedModel->getCode() + $baseCode);
+//                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->purchase_rate_code . ($purchaseBasedModel->getCode() + $baseCode);
+                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->purchase_rate_code . ($basemaxID + $baseCode);
                         $purchaseBasedModel->milk_type_code = $milk_type_code;
                         $purchaseBasedModel->rate_type = $rate_type_code;
                         $purchaseBasedModel->quality_param_code = array_search($quality_param[0], $qualityModel->getParams());
@@ -253,7 +257,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                             $newModel = $h->newInstanceArgs();
                             $attribute = $purchaseBasedModel->attributes;
                             $newModel->setAttributes($attribute);
-                            $newModel->rate_based_code = $purchaseBasedModel->purchase_rate_code . ($newModel->getCode() + $baseCode);
+//                            $newModel->rate_based_code = $purchaseBasedModel->purchase_rate_code . ($newModel->getCode() + $baseCode);
+                            $newModel->rate_based_code = $purchaseBasedModel->purchase_rate_code . ($basemaxID + $baseCode);
                             $newModel->quality_param_code = array_search($quality_param[1], $qualityModel->getParams());
                             $newModel->start_range = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
                             $newModel->end_range = number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
@@ -312,7 +317,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
 //                                    }
                                     if (!$error) {
                                         $data [$i] [] = [
-                                            $purchaseRate->purchase_rate_code . ($purchaseModel->getCode() + $cnt),
+//                                            $purchaseRate->purchase_rate_code . ($purchaseModel->getCode() + $cnt),
+                                            $purchaseRate->purchase_rate_code . ($basemaxID + $cnt),
                                             $purchaseRate->purchase_rate_code,
                                             $rate_type_code,
                                             $milk_quality_type_code,
@@ -495,6 +501,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                         return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
                     } else if ($model->applicable_for == 'BMC') {
                         return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    } else if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
                     } else {
                         return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
                     }
@@ -517,10 +525,10 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             $master = [];
-            //  $detailHistory = new TblDcsPurchaseRateApplicabitityHistory();
+            $detailHistory = new TblDcsPurchaseRateApplicabitityHistory();
             $record = TblDcsPurchaseRateApplicabitity::findOne(Yii::$app->request->post('id'));
-            //  Yii::$app->operation->history($record, $detailHistory, DELETE);
-            //$master[] = $detailHistory->save(FALSE);
+            Yii::$app->operation->history($record, $detailHistory, DELETE);
+            $master[] = $detailHistory->save(FALSE);
             $master[] = $record->delete();
             if (in_array(FALSE, $master)) {
                 $transaction->rollback();

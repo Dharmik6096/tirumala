@@ -197,6 +197,20 @@ $script = "
             addSociety('society',0,'');
         }
     });
+    
+     $('#{$nameforid}-wef_date').on('change',function(){
+        $('#dcs_code-list').empty();
+        var appCode = '';
+        if($('input[name=dcs-filter]:checked').val() == undefined) {
+            appCode = 'applicable_code';
+        }
+        addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), appCode);
+        if($('input[type=\'radio\']:checked').val()==='society')
+        {
+            addSociety('society',0,'');
+        }
+    });
+    
     $(document).on('change', '.flt-checkbox', function(event) {
         event.stopPropagation();
         var chkbx=this;
@@ -217,10 +231,12 @@ $script = "
         var fld='{$field_name}';
         var fldcode='{$field_code}';
         var mname='{$model_name}';
+         var wef_date=$('#{$nameforid}-wef_date').val();  
+
         $.ajax({
                         type: 'post',
                         url: '{$furl}',
-                        data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname},
+                        data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')

@@ -261,7 +261,7 @@ class Applicability extends \yii\base\Module {
         return $filter_data;
     }
 
-    public function getDcs($top_section) {
+    public function getDcs($top_section, $date = '') {
         $field_name = $this->field_name;
         if ($this->select_from_all == false)
             $query = $this->model->find()->select('dcs_code')->where([$field_name => $this->field_value]);
@@ -269,6 +269,9 @@ class Applicability extends \yii\base\Module {
             $query = $this->model->find()->select('dcs_code');
 //        if ($top_section)
 //            $query->andWhere(['<=', 'wef_date', date('Y-m-d')]);
+        if (!empty($date)) {
+            $query->andWhere(['wef_date' => $date]);
+        }
         $values = $query->all();
         $selected = ArrayHelper::getColumn($values, 'dcs_code');
         return $selected;
