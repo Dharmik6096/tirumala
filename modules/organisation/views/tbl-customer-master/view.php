@@ -99,6 +99,30 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 ],
                 [
                     'columns' => [
+
+                        [
+                            'attribute' => 'bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'union_code',
                             'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),

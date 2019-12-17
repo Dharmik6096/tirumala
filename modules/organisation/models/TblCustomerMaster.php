@@ -57,7 +57,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['customer_name', 'union_code', 'address', 'customer_type'], 'required'],
+            [['customer_name', 'union_code', 'address', 'customer_type', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
             [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'safe'],
@@ -87,7 +87,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'local_name' => Yii::t('app', 'Local Name'),
             'local_address' => Yii::t('app', 'Local Address'),
             'gst_no' => Yii::t('app', 'Gst No'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -103,6 +103,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 
@@ -168,6 +171,18 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $query->andFilterWhere(['union_code' => $unionCode]);
 
         return $query->all();
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

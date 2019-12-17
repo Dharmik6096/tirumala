@@ -8,6 +8,15 @@ use yii\helpers\Html;
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'filter' => FALSE, 'visible' => FALSE],
+    ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'filter' => FALSE, 'visible' => FALSE],
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'filter' => FALSE],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => FALSE],
     ['attribute' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');

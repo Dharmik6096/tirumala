@@ -47,7 +47,7 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_customer_master', 'tbl_customer_master', 'tbl_customer_master');
 
 
         // grid filtering conditions

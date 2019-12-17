@@ -24,6 +24,16 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblcustomermaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), false, '', $readonly); ?>  
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcustomermaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcustomermaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
+    </div>
+    <div class="clearfix"></div>
     <div class="col-sm-3 ">
         <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), $readonly); ?>
     </div>
@@ -33,6 +43,9 @@ $form = ActiveForm::begin([
 
     <div class="col-sm-3">
         <?= $form->field($model, 'local_name')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'gst_no')->textInput() ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-3">
@@ -56,9 +69,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblcustomermaster-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('hamlet_code'), 'hamlet_code', FALSE); ?>
     </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'gst_no')->textInput() ?>
-    </div>
+
 </div>
 
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

@@ -639,7 +639,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function filterByOrg($query, $model, $union_table = '', $plant_table = 'tbl_dcs') {
+    public function filterByOrg($query, $model, $union_table = '', $plant_table = 'tbl_dcs', $bmc_table = 'tbl_dcs') {
         $model_class = (new \ReflectionClass($model))->getShortName();
         $filter_model = new SearchFilter();
         $filter_data = $filter_model->getRecord($model_class);
@@ -680,9 +680,9 @@ class GeneralFunctions extends Component {
 
             if (in_array('f_bmc_code', $filters)) {
                 if (Yii::$app->session->get('BMC') !== '')
-                    $query->andFilterWhere(['tbl_dcs.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+                    $query->andFilterWhere([$bmc_table . '.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
                 if (!empty($model->f_bmc_code))
-                    $query->andFilterWhere(['tbl_dcs.bmc_code' => $model->f_bmc_code]);
+                    $query->andFilterWhere([$bmc_table . '.bmc_code' => $model->f_bmc_code]);
             }
 
             if (in_array('f_dcs_code', $filters)) {
