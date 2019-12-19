@@ -49,6 +49,7 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->customer_code = $this->model->getCode();
+            $this->model->customer_code_ex = $this->model->getCodeEx();
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();

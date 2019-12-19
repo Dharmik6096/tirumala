@@ -22,6 +22,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         }, 'filter' => Yii::$app->dropdown->dropdownfilter('customer_type', $searchModel, 'customer_type', Yii::t('app', 'Select'))],
     ['attribute' => 'customer_code'],
+    ['attribute' => 'customer_code_ex'],
     ['attribute' => 'customer_name'],
     ['attribute' => 'local_name', 'filter' => FALSE],
     ['attribute' => 'gst_no',],
