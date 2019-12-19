@@ -18,15 +18,19 @@ class DcsImport extends TblDcs {
         $array = parent::rules();
 
         $rules = [
-            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
-            [['union_code'], 'validateUnionCode'],
-            [['hamlet_code'], 'validateHamlet'],
-            [['dcs_type_code'], 'validateDcsType'],
-            [['registration_date', 'effective_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true],
-            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
-            [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
-            [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
-            [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+                [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
+                [['dpu_type'], 'required', 'on' => 'importCsv'],
+                [['union_code'], 'validateUnionCode'],
+                [['hamlet_code'], 'validateHamlet'],
+                [['dcs_type_code'], 'validateDcsType'],
+                [['registration_date', 'effective_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true],
+                [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
+                [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
+                [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
+                [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+                [['dpu_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'dpu_type');
+                }, 'on' => 'importCsv']
         ];
 
         foreach ($rules as $row) {

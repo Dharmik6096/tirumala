@@ -956,7 +956,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1230,6 +1230,34 @@ class GeneralFunctions extends Component {
             }
         }
         return $model;
+    }
+
+    public function validateGlobalStatic($model, $attribute, $flag) {
+        $dropDown = new DropDown();
+        $labelData = $dropDown->getRecords($flag);
+        $data = $labelData['data'];
+        $records = '';
+        $errorStr = [];
+        foreach ($data as $key => $value) {
+            if (!preg_match('/^[0-9]*$/', $model->$attribute)) {
+                if (strstr(strtoupper($model->$attribute), strtoupper($value))) {
+                    $records = $key;
+                }
+            } elseif (in_array($key, array($model->$attribute))) {
+                $records = $key;
+            }
+            $errorStr[] = $key . '-' . $value;
+        }
+        if (array_keys($data) == array_values($data)) {
+            $errorMsg = implode('/', array_keys($data));
+        } else {
+            $errorMsg = implode(', ', $errorStr);
+        }
+        $model->$attribute = !empty($records) ? $records : $model->$attribute;
+        if (empty($records) && $records != '0') {
+            $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . '. ') . 'Value must be ' . $errorMsg . '.');
+            return false;
+        }
     }
 
 }
