@@ -95,7 +95,7 @@ class SqliteCreate extends Component {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
                             } else {
                                 if ($field['key_field'] == 'to_dest') {
-                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or ' . $field['key_field'] . " in ($bmc_code)) and to_type = 'bmc'";
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($bmc_code) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($mcc_plant_code) and lower(to_type) = 'mcc'))";
                                 } else {
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in (${$field['key_field']})";
                                 }
