@@ -16,19 +16,21 @@ use app\modules\configuration\models\TblMilkCollectionConfig;
  * @property string $uuid
  * @property string $producer_flag
  * @property integer $sample_no
- * @property string $collection_date
+ * @property string $date_time_of_collection
  * @property string $shift_code
- * @property integer $milk_type
- * @property integer $milk_quality_type
- * @property integer $quantity_mode
- * @property string $quantity
+ * @property integer $milk_type_code
+ * @property integer $milk_quality_type_code
+ * @property integer $qty_mode
+ * @property string $qty
+ * @property integer $converted_qty_mode
+ * @property string $converted_qty
  * @property double $cans
- * @property string $fault_flag
  * @property integer $rejected_can
- * @property string $rejected_quantity
+ * @property string $rejected_qty
+ * @property string $weight_datetime
  * @property string $union_code
  * @property string $plant_code
- * @property string $mcc_code
+ * @property string $mcc_plant_code
  * @property string $bmc_code
  * @property string $route_code
  * @property string $dcs_code
@@ -36,14 +38,23 @@ use app\modules\configuration\models\TblMilkCollectionConfig;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
- * @property string $flg_sentbox_entry
- * @property string $sync_status
- * @property string $sync_timestamp
  * @property string $device_id
- * @property string $converted_quantity_mode
- * @property string $converted_quantity
+ * @property string $version_no
+ * @property string $vehicle_no
+ * @property string $ws_code
+ * @property integer $qty_auto
  * @property integer $doc_no
- * @property integer $auto_flag
+ * @property string $originating_org_code
+ * @property string $originating_org_type
+ * @property integer $originating_type
+ * @property string $x_col1
+ * @property string $x_col2
+ * @property string $x_col3
+ * @property string $x_col4
+ * @property string $x_col5
+ * @property string $route_arrival_time
+ * @property string $own_mcc_plant_code
+ * @property string $own_bmc_code
  */
 class TblWeightCollection extends \app\models\ChildModel {
 
@@ -59,20 +70,17 @@ class TblWeightCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['uuid'], 'required', 'except' => ['androidsync']],
-            [['dcs_code', 'collection_date', 'sample_no', 'shift_code', 'milk_type', 'milk_quality_type', 'doc_no', 'quantity'], 'required', 'on' => ['PortalCreate']],
-            [['uuid', 'producer_flag', 'shift_code', 'fault_flag', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'route_code', 'dcs_code', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'device_id', 'converted_quantity_mode', 'converted_quantity', 'auto_flag', 'doc_no'], 'safe'],
-            [['sample_no', 'milk_type', 'milk_quality_type', 'quantity_mode', 'rejected_can'], 'safe'],
-            [['collection_date', 'created_at', 'updated_at', 'sync_timestamp'], 'safe'],
-            [['quantity', 'cans', 'rejected_quantity'], 'safe'],
-            [['cans'], 'integer'],
-            [['quantity'], 'double', 'min' => 0, 'max' => 99999, 'on' => ['edit_collection']],
-            [['sample_no'], 'unique', 'targetAttribute' => ['collection_date', 'shift_code', 'mcc_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['uuid'], 'except' => ['androidsync']],
+            [['dcs_code', 'date_time_of_collection', 'sample_no', 'shift_code', 'milk_type_code', 'milk_quality_type_code', 'doc_no', 'qty'], 'required', 'on' => ['PortalCreate']],
+            [['uuid', 'producer_flag', 'shift_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'created_by', 'updated_by', 'device_id', 'version_no', 'vehicle_no', 'ws_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'string'],
+            [['sample_no', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'rejected_can', 'qty_auto', 'doc_no', 'originating_type'], 'integer'],
+            [['date_time_of_collection', 'weight_datetime', 'created_at', 'updated_at', 'route_arrival_time'], 'safe'],
+            [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'number'],
+            [['qty'], 'double', 'min' => 0, 'max' => 99999, 'on' => ['edit_collection']],
+            [['sample_no'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'mcc_plant_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
             [['producer_flag'], 'default', 'value' => 'Y'],
-            [['cans', 'rejected_can', 'rejected_quantity'], 'default', 'value' => '0'],
-            [['auto_flag'], 'default', 'value' => '1'],
-            [['fault_flag'], 'default', 'value' => 'N'],
-            [['collection_date', 'shift_code'], 'backendData']
+            [['cans', 'rejected_can', 'rejected_qty'], 'default', 'value' => '0'],
+            [['date_time_of_collection', 'shift_code'], 'backendData']
         ];
     }
 
@@ -84,31 +92,45 @@ class TblWeightCollection extends \app\models\ChildModel {
             'uuid' => Yii::t('app', 'Uuid'),
             'producer_flag' => Yii::t('app', 'Producer Flag'),
             'sample_no' => Yii::t('app', 'Sample No'),
-            'collection_date' => Yii::t('app', 'Collection Date'),
-            'shift_code' => Yii::t('app', 'Shift'),
-            'milk_type' => Yii::t('app', 'Milk Type'),
-            'milk_quality_type' => Yii::t('app', 'Milk Quality Type'),
-            'quantity_mode' => Yii::t('app', 'Quantity Mode'),
-            'quantity' => Yii::t('app', 'Qty'),
-            'cans' => Yii::t('app', 'No. of Can'),
-            'fault_flag' => Yii::t('app', 'Fault Flag'),
+            'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
+            'shift_code' => Yii::t('app', 'Shift Code'),
+            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
+            'qty_mode' => Yii::t('app', 'Qty Mode'),
+            'qty' => Yii::t('app', 'Qty'),
+            'converted_qty_mode' => Yii::t('app', 'Converted Qty Mode'),
+            'converted_qty' => Yii::t('app', 'Converted Qty'),
+            'cans' => Yii::t('app', 'Cans'),
             'rejected_can' => Yii::t('app', 'Rejected Can'),
-            'rejected_quantity' => Yii::t('app', 'Rejected Qty'),
+            'rejected_qty' => Yii::t('app', 'Rejected Qty'),
+            'weight_datetime' => Yii::t('app', 'Weight Datetime'),
             'union_code' => Yii::t('app', 'Union Code'),
             'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_code' => Yii::t('app', 'Mcc Code'),
+            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
             'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'route_code' => Yii::t('app', 'Route'),
-            'dcs_code' => Yii::t('app', 'DCS'),
+            'route_code' => Yii::t('app', 'Route Code'),
+            'dcs_code' => Yii::t('app', 'Dcs Code'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'flg_sentbox_entry' => Yii::t('app', 'Flg Sentbox Entry'),
-            'sync_status' => Yii::t('app', 'Sync Status'),
-            'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
-            'converted_quantity' => Yii::t('app', 'Converted Qty'),
-            'doc_no' => Yii::t('app', 'Doc No.'),
+            'device_id' => Yii::t('app', 'Device ID'),
+            'version_no' => Yii::t('app', 'Version No'),
+            'vehicle_no' => Yii::t('app', 'Vehicle No'),
+            'ws_code' => Yii::t('app', 'Ws Code'),
+            'qty_auto' => Yii::t('app', 'Qty Auto'),
+            'doc_no' => Yii::t('app', 'Doc No'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
+            'route_arrival_time' => Yii::t('app', 'Route Arrival Time'),
+            'own_mcc_plant_code' => Yii::t('app', 'Own Mcc Plant Code'),
+            'own_bmc_code' => Yii::t('app', 'Own Bmc Code'),
         ];
     }
 
@@ -121,7 +143,7 @@ class TblWeightCollection extends \app\models\ChildModel {
     }
 
     public function getMilkTypeCode() {
-        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type']);
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
     public function getRouteCode() {
@@ -129,7 +151,7 @@ class TblWeightCollection extends \app\models\ChildModel {
     }
 
     public function getMilkQualityTypeCode() {
-        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type']);
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
     }
 
     public function backendData() {
@@ -139,13 +161,13 @@ class TblWeightCollection extends \app\models\ChildModel {
 
         if (!empty($milkCollData) && $milkCollData->ltr_to_kg != 0 && !empty($milkCollData->ltr_to_kg)) {
             if ($milkCollData->collection_quantity_mode == 0) {
-                $this->converted_quantity = $this->quantity * $milkCollData->ltr_to_kg;
+                $this->converted_qty = $this->q * $milkCollData->ltr_to_kg;
                 $this->quantity_mode = 0;
-                $this->converted_quantity_mode = 1;
+                $this->converted_qty_mode = 1;
             } else {
-                $this->converted_quantity = $this->quantity / $milkCollData->ltr_to_kg;
+                $this->converted_qty = $this->quantity / $milkCollData->ltr_to_kg;
                 $this->quantity_mode = 1;
-                $this->converted_quantity_mode = 0;
+                $this->converted_qty_mode = 0;
             }
         }
     }
