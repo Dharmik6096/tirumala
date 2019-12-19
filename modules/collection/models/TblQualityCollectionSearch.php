@@ -19,9 +19,9 @@ class TblQualityCollectionSearch extends TblQualityCollection {
      */
     public function rules() {
         return [
-            [['uuid', 'collection_date', 'shift_code', 'quality_datetime', 'union_code', 'plant_code', 'mcc_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'device_id'], 'safe'],
-            [['sample_no', 'retest_count', 'doc_no', 'auto_flag'], 'safe'],
-            [['fat', 'snf', 'clr', 'water', 'operator_fat', 'operator_snf'], 'safe'],
+            [['uuid', 'date_time_of_collection', 'shift_code', 'quality_datetime', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'device_id', 'version_no', 'originating_org_code', 'originating_org_type', 'milk_analyser_type_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
+            [['sample_no', 'retest_count', 'doc_no', 'auto_flag', 'originating_type', 'qlty_auto'], 'integer'],
+            [['fat', 'snf', 'clr', 'water'], 'number'],
         ];
     }
 
@@ -58,9 +58,9 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-        
-        
-        
+
+
+
         if (!empty($this->fat)) {
             $query->andFilterWhere([$this->operator_fat, 'tbl_quality_collection.fat', $this->fat]);
         }
@@ -71,19 +71,19 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             $start_date = date('Y-m-d', strtotime($request['min_date']));
             $end_date = date('Y-m-d', strtotime($request['max_date']));
             if ($start_date != $end_date)
-                $query->andFilterWhere(['between', 'CAST(tbl_quality_collection.collection_date AS DATE)', $start_date, $end_date]);
+                $query->andFilterWhere(['between', 'CAST(tbl_quality_collection.date_time_of_collection AS DATE)', $start_date, $end_date]);
             else
-                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_quality_collection.collection_date, 126)', $start_date]);
+                $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_quality_collection.date_time_of_collection, 126)', $start_date]);
         }
         if (!empty($this->collection_date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_quality_collection.collection_date, 126)', date('Y-m-d', strtotime($this->collection_date))]);
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_quality_collection.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
         $query->andFilterWhere([
             'tbl_quality_collection.doc_no' => $this->doc_no,
             'tbl_quality_collection.sample_no' => $this->sample_no,
         ]);
         $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
-        $query->orderBy('tbl_quality_collection.collection_date desc');
+        $query->orderBy('tbl_quality_collection.date_time_of_collection desc');
         return $dataProvider;
     }
 
