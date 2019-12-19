@@ -69,7 +69,9 @@ class RealtimeServicesController extends RestController {
         $data = $this->post_data;
         $model = new TblPurchaseRateDetails();
         $model->attributes = $data['content'];
-        $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$model->purchase_rate_code, $model->milk_quality_type_code, $model->milk_type_code, $model->rate_type]);
+        $model->rate_type = empty($model->rate_type) ? 'MEMBER' : $model->rate_type;
+        $model->rate_class = empty($model->rate_class) ? 'A' : $model->rate_class;
+        $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$model->purchase_rate_code, $model->milk_quality_type_code, $model->milk_type_code, $model->rate_type, $model->rate_class]);
         if (!empty($res_data)) {
             $res_data = array_column($res_data, 'detail');
         }
@@ -104,6 +106,24 @@ class RealtimeServicesController extends RestController {
                 $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 0], ['dcs_code' => $model->dcs_code]);
             }
         }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionRateDownloadAcknowledgement() {
+        $data = $this->post_data;
+        $res_data = [];
+        $res_data['message'] = 'Acknowledgement Updated.';
+        $rate_app_code = $data['content']['rate_app_code'];
+        if ($data['content']['rate_type'] == 'BMC') {
+            $query = Yii::$app->db->createCommand("insert into tbl_rate_download_ack (rate_app_code,purchase_rate_code,wef_date,shift_code,applicable_code,applicable_for,device_id,hash_key,union_code,download_date_time) select rate_app_code,purchase_rate_code,wef_date,shift_code,applicable_code,applicable_for,:device_id,:hash_key,union_code,:download_date_time from tbl_dcs_purchase_rate_applicability where rate_app_code in ($rate_app_code)");
+        } else if ($data['content']['rate_type'] == 'MEMBER') {
+            $query = Yii::$app->db->createCommand("insert into tbl_rate_download_ack (rate_app_code,purchase_rate_code,wef_date,shift_code,applicable_code,applicable_for,device_id,hash_key,union_code,download_date_time) select rate_app_code,purchase_rate_code,wef_date,shift_code,dcs_code,'MEMBER',:device_id,:hash_key,union_code,:download_date_time from tbl_purchase_rate_applicability where rate_app_code in ($rate_app_code)");
+        }
+        $query->bindValue(':device_id', $data['device_id'])
+                ->bindValue(':hash_key', $data['token'])
+                ->bindValue(':download_date_time', date('Y-m-d H:i:s'))
+                ->execute();
         $this->response['data'] = $res_data;
         return $this->response;
     }
