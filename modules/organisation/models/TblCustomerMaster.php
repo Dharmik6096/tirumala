@@ -76,6 +76,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'customer_code' => Yii::t('app', 'Customer Code'),
+            'customer_code_ex' => Yii::t('app', 'Customer Code Ex.'),
             'customer_name' => Yii::t('app', 'Customer Name'),
             'address' => Yii::t('app', 'Address'),
             'is_active' => Yii::t('app', 'Is Active'),
@@ -138,10 +139,15 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function getCode() {
+        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,4))) AS customer_code"])->where(['union_code' => $this->union_code])->one();
+        return $this->union_code . str_pad((int) $data['customer_code'] + 1, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function getCodeEx() {
         $code_prefix = $this->customerType->code_prefix;
         $code_length = $this->customerType->code_length;
-        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,$code_length))) AS customer_code"])->where(['customer_type' => $this->customer_type])->one();
-        return $code_prefix . str_pad((int) $data['customer_code'] + 1, $code_length, '0', STR_PAD_LEFT);
+        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code_ex,$code_length))) AS customer_code_ex"])->where(['customer_type' => $this->customer_type, 'union_code' => $this->union_code])->one();
+        return $code_prefix . str_pad((int) $data['customer_code_ex'] + 1, $code_length, '0', STR_PAD_LEFT);
     }
 
     public function getCustomerWithType($unionCode, $customer_type = '', $notIn = []) {

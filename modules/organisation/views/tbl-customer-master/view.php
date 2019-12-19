@@ -18,12 +18,20 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'customer_code',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'customer_type',
                             'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'customer_code',
+                            'attribute' => 'customer_code_ex',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
