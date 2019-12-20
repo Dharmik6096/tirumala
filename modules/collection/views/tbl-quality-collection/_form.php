@@ -38,11 +38,11 @@ $form = ActiveForm::begin([
     </div> 
 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblqualitycollection-plant_code', 'mcc_code', $model->getAttributeLabel('mcc_code')); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblqualitycollection-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
     </div>      
 
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'collection_date', 'form-group col-sm-2'); ?>
+        <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', 'form-group col-sm-2'); ?>
     </div>
     <div class="col-sm-2 shift rtpl_validate">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift_code'); ?>

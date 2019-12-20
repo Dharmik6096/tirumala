@@ -51,11 +51,11 @@ class TblWeightCollectionController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $datetime = date('Y-m-d H:i:s');
             $this->model->uuid = Yii::$app->general->getUuid();
-            $this->model->collection_date = ($this->model->collection_date) ? date('Y-m-d', strtotime($this->model->collection_date)) : '';
-            $this->model->collection_date = $this->model->collection_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
+            $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
+            $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             $dcsData = $this->model->dcsCode;
             $this->model->plant_code = !empty($dcsData->plant_code) && $dcsData->plant_code != 'N/A' ? $dcsData->plant_code : '';
-            $this->model->mcc_code = !empty($dcsData->mcc_plant_code) && $dcsData->mcc_plant_code != 'N/A' ? $dcsData->mcc_plant_code : '';
+            $this->model->mcc_plant_code = !empty($dcsData->mcc_plant_code) && $dcsData->mcc_plant_code != 'N/A' ? $dcsData->mcc_plant_code : '';
             $this->model->bmc_code = !empty($dcsData->bmc_code) && $dcsData->bmc_code != 'N/A' ? $dcsData->bmc_code : '';
             $this->model->route_code = !empty($dcsData->route_code) && $dcsData->route_code != 'N/A' ? $dcsData->route_code : '';
 //            $this->model->bmc_code = $this->model->mcc_code;

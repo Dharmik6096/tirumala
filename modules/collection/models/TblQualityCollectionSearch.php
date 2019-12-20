@@ -22,6 +22,7 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             [['uuid', 'date_time_of_collection', 'shift_code', 'quality_datetime', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'device_id', 'version_no', 'originating_org_code', 'originating_org_type', 'milk_analyser_type_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
             [['sample_no', 'retest_count', 'doc_no', 'auto_flag', 'originating_type', 'qlty_auto'], 'integer'],
             [['fat', 'snf', 'clr', 'water'], 'number'],
+            [['operator_snf', 'operator_fat'], 'safe']
         ];
     }
 
@@ -75,7 +76,7 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             else
                 $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_quality_collection.date_time_of_collection, 126)', $start_date]);
         }
-        if (!empty($this->collection_date))
+        if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_quality_collection.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
         $query->andFilterWhere([
