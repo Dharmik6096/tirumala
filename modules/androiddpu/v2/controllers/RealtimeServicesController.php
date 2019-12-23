@@ -18,9 +18,9 @@ class RealtimeServicesController extends RestController {
 
     public function actionPurchaseRate() {
         $res_data = [];
-        $res_data['purchaseRate'] = '';
+        $res_data['purchaseRate'] = NULL;
         $res_data['purchaseRateBased'] = [];
-        $res_data['purchaseRateApplicability'] = '';
+        $res_data['purchaseRateApplicability'] = NULL;
         $res_data['purchaseRateApplicabilityMultiple'] = [];
         $data = $this->post_data;
         $org_code = $data['organization_code'];
@@ -58,7 +58,7 @@ class RealtimeServicesController extends RestController {
                 $res_data['purchaseRateApplicabilityMultiple'] = $applicability_array;
             } else {
                 $rate->app_org_code = $org_code;
-                $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0]->attributes : "";
+                $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0]->attributes : NULL;
             }
         }
         $this->response['data'] = $res_data;
