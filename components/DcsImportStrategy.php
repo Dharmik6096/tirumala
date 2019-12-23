@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblDcsVillageMapping;
 use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;
 use Yii;
+use app\modules\organisation\models\TblSocietyCollection;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -98,6 +99,13 @@ class DcsImportStrategy extends ARImportStrategy {
 //                            array_push($modelList, $row);
 //                        }
 
+                        $society_model = new TblSocietyCollection();
+                        $society_model->dcs_code = $model->dcs_code;
+                        $society_model->from_date = date('Y-m-d H:i:s');
+                        $society_model->status = 1;
+                        $society_model->remarks = NULL;
+                        array_push($modelList, $society_model);
+
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
                         }
@@ -112,14 +120,14 @@ class DcsImportStrategy extends ARImportStrategy {
                             $trans->rollback();
                             $message = '';
                             foreach ($model->getErrors() as $errorkey => $value) {
-                                $message.=$value[0] . '<br>';
+                                $message .= $value[0] . '<br>';
                             }
                             return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                         }
                     } else {
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
-                            $message.=$value[0] . '<br>';
+                            $message .= $value[0] . '<br>';
                         }
                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                     }
