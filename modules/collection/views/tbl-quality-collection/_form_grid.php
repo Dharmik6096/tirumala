@@ -16,15 +16,15 @@ $attribute = [
     ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC Code'), 'visible' => false, 'filter' => false],
     ['attribute' => 'bmc_code', 'value' => 'bmcCode.bmc_name', 'vAlign' => 'middle', 'filter' => true, 'visible' => false],
     [
-        'attribute' => 'collection_date',
+        'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->collection_date);
-}],
+            return Yii::$app->controls->view_date($model->date_time_of_collection);
+        }],
     ['attribute' => 'shift_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }

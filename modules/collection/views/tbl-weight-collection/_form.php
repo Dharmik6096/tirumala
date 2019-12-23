@@ -38,16 +38,16 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'collection_date', 'form-group col-sm-2'); ?>
+        <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', 'form-group col-sm-2'); ?>
     </div>
     <div class="col-sm-2 shift rtpl_validate">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift_code'); ?>
     </div>
     <div class="col-sm-2 rtpl_validate">
-        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'milk_type'); ?>
+        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'milk_type_code'); ?>
     </div>
     <div class="col-sm-2 rtpl_validate">
-        <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', 'Milk Quality Type', false, 'milk_quality_type'); ?>
+        <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', 'Milk Quality Type', false, 'milk_quality_type_code'); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
@@ -57,7 +57,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'doc_no')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'quantity')->textInput() ?>
+        <?= $form->field($model, 'qty')->textInput() ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'cans')->textInput() ?>

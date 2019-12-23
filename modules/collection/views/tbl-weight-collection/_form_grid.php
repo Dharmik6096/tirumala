@@ -22,14 +22,14 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'vAlign' => 'middle', 'filter' => true],
     [
-        'attribute' => 'collection_date',
+        'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->collection_date);
+    return Yii::$app->controls->view_date($model->date_time_of_collection);
 }],
     ['attribute' => 'shift_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
@@ -45,7 +45,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->milkQualityTypeCode, 'milk_quality_type_name');
         }, 'visible' => false, 'filter' => false
     ],
-    ['attribute' => 'quantity', 'value' => 'quantity', 'vAlign' => 'middle', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'quantity', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_qty', $operator, ['class' => 'form-control'])],
+    ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'qty', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_qty', $operator, ['class' => 'form-control'])],
     ['attribute' => 'converted_quantity', 'visible' => false, 'filter' => false],
 ];
 

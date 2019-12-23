@@ -19,7 +19,7 @@ class TblWeightCollectionSearch extends TblWeightCollection {
      */
     public function rules() {
         return [
-            [['uuid', 'producer_flag', 'date_time_of_collection', 'shift_code', 'weight_datetime', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'device_id', 'version_no', 'vehicle_no', 'ws_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_arrival_time', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
+            [['uuid', 'producer_flag', 'date_time_of_collection', 'shift_code', 'weight_datetime', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'device_id', 'version_no', 'vehicle_no', 'ws_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_arrival_time', 'own_mcc_plant_code', 'own_bmc_code', 'operator_qty'], 'safe'],
             [['sample_no', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'rejected_can', 'qty_auto', 'doc_no', 'originating_type'], 'integer'],
             [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'number'],
         ];
@@ -65,10 +65,10 @@ class TblWeightCollectionSearch extends TblWeightCollection {
             else
                 $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_weight_collection.date_time_of_collection, 126)', $start_date]);
         }
-        if (!empty($this->collection_date))
+        if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_weight_collection.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
-       
+
 
         $query->andFilterWhere([
             'tbl_weight_collection.sample_no' => $this->sample_no,
