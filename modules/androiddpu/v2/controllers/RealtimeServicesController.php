@@ -51,7 +51,12 @@ class RealtimeServicesController extends RestController {
             if ($multi_applicability) {
                 $applicability_array = [];
                 $app_model->purchase_rate_code = $rate->purchase_rate_code;
-                $applicability_data = $app_model->getPendingApplicability($data['device_id'], $data['token']);
+                $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+                $dcs_code = $orgDetail['dcs_code'];
+                $bmc_code = $orgDetail['bmc_code'];
+                $mcc_plant_code = $orgDetail['mcc_plant_code'];
+                $plant_code = $orgDetail['plant_code'];
+                $applicability_data = $app_model->getPendingApplicability($data['device_id'], $data['token'], $dcs_code, $bmc_code, $mcc_plant_code, $plant_code);
                 foreach ($applicability_data as $applicability) {
                     $applicability_array[] = $applicability->attributes;
                 }
