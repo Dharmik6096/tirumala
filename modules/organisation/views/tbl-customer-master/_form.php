@@ -38,6 +38,9 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), $readonly); ?>
     </div>
     <div class="col-sm-3">
+        <?= $form->field($model, 'customer_code_ex')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
         <?= $form->field($model, 'customer_name')->textInput() ?>
     </div>
 

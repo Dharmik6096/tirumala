@@ -57,7 +57,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['customer_name', 'union_code', 'address', 'customer_type', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
+            [['customer_name', 'union_code', 'address', 'customer_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code_ex'], 'required'],
             [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'safe'],
@@ -65,8 +65,12 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+            ['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['customer_code_ex'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 
