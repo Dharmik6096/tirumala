@@ -443,7 +443,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -633,6 +633,16 @@ class DropDown extends Component {
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
                 'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit')],
+            ],
+            'file_type' => [
+                'name' => 'source_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'DPU'), 2 => Yii::t('app', 'AMCS')],
+            ],
+            'file_status' => [
+                'name' => 'file_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'Error')],
             ],
         ];
         return $records[$l];

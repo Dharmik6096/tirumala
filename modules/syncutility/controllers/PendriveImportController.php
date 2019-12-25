@@ -8,10 +8,21 @@ use yii\filters\VerbFilter;
 use app\models\EiplPacketFileLog;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\models\EiplPacketFileLogSearch;
 
 class PendriveImportController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['import-file'];
+
+    public function actionIndex() {
+        $searchModel = new EiplPacketFileLogSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
 
     public function actionCreate() {
         $model = new EiplPacketFileLog();
