@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
+use kartik\grid\GridView;
 
 $attribute = [
     ['label' => Yii::t('app', 'DCS Code'), 'attribute' => 'organization_code', 'value' => function($model) {
@@ -22,6 +23,16 @@ $attribute = [
         'value' => function ($model) {
             return isset($model->db_version) ? Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version] : '';
         },],
+    [
+        'attribute' => 'created_at',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->created_at);
+        }],
     ['attribute' => 'installation_type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('installation_type', $searchModel, 'installation_type'),
         'value' => function ($model) {

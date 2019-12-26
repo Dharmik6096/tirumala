@@ -12,7 +12,7 @@ use app\modules\installation\models\TblAndroidInstallationDetails;
  */
 class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails {
 
-    public $organization_code;
+    public $organization_code, $from_date, $to_date;
 
     /**
      * @inheritdoc
@@ -20,7 +20,7 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
     public function rules() {
         return [
             [['android_installation_details_id', 'otp_code', 'is_active', 'is_expired', 'sync_active'], 'integer'],
-            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'installation_type', 'organization_code'], 'safe'],
+            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'installation_type', 'organization_code', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -54,20 +54,29 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            // $query->where('0 = 1');
             return $dataProvider;
         }
+        
+         if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'tbl_android_installation_details.created_at', $from_date]);
+        }
 
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'tbl_android_installation_details.created_at', $to_date]);
+        }
+        
         // grid filtering conditions
         $query->andFilterWhere([
             'android_installation_details_id' => $this->android_installation_details_id,
             'otp_code' => $this->otp_code,
             'tbl_android_installation_details.installation_type' => $this->installation_type,
             'is_expired' => $this->is_expired,
-            'created_at' => $this->created_at,
+//            'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'sync_active' => $this->sync_active,
-            
         ]);
 
         $query->andFilterWhere(['like', 'android_installation_id', $this->android_installation_id])
@@ -84,7 +93,8 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
                 ->andFilterWhere(['like', 'imei_no', $this->imei_no])
                 ->andFilterWhere(['like', 'sync_key', $this->sync_key])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->organization_code])
-                ->andFilterWhere(['like', 'tbl_android_installation_details.db_version', $this->db_version]);
+                ->andFilterWhere(['like', 'tbl_android_installation_details.db_version', $this->db_version])
+                ->andFilterWhere(['like', 'tbl_android_installation_details.created_at', ($this->created_at == '') ? null : Yii::$app->formatter->asDate($this->created_at, DATE_FORMAT)]);
         $query->orderBy('created_at desc');
         return $dataProvider;
     }
