@@ -10,6 +10,7 @@ use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -65,11 +66,11 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['customer_code_ex'], function ($attribute, $params) {
-                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                }, 'skipOnEmpty' => false,],
+            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+        }, 'skipOnEmpty' => false,],
             ['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
         ];
     }
@@ -193,6 +194,28 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
