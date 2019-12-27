@@ -331,7 +331,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
         $customer_type = TblCustomerType::find()->select(['customer_type'])->where(['is_organisation' => 0]);
 
         return $this->find()->select(['tbl_dcs_purchase_rate_applicability.*'])
-                        ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.purchase_rate_code=tbl_dcs_purchase_rate_applicability.purchase_rate_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for!='MEMBER'")
+                        ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.rate_app_code=tbl_dcs_purchase_rate_applicability.rate_app_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for!='MEMBER'")
                         ->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code])
                         ->andWhere(['or',
                             ['tbl_dcs_purchase_rate_applicability.applicable_code' => $dcs_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'DCS'],
