@@ -135,7 +135,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     \Yii::$app->sqlite->_organisation_type = $org_type;
 
                     $transaction = $this->generalModel->saveTransaction([$id_model], ['app initialization', 'create']);
-                    if ($transaction == 'customRedirect') {    
+                    if ($transaction == 'customRedirect') {
                         $response = \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code);
                         if ($response) {
                             $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
@@ -306,9 +306,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     if (!empty($member_rate)) {
                         $res_data['rate']['memberApplicableRate'] = implode(',', array_column($member_rate, 'purchase_rate_code'));
                     }
-                    $bmc_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_bmc', [$plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $id_model->device_id, $id_model->hash_key]);
-                    if (!empty($bmc_rate)) {
-                        $res_data['rate']['bmcApplicableRate'] = implode(',', array_column($bmc_rate, 'purchase_rate_code'));
+                    if ($mcc_bmc_config) {
+                        $bmc_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_bmc', [$plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $id_model->device_id, $id_model->hash_key]);
+                        if (!empty($bmc_rate)) {
+                            $res_data['rate']['bmcApplicableRate'] = implode(',', array_column($bmc_rate, 'purchase_rate_code'));
+                        }
                     }
                 }
             }
