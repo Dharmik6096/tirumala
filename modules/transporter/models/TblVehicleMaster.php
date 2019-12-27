@@ -6,6 +6,8 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCapacity;
 use app\modules\organisation\models\TblVehicleType;
+use app\modules\syncutility\models\TblSentbox;
+
 /**
  * This is the model class for table "tbl_vehicle_master".
  *
@@ -34,46 +36,44 @@ use app\modules\organisation\models\TblVehicleType;
  * @property string $fuel_type
  * @property integer $is_active
  */
-class TblVehicleMaster extends \app\models\ChildModel
-{
+class TblVehicleMaster extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public $billing_type,$remarks;
-    public static function tableName()
-    {
+    public $billing_type, $remarks;
+
+    public static function tableName() {
         return 'tbl_vehicle_master';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['vehicle_type_code', 'capacity_code','registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no','transporter_code', 'wef_date', 'union_code', 'fuel_type_code','parsing_no'], 'required'],
+            [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'union_code', 'fuel_type_code', 'parsing_no'], 'required'],
             [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by'], 'string'],
             [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer'],
-            [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code','licence_expiry_date','bmc_code'], 'safe'],
-            [['rent','average'], 'number','min'=>1],
+            [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code'], 'safe'],
+            [['rent', 'average'], 'number', 'min' => 1],
             [['driver_contact_no'], function ($attribute, $params) {
-                Yii::$app->general->vaildatePhoneNumbers($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
+            Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['driver_name'], function ($attribute, $params) {
-                Yii::$app->general->validateName($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
-            [['registration_no','driving_license_number','rc_book_no'], function ($attribute, $params) {
-                Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
-            [['parsing_no','rc_book_no'],'unique'],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['registration_no', 'driving_license_number', 'rc_book_no'], function ($attribute, $params) {
+            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['parsing_no', 'rc_book_no'], 'unique'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'vehicle_code' => Yii::t('app', 'Vehicle Code'),
             'vehicle_type_code' => Yii::t('app', 'Vehicle Type'),
@@ -107,54 +107,48 @@ class TblVehicleMaster extends \app\models\ChildModel
      * @inheritdoc
      * @return TblVehicleMasterQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblVehicleMasterQuery(get_called_class());
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCapacity()
-    {
+    public function getCapacity() {
         return $this->hasOne(TblCapacity::className(), ['capacity_code' => 'capacity_code']);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTransporter()
-    {
+    public function getTransporter() {
         return $this->hasOne(TblTransporter::className(), ['transporter_code' => 'transporter_code']);
     }
-    
-    public function getVehicleType()
-    {
+
+    public function getVehicleType() {
         return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
     }
-    
-    public function getFuelType(){
+
+    public function getFuelType() {
         return $this->hasOne(TblFuelTypeMaster::className(), ['fuel_type_code' => 'fuel_type_code']);
     }
-    
-    public function getVehicleBillingType(){
+
+    public function getVehicleBillingType() {
         return $this->hasOne(TblVehicleBillingType::className(), ['vehicle_code' => 'vehicle_code'])->orderBy('wef_date desc');
     }
-    
-    public function getVehicleKmInfo(){
+
+    public function getVehicleKmInfo() {
         return $this->hasOne(TblVehicleKmInfo::className(), ['vehicle_code' => 'vehicle_code']);
     }
-    
-    
-    public function vehicle($km_base){
+
+    public function vehicle($km_base) {
         $data = $this->find()->all();
 //        if($km_base == true){
 //            $vehicle_billing_model = new TblVehicleBillingType();
@@ -167,17 +161,42 @@ class TblVehicleMaster extends \app\models\ChildModel
 //                ->where(['vehicle_code'=>$sub_query])
 //                ->all();
 //        }
-        $array = \yii\helpers\ArrayHelper::map($data, 'vehicle_code', function($data){ return $data->parsing_no.'/'.$data->vehicleType->vehicle_type_name; });
+        $array = \yii\helpers\ArrayHelper::map($data, 'vehicle_code', function($data) {
+                    return $data->parsing_no . '/' . $data->vehicleType->vehicle_type_name;
+                });
         return $array;
     }
-    
-    public function allVehicle($parents = ''){
-        $rows = $this->find()->where(['transporter_code'=>$parents])->all();
+
+    public function allVehicle($parents = '') {
+        $rows = $this->find()->where(['transporter_code' => $parents])->all();
         $vehicles = [];
-        foreach($rows as $value){
-             $vehicles[] = array('id' => $value->vehicle_code,
-                    'name' => $value->parsing_no.'/'.$value->vehicleType->vehicle_type_name);
+        foreach ($rows as $value) {
+            $vehicles[] = array('id' => $value->vehicle_code,
+                'name' => $value->parsing_no . '/' . $value->vehicleType->vehicle_type_name);
         }
         return $vehicles;
     }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
 }
