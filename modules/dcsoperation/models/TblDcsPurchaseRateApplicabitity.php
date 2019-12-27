@@ -17,6 +17,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_dcs_purchase_rate_applicability".
@@ -52,12 +53,12 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $is_sentbox;
-
-    function __construct() {
-        parent::__construct();
-        $this->is_sentbox = FALSE;
-    }
+//    public $is_sentbox;
+//
+//    function __construct() {
+//        parent::__construct();
+//        $this->is_sentbox = FALSE;
+//    }
 
     public static function tableName() {
         return 'tbl_dcs_purchase_rate_applicability';
@@ -342,6 +343,40 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
                         ])
                         ->andWhere(['tbl_rate_download_ack.ack_id' => NULL])
                         ->all();
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $bmc_code = $mcc_code = $plant_code = '';
+        if ($this->applicable_for == 'DCS') {
+            $bmc_code = $this->dcsName->bmc_code;
+        } else if ($this->applicable_for == 'BMC') {
+            $bmc_code = $this->applicable_code;
+        } else if ($this->applicable_for == 'MCC') {
+            $mcc_code = $this->applicable_code;
+        } else if ($this->applicable_for == 'PLANT') {
+            $plant_code = $this->applicable_code;
+        } else {
+            $bmc_code = $this->customerMasterCode->bmc_code;
+            $mcc_code = $this->customerMasterCode->mcc_plant_code;
+        }
+        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
