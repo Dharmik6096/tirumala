@@ -74,7 +74,7 @@ class TblWeightCollection extends \app\models\ChildModel {
             [['dcs_code', 'date_time_of_collection', 'sample_no', 'shift_code', 'milk_type_code', 'milk_quality_type_code', 'doc_no', 'qty'], 'required', 'on' => ['PortalCreate']],
             [['uuid', 'producer_flag', 'shift_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'created_by', 'updated_by', 'device_id', 'version_no', 'vehicle_no', 'ws_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
             [['sample_no', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'rejected_can', 'qty_auto', 'doc_no', 'originating_type'], 'safe'],
-            [['date_time_of_collection', 'weight_datetime', 'created_at', 'updated_at', 'route_arrival_time'], 'safe'],
+            [['date_time_of_collection', 'weight_datetime', 'created_at', 'updated_at', 'route_arrival_time', 'customer_type', 'customer_code'], 'safe'],
             [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'safe'],
             [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'number', 'except' => ['androidsync']],
             [['qty'], 'double', 'min' => 0, 'max' => 99999, 'on' => ['edit_collection']],
