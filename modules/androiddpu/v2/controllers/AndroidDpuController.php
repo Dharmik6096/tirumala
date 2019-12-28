@@ -182,13 +182,13 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 if (!empty($model_data)) {
                     if ($org_type == 'VLC') {
                         $mcc_bmc_config = FALSE;
-                        /*  $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
-                          if (!empty($current_rate_detail)) {
-                          $res_data['rate']['mPurchaseRateCode'] = $current_rate_detail[0]['m_rate_code'];
-                          $res_data['rate']['mPurchaseRateCodeBlock'] = $current_rate_detail[0]['m_rate_block'];
-                          $res_data['rate']['ePurchaseRateCode'] = $current_rate_detail[0]['e_rate_code'];
-                          $res_data['rate']['ePurchaseRateCodeBlock'] = $current_rate_detail[0]['e_rate_block'];
-                          } */
+                        $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
+                        if (!empty($current_rate_detail)) {
+                            $res_data['rate']['mPurchaseRateCode'] = $current_rate_detail[0]['m_rate_code'];
+                            $res_data['rate']['mPurchaseRateCodeBlock'] = $current_rate_detail[0]['m_rate_block'];
+                            $res_data['rate']['ePurchaseRateCode'] = $current_rate_detail[0]['e_rate_code'];
+                            $res_data['rate']['ePurchaseRateCodeBlock'] = $current_rate_detail[0]['e_rate_block'];
+                        }
                         $collection_status = Yii::$app->general->getSpData('sp_society_collection_status', [$org_code]);
                         $collection_status = empty($collection_status) ? $model_data->is_active : $collection_status[0]['collection_status'];
                         $res_data['memberDownload'] = (bool) $model_data->is_name_request;

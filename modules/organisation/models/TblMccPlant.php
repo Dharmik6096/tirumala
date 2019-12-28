@@ -73,16 +73,16 @@ class TblMccPlant extends \app\models\ChildModel {
             [['email'], 'string', 'max' => 50],
             [['email'], 'email'],
             [['name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
             [['name',], 'string', 'max' => 255],
             [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mcc_plant_code'], 'integer', 'min' => 1],
             [['mcc_plant_code'], 'string', 'max' => 6],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
@@ -357,6 +357,10 @@ class TblMccPlant extends \app\models\ChildModel {
 
     public function getTblMccPlantGroup() {
         return $this->hasMany(TblMccPlantGroupMapping::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getTblMccPlantMain() {
+        return $this->hasMany(TblMccPlantGroupMapping::className(), ['p_mcc_plant_code' => 'mcc_plant_code']);
     }
 
 }

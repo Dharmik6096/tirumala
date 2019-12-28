@@ -35,6 +35,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblPlant;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\syncutility\models\TblSecurity;
+use yii\helpers\ArrayHelper;
 
 class GeneralFunctions extends Component {
 
@@ -565,7 +566,7 @@ class GeneralFunctions extends Component {
             foreach ($unions as $union) {
                 $mapping = TblDcs::find()->select(['dcs_code'])->where(['union_code' => $union])->asArray()->all();
                 if (!empty($mapping)) {
-                    $map = array_values(yii\helpers\ArrayHelper::getColumn($mapping, 'dcs_code'));
+                    $map = array_values(ArrayHelper::getColumn($mapping, 'dcs_code'));
                     if (!empty($dcs))
                         array_merge($dcs, $map);
                     else
@@ -956,7 +957,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1033,6 +1034,26 @@ class GeneralFunctions extends Component {
         }
 
         $mcc = array_unique($mcc);
+
+        foreach ($mcc as $key => $mccCode) {
+            $model = new TblMccPlant();
+            $model->mcc_plant_code = $mccCode;
+            $mcc_plant_array = ArrayHelper::getColumn($model->tblMccPlantMain, 'mcc_plant_code');
+            $mcc = array_merge($mcc, $mcc_plant_array);
+        }
+        $mcc = array_unique($mcc);
+
+        $bmc = array_unique($bmc);
+        
+        foreach ($bmc as $key => $bmcCode) {
+            $model = new TblDcsBmc();
+            $model->bmc_code = $bmcCode;
+            $bmc_array = ArrayHelper::getColumn($model->tblBmcMain, 'bmc_code');
+            $bmc = array_merge($bmc, $bmc_array);
+        }
+
+
+
         foreach ($mcc as $key => $mccCode) {
             $array = [];
             $array['code'] = $mccCode;
