@@ -49,7 +49,7 @@ class DefaultController extends Controller {
         $module->shift_type = Yii::$app->request->post('shift_type');
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
         $values = $module->getDcs($top_section, $wef_date);
-       
+
         $dcsalert = [];
         $removedcs = [];
         //echo $payment; exit;
@@ -93,7 +93,9 @@ class DefaultController extends Controller {
             default :
         }
         //echo 'here';exit;
-        $dcs_list = ArrayHelper::map($dcs, 'dcs_code', 'dcs_name');
+        $dcs_list = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
+                    return $dcs->dcs_name . '-' . $dcs->dcs_code;
+                });
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $dcs_list, 'dcsalert' => $dcsalert, 'dcsarray' => $removedcs]);
     }

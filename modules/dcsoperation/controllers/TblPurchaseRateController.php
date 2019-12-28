@@ -456,20 +456,21 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $appModel->field_name = 'purchase_rate_code';
         $appModel->field_value = $id;
         $appModel->trans_label = 'purchase rate applicability';
+        $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-            return Yii::$app->controls->view_date($model->wef_date);
-        }],
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
             'dcs_name' => ['view' => ['grid'], 'value' => function($model) {
-            return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }],
+                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                }],
             'is_download' => ['view' => ['grid'], 'type' => 'yes-no', 'value' => function($model) {
-            return ($model->is_download == 0) ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
-        }],
+                    return ($model->is_download == 0) ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
+                }],
             'download_date_time' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
-            return Yii::$app->controls->view_date($model->download_date_time);
-        }],
+                    return Yii::$app->controls->view_date($model->download_date_time);
+                }],
         ];
         $username = explode('#', Yii::$app->session->get('UserName'))[1];
         if (!in_array(strtolower($username), ['bipl', 'reil']))

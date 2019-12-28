@@ -798,7 +798,9 @@ class TblDcs extends ChildModel {
             $query->andWhere(['not in', 'dcs_code', $notIn]);
         }
         $dcs = $query->all();
-        $dcs = ArrayHelper::map($dcs, 'dcs_code', 'dcs_name');
+        $dcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
+                    return $dcs->dcs_name . '-' . $dcs->dcs_code;
+                });
         asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
         return $dcs;
     }
