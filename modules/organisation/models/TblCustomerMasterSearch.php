@@ -17,7 +17,7 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
      */
     public function rules() {
         return [
-            [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type','customer_code_ex'], 'safe'],
+            [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code'], 'safe'],
             [['is_active', 'originating_type'], 'integer'],
         ];
     }
@@ -54,6 +54,7 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
         $query->andFilterWhere([
             'tbl_customer_master.customer_type' => $this->customer_type,
             'tbl_customer_master.is_active' => $this->is_active,
+            'tbl_customer_master.route_code' => $this->route_code,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_customer_master.customer_code', $this->customer_code])

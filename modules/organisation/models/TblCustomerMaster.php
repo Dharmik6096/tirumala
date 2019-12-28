@@ -11,6 +11,7 @@ use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -58,19 +59,19 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['customer_name', 'union_code', 'address', 'customer_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code_ex'], 'required'],
+            [['customer_name', 'union_code', 'address', 'customer_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code_ex', 'route_code'], 'required'],
             [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
-            [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code'], 'safe'],
             [['is_active'], 'default', 'value' => 1],
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['customer_code_ex'], function ($attribute, $params) {
-            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-        }, 'skipOnEmpty' => false,],
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
             ['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
         ];
     }
@@ -112,6 +113,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
+            'route_code' => Yii::t('app', 'Route'),
         ];
     }
 
@@ -216,6 +218,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
 
 }

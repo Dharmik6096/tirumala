@@ -183,6 +183,16 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
 
+                                    <?php
+                                    if (in_array($value, array('route_code'))) {
+                                        $depend_str = $field_class . '-f_plant_code' . ',' . $field_class . '-f_mcc_code' . ',' . $field_class . '-f_bmc_code';
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-6">
+                                            <?= Yii::$app->dropdown->all_routes($model, $form, $depend_str, 'route_code', FALSE); ?>
+                                        </div>
+                                    <?php } ?>
+
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">

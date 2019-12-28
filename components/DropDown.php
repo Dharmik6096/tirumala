@@ -259,6 +259,11 @@ class DropDown extends Component {
         echo $form->field($model, $name)->dropDownList($config->configForList(), ['prompt' => 'Select App', 'disabled' => $disable])->label($islable);
     }
 
+    public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

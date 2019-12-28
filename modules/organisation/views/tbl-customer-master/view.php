@@ -38,7 +38,6 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 ],
                 [
                     'columns' => [
-
                         [
                             'attribute' => 'customer_name',
                             'valueColOptions' => ['style' => 'width:30%']
@@ -76,7 +75,6 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 ],
                 [
                     'columns' => [
-
                         [
                             'attribute' => 'district_code',
                             'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
@@ -92,7 +90,6 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 ],
                 [
                     'columns' => [
-
                         [
                             'attribute' => 'village_code',
                             'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
@@ -107,21 +104,25 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 ],
                 [
                     'columns' => [
-
                         [
-                            'attribute' => 'bmc_code',
-                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                            'attribute' => 'route_code',
+                            'value' => Yii::$app->general->getforeignkey($model->routeCode, 'route_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                         [
-                            'attribute' => 'mcc_plant_code',
-                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'attribute' => 'bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
                 [
                     'columns' => [
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                         [
                             'attribute' => 'plant_code',
                             'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
@@ -150,7 +151,7 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],

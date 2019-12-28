@@ -337,5 +337,24 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionAllRouteList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $routes = new TblRouteMapping();
+                $plant = $parents[0];
+                $mcc = !empty($parents[1]) ? $parents[1] : NULL;
+                $bmc = !empty($parents[2]) ? $parents[2] : NULL;
+                $data = $routes->routeFromDestination($plant, $mcc, $bmc);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
+    }
 
 }
