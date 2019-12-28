@@ -34,7 +34,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcustomermaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
     </div>
     <div class="col-sm-3 DCS">
-        <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermaster-plant_code,tblcustomermaster-mcc_plant_code,tblcustomermaster-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE, $readonly); ?>
+        <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermaster-plant_code,tblcustomermaster-mcc_plant_code,tblcustomermaster-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-3 ">
