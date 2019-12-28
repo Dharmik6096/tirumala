@@ -192,7 +192,9 @@ class Grid extends Widget {
             'dropdownOptions' => [
                 'label' => '<i class="glyphicon"></i>'
             ],
-            'exportConfig' => $exportConfig
+
+            'exportConfig' => $exportConfig,
+            'batchSize' => 2000
         ];
         foreach ($exportEvents as $event => $content) {
             $ExportWidget[$event] = $content;
@@ -213,6 +215,7 @@ class Grid extends Widget {
                 'showPageSummary' => !empty($grid_option->showPageSummary) ? $grid_option->showPageSummary : false,
 //                        'floatHeader' => $fixed_header,
 //                        'floatOverflowContainer' => $fixed_header,
+
                 'pjax' => false,
                 'panel' => ['heading' => false, 'before' => '',
                     'after' => '<div class="text-right padding-right-5">{pager}</div>',
@@ -222,6 +225,7 @@ class Grid extends Widget {
                         Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
                     ],
                         ['content' => '{dynagrid}'],
+
                     //  '{export}',
                     $fullExportMenu
                 ],

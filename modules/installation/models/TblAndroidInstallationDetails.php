@@ -66,7 +66,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
             'use_for' => Yii::t('app', 'Use For'),
             'lat' => Yii::t('app', 'Lat'),
             'long' => Yii::t('app', 'Long'),
-            'created_at' => Yii::t('app', 'Created At'),
+            'created_at' => Yii::t('app', 'Created Date'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
