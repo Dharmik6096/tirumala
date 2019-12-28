@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "tbl_bmc_milk_type_history".
  *
  * @property integer $id
- * @property string $mcc_plant_code
+ * @property string $bmc_code
  * @property integer $milk_type_code
  * @property integer $is_active
  * @property string $created_at
@@ -18,23 +18,21 @@ use Yii;
  * @property string $history_created_at
  * @property string $operation_type
  */
-class TblBmcMilkTypeHistory extends \yii\db\ActiveRecord
-{
+class TblBmcMilkTypeHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_milk_type_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['mcc_plant_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
+            [['bmc_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
             [['milk_type_code', 'is_active'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
         ];
@@ -43,11 +41,10 @@ class TblBmcMilkTypeHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
+            'bmc_code' => Yii::t('app', 'Mcc Plant Code'),
             'milk_type_code' => Yii::t('app', 'Milk Type Code'),
             'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -58,4 +55,5 @@ class TblBmcMilkTypeHistory extends \yii\db\ActiveRecord
             'operation_type' => Yii::t('app', 'Operation Type'),
         ];
     }
+
 }
