@@ -314,10 +314,31 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 
     public function getPendingApplicability($device_id, $hash_key, $dcs_code) {
         return $this->find()->select(['tbl_purchase_rate_applicability.*'])
-                        ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.purchase_rate_code=tbl_purchase_rate_applicability.purchase_rate_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for='MEMBER'")
+                        ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.rate_app_code=tbl_purchase_rate_applicability.rate_app_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for='MEMBER'")
                         ->where(['tbl_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code, 'tbl_purchase_rate_applicability.dcs_code' => $dcs_code])
                         ->andWhere(['tbl_rate_download_ack.ack_id' => NULL])
                         ->all();
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

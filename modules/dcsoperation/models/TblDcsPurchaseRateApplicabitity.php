@@ -17,6 +17,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_dcs_purchase_rate_applicability".
@@ -52,12 +53,12 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $is_sentbox;
-
-    function __construct() {
-        parent::__construct();
-        $this->is_sentbox = FALSE;
-    }
+//    public $is_sentbox;
+//
+//    function __construct() {
+//        parent::__construct();
+//        $this->is_sentbox = FALSE;
+//    }
 
     public static function tableName() {
         return 'tbl_dcs_purchase_rate_applicability';
@@ -331,7 +332,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
         $customer_type = TblCustomerType::find()->select(['customer_type'])->where(['is_organisation' => 0]);
 
         return $this->find()->select(['tbl_dcs_purchase_rate_applicability.*'])
-                        ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.purchase_rate_code=tbl_dcs_purchase_rate_applicability.purchase_rate_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for!='MEMBER'")
+                        ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.rate_app_code=tbl_dcs_purchase_rate_applicability.rate_app_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for!='MEMBER'")
                         ->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code])
                         ->andWhere(['or',
                             ['tbl_dcs_purchase_rate_applicability.applicable_code' => $dcs_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'DCS'],
@@ -342,6 +343,40 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
                         ])
                         ->andWhere(['tbl_rate_download_ack.ack_id' => NULL])
                         ->all();
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $bmc_code = $mcc_code = $plant_code = '';
+        if ($this->applicable_for == 'DCS') {
+            $bmc_code = $this->dcsName->bmc_code;
+        } else if ($this->applicable_for == 'BMC') {
+            $bmc_code = $this->applicable_code;
+        } else if ($this->applicable_for == 'MCC') {
+            $mcc_code = $this->applicable_code;
+        } else if ($this->applicable_for == 'PLANT') {
+            $plant_code = $this->applicable_code;
+        } else {
+            $bmc_code = $this->customerMasterCode->bmc_code;
+            $mcc_code = $this->customerMasterCode->mcc_plant_code;
+        }
+        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
