@@ -804,5 +804,8 @@ class TblDcs extends ChildModel {
         asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
         return $dcs;
     }
-
+    
+   public function getUnionDpuConfig() {
+        return $this->hasOne(TblUnionDpuConfig::className(), ['union_code' => 'union_code','dpu_type'=>'dpu_type']);
+    }
 }

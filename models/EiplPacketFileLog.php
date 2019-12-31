@@ -74,7 +74,7 @@ class EiplPacketFileLog extends ChildModel {
                         ->all();
     }
 
-    public function updateSmsStatus($value) {
+    public function updateStatus($value) {
         return $this->updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['file_id' => $value]);
     }
 

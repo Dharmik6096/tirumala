@@ -80,7 +80,7 @@ class EiplPacketController extends Controller {
             $file_ids = array_map(function($e) {
                 return $e->file_id;
             }, $modelData);
-            // $update = $model->updateSmsStatus($file_ids);
+            $update = $model->updateStatus($file_ids);
             foreach ($modelData as $file) {
                 if (file_exists($file->file_path)) {
                     if ($fh = fopen($file->file_path, 'r')) {
@@ -330,10 +330,13 @@ class EiplPacketController extends Controller {
             $update_ids = array_column($modelData, 'dpu_collection_ho_data_id');
             $model->updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['dpu_collection_ho_data_id' => $update_ids]);
             foreach ($modelData as $data) {
-                $string = $data->encrypted_string;
-                $string = Yii::$app->EIPLSecurity->Decrypt($string);
-                $cnt = $data->dpu_collection_ho_data_id;
-                $this->saveCollectionData($data, $string, $cnt);
+                if (!empty($data->dcsCode) && !empty($data->dcsCode->unionDpuConfig)) {
+                    $string = $data->encrypted_string;
+                    $dpu_key = $data->dcsCode->unionDpuConfig->dpu_key;
+                    $string = Yii::$app->EIPLSecurity->Decrypt($string, $dpu_key);
+                    $cnt = $data->dpu_collection_ho_data_id;
+                    $this->saveCollectionData($data, $string, $cnt);
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ namespace app\modules\webservice\eipl\models;
 
 use Yii;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_dpu_collection_ho_data".
@@ -40,7 +41,7 @@ class TblDpuCollectionHoData extends \app\models\ChildModel {
     public function rules() {
         return [
             [['uuid', 'access_token', 'device_id', 'encrypted_string', 'identity_type', 'mobile_no', 'entry_type', 'status', 'created_by', 'updated_by'], 'safe'],
-            [['entry_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at'], 'safe'],
+            [['entry_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at', 'dcs_code'], 'safe'],
         ];
     }
 
@@ -71,14 +72,20 @@ class TblDpuCollectionHoData extends \app\models\ChildModel {
     public function getData() {
         $newRecords = $this->find()
                 ->where(['or', ['status' => 0], ['status' => NULL]])
+                ->andWhere(['IS NOT', 'dcs_code', NULL])
                 ->limit(100)
                 ->all();
 
         $unprocessedRecords = $this->find()
                 ->where(['status' => 3])
+                ->andWhere(['IS NOT', 'dcs_code', NULL])
                 ->limit(10)
                 ->all();
         return array_merge($newRecords, $unprocessedRecords);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
 }
