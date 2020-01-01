@@ -143,49 +143,48 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'rtpl',
+                            'attribute' => 'clr',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'qty',
+                            'attribute' => 'rtpl',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                 [
                     'columns' => [
+                        [
+                            'attribute' => 'qty',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                         [
                             'attribute' => 'qty_mode',
                             'value' => isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'converted_qty',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'amount',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
-                            'attribute' => 'sample_no',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
                     ],
                 ],
                 [
                     'columns' => [
                         [
-                            'attribute' => 'type_of_data_receive',
+                            'attribute' => 'sample_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'collection_type',
-                            'value' => !empty($model->collection_type) ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
+                            'attribute' => 'type_of_data_receive',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -206,6 +205,11 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 ],
                 [
                     'columns' => [
+                        [
+                            'attribute' => 'collection_type',
+                            'value' => !empty($model->collection_type) ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                         [
                             'attribute' => 'remarks',
                             'valueColOptions' => ['style' => 'width:80%']

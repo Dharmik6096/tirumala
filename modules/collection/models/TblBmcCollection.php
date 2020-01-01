@@ -145,6 +145,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'customer_type' => Yii::t('app', 'Type'),
             'customer_code' => Yii::t('app', 'Code'),
             'union_code' => Yii::t('app', 'Union'),
+            'clr' => Yii::t('app', 'CLR'),
         ];
     }
 

@@ -64,6 +64,7 @@ $attribute = [
     ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'rtpl'],
     ['attribute' => 'qty_mode',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('p_ltr_kg', $searchModel, 'qty_mode'),

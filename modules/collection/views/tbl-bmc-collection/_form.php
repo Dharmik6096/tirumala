@@ -153,7 +153,9 @@ $script = "
      $(document).on('change', '#tblbmccollection-shift_code', function() {  
         reloadGrid();
     });
-    
+     $(document).on('change', '#tblbmccollection-bmc_code', function() {  
+        reloadGrid();
+    });
     function reloadGrid(){
         if($('#tblbmccollection-milk_collection_code').val()==''){
             var url = '" . Url::to(['/collection/tbl-bmc-collection/list-grid']) . "'+ '?' + $('#bmc-coll-form').serialize();
