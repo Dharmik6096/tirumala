@@ -36,6 +36,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\syncutility\models\TblSecurity;
 use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblCustomerMaster;
 
 class GeneralFunctions extends Component {
 
@@ -957,7 +958,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1044,7 +1045,7 @@ class GeneralFunctions extends Component {
         $mcc = array_unique($mcc);
 
         $bmc = array_unique($bmc);
-        
+
         foreach ($bmc as $key => $bmcCode) {
             $model = new TblDcsBmc();
             $model->bmc_code = $bmcCode;
@@ -1279,6 +1280,15 @@ class GeneralFunctions extends Component {
             $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . '. ') . 'Value must be ' . $errorMsg . '.');
             return false;
         }
+    }
+
+    public function getCustomer($model, $type, $code) {
+        if (strtolower($type) == 'dcs') {
+            $name = $this->getforeignkey($model->dcsCode, 'dcs_name');
+        } else {
+            $name = $this->getforeignkey($model->mainCustomerCode, 'customer_name');
+        }
+        return $name;
     }
 
 }

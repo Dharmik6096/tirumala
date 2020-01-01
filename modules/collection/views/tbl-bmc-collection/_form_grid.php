@@ -12,6 +12,15 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'bmc_code', 'visible' => false, 'value' => 'bmc_code', 'vAlign' => 'middle', 'filter' => true],
     ['attribute' => 'bmc_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
@@ -23,9 +32,16 @@ $attribute = [
 //            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
 //        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'visible' => false, 'vAlign' => 'middle', 'filter' => true],
+    ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+        },],
+    ['attribute' => 'customer_code'],
+    ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->customer_type, $model->customer_code);
+        }],
     ['attribute' => 'dcs_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
     [
         'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
@@ -73,7 +89,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => TRUE,
-        'update' => true,
+//        'update' => true,
     ]
 ];
 
