@@ -57,7 +57,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType']);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType','mainBmcCode']);
 
         Yii::$app->general->filterByOrg($query, $this);
 
@@ -88,7 +88,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
                 ->andFilterWhere(['like', 'tbl_bmc_collection.rtpl', $this->rtpl])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
                 ->andFilterWhere(['like', 'tbl_bmc_collection.customer_code', $this->customer_code]);
-        $query->orderBy(['tbl_bmc_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc_collection.doc_no' => SORT_ASC, 'tbl_bmc_collection.sample_no' => SORT_ASC]);
+        $query->orderBy(['tbl_bmc.bmc_name' => SORT_ASC, 'tbl_bmc_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc_collection.doc_no' => SORT_ASC, 'tbl_bmc_collection.sample_no' => SORT_ASC]);
         return $dataProvider;
     }
 

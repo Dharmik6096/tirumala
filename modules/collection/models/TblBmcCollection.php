@@ -245,4 +245,8 @@ class TblBmcCollection extends \app\models\ChildModel {
         }
     }
 
+    public function getMainBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
 }
