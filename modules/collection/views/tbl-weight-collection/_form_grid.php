@@ -20,7 +20,14 @@ $attribute = [
     ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Society Code'), 'visible' => false, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'vAlign' => 'middle', 'filter' => true],
+        }, 'vAlign' => 'middle', 'filter' => true, 'visible' => false],
+    ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+        },],
+    ['attribute' => 'customer_code', 'filter' => true],
+    ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->customer_type, $model->customer_code);
+        }, 'filter' => true],
     [
         'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
@@ -29,8 +36,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->date_time_of_collection);
-}],
+            return Yii::$app->controls->view_date($model->date_time_of_collection);
+        }],
     ['attribute' => 'shift_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }

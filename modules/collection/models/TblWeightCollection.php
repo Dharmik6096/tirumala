@@ -9,6 +9,8 @@ use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\configuration\models\TblMilkCollectionConfig;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_weight_collection".
@@ -57,6 +59,8 @@ use app\modules\configuration\models\TblMilkCollectionConfig;
  * @property string $own_bmc_code
  */
 class TblWeightCollection extends \app\models\ChildModel {
+
+    public $customer_name;
 
     /**
      * @inheritdoc
@@ -132,6 +136,8 @@ class TblWeightCollection extends \app\models\ChildModel {
             'route_arrival_time' => Yii::t('app', 'Route Arrival Time'),
             'own_mcc_plant_code' => Yii::t('app', 'Own Mcc Plant Code'),
             'own_bmc_code' => Yii::t('app', 'Own Bmc Code'),
+            'customer_type' => Yii::t('app', 'Type'),
+            'customer_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -171,6 +177,14 @@ class TblWeightCollection extends \app\models\ChildModel {
                 $this->converted_qty_mode = 0;
             }
         }
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
 }

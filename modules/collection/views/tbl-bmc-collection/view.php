@@ -19,25 +19,40 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'bmc_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'bmc_name',
                             'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
-                            'attribute' => 'dcs_code',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'dcs_name',
-                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+                            'attribute' => 'customer_type',
+                            'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -45,17 +60,44 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'dcs_incharge_name',
-                            'value' => !empty(Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')) ? Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->firstname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->lastname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->surname : 'N/A',
+                            'attribute' => 'customer_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                        [
+                            'attribute' => 'customer_name',
+                            'label' => Yii::t('app', 'Name'),
+                            'value' => Yii::$app->general->getCustomer($model, $model->customer_type, $model->customer_code),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'route_name',
                             'value' => Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                        [
+                            'attribute' => 'dcs_incharge_name',
+                            'value' => !empty(Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')) ? Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->firstname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->lastname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->surname : 'N/A',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
                     ],
                 ],
+//                [
+//                    'columns' => [
+//                        [
+//                            'attribute' => 'dcs_code',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                        [
+//                            'attribute' => 'dcs_name',
+//                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                    ],
+//                ],
                 [
                     'columns' => [
                         [
@@ -182,7 +224,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],

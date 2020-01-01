@@ -30,7 +30,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['route-list'];
+    public $freeAccessActions = ['route-list','all-route-list'];
 
     /**
      * @inheritdoc

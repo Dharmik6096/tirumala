@@ -11,6 +11,11 @@ use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblRouteMapping;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_bmc_collection".
@@ -56,7 +61,7 @@ class TblBmcCollection extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $date, $weigh_time, $testing_time;
-    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name;
+    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name;
 
     public static function tableName() {
         return 'tbl_bmc_collection';
@@ -72,19 +77,20 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync']],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number', 'except' => ['androidsync']],
             [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
-            return $model->collection_type == '2';
-        }, 'whenClient' => "function (attribute, value) { 
+                    return $model->collection_type == '2';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
           }", 'except' => ['post_sap_data', 'androidsync']],
             [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync']],
             [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-            return $this->shift_code;
-        }, 'except' => ['androidsync']],
+                    return $this->shift_code;
+                }, 'except' => ['androidsync']],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync']],
-            [['fat', 'snf', 'rtpl', 'qty', 'dcs_code', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
+            [['fat', 'snf', 'rtpl', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no'], 'safe'],
-            [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'safe'],
+            [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code'], 'safe'],
+            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create']],
         ];
     }
 
@@ -130,6 +136,11 @@ class TblBmcCollection extends \app\models\ChildModel {
             'bmc_name' => Yii::t('app', 'BMC Name'),
             'converted_qty' => Yii::t('app', 'Converted Qty'),
             'dcs_incharge_name' => Yii::t('app', 'DCS Incharge'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'customer_type' => Yii::t('app', 'Type'),
+            'customer_code' => Yii::t('app', 'Code'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
 
@@ -183,6 +194,54 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function getBmcData() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type']);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code]);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function validateCustomer($union, $code, $type) {
+        if (!empty($code) && strtolower($type) != 'dcs') {
+            $this->union_code = $union;
+            $this->customer_type = $type;
+            $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
+            $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
+            $exCode = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code_ex');
+            $value = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
+            $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            return $data = ($exCode != $value) ? '' : $Code;
+        }
+    }
+
+    public function getCustomerCodeVal() {
+        if ($this->customerType != 'DCS') {
+            $customerCode = $this->mainCustomerCode;
+            $customerType = $this->customerType;
+            if (!empty($customerCode) && !empty($customerType)) {
+                $prefix = $customerType->code_prefix;
+                $this->customer_code = (int) str_replace($prefix, '', $customerCode->customer_code_ex);
+            }
+        }
     }
 
 }
