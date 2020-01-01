@@ -61,7 +61,7 @@ class TblBmcCollection extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $date, $weigh_time, $testing_time;
-    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name;
+    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $value;
 
     public static function tableName() {
         return 'tbl_bmc_collection';
@@ -75,22 +75,26 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
             [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
             [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync']],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number', 'except' => ['androidsync']],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
             [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
                     return $model->collection_type == '2';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
           }", 'except' => ['post_sap_data', 'androidsync']],
-            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync']],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                    return $this->shift_code;
-                }, 'except' => ['androidsync']],
+            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create']],
+//            [['customer_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'customer_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+//                    return $this->shift_code;
+//                }, 'except' => ['androidsync']],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync']],
             [['fat', 'snf', 'rtpl', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no'], 'safe'],
-            [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create']],
+            [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code'], 'safe'],
+            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'clr'], 'required', 'on' => ['create']],
+            [['clr'], 'number', 'min' => 0, 'on' => ['create']],
+            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
+                    return empty($this->getErrors());
+                }, 'on' => ['create']],
         ];
     }
 
@@ -201,7 +205,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getCustomerCode() {
-        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code]);
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->value]);
     }
 
     public function getMainCustomerCode() {
@@ -226,10 +230,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $exCode = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code_ex');
-            $value = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
+            $this->value = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
             $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
-            return $data = ($exCode != $value) ? '' : $Code;
+            return $data = empty($Code) ? '' : $Code;
         }
     }
 
@@ -242,6 +245,15 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $this->customer_code = (int) str_replace($prefix, '', $customerCode->customer_code_ex);
             }
         }
+    }
+
+    public function getSampleNo() {
+        $data = $this->find()
+                ->select('max(sample_no) as sample_no')
+                ->where(['bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => Yii::$app->formatter->asDate($this->date_time_of_collection, DATE_FORMAT)])
+                ->one();
+        $sample_no = (int) $data['sample_no'] + 1;
+        return $sample_no;
     }
 
 }

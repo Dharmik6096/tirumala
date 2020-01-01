@@ -15,6 +15,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 use app\modules\collection\models\TblBmcCollectionHistory;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
+use yii\widgets\ActiveForm;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
@@ -55,33 +56,81 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblBmcCollection();
+        $searchModel = new TblBmcCollectionSearch();
+        $searchModel->date_time_of_collection = date('Y-m-d');
+        $searchModel->shift_code = 1;
+        $dataProvider = $searchModel->gridsearch(Yii::$app->request->get());
+
+        $this->model->date_time_of_collection = date('d-m-Y');
+        $this->model->milk_type_code = 1;
+        $this->model->milk_quality_type_code = 1;
+        $this->model->shift_code = 1;
 
         $this->viewFile = 'create';
-        if ($this->model->load(Yii::$app->request->post())) {
+        $this->model->scenario = 'create';
+        $modelSave = [];
+        if (Yii::$app->request->post()) {
+            $update = FALSE;
+            $this->model->load(Yii::$app->request->post());
+            if (!empty(Yii::$app->request->post()['TblBmcCollection']['milk_collection_code'])) {
+                $this->model = $this->findModel(Yii::$app->request->post()['TblBmcCollection']['milk_collection_code']);
+                $historyModel = new TblBmcCollectionHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $modelSave[] = $historyModel;
+                $this->model->load(Yii::$app->request->post());
+                $update = TRUE;
+            }
+            if (!$update) {
+//                    $this->model->setAttributes($this->model);
+                $this->model->qty_mode = 1;
+                $this->model->qlty_auto = 1;
+                $this->model->qty_auto = 1;
+                $this->model->dt_date = date('Y-m-d H:i:s');
+                $datetime = date('Y-m-d H:i:s');
+                $this->model->sample_no = $this->model->getSampleNo();
+                $this->model->date_time_of_recieve = $datetime;
+                $this->model->type_of_data_receive = 'Manual';
+                $this->model->sms_status = 'n';
+                $this->model->qlty_time = $datetime;
+                $this->model->qty_time = $datetime;
+                $this->model->date_time_of_testing = $datetime;
+                $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $this->model->customer_code : NULL;
+                $this->model->village_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
+                $this->model->route_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
+            }
+            if (strtolower($this->model->customer_type) != 'dcs') {
+                $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
+            }
+//            $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $this->model->customer_code : NULL;
             $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
-            $this->model->bmc_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'bmc_code');
-            $this->model->qty_mode = 1;
-            $this->model->qlty_auto = 1;
-            $this->model->qty_auto = 1;
-            $this->model->dt_date = date('Y-m-d H:i:s');
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['BMC Collection', 'create']);
-            if ($transaction == 'customRedirect') {
-                return $this->{$transaction}();
+            $modelSave[] = $this->model;
+            if ($this->model->validate()) {
+                $transaction = $this->generalModel->saveTransaction($modelSave, ['BMC Collection', ($update) ? 'edit' : 'create']);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'temp_collection_data' => [], 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'temp_collection_data' => [], 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
             }
+        } else {
+            return $this->render('create', [
+                        'model' => $this->model,
+                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+            ]);
         }
-        $searchModel = new TblBmcCollectionSearch();
-        if (!empty(Yii::$app->request->get())) {
-            $searchModel->date_time_of_collection = Yii::$app->request->get('TblBmcCollection')['date_time_of_collection'];
-        }
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('create', [
                     'model' => $this->model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
-//        return $this->customRender();
     }
 
     public function actionUpdate($id) {
@@ -123,8 +172,16 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 
     public function actionValidateDcs() {
         $dcs = Yii::$app->request->post('dcs_code');
-        $model = new TblDcs();
-        $data = $model->validDcs($dcs);
+        $union = Yii::$app->request->post('union_code');
+        $type = Yii::$app->request->post('customer_type');
+        if (!empty($type) && $type != strtoupper('DCS')) {
+            $custModel = new TblBmcCollection();
+            $data = $custModel->validateCustomer($union, $dcs, $type);
+        } else {
+            $model = new TblDcs();
+            $data = $model->validDcs($dcs);
+        }
+
         if (!empty($data)) {
             return Json::encode(['status' => 'success']);
         } else {
@@ -144,14 +201,24 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['shift'] = Yii::$app->request->post('shift');
         $data['dt_date'] = $data['dt_date'] . ' ' . \Yii::$app->general->getshift($data['shift']);
         $data['fat'] = Yii::$app->request->post('fat');
+        $data['clr'] = Yii::$app->request->post('clr');
         $data['snf'] = Yii::$app->request->post('snf');
+        $data['customer_type'] = Yii::$app->request->post('customer_type');
+        $data['union'] = Yii::$app->request->post('union_code');
         $bmcModel = new TblBmcCollection();
         $bmcModel->dcs_code = $data['dcs_code'];
         $bmcModel->bmc_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'bmc_code');
         $bmcModel->mcc_plant_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'mcc_plant_code');
-        $is_mcc = Yii::$app->general->getforeignkey($bmcModel->bmcData, 'is_mcc');
-        $for = $is_mcc == 1 ? 'MCC' : 'BMC';
-        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
+//        $is_mcc = Yii::$app->general->getforeignkey($bmcModel->bmcData, 'is_mcc');
+//        $for = $is_mcc == 1 ? 'MCC' : 'BMC';
+//        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
+        $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
+        if (strtolower($for) != 'dcs') {
+            $custModel = new TblBmcCollection();
+            $code = $custModel->validateCustomer($data['union'], $bmcModel->dcs_code, $for);
+        } else {
+            $code = $bmcModel->dcs_code;
+        }
         $model = new TblDcsPurchaseRateApplicabitity();
         $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
@@ -160,14 +227,14 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['appl_for'] = $for;
         $data['appl_code'] = $code;
         $model_data = $model->getDcsPurchaseRateApplicableData($data);
-      
+
         if (!empty($model_data)) {
             $detail_model = new TblDcsPurchaseRateDetails();
             $detail_model->rate_type_code = $model_data->rate_app_code;
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
             $rate_type = $detail_model->rateTypeCode->rate_type;
             $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
-           
+
             if (!empty($detail_data)) {
                 $response['status'] = 'success';
                 $rtpl_data['list'] = $detail_data;
@@ -176,6 +243,31 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
+    }
+
+    public function actionListGrid() {
+        $searchModel = new TblBmcCollectionSearch();
+        $searchModel->setAttributes(Yii::$app->request->get('TblBmcCollection'));
+        $dataProvider = $searchModel->gridsearch([]);
+        return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+    }
+
+    public function actionUpdateCollection() {
+        $data = [];
+        $data['status'] = 'error';
+        $data['message'] = '';
+        if (!empty($_POST['milk_collection_code'])) {
+            $modelData = $this->findModel($_POST['milk_collection_code']);
+            if (!empty($modelData)) {
+                $model = $modelData;
+                $model->getCustomerCodeVal();
+                $model->date_time_of_collection = date('d-m-Y', strtotime($model->date_time_of_collection));
+                $data['status'] = 'success';
+            }
+        }
+        $modelData = $model->attributes;
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return ['data' => $data, 'modelData' => $modelData]; //$this->renderAjax('_collection', ['model' => $model, 'modelData' => $modelData, 'type' => 'edit']);
     }
 
 }

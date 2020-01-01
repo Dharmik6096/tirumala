@@ -1,97 +1,23 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use kartik\depdrop\DepDrop;
+use yii\widgets\Pjax;
+use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
-
-$readonly = $type == 'create' ? FALSE : TRUE;
-$disabled_class = $readonly ? 'disabled' : '';
-//$model->is_plant=$model->isNewRecord?0:$model->is_plant;
-//$nameWarning = 0;
-//$codeWarning = 0;
-//if (!empty($_POST)) {
-//    $nameWarning = $_POST['warning'];
-//    $codeWarning = $_POST['code_warning'];
-//}
-$list = array('0' => 'No', '1' => 'Yes');
+use kartik\grid\GridView;
 ?>
-
-<?php
-$form = ActiveForm::begin([
-
-            'options' => ['id' => 'bmc-form'],
-            'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
-            'validateOnChange' => FALSE,
-            'enableClientValidation' => true,
-            'validateOnSubmit' => true,
-        ]);
-?>
-<?php echo $form->errorSummary($model); ?>
-<div class="row">
-    <div class="col-sm-3 rtpl_validate">
-        <?= $form->field($model, 'dcs_code')->textInput(['readonly' => $readonly]) ?>
-    </div>
-    <div class="col-sm-3 rtpl_validate">
-        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type'); ?>
-    </div>
-    <div class="col-sm-3 rtpl_validate">
-        <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', 'Milk Quality Type', false, 'milk_quality_type_code'); ?>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-3 rtpl_validate">
-        <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'),false,$readonly,true); ?> 
-    </div>
-    <div class="col-sm-3 shift rtpl_validate <?= $disabled_class ?>">
-        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift_code'); ?>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-1 rtpl_validate">
-        <?= $form->field($model, 'fat')->textInput() ?>
-    </div>
-    <div class="col-sm-1 rtpl_validate">
-        <?= $form->field($model, 'snf')->textInput() ?>
-    </div>
-    <div class="col-sm-1">
-        <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
-        <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
-    </div>
-    <div class="col-sm-1">
-        <?= $form->field($model, 'qty')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'remarks')->textarea() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdownStatic('collection_type', $model, $form, 'form-group', $model->getAttributeLabel('collection_type'), false, 'collection_type', false); ?>
-    </div>
-    <div class="transporter">
-        <div class="col-sm-3">
-            <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', true, true, 'transporter_code'); ?>
-        </div>
-        <div class='col-sm-3'>
-            <?= Yii::$app->dropdown->vehicletransporter($model, $form, 'tblbmccollection-transporter_code', 'vehicle_code', 'Vehicle'); ?>
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-            <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
-        </div>
-    </div>
+<div id="maincontent">
+    <?=
+    $this->render('_collection', ['model' => $model, 'type' => 'create',])
+    ?>
 </div>
-
-<?php ActiveForm::end(); ?>
-
-
+<div id="gridcontentSet" class='hide-grid-settings'>
+    <?=
+    $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
+    ?>
+</div>
 
 <?php
 $script = "
@@ -133,20 +59,23 @@ $script = "
         $('#tblbmccollection-amount').val(amount);
     }
 
-    $('#tblbmccollection-dcs_code').change(function(){
+    $('#tblbmccollection-customer_code').change(function(){
         var dcs = $(this).val();
+        var type= $('#tblbmccollection-customer_type').val(); 
+        var union= $('#tblbmccollection-union_code').val(); 
         $.ajax({
             type: 'post',
             url:'" . Url::to(['validate-dcs']) . "',
-            data: {'dcs_code':dcs},
+            data: {'dcs_code':dcs,'customer_type':type,'union_code':union},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success')
                 {
 
                 }else{
-                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter valid Society Code</span></div></div>');
-                    $('#tblbmccollection-dcs_code').focus();
+                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter valid Code</span></div></div>');
+                        $('#tblbmccollection-customer_code').val('');                    
+                        $('#tblbmccollection-customer_code').focus();
                 }
             },
             error:function(data){
@@ -160,32 +89,37 @@ $script = "
     $('.rtpl_validate input').change(function(){
         rtpl();
     });
-    $('#tblbmccollection-date_time_of_collection').change(function(){
-        $.pjax.reload('#bmc-collection',{data: $('#bmc-form').serialize(),timeout : false});
-    });
+//    $('#tblbmccollection-date_time_of_collection').change(function(){
+//        $.pjax.reload('#bmc-collection',{data: $('#bmc-form').serialize(),timeout : false});
+//    });
     function rtpl(){
-        var dcs = $('#tblbmccollection-dcs_code').val();
+        var dcs = $('#tblbmccollection-customer_code').val();
         var milk_type = $('#tblbmccollection-milk_type_code').val();
         var milk_quality_type = $('#tblbmccollection-milk_quality_type_code').val();
         var dt_date = $('#tblbmccollection-date_time_of_collection').val();
         var shift = $('#tblbmccollection-shift_code').val();
         var fat = $('#tblbmccollection-fat').val();
         var snf = $('#tblbmccollection-snf').val();
-        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != ''){
+        var clr = $('#tblbmccollection-clr').val();
+        var type = $('#tblbmccollection-customer_type').val();
+        var union = $('#tblbmccollection-union_code').val();
+        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf},
+                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr},
                 success: function(data) {   
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
                       {
                             $('#tblbmccollection-rtpl').val(obj.data.list.rtpl);
                             $('#tblbmccollection-rate_code').val(obj.data.list.purchase_rate_code);
+                            amount();
                       }else{
                             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
                             $('#tblbmccollection-rtpl').val('');
                             $('#tblbmccollection-rate_code').val('');
+                            $('#tblbmccollection-amount').val('');
                       }
                 },
                 error:function(data){
@@ -197,6 +131,100 @@ $script = "
             $('#tblbmccollection-rate_code').val('');
         }
     }
+    $('#tblbmccollection-customer_type').change(function(){
+          $('#tblbmccollection-customer_code').val('');
+          $('#tblbmccollection-rtpl').val('');
+    });
+    
+    $('#tblbmccollection-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        var length = $('#tblbmccollection-customer_type option[value!=\'\']').length;
+            if(length == 0) {
+                $('.show_hide_customer_type').hide();
+            }else if(length == 1) {
+                $('#tblbmccollection-customer_type').val('DCS');
+                $('.show_hide_customer_type').hide();
+            } else {
+                $('.show_hide_customer_type').show();
+            }
+    });
+     $(document).on('change', '#tblbmccollection-date_time_of_collection', function() {  
+        reloadGrid();
+    });
+     $(document).on('change', '#tblbmccollection-shift_code', function() {  
+        reloadGrid();
+    });
+    
+    function reloadGrid(){
+        if($('#tblbmccollection-milk_collection_code').val()==''){
+            var url = '" . Url::to(['/collection/tbl-bmc-collection/list-grid']) . "'+ '?' + $('#bmc-coll-form').serialize();
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    beforeSend:function(data) {
+                        $('#loadercontent').show();
+                        $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        $('#gridcontentSet').html(data);
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
+                    },
+                });
+        }    
+    }
+    
+
+    $(document).on('click','.edit-record',function(e){
+        var id= $(this).attr('data-val');
+        var name = $(this).attr('data-name');
+        editbmcCollection(id);
+    });
+    
+    function editbmcCollection(milk_collection_code){
+            if(milk_collection_code != ''){         
+            $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/collection/tbl-bmc-collection/update-collection']) . "',
+                    data: {'milk_collection_code' : milk_collection_code},
+                    beforeSend:function(data) {
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        $.each(data.modelData, function(index, value) {
+                            $('#tblbmccollection-'+index).val(value);
+//                            storageKey = value;
+                        });
+                        $('#tblbmccollection-plant_code').val(data.modelData.plant_code);
+                        $('#tblbmccollection-plant_code').trigger('change');
+                        $('#tblbmccollection-mcc_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            $('#tblbmccollection-mcc_plant_code').val(data.modelData.mcc_plant_code);
+                            $('#tblbmccollection-mcc_plant_code').trigger('change');
+                        });
+                        $('#tblbmccollection-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            $('#tblbmccollection-bmc_code').val(data.modelData.bmc_code);
+                        });
+                        $('#tblbmccollection-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            $('#tblbmccollection-customer_type').val(data.modelData.customer_type);
+                        });
+                        $('#tblbmccollection-collection_type').trigger('change');
+                        $('#tblbmccollection-transporter_code').trigger('change');
+                        
+                        $('#tblbmccollection-vehicle_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            $('#tblbmccollection-vehicle_code').val(data.modelData.vehicle_code);
+                        });
+                        
+//                       $('#maincontent').html(data);
+                         $('.create_fields').addClass('disabled');
+                         $('#loadercontent').hide();
+                         $('#pageloader').hide();
+                         $(window).scrollTop(0);
+
+                    },
+                });
+            }
+
+    };
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

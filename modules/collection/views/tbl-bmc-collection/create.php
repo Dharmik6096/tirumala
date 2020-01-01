@@ -8,13 +8,7 @@ $this->title = Yii::$app->label->title('create', 'BMC Collection');
         $this->render('_form', [
             'model' => $model,
             'type' => 'create',
-        ])
-        ?>
-        
-        <?=
-        $this->render('_form_grid', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
+            'searchModel' => $searchModel, 'dataProvider' => $dataProvider
         ])
         ?>
     </div>

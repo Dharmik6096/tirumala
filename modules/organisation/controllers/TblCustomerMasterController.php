@@ -8,11 +8,14 @@ use app\modules\organisation\models\TblCustomerMasterSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\organisation\models\TblCustomerMasterHistory;
+use yii\helpers\Json;
 
 /**
  * TblCustomerMasterController implements the CRUD actions for TblCustomerMaster model.
  */
 class TblCustomerMasterController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['customer-type'];
 
     /**
      * Lists all TblCustomerMaster models.
@@ -105,6 +108,25 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCustomerType() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $routes = new TblCustomerMaster();
+                $mcc = $parents[0];
+                $bmc = !empty($parents[1]) ? $parents[1] : NULL;
+                $data = $routes->customerType($mcc, $bmc);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }
