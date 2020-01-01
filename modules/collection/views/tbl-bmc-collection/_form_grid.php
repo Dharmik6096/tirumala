@@ -31,7 +31,6 @@ $attribute = [
 //    ['attribute' => 'route_name', 'value' => function($model) {
 //            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
 //        }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'visible' => false, 'vAlign' => 'middle', 'filter' => true],
     ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         },],
@@ -39,9 +38,6 @@ $attribute = [
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type, $model->customer_code);
         }],
-    ['attribute' => 'dcs_name', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
     [
         'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
@@ -57,20 +53,22 @@ $attribute = [
     ['attribute' => 'sample_no', 'vAlign' => 'middle'],
     ['attribute' => 'milk_type_code', 'value' => function($model) {
             return isset($model->milkType) ? $model->milkType->animal_type_name : '';
-        }, 'vAlign' => 'middle', 'visible' => false, 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
             return isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name : '';
-        }, 'vAlign' => 'middle', 'visible' => false, 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'rtpl'],
     ['attribute' => 'qty_mode',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('p_ltr_kg', $searchModel, 'qty_mode'),
         'value' => function ($model) {
             return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
         },],
     ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'rtpl'],
+    ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'transporter_code', 'value' => function($model) {
             return isset($model->transporter) ? $model->transporter->transporter_name : '';
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
