@@ -287,16 +287,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     foreach ($model->getConfigList() as $d) {
                         $res_data['config'][$d['config_key']] = $d['config_result_key'];
                     }
-                    $VendorType = [];
-                    foreach ($model_data->unionCode->tblCustomerType as $customer) {
-                        $VendorType[] = [
-                            'customer_type' => $customer->customer_type,
-                            'customer_desc' => $customer->customer_desc,
-                            'code_prefix' => $customer->code_prefix,
-                            'code_length' => $customer->code_length,
-                        ];
-                    }
-                    $res_data['VendorType'] = $VendorType;
+
                     $res_data['welcomeMessage'] = 'Welcome to ' . $model_data->unionCode->union_name . '.';
                     $dcs_code = ',' . implode(',', $dcs_code) . ',';
                     $bmc_code = ',' . implode(',', $bmc_code) . ',';
