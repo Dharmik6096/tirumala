@@ -261,7 +261,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'download_type' => 'txt'
             ],
             'BmcShiftReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_BMCShiftReport',
                 'scenario' => '',
                 'title' => '216 - BMC Shift Report',

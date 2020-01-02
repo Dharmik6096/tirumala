@@ -224,4 +224,17 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
 
+    public function getCustomerList($bmc) {
+        $query = $this->find()->where(['is_active' => 1]);
+        if (!empty($bmc)) {
+            $query->andWhere(['bmc_code' => $bmc]);
+        }
+        $data = $query->all();
+        $data = ArrayHelper::map($data, 'customer_code', function($data) {
+                    return !empty($data->customerType) ? $data->customer_name . '(' . Yii::t('app', $data->customerType->customer_desc) . ')' : $data->customer_name;
+                });
+        asort($data, SORT_NATURAL | SORT_FLAG_CASE);
+        return $data;
+    }
+
 }

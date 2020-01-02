@@ -120,6 +120,13 @@ $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
                                             </div>    
                                             <?php
                                         }
+                                        if (in_array($value, array('customer_code'))) {
+                                            ?>
+                                            <div class="col-sm-6 val_dcs_code">
+                                                <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-bmc_code', 'customer_code', Yii::t('app', 'Name')); ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {

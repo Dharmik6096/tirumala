@@ -264,6 +264,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
     }
 
+    public function merge_dcs_customer($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/merge-dcs-customer-list', Yii::t('app', 'Select Name'), $multiple, $extra_param, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

@@ -655,9 +655,11 @@ class TblDcs extends ChildModel {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
-    public function getBMCDCSList($plantCode, $RLS = 'TRUE') {
+    public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '') {
         $value = $this->getBMCDCS($plantCode, $RLS);
-        $value = ArrayHelper::map($value, 'dcs_code', 'dcs_name');
+        $value = ArrayHelper::map($value, 'dcs_code', function($value) use ($type) {
+                    return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ')' : $value->dcs_name;
+                });
         return $value;
     }
 
@@ -791,7 +793,7 @@ class TblDcs extends ChildModel {
 
     public function getUnionDcs($unionCode, $notIn = []) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
-         if (Yii::$app->session->get('Dcs') !== '') {
+        if (Yii::$app->session->get('Dcs') !== '') {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
         if (!empty($notIn)) {
@@ -804,8 +806,9 @@ class TblDcs extends ChildModel {
         asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
         return $dcs;
     }
-    
-   public function getUnionDpuConfig() {
-        return $this->hasOne(TblUnionDpuConfig::className(), ['union_code' => 'union_code','dpu_type'=>'dpu_type']);
+
+    public function getUnionDpuConfig() {
+        return $this->hasOne(TblUnionDpuConfig::className(), ['union_code' => 'union_code', 'dpu_type' => 'dpu_type']);
     }
+
 }
