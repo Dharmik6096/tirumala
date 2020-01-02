@@ -117,4 +117,5 @@ return [
     'DCS Count' => 'Society Count',
     'DCS Incharge' => 'Society Incharge',
     'Union Configurations' => 'Company Configurations',
+'type'=>'Type'
 ];
