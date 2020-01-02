@@ -256,5 +256,8 @@ class TblBmcCollection extends \app\models\ChildModel {
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
     }
+    public function getMainBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
 
 }
