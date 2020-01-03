@@ -172,6 +172,10 @@ class DefaultController extends \app\controllers\ChildController {
         if (empty($model->dcs_code)) {
             $model->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
         }
+        if (empty($model->customer_code)) {
+            $model->customer_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+        }
+
         $controls = [];
         $param = explode(',', $this->data['param']);
         foreach ($param as $key => $value) {
