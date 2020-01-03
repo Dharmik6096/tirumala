@@ -87,6 +87,7 @@ class EiplPacketController extends Controller {
                         $file_ext = explode('.', $file->file_name)[1];
                         $file->dpu_type = strtoupper($file_ext) == 'EIP' ? 8 : 32;
                         $dpu_key = Yii::$app->general->getforeignkey($file->unionDpuConfig, 'dpu_key');
+                        if(!empty($dpu_key)){
                         $cnt = 0;
                         $error_cnt = 0;
                         $success_cnt = 0;
@@ -195,6 +196,10 @@ class EiplPacketController extends Controller {
                         $file->file_status = 3; //currupted
                         $file->status = 3; //error
                     }
+                } else {
+                        $file->file_status = 3; //currupted
+                        $file->status = 3; //error
+                    } 
                 } else {
                     $file->status = 3; //error
                     $file->file_status = 2; //not found
