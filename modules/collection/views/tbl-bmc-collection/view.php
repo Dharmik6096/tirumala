@@ -66,7 +66,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         [
                             'attribute' => 'customer_name',
                             'label' => Yii::t('app', 'Name'),
-                            'value' => Yii::$app->general->getCustomer($model, $model->customer_type, $model->customer_code),
+                            'value' => Yii::$app->general->getCustomer($model, $model->customer_type),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -210,6 +210,14 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                             'value' => !empty($model->collection_type) ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                        [
+                            'attribute' => 'route_arrival_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'remarks',
                             'valueColOptions' => ['style' => 'width:80%']

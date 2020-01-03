@@ -14,7 +14,7 @@ use kartik\grid\GridView;
             },'filter'=>FALSE],
         ['attribute' => 'customer_code', 'filter' => false],
         ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-                return Yii::$app->general->getCustomer($model, $model->customer_type, $model->customer_code);
+                return Yii::$app->general->getCustomer($model, $model->customer_type);
             }, 'filter' => false],
         ['attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,

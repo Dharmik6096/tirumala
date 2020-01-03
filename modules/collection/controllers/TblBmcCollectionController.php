@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr'];
 
     /**
      * Lists all TblBmcCollection models.
@@ -81,7 +81,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $update = TRUE;
             }
             if (!$update) {
-//                    $this->model->setAttributes($this->model);
                 $this->model->qty_mode = 1;
                 $this->model->qlty_auto = 1;
                 $this->model->qty_auto = 1;
@@ -94,7 +93,11 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->qlty_time = $datetime;
                 $this->model->qty_time = $datetime;
                 $this->model->date_time_of_testing = $datetime;
-                $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $this->model->customer_code : NULL;
+                if (strtolower($this->model->customer_type) == 'dcs') {
+                    $dcs = new TblDcs();
+                    $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $dcs->validDcs($this->model->customer_code) : NULL;
+                    $this->model->customer_code = $this->model->dcs_code;
+                }
                 $this->model->village_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
                 $this->model->route_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
             }
@@ -171,22 +174,28 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
     }
 
     public function actionValidateDcs() {
+        $response = [];
+        $response['status'] = 'error';
+        $response['data'] = '';
         $dcs = Yii::$app->request->post('dcs_code');
         $union = Yii::$app->request->post('union_code');
         $type = Yii::$app->request->post('customer_type');
-        if (!empty($type) && $type != strtoupper('DCS')) {
-            $custModel = new TblBmcCollection();
-            $data = $custModel->validateCustomer($union, $dcs, $type);
+        $bmcModel = new TblBmcCollection();
+        if (!empty($type) && strtolower($type) != 'dcs') {
+            $data = $bmcModel->validateCustomer($union, $dcs, $type);
+            $bmcModel->customer_code = $data;
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($dcs);
+            $bmcModel->dcs_code = $data;
         }
-
         if (!empty($data)) {
-            return Json::encode(['status' => 'success']);
-        } else {
-            return Json::encode(['status' => 'error']);
+            $name = Yii::$app->general->getCustomer($bmcModel, $type);
+            $response['status'] = 'success';
+            $response['data'] = $name;
         }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
     public function actionValidateRtpl() {
@@ -206,21 +215,21 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['customer_type'] = Yii::$app->request->post('customer_type');
         $data['union'] = Yii::$app->request->post('union_code');
         $bmcModel = new TblBmcCollection();
-        $bmcModel->dcs_code = $data['dcs_code'];
-        $bmcModel->bmc_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'bmc_code');
-        $bmcModel->mcc_plant_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'mcc_plant_code');
+        $dcsModel = new TblDcs();
+        $dcs = $dcsModel->validDcs($data['dcs_code']);
+        $bmcModel->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
+//        $bmcModel->bmc_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'bmc_code');
+//        $bmcModel->mcc_plant_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'mcc_plant_code');
 //        $is_mcc = Yii::$app->general->getforeignkey($bmcModel->bmcData, 'is_mcc');
 //        $for = $is_mcc == 1 ? 'MCC' : 'BMC';
 //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         if (strtolower($for) != 'dcs') {
-            $custModel = new TblBmcCollection();
-            $code = $custModel->validateCustomer($data['union'], $bmcModel->dcs_code, $for);
+            $code = $bmcModel->validateCustomer($data['union'], $bmcModel->dcs_code, $for);
         } else {
             $code = $bmcModel->dcs_code;
         }
         $model = new TblDcsPurchaseRateApplicabitity();
-        $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
         $data['milk_type'] = $data['milk_type'];
         $data['milk_quality_type_code'] = $data['milk_quality_type'];
@@ -256,6 +265,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data = [];
         $data['status'] = 'error';
         $data['message'] = '';
+        $modelData = [];
         if (!empty($_POST['milk_collection_code'])) {
             $modelData = $this->findModel($_POST['milk_collection_code']);
             if (!empty($modelData)) {
@@ -266,8 +276,24 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             }
         }
         $modelData = $model->attributes;
+        $name = Yii::$app->general->getCustomer($model, $model->customer_type);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return ['data' => $data, 'modelData' => $modelData]; //$this->renderAjax('_collection', ['model' => $model, 'modelData' => $modelData, 'type' => 'edit']);
+        return ['data' => $data, 'modelData' => $modelData, 'name' => $name]; //$this->renderAjax('_collection', ['model' => $model, 'modelData' => $modelData, 'type' => 'edit']);
+    }
+
+    public function actionCalculateClr() {
+        $response = [];
+        $response['status'] = 'success';
+        $response['data'] = '';
+        $fat = Yii::$app->request->post('fat');
+        $snf = Yii::$app->request->post('snf');
+        $union = Yii::$app->request->post('union_code');
+        $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+        $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
+        $response['data'] = $clr;
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }

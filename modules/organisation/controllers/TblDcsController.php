@@ -31,6 +31,7 @@ use app\modules\organisation\models\TblSocietyCollectionHistory;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilitySearch;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -39,7 +40,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs'];
+    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list'];
 
     /**
      * Lists all TblDcs models.
@@ -838,6 +839,26 @@ class TblDcsController extends ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionMergeDcsCustomerList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $mccs = new TblDcs();
+                $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS');
+                $model = new TblCustomerMaster();
+                $customer = $model->getCustomerList($parents[0]);
+                $data = $bmc + $customer;
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

@@ -71,10 +71,11 @@ $script = "
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success')
                 {
-
+                    $('#tblbmccollection-customer_name').val(obj.data); 
                 }else{
                     bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter valid Code</span></div></div>');
                         $('#tblbmccollection-customer_code').val('');                    
+                        $('#tblbmccollection-customer_name').val('');                    
                         $('#tblbmccollection-customer_code').focus();
                 }
             },
@@ -195,8 +196,8 @@ $script = "
                     success: function(data) {
                         $.each(data.modelData, function(index, value) {
                             $('#tblbmccollection-'+index).val(value);
-//                            storageKey = value;
                         });
+                        $('#tblbmccollection-customer_name').val(data.name);
                         $('#tblbmccollection-plant_code').val(data.modelData.plant_code);
                         $('#tblbmccollection-plant_code').trigger('change');
                         $('#tblbmccollection-mcc_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
@@ -226,6 +227,38 @@ $script = "
                 });
             }
 
+    };
+    
+    $('#tblbmccollection-snf').change(function(){
+        calculateClr();
+    });
+    
+     $('#tblbmccollection-fat').change(function(){
+        calculateClr();
+    });
+    
+    function calculateClr(){
+        var union = $('#tblbmccollection-union_code').val();
+        var fat = $('#tblbmccollection-fat').val();
+        var snf = $('#tblbmccollection-snf').val();
+            if(fat !='' && snf !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['calculate-clr']) . "',
+                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblbmccollection-clr').val(obj.data.toFixed(2));
+                            $('#tblbmccollection-clr').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
     };
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');

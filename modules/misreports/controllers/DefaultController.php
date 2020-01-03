@@ -172,6 +172,10 @@ class DefaultController extends \app\controllers\ChildController {
         if (empty($model->dcs_code)) {
             $model->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
         }
+        if (empty($model->customer_code)) {
+            $model->customer_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+        }
+
         $controls = [];
         $param = explode(',', $this->data['param']);
         foreach ($param as $key => $value) {
@@ -261,7 +265,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'download_type' => 'txt'
             ],
             'BmcShiftReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_BMCShiftReport',
                 'scenario' => '',
                 'title' => '216 - BMC Shift Report',

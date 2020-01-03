@@ -20,6 +20,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblFederationsStateMapping;
 use app\modules\organisation\models\TblUnionsDistrictMapping;
 use app\modules\geo\models\TblDistricts;
+use app\modules\configuration\models\TblUnionConfigResult;
 
 class LoginForm extends Model {
 
@@ -145,6 +146,7 @@ class LoginForm extends Model {
         $bmc = '';
         $dcs = '';
         $states = '';
+        $allow_zero_rate = 0;
         switch ($main_org_type) {
 
             case 'PCDF':
@@ -206,6 +208,11 @@ class LoginForm extends Model {
                 }
                 $states = $this->getUnionStates(explode(',', $union));
                 $district = $this->getDistrict($states, explode(',', $union));
+                $code = ArrayHelper::getColumn($name, 'union_code');
+                $union_code = implode(',', $code);
+                if (count($union_code) == 1) {
+                    $allow_zero_rate = Yii::$app->general->getUnionConfiguration($union, 'bmc_collection_allow_on_zero_rate', 'BMC');
+                }
                 $orgType = 'UNION';
                 $organization = $union;
                 break;
@@ -228,6 +235,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('BMC', $bmc);
         Yii::$app->session->set('MCC', $mcc);
         Yii::$app->session->set('organization_logo', $organization_logo);
+        Yii::$app->session->set('AllowOnZeroRate', $allow_zero_rate);
         return true;
     }
 
@@ -418,7 +426,7 @@ class LoginForm extends Model {
     private function getFedStates($fed_code = []) {
         $query = TblFederationsStateMapping::find();
         $query->select(['distinct(state_code)']);
-        $query->where([ 'federation_code' => $fed_code, 'is_active' => 1]);
+        $query->where(['federation_code' => $fed_code, 'is_active' => 1]);
         $list = $query->asArray()->all();
         if (count($list) > 0) {
             return implode(',', array_map(function($a) {
@@ -432,12 +440,12 @@ class LoginForm extends Model {
     private function getUnionStates($union_code = []) {
         $query = TblUnionsDistrictMapping::find();
         $query->select(['distinct(district_code)']);
-        $query->where([ 'union_code' => $union_code, 'is_active' => 1]);
+        $query->where(['union_code' => $union_code, 'is_active' => 1]);
         $list = $query->asArray()->all();
         if (count($list) > 0) {
             $state_query = TblDistricts::find();
             $state_query->select(['distinct(state_code)']);
-            $state_query->where([ 'district_code' => $list, 'is_active' => 1]);
+            $state_query->where(['district_code' => $list, 'is_active' => 1]);
             $state_list = $state_query->asArray()->all();
             return implode(',', array_map(function($a) {
                         return $a['state_code'];

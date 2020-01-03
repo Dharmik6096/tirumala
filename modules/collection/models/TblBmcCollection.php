@@ -61,7 +61,7 @@ class TblBmcCollection extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $date, $weigh_time, $testing_time;
-    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $value;
+    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $value, $allow_rate_zero;
 
     public static function tableName() {
         return 'tbl_bmc_collection';
@@ -86,15 +86,23 @@ class TblBmcCollection extends \app\models\ChildModel {
 //                    return $this->shift_code;
 //                }, 'except' => ['androidsync']],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync']],
-            [['fat', 'snf', 'rtpl', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
+            [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
-            [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no'], 'safe'],
+            [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero'], 'safe'],
             [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'clr'], 'required', 'on' => ['create']],
+            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create']],
             [['clr'], 'number', 'min' => 0, 'on' => ['create']],
             [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
                     return empty($this->getErrors());
                 }, 'on' => ['create']],
+            [['rtpl'], 'required', 'when' => function ($model) {
+                    return $model->allow_rate_zero == 0;
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblbmccollection-allow_rate_zero').val() == '0'; 
+          }", 'except' => ['post_sap_data', 'androidsync']],
+            [['rtpl'], 'default', 'value' => 0],
+            [['rtpl'], 'number', 'min' => 0],
+            [['RouteArivalTime'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
         ];
     }
 
@@ -146,6 +154,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'customer_code' => Yii::t('app', 'Code'),
             'union_code' => Yii::t('app', 'Union'),
             'clr' => Yii::t('app', 'CLR'),
+            'RouteArivalTime' => Yii::t('app', 'Arrival Time'),
         ];
     }
 
@@ -256,6 +265,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
     }
+
     public function getMainBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }

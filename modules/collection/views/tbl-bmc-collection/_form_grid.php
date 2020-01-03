@@ -36,7 +36,7 @@ $attribute = [
         },],
     ['attribute' => 'customer_code'],
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->customer_type, $model->customer_code);
+            return Yii::$app->general->getCustomer($model, $model->customer_type);
         }],
     [
         'attribute' => 'date_time_of_collection',
@@ -78,6 +78,7 @@ $attribute = [
     ['attribute' => 'collection_type', 'value' => function($model) {
             return !empty($model->collection_type) ? ((Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] != '') ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '') : '';
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'route_arrival_time', 'filter' => false, 'visible' => false],
     ['attribute' => 'remarks', 'value' => 'remarks', 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
 ];
 

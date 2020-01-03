@@ -14,7 +14,7 @@ use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 
 class EiplPacketController extends Controller {
 
-    public $freeAccessActions = ['read-folder', 'read-file', 'import-file', 'read-dpu-collection-data'];
+    public $freeAccessActions = ['read-folder', 'read-file', 'import-file', 'read-dpu-collection-data', 'create'];
 
     public function behaviors() {
         return [

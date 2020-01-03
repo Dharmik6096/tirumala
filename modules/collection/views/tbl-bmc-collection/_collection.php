@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmccollection-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
     </div>  
     <div class="col-sm-2 create_fields <?= $disable ?>">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmccollection-mcc_plant_code', 'bmc_code', Yii::t('app','BMC'), FALSE); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmccollection-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
     </div>
     <div class="col-sm-2 rtpl_validate create_fields">
         <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'), false, $readonly, true); ?>
@@ -49,6 +49,9 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2 rtpl_validate create_fields">
         <?= $form->field($model, 'customer_code')->textInput() ?>
+    </div>
+    <div class="col-sm-2 create_fields">
+        <?= $form->field($model, 'customer_name')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'Name')) ?>
     </div>
     <!--    <div class="col-sm-2 rtpl_validate">
     <?= $form->field($model, 'dcs_code')->textInput(['readonly' => $readonly])->label(Yii::t('app', 'Code')) ?>
@@ -64,11 +67,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-1 reset_field rtpl_validate ">
         <?= $form->field($model, 'fat')->textInput() ?>
     </div>
-    <div class="col-sm-1 reset_field rtpl_validate ">
+    <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'snf')->textInput() ?>
     </div>
-     <div class="col-sm-1 reset_field rtpl_validate ">
-        <?= $form->field($model, 'clr')->textInput() ?>
+    <div class="col-sm-1 reset_field rtpl_validate ">
+        <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
     </div>
     <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
@@ -77,6 +80,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'qty')->textInput() ?>
     </div>
+    <?= Html::activeHiddenInput($model, 'allow_rate_zero', ['value' => Yii::$app->session->get('AllowOnZeroRate')]) ?>
     <div class="col-sm-2 reset_field">
         <?= Html::activeHiddenInput($model, 'milk_collection_code', ['value' => $model->milk_collection_code]) ?>
         <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
@@ -94,6 +98,12 @@ $form = ActiveForm::begin([
         </div>
         <div class='col-sm-3 reset_field'>
             <?= Yii::$app->dropdown->vehicletransporter($model, $form, 'tblbmccollection-transporter_code', 'vehicle_code', 'Vehicle'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?=
+            $form->field($model, 'route_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+                'mask' => '99:99',])
+            ?> 
         </div>
     </div>
     <div class="clearfix"></div>
