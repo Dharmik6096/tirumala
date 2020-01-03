@@ -88,21 +88,23 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync']],
             [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
-            [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero'], 'safe'],
+            [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code'], 'safe'],
             [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create']],
-            [['clr'], 'number', 'min' => 0, 'on' => ['create']],
-            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
+            [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update']],
+            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
                     return empty($this->getErrors());
-                }, 'on' => ['create']],
+                }, 'on' => ['create', 'update']],
             [['rtpl'], 'required', 'when' => function ($model) {
                     return $model->allow_rate_zero == 0;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-allow_rate_zero').val() == '0'; 
           }", 'except' => ['post_sap_data', 'androidsync']],
-            [['rtpl'], 'default', 'value' => 0],
+            [['rtpl', 'water'], 'default', 'value' => 0],
+            [['doc_no'], 'default', 'value' => 1],
             [['rtpl'], 'number', 'min' => 0],
-            [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
+            [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/', 'on' => ['create', 'update']],
+            [['customer_code'], 'setUuid', 'on' => ['create', 'update', 'androidsync']],
         ];
     }
 
@@ -268,6 +270,11 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function getMainBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function setUuid($attribute, $params) {
+        $this->data_post_id = !empty($this->data_post_id) ? $this->data_post_id : Yii::$app->general->getUuid();
+        $this->data_post_status = 0;
     }
 
 }

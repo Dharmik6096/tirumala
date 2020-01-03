@@ -11,8 +11,11 @@ use kartik\grid\GridView;
     $attribute = [
         ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
-            },'filter'=>FALSE],
+            }, 'filter' => FALSE],
         ['attribute' => 'customer_code', 'filter' => false],
+        ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
+            }],
         ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type);
             }, 'filter' => false],
@@ -26,6 +29,8 @@ use kartik\grid\GridView;
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
             }, 'filter' => false],
         ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'doc_no', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'sample_no', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return isset($model->milkType) ? $model->milkType->animal_type_name : '';
             }, 'vAlign' => 'middle', 'filter' => false],
@@ -35,8 +40,14 @@ use kartik\grid\GridView;
         ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'qty_mode',
+            'filter' => FALSE,
+            'value' => function ($model) {
+                return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
+            },],
+        ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
     ];
 

@@ -23,7 +23,7 @@ $attribute = [
         ['attribute' => 'route_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->routeMapping, 'route_name');
         }, 'filter' => false],
-        ['attribute' => 'dcs_code_ex', 'value' => 'dcs_code_ex', 'visible' => false, 'filter' => false],
+        ['attribute' => 'dcs_code_ex', 'value' => 'dcs_code_ex', 'filter' => false],
         ['attribute' => 'dcs_code', 'value' => 'dcs_code'],
         ['attribute' => 'dcs_name', 'value' => 'dcs_name'],
         ['attribute' => 'dcs_short_name', 'value' => 'dcs_short_name', 'visible' => false, 'filter' => false],

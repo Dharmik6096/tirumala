@@ -2306,3 +2306,10 @@ div.crystalstyle{
     min-height: auto !important;
     overflow: visible;
 }
+.hide-grid-settings .kv-panel-before{
+    display: none !important;
+}
+
+.panel_clear_both .panel-default{
+    clear: both;
+}

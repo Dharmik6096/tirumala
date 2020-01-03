@@ -78,10 +78,10 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $modelSave[] = $historyModel;
                 $this->model->load(Yii::$app->request->post());
+                $this->model->scenario = 'update';
                 $update = TRUE;
             }
             if (!$update) {
-                $this->model->qty_mode = 1;
                 $this->model->qlty_auto = 1;
                 $this->model->qty_auto = 1;
                 $this->model->dt_date = date('Y-m-d H:i:s');
@@ -97,18 +97,27 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $dcs = new TblDcs();
                     $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $dcs->validDcs($this->model->customer_code) : NULL;
                     $this->model->customer_code = $this->model->dcs_code;
+                } else {
+                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
                 }
                 $this->model->village_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
                 $this->model->route_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
-            }
-            if (strtolower($this->model->customer_type) != 'dcs') {
-                $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
+                $this->model->own_mcc_plant_code = $this->model->mcc_plant_code;
+                $this->model->own_bmc_code = $this->model->bmc_code;
+            } else {
+                if (strtolower($this->model->customer_type) != 'dcs') {
+                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
+                }
             }
 //            $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $this->model->customer_code : NULL;
             $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             $modelSave[] = $this->model;
             if ($this->model->validate()) {
+                $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
+                $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
+                $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
+                $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
                 $transaction = $this->generalModel->saveTransaction($modelSave, ['BMC Collection', ($update) ? 'edit' : 'create']);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -266,17 +275,19 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['status'] = 'error';
         $data['message'] = '';
         $modelData = [];
+        $name = '';
         if (!empty($_POST['milk_collection_code'])) {
             $modelData = $this->findModel($_POST['milk_collection_code']);
             if (!empty($modelData)) {
                 $model = $modelData;
                 $model->getCustomerCodeVal();
                 $model->date_time_of_collection = date('d-m-Y', strtotime($model->date_time_of_collection));
+                $modelData = $model->attributes;
+                $name = Yii::$app->general->getCustomer($model, $model->customer_type);
                 $data['status'] = 'success';
             }
         }
-        $modelData = $model->attributes;
-        $name = Yii::$app->general->getCustomer($model, $model->customer_type);
+
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return ['data' => $data, 'modelData' => $modelData, 'name' => $name]; //$this->renderAjax('_collection', ['model' => $model, 'modelData' => $modelData, 'type' => 'edit']);
     }
@@ -285,11 +296,11 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $response = [];
         $response['status'] = 'success';
         $response['data'] = '';
-        $fat = Yii::$app->request->post('fat');
-        $snf = Yii::$app->request->post('snf');
+        (float) $fat = Yii::$app->request->post('fat');
+        (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
-        $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-        $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+        (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
         $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
         $response['data'] = $clr;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

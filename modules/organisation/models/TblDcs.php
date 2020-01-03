@@ -617,8 +617,8 @@ class TblDcs extends ChildModel {
     }
 
     public function validDcs($dcs) {
-        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->one();
-        return !empty($data) ? $data->dcs_code : '';
+        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->all();
+        return !empty($data) && count($data)==1 ? $data[0]->dcs_code : '';
     }
 
     public function getNewDcs() {
