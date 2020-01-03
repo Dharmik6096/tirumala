@@ -14,7 +14,7 @@ use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 
 class EiplPacketController extends Controller {
 
-    public $freeAccessActions = ['read-folder', 'read-file', 'import-file', 'read-dpu-collection-data', 'create'];
+    public $freeAccessActions = ['read-folder', 'read-file', 'import-file', 'read-dpu-collection-data', 'create', 'check-packet'];
 
     public function behaviors() {
         return [
@@ -106,7 +106,8 @@ class EiplPacketController extends Controller {
                             $dateshift = explode('.', $file->file_name)[0];
                             $dtdate = \DateTime::createFromFormat('dmy', substr($dateshift, 0, 6));
                             $dtdate = $dtdate->format('Y-m-d');
-                            $shift = (substr($dateshift, 6, 1) == 'M') ? 1 : 2;
+                            //$shift = (substr($dateshift, 6, 1) == 'M') ? 1 : 2;
+                            $shift = substr($dateshift, 6, 1);
                         }
                         $new_dcs_data = FALSE;
                         while ($line = fgets($fh)) {
@@ -151,7 +152,8 @@ class EiplPacketController extends Controller {
                                                     $eiplpacket = substr($packet->line_text, 29);
                                                     $main_line = explode(',', $main_line);
                                                     $main_line = array_reverse($main_line);
-                                                    $shift = ($main_line[2] == 'M') ? 1 : 2;
+                                                    //$shift = ($main_line[2] == 'M') ? 1 : 2;
+                                                    $shift = $main_line[2];
                                                 }
                                                 $result = $this->saveCollection($vlccid, $dtdate, $shift, $cnt, $eiplpacket, $file->source_type);
                                             }
@@ -293,7 +295,7 @@ class EiplPacketController extends Controller {
         $createdtime = date('Y-m-d H:i:s');
         $createdtime = date('Y-m-d H:i:s');
         //  $type = ($source == 0) ? 'FTP' : 'PD';
-        $type = 'HTTP';
+        $type = 'PD';
         if (!in_array($farmerid, ['2097', '2098'])) {
             $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer_ho_data '$farmerid',
 '$farmername',
@@ -434,6 +436,63 @@ class EiplPacketController extends Controller {
             return FALSE;
         } catch (\Throwable $ex) {
             return false;
+        }
+    }
+
+    public function actionCheckPacket() {
+        $dateshift = '201219M';
+        $dtdate = \DateTime::createFromFormat('dmy', substr($dateshift, 0, 6));
+        $dtdate = $dtdate->format('Y-m-d');
+        $shift = (substr($dateshift, 6, 1) == 'M') ? 1 : 2;
+        $source = 1;
+        $packet = '0004C0420850000620001935640073122055INDHRA.S    9585468310      ';
+        $vlccid = '000000000021';
+        $sampleno = 1;
+        $farmerid = substr($packet, 0, 4);
+        $milktype = substr($packet, 4, 1);
+        $fat = (float) ((substr($packet, 5, 2)) . '.' . (substr($packet, 7, 1))); // . after 2
+        $snf = (float) ((substr($packet, 8, 2)) . '.' . (substr($packet, 10, 1)));  // . after 2
+        $water = (float) (substr($packet, 11, 2));  // . after 2
+        $qty = (float) ((substr($packet, 13, 3)) . '.' . (substr($packet, 16, 2)));    // . after 3
+        $amt = (float) ((substr($packet, 18, 5)) . '.' . (substr($packet, 23, 2))); // . after 5
+        if ($source == 0) {
+            $rate = (float) ((substr($packet, 25, 2)) . '.' . (substr($packet, 27, 2))); // . after 2
+            $sampletime = $dtdate . ' ' . substr($packet, 31, 2) . ':' . substr($packet, 29, 2) . ':00';
+        } else {
+            $rate = (float) ((substr($packet, 29, 2)) . '.' . (substr($packet, 31, 2))); // . after 2
+            $sampletime = $dtdate . ' ' . substr($packet, 27, 2) . ':' . substr($packet, 25, 2) . ':00';
+        }
+        $txflag = ($source == 0) ? substr($packet, 36, 3) : substr($packet, 33, 3);
+        $farmername = ($source == 0) ? substr($packet, 39, 13) : substr($packet, 36, 13);
+        $farmermo = NULL;
+        $mccid = substr($vlccid, 0, 6);
+        $createdtime = date('Y-m-d H:i:s');
+        $createdtime = date('Y-m-d H:i:s');
+        //  $type = ($source == 0) ? 'FTP' : 'PD';
+        $type = 'HTTP';
+        if (!in_array($farmerid, ['2097', '2098'])) {
+            $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer_ho_dat '$farmerid',
+'$farmername',
+'$farmermo',
+'$vlccid',
+'$mccid',
+'$sampleno',
+'$txflag',
+'$qty',
+'$amt',
+'$rate',
+'$fat',
+'$snf',
+'$water',
+'$dtdate',
+'$shift',
+'$milktype',
+'$sampletime',
+'$createdtime',
+'$type','0'
+");
+            $query = $result->queryScalar();
+            var_dump($query);
         }
     }
 
