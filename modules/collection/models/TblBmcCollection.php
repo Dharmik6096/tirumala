@@ -102,7 +102,7 @@ class TblBmcCollection extends \app\models\ChildModel {
           }", 'except' => ['post_sap_data', 'androidsync']],
             [['rtpl'], 'default', 'value' => 0],
             [['rtpl'], 'number', 'min' => 0],
-            [['RouteArivalTime'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
+            [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
         ];
     }
 
@@ -154,7 +154,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'customer_code' => Yii::t('app', 'Code'),
             'union_code' => Yii::t('app', 'Union'),
             'clr' => Yii::t('app', 'CLR'),
-            'RouteArivalTime' => Yii::t('app', 'Arrival Time'),
+            'route_arrival_time' => Yii::t('app', 'Arrival Time'),
         ];
     }
 
