@@ -208,9 +208,7 @@ class LoginForm extends Model {
                 }
                 $states = $this->getUnionStates(explode(',', $union));
                 $district = $this->getDistrict($states, explode(',', $union));
-                $code = ArrayHelper::getColumn($name, 'union_code');
-                $union_code = implode(',', $code);
-                if (count($union_code) == 1) {
+                if (count($name) == 1) {
                     $allow_zero_rate = Yii::$app->general->getUnionConfiguration($union, 'bmc_collection_allow_on_zero_rate', 'BMC');
                 }
                 $orgType = 'UNION';
