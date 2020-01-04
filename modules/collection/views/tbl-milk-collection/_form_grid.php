@@ -70,6 +70,7 @@ $attribute = [
 //    ['attribute' => 'converted_qty_mode'],
 //    ['attribute' => 'milk_analyser_type_code', 'filter' => true],
 //    ['attribute' => 'ws_code', 'filter' => true],
+    ['attribute' => 'type_of_data_receive'],
 ];
 
 $grid_option = [

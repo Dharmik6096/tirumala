@@ -44,7 +44,6 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                 ],
                 [
                     'columns' => [
-
                         [
                             'attribute' => 'name',
                             'valueColOptions' => ['style' => 'width:30%']
@@ -58,7 +57,6 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                 ],
                 [
                     'columns' => [
-
                         [
                             'attribute' => 'milk_type_code',
                             'value' => !empty($model->milkTypeCode) ? $model->milkTypeCode->animal_type_name : '',
@@ -133,6 +131,14 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                         ],
                     ],
                 ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'type_of_data_receive',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget
@@ -145,7 +151,7 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],
