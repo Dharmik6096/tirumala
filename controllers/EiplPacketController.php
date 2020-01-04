@@ -87,6 +87,7 @@ class EiplPacketController extends Controller {
                         $file_ext = explode('.', $file->file_name)[1];
                         $file->dpu_type = strtoupper($file_ext) == 'EIP' ? 8 : 32;
                         $dpu_key = Yii::$app->general->getforeignkey($file->unionDpuConfig, 'dpu_key');
+                        if(!empty($dpu_key)){
                         $cnt = 0;
                         $error_cnt = 0;
                         $success_cnt = 0;
@@ -106,7 +107,8 @@ class EiplPacketController extends Controller {
                             $dateshift = explode('.', $file->file_name)[0];
                             $dtdate = \DateTime::createFromFormat('dmy', substr($dateshift, 0, 6));
                             $dtdate = $dtdate->format('Y-m-d');
-                            $shift = (substr($dateshift, 6, 1) == 'M') ? 1 : 2;
+                            //$shift = (substr($dateshift, 6, 1) == 'M') ? 1 : 2;
+                            $shift = substr($dateshift, 6, 1);
                         }
                         $new_dcs_data = FALSE;
                         while ($line = fgets($fh)) {
@@ -151,7 +153,8 @@ class EiplPacketController extends Controller {
                                                     $eiplpacket = substr($packet->line_text, 29);
                                                     $main_line = explode(',', $main_line);
                                                     $main_line = array_reverse($main_line);
-                                                    $shift = ($main_line[2] == 'M') ? 1 : 2;
+                                                    // $shift = ($main_line[2] == 'M') ? 1 : 2;
+                                                    $shift = $main_line[2];
                                                 }
                                                 $result = $this->saveCollection($vlccid, $dtdate, $shift, $cnt, $eiplpacket, $file->source_type);
                                             }
@@ -193,6 +196,10 @@ class EiplPacketController extends Controller {
                         $file->file_status = 3; //currupted
                         $file->status = 3; //error
                     }
+                } else {
+                        $file->file_status = 3; //currupted
+                        $file->status = 3; //error
+                    } 
                 } else {
                     $file->status = 3; //error
                     $file->file_status = 2; //not found
@@ -293,7 +300,7 @@ class EiplPacketController extends Controller {
         $createdtime = date('Y-m-d H:i:s');
         $createdtime = date('Y-m-d H:i:s');
         //  $type = ($source == 0) ? 'FTP' : 'PD';
-        $type = 'HTTP';
+        $type = 'PD';
         if (!in_array($farmerid, ['2097', '2098'])) {
             $result = \Yii::$app->db_rmrd->createCommand("sp_txfarmer_ho_data '$farmerid',
 '$farmername',

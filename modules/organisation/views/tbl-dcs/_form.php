@@ -86,7 +86,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'disabled' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
     </div>
     <!--<div class="col-sm-3">-->
-        <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('dpu_type'), false); ?>
+    <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('dpu_type'), false); ?>
     <!--</div>-->
     <div class="clearfix"></div>
     <!--    <div class="col-sm-3">
@@ -199,6 +199,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
     </div>
+    <div class='pull-left col-sm-6'>
+        <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
+        <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-3 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+    </div>
+
     <div class="clearfix"></div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-12">
@@ -238,11 +244,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <?php if ($type == 'create') { ?>
-        <div class="col-sm-3">
+    <?php // if ($type == 'create') { ?>
+<!--        <div class="col-sm-3">
             <?= Yii::$app->controls->active($model, $form); ?>
-        </div>
-    <?php } ?>
+        </div>-->
+    <?php // } ?>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
