@@ -1126,7 +1126,7 @@ class GeneralFunctions extends Component {
 
     public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false) {
         $content_id = '1';
-        $result = Yii::$app->sms->sendSms($content_id, $mobile, $message);
+        $result = Yii::$app->alertnotification->sendSms($content_id, $mobile, $message);
         if ($save_data) {
             $model = new TblAlertNotification();
             $model->setAttributes($sms_data);
