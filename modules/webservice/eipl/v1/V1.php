@@ -27,7 +27,7 @@ class V1 extends \yii\base\Module {
     public static function ServiceArray() {
         $label = [
             'union/master' => [
-                'param' => 'select_param:[union_code],[union_name],[has_bmc]#organization_type#organization_code#table:tbl_unions',
+                'param' => 'select_param:[union_code],[union_name],ISNULL([has_bmc],0) as has_bmc#organization_type#organization_code#table:tbl_unions',
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'plant/master' => [
@@ -44,8 +44,7 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'dcs/master' => [
-                'param' => 'select_param:[bmc_code],[dcs_code],[dcs_name]#organization_type#organization_code#table:tbl_dcs',
-                'sp' => 'sp_app_eipl_v1_master_data',
+                'param' => 'select_param:[bmc_code],[dcs_code],[dcs_name],1 as dpu_sync_allowed,1 as dpu_connection_type,\'98216CAA89BB76436941ABCCC8885442\' as dpu_enc_key,\'\' as dpu_salt,\'v1\' as dpu_version,\'AES\' as dpu_enc_type#organization_type#organization_code#table:tbl_dcs', 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'member/master' => [
                 'param' => 'select_param:[dcs_code],[member_code],[member_name]#organization_type#organization_code#table:tbl_member',
@@ -376,6 +375,10 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs',
                 'sp' => 'sp_app_eipl_v1_widget_bar_bmc_weekly_collection',
                 'call_action' => TRUE
+            ],
+            'report/bmc-collection-passbook' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_bmc_collection_passbook',
             ],
         ];
         return $label;

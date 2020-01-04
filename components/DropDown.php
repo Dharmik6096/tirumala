@@ -773,4 +773,17 @@ class DropDown extends Component {
         return Html::activeDropDownList($model, $control_name, $records, ['class' => $class, 'prompt' => empty($prompt) ? $data['prompt'] : $prompt]);
     }
 
+    public function getTableData($flag) {
+        $data = $this->getLabels($flag);
+        $fields = explode(',', $data['fields']);
+        $model_name = Yii::$app->path->define($data['model']);
+        $model = new $model_name();
+        $select_fields[] = $fields[0];
+        $select_fields[] = $fields[1];
+        if (!empty($fields[2])) {
+            array_push($select_fields, $fields[2]);
+        }
+        return $model->find()->select($select_fields)->where(['is_active' => 1])->orderBy($model->tablename() . '.' . $fields[1])->asArray()->all();
+    }
+
 }

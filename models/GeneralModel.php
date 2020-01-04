@@ -515,6 +515,45 @@ class GeneralModel {
         }
     }
 
+    public function saveDelete4($model, $saveChild, $deleteChild, $message) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            foreach ($model as $m) {
+                $master[] = $m->save();
+            }
+            if (!in_array(FALSE, $master)) {
+                foreach ($saveChild as $m) {
+                    $master[] = $m->save();
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                foreach ($deleteChild as $m) {
+                    $master[] = $m->delete();
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            }
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
+            return 'customRender';
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
+    }
+
 }
 
 ?>

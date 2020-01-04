@@ -38,13 +38,14 @@ class RequestMasterController extends MasterController {
         return $this->response;
     }
 
-    public function actionSaveJson() {
+     public function actionSaveJson() {
         $data = [];
-        $message = 'Unable to save!';
+        $message = Yii::t('app', 'Unable to save!');
         $success_id = [];
         $error_id = [];
         $transaction_data = Yii::$app->request->getRawBody();
         if (!empty($transaction_data['module_name'])) {
+            $master = [];
             $endpoint = $transaction_data['module_name'];
             $moduleDetails = V1::getLabels($endpoint);
             $model_name = $moduleDetails['main_table'];
@@ -60,27 +61,44 @@ class RequestMasterController extends MasterController {
             }
             $model = new $model_name();
             $model->setAttributes($saveData);
+            $saveModel = true;
             $childModel = [];
-            if (isset($transaction_data['operation_type']) && strtolower($transaction_data['operation_type']) == 'update') {
+            $deleteModel = [];
+            $message = Yii::t('app', 'Successfully Saved!');
+            if (isset($transaction_data['operation_type']) && in_array(strtolower($transaction_data['operation_type']), ['update', 'delete'])) {
+                $opType = strtoupper($transaction_data['operation_type']);
                 $primaryKey = $model->tableSchema->primaryKey[0];
-                $key = $model->$primaryKey;
+                $key = !empty($model->$primaryKey) ? $model->$primaryKey : (!empty($saveData[$primaryKey]) ? $saveData[$primaryKey] : '');
                 $model_data = $model->findOne($key);
                 if (!empty($model_data)) {
                     $model = $model_data;
                     $history = $model_name . 'History';
                     $historyModel = new $history();
-                    Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                    Yii::$app->operation->history($model, $historyModel, $opType);
                     $childModel[] = $historyModel;
-                    $model->setAttributes($saveData);
+                    if ($opType == 'DELETE') {
+                        $deleteModel[] = $model;
+                        $message = Yii::t('app', 'Successfully deleted!');
+                    } else {
+                        $model->setAttributes($saveData);
+                    }
                 }
+                $saveModel = $opType == 'DELETE' ? false : true;
             }
             if (isset($moduleDetails['save_child']) && $moduleDetails['save_child']) {
                 $model->setChildTable($model, $transaction_data, $childModel);
+                $saveModel = true;
             }
-
-            $transaction = $this->generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
+            if ($saveModel) {
+                $master = [];
+                $master[] = $model;
+            }
+            $transaction = $this->generalModel->saveDeleteTransaction($master, $childModel, $deleteModel, ['Member Family Detail', 'create']);
+//            $transaction = $this->generalModel->saveTransaction([$model], $childModel, ['transactional data', 'create']);
             if ($transaction == 'customRedirect') {
-                $message = 'Successfully Saved!';
+                $message = $message;
+            } else {
+                $message = Yii::t('app', 'Unable to save!');
             }
         }
         $this->response->setMessage([$message]);

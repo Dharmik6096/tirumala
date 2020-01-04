@@ -53,6 +53,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
             [['app_type', 'otp_code', 'sms_sent', 'is_active', 'is_expired'], 'safe'],
             [['eipl_code', 'mobile_no', 'master_type', 'master_code', 'login_type', 'module_type', 'module_code', 'imei_no', 'device_id', 'lat_long', 'access_token', 'auth_key', 'version_no', 'sms_log'], 'safe'],
             [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at', 'department'], 'safe'],
+            [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at'], 'default', 'value' => date('Y-m-d H:i:s')],
         ];
     }
 
@@ -143,6 +144,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
     }
 
     public function beforeSave($insert) {
+        $this->updated_at = date('Y-m-d H:i:s');
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
                 $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
@@ -154,11 +156,17 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
 
     public function getLogin() {
         $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
-        return $this->find()->where(['or',
-                            ['mobile_no' => $encryptedmobile],
-                            ['mobile_no' => $this->mobile_no]
-                        ])
-                        ->andWhere(['app_type' => $this->app_type])->one();
+        $query = $this->find()->where(['or',
+                    ['mobile_no' => $encryptedmobile],
+                    ['mobile_no' => $this->mobile_no]
+                ])
+                ->andWhere(['app_type' => $this->app_type]);
+        if ($this->login_type == 'MEMBER') {
+            $query = $query->andWhere(['login_type' => $this->login_type, 'module_code' => $this->module_code]);
+        } else {
+            $query = $query->andWhere(['!=', 'login_type', 'MEMBER']);
+        }
+        return $query->one();
     }
 
     public function activationInfo() {
@@ -173,50 +181,75 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                         ->one();
     }
 
-    public function CheckMobileNo() {
+    public function orgMobileDetail() {
         $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
-        $department = new TblDepartment();
-        $departments = $department->getDepartments();
-        $departments = array_keys($departments);
         $userType = ['bmc',
             'mccPlant',
             'plant',
             'routeMapping',
             'society',
-            'union', 'areamanager'];
-        $module_name = array_merge($userType, $departments);
-        $OrgContacts = TblContactDetails::find()
+            'union', 'user'];
+        $module_name = $userType;
+        return $OrgContacts = TblContactDetails::find()
                         ->select(['master_type' => 'module_name',
                             'master_code' => 'module_code',
                             'module_type' => new Expression("'TblContactDetails'"),
                             'module_code' => 'CAST(detail_code as varchar)',
-                            'login_type' => "UPPER(CASE WHEN (module_name='mccPlant') THEN 'MCC' "
+                            'login_type' => "UPPER(CASE WHEN (select TOP 1(organization_type) from tbl_app_organization_mapping where mobile_no=[tbl_contact_details].mobile_no) is not null THEN"
+                            . "(select TOP 1(organization_type) from tbl_app_organization_mapping where mobile_no=[tbl_contact_details].mobile_no) "
+                            . "WHEN (module_name='mccPlant') THEN 'MCC' "
                             . "WHEN  (module_name='routeMapping') THEN 'ROUTE' "
                             . "WHEN  (module_name='society') THEN 'DCS' "
                             . "ELSE module_name END)",
                             'department' => 'department',
+                            'module_name' => 'firstname',
                         ])
                         ->where(['or',
                             ['mobile_no' => $encryptedmobile],
                             ['mobile_no' => $this->mobile_no]
-                        ])->andWhere(['module_name' => $module_name]);
-        $contactDetail = TblMember::find()
+                        ])->andWhere(['module_name' => $module_name, 'is_active' => 1]);
+    }
+
+    public function getLoginOrg() {
+        return $this->hasMany(TblAppOrganizationMapping::className(), ['mobile_no' => 'mobile_no'])->andwhere(['is_active' => 1]);
+    }
+
+    public function memberMobileDetail() {
+        $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
+        return $contactDetail = TblMember::find()
                         ->select(['master_type' => new Expression("'member'"),
                             'master_code' => 'member_code',
                             'module_type' => new Expression("'TblMember'"),
                             'module_code' => 'member_code',
                             'login_type' => new Expression("'MEMBER'"),
                             'department' => new Expression("'MEMBER'"),
+                            'module_name' => 'member_name',
                         ])
                         ->where(['or',
                             ['mobile_no' => $encryptedmobile],
                             ['mobile_no' => $this->mobile_no]
-                        ])->union($OrgContacts)->asArray()->all();
-        return $contactDetail;
+                        ])->andWhere(['is_active' => 1])->andFilterWhere(['member_code' => $this->module_code]);
     }
 
-    public function getLoginOrg() {
-        return $this->hasMany(TblAppOrganizationMapping::className(), ['mobile_no' => 'mobile_no'])->andwhere(['is_active' => 1]);
+    public function MobileNoDetail() {
+        $orgData = $this->orgMobileDetail();
+        $contactDetails = $this->memberMobileDetail();
+        if ($orgData->count() == '1') {
+            $contactDetails = $contactDetails->union($orgData);
+        }
+        return $contactDetails->asArray()->all();
+    }
+
+    public function getMasterDetail() {
+        if ($this->login_type == 'MEMBER') {
+            return $this->hasOne(TblMember::className(), ['member_code' => 'module_code']);
+        } else {
+            return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'module_code']);
+        }
+    }
+
+    public function getDepartmentCode() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
 }
