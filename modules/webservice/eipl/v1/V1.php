@@ -224,7 +224,7 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_dispatch_vs_receipt',
             ],
             'report/manual-milk-entry' => [
-                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#member',
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry',
             ],
             'report/manual-milk-entry-summary' => [
