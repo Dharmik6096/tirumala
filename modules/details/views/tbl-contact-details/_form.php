@@ -29,5 +29,5 @@
     <?= $form->field($model, 'mobile_no')->textInput() ?>
 </div>
 <div class="col-sm-3">
-    <?= $form->field($model, 'department')->textInput() ?>
+    <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
 </div>
