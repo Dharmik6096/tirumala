@@ -51,7 +51,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'customer_code')->textInput() ?>
     </div>
     <div class="col-sm-2 create_fields">
-        <?= $form->field($model, 'customer_name')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'Name')) ?>
+        <?= $form->field($model, 'customer_name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
     </div>
     <!--    <div class="col-sm-2 rtpl_validate">
     <?= $form->field($model, 'dcs_code')->textInput(['readonly' => $readonly])->label(Yii::t('app', 'Code')) ?>
@@ -64,7 +64,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="clearfix"></div>
-    <div class="col-sm-1 reset_field rtpl_validate ">
+    <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'fat')->textInput() ?>
     </div>
     <div class="col-sm-1 reset_field">
@@ -99,7 +99,7 @@ $form = ActiveForm::begin([
         <div class='col-sm-3 reset_field'>
             <?= Yii::$app->dropdown->vehicletransporter($model, $form, 'tblbmccollection-transporter_code', 'vehicle_code', 'Vehicle'); ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 reset_field">
             <?=
             $form->field($model, 'route_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                 'mask' => '99:99',])
@@ -165,7 +165,6 @@ $form = ActiveForm::begin([
             ]);
             AjaxSubmitButton::end();
             ?>
-            <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
         </div>
 

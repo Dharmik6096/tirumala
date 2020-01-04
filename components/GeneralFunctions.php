@@ -37,6 +37,7 @@ use app\modules\sms\models\TblAlertNotification;
 use app\modules\syncutility\models\TblSecurity;
 use yii\helpers\ArrayHelper;
 use app\modules\configuration\models\TblUnionConfigResult;
+
 class GeneralFunctions extends Component {
 
     public static function getUserOrganization($user) {
@@ -1281,11 +1282,19 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getCustomer($model, $type) {
-        if (strtolower($type) == 'dcs') {
-            $name = $this->getforeignkey($model->dcsCode, 'dcs_name');
+    public function getCustomer($model, $type, $exCode = false) {
+        if ($exCode) {
+            if (strtolower($type) == 'dcs') {
+                $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
+            } else {
+                $name = $this->getforeignkey($model->mainCustomerCode, 'customer_code_ex');
+            }
         } else {
-            $name = $this->getforeignkey($model->mainCustomerCode, 'customer_name');
+            if (strtolower($type) == 'dcs') {
+                $name = $this->getforeignkey($model->dcsCode, 'dcs_name');
+            } else {
+                $name = $this->getforeignkey($model->mainCustomerCode, 'customer_name');
+            }
         }
         return $name;
     }

@@ -35,6 +35,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         },],
     ['attribute' => 'customer_code'],
+    ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->customer_type,TRUE);
+        }],
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type);
         }],

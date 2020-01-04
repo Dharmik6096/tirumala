@@ -100,6 +100,7 @@ class TblDcs extends ChildModel {
     public $download_status;
     public $tmcc_code;
     public $is_sentbox;
+    public $same_milk_type, $diff_milk_type;
 
     /**
      * @inheritdoc
@@ -186,13 +187,14 @@ class TblDcs extends ChildModel {
             ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
             [['dcs_code_ex'], 'number'],
             [['is_active'], 'default', 'value' => 1],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type'], 'safe'],
             [['is_dispatch_mandate'], 'default', 'value' => 0],
             [['is_dispatch_mandate'], function ($attribute, $params) {
                     Yii::$app->general->vaildateCheckBoxValue($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
-            [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']]
+            [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']],
+            [['x_col1'], 'default', 'value' => '0#0']
         ];
     }
 
@@ -292,6 +294,7 @@ class TblDcs extends ChildModel {
             'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
             'dpu_type' => Yii::t('app', 'DPU Type'),
+            'diff_milk_type' => Yii::t('app', 'Different Milk Type'),
         ];
     }
 
@@ -617,8 +620,8 @@ class TblDcs extends ChildModel {
     }
 
     public function validDcs($dcs) {
-        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->one();
-        return !empty($data) ? $data->dcs_code : '';
+        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->all();
+        return !empty($data) && count($data)==1 ? $data[0]->dcs_code : '';
     }
 
     public function getNewDcs() {

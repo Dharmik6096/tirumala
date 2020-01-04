@@ -13,7 +13,7 @@ use kartik\grid\GridView;
     $this->render('_collection', ['model' => $model, 'type' => 'create',])
     ?>
 </div>
-<div id="gridcontentSet" class='hide-grid-settings'>
+<div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
     <?=
     $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
     ?>
@@ -158,7 +158,7 @@ $script = "
         reloadGrid();
     });
     function reloadGrid(){
-        if($('#tblbmccollection-milk_collection_code').val()==''){
+//        if($('#tblbmccollection-milk_collection_code').val()==''){
             var url = '" . Url::to(['/collection/tbl-bmc-collection/list-grid']) . "'+ '?' + $('#bmc-coll-form').serialize();
                 $.ajax({
                     type: 'get',
@@ -173,7 +173,7 @@ $script = "
                         $('#pageloader').hide();
                     },
                 });
-        }    
+//        }    
     }
     
 

@@ -234,6 +234,13 @@ class TblDcsController extends ChildController {
             if (isset($address[1]))
                 $this->model->street2 = $address[1];
         }
+        $x_col1 = explode('#', $this->model->x_col1);
+        if (isset($x_col1)) {
+            if (isset($x_col1[0]) && isset($x_col1[1])) {
+                $this->model->same_milk_type = $x_col1[0];
+                $this->model->diff_milk_type = $x_col1[1];
+            }
+        }
         $this->model->vendor = $oldVendor = $vendorModel->getDcsVendor($this->model->dcs_code);
         if (empty($this->model->vendor)) {
             $this->model->vendor = 'NA';
@@ -497,6 +504,7 @@ class TblDcsController extends ChildController {
         $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
         $this->model->mcc_plant_code = Yii::$app->general->getforeignkey($this->model->bmcCode, 'mcc_plant_code');
         $this->model->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
+        $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
     }
 
     private function setMapping(&$modelMapping) {

@@ -11,6 +11,11 @@ use app\modules\geo\models\TblVillages;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\general\models\TblSocietyVendor;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblRouteMapping;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -131,6 +136,10 @@ class TblMilkCollection extends \app\models\ChildModel {
             'sms_timestamp' => Yii::t('app', 'SMS Timestamp'),
             'union_code' => Yii::t('app', 'Union'),
             'clr' => Yii::t('app', 'CLR'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'route_code' => Yii::t('app', 'Route'),
+            'plant_code' => Yii::t('app', 'Plant'),
         ];
     }
 
@@ -257,6 +266,26 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function setUuid($attribute, $params) {
         $this->data_post_id = !empty($this->data_post_id) ? $this->data_post_id : $this->x_col1;
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }

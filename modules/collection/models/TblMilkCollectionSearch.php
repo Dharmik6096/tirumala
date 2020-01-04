@@ -25,7 +25,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type'], 'safe'],
             [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
-            [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount'], 'safe'],
+            [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode'], 'safe'],
         ];
     }
 
@@ -116,6 +116,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             'tbl_milk_collection.date_time_of_recieve' => $this->date_time_of_recieve,
             'tbl_milk_collection.sample_no' => $this->sample_no,
             'tbl_milk_collection.ack' => $this->ack,
+            'tbl_milk_collection.qty_mode' => $this->qty_mode,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code])

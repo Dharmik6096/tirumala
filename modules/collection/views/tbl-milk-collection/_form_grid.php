@@ -16,16 +16,19 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 <?php
 
 $attribute = [
-    ['attribute' => 'dcsCode.union_code', 'value' => function($model) {
-            return Yii::$app->general->getUnionName($model);
-        }, 'visible' => FALSE, 'filter' => false],
-    ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($model) {
-            return substr($model->member_code, -4);
-        }, 'visible' => FALSE, 'filter' => false],
-    ['attribute' => 'member_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }, 'filter' => true],
-    ['label' => Yii::t('app', 'Soc. Code'), 'visible' => FALSE, 'attribute' => 'dcs_code', 'filter' => true],
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'route_code', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['label' => Yii::t('app', 'Soc. Code'), 'visible' => TRUE, 'attribute' => 'dcs_code', 'filter' => true],
     ['label' => Yii::t('app', 'Old Soc. Code'), 'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -34,6 +37,12 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
+    ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($model) {
+            return substr($model->member_code, -4);
+        }, 'visible' => TRUE, 'filter' => false],
+    ['attribute' => 'member_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+        }, 'filter' => true],
     ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -44,11 +53,18 @@ $attribute = [
             return Yii::$app->controls->view_date($model->date_time_of_collection);
         }],
     ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
+    ['attribute' => 'sample_no', 'vAlign' => 'middle'],
     ['attribute' => 'name', 'filter' => false, 'visible' => false],
     ['attribute' => 'milk_type_code', 'value' => 'milkTypeCode.animal_type_name', 'filter' => Html::activeDropDownList($searchModel, 'milk_type_code', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
     ['attribute' => 'fat', 'filter' => Html::activeTextInput($searchModel, 'fat', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_fat', $operator, ['class' => 'form-control'])],
     ['attribute' => 'snf', 'filter' => Html::activeTextInput($searchModel, 'snf', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_snf', $operator, ['class' => 'form-control'])],
     ['attribute' => 'qty', 'filter' => Html::activeTextInput($searchModel, 'qty', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_qty', $operator, ['class' => 'form-control'])],
+    ['attribute' => 'qty_mode',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('p_ltr_kg', $searchModel, 'qty_mode'),
+        'value' => function ($model) {
+            return isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '';
+        },],
+    ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
     // ['attribute' => 'fat', 'filter' => Html::activeDropDownList($searchModel, 'fat', $fat,['class'=>'form-control','prompt'=>'Select FAT'])],
     // ['attribute' => 'snf', 'filter' => Html::activeDropDownList($searchModel, 'snf', $snf,['class'=>'form-control','prompt'=>'Select SNF'])],
     //['attribute' => 'qty', 'value' => 'qty', 'filter' => Html::activeDropDownList($searchModel, 'qty', $qty,['class'=>'form-control','prompt'=>'Select Qty'])],
@@ -70,6 +86,7 @@ $attribute = [
 //    ['attribute' => 'converted_qty_mode'],
 //    ['attribute' => 'milk_analyser_type_code', 'filter' => true],
 //    ['attribute' => 'ws_code', 'filter' => true],
+    ['attribute' => 'type_of_data_receive'],
 ];
 
 $grid_option = [
