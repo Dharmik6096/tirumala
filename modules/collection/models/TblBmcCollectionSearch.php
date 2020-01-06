@@ -58,7 +58,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         }
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode']);
 
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection', 'tbl_bmc_collection');
 
         if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 23:59:59.000']]);
