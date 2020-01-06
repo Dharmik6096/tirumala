@@ -19,10 +19,10 @@ class TblBmcCollectionSearch extends TblBmcCollection {
      */
     public function rules() {
         return [
-            [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
-            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no'], 'safe'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-            [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code'], 'safe']
+                [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
+                [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no'], 'safe'],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
+                [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code'], 'safe']
         ];
     }
 
@@ -43,7 +43,6 @@ class TblBmcCollectionSearch extends TblBmcCollection {
      */
     public function search($params) {
         $query = TblBmcCollection::find();
-
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -59,7 +58,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         }
         $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode']);
 
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection');
 
         if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 23:59:59.000']]);
