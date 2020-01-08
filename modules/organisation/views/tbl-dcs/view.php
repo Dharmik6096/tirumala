@@ -360,7 +360,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                             [
                                 'attribute' => 'dpu_type',
-                                'value' => !empty($model->dpu_type) || $model->dpu_type == 0 ? Yii::$app->dropdown->getRecords('dpu_type')['data'][$model->dpu_type] : '',
+                                'value' => isset($model->dpu_type) ? Yii::$app->dropdown->getRecords('dpu_type')['data'][$model->dpu_type] : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],

@@ -93,7 +93,7 @@ $attribute = [
     ['attribute' => 'dpu_type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('dpu_type', $searchModel, 'dpu_type'),
         'value' => function ($model) {
-            return !empty($model->dpu_type) || $model->dpu_type == 0 ? Yii::$app->dropdown->getRecords('dpu_type')['data'][$model->dpu_type] : '';
+            return isset($model->dpu_type) ? Yii::$app->dropdown->getRecords('dpu_type')['data'][$model->dpu_type] : '';
         },],
 // Contact Detail
     ['label' => Yii::t('app', 'Society Secretory'), 'visible' => false, 'filter' => false,
