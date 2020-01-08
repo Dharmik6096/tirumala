@@ -23,27 +23,27 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                 <?php
                 // DetailView Attributes Configuration
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'union_code',
                                 'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'bmc_code',
                                 'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                ['label' => Yii::t('app', 'Route Code'),
+                            ['label' => Yii::t('app', 'Route Code'),
                                 'attribute' => 'route_code',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'route_code',
                                 'value' => Yii::$app->general->getforeignkey($model->routeMapping, 'route_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
@@ -66,11 +66,11 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                    ],
                     [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'dcs_code_ex',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'dcs_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
@@ -87,171 +87,171 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                       ],
                       ],
                       ], */
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'label' => 'Milk Type',
                                 'format' => 'html',
                                 'value' => $model->milkType(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'dcs_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'dcs_short_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'local_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'local_short_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'phone_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'is_registered',
                                 'value' => ($model->is_registered == 1) ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'registration_code',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'registration_date',
                                 'value' => Yii::$app->controls->view_date($model->registration_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'valid_from',
                                 'value' => Yii::$app->controls->view_date($model->valid_from),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'dcs_type_code',
                                 'value' => Yii::$app->general->getforeignkey($model->dcsTypeCode, 'dcs_type_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'organisation_type_code',
                                 'value' => Yii::$app->general->getforeignkey($model->organisationTypeCode, 'organisation_type'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'scheme_type_code',
                                 'value' => Yii::$app->general->getforeignkey($model->schemeTypeCode, 'scheme_type'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'effective_date',
                                 'value' => Yii::$app->controls->view_date($model->effective_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'label' => 'Pours To BMC',
                                 'value' => Yii::$app->general->getmultiforeignkey($model->societyCodes, ['bmcCode'], 'bmc_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'pan_no',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'secretory_info',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'gst_no',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'fssi',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'address',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'local_address',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'state_code',
                                 'value' => Yii::$app->general->getforeignkey($model->stateCode, 'state_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'district_code',
                                 'value' => Yii::$app->general->getforeignkey($model->districtCode, 'district_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'sub_district_code',
                                 'value' => Yii::$app->general->getforeignkey($model->subDistrictCode, 'sub_district_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'block_code',
                                 'value' => Yii::$app->general->getforeignkey($model->blockCode, 'block_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'village_code',
                                 'value' => Yii::$app->general->getforeignkey($model->villageCode, 'village_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
@@ -318,14 +318,14 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                       ],
                       ],
                       ], */
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'hamlet_code',
                                 'value' => Yii::$app->general->getforeignkey($model->hamletCode, 'hamlet_name'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'pincode',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
@@ -335,46 +335,46 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                            ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'allow_multi_family_member',
                                 'label' => 'Allow Multi Family Member',
                                 'format' => 'html',
                                 'value' => $model->allow_multi_family_member == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'bipl_code',
                                 'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'vendor',
                                 'value' => isset($model->societyVendors) ? $model->societyVendors->vendor_code : Yii::t('app', 'Other'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'dpu_type',
-                                'value' => !empty($model->dpu_type) ? Yii::$app->dropdown->getRecords('dpu_type')['data'][$model->dpu_type] : '',
+                                'value' => !empty($model->dpu_type) || $model->dpu_type == 0 ? Yii::$app->dropdown->getRecords('dpu_type')['data'][$model->dpu_type] : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
                                 'value' => GeneralFunctions::getRecordStatus($model->is_active),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'bipl_code',
                                 'label' => Yii::t('app', 'Reference Code'),
                                 'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
@@ -387,15 +387,15 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                            ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'is_dispatch_mandate',
                                 'format' => 'html',
                                 'value' => $model->is_dispatch_mandate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'is_weight_manual',
                                 'format' => 'html',
                                 'value' => $model->is_weight_manual == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
@@ -403,9 +403,9 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'is_quality_manual',
                                 'format' => 'html',
                                 'value' => $model->is_quality_manual == 1 ? 'Yes' : 'No',
