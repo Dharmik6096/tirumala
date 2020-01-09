@@ -274,6 +274,10 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/merge-dcs-customer-list', Yii::t('app', 'Select Name'), $multiple, $extra_param, $readonly);
     }
 
+    public function transfer_type($model, $form, $depends, $name = 'transfer_type', $islable = false, $multiple = false, $readonly = false) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-master-transfer/transfer-type-list', Yii::t('app', 'Select Type'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -332,7 +336,11 @@ class DropDown extends Component {
                 ])->label($islable);
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = []) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '') {
+        if ($multiselect) {
+            $this->depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList);
+            return;
+        }
         $class = $readonly ? 'depend-control' : '';
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
@@ -728,6 +736,7 @@ class DropDown extends Component {
             'village-code' => ['name' => 'village_code', 'fields' => 'village_code,village_name', 'prompt' => 'Select Village', 'model' => 'TblVillages'],
             'department' => ['name' => 'department', 'fields' => 'department_id,department,local_name', 'prompt' => 'Select Department', 'model' => 'TblDepartment'],
             'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
+            'transfer_master_type' => ['name' => 'master_type', 'fields' => 'master_type,master_type_text', 'prompt' => Yii::t('app', 'Select Type'), 'model' => 'TblTransferType'],
         ];
         return $label[$l];
     }
@@ -784,6 +793,47 @@ class DropDown extends Component {
             array_push($select_fields, $fields[2]);
         }
         return $model->find()->select($select_fields)->where(['is_active' => 1])->orderBy($model->tablename() . '.' . $fields[1])->asArray()->all();
+    }
+
+    private function depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList) {
+        $id = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
+        $depends = explode(',', $depends);
+
+        $data = $this->getLabels($flag);
+        $fields = explode(',', $data['fields']);
+        $checkValid = in_array('checkValid', $data);
+        $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
+        $control_name = ($name == '') ? $data['name'] : $name;
+        $display_code = isset($data['display_code']) ? $data['display_code'] : FALSE;
+        echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(DepDropComp::classname(), [
+            'type' => DepDropComp::TYPE_MULTISELECT,
+            'options' => [
+                'multiple' => true,
+            ],
+            'model' => $model,
+            'attribute' => $control_name,
+            'data' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [''],
+            'value' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [0],
+            'multiSelectOptions' => [
+                'id' => $id,
+                'clientOptions' =>
+                [
+                    'includeSelectAllOption' => true,
+                    'numberDisplayed' => 0,
+                    'disableIfEmpty' => true,
+                    'buttonClass' => 'form-control text-left',
+                    'buttonContainer' => '<div class="form-group"/>',
+                    'buttonWidth' => '100%'
+                ],
+            ],
+            'pluginOptions' => [
+                'depends' => $depends,
+                'placeholder' => false,
+                'url' => Url::to(['/site/get-data']),
+                'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $display_code],
+                'initialize' => true,
+            ]
+        ])->label(Yii::t('app', $label));
     }
 
 }

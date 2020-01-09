@@ -1,0 +1,194 @@
+<?php
+
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
+use yii\helpers\Url;
+?>
+
+<?php
+$form = ActiveForm::begin([
+            'options' => ['id' => 'master-transfer-form'],
+            'validateOnBlur' => false,
+            'validateOnEnter' => TRUE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+            'fieldConfig' => [
+        ]]);
+?>
+<?php echo $form->errorSummary($model); ?>
+<div class="row">
+    <div class="col-sm-3">
+        <?php
+        echo Yii::$app->dropdown->dropdown('transfer_master_type', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('master_type'), false, 'master_type');
+        ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->transfer_type($model, $form, 'tblmastertransfer-master_type', 'transfer_type', $model->getAttributeLabel('transfer_type')); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+    </div>
+    <div class="col-sm-3 reset_field">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmastertransfer-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="CURRENTINFO reset_field">
+        <h5 class="panel-heading mb15"><?= Yii::t('app', 'Current Details') ?></h5>
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'old_mcc_plant_code', $model->getAttributeLabel('old_mcc_plant_code')); ?>
+        </div>
+        <div class="col-sm-3 DCSFARMER">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-old_mcc_plant_code', 'old_bmc_code', $model->getAttributeLabel('old_bmc_code')); ?>
+        </div>
+        <div class="col-sm-3 DCSFARMER">
+            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-old_bmc_code', 'old_dcs_code', $model->getAttributeLabel('old_dcs_code')); ?>         
+        </div>
+        <div class="col-sm-3 FARMER">
+            <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmastertransfer-old_dcs_code', '', $model->getAttributeLabel('old_member_code'), 'old_member_code', FALSE, 0, [], TRUE); ?>
+        </div>
+        <div class="col-sm-3 DCS">
+            <?php //$form->field($model, 'old_route_code')->textInput(['readOnly' => TRUE]) ?>  
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="NEWINFO reset_field">
+        <h5 class="panel-heading mb15"><?= Yii::t('app', 'New Details') ?></h5>
+        <div class="col-sm-3 DCSFARMER">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'new_mcc_plant_code', $model->getAttributeLabel('new_mcc_plant_code')); ?>
+        </div>
+        <div class="col-sm-3 DCSFARMER">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-new_mcc_plant_code', 'new_bmc_code', $model->getAttributeLabel('new_bmc_code')); ?>
+        </div>
+        <div class="col-sm-3 FARMER">
+            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-new_bmc_code', 'new_dcs_code', $model->getAttributeLabel('new_dcs_code')); ?>         
+        </div>
+        <!--        <div class="col-sm-3 number-validate FARMER">
+        <?php //$form->field($model, 'ex_member_code')->textInput() ?>
+                </div>-->
+        <div class="col-sm-3 DCS">
+            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmastertransfer-plant_code,tblmastertransfer-new_mcc_plant_code,tblmastertransfer-new_bmc_code', 'new_route_code', $model->getAttributeLabel('new_route_code')); ?>
+        </div>
+        <div class="col-sm-3 DCSFARMER">
+            <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
+        </div>
+    </div>
+<!--    <div class="col-sm-3  UPDATETRANSACTION">
+        <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>-->
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
+</div>
+<?php ActiveForm::end(); ?>
+<?php
+$script = "$(document).ready(function(){
+     setvisible();
+    $(document).on('change', '#tblmastertransfer-master_type', function() {  
+      setvisible();
+    });
+    $(document).on('change', '#tblmastertransfer-transfer_type', function() {
+      $('#tblmastertransfer-plant_code').val('').trigger('change');
+      $('#tblmastertransfer-new_mcc_plant_code').prop('disabled',false);
+      $('#master-transfer-form .reset_field input').val('');
+      $('#master-transfer-form .reset_field select').val('');
+            setvisible();
+});
+function setvisible(){
+    $('.CURRENTINFO').hide();
+   $('.NEWINFO').hide();
+        $('.UPDATETRANSACTION').hide();
+        var master_type = $('#tblmastertransfer-master_type').val();
+        var transfer_type = $('#tblmastertransfer-transfer_type').val();
+        if(master_type!=''){
+            $('.CURRENTINFO').show();
+            $('.FARMER').show();
+            $('.FARMER').show();
+            if(master_type=='DCS'){
+                $('.FARMER').hide();
+            }else if(master_type=='FARMER'){
+                $('.DCS').hide();
+            }
+        }
+       if(transfer_type!=null && transfer_type!='' && transfer_type!='Loading ...'){
+           $('.NEWINFO').show();
+        if(transfer_type=='DCS'){
+            $('.FARMER').show();
+        } else {
+            $('.DCS').show();
+        }
+     }
+}
+$('#tblmastertransfer-old_mcc_plant_code').on('change', function() {
+    $('#tblmastertransfer-old_mcc_plant_code').trigger('select2:select');
+    var old_mcc = $(this).val();
+    if(old_mcc !='' && old_mcc != null){
+        var master_type = $('#tblmastertransfer-master_type').val();
+        var transfer_type = $('#tblmastertransfer-transfer_type').val();
+        var select2Instance = $('#tblmastertransfer-new_mcc_plant_code').data('select2');
+        var resetOptions = select2Instance.options.options;
+        $('#tblmastertransfer-new_mcc_plant_code').select2('destroy').select2(resetOptions);
+        if(master_type=='FARMER'){
+      //  $('#tblmastertransfer-new_mcc_plant_code').val('').trigger('change');
+      //  $('#tblmastertransfer-new_mcc_plant_code>option[value='+old_mcc+']').prop('disabled', false);
+     //    $('#tblmastertransfer-new_mcc_plant_code>option[value!='+old_mcc+']').prop('disabled', true);
+       //     $('#tblmastertransfer-new_mcc_plant_code').val(old_mcc).trigger('change');
+         //   $('#tblmastertransfer-new_mcc_plant_code').prop('disabled', true);
+        }else if(master_type=='DCS'){
+            if(transfer_type=='MCC'){
+            $('#tblmastertransfer-new_mcc_plant_code>option[value!='+old_mcc+']').prop('disabled', false);
+            $('#tblmastertransfer-new_mcc_plant_code>option[value='+old_mcc+']').prop('disabled', true);
+            }
+         }
+    }
+   
+});
+
+$('#tblmastertransfer-new_bmc_code').on('change', function() {
+    $('#tblmastertransfer-new_bmc_code').trigger('select2:select');
+    var old_mcc = $('#tblmastertransfer-old_dcs_code').val();
+    if(old_mcc !='' && old_mcc != null && old_mcc !=='Loading ...'){
+        var master_type = $('#tblmastertransfer-master_type').val();
+        var transfer_type = $('#tblmastertransfer-transfer_type').val();
+        var select2Instance = $('#tblmastertransfer-new_dcs_code').data('select2');
+        var resetOptions = select2Instance.options.options;
+        $('#tblmastertransfer-new_dcs_code').select2('destroy').select2(resetOptions);
+        if(master_type=='FARMER'){
+        $('#tblmastertransfer-new_dcs_code>option[value='+old_mcc+']').prop('disabled', true);
+          $('#tblmastertransfer-new_dcs_code').trigger('change');
+        }
+    }
+});
+
+$(document).on('change', '#tblmastertransfer-wef_date', function() {
+    $('#tblmastertransfer-update_transaction').prop('checked', false);
+    $('.UPDATETRANSACTION').hide();
+            if($('#tblmastertransfer-master_type').val()=='DCS'){
+            var req_date = $(this).val().split('-');
+            var d = new Date();
+            var month = d.getMonth()+1;
+            var day = d.getDate();
+            var current_date = d.getFullYear() + '-' +
+            (month<10 ? '0' : '') + month + '-' +
+            (day<10 ? '0' : '') + day;
+            current_date = current_date.split('-');
+            var firstDate = new Date();
+            firstDate.setFullYear(req_date[2], (req_date[1] - 1 ), req_date[0]);
+            var secondDate = new Date();
+            secondDate.setFullYear(current_date[0], (current_date[1] - 1 ), current_date[2]);
+            firstDate.setHours(0, 0, 0, 0);
+            secondDate.setHours(0, 0, 0, 0)
+            if(firstDate <= secondDate){
+            $('.UPDATETRANSACTION').show();
+            }
+            }
+});
+});
+";
+$this->registerJs($script, View::POS_END, 'transfer-utility-form');
+?>

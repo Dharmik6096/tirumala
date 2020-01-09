@@ -2313,3 +2313,25 @@ div.crystalstyle{
 .panel_clear_both .panel-default{
     clear: both;
 }
+.multiselect-container {
+    width: calc(100% - 30px) !important;
+    overflow-y: auto;
+    max-height: 217px;
+    position: absolute !important;
+}
+
+.panel-main > .panel-body {
+    min-height: calc(100vH - 180px);
+}
+
+.multiselect-container li.active  label.checkbox {
+    color: #fff !important;
+}
+
+.multiselect-container li  label.checkbox {
+    color: #333;
+}
+
+.multiselect-container li {
+    border-bottom: 1px solid #fff;
+}

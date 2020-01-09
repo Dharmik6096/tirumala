@@ -51,10 +51,11 @@ use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 use app\modules\syncutility\models\TblSyncLog;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\syncutility\models\TblGenerateSentbox;
+use app\modules\organisation\models\TblMasterTransfer;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer'];
 
     public function init() {
         parent::init();
@@ -79,7 +80,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -1703,15 +1704,60 @@ class SiteController extends Controller {
                     $record->response_datetime = date('Y-m-d H:i:s');
                     $record->save(FALSE);
                 } catch (\yii\base\UserException $e) {
-                    var_dump($e);die;
+                    var_dump($e);
+                    die;
                     $record->status = 3;
                     $record->response_datetime = date('Y-m-d H:i:s');
                     $record->save(FALSE);
                 } catch (\yii\db\Exception $e) {
-                    var_dump($e);die;
+                    var_dump($e);
+                    die;
                     $record->status = 3;
                     $record->response_datetime = date('Y-m-d H:i:s');
                     $record->save(FALSE);
+                }
+            }
+        }
+    }
+
+    public function actionMasterTransfer() {
+        $model = new TblMasterTransfer();
+        $model->status = 0;
+        $modelData = $model->getPickRecords();
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->master_transfer_code;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            foreach ($modelData as $row) {
+                try {
+                    $result = \Yii::$app->db->createCommand("{CALL sp_process_transfer_request (:master_type,:transfer_type,:union_code,:plant_code,:old_mcc_plant_code,:new_mcc_plant_code,:old_bmc_code,:new_bmc_code,:old_dcs_code,:new_dcs_code,:old_route_code,:new_route_code,:old_member_code,:new_member_code,:wef_date,:operation_by,:update_transaction)}")
+                            ->bindValue(':master_type', $row->master_type)
+                            ->bindValue(':transfer_type', $row->transfer_type)
+                            ->bindValue(':union_code', $row->union_code)
+                            ->bindValue(':plant_code', $row->plant_code)
+                            ->bindValue(':old_mcc_plant_code', $row->old_mcc_plant_code)
+                            ->bindValue(':new_mcc_plant_code', $row->new_mcc_plant_code)
+                            ->bindValue(':old_bmc_code', $row->old_bmc_code)
+                            ->bindValue(':new_bmc_code', $row->new_bmc_code)
+                            ->bindValue(':old_dcs_code', $row->old_dcs_code)
+                            ->bindValue(':new_dcs_code', $row->new_dcs_code)
+                            ->bindValue(':old_route_code', $row->old_route_code)
+                            ->bindValue(':new_route_code', $row->new_route_code)
+                            ->bindValue(':old_member_code', $row->old_member_code)
+                            ->bindValue(':new_member_code', $row->new_member_code)
+                            ->bindValue(':wef_date', $row->wef_date)
+                            ->bindValue(':operation_by', $row->created_by)
+                            ->bindValue(':update_transaction', $row->update_transaction);
+                    $query = $result->execute();
+                    $row->response_datetime = date('Y-m-d H:i:s');
+                    $row->status = 2;
+                    $row->save();
+                } catch (\yii\db\Exception $e) {
+                    var_dump($e);
+                    $row->response_datetime = date('Y-m-d H:i:s');
+                    $row->status = 3;
+                    $row->save();
                 }
             }
         }
