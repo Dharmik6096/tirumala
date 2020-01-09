@@ -184,7 +184,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $mcc_bmc_config = FALSE;
                         $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
                         if (!empty($current_rate_detail)) {
-                            $purchase_rate_code = $model_data->member_rate_code;
+                            $purchase_rate_code = (string) $model_data->member_rate_code;
                             $res_data['rate']['mPurchaseRateCode'] = $current_rate_detail[0]['m_rate_code'];
                             $res_data['rate']['mPurchaseRateCodeBlock'] = !empty($purchase_rate_code) ? $purchase_rate_code : $current_rate_detail[0]['m_rate_block'];
                             $res_data['rate']['ePurchaseRateCode'] = $current_rate_detail[0]['e_rate_code'];
