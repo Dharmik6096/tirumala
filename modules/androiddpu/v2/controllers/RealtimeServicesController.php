@@ -104,7 +104,7 @@ class RealtimeServicesController extends RestController {
                 $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'download_date_time' => date('Y-m-d H:i:s'), 'is_download' => 0], ['purchase_rate_code' => $model->purchase_rate_code, 'dcs_code' => $model->dcs_code]);
                 $model = new TblDcs();
                 $model->attributes = $data;
-                $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'rate_flag' => 0, 'purchase_rate_code' => NULL], ['dcs_code' => $model->dcs_code]);
+                $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'rate_flag' => 0, 'member_rate_code' => NULL], ['dcs_code' => $model->dcs_code]);
             } else if ($data['ack_type'] == 'MEMBER') {
                 $model = new TblDcs();
                 $model->attributes = $data;
