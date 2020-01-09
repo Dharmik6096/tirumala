@@ -119,7 +119,7 @@ class TblPurchaseRate extends \app\models\ChildModel {
              * @return \yii\db\ActiveQuery
              */
             public function getPurchaseRateApplicability() {
-                return $this->hasMany(TblPurchaseRateApplicability::className(), ['purchase_rate_code' => 'purchase_rate_code'])->where(['dcs_code'=>  $this->app_org_code]);
+                return $this->hasMany(TblPurchaseRateApplicability::className(), ['purchase_rate_code' => 'purchase_rate_code'])->where(['dcs_code'=>  $this->app_org_code])->orderBy('wef_date DESC');
             }
 
             /**
