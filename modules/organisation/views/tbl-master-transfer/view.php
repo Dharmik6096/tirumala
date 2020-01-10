@@ -60,22 +60,27 @@ $this->title = Yii::$app->label->title('view', 'Transfer Requests');
                         ],
                         [
                             'attribute' => 'old_member_code',
-                            'label' => Yii::t('app', 'Vendor Code'),
-                            'value' => Yii::$app->general->getforeignkey($model->oldMemberCode, 'vendor_code'),
+                            'value' => Yii::$app->general->getforeignkey($model->oldMemberCode, 'member_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+//                        [
+//                            'attribute' => 'old_member_code',
+//                            'label' => Yii::t('app', 'Vendor Code'),
+//                            'value' => Yii::$app->general->getforeignkey($model->oldMemberCode, 'vendor_code'),
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
                     ],
                 ],
-                [
-                    'columns' => [
-
-                        [
-                            'attribute' => 'old_member_code',
-                            'value' => Yii::$app->general->getforeignkey($model->oldMemberCode, 'member_name'),
-                            'valueColOptions' => ['style' => 'width:80%']
-                        ],
-                    ],
-                ],
+//                [
+//                    'columns' => [
+//
+//                        [
+//                            'attribute' => 'old_member_code',
+//                            'value' => Yii::$app->general->getforeignkey($model->oldMemberCode, 'member_name'),
+//                            'valueColOptions' => ['style' => 'width:80%']
+//                        ],
+//                    ],
+//                ],
                 [
                     'columns' => [
                         [
@@ -94,38 +99,52 @@ $this->title = Yii::$app->label->title('view', 'Transfer Requests');
                     'columns' => [
                         [
                             'attribute' => 'new_dcs_code',
-                            'label' => Yii::t('app', 'New DSK Code'),
+                            'label' => Yii::t('app', 'New DCS Code'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'new_dcs_code',
-                            'label' => Yii::t('app', 'New DSK'),
+                            'label' => Yii::t('app', 'New DCS'),
                             'value' => Yii::$app->general->getforeignkey($model->newDcsCode, 'dcs_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-//                [
-//                    'columns' => [
-//                        [
-//                            'attribute' => 'old_bmc_code',
-//                            'value' => Yii::$app->general->getforeignkey($model->oldBmcCode, 'bmc_name'),
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
-//                        [
-//                            'attribute' => 'new_bmc_code',
-//                            'label' => Yii::t('app', 'New BMC'),
-//                            'value' => Yii::$app->general->getforeignkey($model->newBmcCode, 'bmc_name'),
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
-//                    ],
-//                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'old_bmc_code',
+                            'label' => Yii::t('app', 'BMC Code'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'old_bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($model->oldBmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'new_bmc_code',
+                            'label' => Yii::t('app', 'New BMC Code'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'new_bmc_code',
+                            'label' => Yii::t('app', 'New BMC'),
+                            'value' => Yii::$app->general->getforeignkey($model->newBmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
                 [
                     'columns' => [
                         [
                             'attribute' => 'old_mcc_plant_code',
                             'label' => Yii::t('app', 'MCC Code'),
-                            'value' => Yii::$app->general->getforeignkey($model->oldMccPlantCode, 'sloc_code'),
+                            // 'value' => Yii::$app->general->getforeignkey($model->oldMccPlantCode, 'sloc_code'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
@@ -140,7 +159,7 @@ $this->title = Yii::$app->label->title('view', 'Transfer Requests');
                         [
                             'attribute' => 'new_mcc_plant_code',
                             'label' => Yii::t('app', 'New MCC Code'),
-                            'value' => Yii::$app->general->getforeignkey($model->newMccPlantCode, 'sloc_code'),
+                            //'value' => Yii::$app->general->getforeignkey($model->newMccPlantCode, 'sloc_code'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
@@ -189,7 +208,7 @@ $this->title = Yii::$app->label->title('view', 'Transfer Requests');
                         ],
                         [
                             'attribute' => 'status',
-                            'value' => isset(Yii::$app->dropdown->getRecords('sap_file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('sap_file_status')['data'][$model->status] : '',
+                            'value' => isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],

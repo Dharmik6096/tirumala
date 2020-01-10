@@ -74,9 +74,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
         </div>
     </div>
-<!--    <div class="col-sm-3  UPDATETRANSACTION">
+    <div class="col-sm-3  UPDATETRANSACTION">
         <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-    </div>-->
+    </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
