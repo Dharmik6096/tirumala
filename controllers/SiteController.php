@@ -1677,26 +1677,28 @@ class SiteController extends Controller {
                         $modelName = Yii::$app->path->define($modelName);
                     }
                     $model = new $modelName();
-                    $modelData = $model->find()
+                    $modelDataAll = $model->find()
                             ->where($record->where_clause)
-                            ->one();
-                    if (!empty($modelData)) {
-                        $union_code = '';
-                        $plant_code = '';
-                        $mcc_plant_code = '';
-                        $bmc_code = '';
-                        $dcs_code = '';
-                        ${$record->sentbox_key} = $record->{$record->sentbox_key};
-                        $sentboxArray = [];
-                        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_plant_code, $bmc_code, $union_code, $dcs_code);
-                        foreach ($sentboxArray as $sent) {
-                            $flag = !empty($record->operation_type) ? $record->operation_type : 'INSERT';
-                            $sentbox = new TblSentbox();
-                            $sentbox->dest_org_id = $sent['code'];
-                            $sentbox->source_org_id = !empty($modelData->union_code) ? $modelData->union_code : $record->union_code;
-                            $sentbox->dest_org_type = $sent['type'];
-                            if (!($sentbox->setSentbox($modelData, $flag))) {
-                                throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                            ->all();
+                    if (!empty($modelDataAll)) {
+                        foreach ($modelDataAll as $modelData) {
+                            $union_code = '';
+                            $plant_code = '';
+                            $mcc_plant_code = '';
+                            $bmc_code = '';
+                            $dcs_code = '';
+                            ${$record->sentbox_key} = $record->{$record->sentbox_key};
+                            $sentboxArray = [];
+                            $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_plant_code, $bmc_code, $union_code, $dcs_code);
+                            foreach ($sentboxArray as $sent) {
+                                $flag = !empty($record->operation_type) ? $record->operation_type : 'INSERT';
+                                $sentbox = new TblSentbox();
+                                $sentbox->dest_org_id = $sent['code'];
+                                $sentbox->source_org_id = !empty($modelData->union_code) ? $modelData->union_code : $record->union_code;
+                                $sentbox->dest_org_type = $sent['type'];
+                                if (!($sentbox->setSentbox($modelData, $flag))) {
+                                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                                }
                             }
                         }
                     }
