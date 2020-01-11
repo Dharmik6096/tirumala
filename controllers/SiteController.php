@@ -1554,51 +1554,58 @@ class SiteController extends Controller {
             $modelData = $model->getData();
             if (!empty($modelData)) {
                 foreach ($modelData as $transaction_data) {
-                    $delete = [];
-                    $childModel = [];
-                    $delete [] = $transaction_data;
-                    $syncLogModel = new TblSyncLog();
-                    $syncLogModel->setAttributes($transaction_data->attributes);
-                    $childModel[] = $syncLogModel;
-                    $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
-                    $model_name = Yii::$app->path->define($model_name);
-                    $model = new $model_name();
-                    $json = $transaction_data->json_text;
-                    $json = (array) json_decode($json);
-                    $json = Yii::$app->general->camelCaseToUnderscore($json);
-                    $model->setAttributes($json);
+                    try {
+                        $delete = [];
+                        $childModel = [];
+                        $delete [] = $transaction_data;
+                        $syncLogModel = new TblSyncLog();
+                        $syncLogModel->setAttributes($transaction_data->attributes);
+                        $childModel[] = $syncLogModel;
+                        $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
+                        $model_name = Yii::$app->path->define($model_name);
+                        $model = new $model_name();
+                        $json = $transaction_data->json_text;
+                        $json = (array) json_decode($json);
+                        $json = Yii::$app->general->camelCaseToUnderscore($json);
+                        $model->setAttributes($json);
 
-                    /* update record if already available */
-                    if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
-                        $unique_value = $model->$unique_key;
-                        $model_data = $model->find()->where([$unique_key => $unique_value])->one();
-                        if (!empty($model_data)) {
-                            $model = $model_data;
-                            $history = $model_name . 'History';
-                            $historyModel = new $history();
-                            Yii::$app->operation->history($model, $historyModel, 'UPDATE');
-                            $childModel[] = $historyModel;
-                            $model->setAttributes($json);
+                        /* update record if already available */
+                        if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
+                            $unique_value = $model->$unique_key;
+                            $model_data = $model->find()->where([$unique_key => $unique_value])->one();
+                            if (!empty($model_data)) {
+                                $model = $model_data;
+                                $history = $model_name . 'History';
+                                $historyModel = new $history();
+                                Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                                $childModel[] = $historyModel;
+                                $model->setAttributes($json);
+                            }
                         }
-                    }
-                    /* update record if already available */
-                    $model->scenario = 'androidsync';
-                    $model = Yii::$app->general->SetDataType($model);
-                    if ($model->validate()) {
-                        if (isset($transaction_data->operation) && $transaction_data->operation == 'UPDATE') {
-                            
-                        }
-                        $generalModel = new GeneralModel();
-                        $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
-                        if ($transaction != 'customRedirect') {
-                            $transaction_data->error_log = (string) $transaction;
+                        /* update record if already available */
+                        $model->scenario = 'androidsync';
+                        $model = Yii::$app->general->SetDataType($model);
+                        if ($model->validate()) {
+                            if (isset($transaction_data->operation) && $transaction_data->operation == 'UPDATE') {
+                                
+                            }
+                            $generalModel = new GeneralModel();
+                            $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
+                            if ($transaction != 'customRedirect') {
+                                $transaction_data->error_log = (string) $transaction;
+                                $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                $transaction_data->save();
+                            }
+                        } else {
+                            $transaction_data->error_log = Json::encode($model->getErrors());
                             $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                             $transaction_data->save();
                         }
-                    } else {
-                        $transaction_data->error_log = Json::encode($model->getErrors());
+                    } catch (\Throwable $ex) {
+                        $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                         $transaction_data->save();
+                        var_dump($ex->xdebug_message);
                     }
                 }
             }
