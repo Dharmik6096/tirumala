@@ -76,6 +76,7 @@ class importData extends \yii\base\Module {
             'milk_dispatch' => ['import_main_class' => 'DispatchImportStrategy', 'table_name' => 'tbl_milk_dispatch', 'fields' => 'mcc_code,dcs_code,date_time_of_collection,shift,qty,fat,snf,no_of_can,return_cob,remarks', 'scenario' => 'importCsv'],
             'dpu-incentive' => ['import_class' => 'tbl_dpu_incentive_master', 'import_main_class' => 'DpuIncentiveImportStrategy', 'table_name' => 'tbl_dpu_incentive_master', 'fields' => 'union_code,dcs_code,m_start_time,e_start_time,m_cutoff_time,e_cutoff_time,m_lock_time,e_lock_time,inc_rate,inc_deduction'],
             'bmc-collection' => ['table_name' => 'tbl_bmc_collection', 'fields' => 'dcs_code,milk_quality_type_code,qty,fat,snf,milk_type_code,date_time_of_collection,shift_code,collection_type,transporter_code,vehicle_code', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
+            'customer-master' => ['table_name' => 'tbl_customer_master', 'fields' => 'bmc_code,route_code,customer_type,customer_code_ex,customer_name,local_name,gst_no,hamlet_code,address,local_address', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

@@ -59,7 +59,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['customer_name', 'union_code', 'address', 'customer_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code_ex', 'route_code'], 'required'],
+            [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['importCsv']],
+            [['customer_name', 'address', 'customer_type', 'customer_code_ex', 'route_code', 'bmc_code'], 'required'],
             [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code'], 'safe'],
@@ -73,6 +74,14 @@ class TblCustomerMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
             ['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
+            [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
+            [['customer_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+                }, 'on' => ['importCsv']],
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerMaster::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+            [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
         ];
     }
 
@@ -248,6 +257,47 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 });
         asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         return $data;
+    }
+
+    public function getDefaultMcc() {
+        return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant' => 1]);
+    }
+
+    public function setImport($attribute, $params) {
+        $this->customer_code = $this->getCode();
+        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+        $this->bmc_code = Yii::$app->general->getforeignkey($this->bmcCode, 'bmc_code');
+
+//        $this->union_code = Yii::$app->general->getforeignkey($this->routeCode, 'union_code');
+//        $toType = Yii::$app->general->getforeignkey($this->routeCode, 'to_type');
+//        if (strtolower($toType) == 'bmc') {
+//            $this->bmc_code = Yii::$app->general->getforeignkey($this->routeCode, 'to_dest');
+//            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+//            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+//        } elseif (strtolower($toType) == 'mcc') {
+//            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->routeCode, 'to_dest');
+//            $this->plant_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'plant_code');
+//            $this->bmc_code = Yii::$app->general->getmultiforeignkey($this->mccPlantCode, ['bmcCode'], 'bmc_code');
+//        } elseif (strtolower($toType) == 'plant') {
+//            $this->plant_code = Yii::$app->general->getforeignkey($this->routeCode, 'to_dest');
+//            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->defaultMcc, 'mcc_plant_code');
+//            $this->bmc_code = Yii::$app->general->getmultiforeignkey($this->mccPlantCode, ['bmcCode'], 'bmc_code');
+//        }
+//
+//        if (empty($this->bmc_code) || $this->bmc_code == 'N/A') {
+//            $this->addError('bmc_code', Yii::t('app/validation', $this->getAttributeLabel('bmc_code') . ' not available'));
+//        } else if (empty($this->mcc_plant_code) || $this->mcc_plant_code == 'N/A') {
+//            $this->addError('mcc_plant_code', Yii::t('app/validation', $this->getAttributeLabel('mcc_plant_code') . ' not available'));
+//        } elseif (empty($this->plant_code) || $this->plant_code == 'N/A') {
+//            $this->addError('plant_code', Yii::t('app/validation', $this->getAttributeLabel('plant_code') . ' not available'));
+//        }
+
+        $this->village_code = Yii::$app->general->getforeignkey($this->hamletCode, 'village_code');
+        $this->sub_district_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode'], 'sub_district_code');
+        $this->district_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode', 'subDistrictCode'], 'district_code');
+        $this->state_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode', 'subDistrictCode', 'districtCode'], 'state_code');
     }
 
 }

@@ -915,36 +915,43 @@ class GeneralFunctions extends Component {
         return $command->queryAll();
     }
 
-    public function validateGlobalData($model, $attribute, $flag, $show_error = true) {
+    public function validateGlobalData($model, $attribute, $flag, $limit = FALSE, $show_error = true, $where = []) {
         $dropDown = new DropDown();
         $labelData = $dropDown->getLabels($flag);
         $fields = explode(',', $labelData['fields']);
         $model_name = Yii::$app->path->define($labelData['model']);
         $datamodel = new $model_name();
-        $where = [];
+
         if ($datamodel->hasAttribute('is_active')) {
             $where['is_active'] = 1;
         }
         $len = strlen($model->$attribute);
         if (!preg_match('/^[0-9]*$/', $model->$attribute)) {
-            $records = $datamodel->find()
-                            ->select([$fields[0]])
-                            ->where([$fields[1] => strtoupper($model->$attribute)])
-                            ->andWhere($where)->all();
+            $query = $datamodel->find()
+                    ->select([$fields[0]])
+                    ->where(['UPPER(SUBSTRING(' . $fields[1] . ', 1, ' . $len . '))' => strtoupper($model->$attribute)])
+                    ->andWhere($where);
+            if ($limit) {
+                $query->limit(1);
+            }
+            $records = $query->all();
         } else {
             $records = $datamodel->find()
                             ->select([$fields[0]])
                             ->where([$fields[0] => $model->$attribute])
                             ->andWhere($where)->all();
         }
-        if (!empty($records) && count($records) == 1) {
-            $model->$attribute = $records[0]->{$fields[0]};
-        } else {
-            if ($show_error) {
-                $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
-                return false;
+       
+        if (!empty($records)) {
+            if (count($records) == 1) {
+                $model->$attribute = $records[0]->{$fields[0]};
             } else {
-                $model->$attribute = NULL;
+                if ($show_error) {
+                    $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
+                    return false;
+                } else {
+                    $model->$attribute = NULL;
+                }
             }
         }
     }
