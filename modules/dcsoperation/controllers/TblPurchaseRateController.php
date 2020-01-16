@@ -22,6 +22,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 use yii\helpers\Json;
 use PHPExcel;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * TblPurchaseRateController implements the CRUD actions for TblPurchaseRate model.
@@ -458,19 +459,19 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $appModel->trans_label = 'purchase rate applicability';
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->wef_date);
-                }],
+            return Yii::$app->controls->view_date($model->wef_date);
+        }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
             'dcs_name' => ['view' => ['grid'], 'value' => function($model) {
-                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-                }],
+            return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+        }],
             'is_download' => ['view' => ['grid'], 'type' => 'yes-no', 'value' => function($model) {
-                    return ($model->is_download == 0) ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
-                }],
+            return ($model->is_download == 0) ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
+        }],
             'download_date_time' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->download_date_time);
-                }],
+            return Yii::$app->controls->view_date($model->download_date_time);
+        }],
         ];
         $username = explode('#', Yii::$app->session->get('UserName'))[1];
         if (!in_array(strtolower($username), ['bipl', 'reil']))
@@ -483,10 +484,31 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
     }
 
     public function actionDeleteRateApp() {
-        $model = TblPurchaseRateApplicability::find()->where(['rate_app_code' => Yii::$app->request->post('id')])->one();
-        $localHistory = new TblPurchaseRateApplicabilityHistory();
-        Yii::$app->operation->history($model, $localHistory, DELETE);
-        $record = $this->generalModel->deleteTransaction([$model, $localHistory]);
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            $detailHistory = new TblPurchaseRateApplicabilityHistory();
+            $record = TblPurchaseRateApplicability::find()->where(['rate_app_code' => Yii::$app->request->post('id')])->one();
+            Yii::$app->operation->history($record, $detailHistory, DELETE);
+            $model = new TblDcs();
+            $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'rate_flag' => 2, 'member_rate_code' => $record->purchase_rate_code], ['dcs_code' => $record->dcs_code]);
+            $master[] = $detailHistory->save(FALSE);
+            $master[] = $record->delete();
+            if (in_array(FALSE, $master)) {
+                $transaction->rollback();
+                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+            } else {
+                $transaction->commit();
+                $record = ['status' => 'success', 'msg' => 'Record is successfuly deleted.'];
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => $e->getMessage()];
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')];
+        }
+
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
