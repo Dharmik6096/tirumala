@@ -15,6 +15,8 @@ use app\components\WebApi;
 use yii\helpers\Url;
 use app\modules\installation\models\TblAndroidInstallationDetailsHistory;
 use yii\web\Response;
+use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 
 /**
  * TblAndroidInstallationController implements the CRUD actions for TblAndroidInstallation model.
@@ -111,12 +113,22 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
             if ($this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($master, ['AMCS Installation', 'create']);
                 if ($transaction == 'customRedirect') {
-                if (!$this->generateIdentity($file, $instDetail->hash_key)) {
-                    $instDetail->delete(FALSE);
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => 'Your transaction is not saved successfully']);
-                    return $this->customRender();
-                }
+                    if (!$this->generateIdentity($file, $instDetail->hash_key)) {
+                        $instDetail->delete(FALSE);
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => 'Your transaction is not saved successfully']);
+                        return $this->customRender();
+                    } else {
+                        $dcs_data = new TblDcs();
+                        $dcs_data->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'rate_flag' => 0, 'is_name_request' => 0, 'member_rate_code' => NULL], ['dcs_code' => $code]);
+                        $rate_app_data = new TblPurchaseRateApplicability();
+                        $rate_app_data->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'download_date_time' => date('Y-m-d H:i:s'), 'is_download' => 0], ['dcs_code' => $code]);
+                        $query = Yii::$app->db->createCommand("insert into tbl_rate_download_ack (rate_app_code,purchase_rate_code,wef_date,shift_code,applicable_code,applicable_for,hash_key,union_code,download_date_time)"
+                                . " select rate_app_code,purchase_rate_code,wef_date,shift_code,dcs_code,'MEMBER',:hash_key,union_code,:download_date_time from tbl_purchase_rate_applicability where dcs_code in ($code)");
+                        $query->bindValue(':hash_key', $instDetail->hash_key)
+                                ->bindValue(':download_date_time', date('Y-m-d H:i:s'))
+                                ->execute();
+                    }
                     return $this->{$transaction}();
                 }
             }

@@ -4,6 +4,7 @@ namespace app\modules\installation\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\dcsoperation\models\TblRateDownloadAck;
 
 /**
  * This is the model class for table "tbl_android_installation_details".
@@ -103,6 +104,8 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
             if (!empty($record) && empty($record->device_id)) {
                 $record->device_id = $data['device_id'];
                 $record->save();
+                $rate_app_data = new TblRateDownloadAck();
+                $rate_app_data->updateAll(['device_id' => $record->device_id, 'download_date_time' => date('Y-m-d H:i:s')], ['applicable_code' => $data['organization_code'], 'applicable_for' => 'MEMBER', 'device_id' => NULL]);
             }
         }
         return $this->find()
