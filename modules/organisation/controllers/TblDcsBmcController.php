@@ -300,6 +300,11 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                 $model_bmc->p_bmc_code = $mapped_bmc_code;
                 $mcc_codes[] = $model_bmc->bmcCode->mcc_plant_code;
                 $master[] = $model_bmc;
+                $mainBmc = $model_bmc->mainBmcCode;
+                $groupBmc = $model_bmc->bmcCode;
+                $main_org_data = ['union_code' => $mainBmc->union_code, 'plant_code' => $mainBmc->plant_code, 'mcc_plant_code' => $mainBmc->mcc_plant_code, 'bmc_code' => $id];
+                $group_org_data = ['union_code' => $groupBmc->union_code, 'plant_code' => $groupBmc->plant_code, 'mcc_plant_code' => $groupBmc->mcc_plant_code, 'bmc_code' => $mapped_bmc_code];
+                Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data);
             }
             if (!empty($mcc_codes)) {
                 $searchMcc = new TblMccPlantGroupMappingSearch();
@@ -312,6 +317,11 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                     $model_mcc->mcc_plant_code = $main_mcc_code;
                     $model_mcc->p_mcc_plant_code = $mapped_mcc_code;
                     $master[] = $model_mcc;
+                    $mainMcc = $model_mcc->mainMccCode;
+                    $groupMcc = $model_mcc->mccCode;
+                    $main_org_data = ['union_code' => $mainMcc->union_code, 'plant_code' => $mainMcc->plant_code, 'mcc_plant_code' => $main_mcc_code];
+                    $group_org_data = ['union_code' => $groupMcc->union_code, 'plant_code' => $groupMcc->plant_code, 'mcc_plant_code' => $mapped_mcc_code];
+                    Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data, 'mcc_plant_code', 'MCC');
                 }
             }
             $transaction = $this->generalModel->saveTransaction($master, ['BMC Mapping', 'create']);

@@ -37,6 +37,7 @@ use app\modules\sms\models\TblAlertNotification;
 use app\modules\syncutility\models\TblSecurity;
 use yii\helpers\ArrayHelper;
 use app\modules\configuration\models\TblUnionConfigResult;
+use app\modules\syncutility\models\TblGenerateSentbox;
 
 class GeneralFunctions extends Component {
 
@@ -941,7 +942,7 @@ class GeneralFunctions extends Component {
                             ->where([$fields[0] => $model->$attribute])
                             ->andWhere($where)->all();
         }
-       
+
         if (!empty($records)) {
             if (count($records) == 1) {
                 $model->$attribute = $records[0]->{$fields[0]};
@@ -965,7 +966,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1310,6 +1311,38 @@ class GeneralFunctions extends Component {
         $model = new TblUnionConfigResult();
         $data = $model->find()->select('config_result_key')->where(['union_code' => $union, 'config_key' => $field, 'config_for' => $for])->one();
         return !empty($data) ? $data->config_result_key : '';
+    }
+
+    public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
+        return [
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+        ];
+    }
+
+    public function generateGroupMappingSetBox(&$master, $main_org_data, $group_org_data, $key = 'bmc_code', $dest_org_type = 'BMC') {
+        $sentbox_config = $this->getGroupMappingSetBoxConfig($key);
+        $default_config = ['entry_datetime' => date('Y-m-d H:i:s'), 'status' => 0, 'operation_type' => 'INSERT', 'sentbox_key' => $key, 'dest_org_type' => $dest_org_type];
+        foreach ($sentbox_config as $config) {
+            $model = new TblGenerateSentbox();
+            $model->attributes = $config;
+            $model->attributes = $default_config;
+            $model->attributes = $group_org_data;
+            $model->where_clause = str_replace('{union_code}', $model->union_code, $model->where_clause);
+            $model->where_clause = str_replace('{plant_code}', $model->plant_code, $model->where_clause);
+            $model->where_clause = str_replace('{mcc_plant_code}', $model->mcc_plant_code, $model->where_clause);
+            $model->where_clause = str_replace('{bmc_code}', $model->bmc_code, $model->where_clause);
+            $model->where_clause = str_replace('{dcs_code}', $model->dcs_code, $model->where_clause);
+            $model->attributes = $main_org_data;
+            $master[] = $model;
+        }
+        return $master;
     }
 
 }

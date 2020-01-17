@@ -37,9 +37,9 @@ class TblGenerateSentbox extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['table_name', 'where_clause', 'operation_type', 'sentbox_key', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string'],
-                [['status'], 'integer'],
-                [['entry_datetime', 'picked_datetime', 'response_datetime', 'model_name'], 'safe'],
+            [['table_name', 'where_clause', 'operation_type', 'sentbox_key', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+            [['status'], 'safe'],
+            [['entry_datetime', 'picked_datetime', 'response_datetime', 'model_name', 'dest_org_type'], 'safe'],
         ];
     }
 

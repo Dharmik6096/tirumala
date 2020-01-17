@@ -302,6 +302,11 @@ class TblMccPlantController extends \app\controllers\ChildController {
                 $model_mcc->mcc_plant_code = $id;
                 $model_mcc->p_mcc_plant_code = $mapped_mcc_code;
                 $master[] = $model_mcc;
+                $mainMcc = $model_mcc->mainMccCode;
+                $groupMcc = $model_mcc->mccCode;
+                $main_org_data = ['union_code' => $mainMcc->union_code, 'plant_code' => $mainMcc->plant_code, 'mcc_plant_code' => $id];
+                $group_org_data = ['union_code' => $groupMcc->union_code, 'plant_code' => $groupMcc->plant_code, 'mcc_plant_code' => $mapped_mcc_code];
+                Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data, 'mcc_plant_code', 'MCC');
             }
             $transaction = $this->generalModel->saveTransaction($master, ['MCC Mapping', 'create']);
             if ($transaction == 'customRedirect') {

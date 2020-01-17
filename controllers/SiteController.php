@@ -1681,8 +1681,8 @@ class SiteController extends Controller {
                     } else {
                         $table = $record->table_name;
                         $modelName = str_replace(' ', '', ucwords(str_replace('_', ' ', $table)));
-                        $modelName = Yii::$app->path->define($modelName);
                     }
+                    $modelName = Yii::$app->path->define($modelName);
                     $model = new $modelName();
                     $modelDataAll = $model->find()
                             ->where($record->where_clause)
@@ -1698,13 +1698,15 @@ class SiteController extends Controller {
                             $sentboxArray = [];
                             $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_plant_code, $bmc_code, $union_code, $dcs_code);
                             foreach ($sentboxArray as $sent) {
-                                $flag = !empty($record->operation_type) ? $record->operation_type : 'INSERT';
-                                $sentbox = new TblSentbox();
-                                $sentbox->dest_org_id = $sent['code'];
-                                $sentbox->source_org_id = !empty($modelData->union_code) ? $modelData->union_code : $record->union_code;
-                                $sentbox->dest_org_type = $sent['type'];
-                                if (!($sentbox->setSentbox($modelData, $flag))) {
-                                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                                if (empty($record->dest_org_type) || $record->dest_org_type == $sent['type']) {
+                                    $flag = !empty($record->operation_type) ? $record->operation_type : 'INSERT';
+                                    $sentbox = new TblSentbox();
+                                    $sentbox->dest_org_id = $sent['code'];
+                                    $sentbox->source_org_id = !empty($modelData->union_code) ? $modelData->union_code : $record->union_code;
+                                    $sentbox->dest_org_type = $sent['type'];
+                                    if (!($sentbox->setSentbox($modelData, $flag))) {
+                                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                                    }
                                 }
                             }
                         }
@@ -1712,15 +1714,18 @@ class SiteController extends Controller {
                     $record->status = 2;
                     $record->response_datetime = date('Y-m-d H:i:s');
                     $record->save(FALSE);
+                } catch (\Throwable $e) {
+                    //var_dump($e);
+                    $record->status = 3;
+                    $record->response_datetime = date('Y-m-d H:i:s');
+                    $record->save(FALSE);
                 } catch (\yii\base\UserException $e) {
-                    var_dump($e);
-                    die;
+                    //var_dump($e);
                     $record->status = 3;
                     $record->response_datetime = date('Y-m-d H:i:s');
                     $record->save(FALSE);
                 } catch (\yii\db\Exception $e) {
-                    var_dump($e);
-                    die;
+                    //var_dump($e);
                     $record->status = 3;
                     $record->response_datetime = date('Y-m-d H:i:s');
                     $record->save(FALSE);
@@ -1762,8 +1767,13 @@ class SiteController extends Controller {
                     $row->response_datetime = date('Y-m-d H:i:s');
                     $row->status = 2;
                     $row->save();
+                } catch (\Throwable $e) {
+                    //var_dump($e);
+                    $row->response_datetime = date('Y-m-d H:i:s');
+                    $row->status = 3;
+                    $row->save();
                 } catch (\yii\db\Exception $e) {
-                    var_dump($e);
+                    // var_dump($e);
                     $row->response_datetime = date('Y-m-d H:i:s');
                     $row->status = 3;
                     $row->save();
