@@ -16,55 +16,55 @@ $attribute = [
 //    ['attribute' => 'organization_type', 'value' => function($model) {
 //            return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
 //        }, 'filter' => TRUE],
-    ['attribute' => 'mobile_no'],
-    ['attribute' => 'device_id'],
-    ['attribute' => 'db_version',
-        'filter' => FALSE,
-        'value' => function ($model) {
-            return isset($model->db_version) ? Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version] : '';
-        },],
-    [
-        'attribute' => 'created_at',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
-        'value' => function($model) {
+            ['attribute' => 'mobile_no'],
+            ['attribute' => 'device_id'],
+            ['attribute' => 'db_version',
+                'filter' => FALSE,
+                'value' => function ($model) {
+                    return isset(Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version]) ? Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version] : $model->db_version;
+                },],
+            [
+                'attribute' => 'created_at',
+                'filterType' => GridView::FILTER_DATE,
+                'filterWidgetOptions' => [
+                    'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                        'autoclose' => true]
+                ],
+                'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->created_at);
         }],
-    ['attribute' => 'installation_type',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('installation_type', $searchModel, 'installation_type'),
-        'value' => function ($model) {
-            return isset($model->installation_type) ? Yii::$app->dropdown->getRecords('installation_type')['data'][$model->installation_type] : '';
-        },],
-];
+            ['attribute' => 'installation_type',
+                'filter' => Yii::$app->dropdown->dropdownfilterStatic('installation_type', $searchModel, 'installation_type'),
+                'value' => function ($model) {
+                    return isset($model->installation_type) ? Yii::$app->dropdown->getRecords('installation_type')['data'][$model->installation_type] : '';
+                },],
+        ];
 
-$grid_option = [
-    'id' => 'android-installation-list',
-    'attributes' => $attribute,
-    'active_column' => false,
-    'actions' => [
+        $grid_option = [
+            'id' => 'android-installation-list',
+            'attributes' => $attribute,
+            'active_column' => false,
+            'actions' => [
 //        'view' => true,
-        'download' => function ($url, $model) {
-            $class = $model->installation_type == 1 ? '' : ' disabled ';
-            $options = ['title' => Yii::t('app', 'Download'), 'class' => $class];
-            $path = $model->db_path;
-            return GhostHtml::a('<i class="fa fa-download"></i>', ['/installation/tbl-android-installation/download', 'id' => Yii::$app->basePath . $path], $options);
-        },
-        'deactive' => function ($url, $model) {
-            $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'dcs_name');
-            $icon = '<i class="fa fa-close"></i>';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'title' => Yii::t('app', 'Deactivate'), 'class' => 'deactivate-identity', 'data-val' => $model->android_installation_details_id, 'data-name' => $name];
-            return GhostHtml::a_alert($icon, ['/installation/tbl-android-installation/deactivate-identity'], $options);
-        },
-    ]
-];
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+                'download' => function ($url, $model) {
+                    $class = $model->installation_type == 1 ? '' : ' disabled ';
+                    $options = ['title' => Yii::t('app', 'Download'), 'class' => $class];
+                    $path = $model->db_path;
+                    return GhostHtml::a('<i class="fa fa-download"></i>', ['/installation/tbl-android-installation/download', 'id' => Yii::$app->basePath . $path], $options);
+                },
+                        'deactive' => function ($url, $model) {
+                    $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'dcs_name');
+                    $icon = '<i class="fa fa-close"></i>';
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'title' => Yii::t('app', 'Deactivate'), 'class' => 'deactivate-identity', 'data-val' => $model->android_installation_details_id, 'data-name' => $name];
+                    return GhostHtml::a_alert($icon, ['/installation/tbl-android-installation/deactivate-identity'], $options);
+                },
+                    ]
+                ];
+                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
-<?php
+                <?php
 
-$script = "
+                $script = "
 $(document).ready(function(){
     $(document).on('click','.deactivate-identity',function(e){
     var id= $(this).attr('data-val');
@@ -108,4 +108,5 @@ $(document).ready(function(){
     });
  
 });";
-$this->registerJs($script, View::POS_END, 'member-index');
+                $this->registerJs($script, View::POS_END, 'member-index');
+                
