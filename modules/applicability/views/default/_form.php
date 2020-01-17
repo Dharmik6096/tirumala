@@ -183,7 +183,7 @@ $script = "
         if($('#{$nameforid}-union_code').val() !== '')
         {
             addFilterData($('#{$nameforid}-union_code').val());
-            addSociety('society',0,'');
+//            addSociety('society',0,'');
         }
 //        $('#dcs-filter input[type=\'radio\']:first').attr('checked', true);
         $('#dcs-filter input[type=\'radio\']:first').trigger('click');
@@ -227,6 +227,7 @@ $script = "
     });
     function addFilterData(ucode, filter_type = '', applicable_for = '')
     {
+        var appendId='nd';
         var flts=JSON.stringify({$filter_json});
         var fld='{$field_name}';
         var fldcode='{$field_code}';
@@ -243,9 +244,10 @@ $script = "
                             {
                                 $.each(obj1.data, function(index, value) {
                                         $('#'+index+'-list').empty();
+                                        appendId = index;
                                         $.each(value, function(ind, vl) {
                                             if(applicable_for == ''){
-                                               $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+ind+'\"><label class=\"route-text\" for=\"'+ind+'\">'+vl+'</label></div></div>');
+                                               $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+appendId+'-'+ind+'\"><label class=\"route-text\" for=\"'+appendId+'-'+ind+'\">'+vl+'</label></div></div>');
                                             } else {
                                                 $('#'+index+'-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><label class=\"route-text\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"TblDcsPurchaseRateApplicabitity[applicable_code][]\" value=\"'+ind+'\" id=\"'+ind+'\"><label for=\"'+ind+'\">'+vl+'</label></label></div></div>');
                                             }
