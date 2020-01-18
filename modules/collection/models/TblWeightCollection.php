@@ -146,7 +146,7 @@ class TblWeightCollection extends \app\models\ChildModel {
     }
 
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
     }
 
     public function getMilkTypeCode() {
