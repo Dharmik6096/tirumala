@@ -33,7 +33,7 @@ class MasterDataController extends \app\modules\androiddpu\v1\controllers\Master
             $model->dest_org_id = $code;
             $model->dest_org_type = $type;
             $model->device_id = $device_id;
-            $notInTables = ['tbl_purchase_rate_applicability', 'tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'];
+            $notInTables = ['tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'];
             $res_data = $model->getData($notInTables);
             $this->response['data'] = $res_data;
         }
