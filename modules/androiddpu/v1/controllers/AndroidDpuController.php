@@ -72,6 +72,7 @@ class AndroidDpuController extends RestController {
                         $andoidIdDetailModel->device_id = $data['device_id'];
                         $andoidIdDetailModel->imei_no = $data['imei'];
                         $andoidIdDetailModel->mobile_no = $content['mobile_no'];
+                        $andoidIdDetailModel->version_no = !empty($content['version_no']) ? $content['version_no'] : NULL;
                         $andoidIdDetailModelData = $andoidIdDetailModel->getActiveCount();
 //                        if (!empty($andoidIdDetailModelData)) {
 //                            $res_data['message'] = 'Mobile Number already registered.';
