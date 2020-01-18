@@ -831,4 +831,38 @@ class TblDcs extends ChildModel {
         }
     }
 
+    public function setModelData($model, &$saveModel) {
+        $society_model = new TblSocietyCollection();
+        $society_model->dcs_code = $model->dcs_code;
+        $society_model->from_date = date('Y-m-d H:i:s');
+        $society_model->status = 1;
+        $society_model->remarks = NULL;
+        array_push($saveModel, $society_model);
+
+        $member_rate_model = new TblPurchaseRate();
+        $member_rate_data = $member_rate_model->getRecord($model->rate_chart_member);
+        if (!empty($member_rate_data)) {
+            $member_applicability = new TblPurchaseRateApplicability();
+            $member_applicability->purchase_rate_code = $member_rate_data->purchase_rate_code;
+            $member_applicability->wef_date = $member_rate_data->wef_date;
+            $member_applicability->shift_code = $member_rate_data->shift_id;
+            $member_applicability->union_code = $model->union_code;
+            $member_applicability->dcs_code = $model->dcs_code;
+            array_push($saveModel, $member_applicability);
+
+            $incentive_model = new TblDpuIncentiveMaster();
+            $incentive_model->dcs_code = $model->dcs_code;
+            $incentive_model->m_cutoff_time = '12:30';
+            $incentive_model->e_cutoff_time = '22:30';
+            $incentive_model->m_start_time = '01:00';
+            $incentive_model->e_start_time = '14:00';
+            $incentive_model->m_lock_time = '13:55';
+            $incentive_model->e_lock_time = '23:55';
+            $incentive_model->inc_rate = 0.0;
+            $incentive_model->inc_deduction = 0.0;
+            $incentive_model->union_code = $model->union_code;
+            array_push($saveModel, $incentive_model);
+        }
+    }
+
 }

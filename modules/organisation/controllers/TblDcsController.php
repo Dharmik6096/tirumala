@@ -169,42 +169,7 @@ class TblDcsController extends ChildController {
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
             if ($validate == 1) {
-                $society_model = new TblSocietyCollection();
-                $society_model->dcs_code = $this->model->dcs_code;
-                $society_model->from_date = date('Y-m-d H:i:s');
-                $society_model->status = 1;
-                $society_model->remarks = NULL;
-                array_push($mapList, $society_model);
-
-                $rate_chart = [];
-                $member_rate_model = new TblPurchaseRate();
-                $member_rate_data = $member_rate_model->getRecord($this->model->rate_chart_member);
-
-                if (!empty($member_rate_data)) {
-                    $member_applicability = new TblPurchaseRateApplicability();
-                    $member_applicability->purchase_rate_code = $member_rate_data->purchase_rate_code;
-//                    $member_applicability->rate_app_code = (string) ($member_rate_data->purchase_rate_code . $member_applicability->getCode());
-                    $member_applicability->wef_date = $member_rate_data->wef_date;
-                    $member_applicability->shift_code = $member_rate_data->shift_id;
-                    $member_applicability->union_code = $this->model->union_code;
-                    $member_applicability->dcs_code = $this->model->dcs_code;
-                    $rate_chart[] = $member_applicability;
-                }
-                $mapList = array_merge($mapList, $rate_chart);
-
-                $incentive_model = new TblDpuIncentiveMaster();
-                $incentive_model->dcs_code = $this->model->dcs_code;
-                $incentive_model->m_cutoff_time = '12:30';
-                $incentive_model->e_cutoff_time = '22:30';
-                $incentive_model->m_start_time = '01:00';
-                $incentive_model->e_start_time = '14:00';
-                $incentive_model->m_lock_time = '13:55';
-                $incentive_model->e_lock_time = '23:55';
-                $incentive_model->inc_rate = 0.0;
-                $incentive_model->inc_deduction = 0.0;
-                $incentive_model->union_code = $this->model->union_code;
-                array_push($mapList, $incentive_model);
-                
+                $this->model->setModelData($this->model, $mapList);
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
