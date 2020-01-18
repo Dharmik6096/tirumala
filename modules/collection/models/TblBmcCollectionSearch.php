@@ -19,10 +19,10 @@ class TblBmcCollectionSearch extends TblBmcCollection {
      */
     public function rules() {
         return [
-                [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
-                [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no'], 'safe'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-                [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code'], 'safe']
+            [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
+            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
+            [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code'], 'safe']
         ];
     }
 
@@ -64,22 +64,25 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             $query->andFilterWhere(['and', ['>=', 'tbl_bmc_collection.date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 00:00:00.000'], ['<=', 'date_time_of_collection', date('Y-m-d', strtotime($this->date_time_of_collection)) . ' 23:59:59.000']]);
         // grid filtering conditions
 
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-        $from_date .= ' ' . $from_shift;
-        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
-
+        if (!empty($this->from_date) || !empty($this->from_shift)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+            $from_date .= ' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+        }
 
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
 
-        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-        $to_date .= ' ' . $to_shift;
-        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
-
+        if (!empty($this->to_date) || !empty($this->to_shift)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+            $to_date .= ' ' . $to_shift;
+            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        }
         $query->andFilterWhere([
             'tbl_bmc_collection.qty_mode' => $this->qty_mode,
             'tbl_bmc_collection.doc_no' => $this->doc_no,
+            'tbl_bmc_collection.sample_no' => $this->sample_no,
         ]);
         $query->andFilterWhere(['like', 'tbl_bmc_collection.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_bmc_collection.rtpl', $this->rtpl])
