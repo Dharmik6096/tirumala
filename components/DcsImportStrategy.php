@@ -15,6 +15,7 @@ use Yii;
 use app\modules\organisation\models\TblSocietyCollection;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\general\models\TblDpuIncentiveMaster;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -123,6 +124,19 @@ class DcsImportStrategy extends ARImportStrategy {
                             $member_applicability->dcs_code = $model->dcs_code;
                             array_push($modelList, $member_applicability);
                         }
+
+                        $incentive_model = new TblDpuIncentiveMaster();
+                        $incentive_model->dcs_code = $model->dcs_code;
+                        $incentive_model->m_cutoff_time = '12:30';
+                        $incentive_model->e_cutoff_time = '22:30';
+                        $incentive_model->m_start_time = '01:00';
+                        $incentive_model->e_start_time = '14:00';
+                        $incentive_model->m_lock_time = '13:55';
+                        $incentive_model->e_lock_time = '23:55';
+                        $incentive_model->inc_rate = 0.0;
+                        $incentive_model->inc_deduction = 0.0;
+                        $incentive_model->union_code = $model->union_code;
+                        array_push($modelList, $incentive_model);
 
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();

@@ -33,6 +33,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\general\models\TblDpuIncentiveMaster;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -178,7 +179,7 @@ class TblDcsController extends ChildController {
                 $rate_chart = [];
                 $member_rate_model = new TblPurchaseRate();
                 $member_rate_data = $member_rate_model->getRecord($this->model->rate_chart_member);
-              
+
                 if (!empty($member_rate_data)) {
                     $member_applicability = new TblPurchaseRateApplicability();
                     $member_applicability->purchase_rate_code = $member_rate_data->purchase_rate_code;
@@ -189,8 +190,21 @@ class TblDcsController extends ChildController {
                     $member_applicability->dcs_code = $this->model->dcs_code;
                     $rate_chart[] = $member_applicability;
                 }
-
                 $mapList = array_merge($mapList, $rate_chart);
+
+                $incentive_model = new TblDpuIncentiveMaster();
+                $incentive_model->dcs_code = $this->model->dcs_code;
+                $incentive_model->m_cutoff_time = '12:30';
+                $incentive_model->e_cutoff_time = '22:30';
+                $incentive_model->m_start_time = '01:00';
+                $incentive_model->e_start_time = '14:00';
+                $incentive_model->m_lock_time = '13:55';
+                $incentive_model->e_lock_time = '23:55';
+                $incentive_model->inc_rate = 0.0;
+                $incentive_model->inc_deduction = 0.0;
+                $incentive_model->union_code = $this->model->union_code;
+                array_push($mapList, $incentive_model);
+                
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
