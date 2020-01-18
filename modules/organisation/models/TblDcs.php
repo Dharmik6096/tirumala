@@ -35,6 +35,7 @@ use app\modules\organisation\models\TblRouteMapping;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\general\models\TblCollectionIncentiveDeduction;
+use app\modules\dcsoperation\models\TblPurchaseRate;
 
 /**
  * This is the model class for table "tbl_dcs".
@@ -100,7 +101,7 @@ class TblDcs extends ChildModel {
     public $download_status;
     public $tmcc_code;
     public $is_sentbox;
-    public $same_milk_type, $diff_milk_type;
+    public $same_milk_type, $diff_milk_type, $rate_chart_member;
 
     /**
      * @inheritdoc
@@ -194,7 +195,10 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
             [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']],
-            [['x_col1'], 'default', 'value' => '0#0']
+            [['rate_chart_member'], 'required', 'on' => ['createDcs', 'importCsv']],
+            [['x_col1'], 'default', 'value' => '0#0'],
+            [['rate_chart_member'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
+//            [['rate_chart_member'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'rate_chart_member'], 'on' => ['importCsv']],
         ];
     }
 
@@ -621,7 +625,7 @@ class TblDcs extends ChildModel {
 
     public function validDcs($dcs) {
         $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->all();
-        return !empty($data) && count($data)==1 ? $data[0]->dcs_code : '';
+        return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
     }
 
     public function getNewDcs() {
@@ -813,6 +817,17 @@ class TblDcs extends ChildModel {
 
     public function getUnionDpuConfig() {
         return $this->hasOne(TblUnionDpuConfig::className(), ['union_code' => 'union_code', 'dpu_type' => 'dpu_type']);
+    }
+
+    public function getPurchaseRate() {
+        return $this->hasOne(TblPurchaseRate::className(), ['union_code' => 'union_code', 'purchase_rate_code' => 'rate_chart_member']);
+    }
+
+    public function importData($attribute, $params) {
+        if (empty($this->purchaseRate)) {
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid.'));
+            return false;
+        }
     }
 
 }

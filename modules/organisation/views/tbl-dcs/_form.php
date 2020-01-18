@@ -32,7 +32,7 @@ if (isset($address[1])) {
 $vendor = ['EIPL' => 'EIPL', 'STELLAPPS' => 'STELLAPPS'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
-$disable = !empty($model->bmc_code) ? TRUE : FALSE;
+//$disable = !empty($model->bmc_code) ? TRUE : FALSE;
 ?>
 
 <?php
@@ -56,7 +56,7 @@ $form = ActiveForm::begin([
     <?= Html::activeHiddenInput($model, 'destination_code') ?>
     <?= Html::activeHiddenInput($model, 'route_code') ?>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disable); ?>
+        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disabled); ?>
     </div>
     <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'tmcc_code')->textInput(['maxlength' => true, 'readonly' => $disabled]) ?>
@@ -88,6 +88,11 @@ $form = ActiveForm::begin([
     <!--<div class="col-sm-3">-->
     <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('dpu_type'), false); ?>
     <!--</div>-->
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbldcs-union_code', 'rate_chart_member', $model->getAttributeLabel('rate_chart_member')); ?>
+        </div>
+    <?php } ?>
     <div class="clearfix"></div>
     <!--    <div class="col-sm-3">
             <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
@@ -245,9 +250,9 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <?php // if ($type == 'create') { ?>
-<!--        <div class="col-sm-3">
-            <?= Yii::$app->controls->active($model, $form); ?>
-        </div>-->
+    <!--        <div class="col-sm-3">
+    <?= Yii::$app->controls->active($model, $form); ?>
+            </div>-->
     <?php // } ?>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="clearfix"></div>

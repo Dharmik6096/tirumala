@@ -13,6 +13,8 @@ use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;
 use Yii;
 use app\modules\organisation\models\TblSocietyCollection;
+use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -46,17 +48,21 @@ class DcsImportStrategy extends ARImportStrategy {
 
 
                     $uniqueAttributes = [];
+                    $addedAttributes = [];
                     foreach ($this->configs as $config) {
+                        $value = call_user_func($config['value'], $row);
                         if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
-                            $value = call_user_func($config['value'], $row);
-
                             //Create array of unique attributes
                             if (isset($config['unique']) && $config['unique']) {
                                 $uniqueAttributes[$config['attribute']] = $value;
                             }
-
                             //Set value to the model
-                            $model->setAttribute($config['attribute'], $value);
+                            ($model->hasAttribute($config['attribute'])) ? $model->setAttribute($config['attribute'], $value) : '';
+                            $addedAttributes[$config['attribute']] = $config['attribute'];
+                        } else if (property_exists($model, $config['attribute'])) {
+                            //Set value to the model of public attribute
+                            $model->{$config['attribute']} = $value;
+                            $addedAttributes[$config['attribute']] = $config['attribute'];
                         }
                     }
 
@@ -105,6 +111,18 @@ class DcsImportStrategy extends ARImportStrategy {
                         $society_model->status = 1;
                         $society_model->remarks = NULL;
                         array_push($modelList, $society_model);
+
+                        $member_rate_model = new TblPurchaseRate();
+                        $member_rate_data = $member_rate_model->getRecord($model->rate_chart_member);
+                        if (!empty($member_rate_data)) {
+                            $member_applicability = new TblPurchaseRateApplicability();
+                            $member_applicability->purchase_rate_code = $member_rate_data->purchase_rate_code;
+                            $member_applicability->wef_date = $member_rate_data->wef_date;
+                            $member_applicability->shift_code = $member_rate_data->shift_id;
+                            $member_applicability->union_code = $model->union_code;
+                            $member_applicability->dcs_code = $model->dcs_code;
+                            array_push($modelList, $member_applicability);
+                        }
 
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();

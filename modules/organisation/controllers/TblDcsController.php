@@ -32,6 +32,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicabilitySearch;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\dcsoperation\models\TblPurchaseRate;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -173,6 +174,23 @@ class TblDcsController extends ChildController {
                 $society_model->status = 1;
                 $society_model->remarks = NULL;
                 array_push($mapList, $society_model);
+
+                $rate_chart = [];
+                $member_rate_model = new TblPurchaseRate();
+                $member_rate_data = $member_rate_model->getRecord($this->model->rate_chart_member);
+              
+                if (!empty($member_rate_data)) {
+                    $member_applicability = new TblPurchaseRateApplicability();
+                    $member_applicability->purchase_rate_code = $member_rate_data->purchase_rate_code;
+//                    $member_applicability->rate_app_code = (string) ($member_rate_data->purchase_rate_code . $member_applicability->getCode());
+                    $member_applicability->wef_date = $member_rate_data->wef_date;
+                    $member_applicability->shift_code = $member_rate_data->shift_id;
+                    $member_applicability->union_code = $this->model->union_code;
+                    $member_applicability->dcs_code = $this->model->dcs_code;
+                    $rate_chart[] = $member_applicability;
+                }
+
+                $mapList = array_merge($mapList, $rate_chart);
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
