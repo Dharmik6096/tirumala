@@ -95,13 +95,16 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->date_time_of_testing = $datetime;
                 if (strtolower($this->model->customer_type) == 'dcs') {
                     $dcs = new TblDcs();
-                    $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $dcs->validDcs($this->model->customer_code) : NULL;
+                    $this->model->dcs_code = $dcs->validDcs($this->model->customer_code);
                     $this->model->customer_code = $this->model->dcs_code;
+                    $this->model->village_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code');
+                    $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
                 } else {
+                    $this->model->dcs_code = NULL;
                     $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
+                    $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
+                    $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
                 }
-                $this->model->village_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
-                $this->model->route_code = strtolower($this->model->customer_type) == 'dcs' ? Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code') : Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
                 $this->model->own_mcc_plant_code = $this->model->mcc_plant_code;
                 $this->model->own_bmc_code = $this->model->bmc_code;
             } else {
@@ -109,8 +112,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
                 }
             }
-//            $this->model->dcs_code = $this->model->customer_type == strtoupper('DCS') ? $this->model->customer_code : NULL;
-            $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
+            $this->model->date_time_of_collection = !empty($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             $modelSave[] = $this->model;
             if ($this->model->validate()) {
