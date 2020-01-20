@@ -53,6 +53,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'gst_no')->textInput() ?>
     </div>
+    <div class='pull-left col-sm-6'>
+        <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
+        <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-3 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-3">
         <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
