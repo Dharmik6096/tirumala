@@ -59,7 +59,7 @@ class TblWeightCollectionSearch extends TblWeightCollection {
             return $dataProvider;
         }
         $query->joinWith(['dcsCode', 'shiftCode', 'milkTypeCode', 'mainCustomerCode', 'customerType']);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_weight_collection','tbl_weight_collection','tbl_weight_collection');
 
         if (!empty($this->qty)) {
             $query->andFilterWhere([$this->operator_qty, 'tbl_weight_collection.qty', $this->qty]);

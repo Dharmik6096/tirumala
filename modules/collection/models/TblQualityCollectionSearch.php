@@ -52,7 +52,7 @@ class TblQualityCollectionSearch extends TblQualityCollection {
         ]);
         $this->load($params);
         $query->joinWith(['bmcCode.tblMccPlant', 'bmcCode']);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_mcc_plant', 'tbl_mcc_plant');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_quality_collection', 'tbl_quality_collection', 'tbl_quality_collection');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
