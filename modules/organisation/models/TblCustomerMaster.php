@@ -47,6 +47,8 @@ use app\modules\organisation\models\TblRouteMapping;
  */
 class TblCustomerMaster extends \app\models\ChildModel {
 
+    public $same_milk_type, $diff_milk_type;
+
     /**
      * @inheritdoc
      */
@@ -63,7 +65,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['customer_name', 'address', 'customer_type', 'customer_code_ex', 'route_code', 'bmc_code'], 'required'],
             [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
-            [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code'], 'safe'],
+            [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type'], 'safe'],
             [['is_active'], 'default', 'value' => 1],
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
@@ -82,6 +84,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerMaster::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['x_col1'], 'default', 'value' => '0#0']
         ];
     }
 

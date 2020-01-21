@@ -53,6 +53,7 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->customer_code = $this->model->getCode();
 //            $this->model->customer_code_ex = $this->model->getCodeEx();
+            $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -70,11 +71,18 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-
+        $x_col1 = explode('#', $this->model->x_col1);
+        if (isset($x_col1)) {
+            if (isset($x_col1[0]) && isset($x_col1[1])) {
+                $this->model->same_milk_type = $x_col1[0];
+                $this->model->diff_milk_type = $x_col1[1];
+            }
+        }
         if (Yii::$app->request->post()) {
             $historyModel = new TblCustomerMasterHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
+            $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
