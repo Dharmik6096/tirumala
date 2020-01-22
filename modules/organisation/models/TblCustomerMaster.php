@@ -84,7 +84,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerMaster::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['x_col1'], 'default', 'value' => '0#0']
+            [['x_col1'], 'default', 'value' => '1#1']
         ];
     }
 

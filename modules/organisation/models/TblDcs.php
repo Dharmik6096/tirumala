@@ -197,7 +197,7 @@ class TblDcs extends ChildModel {
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
             [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']],
             [['rate_chart_member'], 'required', 'on' => ['createDcs', 'importCsv']],
-            [['x_col1'], 'default', 'value' => '0#0'],
+            [['x_col1'], 'default', 'value' => '1#1'],
             [['rate_chart_member'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
 //            [['rate_chart_member'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'rate_chart_member'], 'on' => ['importCsv']],
         ];
