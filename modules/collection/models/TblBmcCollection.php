@@ -332,8 +332,8 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $this->route_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
             }
             $datetime = date('Y-m-d H:i:s');
-            $this->qlty_auto = 1;
-            $this->qty_auto = 1;
+            $this->qlty_auto = 0;
+            $this->qty_auto = 0;
             $this->dt_date = $datetime;
             $this->sample_no = $this->getSampleNo();
             $this->date_time_of_recieve = $datetime;

@@ -82,8 +82,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $update = TRUE;
             }
             if (!$update) {
-                $this->model->qlty_auto = 1;
-                $this->model->qty_auto = 1;
+                $this->model->qlty_auto = 0;
+                $this->model->qty_auto = 0;
                 $this->model->dt_date = date('Y-m-d H:i:s');
                 $datetime = date('Y-m-d H:i:s');
                 $this->model->sample_no = $this->model->getSampleNo();
