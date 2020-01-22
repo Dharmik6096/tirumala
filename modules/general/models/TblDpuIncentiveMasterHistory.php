@@ -44,7 +44,7 @@ class TblDpuIncentiveMasterHistory extends \yii\db\ActiveRecord {
             [['incentive_master_code'], 'safe'],
             [['dcs_code', 'm_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'union_code'], 'required'],
             [['dcs_code', 'm_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'union_code', 'inc_rate', 'inc_deduction', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'from_date', 'to_date'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }

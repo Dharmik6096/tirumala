@@ -5,14 +5,17 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+use demogorgorn\ajax\AjaxSubmitButton;
+use yii\web\JsExpression;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 $class = $type == 'create' ? '' : 'no_pointer';
+//$error = $type == 'create' ? [$model] : [$model, $detailModel];
 ?>
 
 <?php
 $form = ActiveForm::begin([
-            'options' => [],
+            'options' => ['id' => 'dpu-incentive-form'],
             'validateOnBlur' => FALSE,
             'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
@@ -83,9 +86,98 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'inc_deduction')->textInput() ?>
     </div>
 
+    <?php if ($type == 'edit') { ?>
+        <div class="clearfix"></div>
+        <hr>
+        <div class="col-sm-3">
+            <?= Yii::$app->controls->date($detailModel, $form, 'from_date', '', date('Y-m-d'), false, false); ?>
+        </div>
+        <div class="col-sm-3">
+            <?= Yii::$app->controls->date($detailModel, $form, 'to_date', '', date('Y-m-d'), false, false); ?>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-2 shift">
+            <?= Yii::$app->dropdown->dropdown('shift_applicability', $detailModel, $form, '', $detailModel->getAttributeLabel('shift_code'), false, 'shift_code'); ?>
+        </div> 
+        <div class="col-sm-2 reset_field">
+            <?=
+            $form->field($detailModel, 'from_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+                'mask' => '99:99',])
+            ?> 
+        </div>
+        <div class="col-sm-2 reset_field">
+            <?=
+            $form->field($detailModel, 'to_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+                'mask' => '99:99',])
+            ?> 
+        </div>
+        <div class="col-sm-2 reset_field">
+            <?= Yii::$app->dropdown->dropdownStatic('calc_type', $detailModel, $form, 'form-group', TRUE, false, 'scheme_type', false); ?>  
+        </div>
+        <div class="col-sm-2 number-validate reset_field">
+            <?= Html::activeHiddenInput($detailModel, 'incentive_deduction_id', ['value' => $detailModel->incentive_deduction_id]) ?>
+            <?= $form->field($detailModel, 'amount')->textInput() ?>
+        </div>
+    <?php } ?>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?php if ($type == 'edit') { ?> 
+                <?php
+                AjaxSubmitButton::begin([
+                    'label' => Yii::t('app', 'Save'),
+                    'ajaxOptions' => [
+                        'type' => 'POST',
+                        'url' => Url::to(['update', 'id' => $model->incentive_master_code]),
+                        'beforeSend' => new JsExpression("function(data){
+                                               $('#loadercontent').show();
+                                                $('#pageloader').show();
+                                                }"),
+                        'success' => new JsExpression('function(data){
+                                                                var data=$.parseJSON(data);
+                                                                $("#loadercontent").hide();
+                                                                $("#pageloader").hide();
+                                                                if (data.status == "success"){ 
+                                                                    $("#loadercontent").hide();
+                                                                    $("#pageloader").hide();
+                                                                    $(".help-block").text("");
+                                                                    $(".form-group").removeClass("has-error");                                                                   
+                                                                    $(".error-summary").hide();
+                                                                    $(".error-summary li").remove();
+                                                                    reloadGrid();
+                                                                    $(".transporter").hide();
+                                                                    $("#dpu-incentive-form .reset_field input").val("");
+                                                                    $("#dpu-incentive-form .reset_field select").val("");
+                                                                    $("#dpu-incentive-form .reset_field textarea").val("");
+
+                                                                    $(".panel-body").scrollTop(0);                                                                    
+                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
+                                                                   setTimeout(function(){
+                                                                   $("#tblcollectionincentivededuction-from_time").focus();},100);
+                                                                    });
+                                                                }else{
+                                                                
+                                                                    $("#loadercontent").hide();
+                                                                    $("#pageloader").hide();
+                                                                    $(".help-block").text("");
+                                                                    $(".form-group").removeClass("has-error");
+                                                                    $(".error-summary").hide();
+                                                                    $(".error-summary li").remove();
+                                                                    $.each(data, function(key, val) {
+                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                    });
+                                                                    $(".error-summary").show();
+                                                                     $(window).scrollTop(0);
+                                                                }
+                                                 }'),
+                    ],
+                    'options' => ['class' => 'btn btn-default btn-raised',
+                        'type' => 'submit'],
+                ]);
+                AjaxSubmitButton::end();
+                ?>
+            <?php } else { ?>
+                <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?php } ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>

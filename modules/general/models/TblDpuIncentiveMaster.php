@@ -42,16 +42,17 @@ class TblDpuIncentiveMaster extends \app\models\ChildModel {
     public function rules() {
         return [
             [['m_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
-            [['dcs_code', 'm_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'inc_rate', 'inc_deduction', 'union_code'], 'required'],
+            [['dcs_code', 'm_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'inc_rate', 'inc_deduction', 'union_code', 'from_date', 'to_date'], 'required'],
             [['dcs_code', 'm_cutoff_time', 'e_cutoff_time', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'union_code', 'created_by', 'updated_by'], 'string'],
             [['inc_rate', 'inc_deduction'], 'number'],
             [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
             [['dcs_code'], 'unique'],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-            [['e_start_time', 'm_cutoff_time', 'e_cutoff_time', 'm_lock_time', 'e_lock_time'], 'timeValidate'],
+            [['e_start_time', 'm_cutoff_time', 'e_cutoff_time', 'm_lock_time', 'e_lock_time'], 'timeValidate', 'except' => ['update']],
+            [['dcs_code'], 'timeValidate', 'on' => ['update']],
             [['inc_rate', 'inc_deduction'], 'number', 'min' => 0],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
