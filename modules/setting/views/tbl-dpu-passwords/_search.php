@@ -26,6 +26,9 @@ $form = ActiveForm::begin([
 <div class="col-sm-2">
     <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldcssearch-f_mcc_code', 'f_bmc_code'); ?>
 </div>
+<div class="col-sm-2">
+    <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbldcssearch-f_bmc_code', 'dcs_code'); ?>         
+</div> 
 <div class="form-group">
     <div class="col-sm-2">
         <?= Yii::$app->controls->search(); ?>

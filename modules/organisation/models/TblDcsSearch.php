@@ -21,6 +21,7 @@ class TblDcsSearch extends TblDcs {
         return [
             [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type'], 'safe'],
             [['allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code'], 'integer'],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword']],
         ];
     }
 
@@ -100,6 +101,23 @@ class TblDcsSearch extends TblDcs {
                 ->andFilterWhere(['like', 'tbl_dcs.village_code', $this->village_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_contact_details.mobile_no', $this->mobile_no]);
+
+        return $dataProvider;
+    }
+
+    public function dpupasssearch($params) {
+        $query = TblDcs::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['dcs_name' => SORT_ASC]],
+        ]);
+
+        $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
+
+        $query->andWhere(['tbl_dcs.bmc_code' => $this->f_bmc_code]);
+        $query->andWhere('tbl_dcs.bmc_code is not null');
+        $query->andFilterWhere(['tbl_dcs.dcs_code' => $this->dcs_code]);
 
         return $dataProvider;
     }

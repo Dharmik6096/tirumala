@@ -300,6 +300,10 @@ class TblDcs extends ChildModel {
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
             'dpu_type' => Yii::t('app', 'DPU Type'),
             'diff_milk_type' => Yii::t('app', 'Different Milk Type'),
+            'f_plant_code' => Yii::t('app', 'Plant'),
+            'f_mcc_code' => Yii::t('app', 'MCC'),
+            'f_bmc_code' => Yii::t('app', 'BMC'),
+            'f_union_code' => Yii::t('app', 'Union'),
         ];
     }
 

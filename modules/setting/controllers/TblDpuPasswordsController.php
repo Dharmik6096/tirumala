@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsSearch;
 use app\components\Model;
+use app\modules\setting\models\TblDPUPasswordsHistory;
 
 /**
  * TblDpuPasswordsController implements the CRUD actions for TblDpuPasswords model.
@@ -24,37 +25,35 @@ class TblDpuPasswordsController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblDpuPasswords();
         $searchModel = new TblDcsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $data = $dataProvider->getModels();
         $model = [];
-        if (!empty($data)) {
-            foreach ($data as $dpu) {
-                $this->model = new TblDpuPasswords();
-                $this->model->dcs_code = $dpu->dcs_code;
-                $data = $this->model->getDpuDetails();
-                if (!empty($data)) {
-                    $model[] = $data;
-                } else {
-                    $model[] = $this->model;
-                }
-            }
-        } else {
-            $model[] = $this->model;
-        }
+        $dataProvider = $this->setModel($searchModel, $model);
 
         if (Model::loadMultiple($model, Yii::$app->request->post())) {
-            $dpu_passwords = [];
+            $saveModel = [];
+            $historyModel = [];
             foreach ($model as $dpu_password) {
-                if(!empty($dpu_password->AdminPwd) && !empty($dpu_password->SuperPwd) && !empty($dpu_password->UserPwd)){
+                if (!empty($dpu_password->AdminPwd) && !empty($dpu_password->SuperPwd) && !empty($dpu_password->UserPwd)) {
                     $dpu_password->mcc_code = Yii::$app->general->getforeignkey($dpu_password->dcsCode, 'mcc_plant_code');
                     $dpu_password->lastmodified = date('Y-m-d H:i:s');
                     $dpu_password->modifiedby = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-                    $dpu_passwords[] = $dpu_password;
+                    if (!empty($dpu_password->oldAttributes) && ($dpu_password->AdminPwd != $dpu_password->oldAttributes['AdminPwd'] || $dpu_password->SuperPwd != $dpu_password->oldAttributes['SuperPwd'] || $dpu_password->UserPwd != $dpu_password->oldAttributes['UserPwd'])) {
+                        $existData = TblDpuPasswords::find()->where(['dcs_code' => $dpu_password->dcs_code])
+                                ->one();
+                        if (!empty($existData)) {
+                            $history = new TblDPUPasswordsHistory();
+                            \Yii::$app->operation->history($existData, $history, 'UPDATE');
+                            $historyModel[] = $history;
+                            $existData->attributes = $dpu_password->attributes;
+                            $saveModel[] = $existData;
+                        }
+                    } else {
+                        $saveModel[] = $dpu_password;
+                    }
                 }
             }
-            $transaction = $this->generalModel->saveTransaction($dpu_passwords, [], ['DPU Passwords', 'create']);
+            $transaction = $this->generalModel->saveTransaction($saveModel, $historyModel, ['DPU Passwords', 'edit']);
             if ($transaction == 'customRedirect') {
-                return $this->redirect(['create']);
+                $dataProvider = $this->setModel($searchModel, $model);
             }
         }
         return $this->render('create', [
@@ -77,6 +76,29 @@ class TblDpuPasswordsController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    function setModel(&$searchModel, &$model) {
+        $dataProvider = $searchModel->dpupasssearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'dpuPassword';
+        $dataProvider->pagination = false;
+        $data = $dataProvider->getModels();
+        $model = [];
+        if (!empty($data)) {
+            foreach ($data as $dpu) {
+                $this->model = new TblDpuPasswords();
+                $this->model->dcs_code = $dpu->dcs_code;
+                $data = $this->model->getDpuDetails();
+                if (!empty($data)) {
+                    $model[] = $data;
+                } else {
+                    $model[] = $this->model;
+                }
+            }
+        } else {
+            $model[] = $this->model;
+        }
+        return $dataProvider;
     }
 
 }
