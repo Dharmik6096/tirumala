@@ -77,6 +77,7 @@ class importData extends \yii\base\Module {
             'dpu-incentive' => ['import_class' => 'tbl_dpu_incentive_master', 'import_main_class' => 'DpuIncentiveImportStrategy', 'table_name' => 'tbl_dpu_incentive_master', 'fields' => 'union_code,dcs_code,m_start_time,e_start_time,m_cutoff_time,e_cutoff_time,m_lock_time,e_lock_time,inc_rate,inc_deduction'],
             'bmc-collection' => ['table_name' => 'tbl_bmc_collection', 'fields' => 'bmc_code,date_time_of_collection,shift_code,customer_type,customer_code,milk_type_code,milk_quality_type_code,fat,snf,qty,collection_type,transporter_code,vehicle_code,route_arrival_time', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
             'customer-master' => ['table_name' => 'tbl_customer_master', 'fields' => 'bmc_code,route_code,customer_type,customer_code_ex,customer_name,local_name,address,local_address,gst_no,hamlet_code', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
+            'dpu-password' => ['import_class' => 'TblDpuPasswords', 'mapping' => '0', 'mapping_model' => 'TblDpuPasswords', 'import_main_class' => 'DpuPasswordImportStrategy', 'table_name' => 'TblDpuPasswords', 'fields' => 'dcs_code,AdminPwd,SuperPwd,UserPwd', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }
