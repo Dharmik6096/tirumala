@@ -22,7 +22,7 @@ use app\modules\dcsoperation\models\TblShift;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblCollectionIncentiveDeduction extends \yii\db\ActiveRecord {
+class TblCollectionIncentiveDeduction extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
@@ -77,55 +77,48 @@ class TblCollectionIncentiveDeduction extends \yii\db\ActiveRecord {
     }
 
     public function timeValidate($attribute, $params) {
-        $morning_start = Yii::$app->general->getforeignkey($this->dpuIncentive, 'm_start_time');
-        $morning_lock = Yii::$app->general->getforeignkey($this->dpuIncentive, 'm_lock_time');
-        $eve_start = Yii::$app->general->getforeignkey($this->dpuIncentive, 'e_start_time');
-        $eve_lock = Yii::$app->general->getforeignkey($this->dpuIncentive, 'e_lock_time');
+        if (empty($this->getErrors())) {
+            $morning_start = Yii::$app->general->getforeignkey($this->dpuIncentive, 'm_start_time');
+            $morning_lock = Yii::$app->general->getforeignkey($this->dpuIncentive, 'm_lock_time');
+            $eve_start = Yii::$app->general->getforeignkey($this->dpuIncentive, 'e_start_time');
+            $eve_lock = Yii::$app->general->getforeignkey($this->dpuIncentive, 'e_lock_time');
 
-        if (!empty($this->from_time) && !empty($this->to_time) && ($this->to_time <= $this->from_time)) {
-            $this->addError('to_time', Yii::t('app/validation', $this->getAttributeLabel('to_time') . ' Must be Greater than ' . $this->getAttributeLabel('from_time')));
-        } else if ($this->shift_code == 1) {
-            if (!empty($morning_start) && !empty($this->from_time) && (($this->from_time) < $morning_start || ($this->from_time) > $morning_lock ) || (($this->to_time) < $morning_start || ($this->to_time) > $morning_lock)) {
-                $this->addError('from_time', Yii::t('app/validation', 'From Time and To Time Range between ' . $morning_start . ' and ' . $morning_lock));
+            if (!empty($this->from_time) && !empty($this->to_time) && ($this->to_time <= $this->from_time)) {
+                $this->addError('to_time', Yii::t('app/validation', $this->getAttributeLabel('to_time') . ' Must be Greater than ' . $this->getAttributeLabel('from_time')));
+            } else if ($this->shift_code == 1) {
+                if (!empty($morning_start) && !empty($this->from_time) && (($this->from_time) < $morning_start || ($this->from_time) > $morning_lock ) || (($this->to_time) < $morning_start || ($this->to_time) > $morning_lock)) {
+                    $this->addError('from_time', Yii::t('app/validation', 'From Time and To Time Range between ' . $morning_start . ' and ' . $morning_lock));
+                }
+            } elseif ($this->shift_code == 2) {
+                if (!empty($eve_start) && !empty($this->from_time) && (($this->from_time) < $eve_start || ($this->from_time) > $eve_lock ) || (($this->to_time) < $eve_start || ($this->to_time) > $eve_lock)) {
+                    $this->addError('from_time', Yii::t('app/validation', 'From Time and To Time Range between ' . $eve_start . ' and ' . $eve_lock));
+                }
             }
-        } elseif ($this->shift_code == 2) {
-            if (!empty($eve_start) && !empty($this->from_time) && (($this->from_time) < $eve_start || ($this->from_time) > $eve_lock ) || (($this->to_time) < $eve_start || ($this->to_time) > $eve_lock)) {
-                $this->addError('from_time', Yii::t('app/validation', 'From Time and To Time Range between ' . $eve_start . ' and ' . $eve_lock));
+
+            if (!empty($this->from_date) && !empty($this->to_date) && date('Y-m-d', strtotime($this->to_date)) < date('Y-m-d', strtotime($this->from_date))) {
+                $this->addError('to_date', Yii::t('app/validation', $this->getAttributeLabel('to_date') . ' Must be Greater than ' . $this->getAttributeLabel('from_date')));
             }
-        }
-
-        if (!empty($this->from_date) && !empty($this->to_date) && date('Y-m-d', strtotime($this->to_date)) < date('Y-m-d', strtotime($this->from_date))) {
-            $this->addError('to_date', Yii::t('app/validation', $this->getAttributeLabel('to_date') . ' Must be Greater than ' . $this->getAttributeLabel('from_date')));
-        }
-        $dateData = $this->find()
-                ->where('dcs_code=\'' . $this->dcs_code . '\' and shift_code=\'' . $this->shift_code . '\'  and  ((\'' . $this->from_date . '\'  between from_date and to_date) OR (\'' . $this->to_date . '\' between from_date  and to_date))')
-//                ->where(['dcs_code' => $this->dcs_code, 'shift_code' => $this->shift_code])
-//                ->andWhere(['or', ['between', $this->from_date, 'from_date', 'to_date'], ['between', $this->to_date, 'from_date', 'to_date']])
-                ->andWhere(['or', ['between', 'CAST(from_date AS DATE)', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))], ['between', 'CAST(to_date AS DATE)', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))]])
-                ->andWhere(['!=', 'from_date', $this->from_date])
-                ->andWhere(['!=', 'to_date', $this->to_date])
-                ->andfilterWhere(['!=', 'incentive_deduction_id', $this->incentive_deduction_id])
-                ->all();
-
-        if (empty($dateData)) {
-            $from_time = $this->from_time . ':00';
-            $to_time = $this->to_time . ':00';
-//            $query = $this->find()
-//                    ->where('incentive_deduction_id !=\'' . $this->incentive_deduction_id . '\' and dcs_code=\'' . $this->dcs_code . '\' and shift_code=\'' . $this->shift_code . '\' and from_date=\'' . $this->from_date . '\' and to_date=\'' . $this->to_date . '\'  and ((\'' . $from_time . '\'  between from_time and to_time) OR (\'' . $to_time . '\' between from_time  and to_time))')
-//                    ->andWhere(['or', ['between', 'from_time', $from_time, $to_time], ['between', 'to_time', $from_time, $to_time]])
-//                    ->all();
-
-            $query = $this->find()
-                    ->where('dcs_code=\'' . $this->dcs_code . '\' and shift_code=\'' . $this->shift_code . '\' and from_date=\'' . $this->from_date . '\' and to_date=\'' . $this->to_date . '\'  and ((\'' . $from_time . '\'  between from_time and to_time) OR (\'' . $to_time . '\' between from_time  and to_time))')
-                    ->orWhere(['or', ['between', 'from_time', $from_time, $to_time], ['between', 'to_time', $from_time, $to_time]])
+            $dateData = $this->find()
+                    ->where('dcs_code=\'' . $this->dcs_code . '\' and shift_code=\'' . $this->shift_code . '\'  and  (from_date != \'' . $this->from_date . '\' OR  to_date != \'' . $this->to_date . '\')')
+                    ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date) OR (\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
                     ->andfilterWhere(['!=', 'incentive_deduction_id', $this->incentive_deduction_id])
                     ->all();
 
-            if (!empty($query)) {
-                $this->addError('from_date', Yii::t('app/validation', 'Data is allready exist'));
+            if (empty($dateData)) {
+                $from_time = $this->from_time . ':00';
+                $to_time = $this->to_time . ':00';
+                $query = $this->find()
+                        ->where('dcs_code=\'' . $this->dcs_code . '\' and shift_code=\'' . $this->shift_code . '\' and (from_date=\'' . $this->from_date . '\' and to_date=\'' . $this->to_date . '\')')
+                        ->andWhere('((\'' . $from_time . '\'  between from_time and to_time) OR (\'' . $to_time . '\' between from_time  and to_time) OR (from_time between \'' . $from_time . '\' and  \'' . $to_time . '\') OR (to_time between \'' . $from_time . '\' and \'' . $to_time . '\'))')
+                        ->andfilterWhere(['!=', 'incentive_deduction_id', $this->incentive_deduction_id])
+                        ->all();
+
+                if (!empty($query)) {
+                    $this->addError('from_date', Yii::t('app/validation', 'Data is allready exist'));
+                }
+            } else {
+                $this->addError('from_date', Yii::t('app/validation', 'Invalid Date Range'));
             }
-        } else {
-            $this->addError('from_date', Yii::t('app/validation', 'Invalid Date Range'));
         }
     }
 

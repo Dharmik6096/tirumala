@@ -41,8 +41,8 @@ class TblCollectionIncentiveDeductionHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['incentive_deduction_id', 'scheme_type', 'shift_code'], 'integer'],
-            [['dcs_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'string'],
+            [['incentive_deduction_id', 'scheme_type', 'shift_code'], 'safe'],
+            [['dcs_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
             [['from_time', 'to_time', 'from_date', 'to_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['amount'], 'number'],
         ];

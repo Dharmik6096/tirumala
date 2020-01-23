@@ -9,7 +9,7 @@ use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
-$class = $type == 'create' ? '' : 'no_pointer';
+$class = $type == 'create' ? '' : 'disabled';
 //$error = $type == 'create' ? [$model] : [$model, $detailModel];
 ?>
 
@@ -37,8 +37,8 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldpuincentivemaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbldpuincentivemaster-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, '', $readonly, TRUE); ?>         
+    <div class="col-sm-3 <?= $class ?>">
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbldpuincentivemaster-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, '', false, TRUE); ?>         
     </div>
     <div class="clearfix"></div>
 
@@ -88,7 +88,7 @@ $form = ActiveForm::begin([
 
     <?php if ($type == 'edit') { ?>
         <div class="clearfix"></div>
-        <hr>
+        <hr class="line-color">
         <div class="col-sm-3">
             <?= Yii::$app->controls->date($detailModel, $form, 'from_date', '', date('Y-m-d'), false, false); ?>
         </div>
@@ -177,8 +177,8 @@ $form = ActiveForm::begin([
                 ?>
             <?php } else { ?>
                 <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+                <?= Yii::$app->controls->reset(); ?>
             <?php } ?>
-            <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>

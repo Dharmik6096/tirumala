@@ -58,10 +58,9 @@ class TblCollectionIncentiveDeductionSearch extends TblCollectionIncentiveDeduct
         // grid filtering conditions
 
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-        $query->andFilterWhere(['>=', 'cast(from_date as date)', $from_date]);
-
         $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-        $query->andFilterWhere(['<=', 'cast(to_date as date)', $to_date]);
+        $query->andWhere('((\'' . $from_date . '\'  between from_date and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))');
+
 
         $query->andFilterWhere([
             'dcs_code' => $this->dcs_code,
