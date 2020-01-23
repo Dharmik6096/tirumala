@@ -20,23 +20,21 @@ use Yii;
  * @property string $operation_type
  * @property string $history_created_at
  */
-class TblDPUPasswordsHistory extends \yii\db\ActiveRecord
-{
+class TblDPUPasswordsHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tblDPUPasswordsHistory';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['dcs_code', 'PPCode', 'bmc_code', 'mcc_code', 'AdminPwd', 'SuperPwd', 'UserPwd', 'modifiedby', 'operation_type'], 'string'],
+            [['dcs_code', 'PPCode', 'bmc_code', 'mcc_code', 'AdminPwd', 'SuperPwd', 'UserPwd', 'modifiedby', 'operation_type'], 'safe'],
             [['lastmodified', 'history_created_at'], 'safe'],
         ];
     }
@@ -44,8 +42,7 @@ class TblDPUPasswordsHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
@@ -61,4 +58,5 @@ class TblDPUPasswordsHistory extends \yii\db\ActiveRecord
             'history_created_at' => Yii::t('app', 'History Created At'),
         ];
     }
+
 }
