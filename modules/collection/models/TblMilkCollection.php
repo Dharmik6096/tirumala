@@ -16,6 +16,8 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -80,15 +82,25 @@ class TblMilkCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['milk_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+                }, 'on' => 'importCsv'],
+            [['shift_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+                }, 'on' => 'importCsv'],
+            [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+            [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag'], 'string', 'except' => ['sendsms', 'androidsync']],
-            [['milk_type_code', 'shift_code', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'rtpl', 'qty', 'amount'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
+            [['milk_type_code', 'shift_code', 'dcs_code', 'member_code', 'milk_type_code', 'qty'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
+            [['milk_quality_type_code', 'amount', 'rtpl'], 'required', 'except' => ['importCsv', 'portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
             [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['sendsms', 'androidsync']],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync']],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
             [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync']],
-            [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync']],
+            [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv']],
+            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
             //  [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
             // [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code'], 'except' => ['sendsms']],
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
@@ -98,6 +110,18 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code'], 'safe'],
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'milk_type_code', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'sample_no', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'ack', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'created_at', 'created_by', 'updated_at', 'updated_by', 'route_code', 'bmc_code', 'converted_qty', 'is_approved', 'data_post_id', 'resp_status', 'resp_desc', 'picked_datetime', 'ftp_txn_file_name', 'tag_1', 'tag_2', 'ftp_txn_log_id', 'error_desc', 'originating_type', 'last_edited_type', 'remarks', 'sync_status', 'union_code', 'plant_code', 'mcc_plant_code', 'version_no', 'originating_org_code', 'originating_org_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'converted_qty_mode', 'incentive', 'deduction', 'total_amount'], 'safe'],
             [['dcs_code'], 'setUuid', 'on' => ['androidsync']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['snf', 'rtpl'], 'double', 'min' => 0, 'on' => ['importCsv']],
+            [['fat', 'qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['importCsv']],
+            [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
+            [['dcs_code'], 'pastDateValidate', 'on' => 'importCsv'],
+            [['dcs_code'], 'unique', 'targetAttribute' => ['member_code', 'dcs_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+                    return empty($this->getErrors());
+                }, 'on' => ['importCsv']],
+            ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')]
         ];
     }
 
@@ -286,6 +310,99 @@ class TblMilkCollection extends \app\models\ChildModel {
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function ImportfieldSet($attribute, $params) {
+        $dcs = new TblDcs();
+        $this->dcs_code = $dcs->validDcs($this->dcs_code);
+        if (empty($this->dcs_code)) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+        } else {
+            $bmc = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+            if (!empty($this->bmc_code) && ($this->bmc_code != $bmc)) {
+                $this->addError('bmc_code', Yii::t('app/validation', $this->getAttributeLabel('bmc_code') . ' is invalid'));
+            }
+            $this->member_code = $this->dcs_code . '' . $this->member_code;
+            if (empty($this->memberCode)) {
+                $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' invalid '));
+            }
+
+            $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+            $this->milk_quality_type_code = 1;
+            $this->member_code = $this->dcs_code . str_pad(substr($this->member_code, -4), 4, '0', STR_PAD_LEFT);
+            $this->mobile_no = Yii::$app->general->getforeignkey($this->memberCode, 'mobile_no');
+            $this->name = Yii::$app->general->getforeignkey($this->memberCode, 'member_name');
+            $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
+            $datetime = date('Y-m-d H:i:s');
+            $this->date_time_of_recieve = $datetime;
+            $this->dt_date = Yii::$app->formatter->asDate($datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->shift_code);
+            $this->qlty_time = $datetime;
+            $this->qty_time = $datetime;
+            $this->type_of_data_receive = 'import';
+            $this->status = 'Accept';
+            $this->qty_mode = 0;
+            $this->qlty_auto = 0;
+            $this->qty_auto = 0;
+            $this->sms_status = 'n';
+            $this->route_code = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
+            $this->sample_no = $this->getSampleNo();
+            $this->last_edited_type = 'P';
+            $this->own_mcc_plant_code = $this->mcc_plant_code;
+            $this->own_bmc_code = $this->bmc_code;
+
+            //set rtpl,rate_code and amount
+            if (empty($this->getErrors())) {
+                $data['milk_type'] = $this->milk_type_code;
+                $data['milk_quality_type'] = $this->milk_quality_type_code;
+                $data['fat'] = $this->fat;
+                $data['snf'] = $this->snf;
+                $data['shift'] = $this->shift_code;
+                $model = new TblPurchaseRateApplicability();
+                $model->dcs_code = $this->dcs_code;
+                $model->wef_date = $this->dt_date;
+                $model_data = $model->getPurchaseRateApplicableData($data);
+
+                if (!empty($model_data)) {
+                    $detail_model = new TblPurchaseRateDetails();
+                    $detail_model->rate_type_code = $model_data->rate_app_code;
+                    $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+                    $rate_type = $detail_model->rateTypeCode->rate_type;
+                    $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+                    if (!empty($detail_data)) {
+                        $this->purchase_rate_code = (string) $detail_data->purchase_rate_code;
+                        $this->rtpl = $detail_data->rtpl;
+                        $this->amount = $detail_data->rtpl * $this->qty;
+                    } else {
+                        $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                    }
+                } else {
+                    $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                }
+            }
+        }
+    }
+
+    public function pastDateValidate($attribute, $params) {
+        $this->date_time_of_collection = ($this->date_time_of_collection == '') ? null : date('Y-m-d', strtotime($this->date_time_of_collection));
+        if (!empty($this->date_time_of_collection) && ($this->date_time_of_collection > date('Y-m-d'))) {
+            $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be Greater than ' . date('d-m-Y')));
+        }
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->date_time_of_collection = Yii::$app->controls->view_date($this->date_time_of_collection, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->date_time_of_collection = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->date_time_of_collection = !empty($this->date_time_of_collection) ? Yii::$app->controls->view_date($this->date_time_of_collection, 'php:Y-m-d') : NULL;
+        }
     }
 
 }

@@ -30,8 +30,12 @@ class DpuIncentiveImportStrategy extends ARImportStrategy {
                 try {
                     $modelList = [];
                     $model = new $this->className;
+                    $detailModel = new \app\modules\general\models\TblCollectionIncentiveDeduction();
                     if (!empty($this->scenario)) {
                         $model->scenario = $this->scenario;
+                    }
+                    if (!empty($this->scenario)) {
+                        $detailModel->scenario = $this->scenario;
                     }
                     $addedAttributes = [];
                     foreach ($this->configs as $config) {
@@ -44,8 +48,17 @@ class DpuIncentiveImportStrategy extends ARImportStrategy {
                             //Set value to the model of public attribute
                             $model->{$config['attribute']} = $value;
                             $addedAttributes[$config['attribute']] = $config['attribute'];
+                        } else if (isset($config['attribute']) && ($detailModel->hasAttribute($config['attribute']))) {
+                            //Set value to the model
+                            ($detailModel->hasAttribute($config['attribute'])) ? $detailModel->setAttribute($config['attribute'], $value) : '';
+                            $addedAttributes[$config['attribute']] = $config['attribute'];
                         }
                     }
+                    echo "<pre>";
+                    print_r($detailModel);
+                    echo "</pre>";
+                 
+                    die;
                     $existData = TblDpuIncentiveMaster::find()->where(['dcs_code' => $model->dcs_code])->one();
                     if (!empty($existData)) {
                         $historyModel = new TblDpuIncentiveMasterHistory();
@@ -74,14 +87,14 @@ class DpuIncentiveImportStrategy extends ARImportStrategy {
                             $trans->rollback();
                             $message = '';
                             foreach ($model->getErrors() as $errorkey => $value) {
-                                $message.=$value[0] . '<br/>';
+                                $message .= $value[0] . '<br/>';
                             }
                             return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                         }
                     } else {
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
-                            $message.=$value[0] . '<br/>';
+                            $message .= $value[0] . '<br/>';
                         }
 
                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
