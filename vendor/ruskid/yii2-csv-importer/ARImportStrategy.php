@@ -99,19 +99,23 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     $uniqueAttributes = [];
                     $addedAttributes = [];
                     foreach ($this->configs as $config) {
-                        if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
-                            $value = call_user_func($config['value'], $row);
+                    if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
+                        $value = call_user_func($config['value'], $row);
 
-                            //Create array of unique attributes
-                            if (isset($config['unique']) && $config['unique']) {
-                                $uniqueAttributes[$config['attribute']] = trim($value);
-                            }
-                            $addedAttributes [] = $config['attribute']; 
-
-                            //Set value to the model
-                            $model->setAttribute($config['attribute'], trim($value));
+                        //Create array of unique attributes
+                        if (isset($config['unique']) && $config['unique']) {
+                            $uniqueAttributes[$config['attribute']] = trim($value);
                         }
+                        $addedAttributes [] = $config['attribute'];
+
+                        //Set value to the model
+                        $model->setAttribute($config['attribute'], trim($value));
+                    } else if (property_exists($model, $config['attribute'])) {
+                        //Set value to the model of public attribute
+                        $value = call_user_func($config['value'], $row);
+                        $model->{$config['attribute']} = $value;
                     }
+                }
                     /*$modelNew = [];
                     $primaryKey = $model->tableSchema->primaryKey[0];
                     if(!empty($this->updateField)){

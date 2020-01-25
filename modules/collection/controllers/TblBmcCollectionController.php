@@ -198,7 +198,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($dcs);
-            $bmcModel->dcs_code = $data;
+            $bmcModel->customer_code = $data;
         }
         if (!empty($data)) {
             $name = Yii::$app->general->getCustomer($bmcModel, $type);

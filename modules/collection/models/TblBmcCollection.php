@@ -122,7 +122,8 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-allow_rate_zero').val() == '0'; 
           }", 'on' => ['create', 'update']],
-            [['rtpl', 'water', 'amount'], 'default', 'value' => 0],
+            [['rtpl', 'amount'], 'default', 'value' => 0, 'except' => ['importCsv']],
+            [['water'], 'default', 'value' => 0],
             [['doc_no'], 'default', 'value' => 1],
             [['rtpl'], 'number', 'min' => 0],
             [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/', 'on' => ['create', 'update', 'importCsv']],
@@ -360,36 +361,45 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->clr = ($snf - ($fat * $lr1) - $lr2) * 4;
 
             //set rtpl,rate_code and amount
-            $data['milk_type'] = $this->milk_type_code;
-            $data['milk_quality_type'] = $this->milk_quality_type_code;
-            $data['dt_date'] = Yii::$app->formatter->asDate($this->dt_date, DATE_FORMAT);
-            $data['dt_date'] = $data['dt_date'] . ' ' . \Yii::$app->general->getshift($this->shift_code);
-            $data['fat'] = $this->fat;
-            $data['clr'] = $this->clr;
-            $data['snf'] = $this->snf;
-            $data['shift'] = $this->shift_code;
-            $data['union'] = $this->union_code;
-            $model = new TblDcsPurchaseRateApplicabitity();
-            $data['milk_quality_type_code'] = $data['milk_quality_type'];
-            $data['appl_for'] = $this->customer_type;
-            $data['appl_code'] = $this->customer_code;
-            $model->wef_date = $data['dt_date'];
-            $model_data = $model->getDcsPurchaseRateApplicableData($data);
-            if (!empty($model_data)) {
-                $detail_model = new TblDcsPurchaseRateDetails();
-                $detail_model->rate_type_code = $model_data->rate_app_code;
-                $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-                $rate_type = $detail_model->rateTypeCode->rate_type;
-                $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
-                if (!empty($detail_data)) {
-                    $this->rate_code = (string) $detail_data->purchase_rate_code;
-                    $this->rtpl = $detail_data->rtpl;
-                    $this->amount = $detail_data->rtpl * $this->qty;
+            if (empty($this->getErrors()) && $this->amount === '' && $this->rtpl === '') {
+                $data['milk_type'] = $this->milk_type_code;
+                $data['milk_quality_type'] = $this->milk_quality_type_code;
+                $data['dt_date'] = Yii::$app->formatter->asDate($this->dt_date, DATE_FORMAT);
+                $data['dt_date'] = $data['dt_date'] . ' ' . \Yii::$app->general->getshift($this->shift_code);
+                $data['fat'] = $this->fat;
+                $data['clr'] = $this->clr;
+                $data['snf'] = $this->snf;
+                $data['shift'] = $this->shift_code;
+                $data['union'] = $this->union_code;
+                $model = new TblDcsPurchaseRateApplicabitity();
+                $data['milk_quality_type_code'] = $data['milk_quality_type'];
+                $data['appl_for'] = $this->customer_type;
+                $data['appl_code'] = $this->customer_code;
+                $model->wef_date = $data['dt_date'];
+                $model_data = $model->getDcsPurchaseRateApplicableData($data);
+                if (!empty($model_data)) {
+                    $detail_model = new TblDcsPurchaseRateDetails();
+                    $detail_model->rate_type_code = $model_data->rate_app_code;
+                    $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+                    $rate_type = $detail_model->rateTypeCode->rate_type;
+                    $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
+                    if (!empty($detail_data)) {
+                        $this->rate_code = (string) $detail_data->purchase_rate_code;
+                        $this->rtpl = $detail_data->rtpl;
+                        $this->amount = $detail_data->rtpl * $this->qty;
+                    } else if (Yii::$app->session->get('AllowOnZeroRate') == 0) {
+                        $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                    }
                 } else if (Yii::$app->session->get('AllowOnZeroRate') == 0) {
                     $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
                 }
-            } else if (Yii::$app->session->get('AllowOnZeroRate') == 0) {
-                $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+            } else if (empty(floatval($this->rtpl)) && !empty(floatval($this->amount))) {
+                $this->rtpl = $this->amount / $this->qty;
+            } else if (!empty(floatval($this->rtpl)) && empty(floatval($this->amount))) {
+                $this->amount = $this->rtpl * $this->qty;
+            } else if (empty(floatval($this->rtpl)) || empty(floatval($this->amount))) {
+                $this->amount = 0;
+                $this->rtpl = 0;
             }
         }
     }
