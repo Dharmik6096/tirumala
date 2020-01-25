@@ -111,12 +111,12 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create']],
             [['customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['importCsv']],
             [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv']],
-            [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
             [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
                     return empty($this->getErrors());
                 }, 'on' => ['create', 'update', 'importCsv']],
+            [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
             [['rtpl'], 'required', 'when' => function ($model) {
                     return $model->allow_rate_zero == 0;
                 }, 'whenClient' => "function (attribute, value) { 
