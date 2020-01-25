@@ -315,80 +315,82 @@ class TblMilkCollection extends \app\models\ChildModel {
     }
 
     public function ImportfieldSet($attribute, $params) {
-        $dcs = new TblDcs();
-        $this->dcs_code = $dcs->validDcs($this->dcs_code);
-        if (empty($this->dcs_code)) {
-            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
-        } else {
-            $bmc = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
-            if (!empty($this->bmc_code) && ($this->bmc_code != $bmc)) {
-                $this->addError('bmc_code', Yii::t('app/validation', $this->getAttributeLabel('bmc_code') . ' is invalid'));
-            }
-            $this->member_code = $this->dcs_code . str_pad($this->member, 4, '0', STR_PAD_LEFT);
-            if (empty($this->memberCode) && !empty($this->member)) {
-                $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' invalid '));
-            }
+        if (empty($this->getErrors())) {
+            $dcs = new TblDcs();
+            $this->dcs_code = $dcs->validDcs($this->dcs_code);
+            if (empty($this->dcs_code)) {
+                $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+            } else {
+                $bmc = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+                if (!empty($this->bmc_code) && ($this->bmc_code != $bmc)) {
+                    $this->addError('bmc_code', Yii::t('app/validation', $this->getAttributeLabel('bmc_code') . ' is invalid'));
+                }
+                $this->member_code = $this->dcs_code . str_pad($this->member, 4, '0', STR_PAD_LEFT);
+                if (empty($this->memberCode) && !empty($this->member)) {
+                    $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' invalid '));
+                }
 
-            $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
-            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
-            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
-            $this->milk_quality_type_code = 1;
-            $this->member_code = $this->dcs_code . str_pad(substr($this->member_code, -4), 4, '0', STR_PAD_LEFT);
-            $this->mobile_no = Yii::$app->general->getforeignkey($this->memberCode, 'mobile_no');
-            $this->name = Yii::$app->general->getforeignkey($this->memberCode, 'member_name');
-            $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
-            $datetime = date('Y-m-d H:i:s');
-            $this->date_time_of_recieve = $datetime;
-            $this->dt_date = Yii::$app->formatter->asDate($datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->shift_code);
-            $this->qlty_time = $datetime;
-            $this->qty_time = $datetime;
-            $this->type_of_data_receive = 'import';
-            $this->status = 'Accept';
-            $this->qty_mode = 0;
-            $this->qlty_auto = 0;
-            $this->qty_auto = 0;
-            $this->sms_status = 'n';
-            $this->route_code = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
-            $this->sample_no = $this->getSampleNo();
-            $this->last_edited_type = 'P';
-            $this->own_mcc_plant_code = $this->mcc_plant_code;
-            $this->own_bmc_code = $this->bmc_code;
+                $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+                $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+                $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+                $this->milk_quality_type_code = 1;
+                $this->member_code = $this->dcs_code . str_pad(substr($this->member_code, -4), 4, '0', STR_PAD_LEFT);
+                $this->mobile_no = Yii::$app->general->getforeignkey($this->memberCode, 'mobile_no');
+                $this->name = Yii::$app->general->getforeignkey($this->memberCode, 'member_name');
+                $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
+                $datetime = date('Y-m-d H:i:s');
+                $this->date_time_of_recieve = $datetime;
+                $this->dt_date = Yii::$app->formatter->asDate($datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->shift_code);
+                $this->qlty_time = $datetime;
+                $this->qty_time = $datetime;
+                $this->type_of_data_receive = 'import';
+                $this->status = 'Accept';
+                $this->qty_mode = 0;
+                $this->qlty_auto = 0;
+                $this->qty_auto = 0;
+                $this->sms_status = 'n';
+                $this->route_code = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
+                $this->sample_no = $this->getSampleNo();
+                $this->last_edited_type = 'P';
+                $this->own_mcc_plant_code = $this->mcc_plant_code;
+                $this->own_bmc_code = $this->bmc_code;
 
-            //set rtpl,rate_code and amount
-            if (empty($this->getErrors()) && $this->amount === '' && $this->rtpl === '') {
-                $data['milk_type'] = $this->milk_type_code;
-                $data['milk_quality_type'] = $this->milk_quality_type_code;
-                $data['fat'] = $this->fat;
-                $data['snf'] = $this->snf;
-                $data['shift'] = $this->shift_code;
-                $model = new TblPurchaseRateApplicability();
-                $model->dcs_code = $this->dcs_code;
-                $model->wef_date = $this->dt_date;
-                $model_data = $model->getPurchaseRateApplicableData($data);
+                //set rtpl,rate_code and amount
+                if (empty($this->getErrors()) && $this->amount === '' && $this->rtpl === '') {
+                    $data['milk_type'] = $this->milk_type_code;
+                    $data['milk_quality_type'] = $this->milk_quality_type_code;
+                    $data['fat'] = $this->fat;
+                    $data['snf'] = $this->snf;
+                    $data['shift'] = $this->shift_code;
+                    $model = new TblPurchaseRateApplicability();
+                    $model->dcs_code = $this->dcs_code;
+                    $model->wef_date = $this->dt_date;
+                    $model_data = $model->getPurchaseRateApplicableData($data);
 
-                if (!empty($model_data)) {
-                    $detail_model = new TblPurchaseRateDetails();
-                    $detail_model->rate_type_code = $model_data->rate_app_code;
-                    $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-                    $rate_type = $detail_model->rateTypeCode->rate_type;
-                    $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
-                    if (!empty($detail_data)) {
-                        $this->purchase_rate_code = (string) $detail_data->purchase_rate_code;
-                        $this->rtpl = $detail_data->rtpl;
-                        $this->amount = $detail_data->rtpl * $this->qty;
+                    if (!empty($model_data)) {
+                        $detail_model = new TblPurchaseRateDetails();
+                        $detail_model->rate_type_code = $model_data->rate_app_code;
+                        $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+                        $rate_type = $detail_model->rateTypeCode->rate_type;
+                        $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+                        if (!empty($detail_data)) {
+                            $this->purchase_rate_code = (string) $detail_data->purchase_rate_code;
+                            $this->rtpl = $detail_data->rtpl;
+                            $this->amount = $detail_data->rtpl * $this->qty;
+                        } else {
+                            $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                        }
                     } else {
                         $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
                     }
-                } else {
-                    $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                } else if (empty(floatval($this->rtpl)) && !empty(floatval($this->amount))) {
+                    $this->rtpl = $this->amount / $this->qty;
+                } else if (!empty(floatval($this->rtpl)) && empty(floatval($this->amount))) {
+                    $this->amount = $this->rtpl * $this->qty;
+                } else if (empty(floatval($this->rtpl)) || empty(floatval($this->amount))) {
+                    $this->amount = 0;
+                    $this->rtpl = 0;
                 }
-            } else if (empty(floatval($this->rtpl)) && !empty(floatval($this->amount))) {
-                $this->rtpl = $this->amount / $this->qty;
-            } else if (!empty(floatval($this->rtpl)) && empty(floatval($this->amount))) {
-                $this->amount = $this->rtpl * $this->qty;
-            } else if (empty(floatval($this->rtpl)) || empty(floatval($this->amount))) {
-                $this->amount = 0;
-                $this->rtpl = 0;
             }
         }
     }
