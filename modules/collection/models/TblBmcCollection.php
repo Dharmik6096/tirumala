@@ -93,6 +93,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
             [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
             [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync']],
+            [['rtpl', 'amount'], 'trim'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
             [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
                     return $model->collection_type == '2';

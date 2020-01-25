@@ -90,6 +90,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }, 'on' => 'importCsv'],
             [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+            [['rtpl', 'amount'], 'trim'],
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag'], 'string', 'except' => ['sendsms', 'androidsync']],
             [['milk_type_code', 'shift_code', 'dcs_code', 'milk_type_code', 'qty'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
             [['milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'except' => ['importCsv', 'portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
