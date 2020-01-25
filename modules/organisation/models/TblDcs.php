@@ -101,7 +101,7 @@ class TblDcs extends ChildModel {
     public $download_status;
     public $tmcc_code;
     public $is_sentbox;
-    public $same_milk_type, $diff_milk_type, $rate_chart_member;
+    public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
 
     /**
      * @inheritdoc
@@ -189,16 +189,20 @@ class TblDcs extends ChildModel {
             ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
             [['dcs_code_ex'], 'number'],
             [['is_active'], 'default', 'value' => 1],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate'], 'safe'],
             [['is_dispatch_mandate'], 'default', 'value' => 0],
             [['is_dispatch_mandate'], function ($attribute, $params) {
                     Yii::$app->general->vaildateCheckBoxValue($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
             [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']],
-            [['rate_chart_member'], 'required', 'on' => ['createDcs', 'importCsv']],
+            [['rate_chart_member'], 'required', 'when' => function ($model) {
+                    return $model->with_member_rate == 1;
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tbldcs-with_member_rate').val() == '1'; 
+          }", 'on' => ['createDcs']],
             [['x_col1'], 'default', 'value' => '1#1'],
-            [['rate_chart_member'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['dcs_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
 //            [['rate_chart_member'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'rate_chart_member'], 'on' => ['importCsv']],
         ];
     }
@@ -829,9 +833,13 @@ class TblDcs extends ChildModel {
     }
 
     public function importData($attribute, $params) {
-        if (empty($this->purchaseRate)) {
-            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid.'));
-            return false;
+        if (Yii::$app->session->get('WithMemberRate') == 1) {
+            if (empty($this->rate_chart_member)) {
+                $this->addError('rate_chart_member', Yii::t('app/validation', $this->getAttributeLabel('rate_chart_member') . ' cannot be blank.'));
+            } else if (empty($this->purchaseRate)) {
+                $this->addError('rate_chart_member', Yii::t('app/validation', $this->getAttributeLabel('rate_chart_member') . ' is Invalid.'));
+                return false;
+            }
         }
     }
 
