@@ -229,7 +229,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', '507 - Cleaning Flag Bmc'), 'url' => ['/misreports/default/cleaning-flag-bmc']],
                     ]
                 ],
-                ['label' => '', 'url' => 'javascript:void(0)', 'visible' => $reportUser],
+                ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
         [
