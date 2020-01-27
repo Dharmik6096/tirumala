@@ -873,6 +873,8 @@ class TblDcs extends ChildModel {
             $incentive_model->inc_rate = 0.0;
             $incentive_model->inc_deduction = 0.0;
             $incentive_model->union_code = $model->union_code;
+            $incentive_model->from_date = date('Y-m-d');
+            $incentive_model->to_date = date('Y-m-d');
             array_push($saveModel, $incentive_model);
         }
     }
