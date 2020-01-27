@@ -25,8 +25,8 @@ $attribute = [
     ['attribute' => 'member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'filter' => true],
-    ['header' => 'Soc. Code', 'attribute' => 'dcs_code', 'filter' => true],
-    ['header' => 'Old Soc. Code', 'attribute' => 'dcs_code',
+    ['header' => Yii::t('app', 'Soc. Code'), 'attribute' => 'dcs_code', 'filter' => true],
+    ['header' => Yii::t('app', 'Old Soc. Code'), 'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
         }, 'filter' => false],
@@ -55,8 +55,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->date_time_of_collection);
-}],
+            return Yii::$app->controls->view_date($model->date_time_of_collection);
+        }],
     ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
     ['attribute' => 'mobile_no', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'mobile_no');

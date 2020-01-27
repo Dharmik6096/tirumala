@@ -20,6 +20,7 @@ use app\models\GeneralModel;
 use app\modules\dcsoperation\models\TblQualityParam;
 use app\models\ChildModel;
 use Jaspersoft\Client\Client;
+use app\modules\organisation\models\TblUnions;
 
 class ChildController extends Controller {
 
@@ -30,7 +31,8 @@ class ChildController extends Controller {
 
     public function init() {
         parent::init();
-        $language = (!empty(Yii::$app->session->get('organizations_code')) && Yii::$app->session->get('organizations_type') == 'UNION' && count(explode(',', Yii::$app->session->get('organizations_code')) == 1)) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
+//        $language = (!empty(Yii::$app->session->get('organizations_code')) && Yii::$app->session->get('organizations_type') == 'UNION' && count(explode(',', Yii::$app->session->get('organizations_code')) == 1)) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
+        $language = (!empty(Yii::$app->session->get('languageTranslation') && Yii::$app->session->get('organizations_type') == 'UNION')) ? Yii::$app->session->get('languageTranslation') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
         \Yii::$app->language = $language;
         $path = Yii::$app->basePath . '/messages/' . $language;
         if (!file_exists($path)) {

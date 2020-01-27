@@ -28,9 +28,9 @@ $this->title = 'Process for Payment Disburse';
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
-        return ['value' => $model['dcs_code']];
-    }],
-        ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name'],
+                return ['value' => $model['dcs_code']];
+            }],
+        ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'label' => Yii::t('app', 'DCS Code')],
         ['attribute' => 'total_amount', 'pageSummary' => true, 'value' => 'total_amount',
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
@@ -56,26 +56,26 @@ $this->title = 'Process for Payment Disburse';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Members'];
                 return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members', 'cycle' => $model['dcs_payment_cycle_code'], 'dcs_code' => $model['dcs_code']], $options);
             },
-                ]
-            ];
+        ]
+    ];
 
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['create'], false);
-            ?>
-            <div class="clearfix"></div>
-            <?php if (!empty($model->dcs_payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
-                <div class="col-md-12" >
-                    <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn btn-primary bank', 'name' => 'member']); ?>
-                    <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>
-                </div>
-            <?php } ?>
-
-            <div class="clearfix"></div>
-
-            <?php ActiveForm::end(); ?>
+    Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['create'], false);
+    ?>
+    <div class="clearfix"></div>
+    <?php if (!empty($model->dcs_payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
+        <div class="col-md-12" >
+            <?= Html::button(Yii::t('app', 'Process Payment'), ['class' => 'btn btn-primary bank', 'name' => 'member']); ?>
+            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>
         </div>
+    <?php } ?>
 
-        <?php
-        $script = "
+    <div class="clearfix"></div>
+
+    <?php ActiveForm::end(); ?>
+</div>
+
+<?php
+$script = "
             $('.kv-panel-before').hide();
     $('.sub').on('click',function(){
         $('#flag').val($(this).prop('name'));
@@ -102,5 +102,4 @@ $this->title = 'Process for Payment Disburse';
 
     });
     ";
-        $this->registerJs($script, View::POS_END, 'data-export-script');
-        
+$this->registerJs($script, View::POS_END, 'data-export-script');

@@ -167,6 +167,8 @@ class TblMilkCollection extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'route_code' => Yii::t('app', 'Route'),
             'plant_code' => Yii::t('app', 'Plant'),
+            'society_code' => Yii::t('app', 'Society Code'),
+            'dcs_name' => Yii::t('app', 'Society Name'),
         ];
     }
 

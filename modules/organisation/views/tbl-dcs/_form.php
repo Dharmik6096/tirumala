@@ -55,6 +55,8 @@ $form = ActiveForm::begin([
     <?= Html::activeHiddenInput($model, 'destination_type') ?>
     <?= Html::activeHiddenInput($model, 'destination_code') ?>
     <?= Html::activeHiddenInput($model, 'route_code') ?>
+    <?= Html::activeHiddenInput($model, 'with_member_rate', ['value' => Yii::$app->session->get('WithMemberRate')]) ?>
+
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disabled); ?>
     </div>
