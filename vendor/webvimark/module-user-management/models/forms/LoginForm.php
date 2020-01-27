@@ -211,6 +211,10 @@ class LoginForm extends Model {
                 }
                 $states = $this->getUnionStates(explode(',', $union));
                 $district = $this->getDistrict($states, explode(',', $union));
+                if (count($name) == 1) {
+                    $allow_zero_rate = Yii::$app->general->getUnionConfiguration($union, 'bmc_collection_allow_on_zero_rate', 'BMC');
+                    $with_member_rate = Yii::$app->general->getUnionConfiguration($union, 'dcs_create_with_member_rate', 'PORTAL');
+                }
                 $unionCode = (!empty($name)) && !empty($name[0]) ? $name[0]->union_code : '';
                 $unionData = !empty($unionCode) ? TblUnions::find()->where(['union_code' => $unionCode])->one() : '';
                 $language = !empty($unionData) && !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
@@ -220,6 +224,7 @@ class LoginForm extends Model {
                 foreach ($unionConfigData as $data) {
                     $unionConfigArray[$data->union_code][$data->config_key] = $data->config_result_key;
                 }
+                break;
         }
         $language_code = 'en';
         Yii::$app->session->set('Federations', $federation);
