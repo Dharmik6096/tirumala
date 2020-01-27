@@ -149,6 +149,7 @@ class LoginForm extends Model {
         $allow_zero_rate = 0;
         $language = '';
         $with_member_rate = 0;
+        $unionConfigArray = [];
         switch ($main_org_type) {
 
             case 'PCDF':
@@ -210,16 +211,15 @@ class LoginForm extends Model {
                 }
                 $states = $this->getUnionStates(explode(',', $union));
                 $district = $this->getDistrict($states, explode(',', $union));
-                if (count($name) == 1) {
-                    $allow_zero_rate = Yii::$app->general->getUnionConfiguration($union, 'bmc_collection_allow_on_zero_rate', 'BMC');
-                    $with_member_rate = Yii::$app->general->getUnionConfiguration($union, 'dcs_create_with_member_rate', 'PORTAL');
-                }
                 $unionCode = (!empty($name)) && !empty($name[0]) ? $name[0]->union_code : '';
                 $unionData = !empty($unionCode) ? TblUnions::find()->where(['union_code' => $unionCode])->one() : '';
                 $language = !empty($unionData) && !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
                 $orgType = 'UNION';
                 $organization = $union;
-                break;
+                $unionConfigData = Yii::$app->general->getAllUnionWiseConfig(explode(',', $union), 'PORTAL');
+                foreach ($unionConfigData as $data) {
+                    $unionConfigArray[$data->union_code][$data->config_key] = $data->config_result_key;
+                }
         }
         $language_code = 'en';
         Yii::$app->session->set('Federations', $federation);
@@ -242,6 +242,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('AllowOnZeroRate', $allow_zero_rate);
         Yii::$app->session->set('languageTranslation', $language);
         Yii::$app->session->set('WithMemberRate', $with_member_rate);
+        Yii::$app->session->set('unionConfig', $unionConfigArray);
         return true;
     }
 

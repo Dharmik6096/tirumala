@@ -966,7 +966,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1343,6 +1343,12 @@ class GeneralFunctions extends Component {
             $master[] = $model;
         }
         return $master;
+    }
+
+    public function getAllUnionWiseConfig($union, $for) {
+        $model = new TblUnionConfigResult();
+        $data = $model->find()->where(['union_code' => $union, 'config_for' => $for])->all();
+        return $data;
     }
 
 }
