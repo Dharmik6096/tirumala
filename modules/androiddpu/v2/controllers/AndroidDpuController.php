@@ -195,7 +195,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['memberDownload'] = (bool) $model_data->is_name_request;
                         $res_data['config']['collectionBlock'] = !(bool) $collection_status;
                         $res_data['config']['dcsBlock'] = !(bool) $model_data->is_active;
-                        $res_data['config']['dispatchMandate'] = (bool) $model_data->is_dispatch_mandate;
+                        $res_data['config']['dispatchMandate'] = $model_data->is_dispatch_mandate > 0 ? true : false; //(bool) $model_data->is_dispatch_mandate;
                         $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
                         $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
                         $config = $model_data->dpuIncentiveMaster;

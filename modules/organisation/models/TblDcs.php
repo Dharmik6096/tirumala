@@ -191,10 +191,10 @@ class TblDcs extends ChildModel {
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type'], 'safe'],
                 [['is_dispatch_mandate'], 'default', 'value' => 0],
                 [['is_dispatch_mandate'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateCheckBoxValue($this, $attribute, $params);
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate');
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
                 [['is_weight_manual', 'is_quality_manual'], 'boolean'],
-                [['dpu_type'], 'required', 'on' => ['createDcs', 'updateDcs']],
+                [['dpu_type', 'is_dispatch_mandate'], 'required', 'on' => ['createDcs', 'updateDcs']],
                 [['x_col1'], 'default', 'value' => '0#0']
         ];
     }
@@ -291,7 +291,7 @@ class TblDcs extends ChildModel {
             'download_status' => Yii::t('app', 'Member Download Status'),
             'is_name_request' => Yii::t('app', 'Member Download Status'),
             'rate_flag' => Yii::t('app', 'Rate Download Status'),
-            'is_dispatch_mandate' => Yii::t('app', 'Is Dispatch Mandate'),
+            'is_dispatch_mandate' => Yii::t('app', 'Type of Dispatch'),
             'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
             'dpu_type' => Yii::t('app', 'DPU Type'),
@@ -762,7 +762,7 @@ class TblDcs extends ChildModel {
 
     public function afterDelete() {
         $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code);
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
