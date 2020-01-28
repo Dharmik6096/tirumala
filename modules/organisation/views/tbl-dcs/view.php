@@ -392,7 +392,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             [
                                 'attribute' => 'is_dispatch_mandate',
                                 'format' => 'html',
-                                'value' => $model->is_dispatch_mandate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
+                                'value' => isset($model->is_dispatch_mandate) ? Yii::$app->dropdown->getRecords('is_dispatch_mandate')['data'][$model->is_dispatch_mandate] : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
