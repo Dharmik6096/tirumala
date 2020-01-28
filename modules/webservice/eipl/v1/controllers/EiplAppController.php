@@ -73,6 +73,11 @@ class EiplAppController extends MasterController {
             if (!empty($detail) && count($detail) == 1) {
                 $exist = $model->getLogin();
                 if (!empty($exist)) {
+                    if ($exist->is_block == 1) {
+                        $this->response->setStatusCode($this->eiplResponseCode->statusError);
+                        $this->response->setMessage(['Your Login is Blocked.']);
+                        return $this->response;
+                    }
                     $model = $exist;
                     $historyModel = new TblEiplAppLoginHistory();
                     Yii::$app->operation->history($model, $historyModel, 'UPDATE');
@@ -124,6 +129,11 @@ class EiplAppController extends MasterController {
         $serverDateTime = date('Y-m-d H:i:s');
         $identity = Yii::$app->eiplapp->identity;
         if (!empty($identity)) {
+            if ($identity->is_block == 1) {
+                $this->response->setStatusCode($this->eiplResponseCode->statusError);
+                $this->response->setMessage(['Your Login is Blocked.']);
+                return $this->response;
+            }
             $model = new TblEiplAppLogin();
             $model->mobile_no = Yii::$app->eiplapp->identity->mobile_no;
             $model->app_type = 1;
@@ -136,6 +146,8 @@ class EiplAppController extends MasterController {
             $detail = $query->asArray()->all();
             if (!empty($detail) && count($detail) == 1) {
                 $identity->attributes = $detail[0];
+                $content = Yii::$app->request->getRawBody();
+                $identity->version_no = !empty($content['version_no']) ? $content['version_no'] : $identity->version_no;
                 if ($identity->login_type != 'MEMBER' && !empty($identity->loginOrg)) {
                     $identity->login_type = $identity->loginOrg[0]->organization_type;
                 }
@@ -273,8 +285,10 @@ class EiplAppController extends MasterController {
                     $this->response->setMessage(['Unable to update Login Type.']);
                 }
             } else {
+                $identity->is_active = 0;
+                $transaction = $this->generalModel->saveTransaction([$identity], ['app login', 'edit']);
                 $this->response->setStatusCode($this->eiplResponseCode->statusError);
-                $this->response->setMessage(['Duplicate/No Mobile No. Found.']);
+                $this->response->setMessage(['Mobile No. Not Found/Duplicate.']);
             }
         } else {
             $this->response->setStatusCode($this->eiplResponseCode->statusError);

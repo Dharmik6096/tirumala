@@ -232,7 +232,7 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry_summary',
             ],
             'report/member-collection' => [
-                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#member',
+                'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_day_wise_report',
             ],
             'report/member-collection-passbook' => [
@@ -379,6 +379,14 @@ class V1 extends \yii\base\Module {
             'report/bmc-collection-passbook' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_passbook',
+            ],
+            'report/member-collection-paymentcyclewise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime',
+                'sp' => 'sp_app_eipl_v1_member_collection_paymentcycle_wise_report',
+            ],
+            'report/member-collection-monthwise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime',
+                'sp' => 'sp_app_eipl_v1_member_collection_monthwise_report',
             ],
         ];
         return $label;
