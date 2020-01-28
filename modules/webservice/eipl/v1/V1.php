@@ -312,23 +312,23 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_dashboard_dsk_dsk',
             ],
             'dashboard/dsk-avgfat' => [
-                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
                 'sp' => 'sp_app_eipl_v1_dashboard_dsk_avg_fat',
             ],
             'dashboard/dsk-avgsnf' => [
-                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
                 'sp' => 'sp_app_eipl_v1_dashboard_dsk_avg_snf',
             ],
             'dashboard/dsk-totalqty' => [
-                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
                 'sp' => 'sp_app_eipl_v1_dashboard_dsk_total_quantity',
             ],
             'dashboard/dsk-avgrate' => [
-                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
                 'sp' => 'sp_app_eipl_v1_dashboard_dsk_avg_rate',
             ],
             'dashboard/dsk-totalamt' => [
-                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
                 'sp' => 'sp_app_eipl_v1_dashboard_dsk_total_amount',
             ],
             'dashboard/dsk-totalmember' => [
