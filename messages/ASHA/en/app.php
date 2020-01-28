@@ -158,4 +158,5 @@ return [
     'avg_fat' => 'Avg.FAT(%)',
     'avg_snf' => 'Avg.SNF(%)',
     'avf_fat' => 'Avg.FAT(%)',
+    'bmc_name' => 'BMC',
 ];
