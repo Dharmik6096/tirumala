@@ -154,6 +154,26 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberCollectionDayWise() {
+        $this->report = 'MemberCollectionDayWise';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberCollectionPassbook() {
+        $this->report = 'MemberCollectionPassbook';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberCollectionPaymentcycleWise() {
+        $this->report = 'MemberCollectionPaymentcycleWise';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberCollectionMonthWise() {
+        $this->report = 'MemberCollectionMonthWise';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -413,6 +433,30 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_dcs_wise_rate_applicability_details',
                 'scenario' => 'RateApplicabilityDetails',
                 'title' => '222 - Rate Applicability Details',
+            ],
+            'MemberCollectionDayWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_app_eipl_v1_member_collection_day_wise_report',
+                'scenario' => 'MemberCollectionDayWise',
+                'title' => 'M02 - Member Collection Day Wise',
+            ],
+            'MemberCollectionPassbook' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_app_eipl_v1_member_collection_passbook',
+                'scenario' => 'MemberCollectionPassbook',
+                'title' => 'M01 - Member Collection Passbook',
+            ],
+            'MemberCollectionPaymentcycleWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,p_date:string',
+                'sp_name' => 'sp_app_eipl_v1_member_collection_paymentcycle_wise_report',
+                'scenario' => 'MemberCollectionPaymentcycleWise',
+                'title' => 'M03 - Member Collection Paymentcycle Wise',
+            ],
+            'MemberCollectionMonthWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,p_date:string',
+                'sp_name' => 'sp_app_eipl_v1_member_collection_monthwise_report',
+                'scenario' => 'MemberCollectionMonthWise',
+                'title' => 'M04 - Member Collection Month Wise',
             ],
         ];
         return $label[$l];

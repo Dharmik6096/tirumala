@@ -127,6 +127,13 @@ $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('member_code'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('member')); ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {

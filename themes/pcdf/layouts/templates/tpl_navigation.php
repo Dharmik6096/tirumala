@@ -121,6 +121,16 @@ echo GhostMenu::widget([
             'items' => [
                 [
                     'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Mobile Report <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => 'M01-' . Yii::t('app', 'Member Collection Passbook'), 'url' => ['/misreports/default/member-collection-passbook']],
+                        ['label' => 'M02-' . Yii::t('app', 'Member Collection Day Wise'), 'url' => ['/misreports/default/member-collection-day-wise']],
+                        ['label' => 'M03-' . Yii::t('app', 'Member Collection Paymentcycle Wise'), 'url' => ['/misreports/default/member-collection-paymentcycle-wise']],
+                        ['label' => 'M04-' . Yii::t('app', 'Member Collection Month Wise'), 'url' => ['/misreports/default/member-collection-month-wise']],
+                    ]
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Milk Collection <b class="caret"></b></a>',
                     'items' => [
                         ['label' => '101-' . Yii::t('app', 'Member Milk Collection Summary'), 'url' => ['/jasperreports/default/member-milk-collection-summary']],
