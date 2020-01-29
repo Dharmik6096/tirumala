@@ -388,6 +388,22 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_monthwise_report',
             ],
+            'dashboard/shift-collection-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_shift_collection_summary',
+            ],
+            'dashboard/today-collection-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_today_collection_summary',
+            ],
+            'dashboard/current-payment-cycle-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_current_payment_cycle_summary',
+            ],
+            'dashboard/current-month-collection-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_current_month_collection_summary',
+            ],
         ];
         return $label;
     }
