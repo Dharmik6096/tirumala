@@ -471,7 +471,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -677,6 +677,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Not Require'), 1 => Yii::t('app', 'Require'), 2 => Yii::t('app', 'Auto')],
             ],
+            'login_type' => [
+                'name' => 'login_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER')],
+            ],
         ];
         return $records[$l];
     }
@@ -747,6 +752,7 @@ class DropDown extends Component {
             'department' => ['name' => 'department', 'fields' => 'department_id,department,local_name', 'prompt' => 'Select Department', 'model' => 'TblDepartment'],
             'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
             'transfer_master_type' => ['name' => 'master_type', 'fields' => 'master_type,master_type_text', 'prompt' => Yii::t('app', 'Select Type'), 'model' => 'TblTransferType'],
+            'app_type' => ['name' => 'app_type', 'fields' => 'operator_type,api_name', 'prompt' => 'Select Type', 'model' => 'TblApiMaster', 'whereCondition' => ['receiver_type' => 'APP_NOTIFICATION']],
         ];
         return $label[$l];
     }
@@ -827,7 +833,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

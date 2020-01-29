@@ -3,6 +3,13 @@
 namespace app\modules\sms\models;
 
 use Yii;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblDcs;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_bulk_notification".
@@ -29,44 +36,43 @@ use Yii;
  * @property string $pickup_datetime
  * @property string $response_datetime
  */
-class TblBulkNotification extends \yii\db\ActiveRecord
-{
+class TblBulkNotification extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bulk_notification';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by'], 'string'],
-            [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime'], 'safe'],
-            [['receiver_type', 'content_id', 'status'], 'integer'],
+            [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type'], 'safe'],
+            [['content_id', 'status'], 'integer'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'wef_date'], 'required'],
+            [['status', 'member_code', 'dcs_code'], 'default', 'value' => 0]
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bulk_notification_id' => Yii::t('app', 'Bulk Notification ID'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'member_code' => Yii::t('app', 'Member Code'),
             'app_type' => Yii::t('app', 'App Type'),
             'login_type' => Yii::t('app', 'Login Type'),
-            'wef_date' => Yii::t('app', 'Wef Date'),
+            'wef_date' => Yii::t('app', 'Schedule On'),
             'title' => Yii::t('app', 'Title'),
             'message' => Yii::t('app', 'Message'),
             'campaign_name' => Yii::t('app', 'Campaign Name'),
@@ -80,4 +86,48 @@ class TblBulkNotification extends \yii\db\ActiveRecord
             'response_datetime' => Yii::t('app', 'Response Datetime'),
         ];
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getApiMaster() {
+        return $this->hasOne(TblApiMaster::className(), ['operator_type' => 'app_type']);
+    }
+
+    public function getPickRecords($limit = 30) {
+        $query = $this->find()
+                ->where(['status' => $this->status])
+                ->andWhere(['=', 'CAST(wef_date as date)', date('Y-m-d')]);
+        $query->limit($limit);
+        $query->orderBy([
+            'wef_date' => SORT_ASC,
+        ]);
+        return $query->all();
+    }
+
+    public function updateFileStatus($value) {
+        return $this->updateAll(['status' => 1, 'pickup_datetime' => date('Y-m-d H:i:s')], ['bulk_notification_id' => $value]);
+    }
+
 }

@@ -138,13 +138,16 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
             'TblCustomerMasterSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code','route_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code'],
             ],
             'EiplPacketFileLogSearch' => [
                 'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
             'TblAndroidInstallationDetailsSearch' => [
                 'filter' => ['from_date', 'to_date'],
+            ],
+            'TblBulkNotificationSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

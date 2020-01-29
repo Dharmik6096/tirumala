@@ -8,39 +8,24 @@ use app\modules\sms\models\TblBulkNotificationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\sms\models\TblApiMaster;
 
 /**
  * TblBulkNotificationController implements the CRUD actions for TblBulkNotification model.
  */
-class TblBulkNotificationController extends Controller
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblBulkNotificationController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblBulkNotification models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblBulkNotificationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -49,10 +34,9 @@ class TblBulkNotificationController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -61,17 +45,19 @@ class TblBulkNotificationController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
-        $model = new TblBulkNotification();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->bulk_notification_id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+    public function actionCreate() {
+        $this->model = new TblBulkNotification();
+        $this->viewFile = 'create';
+        if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->receiver_type = 'APP_NOTIFICATION';
+            $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
+            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Bulk Notification', 'create']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**
@@ -80,17 +66,20 @@ class TblBulkNotificationController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->bulk_notification_id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+    public function actionUpdate($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        if (Yii::$app->request->post()) {
+//            $historyModel = new TblBulkNotificationHistory();
+//            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'edit']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**
@@ -99,8 +88,7 @@ class TblBulkNotificationController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -113,12 +101,12 @@ class TblBulkNotificationController extends Controller
      * @return TblBulkNotification the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblBulkNotification::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

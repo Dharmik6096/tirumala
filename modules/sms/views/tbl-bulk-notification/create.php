@@ -1,21 +1,14 @@
 <?php
-
-use yii\helpers\Html;
-
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\sms\models\TblBulkNotification */
-
-$this->title = 'Create Tbl Bulk Notification';
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Bulk Notifications', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('create', 'Bulk Notofication');
 ?>
-<div class="tbl-bulk-notification-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'create'
+        ])
+        ?>
+    </div>
 </div>

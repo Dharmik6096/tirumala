@@ -1,0 +1,70 @@
+<?php
+
+use yii\helpers\Html;
+use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
+?>
+
+<?php
+
+$attribute = [
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'dcs_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'member_code', 'filter' => false],
+    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Name'), 'value' => function($model) {
+            return $model->member_code == 0 ? 'All' : Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+        }, 'vAlign' => 'middle'],
+    [
+        'attribute' => 'wef_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->wef_date);
+        }],
+    [
+        'attribute' => 'status',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('file_status', $searchModel, 'status'),
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '';
+        }],
+    ['attribute' => 'app_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->apiMaster, 'api_name');
+        }, 'vAlign' => 'middle'],
+    'login_type',
+    'campaign_name',
+    'title',
+    'message',
+];
+
+$grid_option = [
+    'id' => 'bulk-notification-grid',
+    'attributes' => $attribute,
+    'active_column' => FALSE,
+    'actions' => [
+        'view' => true,
+        'edit' => function ($url, $model) {
+            $class = $model->status == 0 ? '' : 'disabled';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->bulk_notification_id, 'data-name' => $model->bulk_notification_id, 'title' => Yii::t('app', 'Edit')];
+            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/sms/tbl-bulk-notification/update'], $options);
+        },
+    ]
+];
+
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>

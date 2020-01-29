@@ -80,8 +80,8 @@ class Path extends Component {
         '\\app\modules\configuration\models\\' =>
         ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult', 'TblUnionConfigResultHistory'],
         '\\app\modules\installation\models\\' => ['TblAndroidInstallation', 'TblAndroidInstallationDetails', 'TblAndroidInstallationDetailsHistory'],
-        '\\app\modules\setting\models\\' =>
-        ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
+        '\\app\modules\setting\models\\' => ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
+        '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification'],
     ];
 
     public function get($model) {

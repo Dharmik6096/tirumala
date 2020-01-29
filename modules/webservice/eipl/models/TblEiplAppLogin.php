@@ -252,4 +252,18 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
         return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
     }
 
+    public function getLoginData($data) {
+        $query = $this->find()->alias('ap')
+                ->select(['ap.device_id', 'ap.master_code'])
+                ->join('INNER JOIN', 'tbl_member m', 'm.member_code = ap. master_code')
+                ->join('INNER JOIN', 'tbl_dcs d', 'd.dcs_code = m. dcs_code')
+                ->where(['d.dcs_code' => $data->dcs_code, 'd.union_code' => $data->union_code, 'd.plant_code' => $data->plant_code, 'd.mcc_plant_code' => $data->mcc_plant_code, 'd.bmc_code' => $data->bmc_code])
+                ->andWhere(['ap.is_active' => 1, 'login_type' => $data->login_type]);
+
+        if (!empty($data->member_code)) {
+            $query = $query->andWhere(['m.member_code' => $data->member_code]);
+        }
+        return $query->all();
+    }
+
 }

@@ -1,55 +1,163 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use app\components\GeneralFunctions;
+use kartik\detail\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\sms\models\TblBulkNotification */
-
-$this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Bulk Notifications', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'Bulk Notification');
 ?>
-<div class="tbl-bulk-notification-view">
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'bulk_notification_id'
+                        ],
+                        [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'dcs_code',
+                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        ['attribute' => 'member_code'],
+                        [
+                            'attribute' => 'member_code',
+                            'label' => Yii::t('app', 'Member Name'),
+                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'member_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'app_type',
+                            'value' => Yii::$app->general->getforeignkey($model->apiMaster, 'api_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'login_type',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'wef_date',
+                            'value' => Yii::$app->controls->view_date($model->wef_date),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'status',
+                            'value' => isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'campaign_name',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'title',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'message',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'content_id',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'entry_datetime',
+                            'value' => Yii::$app->controls->view_date($model->entry_datetime),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'pickup_datetime',
+                            'value' => Yii::$app->controls->view_date($model->pickup_datetime),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'response_datetime',
+                            'value' => Yii::$app->controls->view_date($model->response_datetime),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+            ];
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->bulk_notification_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->bulk_notification_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'bulk_notification_id',
-            'union_code',
-            'plant_code',
-            'mcc_plant_code',
-            'bmc_code',
-            'dcs_code',
-            'member_code',
-            'app_type',
-            'login_type',
-            'wef_date',
-            'title',
-            'message',
-            'campaign_name',
-            'created_at',
-            'created_by',
-            'receiver_type',
-            'content_id',
-            'status',
-            'entry_datetime',
-            'pickup_datetime',
-            'response_datetime',
-        ],
-    ]) ?>
-
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [// your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
+                ],
+                'container' => ['id' => 'kv-demo'],
+            ]);
+            ?>
+        </div>
+    </div>
 </div>
