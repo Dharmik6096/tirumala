@@ -60,8 +60,8 @@ $grid_option = [
         'view' => true,
         'edit' => function ($url, $model) {
             $class = $model->status == 0 ? '' : 'disabled';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->bulk_notification_id, 'data-name' => $model->bulk_notification_id, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/sms/tbl-bulk-notification/update'], $options);
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'title' => Yii::t('app', 'Edit')];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/sms/tbl-bulk-notification/update', 'id' => $model->bulk_notification_id], $options);
         },
     ]
 ];

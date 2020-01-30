@@ -118,7 +118,7 @@ class TblBulkNotification extends \app\models\ChildModel {
     public function getPickRecords($limit = 30) {
         $query = $this->find()
                 ->where(['status' => $this->status])
-                ->andWhere(['=', 'CAST(wef_date as date)', date('Y-m-d')]);
+                ->andWhere(['<=', 'CAST(wef_date as date)', date('Y-m-d')]);
         $query->limit($limit);
         $query->orderBy([
             'wef_date' => SORT_ASC,
