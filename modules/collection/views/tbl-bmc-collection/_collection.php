@@ -80,7 +80,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'qty')->textInput() ?>
     </div>
-    <?= Html::activeHiddenInput($model, 'allow_rate_zero', ['value' => Yii::$app->session->get('AllowOnZeroRate')]) ?>
     <div class="col-sm-2 reset_field">
         <?= Html::activeHiddenInput($model, 'milk_collection_code', ['value' => $model->milk_collection_code]) ?>
         <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>

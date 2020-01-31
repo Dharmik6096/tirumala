@@ -38,6 +38,7 @@ body{
     font-size: 12px;
     line-height: 1.5;
     font-weight: 400;
+    padding-right: 0px !important
 }
 h1, h2, h3, h4, h5, h6{
     color: inherit;

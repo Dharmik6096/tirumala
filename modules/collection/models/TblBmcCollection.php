@@ -118,11 +118,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
-            [['rtpl'], 'required', 'when' => function ($model) {
-                    return $model->allow_rate_zero == 0;
-                }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblbmccollection-allow_rate_zero').val() == '0'; 
-          }", 'on' => ['create', 'update']],
+            [['rtpl'], function ($attribute, $params) {
+                    Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
+                }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
             [['rtpl', 'amount'], 'default', 'value' => 0, 'except' => ['importCsv']],
             [['water'], 'default', 'value' => 0],
             [['doc_no'], 'default', 'value' => 1],
@@ -388,11 +386,15 @@ class TblBmcCollection extends \app\models\ChildModel {
                         $this->rate_code = (string) $detail_data->purchase_rate_code;
                         $this->rtpl = $detail_data->rtpl;
                         $this->amount = $detail_data->rtpl * $this->qty;
-                    } else if (Yii::$app->session->get('AllowOnZeroRate') == 0) {
-                        $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                    } else {
+                        Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
+                        $this->rtpl = 0;
+                        $this->amount = 0;
                     }
-                } else if (Yii::$app->session->get('AllowOnZeroRate') == 0) {
-                    $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                } else {
+                    Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
+                    $this->rtpl = 0;
+                    $this->amount = 0;
                 }
             } else if (empty(floatval($this->rtpl)) && !empty(floatval($this->amount))) {
                 $this->rtpl = $this->amount / $this->qty;
