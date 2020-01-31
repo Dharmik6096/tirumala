@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Bulk Notofication');
+$this->title = Yii::$app->label->title('create', 'Bulk Notification');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

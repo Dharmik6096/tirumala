@@ -52,9 +52,6 @@ use app\modules\syncutility\models\TblSyncLog;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\modules\organisation\models\TblMasterTransfer;
-use app\modules\sms\models\TblBulkNotification;
-use app\modules\webservice\eipl\models\TblEiplAppLogin;
-use app\modules\sms\models\TblAlertNotification;
 
 class SiteController extends Controller {
 
@@ -1778,56 +1775,6 @@ class SiteController extends Controller {
                     $row->save();
                 } catch (\yii\db\Exception $e) {
                     // var_dump($e);
-                    $row->response_datetime = date('Y-m-d H:i:s');
-                    $row->status = 3;
-                    $row->save();
-                }
-            }
-        }
-    }
-
-    public function actionBulkNotification() {
-        $model = new TblBulkNotification();
-        $model->status = 0;
-        $modelData = $model->getPickRecords();
-        if (!empty($modelData)) {
-            $ids = array_map(function($e) {
-                return $e->bulk_notification_id;
-            }, $modelData);
-            $update = $model->updateFileStatus($ids);
-            foreach ($modelData as $row) {
-                try {
-                    $loginModel = new TblEiplAppLogin();
-                    $loginModelData = $loginModel->getLoginData($row);
-                    if (!empty($loginModelData)) {
-                        $saveModel = [];
-                        foreach ($loginModelData as $detail) {
-                            $alertModel = new TblAlertNotification();
-                            $alertModel->attributes = $row->attributes;
-                            $alertModel->header_info = $row->title;
-                            $alertModel->module_type = $row->campaign_name;
-                            $alertModel->receiver_detail = $detail->device_id;
-                            $alertModel->refecence_code = $detail->master_code;
-                            $saveModel[] = $alertModel;
-                        }
-                        $generalModel = new GeneralModel();
-                        $transaction = $generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
-                        if ($transaction == 'customRedirect') {
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->status = 2;
-                        } else {
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->status = 3;
-                        }
-                    }
-                    $row->save();
-                } catch (\Throwable $e) {
-                    var_dump($e);
-                    $row->response_datetime = date('Y-m-d H:i:s');
-                    $row->status = 3;
-                    $row->save();
-                } catch (\yii\db\Exception $e) {
-                    var_dump($e);
                     $row->response_datetime = date('Y-m-d H:i:s');
                     $row->status = 3;
                     $row->save();

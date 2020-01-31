@@ -54,7 +54,8 @@ class TblBulkNotification extends \app\models\ChildModel {
             [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type'], 'safe'],
             [['content_id', 'status'], 'integer'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'wef_date'], 'required'],
-            [['status', 'member_code', 'dcs_code'], 'default', 'value' => 0]
+            [['status'], 'default', 'value' => 0],
+            [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
         ];
     }
 
@@ -73,7 +74,7 @@ class TblBulkNotification extends \app\models\ChildModel {
             'app_type' => Yii::t('app', 'App Type'),
             'login_type' => Yii::t('app', 'Login Type'),
             'wef_date' => Yii::t('app', 'Schedule On'),
-            'title' => Yii::t('app', 'Title'),
+            'title' => Yii::t('app', 'Tittle'),
             'message' => Yii::t('app', 'Message'),
             'campaign_name' => Yii::t('app', 'Campaign Name'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -128,6 +129,13 @@ class TblBulkNotification extends \app\models\ChildModel {
 
     public function updateFileStatus($value) {
         return $this->updateAll(['status' => 1, 'pickup_datetime' => date('Y-m-d H:i:s')], ['bulk_notification_id' => $value]);
+    }
+
+    public function disableDelete() {
+        if ($this->status != 0)
+            return false;
+        else
+            return true;
     }
 
 }

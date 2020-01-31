@@ -25,7 +25,7 @@ $attribute = [
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'member_code', 'filter' => false],
     ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Name'), 'value' => function($model) {
-            return $model->member_code == 0 ? 'All' : Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'vAlign' => 'middle'],
     [
         'attribute' => 'wef_date',
@@ -63,6 +63,7 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'title' => Yii::t('app', 'Edit')];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/sms/tbl-bulk-notification/update', 'id' => $model->bulk_notification_id], $options);
         },
+        'delete' => ['option' => 'bulk_notification_id,bulk_notification_id,tbl-bulk-notification/delete,disableDelete()'],
     ]
 ];
 

@@ -9,6 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblBulkNotificationHistory;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
  * TblBulkNotificationController implements the CRUD actions for TblBulkNotification model.
@@ -48,10 +51,13 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblBulkNotification();
         $this->viewFile = 'create';
+        $this->model->app_type = 1;
+        $this->model->login_type = 'MEMBER';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->receiver_type = 'APP_NOTIFICATION';
             $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
             $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $this->model->entry_datetime = date('Y-m-d H:i:s');
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Bulk Notification', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -70,11 +76,12 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
-//            $historyModel = new TblBulkNotificationHistory();
-//            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $historyModel = new TblBulkNotificationHistory();
+            Yii::$app->operation->history($this->model, $historyModel, 'UPDATE');
             $this->model->load(Yii::$app->request->post());
             $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'edit']);
+            $this->model->entry_datetime = !empty($this->model->entry_datetime) ? date('Y-m-d', strtotime($this->model->entry_datetime)) : '';
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -88,10 +95,13 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $historyModel = new TblBulkNotificationHistory();
+        Yii::$app->operation->history($this->model, $historyModel, 'DELETE');
+        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**
