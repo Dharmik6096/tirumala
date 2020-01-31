@@ -234,10 +234,12 @@ class V1 extends \yii\base\Module {
             'report/member-collection' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_day_wise_report',
+                'call_action' => TRUE
             ],
             'report/member-collection-passbook' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_passbook',
+                'call_action' => TRUE
             ],
             'report/member-collection-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
