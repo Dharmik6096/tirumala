@@ -95,7 +95,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->date_time_of_testing = $datetime;
                 if (strtolower($this->model->customer_type) == 'dcs') {
                     $dcs = new TblDcs();
-                    $this->model->dcs_code = $dcs->validDcs($this->model->customer_code);
+                    $this->model->dcs_code = $dcs->validDcs($this->model->customer_code, $this->model->bmc_code);
                     $this->model->customer_code = $this->model->dcs_code;
                     $this->model->village_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code');
                     $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
@@ -188,6 +188,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $response = [];
         $response['status'] = 'error';
         $response['data'] = '';
+        $bmc = Yii::$app->request->post('bmc_code');
         $dcs = Yii::$app->request->post('dcs_code');
         $union = Yii::$app->request->post('union_code');
         $type = Yii::$app->request->post('customer_type');
@@ -197,7 +198,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $bmcModel->customer_code = $data;
         } else {
             $model = new TblDcs();
-            $data = $model->validDcs($dcs);
+            $data = $model->validDcs($dcs, $bmc);
             $bmcModel->customer_code = $data;
         }
         if (!empty($data)) {
@@ -213,6 +214,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $response = [];
         $response['status'] = 'error';
 
+        $data['bmc_code'] = Yii::$app->request->post('bmc_code');
         $data['dcs_code'] = Yii::$app->request->post('dcs_code');
         $data['milk_type'] = Yii::$app->request->post('milk_type');
         $data['milk_quality_type'] = Yii::$app->request->post('milk_quality_type');
@@ -227,7 +229,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['union'] = Yii::$app->request->post('union_code');
         $bmcModel = new TblBmcCollection();
         $dcsModel = new TblDcs();
-        $dcs = $dcsModel->validDcs($data['dcs_code']);
+        $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
         $bmcModel->dcs_code = !empty($dcs) ? $dcs : $data['dcs_code'];
 //        $bmcModel->bmc_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'bmc_code');
 //        $bmcModel->mcc_plant_code = Yii::$app->general->getforeignkey($bmcModel->dcsCode, 'mcc_plant_code');

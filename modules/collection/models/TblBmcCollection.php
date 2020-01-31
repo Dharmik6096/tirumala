@@ -315,7 +315,7 @@ class TblBmcCollection extends \app\models\ChildModel {
 
             if (strtoupper($this->customer_type) == 'DCS') {
                 $dcs = new TblDcs();
-                $this->dcs_code = $dcs->validDcs($this->customer_code);
+                $this->dcs_code = $dcs->validDcs($this->customer_code, $this->bmc_code);
                 if (empty($this->dcs_code)) {
                     $this->addError('customer_code', Yii::t('app/validation', $this->getAttributeLabel('customer_code') . ' is invalid'));
                 }
