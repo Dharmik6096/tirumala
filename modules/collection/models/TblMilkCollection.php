@@ -135,7 +135,7 @@ class TblMilkCollection extends \app\models\ChildModel {
         return [
             'milk_collection_code' => Yii::t('app', 'Milk Collection Code'),
             'member_code' => Yii::t('app', 'Member'),
-            'dcs_code' => Yii::t('app', 'Society Name'),
+            'dcs_code' => Yii::t('app', 'Society'),
             'name' => Yii::t('app', 'Name'),
             'mobile_no' => Yii::t('app', 'Mobile No'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
