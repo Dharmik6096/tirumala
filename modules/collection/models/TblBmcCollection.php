@@ -84,8 +84,8 @@ class TblBmcCollection extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
             [['customer_type'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type');
-                }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
+                }, 'on' => ['importCsv']],
             [['collection_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
                 }, 'on' => 'importCsv'],
