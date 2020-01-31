@@ -157,6 +157,7 @@ return [
     'kg_snf' => 'KgSNF',
     'avg_fat' => 'Avg.FAT(%)',
     'avg_snf' => 'Avg.SNF(%)',
-    'avf_fat' => 'Avg.FAT(%)',
     'bmc_name' => 'BMC',
+    'pouring_shift' => 'P.Shift',
+    'avg_rate' => 'Avg.Rate'
 ];
