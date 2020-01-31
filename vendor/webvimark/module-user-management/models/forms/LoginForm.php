@@ -244,9 +244,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('BMC', $bmc);
         Yii::$app->session->set('MCC', $mcc);
         Yii::$app->session->set('organization_logo', $organization_logo);
-        Yii::$app->session->set('AllowOnZeroRate', $allow_zero_rate);
-        Yii::$app->session->set('languageTranslation', $language);
-        Yii::$app->session->set('WithMemberRate', $with_member_rate);
+        Yii::$app->session->set('eiplCode', $language);
         Yii::$app->session->set('unionConfig', $unionConfigArray);
         return true;
     }
