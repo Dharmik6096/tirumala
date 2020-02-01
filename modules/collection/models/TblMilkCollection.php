@@ -320,7 +320,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function ImportfieldSet($attribute, $params) {
         if (empty($this->getErrors())) {
             $dcs = new TblDcs();
-            $this->dcs_code = $dcs->validDcs($this->dcs_code);
+            $this->dcs_code = $dcs->validDcs($this->dcs_code, $this->bmc_code);
             $this->date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : '';
             $this->date_time_of_collection = $this->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->shift_code);
             if (empty($this->dcs_code)) {
