@@ -244,6 +244,7 @@ class V1 extends \yii\base\Module {
             'report/member-collection-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_summary',
+                'call_action' => TRUE
             ],
             'report/collection-dispatch' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
