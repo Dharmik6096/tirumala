@@ -258,7 +258,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                 ->join('INNER JOIN', 'tbl_member m', 'm.member_code = ap. master_code')
                 ->join('INNER JOIN', 'tbl_dcs d', 'd.dcs_code = m. dcs_code')
                 ->where(['d.dcs_code' => $data->dcs_code, 'd.union_code' => $data->union_code, 'd.plant_code' => $data->plant_code, 'd.mcc_plant_code' => $data->mcc_plant_code, 'd.bmc_code' => $data->bmc_code])
-                ->andWhere(['ap.is_active' => 1, 'ap.login_type' => $data->login_type, 'ap.is_block' => 0]);
+                ->andWhere(['ap.is_active' => 1, 'ap.login_type' => $data->login_type, 'ISNULL(ap.is_block,0)' => 0]);
 
         if (!empty($data->member_code)) {
             $query = $query->andWhere(['m.member_code' => $data->member_code]);

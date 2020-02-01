@@ -1353,7 +1353,7 @@ class GeneralFunctions extends Component {
 
     public function validateOnUnionConfig($model, $attribute, $flag, $flagVal) {
         $session = isset(Yii::$app->session->get('unionConfig')[$model->union_code][$flag]) ? Yii::$app->session->get('unionConfig')[$model->union_code][$flag] : '';
-        if (!empty($session) && $session == $flagVal) {
+        if (empty($model->$attribute) && !empty($session) && $session == $flagVal) {
             $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' cannot be blank.'));
             return false;
         }

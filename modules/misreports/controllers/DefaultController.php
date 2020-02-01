@@ -174,6 +174,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberCollectionSummary() {
+        $this->report = 'MemberCollectionSummary';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -450,13 +455,19 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,p_date:string',
                 'sp_name' => 'sp_app_eipl_v1_member_collection_paymentcycle_wise_report',
                 'scenario' => 'MemberCollectionPaymentcycleWise',
-                'title' => 'M03 - Member Collection Paymentcycle Wise',
+                'title' => 'M04 - Member Collection Payment Cycle Wise',
             ],
             'MemberCollectionMonthWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,p_date:string',
                 'sp_name' => 'sp_app_eipl_v1_member_collection_monthwise_report',
                 'scenario' => 'MemberCollectionMonthWise',
-                'title' => 'M04 - Member Collection Month Wise',
+                'title' => 'M05 - Member Collection Month Wise',
+            ],
+            'MemberCollectionSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_app_eipl_v1_member_collection_summary',
+                'scenario' => 'MemberCollectionSummary',
+                'title' => 'M03 - MemberCollectionSummary',
             ],
         ];
         return $label[$l];

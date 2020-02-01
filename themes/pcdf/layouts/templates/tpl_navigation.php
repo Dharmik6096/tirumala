@@ -126,8 +126,9 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => 'M01-' . Yii::t('app', 'Member Collection Passbook'), 'url' => ['/misreports/default/member-collection-passbook']],
                         ['label' => 'M02-' . Yii::t('app', 'Member Collection Day Wise'), 'url' => ['/misreports/default/member-collection-day-wise']],
-                        ['label' => 'M03-' . Yii::t('app', 'Member Collection Paymentcycle Wise'), 'url' => ['/misreports/default/member-collection-paymentcycle-wise']],
-                        ['label' => 'M04-' . Yii::t('app', 'Member Collection Month Wise'), 'url' => ['/misreports/default/member-collection-month-wise']],
+                        ['label' => 'M03-' . Yii::t('app', 'Member Collection Summary'), 'url' => ['/misreports/default/member-collection-summary']],
+                        ['label' => 'M04-' . Yii::t('app', 'Member Collection Payment Cycle Wise'), 'url' => ['/misreports/default/member-collection-paymentcycle-wise']],
+                        ['label' => 'M05-' . Yii::t('app', 'Member Collection Month Wise'), 'url' => ['/misreports/default/member-collection-month-wise']],
                     ]
                 ],
                 [
