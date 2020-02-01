@@ -65,7 +65,6 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                         ],
                         [
                             'attribute' => 'member_code',
-                            'value' => !empty($model->memberCode) ? $model->memberCode->member_name . ' ' . $model->memberCode->father_name . ' ' . $model->memberCode->surname : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -73,7 +72,8 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'name',
+                            'attribute' => 'member_code',
+                            'value' => !empty($model->memberCode) ? $model->memberCode->member_name . ' ' . $model->memberCode->father_name . ' ' . $model->memberCode->surname : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
