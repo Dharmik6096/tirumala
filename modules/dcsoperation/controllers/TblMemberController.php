@@ -14,6 +14,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use app\modules\sms\models\TblAlertNotification;
+use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -240,6 +243,38 @@ class TblMemberController extends \app\controllers\ChildController {
     private function setModel() {
         $this->model->dob = empty($this->model->dob) ? NULL : $this->model->dob;
         $this->model->member_name = ucwords($this->model->member_name);
+    }
+
+    public function actionAppInformation() {
+        $member_code = !empty(Yii::$app->request->post('member_code')) ? Yii::$app->request->post('member_code') : NULL;
+        $this->model = $this->findModel($member_code);
+        $appModel = new TblEiplAppLogin();
+        $appInfo = $appModel->getMemberAppInfo($this->model);
+        $alertInfo = [];
+        if (!empty($appInfo)) {
+            $alertModel = new TblAlertNotification();
+            $alertInfo = $alertModel->getAppAlertInfo($appInfo);
+        }
+        if (!empty(Yii::$app->request->post()['TblEiplAppLogin']) && !empty(Yii::$app->request->post()['TblEiplAppLogin']['app_login_id'])) {
+            $appModel = TblEiplAppLogin::findOne(['app_login_id' => Yii::$app->request->post()['TblEiplAppLogin']['app_login_id']]);
+            $historyModel = new TblEiplAppLoginHistory();
+            Yii::$app->operation->history($appModel, $historyModel, UPDATE);
+            if ($appModel->is_block == 1) {
+                $appModel->is_block = 0;
+                $label = 'app Un-block';
+            } else {
+                $appModel->is_block = 1;
+                $label = 'app Block';
+            }
+            $transaction = $this->generalModel->saveTransaction([$appModel, $historyModel], [$label, 'edit']);
+            return $this->redirect(['index']);
+        }
+
+        return $this->renderAjax('app_info_form', [
+                    'model' => $this->model,
+                    'appInfo' => $appInfo,
+                    'alertInfo' => $alertInfo,
+        ]);
     }
 
 }

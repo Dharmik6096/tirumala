@@ -88,4 +88,12 @@ class TblAlertNotification extends \app\models\ChildModel {
         return $this->hasOne(TblApiMaster::className(), ['api_master_id' => 'content_id']);
     }
 
+    public function getAppAlertInfo($data) {
+        return $query = $this->find()
+                ->where(['receiver_detail' => $data->device_id, 'receiver_type' => 'APP_NOTIFICATION'])
+                ->limit(15)
+                ->orderby('entry_datetime DESC')
+                ->all();
+    }
+
 }
