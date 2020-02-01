@@ -467,7 +467,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_app_eipl_v1_member_collection_summary',
                 'scenario' => 'MemberCollectionSummary',
-                'title' => 'M03 - MemberCollectionSummary',
+                'title' => 'M03 - Member Collection Summary',
             ],
         ];
         return $label[$l];
