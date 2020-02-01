@@ -63,10 +63,11 @@ $script = "
         var dcs = $(this).val();
         var type= $('#tblbmccollection-customer_type').val(); 
         var union= $('#tblbmccollection-union_code').val(); 
+        var bmc= $('#tblbmccollection-bmc_code').val(); 
         $.ajax({
             type: 'post',
             url:'" . Url::to(['validate-dcs']) . "',
-            data: {'dcs_code':dcs,'customer_type':type,'union_code':union},
+            data: {'dcs_code':dcs,'customer_type':type,'union_code':union,'bmc_code':bmc},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success')
@@ -104,11 +105,12 @@ $script = "
         var clr = $('#tblbmccollection-clr').val();
         var type = $('#tblbmccollection-customer_type').val();
         var union = $('#tblbmccollection-union_code').val();
-        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != ''){
+        var bmc = $('#tblbmccollection-bmc_code').val();
+        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != '' && bmc != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr},
+                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc},
                 success: function(data) {   
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')

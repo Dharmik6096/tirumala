@@ -629,8 +629,8 @@ class TblDcs extends ChildModel {
         return $this->hasOne(TblSocietyCollection::className(), ['dcs_code' => 'dcs_code'])->orderBy('collection_id desc');
     }
 
-    public function validDcs($dcs) {
-        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->all();
+    public function validDcs($dcs, $bmc) {
+        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1, 'bmc_code' => $bmc])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
     }
 

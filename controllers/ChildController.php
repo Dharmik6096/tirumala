@@ -32,7 +32,7 @@ class ChildController extends Controller {
     public function init() {
         parent::init();
 //        $language = (!empty(Yii::$app->session->get('organizations_code')) && Yii::$app->session->get('organizations_type') == 'UNION' && count(explode(',', Yii::$app->session->get('organizations_code')) == 1)) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
-        $language = (!empty(Yii::$app->session->get('languageTranslation') && Yii::$app->session->get('organizations_type') == 'UNION')) ? Yii::$app->session->get('languageTranslation') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
+        $language = (!empty(Yii::$app->session->get('eiplCode'))) ? Yii::$app->session->get('eiplCode') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
         \Yii::$app->language = $language;
         $path = Yii::$app->basePath . '/messages/' . $language;
         if (!file_exists($path)) {
