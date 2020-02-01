@@ -18,6 +18,10 @@ class ReportController extends MasterController {
         return $this->prepareResposne();
     }
 
+    public function actionMemberCollectionSummary() {
+        return $this->prepareResposne();
+    }
+
     public function prepareResposne() {
         $req_data = Yii::$app->request->getRawBody();
         $endpoint = !empty($req_data['endpoint']) ? $req_data['endpoint'] : NULL;
