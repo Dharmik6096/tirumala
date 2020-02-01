@@ -32,7 +32,7 @@ $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
     }
     ?>
     <div class="panel-body padding-0">
-        <div class="report-area">
+        <div class="report-area not_ellipsis">
             <div class="modal modal-default fade" id="mis_report_search_filter" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
