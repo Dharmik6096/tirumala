@@ -159,5 +159,11 @@ return [
     'avg_snf' => 'Avg.SNF(%)',
     'bmc_name' => 'BMC',
     'pouring_shift' => 'P.Shift',
-    'avg_rate' => 'Avg.Rate'
+    'avg_rate' => 'Avg.Rate',
+    'mobile_no' => 'Mobile No.',
+    'first_request' => 'First Request',
+    'last_request' => 'Last Request',
+    'app_version' => 'App Version',
+    'is_app_block' => 'Is App Block',
+    'device_name' => 'Device Name'
 ];

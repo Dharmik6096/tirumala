@@ -25,8 +25,8 @@ class ReportsModel extends Model {
             [['report_type'], 'required', 'on' => 'BmcCollection'],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapReport'],
             [['to_date'], function ($attribute, $params) {
-                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+        }, 'skipOnEmpty' => false],
             [['union_code', 'plant_code'], 'required', 'on' => 'SapStatusReport'],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
             [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
@@ -37,6 +37,7 @@ class ReportsModel extends Model {
             [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MemberCollectionPassbook', 'MemberCollectionDayWise', 'MemberCollectionSummary']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'p_date'], 'required', 'on' => ['MemberCollectionPaymentcycleWise', 'MemberCollectionMonthWise']],
+            [['union_code', 'plant_code', 'mcc_code'], 'required', 'on' => ['MemberMobileAppDetail']],
         ];
     }
 

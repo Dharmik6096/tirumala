@@ -179,6 +179,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberMobileAppDetail() {
+        $this->report = 'MemberMobileAppDetail';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -468,6 +473,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_app_eipl_v1_member_collection_summary',
                 'scenario' => 'MemberCollectionSummary',
                 'title' => 'M03 - Member Collection Summary',
+            ],
+            'MemberMobileAppDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_rpt_mis_member_app_detail',
+                'scenario' => 'MemberMobileAppDetail',
+                'title' => 'M06 - Member Application Detail',
             ],
         ];
         return $label[$l];

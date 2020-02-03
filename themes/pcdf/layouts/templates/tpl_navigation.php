@@ -129,6 +129,7 @@ echo GhostMenu::widget([
                         ['label' => 'M03-' . Yii::t('app', 'Member Collection Summary'), 'url' => ['/misreports/default/member-collection-summary']],
                         ['label' => 'M04-' . Yii::t('app', 'Member Collection Payment Cycle Wise'), 'url' => ['/misreports/default/member-collection-paymentcycle-wise']],
                         ['label' => 'M05-' . Yii::t('app', 'Member Collection Month Wise'), 'url' => ['/misreports/default/member-collection-month-wise']],
+                        ['label' => 'M06-' . Yii::t('app', 'Member Application Detail'), 'url' => ['/misreports/default/member-mobile-app-detail']],
                     ]
                 ],
                 [

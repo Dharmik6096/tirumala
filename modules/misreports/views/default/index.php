@@ -92,7 +92,7 @@ $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
                                         if (in_array($value, array('mcc_code'))) {
                                             ?>
                                             <div class="col-sm-6 val_plant_code">
-                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant code'); ?>
+                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
                                             <div class="col-sm-6 val_mcc_code">
                                                 <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC'); ?>
