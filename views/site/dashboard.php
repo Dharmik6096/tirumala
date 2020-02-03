@@ -63,6 +63,16 @@ $bmc_mcollection = array_column(array_values($bmc_collection), 'm_quantity');
 $bmc_mcollection = json_encode($bmc_mcollection);
 $bmc_ecollection = array_column(array_values($bmc_collection), 'e_quantity');
 $bmc_ecollection = json_encode($bmc_ecollection);
+
+$active_member = array_sum(array_map(function($item) {
+            return $item['active_member'];
+        }, $member_mobile_detail));
+$mobile_app_active = array_sum(array_map(function($item) {
+            return $item['mobile_app_active'];
+        }, $member_mobile_detail));
+$mobile_app_block = array_sum(array_map(function($item) {
+            return $item['mobile_app_block'];
+        }, $member_mobile_detail));
 ?>
 <div class="panel-group row panel-fixed" id="filter">
     <div class="panel panel-default min_h_0">
@@ -70,6 +80,7 @@ $bmc_ecollection = json_encode($bmc_ecollection);
             <h4 class="panel-title">
                 <?= Yii::t('app', 'Data for PCDF') . ' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
                 <a data-toggle="collapse" href="#collapse1" class="setting"><i class="fa fa-gear"></i></a>
+                <a class="member-mobile-info pull-right"><i class="fa fa-mobile"></i></a>
             </h4>
         </div>
         <div id="collapse1" class="panel-collapse collapse">
@@ -371,6 +382,20 @@ $bmc_ecollection = json_encode($bmc_ecollection);
     </div>
 </div>
 
+<div id="pieChartModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?= Yii::t('app', 'Member V/S Mobile APP'); ?></h4>
+            </div>
+            <div class="modal-body" id='piecontainer'>
+            </div>
+        </div>
+
+    </div>
+</div>
 <div id="crossTabDetails"></div>
 <div id="chartToTable"></div>
 <?php
@@ -1068,5 +1093,63 @@ function setHtmlData(id,cntr,url){
         }
     });
 }
+
+var active_member = " . $active_member . ";
+var mobile_app_active = " . $mobile_app_active . ";
+var mobile_app_block = " . $mobile_app_block . ";
+var pie_chart = $('#piecontainer');
+if (pie_chart.length) {
+    Highcharts.chart('piecontainer', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: false,
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name} ({point.y})</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    },
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: [{
+                name: '" . Yii::t('app', 'Active Member') . "',
+                y: active_member,
+                color: '#3a7cd6'
+            }, {
+                name: '" . Yii::t('app', 'Mobile App Active') . "',
+                y: mobile_app_active,
+                color: '#1758'
+            }, {
+                name: '" . Yii::t('app', 'Mobile App Blocked') . "',
+                y: mobile_app_block,
+                color: '#FFB319'
+            }]
+        }]
+    });
+}
+
+$(document).on('click','.member-mobile-info',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        $('#pieChartModal').modal('toggle'); 
+        $('#loadercontent').hide();
+        $('#pageloader').hide();
+});
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');
