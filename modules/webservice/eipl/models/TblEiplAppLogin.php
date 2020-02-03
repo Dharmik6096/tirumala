@@ -50,7 +50,7 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
      */
     public function rules() {
         return [
-            [['app_type', 'otp_code', 'sms_sent', 'is_active', 'is_expired'], 'safe'],
+            [['app_type', 'otp_code', 'sms_sent', 'is_active', 'is_expired', 'device_detail'], 'safe'],
             [['eipl_code', 'mobile_no', 'master_type', 'master_code', 'login_type', 'module_type', 'module_code', 'imei_no', 'device_id', 'lat_long', 'access_token', 'auth_key', 'version_no', 'sms_log'], 'safe'],
             [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at', 'department'], 'safe'],
             [['orignating_timestamp', 'posting_timestamp', 'expired_datetime', 'updated_at'], 'default', 'value' => date('Y-m-d H:i:s')],

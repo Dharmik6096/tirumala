@@ -36,6 +36,7 @@ $form = ActiveForm::begin(['options' => [
                         <div class="col-md-4 padding-left-0"><b><?= Yii::t('app', 'APP Version') ?>:</b> <?= !empty($appInfo) ? $appInfo->version_no : 'N/A' ?></div>
                         <div class="col-md-4"><b><?= Yii::t('app', 'First Req.') ?>:</b> <?= !empty($appInfo) ? Yii::$app->controls->view_datetime($appInfo->orignating_timestamp) : 'N/A' ?></div>
                         <div class="col-md-4"><b><?= Yii::t('app', 'Last Req.') ?>:</b> <?= !empty($appInfo) ? Yii::$app->controls->view_datetime($appInfo->updated_at) : 'N/A' ?></div>
+                        <div class="col-md-12 padding-left-0"><b><?= Yii::t('app', 'Device Name') ?>:</b> <?= !empty($appInfo) ? $appInfo->device_detail : 'N/A' ?></div>
                     </div> 
                     <div class="clearfix"></div>
                     <h5 class="modal-title mt10"><?php echo Yii::t('app', 'Notification Detail'); ?></h5>
