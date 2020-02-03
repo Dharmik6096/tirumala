@@ -8,7 +8,7 @@ use yii\helpers\Url;
 <?php
 $form = ActiveForm::begin(['options' => [
                 'class' => 'popup-form',
-                'id' => 'app-information-form',
+                'id' => 'app-information-form-check',
             ], 'validateOnBlur' => TRUE,
             'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
@@ -18,7 +18,7 @@ $form = ActiveForm::begin(['options' => [
         ]);
 ?>
 <div class="modal modal-default fade" id="AppInformationModal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog width_100-200">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
@@ -30,16 +30,16 @@ $form = ActiveForm::begin(['options' => [
                         <!--<div class="col-md-6"><b> <?= Yii::t('app', 'BMC') ?>: </b><?= Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode'], 'bmc_name') ?> - <?= Yii::$app->general->getforeignkey($model->dcsCode, 'bmc_code') ?></div>-->
                         <!--<div class="col-md-6"><b> <?= $model->getAttributeLabel('dcs_code') ?>: </b><?= Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name') ?> - <?= Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') ?></div>-->
 <!--                        <div class="col-md-12"><b><?= Yii::t('app', 'Member') ?>: </b><?= $model->member_code ?> - <?= $model->member_name ?></div>-->
-                        <div class="col-md-4"><b> <?= $model->getAttributeLabel('mobile_no') ?>: </b><?= $model->mobile_no ?></div>
+                        <div class="col-md-4 padding-left-0"><b> <?= $model->getAttributeLabel('mobile_no') ?>: </b><?= $model->mobile_no ?></div>
                         <div class="col-md-4"><b><?= Yii::t('app', 'Is APP Active') ?>:</b> <?= !empty($appInfo) ? ($appInfo->is_active == 1 ? 'Yes' : 'No') : 'N/A' ?></div>
                         <div class="col-md-4"><b><?= Yii::t('app', 'Is APP Block') ?>:</b> <?= !empty($appInfo) ? ( $appInfo->is_block == 1 ? 'Yes' : 'No') : 'N/A' ?></div>
-                        <div class="col-md-4"><b><?= Yii::t('app', 'APP Version') ?>:</b> <?= !empty($appInfo) ? $appInfo->version_no : 'N/A' ?></div>
-                        <!--<div class="col-md-6"><b><?= Yii::t('app', 'First Req.') ?>:</b> <?= !empty($appInfo) ? Yii::$app->controls->view_datetime($appInfo->orignating_timestamp) : 'N/A' ?></div>-->
-                        <div class="col-md-8"><b><?= Yii::t('app', 'Last Activity On') ?>:</b> <?= !empty($appInfo) ? Yii::$app->controls->view_datetime($appInfo->updated_at) : 'N/A' ?></div>
+                        <div class="col-md-4 padding-left-0"><b><?= Yii::t('app', 'APP Version') ?>:</b> <?= !empty($appInfo) ? $appInfo->version_no : 'N/A' ?></div>
+                        <div class="col-md-4"><b><?= Yii::t('app', 'First Req.') ?>:</b> <?= !empty($appInfo) ? Yii::$app->controls->view_datetime($appInfo->orignating_timestamp) : 'N/A' ?></div>
+                        <div class="col-md-4"><b><?= Yii::t('app', 'Last Req.') ?>:</b> <?= !empty($appInfo) ? Yii::$app->controls->view_datetime($appInfo->updated_at) : 'N/A' ?></div>
                     </div> 
-                    <hr class="line-color">
                     <div class="clearfix"></div>
-                    <h5 class="modal-title"><?php echo Yii::t('app', 'Notification Detail'); ?></h5>
+                    <h5 class="modal-title mt10"><?php echo Yii::t('app', 'Notification Detail'); ?></h5>
+                    <hr class="line-color margin_0">
                     <table  class="table table-bordered table-striped table-main table-language">
                         <thead>
                             <tr>
@@ -58,12 +58,12 @@ $form = ActiveForm::begin(['options' => [
                                     <td><?= $alertData->header_info ?></td>
                                     <td><?= $alertData->message ?></td>
                                     <td><?= Yii::$app->controls->view_datetime($alertData->entry_datetime) ?></td>
-                                    <td><?= $alertData->status == 2 ? 'Delievered' : ($alertData->status == 3 ? 'Failed' : 'Pending') ?></td>
+                                    <td><?= $alertData->send_status == 2 ? 'Delivered' : ($alertData->send_status == 3 ? 'Failed' : 'Pending') ?></td>
                                 </tr>
                                 <?php
                                 $i++;
                             }
-                        } 
+                        }
                         ?>
                     </table>
                 </div>
@@ -73,10 +73,12 @@ $form = ActiveForm::begin(['options' => [
                     <button type="button" class="btn btn-default btn-raised close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                     <?php
                     if (!empty($appInfo) && $appInfo->is_active == 1 && $model->is_active == 1) {
-                         echo Html::hiddenInput('member_code', $model->member_code);
+                        echo Html::hiddenInput('member_code', $model->member_code);
+                        echo Html::hiddenInput('member_name', $model->member_name, ['id' => 'member_name']);
                         echo Html::activeHiddenInput($appInfo, 'app_login_id');
                         $label = $appInfo->is_block == 1 ? 'Un-Block' : 'Block';
-                        echo Html::submitButton(Yii::t('app', $label), ['class' => 'btn btn-default', 'id' => 'block-unblock']);
+                        echo Html::hiddenInput('display_label', $label, ['id' => 'display_label']);
+                        echo Html::submitButton(Yii::t('app', $label), ['class' => 'btn btn-default', 'id' => 'block-unblock-submit']);
                     }
                     ?>
                 </div>
@@ -86,11 +88,3 @@ $form = ActiveForm::begin(['options' => [
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<?php
-$script = "
-     $('#block-unblock').click(function() {
-        $('#app-information-form-form').submit();
-    });
-";
-Yii::$app->view->registerJs($script, View::POS_END, 'complaint-assignment');
-?>

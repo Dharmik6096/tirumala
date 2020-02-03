@@ -50,7 +50,7 @@ $attribute = [
     ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
-    ['attribute' => 'mobile_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'mobile_no', 'visible' => TRUE, 'filter' => true],
     ['attribute' => 'email', 'visible' => false, 'filter' => false],
     ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
@@ -165,6 +165,35 @@ $(document).ready(function(){
             error: function(data) {    
                 $('#loadercontent').hide();
                 $('#pageloader').hide();
+            }
+        });
+    });
+    
+
+    $(document).on('submit','form#app-information-form-check',function(e){
+//     $('form#app-information-form-check').submit(function(e) {
+        var label= $('#display_label').val();
+        var name= $('#member_name').val();
+        e.preventDefault();
+        var currentForm = this;
+        bootbox.confirm({
+            message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to '+label+' \"'+name+'\"?</span></div></div>',
+            buttons: {
+                'cancel': {
+                                label: 'Cancel',
+                                className: 'btn btn-danger'
+                  },
+                'confirm': {
+                                label: 'Ok',
+                                className: 'btn btn-primary'
+                 }
+            },
+            callback: function(result) {
+                if (result) {
+                    $('#pageloader').show();
+                    $('#loadercontent').show();
+                    currentForm.submit();
+                }
             }
         });
     });

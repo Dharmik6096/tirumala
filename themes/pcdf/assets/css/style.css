@@ -2370,3 +2370,6 @@ div.crystalstyle{
     content: "\f00d";
     font-family: FontAwesome;
 }
+.width_100-200{
+    width: calc(100% - 30%) !important;
+}
