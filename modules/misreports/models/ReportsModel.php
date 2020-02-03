@@ -37,7 +37,7 @@ class ReportsModel extends Model {
             [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MemberCollectionPassbook', 'MemberCollectionDayWise', 'MemberCollectionSummary']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'p_date'], 'required', 'on' => ['MemberCollectionPaymentcycleWise', 'MemberCollectionMonthWise']],
-            [['union_code', 'plant_code', 'mcc_code'], 'required', 'on' => ['MemberMobileAppDetail']],
+            [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
         ];
     }
 
