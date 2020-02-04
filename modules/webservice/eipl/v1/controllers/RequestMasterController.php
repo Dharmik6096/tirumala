@@ -28,6 +28,9 @@ class RequestMasterController extends MasterController {
                 $sp_param[] = $param_val;
             }
             $response = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            if (isset($data['as_object']) && $data['as_object']) {
+                $response = !empty($response) ? $response[0] : NULL;
+            }
         } else {
             $endpoint_array = explode('/', $endpoint);
             $cntrlaction = 'webservice/eipl/v1/' . $endpoint_array[0] . '/' . $endpoint_array[1];
@@ -38,7 +41,7 @@ class RequestMasterController extends MasterController {
         return $this->response;
     }
 
-     public function actionSaveJson() {
+    public function actionSaveJson() {
         $data = [];
         $message = Yii::t('app', 'Unable to save!');
         $success_id = [];
