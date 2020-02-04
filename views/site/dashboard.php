@@ -1108,7 +1108,7 @@ if (pie_chart.length) {
         },
         title: false,
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '<b>{point.percentage:.1f}%</b>'
         },
         plotOptions: {
             pie: {
