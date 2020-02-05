@@ -94,7 +94,8 @@ class DcsImportStrategy extends ARImportStrategy {
                         $modelCodes->dcs_code = $model->dcs_code;
                         $modelCodes->bipl_code = substr($model->dcs_code, 2, 8);
                         $modelCodes->union_code = $model->union_code;
-                        $modelCodes->bmc_code = NULL;
+//                        $modelCodes->bmc_code = NULL;
+                        $modelCodes->bmc_code = $model->bmc_code;
                         array_push($modelList, $modelCodes);
 //                        var_dump($model->dcs_code);exit;
 //                        $list = $model->setSubCenter('I',$this->scenario);
@@ -102,9 +103,9 @@ class DcsImportStrategy extends ARImportStrategy {
 //                        foreach ($list as $row){
 //                            array_push($modelList, $row);
 //                        }
-                      
+
                         $model->setModelData($model, $modelList);
-                        
+
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
                         }
