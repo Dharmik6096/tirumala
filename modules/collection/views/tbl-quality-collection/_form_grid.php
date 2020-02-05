@@ -13,8 +13,19 @@ $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 <?php
 
 $attribute = [
-    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC Code'), 'visible' => false, 'filter' => false],
-    ['attribute' => 'bmc_code', 'value' => 'bmcCode.bmc_name', 'vAlign' => 'middle', 'filter' => true, 'visible' => false],
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC Code'), 'value' => 'bmc_code', 'vAlign' => 'middle', 'visible' => FALSE, 'filter' => false],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
     [
         'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
@@ -35,6 +46,9 @@ $attribute = [
     ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => Html::activeTextInput($searchModel, 'snf', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_snf', $operator, ['class' => 'form-control'])],
     ['attribute' => 'water', 'visible' => false, 'value' => 'water', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'clr', 'visible' => false, 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'qlty_auto', 'value' => function($model) {
+            return isset($model->qlty_auto) ? Yii::$app->dropdown->getRecords('is_quality_auto')['data'][$model->qlty_auto] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('is_quality_auto', $searchModel, 'qlty_auto'),],
 ];
 
 $grid_option = [
