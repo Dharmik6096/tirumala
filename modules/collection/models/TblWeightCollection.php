@@ -11,6 +11,10 @@ use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\configuration\models\TblMilkCollectionConfig;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_weight_collection".
@@ -96,12 +100,12 @@ class TblWeightCollection extends \app\models\ChildModel {
         return [
             'uuid' => Yii::t('app', 'Uuid'),
             'producer_flag' => Yii::t('app', 'Producer Flag'),
-            'sample_no' => Yii::t('app', 'Sample No'),
+            'sample_no' => Yii::t('app', 'Sample No.'),
             'date_time_of_collection' => Yii::t('app', 'Collection Date'),
             'shift_code' => Yii::t('app', 'Shift'),
             'milk_type_code' => Yii::t('app', 'Milk Type Code'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
-            'qty_mode' => Yii::t('app', 'Qty Mode'),
+            'qty_mode' => Yii::t('app', 'Collection Mode'),
             'qty' => Yii::t('app', 'Qty'),
             'converted_qty_mode' => Yii::t('app', 'Converted Qty Mode'),
             'converted_qty' => Yii::t('app', 'Converted Qty'),
@@ -112,7 +116,7 @@ class TblWeightCollection extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'bmc_code' => Yii::t('app', 'BMC'),
             'route_code' => Yii::t('app', 'Route'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -123,8 +127,8 @@ class TblWeightCollection extends \app\models\ChildModel {
             'version_no' => Yii::t('app', 'Version No'),
             'vehicle_no' => Yii::t('app', 'Vehicle No'),
             'ws_code' => Yii::t('app', 'Ws Code'),
-            'qty_auto' => Yii::t('app', 'Qty Auto'),
-            'doc_no' => Yii::t('app', 'Doc No'),
+            'qty_auto' => Yii::t('app', 'Qty Mode'),
+            'doc_no' => Yii::t('app', 'Doc. No.'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
@@ -185,6 +189,22 @@ class TblWeightCollection extends \app\models\ChildModel {
 
     public function getMainCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }

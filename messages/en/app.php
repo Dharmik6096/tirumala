@@ -120,4 +120,8 @@ return [
     'type' => 'Type',
     'New DCS' => 'New Society',
     'New DCS Code' => 'New Society Code',
+    'FAT' => 'FAT(%)',
+    'SNF' => 'SNF(%)',
+    'Doc No' => 'Doc. No.',
+    'Sample No' => 'Sample No.',
 ];
