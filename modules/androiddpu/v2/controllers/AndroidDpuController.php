@@ -294,9 +294,12 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $bmc_code = ',' . implode(',', $bmc_code) . ',';
                     $mcc_plant_code = ',' . implode(',', $mcc_plant_code) . ',';
                     $plant_code = ',' . implode(',', $plant_code) . ',';
-                    $member_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_member', [$dcs_code, $id_model->device_id, $id_model->hash_key]);
-                    if (!empty($member_rate)) {
-                        $res_data['rate']['memberApplicableRate'] = implode(',', array_column($member_rate, 'purchase_rate_code'));
+                    $is_member_rate = isset($res_data['config']['required_member_rate']) ? $res_data['config']['required_member_rate'] : '1';
+                    if ($is_member_rate == '1') {
+                        $member_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_member', [$dcs_code, $id_model->device_id, $id_model->hash_key]);
+                        if (!empty($member_rate)) {
+                            $res_data['rate']['memberApplicableRate'] = implode(',', array_column($member_rate, 'purchase_rate_code'));
+                        }
                     }
                     if ($mcc_bmc_config) {
                         $bmc_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_bmc', [$plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $id_model->device_id, $id_model->hash_key]);
