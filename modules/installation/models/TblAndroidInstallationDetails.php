@@ -5,6 +5,7 @@ namespace app\modules\installation\models;
 use Yii;
 use yii\helpers\ArrayHelper;
 use app\modules\dcsoperation\models\TblRateDownloadAck;
+use app\models\GeneralModel;
 
 /**
  * This is the model class for table "tbl_android_installation_details".
@@ -99,11 +100,24 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
         if ($data['organization_type'] == 'VLC' && $data['device_id'] != '' && $data['device_id'] != NULL) {
             $record = $this->find()
                     // ->where(['hask_key' => $data['token'], 'organization_type' => 'VLC', 'is_active' => 1, 'is_expired' => 0, 'organization_code' => $data['organization_code']])
-                    ->where(['hash_key' => $data['token'], 'is_active' => 1, 'is_expired' => 0])
+                    ->where(['hash_key' => $data['token']])
                     ->one();
-            if (!empty($record) && empty($record->device_id)) {
+            if (!empty($record) && (empty($record->device_id) || $record->is_active == 0)) {
                 $record->device_id = $data['device_id'];
-                $record->save();
+                $record->is_active = 1;
+                $childModel = [];
+                $delete = [];
+                $existDetailData = $this->find()->where(['android_installation_id' => $record->android_installation_id])
+                        ->andWhere(['!=', 'android_installation_details_id', $record->android_installation_details_id])
+                        ->all();
+                foreach ($existDetailData as $detail) {
+                    $historyModel = new TblAndroidInstallationDetailsHistory();
+                    Yii::$app->operation->history($detail, $historyModel, 'DELETE');
+                    $childModel[] = $historyModel;
+                    $delete[] = $detail;
+                }
+                $generalModel = new GeneralModel();
+                $transaction = $generalModel->saveDeleteTransaction([$record], $childModel, $delete, ['identity', 'edit']);
                 $rate_app_data = new TblRateDownloadAck();
                 $rate_app_data->updateAll(['device_id' => $record->device_id, 'download_date_time' => date('Y-m-d H:i:s')], ['applicable_code' => $data['organization_code'], 'applicable_for' => 'MEMBER', 'device_id' => NULL]);
             }
