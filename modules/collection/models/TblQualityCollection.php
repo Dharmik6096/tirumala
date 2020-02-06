@@ -5,6 +5,9 @@ namespace app\modules\collection\models;
 use Yii;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_quality_collection".
@@ -78,17 +81,17 @@ class TblQualityCollection extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'uuid' => Yii::t('app', 'Uuid'),
-            'sample_no' => Yii::t('app', 'Sample No'),
+            'sample_no' => Yii::t('app', 'Sample No.'),
             'date_time_of_collection' => Yii::t('app', 'Collection Date'),
             'shift_code' => Yii::t('app', 'Shift'),
-            'fat' => Yii::t('app', 'FAT'),
-            'snf' => Yii::t('app', 'SNF'),
+            'fat' => Yii::t('app', 'FAT(%)'),
+            'snf' => Yii::t('app', 'SNF(%)'),
             'clr' => Yii::t('app', 'Clr'),
             'water' => Yii::t('app', 'Water'),
             'quality_datetime' => Yii::t('app', 'Quality Datetime'),
             'retest_count' => Yii::t('app', 'Retest Count'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -97,12 +100,12 @@ class TblQualityCollection extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'device_id' => Yii::t('app', 'Device ID'),
             'version_no' => Yii::t('app', 'Version No'),
-            'doc_no' => Yii::t('app', 'Doc No'),
+            'doc_no' => Yii::t('app', 'Doc. No.'),
             'auto_flag' => Yii::t('app', 'Auto Flag'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'qlty_auto' => Yii::t('app', 'Qlty Auto'),
+            'qlty_auto' => Yii::t('app', 'Qlty Mode'),
             'milk_analyser_type_code' => Yii::t('app', 'Milk Analyser Type Code'),
             'x_col1' => Yii::t('app', 'X Col1'),
             'x_col2' => Yii::t('app', 'X Col2'),
@@ -114,12 +117,24 @@ class TblQualityCollection extends \app\models\ChildModel {
         ];
     }
 
-    public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
-    }
-
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }
