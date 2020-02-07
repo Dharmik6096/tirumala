@@ -184,6 +184,16 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCollectionDataSummary() {
+        $this->report = 'CollectionDataSummary';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'CollectionDataSummaryProductWise';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -479,6 +489,20 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_rpt_mis_member_app_detail',
                 'scenario' => 'MemberMobileAppDetail',
                 'title' => 'M06 - Member Application Detail',
+            ],
+            'CollectionDataSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_mis_collection_data_summary_mccwise',
+                'scenario' => 'CollectionDataSummary',
+                'title' => '119 - Collection Data Summary',
+                'report_type' => [Yii::t('app', 'MCC Wise'), Yii::t('app', 'Product Wise')],
+            ],
+            'CollectionDataSummaryProductWise' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_mis_collection_data_summary_productwise',
+                'scenario' => 'CollectionDataSummary',
+                'title' => '119 - Collection Data Summary',
+                'report_type' => [Yii::t('app', 'MCC Wise'), Yii::t('app', 'Product Wise')],
             ],
         ];
         return $label[$l];

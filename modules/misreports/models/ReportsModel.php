@@ -33,11 +33,12 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'calibration_day'], 'required', 'on' => ['CalibrationFlag', 'CleaningFlagBmc']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['AnalyzerCleaningReview', 'AnalyzerCleaningPendingActivity', 'AnalyzerPcbReplacement']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date'], 'required', 'on' => ['CleaningFlag', 'EkoMilkCalibration']],
-            [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['TotalMilkCollectionDateShift']],
+            [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['TotalMilkCollectionDateShift', 'CollectionDataSummary']],
             [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MemberCollectionPassbook', 'MemberCollectionDayWise', 'MemberCollectionSummary']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'p_date'], 'required', 'on' => ['MemberCollectionPaymentcycleWise', 'MemberCollectionMonthWise']],
             [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
+            [['union_code', 'report_type'], 'required', 'on' => ['CollectionDataSummary']],
         ];
     }
 

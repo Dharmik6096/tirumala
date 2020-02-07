@@ -154,6 +154,7 @@ echo GhostMenu::widget([
                         ['label' => '116-' . Yii::t('app', 'Society Wise Collection vs Dispatch - Graph'), 'url' => ['/jasperreports/default/dcs-collection-vs-dispatch-graph']],
                         ['label' => '117-' . Yii::t('app', 'Society Details'), 'url' => ['/jasperreports/default/society-details']],
                         ['label' => '118-' . Yii::t('app', 'MCC Wise Collection Summary'), 'url' => ['/misreports/default/total-milk-collection-date-shift']],
+                        ['label' => '119-' . Yii::t('app', 'Collection Data Summary'), 'url' => ['/misreports/default/collection-data-summary']],
                     ]
                 ],
                 [
