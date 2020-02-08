@@ -124,4 +124,7 @@ return [
     'SNF' => 'SNF(%)',
     'Doc No' => 'Doc. No.',
     'Sample No' => 'Sample No.',
+    'avg_rate' => 'Avg.Rate',
+    'avg_fat' => 'Avg.FAT(%)',
+    'avg_snf' => 'Avg.SNF(%)',
 ];
