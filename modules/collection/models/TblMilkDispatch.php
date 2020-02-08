@@ -47,27 +47,28 @@ class TblMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_code', 'mcc_code', 'date_time_of_collection', 'shift', 'qty', 'no_of_can'], 'required', 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'convertDateDot', 'except' => 'convertDate', 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
-            [['date_time_of_collection', 'shift'], 'backendData', 'when' => function($model) {
-            return empty($model->getErrors());
-        }, 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'dateValidate', 'on' => ['importCsv']],
-            [['fat', 'snf', 'qty', 'water'], 'default', 'value' => 0],
-            [['qty'], 'double', 'min' => 0, 'max' => 99999, 'on' => ['importCsv']],
-            [['fat', 'snf'], 'double', 'max' => 99, 'on' => ['importCsv']],
-            [['no_of_can'], 'integer', 'max' => 99, 'on' => ['importCsv']],
-            [['dcs_code', 'bmc_code', 'shift', 'village_code', 'type_of_data_receive'], 'string'],
-            [['milk_type_code', 'sample_no'], 'integer'],
-            [['fat', 'snf', 'water', 'qty'], 'number'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dcs_code', 'mcc_code', 'return_cob', 'remarks', 'route_code'], 'safe'],
-            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
-            [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
-            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code'], 'except' => ['importCsv']],
-            [['mcc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_code' => 'mcc_plant_code'], 'on' => ['importCsv']],
+                [['dcs_code', 'mcc_code', 'date_time_of_collection', 'shift', 'qty', 'no_of_can'], 'required', 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'convertDateDot', 'except' => 'convertDate', 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
+                [['date_time_of_collection', 'shift'], 'backendData', 'when' => function($model) {
+                    return empty($model->getErrors());
+                }, 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'dateValidate', 'on' => ['importCsv']],
+                [['fat', 'snf', 'qty', 'water'], 'default', 'value' => 0],
+                [['qty', 'return_cob'], 'double', 'min' => 0, 'max' => 99999, 'on' => ['importCsv']],
+                [['fat', 'snf'], 'double', 'max' => 99, 'on' => ['importCsv']],
+                [['no_of_can'], 'integer', 'max' => 99, 'on' => ['importCsv']],
+                [['dcs_code', 'bmc_code', 'shift', 'village_code', 'type_of_data_receive'], 'string'],
+                [['milk_type_code', 'sample_no'], 'integer'],
+                [['fat', 'snf', 'water', 'qty'], 'number'],
+                [['date_time_of_collection', 'date_time_of_recieve', 'dcs_code', 'mcc_code', 'return_cob', 'remarks', 'route_code'], 'safe'],
+                [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
+                [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
+                [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code'], 'except' => ['importCsv']],
+                [['mcc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_code' => 'mcc_plant_code'], 'on' => ['importCsv']],
+                [['return_cob'], 'default', 'value' => '0']
         ];
     }
 
