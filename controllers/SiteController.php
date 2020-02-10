@@ -696,7 +696,7 @@ class SiteController extends Controller {
                     if (!empty($post[$checkshift[1]])) {
                         $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift($post[$checkshift[1]]);
                     } else {
-                        $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift(3);
+                        $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift(1);
                     }
                 }
             }
@@ -811,6 +811,10 @@ class SiteController extends Controller {
                 'name' => 'sp_portal_dashboard_dispatch_vs_receipt',
                 'appendTime' => true,
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',hidden_from_date=' . date('Y-m-d') . '|date,hidden_to_date=' . date('Y-m-d') . '|date',
+            ],
+            'bmc_collection_summary' => [
+                'name' => 'sp_Portal_dashboard_qlty_qty_sap_summary',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift',
             ],
         ];
         return $array[$sp];
@@ -1791,6 +1795,18 @@ class SiteController extends Controller {
                 ->bindValue(':mcc_code', $mcc_str)
                 ->bindValue(':bmc_code', $bmc_str)
                 ->bindValue(':dcs_code', $dcs_str);
+        $results = $query->queryAll();
+        return $results;
+    }
+
+    private function getBmcCollectionSummary($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $start_date, $from_shift) {
+        $query = \Yii::$app->db->createCommand("{CALL $sp_name(:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code)}")
+                ->bindValue(':union_code', ',' . $union_str . ',')
+                ->bindValue(':plant_code', $plant_str)
+                ->bindValue(':mcc_code', $mcc_str)
+                ->bindValue(':bmc_code', $bmc_str)
+                ->bindValue(':start_date', $start_date)
+                ->bindValue(':from_shift', $from_shift);
         $results = $query->queryAll();
         return $results;
     }
