@@ -264,6 +264,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
                 ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
                 ->andWhere(['NOT IN', 'table_name', $notInTables])
                 ->orderBy('posting_timestamp')
+                ->limit(5)
                 ->all();
         $response = [];
         foreach ($data as $key => $model) {

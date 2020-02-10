@@ -74,10 +74,17 @@ class TblInbox extends \yii\db\ActiveRecord {
         ];
     }
 
+    public function getSyncPriority() {
+        return $this->hasOne(TblSyncPriority::className(), ['table_name' => 'table_name'])->andOnCondition(['tbl_sync_priority.sync_type' => 'tbl_inbox']);
+    }
+
     public function getData() {
         return $this->find()
-                        ->where(['or', ['error_log' => NULL], ['error_log' => '']])
-                        ->limit(50)->all();
+                        ->joinWith(['syncPriority'])
+                        ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
+                        ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+                        ->limit(50)
+                        ->all();
     }
 
 }
