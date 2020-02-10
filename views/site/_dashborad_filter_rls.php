@@ -7,7 +7,7 @@ use yii\web\View;
 $model->from_date = Yii::$app->controls->view_date(date('Y-m-d'));
 $model->to_date = Yii::$app->controls->view_date(date('Y-m-d'));
 $model->from_shift = empty($model->from_shift) ? 1 : $model->from_shift;
-$model->to_shift = empty($model->to_shift) ? 1 : $model->to_shift;
+$model->to_shift = empty($model->to_shift) ? 2 : $model->to_shift;
 $date_picker_class = !empty($date_picker_class) ? $date_picker_class : 'col-sm-2';
 $mcc_class = !empty($mcc_class) ? $mcc_class : 'col-sm-2';
 $common_class = 'padding-left-5 padding-right-5';

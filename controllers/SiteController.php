@@ -1799,16 +1799,4 @@ class SiteController extends Controller {
         return $results;
     }
 
-    private function getBmcCollectionSummary($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $start_date, $from_shift) {
-        $query = \Yii::$app->db->createCommand("{CALL $sp_name(:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code)}")
-                ->bindValue(':union_code', ',' . $union_str . ',')
-                ->bindValue(':plant_code', $plant_str)
-                ->bindValue(':mcc_code', $mcc_str)
-                ->bindValue(':bmc_code', $bmc_str)
-                ->bindValue(':start_date', $start_date)
-                ->bindValue(':from_shift', $from_shift);
-        $results = $query->queryAll();
-        return $results;
-    }
-
 }
