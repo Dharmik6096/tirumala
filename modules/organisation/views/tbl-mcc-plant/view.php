@@ -151,6 +151,20 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'is_weight_manual',
+                                'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'is_quality_manual',
+                                'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',

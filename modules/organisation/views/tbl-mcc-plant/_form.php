@@ -105,6 +105,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-3 mt25">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
+    <div class="col-sm-3 mt25">
+        <?= $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3 mt25">
+        <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

@@ -17,7 +17,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
      */
     public function rules() {
         return [
-            [['bmc_code', 'mcc_plant_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name'], 'safe'],
+            [['bmc_code', 'mcc_plant_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name', 'is_weight_manual', 'is_quality_manual'], 'safe'],
         ];
     }
 
@@ -51,6 +51,10 @@ class TblDcsBmcSearch extends TblDcsBmc {
         $this->load($params);
         $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this);
+
+
+        if (Yii::$app->session->get('BMC') !== '')
+            $query->andFilterWhere([ 'tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -87,6 +91,8 @@ class TblDcsBmcSearch extends TblDcsBmc {
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_bmc.is_active' => $this->is_active,
+            'tbl_bmc.is_weight_manual' => $this->is_weight_manual,
+            'tbl_bmc.is_quality_manual' => $this->is_quality_manual,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_bmc.bmc_code', $this->bmc_code])

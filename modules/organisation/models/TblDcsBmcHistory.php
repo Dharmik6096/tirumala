@@ -52,7 +52,7 @@ class TblDcsBmcHistory extends \yii\db\ActiveRecord {
             [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'is_mcc', 'valid_from'], 'safe'],
             [['model', 'bmc_code', 'mcc_code', 'bmc_type_code', 'extra_tank_capacity', 'bmc_milk_type', 'capacity', 'manufacturer_code'], 'safe'],
             [['state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bmc_name', 'union_code', 'local_name'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
         ];
     }
 

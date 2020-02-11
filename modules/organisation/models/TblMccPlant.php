@@ -60,6 +60,7 @@ class TblMccPlant extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
             [['plant_code', 'name', 'hamlet_code', 'union_code'], 'required'],
             [['mcc_plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
             [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code'], 'safe'],
@@ -85,7 +86,8 @@ class TblMccPlant extends \app\models\ChildModel {
         }, 'skipOnEmpty' => false],
             [['mcc_plant_code'], 'integer', 'min' => 1],
             [['mcc_plant_code'], 'string', 'max' => 6],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
         ];
     }
 
@@ -125,6 +127,8 @@ class TblMccPlant extends \app\models\ChildModel {
             'capacity' => Yii::t('app', 'Capacity (LPD)'),
             'valid_from' => Yii::t('app', 'Valid From'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
+            'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
         ];
     }
 

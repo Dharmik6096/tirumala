@@ -19,7 +19,7 @@ class TblMccPlantSearch extends TblMccPlant {
      */
     public function rules() {
         return [
-            [['mcc_plant_code', 'plant_code', 'federation_code', 'contact_person', 'created_at', 'created_by', 'description', 'email', 'mobile_no', 'name', 'updated_at', 'updated_by', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'union_code', 'village_code', 'capacity', 'valid_from'], 'safe'],
+            [['mcc_plant_code', 'plant_code', 'federation_code', 'contact_person', 'created_at', 'created_by', 'description', 'email', 'mobile_no', 'name', 'updated_at', 'updated_by', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'union_code', 'village_code', 'capacity', 'valid_from', 'is_weight_manual', 'is_quality_manual'], 'safe'],
             [['is_active'], 'boolean'],
         ];
     }
@@ -52,7 +52,13 @@ class TblMccPlantSearch extends TblMccPlant {
         $this->load($params);
         $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this);
-        
+
+        if (Yii::$app->session->get('Plant') !== '')
+            $query->andFilterWhere([ 'tbl_mcc_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+
+        if (Yii::$app->session->get('MCC') !== '')
+            $query->andFilterWhere([ 'tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+
         if (!empty($this->plant_code)) {
             $query->joinWith(['plantCode']);
             $query->andFilterWhere(['like', 'tbl_plant.name', $this->plant_code]);
@@ -79,6 +85,8 @@ class TblMccPlantSearch extends TblMccPlant {
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_mcc_plant.is_active' => $this->is_active,
+            'tbl_mcc_plant.is_weight_manual' => $this->is_weight_manual,
+            'tbl_mcc_plant.is_quality_manual' => $this->is_quality_manual,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_mcc_plant.mcc_plant_code', $this->mcc_plant_code])

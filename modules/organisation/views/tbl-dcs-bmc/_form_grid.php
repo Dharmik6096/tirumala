@@ -30,6 +30,16 @@ $attribute = [
             return Yii::$app->controls->view_date($model->valid_from);
         }, 'visible' => false, 'filter' => false],
     ['attribute' => 'manufacturer_code', 'value' => 'manufacturerCode.manufacturer_name'],
+    ['attribute' => 'is_weight_manual',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_weight_manual'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '';
+        },],
+    ['attribute' => 'is_quality_manual',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_quality_manual'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual] : '';
+        },],
     ['attribute' => 'bmc_milk_type', 'value' => 'bmcMilkType.animal_type_name', 'visible' => false, 'filter' => false],
 // Contact Detail
     ['label' => 'Contact Person', 'visible' => false, 'filter' => false,

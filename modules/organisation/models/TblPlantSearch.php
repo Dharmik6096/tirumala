@@ -50,6 +50,9 @@ class TblPlantSearch extends TblPlant {
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this);
 
+        if (Yii::$app->session->get('Plant') !== '')
+            $query->andFilterWhere([ 'tbl_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

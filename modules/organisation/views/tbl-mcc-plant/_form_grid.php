@@ -14,6 +14,16 @@ $attribute = [
     ['attribute' => 'name'],
     ['attribute' => 'local_name', 'filter' => false],
     ['attribute' => 'capacity', 'value' => 'capacity0.value'],
+    ['attribute' => 'is_weight_manual',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_weight_manual'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '';
+        },],
+    ['attribute' => 'is_quality_manual',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_quality_manual'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual] : '';
+        },],
     [
         'attribute' => 'valid_from',
         'value' => function($model) {

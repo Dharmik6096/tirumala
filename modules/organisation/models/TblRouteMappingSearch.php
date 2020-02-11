@@ -54,7 +54,20 @@ class TblRouteMappingSearch extends TblRouteMapping {
         $this->load($params);
         $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this);
-        
+
+        $where_bmc = [];
+        if (Yii::$app->session->get('BMC') !== '') {
+            $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
+            $where_bmc['tbl_route_mapping.to_type'] = 'bmc';
+        }
+
+        $where_mcc = [];
+        if (Yii::$app->session->get('MCC') !== '') {
+            $where_mcc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('MCC'));
+            $where_mcc['tbl_route_mapping.to_type'] = 'mcc';
+        }
+        $query->andWhere(['or', $where_bmc, $where_mcc]);
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

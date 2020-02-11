@@ -687,6 +687,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'MANUAL'), 1 => Yii::t('app', 'AUTOMATIC')],
             ],
+            'boolean_value' => [
+                'name' => 'boolean_value',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')],
+            ],
         ];
         return $records[$l];
     }

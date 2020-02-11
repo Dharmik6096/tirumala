@@ -62,6 +62,7 @@ class TblDcsBmc extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
             [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
             [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
             [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
@@ -80,8 +81,9 @@ class TblDcsBmc extends \app\models\ChildModel {
         }, 'skipOnEmpty' => false],
             [['bmc_code'], 'integer', 'min' => 1],
             [['bmc_code'], 'string', 'max' => 5],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code'], 'safe'],
-            [['mcc_plant_code'], 'setField']
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+            [['mcc_plant_code'], 'setField'],
+            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
         ];
     }
 
@@ -115,6 +117,8 @@ class TblDcsBmc extends \app\models\ChildModel {
             'valid_from' => Yii::t('app', 'Valid From'),
             'plant_code' => Yii::t('app', 'Plant'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
+            'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
         ];
     }
 
