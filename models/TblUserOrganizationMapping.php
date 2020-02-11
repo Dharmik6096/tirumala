@@ -177,7 +177,7 @@ class TblUserOrganizationMapping extends ChildModel {
         $selected = [];
         foreach ($data as $key => $row) {
             if (array_search($key, array_column($values, 'organization_code')) !== FALSE) {
-                $selected[$key] = $key;
+                $selected[$key] = (string) $key;
             }
         }
 
@@ -291,7 +291,7 @@ class TblUserOrganizationMapping extends ChildModel {
         $list = $query->asArray()->all();
         $data = ArrayHelper::map($list, 'bmc_code', 'bmc_name');
         if ($DcsArray != 0) {
-            $codes = TblDcs::find()->select(['bmc_code'])->where(['dcs_code' => array_flip($DcsArray)])->asArray()->all();
+            $codes = TblDcs::find()->select(['bmc_code'])->where(['dcs_code' => array_values($DcsArray)])->asArray()->all();
             $query->andWhere(['bmc_code' => $codes]);
             $list = $query->asArray()->all();
 
@@ -429,7 +429,7 @@ class TblUserOrganizationMapping extends ChildModel {
     }
 
     public function getUserOrgs($userCode) {
-        $records = $this->find()->select(['organization_code','organization_type'])->where(['user_id' => $userCode, 'is_active' => 1])->asArray()->all();
+        $records = $this->find()->select(['organization_code', 'organization_type'])->where(['user_id' => $userCode, 'is_active' => 1])->asArray()->all();
         return $records;
     }
 

@@ -178,18 +178,20 @@ class TblDcsController extends ChildController {
                             $userModel = new User();
                             $users = $userModel->findByRole([$vendorModel->vendor_code]);
                             foreach ($users as $user) {
-                                //TblUserOrganizationMapping::deleteAll(['user_id' => $user->id]);
-                                if (empty($user->user_type_id)) {
-                                    $user->user_type_id = 4;
-                                    array_push($orgMap, $user);
+                                if (empty($user->user_type_id) || $user->user_type_id == 7) {
+                                    //TblUserOrganizationMapping::deleteAll(['user_id' => $user->id]);
+                                    if (empty($user->user_type_id)) {
+                                        $user->user_type_id = 7;
+                                        array_push($orgMap, $user);
+                                    }
+                                    $modelNew = new TblUserOrganizationMapping();
+                                    $modelNew->organization_code = $vendorModel->dcs_code;
+                                    $modelNew->organization_type = 'DCS';
+                                    $modelNew->user_id = $user->id;
+                                    $modelNew->is_active = $user->is_active;
+                                    Yii::$app->operation->defaults($modelNew, INSERT);
+                                    array_push($orgMap, $modelNew);
                                 }
-                                $modelNew = new TblUserOrganizationMapping();
-                                $modelNew->organization_code = $vendorModel->dcs_code;
-                                $modelNew->organization_type = 'DCS';
-                                $modelNew->user_id = $user->id;
-                                $modelNew->is_active = $user->is_active;
-                                Yii::$app->operation->defaults($modelNew, INSERT);
-                                array_push($orgMap, $modelNew);
                             }
                             if (strtolower($vendorModel->vendor_code) == 'eipl') {
                                 $path = Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
@@ -327,17 +329,19 @@ class TblDcsController extends ChildController {
                     $userModel = new User();
                     $users = $userModel->findByRole([$vendorModel->vendor_code]);
                     foreach ($users as $user) {
-                        if (empty($user->user_type_id)) {
-                            $user->user_type_id = 4;
-                            array_push($mappingList, $user);
+                        if (empty($user->user_type_id) || $user->user_type_id == 7) {
+                            if (empty($user->user_type_id)) {
+                                $user->user_type_id = 7;
+                                array_push($mappingList, $user);
+                            }
+                            $modelNew = new TblUserOrganizationMapping();
+                            $modelNew->organization_code = $vendorModel->dcs_code;
+                            $modelNew->organization_type = 'DCS';
+                            $modelNew->user_id = $user->id;
+                            $modelNew->is_active = $user->is_active;
+                            Yii::$app->operation->defaults($modelNew, INSERT);
+                            array_push($mappingList, $modelNew);
                         }
-                        $modelNew = new TblUserOrganizationMapping();
-                        $modelNew->organization_code = $vendorModel->dcs_code;
-                        $modelNew->organization_type = 'DCS';
-                        $modelNew->user_id = $user->id;
-                        $modelNew->is_active = $user->is_active;
-                        Yii::$app->operation->defaults($modelNew, INSERT);
-                        array_push($mappingList, $modelNew);
                     }
                     if (strtolower($vendorModel->vendor_code) == 'eipl') {
                         $path = Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';

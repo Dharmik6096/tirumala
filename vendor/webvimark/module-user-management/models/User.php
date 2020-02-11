@@ -123,7 +123,7 @@ class User extends UserIdentity {
             Yii::$app->db->createCommand()
                     ->insert(Yii::$app->getModule('user-management')->auth_assignment_table, [
                         'user_id' => $userId,
-                        'item_name' => $roleName,
+                        'item_name' => (string) $roleName,
                         'created_at' => time(),
                     ])->execute();
 
@@ -145,7 +145,7 @@ class User extends UserIdentity {
      */
     public static function revokeRole($userId, $roleName) {
         $result = Yii::$app->db->createCommand()
-                        ->delete(Yii::$app->getModule('user-management')->auth_assignment_table, ['user_id' => $userId, 'item_name' => $roleName])
+                        ->delete(Yii::$app->getModule('user-management')->auth_assignment_table, ['user_id' => $userId, 'item_name' => (string) $roleName])
                         ->execute() > 0;
 
         if ($result) {
@@ -318,8 +318,8 @@ class User extends UserIdentity {
             ['bind_to_ip', 'trim'],
             [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             ['password', 'required', 'on' => ['newUser', 'changePassword']],
             ['password', 'string', 'max' => 255, 'on' => ['newUser', 'changePassword']],
 //            ['password', 'trim', 'on' => ['newUser', 'changePassword']],
@@ -328,12 +328,12 @@ class User extends UserIdentity {
             ['repeat_password', 'compare', 'compareAttribute' => 'password'],
             [['allow_app_login'], 'default', 'value' => 0],
             [['department', 'mobile_no'], 'required', 'when' => function($model) {
-                    return $model->allow_app_login == 1;
-                }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }"],
+            return $model->allow_app_login == 1;
+        }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }"],
             [['mobile_no'], 'unique'],
             [['name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
         ];
     }
 

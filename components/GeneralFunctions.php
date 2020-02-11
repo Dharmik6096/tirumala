@@ -562,21 +562,21 @@ class GeneralFunctions extends Component {
         return [$orgs, $i];
     }
 
-    public function getMappedDcs($unions = []) {
-        $dcs = [];
-        if (!empty($unions)) {
-            foreach ($unions as $union) {
-                $mapping = TblDcs::find()->select(['dcs_code'])->where(['union_code' => $union])->asArray()->all();
-                if (!empty($mapping)) {
-                    $map = array_values(ArrayHelper::getColumn($mapping, 'dcs_code'));
-                    if (!empty($dcs))
-                        array_merge($dcs, $map);
-                    else
-                        $dcs = $map;
-                }
+    public function getMappedData($filter = [], $model_val, $select_param, $filter_param) {
+        $data = [];
+        if (!empty($filter)) {
+            $model_name = Yii::$app->path->define($model_val);
+            $model = new $model_name();
+            $mapping = $model->find()->select($select_param)->where([$filter_param => $filter])->asArray()->all();
+            if (!empty($mapping)) {
+                $map = array_values(yii\helpers\ArrayHelper::getColumn($mapping, $select_param));
+                if (!empty($data))
+                    array_merge($data, $map);
+                else
+                    $data = $map;
             }
         }
-        return $dcs;
+        return $data;
     }
 
     public function checkDirectory($path, $permission = '0755') {
@@ -966,7 +966,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;

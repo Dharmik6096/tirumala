@@ -34,10 +34,20 @@ class UserSearch extends User {
             $unions = explode(',', Yii::$app->session->get('Unions'));
             $feds = explode(',', Yii::$app->session->get('Federations'));
             $dcs = explode(',', Yii::$app->session->get('Dcs'));
-            $union_dcs = Yii::$app->general->getMappedDcs($unions);
-            $org_array = array_merge($unions, $feds, $dcs, $union_dcs);
+            $plant = explode(',', Yii::$app->session->get('Plant'));
+            $mcc = explode(',', Yii::$app->session->get('MCC'));
+            $bmc = explode(',', Yii::$app->session->get('BMC'));
+            $union_plant = empty(Yii::$app->session->get('Plant')) ? Yii::$app->general->getMappedData($unions, 'TblPlant', 'plant_code', 'union_code') : $plant;
+            $plant_mcc = empty(Yii::$app->session->get('MCC')) ? Yii::$app->general->getMappedData($union_plant, 'TblMccPlant', 'mcc_plant_code', 'plant_code') : $mcc;
+            $mcc_bmc = empty(Yii::$app->session->get('BMC')) ? Yii::$app->general->getMappedData($plant_mcc, 'TblDcsBmc', 'bmc_code', 'mcc_code') : $bmc;
+            $bmc_dcs = empty(Yii::$app->session->get('Dcs')) ? Yii::$app->general->getMappedData($mcc_bmc, 'TblDcs', 'dcs_code', 'bmc_code') : $dcs;
+            $org_array = array_merge($unions, $feds, $plant, $mcc, $bmc, $dcs, $union_plant, $plant_mcc, $mcc_bmc, $bmc_dcs);
+            $org_string = "'" . implode(',', $org_array) . "'";
+            $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $org_codes = $command->sql;
             $query->where(['superadmin' => 0]);
-            $query->andWhere(['tbl_user_organization_mapping.organization_code' => $org_array, 'tbl_user_organization_mapping.organization_type' => Yii::$app->general->getChildOrgs()[0]]);
+            $query->andWhere(['tbl_user_organization_mapping.organization_type' => Yii::$app->general->getChildOrgs()[0]]);
+            $query->andWhere('tbl_user_organization_mapping.organization_code in (' . $org_codes . ')');
             $query->orWhere(['user_id' => Yii::$app->session->get('UserCode')]);
         }
         $dataProvider = new ActiveDataProvider([
