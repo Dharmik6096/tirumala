@@ -39,7 +39,7 @@ class UserSearch extends User {
             $bmc = explode(',', Yii::$app->session->get('BMC'));
             $union_plant = empty(Yii::$app->session->get('Plant')) ? Yii::$app->general->getMappedData($unions, 'TblPlant', 'plant_code', 'union_code') : $plant;
             $plant_mcc = empty(Yii::$app->session->get('MCC')) ? Yii::$app->general->getMappedData($union_plant, 'TblMccPlant', 'mcc_plant_code', 'plant_code') : $mcc;
-            $mcc_bmc = empty(Yii::$app->session->get('BMC')) ? Yii::$app->general->getMappedData($plant_mcc, 'TblDcsBmc', 'bmc_code', 'mcc_code') : $bmc;
+            $mcc_bmc = empty(Yii::$app->session->get('BMC')) ? Yii::$app->general->getMappedData($plant_mcc, 'TblDcsBmc', 'bmc_code', 'mcc_plant_code') : $bmc;
             $bmc_dcs = empty(Yii::$app->session->get('Dcs')) ? Yii::$app->general->getMappedData($mcc_bmc, 'TblDcs', 'dcs_code', 'bmc_code') : $dcs;
             $org_array = array_merge($unions, $feds, $plant, $mcc, $bmc, $dcs, $union_plant, $plant_mcc, $mcc_bmc, $bmc_dcs);
             $org_string = "'" . implode(',', $org_array) . "'";
