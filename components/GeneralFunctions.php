@@ -544,16 +544,28 @@ class GeneralFunctions extends Component {
     public function getChildOrgs() {
         switch (Yii::$app->session->get('UserType')) {
             case 2:
-                $orgs = ['UNION', 'DCS'];
+                $orgs = ['UNION', 'DCS', 'PLANT', 'MCC', 'BMC'];
                 $i = 2;
                 break;
             case 3:
-                $orgs = ['DCS'];
+                $orgs = ['DCS', 'PLANT', 'MCC', 'BMC'];
                 $i = 3;
                 break;
             case 4:
-                $orgs = ['none'];
+                $orgs = ['DCS', 'MCC', 'BMC'];
                 $i = 4;
+                break;
+            case 5:
+                $orgs = ['MCC', 'BMC'];
+                $i = 5;
+                break;
+            case 6:
+                $orgs = ['BMC'];
+                $i = 6;
+                break;
+            case 7:
+                $orgs = ['none'];
+                $i = 7;
                 break;
             default :
                 $orgs = ['none'];
