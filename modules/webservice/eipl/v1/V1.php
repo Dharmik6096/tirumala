@@ -412,6 +412,22 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_dashboard_member_calendar_summary',
                 'as_object' => TRUE
             ],
+            'dashboard/dsk-dsk-online' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_dsk_online',
+            ],
+            'dashboard/bmc-dsk-online' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_dsk_online',
+            ],
+            'dashboard/bmc-weigth-sample' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_weight_sample',
+            ],
+            'dashboard/bmc-quality-sample' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_quality_sample',
+            ],
         ];
         return $label;
     }
