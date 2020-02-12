@@ -274,7 +274,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
     }
 
     public function getExportDataDcsNew($device_id, $dest_org_id, $dest_org_type) {
-        $query = TblSentbox::find()->select([ 'dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
+        $query = TblSentbox::find()->select(['dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
                         ->where(['dest_org_id' => $dest_org_id, 'dest_org_type' => $dest_org_type, 'device_id' => $device_id])
                         ->andWhere(['sync_status' => 'U', 'message_type' => 'RECORD'])->orderBy('posting_timestamp');
         $dataProvider = new ArrayDataProvider([
@@ -282,6 +282,14 @@ class TblSentbox extends \yii\db\ActiveRecord {
             'pagination' => false,
         ]);
         return $dataProvider;
+    }
+
+    public function getDataCount($notInTables = []) {
+        $data = $this->find()
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                ->andWhere(['NOT IN', 'table_name', $notInTables])
+                ->count();
+        return $data;
     }
 
 }

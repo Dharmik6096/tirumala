@@ -104,4 +104,23 @@ class MasterDataController extends \app\modules\androiddpu\v1\controllers\Master
         return $sync_active_model;
     }
 
+    public function actionSentboxCount() {
+        $response = [];
+        $data = $this->post_data;
+        if (true) {
+            $code = !empty($data['organization_code']) ? $data['organization_code'] : '';
+            $type = !empty($data['organization_type']) ? $data['organization_type'] : '';
+            $device_id = !empty($data['device_id']) ? $data['device_id'] : '';
+            $model = new TblSentbox();
+            $model->dest_org_id = $code;
+            $model->dest_org_type = $type;
+            $model->device_id = $device_id;
+            $notInTables = ['tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'];
+            $res_data = $model->getDataCount($notInTables);
+            $response['count'] = !empty($res_data) ? $res_data : new \stdClass();
+            $this->response['data'] = $response;
+        }
+        return $this->response;
+    }
+
 }
