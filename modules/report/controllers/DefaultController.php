@@ -421,7 +421,8 @@ class DefaultController extends \app\controllers\ChildController {
                     'union_name',
                     'district_name',
                     'dcs_code',
-                    'dcs_name'
+                    'dcs_name',
+                    'product_type'
                 ],
             ],
         ]);

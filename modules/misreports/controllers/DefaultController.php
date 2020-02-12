@@ -194,6 +194,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMccShiftCrossTab() {
+        $this->report = 'MccShiftCrossTab';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -503,6 +508,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'CollectionDataSummary',
                 'title' => '119 - Collection Data Summary',
                 'report_type' => [Yii::t('app', 'MCC Wise'), Yii::t('app', 'Product Wise')],
+            ],
+            'MccShiftCrossTab' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_mis_mcc_shift_wise_dcs_count',
+                'scenario' => 'MccShiftCrossTab',
+                'title' => '120 - MCC-Shift Collection Count',
             ],
         ];
         return $label[$l];

@@ -6,7 +6,7 @@ use yii\widgets\Pjax;
 use kartik\grid\GridView;
 use kartik\export\ExportMenu;
 
-$this->title = Yii::t('app', Yii::$app->label->title('list', '208 - Society-Shift Crosstab'));
+$this->title = Yii::t('app', '208 - Society-Shift Collection Completed');
 ?>
 
 <div class="tbl-banks-index">
@@ -20,11 +20,12 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', '208 - Society-Shif
 
                 <?php
                 $attribute = [
-                        ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
-                        ['attribute' => 'district_name', 'filter' => false],
-                        ['attribute' => 'dcs_code', 'filter' => false],
-                        ['attribute' => 'dcs_name', 'filter' => false],
-                        ['attribute' => 'MinDate', 'filter' => false],
+                    ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                    ['attribute' => 'district_name', 'filter' => false],
+                    ['attribute' => 'dcs_code', 'filter' => false],
+                    ['attribute' => 'dcs_name', 'filter' => false],
+                    ['attribute' => 'product_type', 'filter' => false],
+                    ['attribute' => 'MinDate', 'filter' => false],
                 ];
                 if (!empty($extra))
                     $attribute = array_merge($attribute, $extra);
