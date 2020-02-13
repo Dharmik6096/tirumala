@@ -419,6 +419,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'defaultOrder' => ['union_name' => SORT_ASC],
                 'attributes' => [
                     'union_name',
+                    'mcc_code',
+                    'mcc_name',
                     'district_name',
                     'dcs_code',
                     'dcs_name',

@@ -21,6 +21,8 @@ $this->title = Yii::t('app', '208 - Society-Shift Collection Completed');
                 <?php
                 $attribute = [
                     ['attribute' => 'union_name', 'label' => Yii::t('app', 'Union Name'), 'filter' => false],
+                    ['attribute' => 'mcc_code', 'filter' => false],
+                    ['attribute' => 'mcc_name', 'filter' => false],
                     ['attribute' => 'district_name', 'filter' => false],
                     ['attribute' => 'dcs_code', 'filter' => false],
                     ['attribute' => 'dcs_name', 'filter' => false],
