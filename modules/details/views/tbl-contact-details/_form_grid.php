@@ -8,6 +8,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 Url::remember();
 if ($searchModel->module_name == 'society') {
@@ -41,22 +42,29 @@ $grid_option = [
 //      'update' => true,
 //      'delete' => ['option' => 'contact_person,detail_code,/details/tbl-contact-details/delete'],
         'disable' => function ($url, $model) {
-            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
+            $class = $model->is_active == 1 ? '' : 'disabled';
+            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive ' . $class, 'data-is-default' => $model->is_default];
 //            die('here');
-            return $model->is_active == 1 ? Html::a('<i class="fa fa-times"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options) : '';
+            return Html::a('<i class="fa fa-times"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
         },
-                'default' => function ($url, $model) {
-            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default'];
-            return ($model->is_default == 0 && $model->is_active == 1) ? Html::a('<i class="fa fa-check"></i>', ['/details/tbl-contact-details/set-default', 'id' => $model->detail_code], $options) : '';
+        'default' => function ($url, $model) {
+            $class = $model->is_default == 0 && $model->is_active == 1 && !empty($model->mobile_no) ? '' : 'disabled';
+            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default ' . $class];
+            return Html::a('<i class="fa fa-check"></i>', ['/details/tbl-contact-details/set-default', 'id' => $model->detail_code], $options);
         },
-            ]
-        ];
+        'edit' => function ($url, $model) {
+            $class = $model->is_active == 1 ? '' : 'disabled';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->detail_code, 'data-name' => $model->detail_code, 'title' => Yii::t('app', 'Edit')];
+            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/details/tbl-contact-details/update-contact'], $options);
+        },
+    ]
+];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
 ?>
-        <?php
+<?php
 
-        $script = <<< JS
+$script = <<< JS
               
         $(".deactive").on('click',function(event){
             event.preventDefault();
@@ -87,7 +95,7 @@ $grid_option = [
                 }
              });
         });
-        
+      
 JS;
-        $this->registerJs($script, View::POS_READY);
-        ?>
+$this->registerJs($script, View::POS_READY);
+?>

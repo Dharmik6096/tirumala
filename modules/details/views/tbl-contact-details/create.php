@@ -35,21 +35,53 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
             <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
-                    <?= Yii::$app->controls->reset(); ?>
-                    <?= Yii::$app->controls->cancel($model); ?>
+                            <?= Yii::$app->controls->reset(); ?>
+                            <?= Yii::$app->controls->cancel($model); ?>
+                        </div>
+                    </div>
+                </div>
+                <?php ActiveForm::end(); ?>
+                <div class="row">
+            <div class="form-grid">
+                        <?=
+                        $this->render('_form_grid', [
+                            'dataProvider' => $dataProvider,
+                            'searchModel' => $searchModel,
+                        ])
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
-        <?php ActiveForm::end(); ?>
-        <div class="row">
-            <div class="form-grid">
-                <?=
-                $this->render('_form_grid', [
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
-                ])
-                ?>
-            </div>
-        </div>
-    </div>
-</div>
+        <?php
+        $script = "
+     $('.edit-record').on('click',function(event){       
+        var id= $(this).attr('data-val');
+        editContactDetail(id);
+    });
+    
+    function editContactDetail(detail_code){
+            if(detail_code != ''){         
+            $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/details/tbl-contact-details/update-contact']) . "',
+                    data: {'detail_code' : detail_code},
+                    beforeSend:function(data) {
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        $.each(data.modelData, function(index, value) {
+                            $('#tblcontactdetails-'+index).val(value);
+                        });
+                         $('#loadercontent').hide();
+                         $('#pageloader').hide();
+                         $(window).scrollTop(0);
+
+                    },
+                });
+            }
+    };
+";
+        $this->registerJs($script, View::POS_END, 'panel-before-hide');
+        ?>

@@ -1,3 +1,7 @@
+<?php 
+use yii\helpers\Html;
+?>
+
 <!--<div class="col-sm-3">
     <? = $form->field($model, 'contact_person')->textInput() ?>
 </div>-->
@@ -29,5 +33,6 @@
     <?= $form->field($model, 'mobile_no')->textInput() ?>
 </div>
 <div class="col-sm-3">
+    <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
     <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
 </div>
