@@ -120,7 +120,7 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
-                    [
+                [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning', 'trace', 'info'],
                 ],
@@ -229,6 +229,7 @@ $config = [
         'eipl' => ['class' => 'app\modules\webservice\eipl\Eipl',],
         'embededdpu' => ['class' => 'app\modules\embededdpu\Embededdpu',],
         'sms' => ['class' => 'app\modules\sms\Sms',],
+        'vsp' => ['class' => 'app\modules\vsp\Vsp',],
     ],
     'params' => $params,
 ];

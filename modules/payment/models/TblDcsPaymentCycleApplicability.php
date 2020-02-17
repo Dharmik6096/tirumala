@@ -142,13 +142,15 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
      * @return applicablity date for dropdown     * 
      */
     public function societyList($cycle) {
-
-        $collection_data = TblMilkCollection::find()->select(['dcs_code'])->distinct()->all();
-        $collection_data = ArrayHelper::getColumn($collection_data, 'dcs_code');
+//        $collection_data = TblMilkCollection::find()->select(['dcs_code'])->distinct()->all();
+//        $collection_data = ArrayHelper::getColumn($collection_data, 'dcs_code');
+        $condition = ['dcs_payment_cycle_code' => $cycle, 'tbl_dcs.is_active' => 1];
         $list = $this->find()->select(['tbl_dcs_payment_cycle_applicability.dcs_code as dcs_code', 'dcs_name', 'data_lock'])
-                        ->innerJoinWith('dcsCode')
-                        ->where(['dcs_payment_cycle_code' => $cycle, 'tbl_dcs_payment_cycle_applicability.dcs_code' => $collection_data, 'tbl_dcs.is_active' => 1])
-                        ->orderby('dcs_name')->all();
+                ->innerJoinWith('dcsCode')
+                ->where($condition)
+                ->asArray()
+                ->all();
+
 //        $processed = new TblMemberPayment();
 //        $processed= $processed->find()->select(['dcs_code'])->where(['dcs_payment_cycle_code' => $cycle])->all();
 //        $processed = ArrayHelper::getColumn($processed, 'dcs_code');

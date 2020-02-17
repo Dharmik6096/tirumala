@@ -189,8 +189,8 @@ class TblDcsPaymentCycle extends \app\models\ChildModel {
          return $this->hasMany(TblDcsPaymentCycleApplicability::className(), ['dcs_payment_cycle_code' => 'dcs_payment_cycle_code']);
     }
     
-    public function unionPaymentCycles($union_code)
-    {
+    public function unionPaymentCycles($union_code) 
+            {
         return \yii\helpers\ArrayHelper::map($this->find()->select(['from_date', 'to_date', 'dcs_payment_cycle_code'])->where(['union_code'=>$union_code])->andWhere(['<','to_date',date('Y-m-d')])->orderBy('from_date ASC')->distinct()->all(), function($model) {
                     return $model['dcs_payment_cycle_code'];
                 }, function($model) {

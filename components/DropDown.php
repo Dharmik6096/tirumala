@@ -283,6 +283,17 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/chart-list', Yii::t('app', 'Select Member Rate Chart'), $multiple);
     }
 
+    public function unionpaymentcycledcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/payment-cycle-dcs-list', 'Select DCS', $multiple, $model->$name, $readonly);
+    }
+
+    public function bill_head($model, $form, $depends, $name = 'bill_head_code', $islable = true, $flag = 'D') {
+        $this->setClass($form, $name);
+        $action = ($flag == 'D') ? '/vsp/tbl-bill-head/list-dcswise' : '/vsp/tbl-bill-head/list-unionwise';
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, $action, 'Select Bill Head', false, $model->$name, false);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -763,6 +774,8 @@ class DropDown extends Component {
             'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
             'transfer_master_type' => ['name' => 'master_type', 'fields' => 'master_type,master_type_text', 'prompt' => Yii::t('app', 'Select Type'), 'model' => 'TblTransferType'],
             'app_type' => ['name' => 'app_type', 'fields' => 'operator_type,api_name', 'prompt' => 'Select Type', 'model' => 'TblApiMaster', 'whereCondition' => ['receiver_type' => 'APP_NOTIFICATION']],
+            'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula'],
+            'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
         ];
         return $label[$l];
     }

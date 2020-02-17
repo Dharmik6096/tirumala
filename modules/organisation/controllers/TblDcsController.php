@@ -34,6 +34,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\general\models\TblDpuIncentiveMaster;
+use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -42,7 +43,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list'];
+    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list'];
 
     /**
      * Lists all TblDcs models.
@@ -862,6 +863,25 @@ class TblDcsController extends ChildController {
                 $data = $bmc + $customer;
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionPaymentCycleDcsList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+
+                $paymentcycleModel = new TblDcsPaymentCycleApplicability();
+                $society_list = $paymentcycleModel->societyList($parents[0]);
+                $data = $society_list['list'];
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $val['dcs_code'], 'name' => $val['dcs_name']);
                 }
                 echo Json::encode(['output' => $out, 'selected' => '']);
                 return;

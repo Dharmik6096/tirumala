@@ -11,7 +11,21 @@ $(document).ready(function () {
         'SNFKG': '&',
         'TS': '<',
         'TSKG': '>',
-        'CLR': '~'
+        'CLR': '~',
+        'AMT': '^',
+        'QTY': '^',
+        'KGFAT': '^',
+        'KGSNF': '^',
+        '[val0]': '^',
+        '[val1]': '^',
+        '[val2]': '^',
+        '[val3]': '^',
+        '[val4]': '^',
+        '[val5]': '^',
+        '[val6]': '^',
+        '[val7]': '^',
+        '[val8]': '^',
+        '[val9]': '^',
     };
     //var fat={'FAT'=>'$','FATKG'=>'#','SNF'=>'@','SNFKG'=>'&'};
     var decimalAdded = false;
@@ -34,44 +48,45 @@ $(document).ready(function () {
                 input.innerHTML = '';
                 $('#formula').val('');
                 decimalAdded = true;
-            } else if (btnVal == 'B') {
-                var len = 0;
-                var text = input.innerHTML;
-                if (text != '') {
-                    var sp = text[text.length - 1].match(/([a-zA-Z])+/g);
-                    if (sp != null) {
-                        var str = text.replace(/([\-~@!#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, ' ');
-                        str = str.split(' ').reverse()[0];
-                        len = input.innerHTML.length - str.length;
-                    } else {
-                        len = input.innerHTML.length - 1;
-                    }
-                    var modified = text.substr(0, len);
-                    input.innerHTML = modified;
-                    $('#formula_description').val(modified);
-                    decimalAdded = true;
-                }
             }
+//            else if (btnVal == 'B') {
+//                var len = 0;
+//                var text = input.innerHTML;
+//                if (text != '') {
+//                    var sp = text[text.length - 1].match(/([a-zA-Z])+/g);
+//                    if (sp != null) {
+//                        var str = text.replace(/([\-~@!#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, ' ');
+//                        str = str.split(' ').reverse()[0];
+//                        len = input.innerHTML.length - str.length;
+//                    } else {
+//                        len = input.innerHTML.length - 1;
+//                    }
+//                    var modified = text.substr(0, len);
+//                    input.innerHTML = modified;
+//                    $('#formula_description').val(modified);
+//                    decimalAdded = true;
+//                }
+//            }
 
             // If backspace key is pressed, erase last character
-//            else if (btnVal == 'Backspace') {
-//                var str = $('#formula').val();
-//                $('#formula').val(str.substring(0, str.length - 1));
-//                input.innerHTML = $('#formula').val();
-//                var re = $.map(fat, function (v, k) {
-//                    return {
-//                        key: k,
-//                        value: v
-//                    };
-//                });
-//                $(input).text(function (i, val) {
-//                    $.each(re, function (i, obj) {
-//                        val = val.replace(obj.value, obj.key);
-//                    });
-//                    return val;
-//                });
-//                console.log($(input).text());
-//            }
+            else if (btnVal == 'Back' || btnVal == 'B') {
+                var str = $('#formula').val();
+                $('#formula').val(str.substring(0, str.length - 1));
+                input.innerHTML = $('#formula').val();
+                var re = $.map(fat, function (v, k) {
+                    return {
+                        key: k,
+                        value: v
+                    };
+                });
+                $(input).text(function (i, val) {
+                    $.each(re, function (i, obj) {
+                        val = val.replace(obj.value, obj.key);
+                    });
+                    return val;
+                });
+                console.log($(input).text());
+            }
 
             // If eval key is pressed, calculate and display the result
 //            else if (btnVal == '=') {
@@ -176,6 +191,7 @@ $(document).ready(function () {
                 $('#formula').val($('#formula').val() + btnVal);
             }
             $('#formula_description').val(input.innerHTML);
+            $('#tblgeneralformula-formula').val(input.innerHTML);
             $('#finalformula > div').text(input.innerHTML);
             $('.top .screen').scrollLeft(300);
             // prevent page jumps
@@ -190,7 +206,8 @@ $(document).ready(function () {
                 return false;
             }
         });
-        switch (keyVal) {
+//        switch (keyVal) {
+        switch ('') {
             case 'c':
                 $('.keys span:nth-child(1)').trigger("click");
                 break;
