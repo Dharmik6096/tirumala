@@ -152,6 +152,9 @@ class SearchFilter {
             'TblBillHeadSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblHeadLoadSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

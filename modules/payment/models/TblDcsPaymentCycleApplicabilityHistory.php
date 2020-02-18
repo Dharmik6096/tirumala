@@ -16,34 +16,31 @@ use Yii;
  * @property string $history_created_at
  * @property string $operation_type
  */
-class TblDcsPaymentCycleApplicabilityHistory extends \yii\db\ActiveRecord
-{
+class TblDcsPaymentCycleApplicabilityHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_payment_cycle_applicability_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
 //            [['payment_cycle_applicabilty_code', 'dcs_code'], 'required'],
 //            [['payment_cycle_applicabilty_code', 'is_lock'], 'integer'],
 //            [['dcs_code', 'operation_type'], 'string'],
-            [['payment_cycle_applicabilty_code','dcs_payment_cycle_code', 'dcs_code', 'from_date', 'to_date', 'is_lock', 'operation_type',  'history_created_at','data_lock'], 'safe'],
+            [['payment_cycle_applicabilty_code', 'dcs_payment_cycle_code', 'dcs_code', 'from_date', 'to_date', 'is_lock', 'operation_type', 'history_created_at', 'data_lock', 'data_lock_vsp'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
@@ -55,4 +52,5 @@ class TblDcsPaymentCycleApplicabilityHistory extends \yii\db\ActiveRecord
             'operation_type' => Yii::t('app', 'Operation Type'),
         ];
     }
+
 }

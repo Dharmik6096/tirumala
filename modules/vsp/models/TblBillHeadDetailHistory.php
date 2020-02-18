@@ -25,35 +25,33 @@ use Yii;
  * @property string $history_created_at
  * @property string $history_created_by
  */
-class TblBillHeadDetailHistory extends \yii\db\ActiveRecord
-{
+class TblBillHeadDetailHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bill_head_detail_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bill_head_detail_code', 'bill_head_code', 'payment_cycle_code', 'dcs_code', 'is_active'], 'required'],
-            [['bill_head_detail_code', 'union_code', 'bill_head_code', 'dcs_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'string'],
-            [['payment_cycle_code', 'is_installment', 'no_installment', 'is_active'], 'integer'],
-            [['amount'], 'number'],
+            [['bill_head_detail_code', 'bill_head_code', 'payment_cycle_code', 'dcs_code', 'is_active'], 'safe'],
+            [['bill_head_detail_code', 'union_code', 'bill_head_code', 'dcs_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
+            [['payment_cycle_code', 'is_installment', 'no_installment', 'is_active'], 'safe'],
+            [['amount'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'bill_head_detail_code' => 'Bill Head Detail Code',
@@ -74,4 +72,5 @@ class TblBillHeadDetailHistory extends \yii\db\ActiveRecord
             'history_created_by' => 'History Created By',
         ];
     }
+
 }

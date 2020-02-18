@@ -36,6 +36,9 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\general\models\TblCollectionIncentiveDeduction;
 use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\payment\models\TblDcsPaymentCycleApplicability;
+use app\modules\vsp\models\TblBillHeadApplicability;
+use app\modules\vsp\models\TblBillHeadDetail;
 
 /**
  * This is the model class for table "tbl_dcs".
@@ -890,7 +893,15 @@ class TblDcs extends ChildModel {
     }
 
     public function getPaymentCycleApplicability() {
-        return $this->hasMany(\app\modules\payment\models\TblDcsPaymentCycleApplicability::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasMany(TblDcsPaymentCycleApplicability::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getBillHeadApplicability() {
+        return $this->hasMany(TblBillHeadApplicability::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getBillHeadTransactions() {
+        return $this->hasMany(TblBillHeadDetail::className(), ['dcs_code' => 'dcs_code']);
     }
 
 }

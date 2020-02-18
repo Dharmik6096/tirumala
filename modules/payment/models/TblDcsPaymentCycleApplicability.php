@@ -46,7 +46,7 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
             [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
             [['from_date', 'to_date', 'dcs_name', 'created_by', 'created_date'], 'safe'],
             [['is_lock', 'data_lock'], 'integer'],
-            [['dcs_payment_cycle_code'], 'safe'],
+            [['dcs_payment_cycle_code', 'data_lock_vsp'], 'safe'],
             [['dcs_code'], 'required']
         ];
     }
@@ -145,7 +145,7 @@ class TblDcsPaymentCycleApplicability extends \app\models\ChildModel {
 //        $collection_data = TblMilkCollection::find()->select(['dcs_code'])->distinct()->all();
 //        $collection_data = ArrayHelper::getColumn($collection_data, 'dcs_code');
         $condition = ['dcs_payment_cycle_code' => $cycle, 'tbl_dcs.is_active' => 1];
-        $list = $this->find()->select(['tbl_dcs_payment_cycle_applicability.dcs_code as dcs_code', 'dcs_name', 'data_lock'])
+        $list = $this->find()->select(['tbl_dcs_payment_cycle_applicability.dcs_code as dcs_code', 'dcs_name', 'data_lock', 'data_lock_vsp'])
                 ->innerJoinWith('dcsCode')
                 ->where($condition)
                 ->asArray()

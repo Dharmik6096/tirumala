@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\payment\models\TblDcsPaymentCycle;
 use app\modules\organisation\models\TblUnions;
 use app\modules\vsp\models\TblBillHead;
+
 /**
  * This is the model class for table "tbl_bill_head_detail".
  *
@@ -46,6 +47,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'installment_amount'], 'safe'],
             [['amount'], 'number', 'min' => 0],
             [['no_installment'], 'number', 'min' => 0],
+            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
         ];
     }
 
@@ -84,8 +86,8 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     }
 
     public function getData($dcs_code, $payment_cycle_code, $bill_head_code) {
-        return $this->find()->select(['bill_head_code', 'amount','bill_head_detail_code'])->where(['dcs_code' => $dcs_code, 'payment_cycle_code' => $payment_cycle_code, 'bill_head_code' => $bill_head_code, 'is_active' => '1'])->asArray()->all();
-      //  return \yii\helpers\ArrayHelper::map($list, 'bill_head_code', 'amount');
+        return $this->find()->select(['bill_head_code', 'amount', 'bill_head_detail_code'])->where(['dcs_code' => $dcs_code, 'payment_cycle_code' => $payment_cycle_code, 'bill_head_code' => $bill_head_code, 'is_active' => '1'])->asArray()->all();
+        //  return \yii\helpers\ArrayHelper::map($list, 'bill_head_code', 'amount');
     }
 
     public function getBillHeadCode() {

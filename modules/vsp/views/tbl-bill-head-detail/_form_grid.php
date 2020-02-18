@@ -23,9 +23,7 @@ $grid_option = [
     'id' => 'bill-head-detail-list',
     'attributes' => $attribute,
     'active_column' => true,
-    'actions' => [
-        'update' => false,
-    ]
+   
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
