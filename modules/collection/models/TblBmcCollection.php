@@ -75,20 +75,20 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['milk_type_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+        }, 'on' => 'importCsv'],
             [['milk_quality_type_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
+        }, 'on' => 'importCsv'],
             [['shift_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+        }, 'on' => 'importCsv'],
             [['customer_type'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
-                }, 'on' => ['importCsv']],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
+        }, 'on' => ['importCsv']],
             [['collection_type'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
+        }, 'on' => 'importCsv'],
             [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
             [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
@@ -96,8 +96,8 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['rtpl', 'amount'], 'trim'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
             [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
-                    return $model->collection_type == '2';
-                }, 'whenClient' => "function (attribute, value) { 
+            return $model->collection_type == '2';
+        }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
           }", 'except' => ['post_sap_data', 'androidsync', 'importCsv']],
             [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create']],
@@ -112,15 +112,15 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create']],
             [['customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['importCsv']],
             [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv']],
-            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
-                    return empty($this->getErrors());
-                }, 'on' => ['create', 'update', 'importCsv']],
             [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
+            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
+            return empty($this->getErrors());
+        }, 'on' => ['create', 'update', 'importCsv']],
             [['rtpl'], function ($attribute, $params) {
-                    Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
-                }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
+            Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
+        }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
             [['rtpl', 'amount'], 'default', 'value' => 0, 'except' => ['importCsv']],
             [['water'], 'default', 'value' => 0],
             [['doc_no'], 'default', 'value' => 1],
@@ -418,6 +418,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function convertDate() {
         if (empty($this->getErrors())) {
             $this->date_time_of_collection = !empty($this->date_time_of_collection) ? Yii::$app->controls->view_date($this->date_time_of_collection, 'php:Y-m-d') : NULL;
+            $this->date_time_of_collection = $this->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->shift_code);
         }
     }
 

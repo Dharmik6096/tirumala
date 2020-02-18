@@ -27,7 +27,7 @@ class ReportsModel extends Model {
             [['to_date'], function ($attribute, $params) {
             Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
         }, 'skipOnEmpty' => false],
-            [['union_code', 'plant_code'], 'required', 'on' => 'SapStatusReport'],
+            [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapStatusReport'],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
             [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'calibration_day'], 'required', 'on' => ['CalibrationFlag', 'CleaningFlagBmc']],
