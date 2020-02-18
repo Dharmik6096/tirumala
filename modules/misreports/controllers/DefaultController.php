@@ -91,6 +91,11 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionSapStatusReport() {
         $this->report = 'SapStatusReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapDetailedStatusReport';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -384,6 +389,14 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_sap_status_report',
                 'scenario' => 'SapStatusReport',
                 'title' => '401 - Status Report',
+                'report_type' => [Yii::t('app', 'Date Shift Wise'), Yii::t('app', 'MCC and Date Shift Wise')],
+            ],
+            'SapDetailedStatusReport' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_detailed_status_report',
+                'scenario' => 'SapStatusReport',
+                'title' => '401 - Status Report',
+                'report_type' => [Yii::t('app', 'Date Shift Wise'), Yii::t('app', 'MCC and Date Shift Wise')],
             ],
             'SapComparisionReportDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
