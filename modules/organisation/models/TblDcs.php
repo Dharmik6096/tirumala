@@ -36,9 +36,9 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\general\models\TblCollectionIncentiveDeduction;
 use app\modules\dcsoperation\models\TblPurchaseRate;
-use app\modules\payment\models\TblDcsPaymentCycleApplicability;
-use app\modules\vsp\models\TblBillHeadApplicability;
-use app\modules\vsp\models\TblBillHeadDetail;
+//use app\modules\payment\models\TblDcsPaymentCycleApplicability;
+//use app\modules\vsp\models\TblBillHeadApplicability;
+//use app\modules\vsp\models\TblBillHeadDetail;
 
 /**
  * This is the model class for table "tbl_dcs".
@@ -874,34 +874,34 @@ class TblDcs extends ChildModel {
         array_push($saveModel, $incentive_model);
     }
 
-    public function headWiseDcs($payment_cycle_code, $bill_head_code) {
-        $value1 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
-                        ->innerJoinWith(['paymentCycleApplicability', 'billHeadApplicability'])
-                        ->where(['tbl_dcs_payment_cycle_applicability.dcs_payment_cycle_code' => $payment_cycle_code, 'tbl_bill_head_applicability.bill_head_code' => $bill_head_code])
-                        ->orderby('dcs_name')->all();
-
-        $value1 = ArrayHelper::map($value1, 'dcs_code', 'dcs_name');
-        $value2 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
-                        ->innerJoinWith('billHeadTransactions')
-                        ->where(['payment_cycle_code' => $payment_cycle_code, 'bill_head_code' => $bill_head_code])
-                        ->orderby('dcs_name')->all();
-
-        $value2 = ArrayHelper::map($value2, 'dcs_code', 'dcs_name');
-        $value = array_diff_key($value1, $value2);
-        asort($value, SORT_NATURAL | SORT_FLAG_CASE);
-        return $value;
-    }
-
-    public function getPaymentCycleApplicability() {
-        return $this->hasMany(TblDcsPaymentCycleApplicability::className(), ['dcs_code' => 'dcs_code']);
-    }
-
-    public function getBillHeadApplicability() {
-        return $this->hasMany(TblBillHeadApplicability::className(), ['dcs_code' => 'dcs_code']);
-    }
-
-    public function getBillHeadTransactions() {
-        return $this->hasMany(TblBillHeadDetail::className(), ['dcs_code' => 'dcs_code']);
-    }
+//    public function headWiseDcs($payment_cycle_code, $bill_head_code) {
+//        $value1 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
+//                        ->innerJoinWith(['paymentCycleApplicability', 'billHeadApplicability'])
+//                        ->where(['tbl_dcs_payment_cycle_applicability.dcs_payment_cycle_code' => $payment_cycle_code, 'tbl_bill_head_applicability.bill_head_code' => $bill_head_code])
+//                        ->orderby('dcs_name')->all();
+//
+//        $value1 = ArrayHelper::map($value1, 'dcs_code', 'dcs_name');
+//        $value2 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
+//                        ->innerJoinWith('billHeadTransactions')
+//                        ->where(['payment_cycle_code' => $payment_cycle_code, 'bill_head_code' => $bill_head_code])
+//                        ->orderby('dcs_name')->all();
+//
+//        $value2 = ArrayHelper::map($value2, 'dcs_code', 'dcs_name');
+//        $value = array_diff_key($value1, $value2);
+//        asort($value, SORT_NATURAL | SORT_FLAG_CASE);
+//        return $value;
+//    }
+//
+//    public function getPaymentCycleApplicability() {
+//        return $this->hasMany(TblDcsPaymentCycleApplicability::className(), ['dcs_code' => 'dcs_code']);
+//    }
+//
+//    public function getBillHeadApplicability() {
+//        return $this->hasMany(TblBillHeadApplicability::className(), ['dcs_code' => 'dcs_code']);
+//    }
+//
+//    public function getBillHeadTransactions() {
+//        return $this->hasMany(TblBillHeadDetail::className(), ['dcs_code' => 'dcs_code']);
+//    }
 
 }
