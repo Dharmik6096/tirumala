@@ -15,6 +15,7 @@ use app\modules\vsp\models\TblCriteriaKeywordMapping;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblBillHeadController implements the CRUD actions for TblBillHead model.
@@ -143,15 +144,34 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $appModel->union_code = $model->union_code;
         $appModel->field_name = 'bill_head_code';
         $appModel->field_value = $id;
+        $appModel->options = ['tanker_rate'];
+        $appModel->mcc_field_name = 'applicable_code';
         $appModel->trans_label = Yii::t('app', 'bill head applicabilities');
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
-            'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
+            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    } else if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+                    }
+                }],
+                //'dcs_name' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],           
         ];
+        $customerType = new TblCustomerType();
+        $value = $customerType->getCustomerType();
         $appModel->actions = ['delete' => ['option' => 'bill_head_applicabilty_code,bill_head_applicabilty_code,tbl-bill-head/delete-applicability']];
-        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
-
+//        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
+        $appModel->dcs_filters = $value;
         return $appModel->createApp();
     }
 

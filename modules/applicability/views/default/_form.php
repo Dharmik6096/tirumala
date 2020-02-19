@@ -30,6 +30,7 @@ $form = ActiveForm::begin([
         ]);
 $divPrefix = '<div class="col-sm-3 shift">';
 $divPostfix = '</div>';
+$modelName = 'TblDcsPurchaseRateApplicabitity';
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
@@ -88,6 +89,7 @@ $divPostfix = '</div>';
         </div>
         <?php
     } else if (in_array('tanker_rate', $options)) {
+        $modelName = \yii\helpers\StringHelper::basename(get_class($model));
         $class = 'col-sm-12';
         $checkboxClass = 'col-sm-3';
         ?>
@@ -249,7 +251,8 @@ $script = "
                                             if(applicable_for == ''){
                                                $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+appendId+'-'+ind+'\"><label class=\"route-text\" for=\"'+appendId+'-'+ind+'\">'+vl+'</label></div></div>');
                                             } else {
-                                                $('#'+index+'-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><label class=\"route-text\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"TblDcsPurchaseRateApplicabitity[applicable_code][]\" value=\"'+ind+'\" id=\"'+ind+'\"><label for=\"'+ind+'\">'+vl+'</label></label></div></div>');
+                                                var modelName = '" . $modelName . "';
+                                                $('#'+index+'-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><label class=\"route-text\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"'+modelName+'[applicable_code][]\" value=\"'+ind+'\" id=\"'+ind+'\"><label for=\"'+ind+'\">'+vl+'</label></label></div></div>');
                                             }
                                         });
                                     });

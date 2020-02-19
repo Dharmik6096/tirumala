@@ -21,9 +21,18 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->unionpaymentcycle($model, $form, 'tblbillheaddetail-union_code', 'payment_cycle_code', 'Payment Cycle'); ?>
 
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->unionpaymentcycledcs($model, $form, 'tblbillheaddetail-payment_cycle_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-mcc_plant_code,tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
     </div>
+    <div class="col-sm-2 rtpl_validate create_fields">
+        <?= $form->field($model, 'customer_code')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'customer_name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
+    </div>
+    <!--    <div class="col-sm-3">
+    <?= Yii::$app->dropdown->unionpaymentcycledcs($model, $form, 'tblbillheaddetail-payment_cycle_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>
+        </div>-->
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->bill_head($model, $form, 'tblbillheaddetail-dcs_code', 'bill_head_code', 'Bill Head', 'D'); ?>       
     </div>

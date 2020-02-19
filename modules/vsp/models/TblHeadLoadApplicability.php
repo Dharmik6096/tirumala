@@ -9,6 +9,10 @@ use app\modules\organisation\models\TblSubCenter;
 use app\modules\organisation\models\TblRoutes;
 use yii\helpers\ArrayHelper;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_head_load_applicability".
@@ -48,12 +52,13 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_code', 'wef_date', 'shift_code', 'shift_for'], 'required'],
-            [['created_at', 'dcs_code',  'updated_at', 'organization', 'wef_date', 'route_code', 'union_code'], 'safe'],
+            [['applicable_code', 'wef_date', 'shift_code', 'shift_for'], 'required'],
+            [['created_at', 'dcs_code', 'updated_at', 'organization', 'wef_date', 'route_code', 'union_code'], 'safe'],
             [['head_load_code'], 'string', 'max' => 35],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['head_load_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHeadLoad::className(), 'targetAttribute' => ['head_load_code' => 'head_load_code']],
             [['dcs_code'], 'ChangeDate'],
+            [['applicable_code', 'applicable_for'], 'safe']
         ];
     }
 
@@ -74,6 +79,8 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'shift_for' => Yii::t('app', 'Applicable For'),
             'shift_code' => Yii::t('app', 'Wef Shift'),
+            'applicable_for' => Yii::t('app', 'For'),
+            'applicable_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -97,7 +104,6 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
     public function getHeadLoadCode() {
         return $this->hasOne(TblHeadLoad::className(), ['head_load_code' => 'head_load_code']);
     }
-
 
     /**
      * @return \yii\db\ActiveQuery
@@ -150,7 +156,7 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
                 $routeCode = $row->dcsCode->route_code;
                 $orgFlag = 0;
                 $selectedOrg[$row->dcs_code] = ['selected' => 'selected'];
-            } 
+            }
             $wefDate = $row->wef_date;
             $selectedRoute[$routeCode] = ['selected' => 'selected'];
 
@@ -167,11 +173,10 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
             $dcsAry = $dcs->getRouteDcs($routeCode);
             $records = ArrayHelper::map($dcsAry, 'dcs_code', 'dcs_name');
             $finalArray = array_merge($finalArray, $records);
-        } 
+        }
 
         return $finalArray;
     }
-
 
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
@@ -184,6 +189,26 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
     public function ChangeDate() {
         $this->wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
         $this->wef_date .= ' ' . Yii::$app->general->getshift($this->shift_code);
+    }
+
+    public function getCustomerMasterCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code']);
+    }
+
+    public function getDcsName() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'applicable_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'applicable_code']);
     }
 
 }

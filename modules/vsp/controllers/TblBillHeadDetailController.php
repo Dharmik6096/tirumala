@@ -80,11 +80,6 @@ class TblBillHeadDetailController extends ChildController {
         return $this->customRender();
     }
 
-    /*
-     * Insertion for BillHeadDetail for multiple society
-     * Developed By : Roshani Shah
-     * Date : 24/10/2018
-     */
 
     public function actionSocietyBulkInsert() {
 

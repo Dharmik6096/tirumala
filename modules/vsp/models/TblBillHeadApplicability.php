@@ -6,6 +6,10 @@ use Yii;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
 use app\modules\vsp\models\TblBillHead;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_bill_head_applicability".
@@ -35,9 +39,10 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
     public function rules() {
         return [
             [['created_at', 'updated_at', 'wef_date'], 'safe'],
-            [['wef_date', 'dcs_code'], 'required'],
+            [['wef_date', 'applicable_code'], 'required'],
             [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
+            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['applicable_code', 'applicable_for'], 'safe']
         ];
     }
 
@@ -55,6 +60,8 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
             'dcs_code' => Yii::t('app', 'DCS'),
             'bill_head_code' => Yii::t('app', 'Bill Head Code'),
             'union_code' => Yii::t('app', 'Union'),
+            'applicable_for' => Yii::t('app', 'For'),
+            'applicable_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -68,6 +75,26 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
 
     public function getBillHeadCode() {
         return $this->hasOne(TblBillHead::className(), ['bill_head_code' => 'bill_head_code']);
+    }
+
+    public function getCustomerMasterCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code']);
+    }
+
+    public function getDcsName() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'applicable_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'applicable_code']);
     }
 
 }

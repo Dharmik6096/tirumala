@@ -44,7 +44,8 @@ class TblBillHeadDetailHistory extends \yii\db\ActiveRecord {
             [['payment_cycle_code', 'is_installment', 'no_installment', 'is_active'], 'safe'],
             [['amount'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
+            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['customer_type', 'customer_code'], 'safe']
         ];
     }
 

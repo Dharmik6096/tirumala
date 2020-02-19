@@ -30,7 +30,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $installment_amount;
+    public $installment_amount, $customer_name;
 
     public static function tableName() {
         return 'tbl_bill_head_detail';
@@ -47,7 +47,8 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'installment_amount'], 'safe'],
             [['amount'], 'number', 'min' => 0],
             [['no_installment'], 'number', 'min' => 0],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
+            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['customer_type', 'customer_code', 'customer_name'], 'safe']
         ];
     }
 

@@ -22,6 +22,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\Response;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblHeadLoadController implements the CRUD actions for TblHeadLoad model.
@@ -453,12 +454,32 @@ class TblHeadLoadController extends \app\controllers\ChildController {
         $appModel->union_code = $model->union_code;
         $appModel->actions = ['delete' => ['option' => 'code,code,tbl-head-load/delete-applicability']];
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-            return Yii::$app->controls->view_date($model->wef_date);
-        }],
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'shift_for' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCodeFor.shift', 'class' => ''],
-            'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
+            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    } else if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+                    }
+                }],
+//             'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
         ];
+        $appModel->options = ['tanker_rate'];
+        $appModel->mcc_field_name = 'applicable_code';
+        $customerType = new TblCustomerType();
+        $value = $customerType->getCustomerType();
+        $appModel->dcs_filters = $value;
         return $appModel->createApp();
     }
 
@@ -596,8 +617,6 @@ class TblHeadLoadController extends \app\controllers\ChildController {
                     'selectedOrganization' => $data['selectedOrganization'], 'selectedAllOrg' => $data['selectedAllOrg'],
         ]);
     }
-
-   
 
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->head_load_code]);
