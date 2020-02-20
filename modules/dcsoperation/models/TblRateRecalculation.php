@@ -49,7 +49,7 @@ class TblRateRecalculation extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-//            [['rate_code'], 'required', 'message' => 'Please select at least one rate to update'],
+            [['rate_code'], 'required', 'message' => 'Please select at least one rate to update'],
             [['recalc_for'], 'required', 'on' => ['recalculation_search', 'recalculation_search_custom']],
             [['rate_code'], 'integer', 'except' => 'recalculation_search_custom'],
             [['from_shift', 'to_shift'], 'integer'],
