@@ -44,67 +44,67 @@ if (!empty($rec_data) && $rtype == 'forced') {
             <?= Yii::$app->controls->reset(); ?>
         <?php } ?>
     </div>
+
+
+
+    <?php
+    if ($rtype == 'forced') {
+        $attribute = [
+            ['class' => 'kartik\grid\CheckboxColumn',
+                'rowSelectedClass' => GridView::TYPE_SUCCESS,
+                'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+                'visible' => $rtype == 'forced' ? false : true,
+                'checkboxOptions' => function($model) {
+                    return ['value' => $model['dcs_code']];
+                }],
+            ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'dcs_name', 'value' => 'dcs_name'],
+            ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
+        ];
+    } else {
+        $attribute = [
+            ['class' => 'kartik\grid\CheckboxColumn',
+                'rowSelectedClass' => GridView::TYPE_SUCCESS,
+                'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+                'visible' => $rtype == 'forced' ? false : true,
+                'checkboxOptions' => function($model) {
+                    return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
+                }],
+            ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'code_ex', 'value' => 'code_ex', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'name', 'value' => 'name'],
+            ['label' => 'From Date', 'attribute' => 'from_date', 'value' => function($model) {
+                    $shift = explode(' ', $model['from_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
+                    return Yii::$app->controls->view_date($model['from_date']) . $shift;
+                }, 'filter' => false],
+            ['label' => 'To Date', 'attribute' => 'to_date', 'value' => function($model) {
+                    $shift = explode(' ', $model['to_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
+                    return !empty($model['to_date']) ? Yii::$app->controls->view_date($model['to_date']) . $shift : '';
+                }, 'filter' => false],
+            ['attribute' => 'wef_date', 'value' => function($model) {
+                    $shift = explode(' ', $model['wef_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
+                    return Yii::$app->controls->view_date($model['wef_date']) . $shift;
+                }, 'filter' => false],
+            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
+        ];
+    }
+    $grid_option = [
+        'id' => 'bmc-rate-recalculation-list',
+        'attributes' => $attribute,
+        'active_column' => false,
+    ];
+    if (!empty($dataProvider)) {
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+    }
+    ?>
+    <?php ActiveForm::end(); ?>
 </div>
-
-
-
-<?php
-if ($rtype == 'forced') {
-    $attribute = [
-        ['class' => 'kartik\grid\CheckboxColumn',
-            'rowSelectedClass' => GridView::TYPE_SUCCESS,
-            'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-            'visible' => $rtype == 'forced' ? false : true,
-            'checkboxOptions' => function($model) {
-                return ['value' => $model['dcs_code']];
-            }],
-        ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'dcs_name', 'value' => 'dcs_name'],
-        ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
-    ];
-} else {
-    $attribute = [
-        ['class' => 'kartik\grid\CheckboxColumn',
-            'rowSelectedClass' => GridView::TYPE_SUCCESS,
-            'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-            'visible' => $rtype == 'forced' ? false : true,
-            'checkboxOptions' => function($model) {
-                return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
-            }],
-        ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'code_ex', 'value' => 'code_ex', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'name', 'value' => 'name'],
-        ['label' => 'From Date', 'attribute' => 'from_date', 'value' => function($model) {
-                $shift = explode(' ', $model['from_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
-                return Yii::$app->controls->view_date($model['from_date']) . $shift;
-            }, 'filter' => false],
-        ['label' => 'To Date', 'attribute' => 'to_date', 'value' => function($model) {
-                $shift = explode(' ', $model['to_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
-                return !empty($model['to_date']) ? Yii::$app->controls->view_date($model['to_date']) . $shift : '';
-            }, 'filter' => false],
-        ['attribute' => 'wef_date', 'value' => function($model) {
-                $shift = explode(' ', $model['wef_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
-                return Yii::$app->controls->view_date($model['wef_date']) . $shift;
-            }, 'filter' => false],
-        ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
-    ];
-}
-$grid_option = [
-    'id' => 'bmc-rate-recalculation-list',
-    'attributes' => $attribute,
-    'active_column' => false,
-];
-if (!empty($dataProvider)) {
-    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-}
-?>
-<?php ActiveForm::end(); ?>
 <?php
 $script = "
     $('#tblbmccollectionsearch-union_code').on('change', function(){
@@ -120,7 +120,7 @@ $script = "
     $('.submit_form').on('click', function(){
         $('from#recalculation-form').submit();
     });
-    
+ 
      $('#tblbmccollectionsearch-customer_type').change(function(){
           $('#tblbmccollectionsearch-customer_code').val('');
     });
@@ -131,11 +131,11 @@ $script = "
                 $('.show_hide_customer_type').hide();
             }else if(length == 1) {
                 $('#tblbmccollectionsearch-customer_type').val('DCS');
-                $('.show_hide_customer_type').hide();
+               $('.show_hide_customer_type').hide();
             } else {
                 $('.show_hide_customer_type').show();
             }
-    });
+    }); 
 ";
 $this->registerJs($script, View::POS_END, 'rate-recalculation-script');
 ?>
