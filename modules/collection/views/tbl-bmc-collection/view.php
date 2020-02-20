@@ -224,7 +224,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         ],
                         [
                             'attribute' => 'qlty_time',
-                            'value' => Yii::$app->controls->view_time($model->qlty_time, 'php:H:i:s'),
+                            'value' => Yii::$app->controls->view_time($model->created_at, 'php:H:i:s'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
