@@ -220,7 +220,12 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                     'columns' => [
                         [
                             'attribute' => 'remarks',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'qlty_time',
+                            'value' => Yii::$app->controls->view_time($model->created_at, 'php:H:i:s'),
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
