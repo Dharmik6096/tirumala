@@ -161,7 +161,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 if ($rtype == 'custom') {
                     foreach ($data as $code) {
                         $c = explode('###', $code);
-                        $sp_params = [$c[1], $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $searchModel->recalc_for, $c[0], $c[4]];
+                        $sp_params = [$searchModel->bmc_code, $c[1], $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $searchModel->recalc_for, $c[0], $c[4]];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }
