@@ -33,7 +33,7 @@ $attribute = [
             $refCode = strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '';
             return !empty($desc) ? $refCode . '(' . $desc . ')' : $refCode;
         }, 'filter' => false],
-    ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'filter' => false],
+    ['attribute' => 'rate_type', 'value' => 'rate_type', 'filter' => false],
     [
         'attribute' => 'from_date',
         'filterType' => GridView::FILTER_DATE,
@@ -47,9 +47,6 @@ $attribute = [
     ['attribute' => 'from_shift', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftId, 'shift');
         }, 'vAlign' => 'middle', 'filter' => '<span class="shift">' . Yii::$app->dropdown->dropdownfilter('shift', $searchModel, 'from_shift', Yii::t('app', 'Select'), 'form-control shift') . '</span>'],
-    ['attribute' => 'recalc_type', 'value' => function($model) {
-            return $model->recalc_type;
-        }, 'filter' => false],
     [
         'attribute' => 'to_date',
         'filterType' => GridView::FILTER_DATE,
@@ -62,9 +59,9 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'to_shift', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->toShiftId, 'shift');
-        }, 'vAlign' => 'middle', 'filter' => '<span class="shift">' . Yii::$app->dropdown->dropdownfilter('shift', $searchModel, 'to_shift', Yii::t('app', 'Select'), 'form-control shift') . '</span>'], ['attribute' => 'recalc_type', 'value' => function($model) {
-            return $model->recalc_type;
-        }, 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => '<span class="shift">' . Yii::$app->dropdown->dropdownfilter('shift', $searchModel, 'to_shift', Yii::t('app', 'Select'), 'form-control shift') . '</span>'],
+    ['attribute' => 'recalc_type', 'filter' => false],
+    ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'filter' => false],
 //    ['header' => 'DSK', 'attribute' => 'dcs_code', 'value' => function($model) {
 //            return strlen($model->dcs_code) > 30 ? substr($model->dcs_code, 0, 30) . '...' : $model->dcs_code;
 //        },

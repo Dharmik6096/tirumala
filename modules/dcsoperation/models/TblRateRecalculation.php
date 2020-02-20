@@ -79,7 +79,7 @@ class TblRateRecalculation extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'recalc_for' => Yii::t('app', 'Recalc For'),
-            'recalc_type' => Yii::t('app', 'Recalc Type'),
+            'recalc_type' => Yii::t('app', 'Method'),
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),

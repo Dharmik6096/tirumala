@@ -66,6 +66,18 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'rate_type',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'recalc_for',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ]
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'from_date',
                                 'value' => Yii::$app->controls->view_date($model->from_date),
                                 'valueColOptions' => ['style' => 'width:30%'],
