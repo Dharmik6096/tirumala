@@ -107,30 +107,31 @@ if (!empty($rec_data) && $rtype == 'forced') {
 </div>
 <?php
 $script = "
-    $('#tblbmccollectionsearch-union_code').on('change', function(){
-        var searchUnion = $(this).val();
-        var mianModelUnion = $('#tblraterecalculation-union_code').val();
-        if(searchUnion != mianModelUnion){
-            $('.btn_show').hide();
-        } else {
-            $('.btn_show').show();
-        }
-    });
-    
     $('.submit_form').on('click', function(){
         $('from#recalculation-form').submit();
     });
- 
-     $('#tblbmccollectionsearch-customer_type').change(function(){
-          $('#tblbmccollectionsearch-customer_code').val('');
+    $('.show_on_memebr').hide();
+    $('.show_on_bmc').hide();
+    $('#tblraterecalculationsearch-recalc_for').change(function(){
+          $('#tblraterecalculationsearch-dcs_code').val('');
+          $('#tblraterecalculationsearch-customer_type').val('');
+          $('#tblraterecalculationsearch-customer_code').val('');
+          var recalc_for =$('#tblraterecalculationsearch-recalc_for').val();
+            if(recalc_for=='member'){
+               $('.show_on_memebr').show();
+               $('.show_on_bmc').hide();
+            }else if(recalc_for=='bmc'){
+                $('.show_on_memebr').hide();
+                $('.show_on_bmc').show();
+            }
     });
     
-    $('#tblbmccollectionsearch-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-        var length = $('#tblbmccollectionsearch-customer_type option[value!=\'\']').length;
+    $('#tblraterecalculationsearch-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        var length = $('#tblraterecalculationsearch-customer_type-customer_type option[value!=\'\']').length;
             if(length == 0) {
                 $('.show_hide_customer_type').hide();
             }else if(length == 1) {
-                $('#tblbmccollectionsearch-customer_type').val('DCS');
+                $('#tblraterecalculationsearch-customer_type-customer_type').val('DCS');
                $('.show_hide_customer_type').hide();
             } else {
                 $('.show_hide_customer_type').show();

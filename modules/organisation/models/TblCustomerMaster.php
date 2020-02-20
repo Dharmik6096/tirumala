@@ -303,4 +303,15 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $this->state_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode', 'subDistrictCode', 'districtCode'], 'state_code');
     }
 
+    public function getCustomerCodeList($bmc, $type) {
+        $query = $this->find()->where(['is_active' => 1]);
+        if (!empty($bmc)) {
+            $query->andWhere(['bmc_code' => $bmc, 'customer_type' => $type]);
+        }
+        $data = $query->all();
+        $data = ArrayHelper::map($data, 'customer_code', 'customer_name');
+        asort($data, SORT_NATURAL | SORT_FLAG_CASE);
+        return $data;
+    }
+
 }

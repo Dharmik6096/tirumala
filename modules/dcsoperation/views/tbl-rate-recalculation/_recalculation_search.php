@@ -45,17 +45,16 @@ $form = ActiveForm::begin([
 </div>
 <?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $searchModel, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', FALSE, FALSE, 'recalc_for') ?> 
 <?php if ($rtype == 'forced') { ?>
-    <div class="col-sm-2 reset_field form-group_mb0">
+    <div class="col-sm-2 show_on_memebr form-group_mb0">
         <?= Yii::$app->dropdown->bmc_society($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'dcs_code', false, FALSE, '', FALSE, false, true); ?>         
     </div>  
-    <div class="col-sm-2 show_hide_customer_type">
+    <div class="col-sm-2 show_on_bmc ">
         <?= Yii::$app->dropdown->customer_type($searchModel, $form, 'tblraterecalculationsearch-mcc_plant_code,tblraterecalculationsearch-bmc_code', 'customer_type', FALSE, FALSE); ?>
     </div>
-    <div class="col-sm-2 show_hide_customer_type">
-        <?= Yii::$app->dropdown->depend_dropdown('customer_code', $searchModel, $form, 'tblraterecalculationsearch-customer_type', '', FALSE, 'customer_code'); ?>
-        <!--<?Yii::$app->dropdown->customer_code($searchModel, $form, 'tblraterecalculationsearch-customer_type', 'customer_code', FALSE, FALSE); ?>-->
+    <div class="col-sm-2 show_on_bmc">
+        <?= Yii::$app->dropdown->customer_code($searchModel, $form, 'tblraterecalculationsearch-bmc_code,tblraterecalculationsearch-customer_type', 'customer_code', FALSE, FALSE); ?>
     </div>
-    
+
 <?php } ?>
 <div class="clearfix"></div>
 <div class="col-sm-2">
