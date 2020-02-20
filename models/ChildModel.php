@@ -33,9 +33,9 @@ class ChildModel extends \yii\db\ActiveRecord {
 
             $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             if ($insert) {
-                if ($this->hasAttribute('created_by'))
+                if ($this->hasAttribute('created_by') && $this->created_by == NULL)
                     $this->created_by = $user;
-                if ($this->hasAttribute('created_at'))
+                if ($this->hasAttribute('created_at') && $this->created_at == NULL)
                     $this->created_at = date('Y-m-d H:i:s');
 
                 if ($this->hasAttribute('originating_org_code') && $this->originating_org_code == NULL) {
