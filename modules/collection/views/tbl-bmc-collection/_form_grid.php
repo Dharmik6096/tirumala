@@ -55,7 +55,7 @@ $attribute = [
     ['attribute' => 'doc_no', 'vAlign' => 'middle'],
     ['attribute' => 'sample_no', 'vAlign' => 'middle'],
     ['attribute' => 'qlty_time', 'vAlign' => 'middle', 'value' => function($model) {
-            return Yii::$app->controls->view_time($model->qlty_time,'php:H:i:s');
+            return Yii::$app->controls->view_time($model->created_at,'php:H:i:s');
         }],
     ['attribute' => 'milk_type_code', 'value' => function($model) {
             return isset($model->milkType) ? $model->milkType->animal_type_name : '';
