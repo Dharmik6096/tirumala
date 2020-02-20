@@ -8,9 +8,6 @@ use app\components\GeneralFunctions;
 /* @var $model app\modules\dcsoperation\models\TblPurchaseRate */
 
 $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
-//$this->title = $model->purchase_rate_code;
-//$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Purchase Rates'), 'url' => ['index']];
-//$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
@@ -23,18 +20,34 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
             <div class="table-responsive">
                 <?php
                 $attributes = [
-                    /*[
+                    [
                         'columns' => [
                             [
-                                'attribute' => 'rate_recalculation_code',
+                                'attribute' => 'union_code',
+                                'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'rate_type',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'attribute' => 'plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ]
-                    ],*/
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'mcc_plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'bmc_code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
                     [
                         'columns' => [
                             [
@@ -42,8 +55,10 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'purchase_rate_code',
-                                'value'=> $model->rate_type == 'DCS' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description'),
+                                'attribute' => 'rate_code',
+                                'label' => Yii::t('app', 'Rate Desc.'),
+                                'value' => !empty(strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) ?
+                                (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '') . '(' . (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) . ')' : (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : ''),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ]
@@ -64,7 +79,6 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                     ],
                     [
                         'columns' => [
-
                             [
                                 'attribute' => 'from_shift',
                                 'value' => isset($model->fromShiftId) ? $model->fromShiftId->shift : '',
@@ -82,17 +96,7 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                             [
                                 'attribute' => 'recalc_type',
                                 'valueColOptions' => ['style' => 'width:100%']
-                            ],    
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                           [
-                                'attribute' => 'dcs_code',
-                                //'value' => 'dcs_code',
-                                'valueColOptions' => ['style' => 'width:100%']
                             ],
-                            
                         ],
                     ],
                 ];
@@ -107,13 +111,17 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],
                 ]);
                 ?>
             </div>
+        </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Rate Recalculation Detail') ?></h5></div>
+        <div class="form-grid">
+            <?php echo $this->render('@app/modules/dcsoperation/views/tbl-rate-recalculation/_form_grid_view', ['dataProviderGrid' => $dataProviderGrid, 'searchModelGrid' => $searchModelGrid]); ?>
         </div>
     </div>
 </div>

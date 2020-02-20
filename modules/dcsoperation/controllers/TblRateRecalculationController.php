@@ -36,8 +36,11 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
     public function actionView() {
         $searchModel = new TblRateRecalculationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProviderGrid = $searchModel->gridsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $dataProvider->getModels()[0],
+                    'dataProviderGrid' => $dataProviderGrid,
+                    'searchModelGrid' => $searchModel,
         ]);
     }
 
@@ -89,7 +92,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $searchModel->load(Yii::$app->request->queryParams);
             $dcs_codes = $rateCodes = [];
-
+            $hirarchy = Yii::$app->request->post()['TblRateRecalculationSearch'];
             $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
             foreach ($codes as $code) {
                 $c = explode('###', $code);
@@ -98,9 +101,10 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             }
             $this->model->rate_code = $rateCodes;
             $this->model->recalc_for = $searchModel->recalc_for;
+
             if ($this->model->validate()) {
 
-                $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, 'custom', $codes);
+                $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, 'custom', $codes, $hirarchy);
             }
         }
         $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams, 'sp_Portal_Data_Recalculation_Custom');
@@ -113,7 +117,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $rtype, $data = []) {
+    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $rtype, $data = [], $hirarchy) {
         $master = [];
         //$coll_data = $dataProvider->allModels;//->getModels();
         if (empty($dcs_codes)) {
@@ -121,24 +125,37 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         } else if (!is_array($dcs_codes)) {
             $dcs_codes = [$searchModel->dcs_code];
         }
+        $customerType = $calcFor = [];
+        if ($rtype == 'custom') {
+            foreach ($data as $code) {
+                $c = explode('###', $code);
+                $customerType[] = !empty($c[4]) ? $c[4] : '';
+                $calcFor[] = !empty($c[5]) ? $c[5] : '';
+            }
+        }
         if (!empty($dcs_codes)) {
             foreach ($dcs_codes as $key => $dcs_code) {
                 $saveModel = new TblRateRecalculation();
-                $saveModel->union_code = $this->model->union_code;
+                $saveModel->union_code = !empty($hirarchy['union_code']) ? $hirarchy['union_code'] : NULL;
+                $saveModel->plant_code = !empty($hirarchy['plant_code']) ? $hirarchy['plant_code'] : NULL;
+                $saveModel->mcc_plant_code = !empty($hirarchy['mcc_plant_code']) ? $hirarchy['mcc_plant_code'] : NULL;
+                $saveModel->bmc_code = !empty($hirarchy['bmc_code']) ? $hirarchy['bmc_code'] : NULL;
                 $saveModel->rate_code = is_array($rateCode) ? $rateCode[$key] : $rateCode;
-                $saveModel->rate_type = $searchModel->recalc_for;
+                $saveModel->rate_type = is_array($calcFor) ? $calcFor[$key] : $calcFor;
                 $saveModel->from_date = date('Y-m-d', strtotime($searchModel->from_date));
                 $saveModel->to_date = date('Y-m-d', strtotime($searchModel->to_date));
                 $saveModel->from_shift = $searchModel->from_shift;
                 $saveModel->to_shift = $searchModel->to_shift;
                 $saveModel->dcs_code = $dcs_code;
                 $saveModel->recalc_for = $searchModel->recalc_for;
+                $saveModel->customer_code = $dcs_code;
                 $saveModel->recalc_type = $rtype;
+                $saveModel->customer_type = is_array($customerType) ? $customerType[$key] : $customerType;
                 $master[] = $saveModel;
             }
         }
         $transaction = $this->generalModel->saveTransaction($master, ['Rate Recalculation', 'create']);
-        if ($transaction !== FALSE) {
+        if ($transaction == 'customRedirect') {
             $trans = \Yii::$app->db->beginTransaction();
             try {
                 if ($rtype == 'custom') {

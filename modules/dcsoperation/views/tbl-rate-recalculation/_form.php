@@ -29,8 +29,10 @@ if (!empty($rec_data) && $rtype == 'forced') {
         <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tblraterecalculationsearch-union_code', 'rate_code', $model->getAttributeLabel('rate_code')); ?>
     </div>
 <?php } ?>
-<?= Html::activeHiddenInput($model, 'union_code') ?>
-<?= Html::activeHiddenInput($model, 'bmc_code') ?>
+<?= Html::activeHiddenInput($searchModel, 'union_code') ?>
+<?= Html::activeHiddenInput($searchModel, 'plant_code') ?>
+<?= Html::activeHiddenInput($searchModel, 'mcc_plant_code') ?>
+<?= Html::activeHiddenInput($searchModel, 'bmc_code') ?>
 
 <div class="clearfix"></div>
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -69,7 +71,7 @@ if ($rtype == 'forced') {
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'visible' => $rtype == 'forced' ? false : true,
             'checkboxOptions' => function($model) {
-                return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type']];
+                return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
             }],
         ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],

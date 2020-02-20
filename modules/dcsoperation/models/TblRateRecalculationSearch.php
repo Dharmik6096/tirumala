@@ -14,16 +14,14 @@ use yii\data\SqlDataProvider;
  */
 class TblRateRecalculationSearch extends TblRateRecalculation {
 
-    public $bmc_code, $mcc_code, $plant_code;
-
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
             [['rate_recalculation_code', 'rate_code', 'from_shift', 'to_shift'], 'integer'],
-            [['rate_type', 'from_date', 'to_date', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mcc_code', 'bmc_code', 'plant_code', 'recalc_for'], 'safe'],
-            [['recalc_for', 'mcc_code', 'plant_code', 'union_code', 'bmc_code'], 'required', 'on' => 'recalculation_search']
+            [['rate_type', 'from_date', 'to_date', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mcc_plant_code', 'bmc_code', 'plant_code', 'recalc_for', 'customer_code', 'customer_type'], 'safe'],
+            [['recalc_for', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required', 'on' => 'recalculation_search'],
         ];
     }
 
@@ -52,7 +50,7 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_rate_recalculation', 'tbl_rate_recalculation', 'tbl_rate_recalculation');
         // $this->attributes=$params['TblRateRecalculationSearch'];
         //echo '<pre>';
         // print_r($params); exit;
@@ -67,29 +65,28 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
         if (!empty($this->to_date))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), to_date, 126)', date('Y-m-d', strtotime($this->to_date))]);
 
-
-        $query->alias('t');
-        $subquery = "STUFF((SELECT distinct ', ' + tbl_dcs.[dcs_name]
-         FROM [tbl_rate_recalculation] p1 left join [tbl_dcs] on  tbl_dcs.dcs_code = p1.dcs_code
-          WHERE t.[from_date] = p1.[from_date]
-		 and t.[to_date] = p1.[to_date]
-		 and t.[recalc_for] = p1.[recalc_for]
-		 and t.[rate_code] = p1.[rate_code]
-		 and t.[from_shift] = p1.[from_shift]
-		 and t.[to_shift] = p1.[to_shift]
-            FOR XML PATH(''), TYPE
-            ).value('.', 'NVARCHAR(MAX)')
-        ,1,1,'')";
-        $query->select(['from_date', 'to_date', 'recalc_for', 'recalc_type', 'rate_code', 'from_shift', 'to_shift', $subquery . ' as dcs_code']);
-
-
+//        $query->alias('t');
+//        $subquery = "STUFF((SELECT distinct ', ' + tbl_dcs.[dcs_name]
+//         FROM [tbl_rate_recalculation] p1 left join [tbl_dcs] on  tbl_dcs.dcs_code = p1.dcs_code
+//          WHERE t.[from_date] = p1.[from_date]
+//		 and t.[to_date] = p1.[to_date]
+//		 and t.[recalc_for] = p1.[recalc_for]
+//		 and t.[rate_code] = p1.[rate_code]
+//		 and t.[from_shift] = p1.[from_shift]
+//		 and t.[to_shift] = p1.[to_shift]
+//            FOR XML PATH(''), TYPE
+//            ).value('.', 'NVARCHAR(MAX)')
+//        ,1,1,'')";
+        $query->select(['from_date', 'to_date', 'recalc_for', 'recalc_type', 'rate_code', 'from_shift', 'to_shift', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type']);
+        $query->andFilterWhere([
+            'from_shift' => $this->from_shift,
+            'to_shift' => $this->to_shift,
+        ]);
         $query->andFilterWhere(['like', 'rate_type', $this->rate_type])
                 ->andFilterWhere(['rate_code' => $this->rate_code])
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
-        $query->groupBy(['from_date', 'to_date', 'recalc_for', 'rate_code', 'from_shift', 'to_shift', 'recalc_type']);
+                ->andFilterWhere(['like', 'customer_code', $this->customer_code]);
+        $query->groupBy(['from_date', 'to_date', 'recalc_for', 'rate_code', 'from_shift', 'to_shift', 'recalc_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type']);
         //echo $query->createCommand()->rawSql; exit;
         return $dataProvider;
     }
@@ -100,9 +97,10 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
 
         $output = [];
         if (!empty($params)) {
-            $sp_params = ['union_code' => '',
+            $sp_params = [
+                'union_code' => '',
                 'plant_code' => '',
-                'mcc_code' => '',
+                'mcc_plant_code' => '',
                 'bmc_code' => '',
                 'dcs_code' => '',
                 'from_date' => '',
@@ -142,6 +140,46 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
             ]);
         }
         //var_dump($output); exit;
+        return $dataProvider;
+    }
+
+    public function gridsearch($params) {
+        $this->load($params);
+
+        $query = TblRateRecalculation::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+//        $query->joinWith(['dcsCode']);
+//        $query->andWhere(['tbl_dcs.mcc_plant_code' => $this->mcc_plant_code]);
+
+        Yii::$app->general->filterByOrg($query, $this);
+
+        if (!empty($this->from_date))
+            $query->andFilterWhere(['CAST(from_date as date)' => date('Y-m-d', strtotime($this->from_date))]);
+        if (!empty($this->to_date))
+            $query->andFilterWhere(['CAST(to_date as date)' => date('Y-m-d', strtotime($this->to_date))]);
+
+        $query->andFilterWhere([
+            'bmc_code' => $this->bmc_code,
+//            'from_date' => $this->from_date,
+//            'to_date' => $this->to_date,
+            'recalc_for' => $this->recalc_for,
+            'rate_code' => $this->rate_code,
+            'from_shift' => $this->from_shift,
+            'to_shift' => $this->to_shift,
+        ]);
+
         return $dataProvider;
     }
 

@@ -38,10 +38,10 @@ $form = ActiveForm::begin([
     <?= Yii::$app->dropdown->union_plant($searchModel, $form, 'tblraterecalculationsearch-union_code', 'plant_code', false); ?>
 </div> 
 <div class="col-sm-2">
-    <?= Yii::$app->dropdown->plant_mcc($searchModel, $form, 'tblraterecalculationsearch-plant_code', 'mcc_code', false); ?>
+    <?= Yii::$app->dropdown->plant_mcc($searchModel, $form, 'tblraterecalculationsearch-plant_code', 'mcc_plant_code', false); ?>
 </div>      
 <div class="col-sm-2">
-    <?= Yii::$app->dropdown->mcc_bmc($searchModel, $form, 'tblraterecalculationsearch-mcc_code', 'bmc_code', false); ?>
+    <?= Yii::$app->dropdown->mcc_bmc($searchModel, $form, 'tblraterecalculationsearch-mcc_plant_code', 'bmc_code', false); ?>
 </div>
 <?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $searchModel, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', FALSE, FALSE, 'recalc_for') ?> 
 <?php if ($rtype == 'forced') { ?>
@@ -49,7 +49,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->bmc_society($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'dcs_code', false, FALSE, '', FALSE, false, true); ?>         
     </div>  
     <div class="col-sm-2 show_hide_customer_type">
-        <?= Yii::$app->dropdown->customer_type($searchModel, $form, 'tblraterecalculationsearch-mcc_code,tblraterecalculationsearch-bmc_code', 'customer_type', FALSE, FALSE); ?>
+        <?= Yii::$app->dropdown->customer_type($searchModel, $form, 'tblraterecalculationsearch-mcc_plant_code,tblraterecalculationsearch-bmc_code', 'customer_type', FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2 show_hide_customer_type">
         <?= Yii::$app->dropdown->depend_dropdown('customer_code', $searchModel, $form, 'tblraterecalculationsearch-customer_type', '', FALSE, 'customer_code'); ?>

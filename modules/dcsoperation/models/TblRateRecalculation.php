@@ -7,6 +7,12 @@ use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblDcsPurchaseRate;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_rate_recalculation".
@@ -29,7 +35,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRate;
  */
 class TblRateRecalculation extends \app\models\ChildModel {
 
-    public $purchase_rate_code, $bmc_code;
+    public $purchase_rate_code, $customer_name, $rate_desc;
 
     /**
      * @inheritdoc
@@ -43,14 +49,14 @@ class TblRateRecalculation extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['rate_code'], 'required', 'message' => 'Please select at least one rate to update'],
+//            [['rate_code'], 'required', 'message' => 'Please select at least one rate to update'],
             [['recalc_for'], 'required', 'on' => ['recalculation_search', 'recalculation_search_custom']],
             [['rate_code'], 'integer', 'except' => 'recalculation_search_custom'],
             [['from_shift', 'to_shift'], 'integer'],
             [['rate_type', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'recalc_for', 'recalc_type'], 'string'],
             [['from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
             [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['purchase_rate_code', 'bmc_code', 'recalc_for'], 'safe']
+            [['purchase_rate_code', 'bmc_code', 'recalc_for', 'plant_code', 'mcc_plant_code'], 'safe']
         ];
     }
 
@@ -67,13 +73,18 @@ class TblRateRecalculation extends \app\models\ChildModel {
             'to_date' => Yii::t('app', 'To Date'),
             'to_shift' => Yii::t('app', 'To Shift'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'recalc_for' => Yii::t('app', 'Recalc For'),
             'recalc_type' => Yii::t('app', 'Recalc Type'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'customer_code' => Yii::t('app', 'Code'),
+            'customer_type' => Yii::t('app', 'Type'),
         ];
     }
 
@@ -90,11 +101,35 @@ class TblRateRecalculation extends \app\models\ChildModel {
     }
 
     public function getRateDescCode() {
-        return $this->hasOne(TblDcsPurchaseRate::className(), ['purchase_rate_code' => 'rate_code']);
+        return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'rate_code']);
     }
 
     public function getDcsRateDescCode() {
-        return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'rate_code']);
+        return $this->hasOne(TblDcsPurchaseRate::className(), ['purchase_rate_code' => 'rate_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['mcc_plant_code' => 'bmc_code']);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type', 'union_code' => 'union_code']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
     }
 
 }

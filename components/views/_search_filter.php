@@ -182,6 +182,14 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->dropdown('transporter_payment_head_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', false, false, 'transporter_payment_head_code'); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('customer_code'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-6">
+                                            <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, $field_class . '-f_bmc_code', 'customer_code', FALSE); ?>
+                                        </div>
+                                    <?php } ?>
 
                                     <?php
                                     if (in_array($value, array('route_code'))) {
