@@ -59,11 +59,9 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
             // $query->where('0=1');
             return $dataProvider;
         }
-
-        if (!empty($this->from_date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), from_date, 126)', date('Y-m-d', strtotime($this->from_date))]);
-        if (!empty($this->to_date))
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), to_date, 126)', date('Y-m-d', strtotime($this->to_date))]);
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andWhere('((\'' . $from_date . '\'  between from_date and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))');
 
 //        $query->alias('t');
 //        $subquery = "STUFF((SELECT distinct ', ' + tbl_dcs.[dcs_name]

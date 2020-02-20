@@ -9,6 +9,7 @@ use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\web\View;
 ?>
 
 <?php
@@ -31,7 +32,6 @@ $attribute = [
             $desc = strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description');
             $refCode = strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '';
             return !empty($desc) ? $refCode . '(' . $desc . ')' : $refCode;
-            
         }, 'filter' => false],
     ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'filter' => false],
     [
@@ -43,11 +43,13 @@ $attribute = [
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_date);
-        }],
-    ['attribute' => 'from_shift',
-        'value' => function($model) {
+        }, 'filter' => false],
+    ['attribute' => 'from_shift', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftId, 'shift');
-        }, 'filter' => false,],
+        }, 'vAlign' => 'middle', 'filter' => '<span class="shift">' . Yii::$app->dropdown->dropdownfilter('shift', $searchModel, 'from_shift', Yii::t('app', 'Select'), 'form-control shift') . '</span>'],
+    ['attribute' => 'recalc_type', 'value' => function($model) {
+            return $model->recalc_type;
+        }, 'filter' => false],
     [
         'attribute' => 'to_date',
         'filterType' => GridView::FILTER_DATE,
@@ -57,12 +59,10 @@ $attribute = [
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->to_date);
-        }],
-    ['attribute' => 'to_shift',
-        'value' => function($model) {
+        }, 'filter' => false],
+    ['attribute' => 'to_shift', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->toShiftId, 'shift');
-        }, 'filter' => false,],
-    ['attribute' => 'recalc_type', 'value' => function($model) {
+        }, 'vAlign' => 'middle', 'filter' => '<span class="shift">' . Yii::$app->dropdown->dropdownfilter('shift', $searchModel, 'to_shift', Yii::t('app', 'Select'), 'form-control shift') . '</span>'], ['attribute' => 'recalc_type', 'value' => function($model) {
             return $model->recalc_type;
         }, 'filter' => false],
 //    ['header' => 'DSK', 'attribute' => 'dcs_code', 'value' => function($model) {
