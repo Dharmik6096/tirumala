@@ -3,6 +3,7 @@
 namespace app\modules\vsp\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_general_formula".
@@ -32,7 +33,7 @@ class TblGeneralFormula extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['general_formula_code', 'formula', 'formula_name'], 'required'],
+            [['general_formula_code', 'formula', 'formula_name', 'union_code'], 'required'],
             [['formula_name'], 'unique'],
             [['general_formula_code', 'formula', 'formula_name', 'formula_description', 'created_by', 'updated_by', 'union_code'], 'string'],
             [['is_active'], 'integer'],
@@ -57,7 +58,7 @@ class TblGeneralFormula extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
 
@@ -73,6 +74,10 @@ class TblGeneralFormula extends \app\models\ChildModel {
                 $this->addError($attribute, Yii::t('app/validation', 'Incorrect Formula.'));
             }
         }
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }

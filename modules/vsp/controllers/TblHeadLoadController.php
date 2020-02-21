@@ -290,132 +290,6 @@ class TblHeadLoadController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionMapDcs($id) {
-
-        $this->model = new TblHeadLoadApplicability();
-        $this->headLoad = $this->findModel($id);
-
-
-        $data = $this->model->getHeadLoadApplicability($id, $this->headLoad->union_code);
-        $this->model->organization = $data['orgFlag'];
-        $this->model->wef_date = $data['wefDate'];
-
-        if ($this->model->load(Yii::$app->request->post())) {
-            if ($this->model->validate()) {
-                $org = ($this->model->organization == 0) ? 'dcs_code' : 'sub_center_code';
-
-                if ($this->model->organization == 0) {
-                    $org = 'dcs_code';
-                    $crossOrg = 'sub_center_code';
-                    $relationalModel = new TblDcs();
-                } else {
-                    $org = 'sub_center_code';
-                    $crossOrg = 'dcs_code';
-                    $relationalModel = new TblSubCenter();
-                }
-
-                $oldModel = new TblHeadLoadApplicability();
-                $dataold = $oldModel->find()->where(['head_load_code' => $id])->all();
-                $returnedArray = \yii\helpers\ArrayHelper::map($dataold, $org, $org);
-
-                $toRevoke = array_diff($returnedArray, $this->model->dcs_code);
-                $toAssign = array_diff($this->model->dcs_code, $returnedArray);
-                $mappingList = [];
-
-                foreach ($toRevoke as $value) {
-                    $milkModel = TblHeadLoadApplicability::find()->where([$org => $value, 'head_load_code' => $id])->one();
-                    $milkModel->scenario = 'applicability';
-                    $milkHistory = new TblHeadLoadApplicabilityHistory();
-                    Yii::$app->operation->history($milkModel, $milkHistory, UPDATE);
-                    Yii::$app->operation->defaults($milkModel, DELETE);
-                    array_push($mappingList, $milkHistory);
-                    array_push($mappingList, $milkModel);
-//                    echo 'revike = '.$value.' code = '.$milkModel->rate_app_code.' = '.$milkModel->is_delete.'<br>';
-                }
-
-                $code = $this->model->getCode();
-                foreach ($this->model->dcs_code as $value) {
-                    $milkModel = TblHeadLoadApplicability::find()->where([$org => $value, 'head_load_code' => $id])->one();
-                    if ($milkModel) {
-                        if ($milkModel->is_delete == 1) {
-                            $milkHistory = new TblHeadLoadApplicabilityHistory();
-                            Yii::$app->operation->history($milkModel, $milkHistory, UPDATE);
-                        }
-                    } else {
-                        $milkModel = new TblHeadLoadApplicability();
-                        $milkModel->code = $code;
-                        $milkModel->$org = $value;
-                        $milkModel->head_load_code = $id;
-                    }
-                    $milkModel->scenario = 'applicability';
-                    $milkModel->is_delete = 0;
-                    $milkModel->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
-                    $check = $milkModel->checkDuplicate();
-                    if ($check == 1) {
-                        $this->model->addError('wef_date', date('d-m-Y', strtotime($milkModel->wef_date)) . ' date already taken by dcs.');
-                        return $this->render('_map_dcs', [
-                                    'headLoad' => $this->headLoad, 'model' => $this->model, 'routes' => $data['routes'], 'selectedRoutes' => $data['selectedRoutes'],
-                                    'selectedOrganization' => $data['selectedOrganization'], 'selectedAllOrg' => $data['selectedAllOrg'],
-                        ]);
-                    }
-                    $code = str_pad($code + 1, 2, '0', STR_PAD_LEFT);
-                    array_push($mappingList, $milkModel);
-                }
-                $transaction = $this->generalModel->saveTransaction($mappingList, ['purchase rate applicability', 'create']);
-                if ($transaction !== FALSE) {
-                    if ($transaction == 'customRender')
-                        return $this->render('_map_dcs', [
-                                    'headLoad' => $this->headLoad, 'model' => $this->model, 'routes' => $data['routes'], 'selectedRoutes' => $data['selectedRoutes'],
-                                    'selectedOrganization' => $data['selectedOrganization'], 'selectedAllOrg' => $data['selectedAllOrg'],
-                        ]);
-                    else
-                        Yii::$app->display->message(true, 'head load applicability', 'edit');
-                    return $this->redirect(['index']);
-                }
-
-                /* foreach ($dataold as $d) {
-                  Yii::$app->operation->history($d, new TblHeadLoadApplicabilityHistory(), 'Edit', FALSE);
-                  }
-                  $oldModel->deleteAll(['head_load_code' => $id]);
-
-                  foreach ($this->model->dcs_code as $dcs){
-                  $modelNew = new TblHeadLoadApplicability();
-                  $modelNew->code = $this->model->getCode();
-                  $modelNew->$org = $dcs;
-                  $modelNew->head_load_code=$id;
-                  $modelNew->wef_date = Yii::$app->formatter->asDate($this->model->wef_date,DATE_FORMAT);
-                  $check = $modelNew->checkDuplicate();
-
-                  if($check==1){
-                  $this->model->addError('wef_date',$modelNew->wef_date.' date already taken by dcs.');
-
-                  return $this->render('_map_dcs', [
-                  'headLoad' => $this->headLoad,'model'=>$this->model,'routes'=>$data['routes'],'selectedRoutes'=>$data['selectedRoutes'],
-                  'selectedOrganization'=>$data['selectedOrganization'],'selectedAllOrg'=>$data['selectedAllOrg'],
-                  ]);
-                  }
-
-                  $relationalModel->$org = $dcs;
-                  $relationalCode = $relationalModel->getMainSubCenter();
-                  $modelNew->$crossOrg = ($relationalCode)?$relationalCode->$crossOrg:null;
-                  //
-                  Yii::$app->operation->defaults($modelNew, UPDATE);
-                  if($modelNew->save(false)){
-                  $sentbox = new \app\models\TblSentbox();
-                  if ($sentbox->setSentbox($modelNew, UPDATE)) {
-                  $modelNew->flg_sentbox_entry = 'Y';
-                  $modelNew->save();
-                  }
-                  }
-                  } */
-            }
-        }
-        return $this->render('_map_dcs', [
-                    'headLoad' => $this->headLoad, 'model' => $this->model, 'routes' => $data['routes'], 'selectedRoutes' => $data['selectedRoutes'],
-                    'selectedOrganization' => $data['selectedOrganization'], 'selectedAllOrg' => $data['selectedAllOrg'],
-        ]);
-    }
-
     public function actionGetDcs() {
 
         if (!empty(Yii::$app->request->post('route'))) {
@@ -460,7 +334,7 @@ class TblHeadLoadController extends \app\controllers\ChildController {
             'shift_for' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCodeFor.shift', 'class' => ''],
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
-            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+            'name' => ['view' => ['grid'], 'value' => function($model) {
                     if ($model->applicable_for == 'PLANT') {
                         return Yii::$app->general->getforeignkey($model->plantCode, 'name');
                     } else if ($model->applicable_for == 'MCC') {

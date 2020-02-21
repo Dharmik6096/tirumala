@@ -20,25 +20,13 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         },
-        'filter' => false,],
-    ['attribute' => 'head_load_code', 'value' => 'head_load_code', 'vAlign' => 'middle',],
-    //  ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS'), 'value' => function($model) { return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'); }, 'vAlign' => 'middle',],
-//    ['attribute' => 'criteria_type_code', 'value' => function($model) {
-//            return Yii::$app->general->getforeignkey($model->criteriaTypeCode, 'criteria_name');
-//        }, 'vAlign' => 'middle',],
+        'filter' => false, 'visible' => false],
+    ['attribute' => 'head_load_code', 'value' => 'head_load_code', 'vAlign' => 'middle', 'visible' => false],
     ['attribute' => 'fix_value', 'vAlign' => 'middle',],
     ['attribute' => 'min_km', 'vAlign' => 'middle',],
     ['attribute' => 'min_qty', 'vAlign' => 'middle',],
     ['attribute' => 'max_qty', 'vAlign' => 'middle',],
     ['attribute' => 'criteria_description', 'value' => 'criteria_description', 'vAlign' => 'middle',],
-//    [
-//        'attribute' => 'entry_type',
-//        'label' => Yii::t('app', 'Entry Type'),
-//        'filter' => Yii::$app->dropdown->dropdownfilterStatic('entry_type', $searchModel),
-//        'value' => function($model) {
-//    return Yii::$app->general->getEntryValue($model->entry_type);
-//}
-//    ],
 ];
 
 $grid_option = [
@@ -48,19 +36,12 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'mapping' => function ($url, $model) {
-            $disable = ($model->disableHeadLoad(1)) ? '' : 'disabled';
-            if ($disable == '') {
-                $disable = ($model->is_active == 0) ? 'disabled' : '';
-            }
+            $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['data-name' => $model->head_load_code, 'data-val' => $model->head_load_code, 'title' => Yii::t('app', 'Applicability'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-head-load/head-load-applicability', 'id' => $model->head_load_code], $options);
         },
         'in-active' => function ($url, $model) {
-
-            $disable = ($model->disableHeadLoad(1)) ? '' : 'disabled';
-            if ($disable == '') {
-                $disable = ($model->is_active == 0) ? 'disabled' : '';
-            }
+            $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'inact-record ' . $disable, 'data-val' => $model->head_load_code, 'data-name' => $model->head_load_code, 'title' => Yii::t('app', 'InActive')];
             return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/vsp/tbl-head-load/in-active'], $options);
         },

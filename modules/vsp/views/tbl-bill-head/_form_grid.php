@@ -10,9 +10,9 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        },
+        }, 'visible' => false,
         'filter' => false,],
-    ['attribute' => 'bill_head_code'],
+    ['attribute' => 'bill_head_code', 'visible' => false],
     ['attribute' => 'bill_head_name'],
     ['attribute' => 'bill_head_type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('calc_type', $searchModel, 'bill_head_type'),

@@ -26,8 +26,11 @@ $form = ActiveForm::begin(['options' => [
     <div class="panel-subheading">
         <?php echo $form->errorSummary($model); ?>
         <div class="row">
-            <?= $form->field($model, 'formula_name', [ 'options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'formula', [ 'options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true, 'readonly' => true]) ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
+            </div>
+            <?= $form->field($model, 'formula_name', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'formula', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true, 'readonly' => true]) ?>
         </div>
 
     </div>
@@ -74,8 +77,8 @@ $form = ActiveForm::begin(['options' => [
 </div>        
 <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <?= Yii::$app->controls->save($button, $model); ?>
-<?= Yii::$app->controls->reset(); ?>
-<?= Yii::$app->controls->cancel($model, 'index'); ?>
+    <?= Yii::$app->controls->reset(); ?>
+    <?= Yii::$app->controls->cancel($model, 'index'); ?>
 </div>
 
 
