@@ -53,7 +53,7 @@ class TblRateRecalculation extends \app\models\ChildModel {
             [['recalc_for'], 'required', 'on' => ['recalculation_search', 'recalculation_search_custom']],
             [['rate_code'], 'integer', 'except' => 'recalculation_search_custom'],
             [['from_shift', 'to_shift'], 'integer'],
-            [['rate_type', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'recalc_for', 'recalc_type'], 'string'],
+            [['rate_type', 'union_code', 'created_by', 'updated_by', 'recalc_for', 'recalc_type'], 'string'],
             [['from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
             [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
             [['purchase_rate_code', 'bmc_code', 'recalc_for', 'plant_code', 'mcc_plant_code'], 'safe']

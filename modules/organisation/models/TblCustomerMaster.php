@@ -319,8 +319,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
         if (!empty($bmc)) {
             $query->andWhere(['bmc_code' => $bmc]);
         }
-        $data = $query->all();
-        return $data;
+        $value = $query->all();
+//        $value = ArrayHelper::map($data, 'customer_code', 'customer_type');
+        return $value;
     }
 
 }

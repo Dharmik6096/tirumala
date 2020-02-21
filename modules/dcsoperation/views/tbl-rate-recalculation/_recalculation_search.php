@@ -48,7 +48,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 show_on_memebr form-group_mb0">
         <?= Yii::$app->dropdown->bmc_society($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'dcs_code', false, FALSE, '', FALSE, false, true); ?>         
     </div>  
-    <div class="col-sm-2 show_on_bmc ">
+    <div class="col-sm-2 show_on_bmc show_hide_customer_type ">
         <?= Yii::$app->dropdown->customer_type($searchModel, $form, 'tblraterecalculationsearch-mcc_plant_code,tblraterecalculationsearch-bmc_code', 'customer_type', FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2 show_on_bmc">

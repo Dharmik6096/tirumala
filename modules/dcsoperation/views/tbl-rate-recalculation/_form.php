@@ -34,7 +34,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
 <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code') ?>
 <?= Html::activeHiddenInput($searchModel, 'bmc_code') ?>
 
-<div class="clearfix"></div>
+<!--<span class="hide-grid-settings kv-panel-before"></span>-->
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <div class="form-group">
         <?php if (!empty($rec_data)) { ?>
@@ -110,6 +110,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
 <?php
 $script = "
     $(document).ready(function() {
+       $('.btn-toolbar.kv-grid-toolbar').hide();
       $('.show_on_memebr').hide();
       $('.show_on_bmc').hide();
         var recalc_for =$('#tblraterecalculationsearch-recalc_for').val();
@@ -126,29 +127,48 @@ $script = "
     });
     $('#tblraterecalculationsearch-recalc_for').change(function(){
           $('#tblraterecalculationsearch-dcs_code').val('');
-          $('#tblraterecalculationsearch-customer_type').val('');
           $('#tblraterecalculationsearch-customer_code').val('');
           var recalc_for =$('#tblraterecalculationsearch-recalc_for').val();
             if(recalc_for=='member'){
                $('.show_on_memebr').show();
+               $('#tblraterecalculationsearch-customer_type').val('');
                $('.show_on_bmc').hide();
             }else if(recalc_for=='bmc'){
                 $('.show_on_memebr').hide();
                 $('.show_on_bmc').show();
+                hideType();
             }
     });
     
     $('#tblraterecalculationsearch-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-        var length = $('#tblraterecalculationsearch-customer_type-customer_type option[value!=\'\']').length;
+        var length = $('#tblraterecalculationsearch-customer_type option[value!=\'\']').length;
+        var recalc_for =$('#tblraterecalculationsearch-recalc_for').val();
             if(length == 0) {
                 $('.show_hide_customer_type').hide();
             }else if(length == 1) {
-                $('#tblraterecalculationsearch-customer_type-customer_type').val('DCS');
-               $('.show_hide_customer_type').hide();
-            } else {
+                $('#tblraterecalculationsearch-customer_type').val('DCS');
+                $('.show_hide_customer_type').hide();
+                $('#tblraterecalculationsearch-customer_type').trigger('change');
+                $('#tblraterecalculationsearch-customer_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    $('#tblraterecalculationsearch-customer_code').trigger('change');
+                });
+            } else if(recalc_for=='bmc'){
                 $('.show_hide_customer_type').show();
             }
-    }); 
+    });
+    
+    function hideType(){
+        var type =$('#tblraterecalculationsearch-customer_type').val();
+        var length = $('#tblraterecalculationsearch-customer_type option[value!=\'\']').length;
+        if(length == 1) {
+                $('#tblraterecalculationsearch-customer_type').val('DCS');
+                $('.show_hide_customer_type').hide();
+                $('#tblraterecalculationsearch-customer_type').trigger('change');
+                $('#tblraterecalculationsearch-customer_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    $('#tblraterecalculationsearch-customer_code').trigger('change');
+                });
+        }
+    }
 ";
 $this->registerJs($script, View::POS_END, 'rate-recalculation-script');
 ?>

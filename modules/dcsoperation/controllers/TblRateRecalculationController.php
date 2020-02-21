@@ -61,29 +61,25 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
             $searchModel->load(Yii::$app->request->queryParams);
-
+            $customeCode = [];
             if ($this->model->validate()) {
                 if (strtolower($searchModel->recalc_for) == 'member') {
                     $dcs_codes = $searchModel->dcs_code;
-//                    if (empty($dcs_codes)) {
-//                        $dcs = new TblDcs();
-//                        $dcs_codes = array_keys($dcs->getBMCDCSList($searchModel->bmc_code));
-//                    }
+                    if (empty($dcs_codes)) {
+                        $dcs = new TblDcs();
+                        $dcs_codes = array_keys($dcs->getBMCDCSList($searchModel->bmc_code));
+                    }
                 } else if (strtolower($searchModel->recalc_for) == 'bmc') {
                     $dcs_codes = $searchModel->customer_code;
-//                    if (empty($dcs_codes)) {
-//                        $custome = new TblCustomerMaster();
-//                        $data = $custome->getBMCCustomerList($searchModel->bmc_code);
-//                        $dcs_codes = [];
-//                        foreach ($data as $detail) {
-//                            $searchModel->customer_code = $detail->customer_code;
-//                            $searchModel->customer_type = $detail->customer_type;
-//                            $dcs_codes[] = $searchModel;
-//                        }
-//                    }
+                    if (empty($dcs_codes)) {
+                        $custome = new TblCustomerMaster();
+                        $dcs = new TblDcs();
+                        $dcs_codes = $custome->getBMCCustomerList($searchModel->bmc_code);
+                        $customeCode = array_keys($dcs->getBMCDCSList($searchModel->bmc_code));
+                    }
                 }
 
-                $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all');
+                $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', [], $customeCode);
             }
         } else {
             $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams);
@@ -132,7 +128,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $rtype, $data = []) {
+    public function saveAndRedirect($dcs_codes, $searchModel, $rateCode, $rtype, $data = [], $customeCode = []) {
         $master = [];
         //$coll_data = $dataProvider->allModels;//->getModels();
         if (empty($dcs_codes)) {
@@ -157,8 +153,21 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             } else {
                 if (!is_array($dcs_codes)) {
                     $dcs_codes = [$searchModel->customer_code];
+                    $customerType = $searchModel->customer_type;
+                } else {
+                    $customerType = [];
+                    foreach ($dcs_codes as $detail) {
+                        $customerType[] = $detail->customer_type;
+                    }
+                    $setVal = [];
+                    foreach ($customeCode as $a) {
+                        $code = [];
+                        $code['customer_type'] = 'DCS';
+                        $code['customer_code'] = $a;
+                        $setVal[] = $code;
+                    }
+                    $dcs_codes = array_merge($dcs_codes, $setVal);
                 }
-                $customerType = $searchModel->customer_type;
                 $calcFor = 'BMC';
             }
         }
@@ -176,10 +185,10 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 $saveModel->from_shift = $searchModel->from_shift;
                 $saveModel->to_shift = $searchModel->to_shift;
                 $saveModel->recalc_for = $searchModel->recalc_for;
-                $saveModel->customer_code = $dcs_code;
+                $saveModel->customer_code = !empty($dcs_code['customer_code']) ? $dcs_code['customer_code'] : $dcs_code;
                 $saveModel->recalc_type = $rtype;
-                $saveModel->customer_type = is_array($customerType) ? $customerType[$key] : $customerType;
-                $saveModel->dcs_code = strtolower($saveModel->customer_type) == 'dcs' ? $dcs_code : NULL;
+                $saveModel->customer_type = !empty($dcs_code['customer_type']) ? $dcs_code['customer_type'] : (is_array($customerType) ? $customerType[$key] : $customerType);
+                $saveModel->dcs_code = strtolower($saveModel->customer_type) == 'dcs' ? (!empty($dcs_code['customer_code']) ? $dcs_code['customer_code'] : $dcs_code) : NULL;
                 $master[] = $saveModel;
             }
         }
@@ -200,8 +209,8 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         $to_shift = Yii::$app->general->getshift($searchModel->to_shift);
                         $fdate = date('Y-m-d H:i:s', strtotime($searchModel->from_date . ' ' . $from_shift));
                         $tdate = date('Y-m-d H:i:s', strtotime($searchModel->to_date . ' ' . $to_shift));
-                        $codes = $code;
-                        $type = (strtolower($searchModel->recalc_for) == 'member' && empty($searchModel->customer_type)) ? 'DCS' : $searchModel->customer_type;
+                        $codes = !empty($code['customer_code']) ? $code['customer_code'] : $code;
+                        $type = (strtolower($searchModel->recalc_for) == 'member') ? 'DCS' : (!empty($code['customer_type']) ? $code['customer_type'] : $searchModel->customer_type);
                         $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $type];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
