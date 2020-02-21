@@ -191,20 +191,6 @@ class TblHeadLoad extends \app\models\ChildModel {
         // $value = $code . str_pad($code1, 7, '0', STR_PAD_LEFT);
         $value = $code . $code1;
         return $value;
-    }
-
-    public function disableHeadLoad($type = '') {
-        return TRUE;
-        $code = $this->head_load_code;
-        $originate = substr($code, 0, 3);
-        $dcs = substr($code, 3, 4);
-        if ($originate == Yii::$app->session->get('Unions') && $dcs == '0000') {
-            if ($type == 1) {
-                return true;
-            }
-        }
-
-        return FALSE;
-    }
+    }   
 
 }

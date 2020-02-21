@@ -16,20 +16,26 @@ use app\components\GeneralFunctions;
 $attribute = [
     [
         'attribute' => 'wef_date',
-//        'filterType' => GridView::FILTER_DATE,
-//        'filterWidgetOptions' => [
-//            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-//                'autoclose' => true]
-//        ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-    ['attribute' => 'dcs_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'vAlign' => 'middle', 'label' => Yii::t('app', 'DCS')],
     ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle',],
     ['attribute' => 'shift_for', 'value' => 'shiftCodeFor.shift', 'vAlign' => 'middle',],
-        //  ['attribute' => 'sub_center_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->subCenterCode, 'sub_center_name'); }, 'vAlign' => 'middle',],
+    ['attribute' => 'applicable_for'],
+    ['attribute' => 'applicable_code'],
+    ['attribute' => 'applicable_code', 'value' => function($model) {
+            if ($model->applicable_for == 'PLANT') {
+                return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+            } else if ($model->applicable_for == 'MCC') {
+                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+            } else if ($model->applicable_for == 'BMC') {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+            } else if ($model->applicable_for == 'DCS') {
+                return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
+            } else {
+                return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+            }
+        }, 'label' => Yii::t('app', 'Name'), 'vAlign' => 'middle'],
 ];
 
 $grid_option = [
