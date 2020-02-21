@@ -27,6 +27,13 @@ $this->title = Yii::$app->label->title('create', 'Mapping');
             'options' => $options,
             'preload' => $preload,
             'title' => $title,
+            'customer_type_wise_entry' => $customer_type_wise_entry,
+            'customer_type_field_name' => $customer_type_field_name,
+            'customer_type_list' => $customer_type_list,
+            'selected_customer_type' => $selected_customer_type,
+            'selectedCodes' => $selectedCodes,
+            'selectedTypes' => $selectedTypes,
+            'hideCustomerType' => $hideCustomerType
         ])
         ?>
         <div class="row">

@@ -27,6 +27,7 @@ $form = ActiveForm::begin([
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
+            'encodeErrorSummary' => false,
         ]);
 $divPrefix = '<div class="col-sm-3 shift">';
 $divPostfix = '</div>';
@@ -97,6 +98,27 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             <h5 class="panel-subtitle">Apply to</h5>
             <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
         </div>
+        <?php
+    }
+    $customerClass = "";
+    ?>
+
+    <?php
+    if ($customer_type_wise_entry) {
+        $customerClass = "customerTypeValidate";
+        $hideClass = $hideCustomerType ? ' disp_none ' : '';
+        ?>
+        <div class="col-sm-12 mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
+            <h5 class="panel-subtitle">Apply to</h5>
+            <div id="dcs-wrap">
+                <?=
+                $this->render('_checkbox_list', [
+                    'model' => $model, 'form' => $form, 'field_name' => $customer_type_field_name,
+                    'list' => $customer_type_list, 'selected' => $selected_customer_type, 'selectedData' => $selectedTypes, 'checkboxClass' => 'col-sm-3',
+                ])
+                ?>
+            </div>
+        </div>
     <?php } ?>
     <div class="<?= $class ?>">
         <div class="app-check-list">
@@ -110,11 +132,11 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 </div>
             </div>
             <div class="clearfix"></div>
-            <div id="dcs-wrap">
+            <div id="dcs-wrap" class="<?= $customerClass ?>">
                 <?=
                 $this->render('_checkbox_list', [
                     'model' => $model, 'form' => $form, 'field_name' => $main_field_name,
-                    'list' => $dcs_list, 'selected' => $selected, 'checkboxClass' => $checkboxClass,
+                    'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
                 ])
                 ?>
             </div>
@@ -182,6 +204,7 @@ $script = "
         $('#dcs_code-list').empty();
     });
     $(document).ready(function(){
+        $('.customerTypeEntries input').removeClass('route-checkbox');
         if($('#{$nameforid}-union_code').val() !== '')
         {
             addFilterData($('#{$nameforid}-union_code').val());
@@ -311,4 +334,14 @@ $script = "
     }
 
 ";
+//if ($customer_type_wise_entry) {
+//    $script .= "
+//        $('.customerTypeValidate input').on('click', function(){
+//            validateCustomers();
+//        });
+//        function validateCustomers(){
+//            
+//        }
+//    ";
+//}
 $this->registerJs($script, View::POS_END, 'village-code');

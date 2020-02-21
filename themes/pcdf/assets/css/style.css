@@ -2373,3 +2373,7 @@ div.crystalstyle{
 .width_100-200{
     width: calc(100% - 30%) !important;
 }
+
+.disp_none {
+    display: none
+}

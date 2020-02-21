@@ -16,6 +16,8 @@ use app\models\TblUserOrganizationMapping;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * applicability module definition class
@@ -44,6 +46,17 @@ class Applicability extends \yii\base\Module {
     public $header_title = '';
     //put your code here
     protected $generalModel;
+    public $bmc_field_name = 'applicable_code';
+    public $customer_type_wise_entry = false;
+    public $customer_type_field_name = 'applicable_type';
+    public $customer_type_list = [];
+    public $assignMultiData = false;
+    public $assignMultiDataKey = '';
+    public $assignDataKey = '';
+    public $setModelFields = false;
+    public $selectedCodes = [];
+    public $selectedTypes = [];
+    public $assignStaticData = [];
 
     /**
      * @inheritdoc
@@ -62,6 +75,7 @@ class Applicability extends \yii\base\Module {
     }
 
     protected function customRender() {
+        $selected_customer_type = [];
         $field_name = $this->field_name;
         $preload = count($this->options) == 1 ? $this->options[0] : (empty($this->options) ? 'none' : $this->default_option);
         switch ($preload) {
@@ -84,6 +98,12 @@ class Applicability extends \yii\base\Module {
                 $main_field_name = $this->mcc_field_name;
                 $title = 'MCCs';
                 break;
+            case 'bmc':
+                $selected = []; //$this->getBmc();
+                $list = $this->loadUnionBmc($this->union_code);
+                $main_field_name = $this->mcc_field_name;
+                $title = 'BMCs';
+                break;
             default :
                 $selected = [];
                 $list = [];
@@ -93,6 +113,17 @@ class Applicability extends \yii\base\Module {
         $searchModel = $this->searchModel;
         $searchModel->$field_name = $this->field_value;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $hideCustomerType = false;
+        if ($this->customer_type_wise_entry) {
+            $customerModel = new TblCustomerType();
+            $this->customer_type_list = $customerModel->getCustomerType();
+            $this->customer_type_list['DCS'] = 'DCS';
+            if (count($this->customer_type_list) == 1) {
+                $hideCustomerType = true;
+                $this->selectedTypes = !empty($this->selectedTypes) ? $this->selectedTypes : ['DCS'];
+            }
+            $selected_customer_type = []; //$this->getBmc($this->customer_type_field_name);
+        }
         return Yii::$app->controller->render('/../../applicability/views/default/create', [
                     'model' => $this->model,
                     'field_name' => $field_name,
@@ -121,6 +152,13 @@ class Applicability extends \yii\base\Module {
                     'title' => $title,
                     'script' => $this->script,
                     'header_title' => $this->header_title,
+                    'customer_type_wise_entry' => $this->customer_type_wise_entry,
+                    'customer_type_list' => $this->customer_type_list,
+                    'customer_type_field_name' => $this->customer_type_field_name,
+                    'selected_customer_type' => $selected_customer_type,
+                    'selectedCodes' => $this->selectedCodes,
+                    'selectedTypes' => $this->selectedTypes,
+                    'hideCustomerType' => $hideCustomerType
         ]);
     }
 
@@ -548,6 +586,85 @@ class Applicability extends \yii\base\Module {
         $mccModel = new TblMccPlant();
         $mccList = $mccModel->getMccs($union_code);
         return $mccList;
+    }
+
+    public function loadUnionBmc($union_code) {
+        $bmcModel = new TblDcsBmc();
+        $bmcList = $bmcModel->getBmcs($union_code);
+        return $bmcList;
+    }
+
+    public function getBmc($selectFieldName = '') {
+        $selectFieldName = !empty($selectFieldName) ? $selectFieldName : $this->bmc_field_name;
+        $field_name = $this->field_name;
+        if ($this->select_from_all == false)
+            $query = $this->model->find()->select($selectFieldName)->where([$field_name => $this->field_value]);
+        else
+            $query = $this->model->find()->select($selectFieldName);
+        $values = $query->all();
+        $selected = ArrayHelper::getColumn($values, $selectFieldName);
+        return $selected;
+    }
+
+    public function customerTypeWiseApplicability() {
+        $searchName = $this->model->className() . 'Search';
+        $historyName = $this->model->className() . 'History';
+        $this->searchModel = new $searchName();
+        $this->historyModel = new $historyName();
+        if (Yii::$app->request->post()) {
+            $this->selectedCodes = [];
+            $fieldName = $this->field_name;
+            if ($this->model->load(Yii::$app->request->post())) {
+                $this->model->$fieldName = $this->field_value;
+                $save_model = [];
+                $setField = $this->assignDataKey;
+                $saveDataArray = $this->model->$setField;
+                $wefDate = '';
+                if ($this->model->hasAttribute('wef_date')) {
+                    $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+                }
+                $this->model->setAttributes($this->assignStaticData);
+                if ($this->model->validate()) {
+                    foreach ($saveDataArray as $val) {
+                        if ($this->assignMultiData) {
+                            $array = $this->model->{$this->assignMultiDataKey};
+                            foreach ($array as $a) {
+                                $new_model = new ReflectionClass($this->model->className());
+                                $model = $new_model->newInstanceArgs();
+                                $model->$fieldName = $this->field_value;
+                                $model->$setField = $val;
+                                $model->{$this->assignMultiDataKey} = $a;
+                                if ($model->hasAttribute('wef_date')) {
+                                    $model->wef_date = $this->model->wef_date;
+                                }
+                                $model->setAttributes($this->assignStaticData);
+                                $save_model[] = $model;
+                            }
+                        } else {
+                            $new_model = new ReflectionClass($this->model->className());
+                            $model = $new_model->newInstanceArgs();
+                            $model->$fieldName = $this->field_value;
+                            $model->$setField = $val;
+                            if ($model->hasAttribute('wef_date')) {
+                                $model->wef_date = $this->model->wef_date;
+                            }
+                            $model->setAttributes($this->assignStaticData);
+                            $save_model[] = $model;
+                        }
+                    }
+                    $transaction = $this->generalModel->appTransaction($save_model, [$this->trans_label, 'create']);
+                    if ($transaction !== FALSE) {
+                        return $this->{$transaction}();
+                    }
+                } else {
+                    $this->selectedCodes = $saveDataArray;
+                    if ($this->assignMultiData) {
+                        $this->selectedTypes = $this->model->{$this->assignMultiDataKey};
+                    }
+                }
+            }
+        }
+        return $this->customRender();
     }
 
 }

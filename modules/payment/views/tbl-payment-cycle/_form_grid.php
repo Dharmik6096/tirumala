@@ -1,0 +1,51 @@
+<?php
+
+use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\web\View;
+use yii\widgets\Pjax;
+use yii\helpers\Url;
+?>
+
+<?php
+
+$attribute = [
+        ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    //'dcs_payment_cycle_code',
+    ['attribute' => 'from_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->from_date);
+        }],
+        ['attribute' => 'to_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->to_date);
+        }],
+    'interval_value'
+];
+
+$grid_option = [
+    'id' => 'payment-cycle-grid',
+    'attributes' => $attribute,
+    'active_column' => TRUE,
+    'actions' => [
+        'view' => true,
+        'applicabilty' => function ($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/payment/tbl-payment-cycle/payment-cycle-applicability', 'id' => $model->payment_cycle_code], $options);
+        },
+        'delete' => ['option' => 'payment_cycle_code,payment_cycle_code,tbl-payment-cycle/delete,disableDelete()'],
+    ]
+];
+
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
