@@ -23,6 +23,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 use yii\helpers\Json;
 use PHPExcel;
 use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 
 /**
  * TblPurchaseRateController implements the CRUD actions for TblPurchaseRate model.
@@ -518,11 +519,18 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $out = NULL;
         if (isset($_POST['depdrop_parents'])) {
             $value = $_POST['depdrop_parents'];
-            $RateModel = new TblPurchaseRate();
-            $list = $RateModel->getRateChartList($value[0]);
-            foreach ($list as $key => $r) {
-                $out[] = array('id' => $key,
-                    'name' => $r);
+            if (!empty($value[0]) && !empty($value[1])) {
+                if (strtolower($value[1]) == 'member') {
+                    $RateModel = new TblPurchaseRate();
+                    $list = $RateModel->getRateChartList($value[0]);
+                } else {
+                    $RateModel = new TblDcsPurchaseRate();
+                    $list = $RateModel->getRateChartList($value[0]);
+                }
+                foreach ($list as $key => $r) {
+                    $out[] = array('id' => $key,
+                        'name' => $r);
+                }
             }
             echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
             return;

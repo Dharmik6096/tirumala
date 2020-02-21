@@ -26,7 +26,7 @@ $form = ActiveForm::begin([
 if (!empty($rec_data) && $rtype == 'forced') {
     ?>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tblraterecalculationsearch-union_code', 'rate_code', $model->getAttributeLabel('rate_code')); ?>
+        <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tblraterecalculationsearch-union_code,tblraterecalculationsearch-recalc_for', 'rate_code', $model->getAttributeLabel('rate_code')); ?>
     </div>
 <?php } ?>
 <?= Html::activeHiddenInput($searchModel, 'union_code') ?>
@@ -55,10 +55,12 @@ if (!empty($rec_data) && $rtype == 'forced') {
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['value' => $model['dcs_code']];
+                    return ['value' => $model['code']];
                 }],
-            ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'vAlign' => 'middle', 'filter' => false],
-            ['attribute' => 'dcs_name', 'value' => 'dcs_name'],
+            ['attribute' => 'type', 'filter' => false],
+            ['attribute' => 'code', 'filter' => false],
+            ['attribute' => 'code_ex', 'filter' => false],
+            ['attribute' => 'name', 'filter' => false],
             ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
@@ -107,11 +109,21 @@ if (!empty($rec_data) && $rtype == 'forced') {
 </div>
 <?php
 $script = "
+    $(document).ready(function() {
+      $('.show_on_memebr').hide();
+      $('.show_on_bmc').hide();
+        var recalc_for =$('#tblraterecalculationsearch-recalc_for').val();
+            if(recalc_for=='member'){
+                $('.show_on_memebr').show();
+                $('.show_on_bmc').hide();
+            }else if(recalc_for=='bmc'){
+                $('.show_on_memebr').hide();
+                $('.show_on_bmc').show();
+            }
+    });
     $('.submit_form').on('click', function(){
         $('from#recalculation-form').submit();
     });
-    $('.show_on_memebr').hide();
-    $('.show_on_bmc').hide();
     $('#tblraterecalculationsearch-recalc_for').change(function(){
           $('#tblraterecalculationsearch-dcs_code').val('');
           $('#tblraterecalculationsearch-customer_type').val('');

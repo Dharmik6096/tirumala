@@ -443,7 +443,7 @@ class DropDown extends Component {
                 });
     }
 
-    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false) {
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false) {
         if (in_array($flag, ['organizations_type'])) {
             (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
         }
@@ -454,8 +454,14 @@ class DropDown extends Component {
         if (!in_array($flag, array('p_type'))) {
             asort($records, SORT_NATURAL | SORT_FLAG_CASE);
         }
+
         if ($addAll) {
             $records = [0 => Yii::t('app', 'All')] + $records;
+        }
+        if ($removeKey) {
+            foreach ($data['remove_key'] as $value) {
+                unset($records[$value]);
+            }
         }
         echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
     }
@@ -717,6 +723,7 @@ class DropDown extends Component {
                 'name' => 'rate_cal_for',
                 'prompt' => Yii::t('app', 'Select Recalc For'),
                 'data' => ['member' => Yii::t('app', 'Member'), 'bmc' => Yii::t('app', 'BMC'), 'both' => Yii::t('app', 'Both')],
+                'remove_key' => ['both'],
             ],
         ];
         return $records[$l];

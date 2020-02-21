@@ -7,13 +7,13 @@ use yii\web\View;
 $request = Yii::$app->request->queryParams;
 $searchModel->from_date = !empty($searchModel->from_date) ? $searchModel->from_date : date('d-m-Y');
 $searchModel->to_date = !empty($searchModel->to_date) ? $searchModel->to_date : date('d-m-Y');
-
-if (!empty($searchModel->dcs_code) && in_array('multiselect-all', $searchModel->dcs_code)) {
-    $dcs = new \app\modules\organisation\models\TblDcs();
-    $sel = array_map('strval', array_keys($dcs->getBMCDCSList($searchModel->bmc_code)));
-    $arr = array_combine(range(1, count($sel)), $sel);
-    $searchModel->dcs_code = $searchModel->dcs_code + $arr;
-}
+$remove = $rtype == 'forced' ? TRUE : FALSE;
+//if (!empty($searchModel->dcs_code)) {
+//    $dcs = new \app\modules\organisation\models\TblDcs();
+//    $sel = array_map('strval', array_keys($dcs->getBMCDCSList($searchModel->bmc_code)));
+//    $arr = array_combine(range(1, count($sel)), $sel);
+//    $searchModel->dcs_code = $searchModel->dcs_code + $arr;
+//}
 //var_dump($searchModel->dcs_code); exit;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\collection\models\TblMilkDispatchSearch */
@@ -43,7 +43,7 @@ $form = ActiveForm::begin([
 <div class="col-sm-2">
     <?= Yii::$app->dropdown->mcc_bmc($searchModel, $form, 'tblraterecalculationsearch-mcc_plant_code', 'bmc_code', false); ?>
 </div>
-<?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $searchModel, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', FALSE, FALSE, 'recalc_for') ?> 
+<?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $searchModel, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', FALSE, FALSE, 'recalc_for', false, $remove) ?> 
 <?php if ($rtype == 'forced') { ?>
     <div class="col-sm-2 show_on_memebr form-group_mb0">
         <?= Yii::$app->dropdown->bmc_society($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'dcs_code', false, FALSE, '', FALSE, false, true); ?>         

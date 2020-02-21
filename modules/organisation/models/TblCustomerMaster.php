@@ -314,4 +314,13 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $data;
     }
 
+    public function getBMCCustomerList($bmc) {
+        $query = $this->find()->where(['is_active' => 1]);
+        if (!empty($bmc)) {
+            $query->andWhere(['bmc_code' => $bmc]);
+        }
+        $data = $query->all();
+        return $data;
+    }
+
 }
