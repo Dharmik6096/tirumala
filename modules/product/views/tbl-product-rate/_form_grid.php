@@ -32,6 +32,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
+        ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
+            return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
+        }],
+        ['attribute' => 'vsp_commission', 'value' => 'vsp_commission'],
         [
         'attribute' => 'union_code', 'filter' => false,
         'value' => function($model) {
@@ -44,6 +48,11 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => true,
     'actions' => [
+        'view_details' => function ($url, $model) {
+            $class = '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => $class];
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/product/tbl-product-rate/view', 'id' => $model->product_rate_code, 'is_member_rate' => $model->is_member_rate], $options);
+        },
         'applicabilty' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_rate_code], $options);

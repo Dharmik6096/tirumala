@@ -47,10 +47,10 @@ class TblProductRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'applicable_type', 'wef_date'], 'required'],
+                [['applicable_code', 'wef_date'], 'required'],
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['product_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['product_code', 'originating_type'], 'safe'],
+                [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
                 [['rate', 'rate_two'], 'safe'],
                 [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
         ];
@@ -107,6 +107,10 @@ class TblProductRateApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
     }
 
+    public function getDispDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
+    }
+
     public function getCustomerType() {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_type']);
     }
@@ -123,7 +127,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
         } else if ($applicableFor == 'BMC') {
             return Yii::$app->general->getforeignkey($this->bmcCode, 'bmc_name');
         } else if ($applicableFor == 'DCS') {
-            return Yii::$app->general->getforeignkey($this->dcsCode, 'dcs_name');
+            return Yii::$app->general->getforeignkey($this->dispDcsCode, 'dcs_name');
         } else {
             return Yii::$app->general->getforeignkey($this->mainCustomerCode, 'customer_name');
         }
@@ -134,8 +138,9 @@ class TblProductRateApplicability extends \app\models\ChildModel {
     }
 
     public function validateData($returnCodes = false) {
+        $this->wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
         $data = $this->find()
-                ->where(['applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'applicable_type' => $this->applicable_type, 'product_code' => $this->product_code])
+                ->where(['applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'product_code' => $this->product_code, 'is_member_rate' => $this->is_member_rate])
                 ->andWhere(['wef_date' => $this->wef_date])
                 ->all();
         $applicable_code = [];

@@ -39,13 +39,26 @@ class TblProductRate extends \app\models\ChildModel {
                 [['product_code', 'rate', 'wef_date', 'union_code'], 'required'],
                 [['product_code', 'is_active'], 'integer'],
                 [['rate'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
-                [['wef_date', 'created_at', 'updated_at', 'product_rate_code', 'union_code'], 'safe'],
+                [['wef_date', 'created_at', 'updated_at', 'product_rate_code', 'union_code', 'is_member_rate', 'vsp_commission'], 'safe'],
                 [['created_by', 'updated_by'], 'string'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
                 ['wef_date', 'unique', 'message' => Yii::t('app/validation', 'Rate is already taken on this WEF Date.'), 'when' => function($model) {
                     $data = $this->find()->where(['union_code' => $model->union_code, 'product_code' => $model->product_code, 'wef_date' => Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT)])->andWhere(['<>', 'product_rate_code', $model->product_rate_code])->count();
                     return ($data == 1) ? true : false;
                 }],
+                [['vsp_commission'], 'required', 'when' => function ($model) {
+                    return $model->is_member_rate == 1;
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblproductrate-is_member_rate').is(':checked'); 
+               }"
+            ],
+                [['vsp_commission'], 'number', 'min' => 0, 'when' => function ($model) {
+                    return $model->is_member_rate == 1;
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblproductrate-is_member_rate').is(':checked'); 
+               }"],
+                [['is_member_rate', 'vsp_commission'], 'default', 'value' => 0],
+                [['vsp_commission'], 'validateCommission', 'skipOnEmpty' => false],
         ];
     }
 
@@ -66,6 +79,7 @@ class TblProductRate extends \app\models\ChildModel {
             'is_active' => Yii::t('app', 'Is Active'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'vsp_commission' => Yii::t('app', 'VSP Commission'),
         ];
     }
 
@@ -141,6 +155,15 @@ class TblProductRate extends \app\models\ChildModel {
             return false;
         else
             return true;
+    }
+
+    public function validateCommission($attribute, $params) {
+        if (!empty($this->is_member_rate)) {
+            if ($this->vsp_commission > $this->rate) {
+                $this->addError($attribute, Yii::t('app/validation', 'VSP Commission must be less than Rate'));
+                return false;
+            }
+        }
     }
 
 }

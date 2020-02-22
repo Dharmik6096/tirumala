@@ -20,25 +20,23 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblProductRateHistory extends \yii\db\ActiveRecord
-{
+class TblProductRateHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_product_rate_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
 //            [['rate_code', 'product_code', 'is_active'], 'integer'],
 //            [['rate'], 'number'],
-            [['product_rate_code', 'product_code', 'is_active', 'rate', 'wef_date', 'created_at', 'history_created_at', 'updated_at', 'created_by', 'operation_type', 'updated_by','union_code'], 'safe'],
+                [['product_rate_code', 'product_code', 'is_active', 'rate', 'wef_date', 'created_at', 'history_created_at', 'updated_at', 'created_by', 'operation_type', 'updated_by', 'union_code', 'is_member_rate', 'vsp_commission'], 'safe'],
 //            [['created_by', 'operation_type', 'updated_by'], 'string'],
         ];
     }
@@ -46,8 +44,7 @@ class TblProductRateHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'product_rate_code' => Yii::t('app', 'Rate Code'),
@@ -63,4 +60,5 @@ class TblProductRateHistory extends \yii\db\ActiveRecord
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
+
 }

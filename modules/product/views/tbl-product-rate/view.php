@@ -4,9 +4,10 @@ use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 //$this->title = Yii::$app->label->title('view', 'Product Rate History');
-$this->title = Yii::t('app','Product Rate History').' ('.$searchModel->product_code.'-'.Yii::t('app',$searchModel->productCode->product_name).')';
+$this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->product_code . '-' . Yii::t('app', $searchModel->productCode->product_name) . ')';
 //$this->params['menu'][] = Yii::$app->controls->update($model->rate_code);
 ?>
 <div class="tbl-purchase-rate-view">
@@ -19,16 +20,16 @@ $this->title = Yii::t('app','Product Rate History').' ('.$searchModel->product_c
             <div class="table-responsive">
                 <?php
                 $attribute = [
-                    ['attribute' => 'product_rate_code_val','label'=>Yii::t('app','Rate Code'),'value'=>'product_rate_code'],
-                    [
+                        ['attribute' => 'product_rate_code_val', 'label' => Yii::t('app', 'Rate Code'), 'value' => 'product_rate_code'],
+                        [
                         'attribute' => 'product_name',
                         'value' => 'productCode.product_name',
-                        'label' => Yii::t('app','Product'),
-                    ], 
+                        'label' => Yii::t('app', 'Product'),
+                    ],
 //                    ['attribute' => 'product_rate_code'],
 //                    ['attribute' => 'product_code'],
                     ['attribute' => 'rate'],
-                    [
+                        [
                         'attribute' => 'wef_date', 'width' => '200px',
                         'filterType' => GridView::FILTER_DATE,
                         'filterWidgetOptions' => [
@@ -36,19 +37,29 @@ $this->title = Yii::t('app','Product Rate History').' ('.$searchModel->product_c
                                 'autoclose' => true]
                         ],
                         'value' => function($model) {
-                        return Yii::$app->controls->view_date($model->wef_date);
-                    }],
-                    [
-                        'attribute' => 'union_code',
+                            return Yii::$app->controls->view_date($model->wef_date);
+                        }],
+                        ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
+                            return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
+                        }],
+                        ['attribute' => 'vsp_commission', 'value' => 'vsp_commission'],
+                        [
+                        'attribute' => 'union_code', 'filter' => false,
                         'value' => function($model) {
                             return (!empty($model->union_code) || isset($model->union_code)) ? $model->unionCode->union_name : '-';
-                    }],
+                        }],
                 ];
 
                 $grid_option = [
                     'id' => 'rate-history-grid',
                     'attributes' => $attribute,
                     'active_column' => TRUE,
+                    'actions' => [
+                        'applicabilty' => function ($url, $model) {
+                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+                            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_rate_code], $options);
+                        }
+                    ]
                 ];
 
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

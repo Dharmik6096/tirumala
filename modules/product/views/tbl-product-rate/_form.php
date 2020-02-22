@@ -34,9 +34,16 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-3">
+    <!--<div class="clearfix"></div>-->
+
+    <div class="col-sm-3 mt25">
+        <?= $form->field($model, 'is_member_rate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3 mt25">
         <?= Yii::$app->controls->active($model, $form); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'vsp_commission')->textInput() ?>
     </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -51,14 +58,24 @@ $form = ActiveForm::begin([
 $script = "
     $(document).ready(function(){
         setMinDate();
-   
-   function setMinDate()
-    {
-    var id = $('#tblproductrate-product_code').val();
-    var code='{$model->product_rate_code}';
-    var union='{$model->union_code}';
-    var odt='{$model->wef_date}';
-    if(id!=='' && id!==null){
+    dispVsp();
+    $('#tblproductrate-is_member_rate').on('change',function(){
+        dispVsp();
+    });
+    function dispVsp(){
+        if($('#tblproductrate-is_member_rate').is(':checked')){
+            $('.field-tblproductrate-vsp_commission').show();
+        } else {
+            $('.field-tblproductrate-vsp_commission').hide();
+            $('#tblproductrate-vsp_commission').val(0);
+        }
+    }
+    function setMinDate() {
+        var id = $('#tblproductrate-product_code').val();
+        var code='{$model->product_rate_code}';
+        var union='{$model->union_code}';
+        var odt='{$model->wef_date}';
+        if(id!=='' && id!==null){
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/product/tbl-product-rate/get-min-date']) . "',
@@ -91,18 +108,18 @@ $script = "
                                     //alert('Your data has not been submitted..Please try again');
                                 }
             }); 
+        }
     }
-    }
- function formatDate(d) {
+    function formatDate(d) {
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
 
-    return [day, month, year].join('-');
-} 
+        return [day, month, year].join('-');
+    } 
 });
 ";
 $this->registerJs($script, View::POS_END, 'village-code');

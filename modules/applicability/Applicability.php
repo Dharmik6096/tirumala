@@ -195,6 +195,7 @@ class Applicability extends \yii\base\Module {
 
             if ($model->load(Yii::$app->request->post())) {
                 $model->setAttributes(Yii::$app->request->post());
+                $model->setAttributes($this->assignStaticData);
                 if ($model->validate()) {
                     $dataold = $this->model->find()->where([$this->field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->all();
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);
@@ -224,6 +225,7 @@ class Applicability extends \yii\base\Module {
                         $appModel = $r->newInstanceArgs();
                         $data = $model->attributes;
                         $appModel->setAttributes($data);
+                        $appModel->setAttributes($this->assignStaticData);
                         $primaryKey = $model->tableSchema->primaryKey[0];
                         unset($appModel->$primaryKey);
                         $appModel->{$main_field_name} = $value;

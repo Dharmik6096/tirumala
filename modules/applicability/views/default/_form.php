@@ -93,8 +93,9 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         $modelName = \yii\helpers\StringHelper::basename(get_class($model));
         $class = 'col-sm-12';
         $checkboxClass = 'col-sm-3';
+        $appendClass = count($filters) == 1 ? ' disp_none ' : '';
         ?>
-        <div class="col-sm-12 mt10">
+        <div class="col-sm-12 mt10 <?= $appendClass ?>">
             <h5 class="panel-subtitle">Apply to</h5>
             <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
         </div>

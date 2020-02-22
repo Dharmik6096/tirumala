@@ -12,6 +12,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\product\models\TblProductRateApplicabilitySearch;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblProductRateController implements the CRUD actions for TblProductRate model.
@@ -37,7 +38,7 @@ class TblProductRateController extends \app\controllers\ChildController {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id, $is_member_rate) {
 //        return $this->render('view', [
 //                    'model' => $this->findModel($id),
 //        ]);
@@ -48,6 +49,7 @@ class TblProductRateController extends \app\controllers\ChildController {
         //$query_rate = TblProductRate::find()->select('*')->where(['product_code'=>$product_code])->andWhere(['<>', 'product_rate_code', $id])->orderBy(['wef_date' => SORT_DESC]);
         $searchModel->product_code = $product_code;
         $searchModel->product_rate_code = $id;
+        $searchModel->is_member_rate = $is_member_rate;
         $searchModel->union_code = $query['union_code'];
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         //$dataProvider = $searchModel->getHistoryRate($id);
@@ -136,71 +138,92 @@ class TblProductRateController extends \app\controllers\ChildController {
         }
     }
 
-//    public function actionProductRateApplicability($id) {
-//        $model = $this->findModel($id);
-//        $appModel = Yii::$app->getModule('applicability');
-//        $appModel->model = new TblProductRateApplicability();
-//        $appModel->is_union = false;
-//        $appModel->union_code = $model->union_code;
-//        $appModel->field_name = 'product_rate_code';
-//        $appModel->field_value = $id;
-//        $appModel->trans_label = 'product rate applicability';
-//        $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-//            return Yii::$app->controls->view_date($model->wef_date);
-//        }],
-//            'dcs_code' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],
-//        ];
-//        return $appModel->createApp();
-//    }
-
-
     public function actionProductRateApplicability($id) {
-        $cmodel = $this->findModel($id);
+        $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblProductRateApplicability();
-        $appModel->model->product_rate_code = $id;
-        $appModel->model->wef_date = Yii::$app->controls->view_date($cmodel->wef_date);
-        $appModel->searchModel = new TblProductRateApplicabilitySearch();
+        $customerType = new TblCustomerType();
+        if ($model->is_member_rate == 1) {
+            $value = ['DCS' => 'DCS'];
+        } else {
+            $value = $customerType->getCustomerType();
+        }
+//        $appModel->model->shift_code = $model->shift_id;
+        $appModel->model->wef_date = $model->wef_date;
+        $appModel->is_union = false;
+        $appModel->union_code = $model->union_code;
         $appModel->field_name = 'product_rate_code';
         $appModel->field_value = $id;
         $appModel->trans_label = 'product rate applicability';
-        $appModel->top_section = FALSE;
-        $appModel->is_union = FALSE;
-        $appModel->union_code = $cmodel->union_code;
-        $appModel->bmc_field_name = 'applicable_code';
-
-        $appModel->options = ['bmc'];
-        $appModel->payment = true;
-        $appModel->customer_type_wise_entry = true;
-        $appModel->assignMultiData = true;
-        $appModel->setModelFields = true;
-        $appModel->assignMultiDataKey = 'applicable_type';
-        $appModel->assignDataKey = 'applicable_code';
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->options = ['tanker_rate'];
         $appModel->assignStaticData = [
-            'applicable_for' => 'BMC',
-            'product_code' => $cmodel->product_code
+            'product_code' => $model->product_code,
+            'is_member_rate' => $model->is_member_rate
         ];
-
-        $appModel->title = Yii::$app->controls->view_date($cmodel->wef_date);
-        $appModel->fields = [
-            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+        $appModel->header_title = ' [Product: ' . Yii::$app->general->getforeignkey($model->productCode, 'product_name') . ', Rate: ' . $model->rate . '] ';
+        $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
-                }],
-            'product' => ['view' => ['grid'], 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->productRate, 'product_name');
-                }],
-            'applicable_type' => ['view' => ['grid'], 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
                 }],
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
-            'applicable_name' => ['view' => ['grid'], 'value' => function($model) {
+            'name' => ['view' => ['grid'], 'value' => function($model) {
                     return $model->getName($model->applicable_for);
                 }],
         ];
-//        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
-        return $appModel->customerTypeWiseApplicability();
+        $appModel->dcs_filters = $value;
+
+        return $appModel->createApp();
     }
+
+//
+//    public function actionProductRateApplicability($id) {
+//        $cmodel = $this->findModel($id);
+//        $appModel = Yii::$app->getModule('applicability');
+//        $appModel->model = new TblProductRateApplicability();
+//        $appModel->model->product_rate_code = $id;
+//        $appModel->model->wef_date = Yii::$app->controls->view_date($cmodel->wef_date);
+//        $appModel->searchModel = new TblProductRateApplicabilitySearch();
+//        $appModel->field_name = 'product_rate_code';
+//        $appModel->field_value = $id;
+//        $appModel->trans_label = 'product rate applicability';
+//        $appModel->top_section = FALSE;
+//        $appModel->is_union = FALSE;
+//        $appModel->union_code = $cmodel->union_code;
+//        $appModel->bmc_field_name = 'applicable_code';
+//
+//        $appModel->options = ['bmc'];
+//        $appModel->payment = true;
+//        $appModel->customer_type_wise_entry = true;
+//        $appModel->assignMultiData = true;
+//        $appModel->setModelFields = true;
+//        $appModel->assignMultiDataKey = 'applicable_type';
+//        $appModel->assignDataKey = 'applicable_code';
+//        $appModel->assignStaticData = [
+//            'applicable_for' => 'BMC',
+//            'product_code' => $cmodel->product_code
+//        ];
+//
+//        $appModel->title = Yii::$app->controls->view_date($cmodel->wef_date);
+//        $appModel->fields = [
+//            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+//                    return Yii::$app->controls->view_date($model->wef_date);
+//                }],
+//            'product' => ['view' => ['grid'], 'value' => function($model) {
+//                    return Yii::$app->general->getforeignkey($model->productRate, 'product_name');
+//                }],
+//            'applicable_type' => ['view' => ['grid'], 'value' => function($model) {
+//                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+//                }],
+//            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+//            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+//            'applicable_name' => ['view' => ['grid'], 'value' => function($model) {
+//                    return $model->getName($model->applicable_for);
+//                }],
+//        ];
+////        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
+//        return $appModel->customerTypeWiseApplicability();
+//    }
 
     public function actionGetMinDate() {
 
