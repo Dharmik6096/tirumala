@@ -261,8 +261,15 @@ class DefaultController extends \app\controllers\ChildController {
             }
             $sp_name2 = $this->data['sp_name2'];
             $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
-            if ((int) $second_output[0]['RecordCount'] > 0) {
-                $this->message = 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.';
+            $invalid = false;
+            foreach ($second_output as $key => $value) {
+                if ($value['Pending'] > 0) {
+                    $invalid = true;
+                    break;
+                }
+            }
+            if ($invalid) {
+                $this->message = !empty($this->data['message']) ? $this->data['message'] : '';
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                     'message' => $this->message]);
             }
@@ -339,30 +346,35 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '219 - Society Summary Report',
             ],
             'VmReportSap' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,mcc_code:union_code,date:string:shift',
                 'sp_name' => 'rpt_MIS_VMSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP VM Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
             ],
             'WqReportSap' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,mcc_code:union_code,date:string:shift',
                 'sp_name' => 'rpt_MIS_WQSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP WQ Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
+                'message' => Yii::t('app', 'Sync of data is pending from device.'),
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
             ],
             'SdReportSap' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,mcc_code:union_code,date:string:shift',
                 'sp_name' => 'rpt_MIS_SDSAPReport',
                 'sp_name2' => 'sp_checkDatacompleteness_TMPL',
-                'param2' => 'from_date:string:from_shift,to_date:string:to_shift,union_code,bmc_code',
+                'param2' => 'date:string:shift,union_code,mcc_code',
                 'scenario' => 'SapReport',
                 'title' => 'SAP SD Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
+                'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
             ],
             'DateBmcCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',

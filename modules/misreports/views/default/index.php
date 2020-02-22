@@ -14,6 +14,10 @@ $model->to_date = empty($model->to_date) ? date('d-m-Y') : $model->to_date;
 $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
 $defaultToggle = true;
 $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
+$model->date = empty($model->date) ? date('d-m-Y') : $model->date;
+if (isset($data['url1'])) {
+    $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
+}
 ?>
 <div class="panel panel-default panel-main">
 
@@ -23,7 +27,7 @@ $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
     $exportEvents = [];
     if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
-        $this->title = $model->bmc_code . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
+        $this->title = $model->mcc_code . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
         $removeExportType = ['CSV'];
         $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);
@@ -89,13 +93,20 @@ $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
                                                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                                             </div>   <?php
                                         }
-                                        if (in_array($value, array('mcc_code'))) {
+                                        if (in_array($value, array('plant_code'))) {
                                             ?>
                                             <div class="col-sm-6 val_plant_code">
                                                 <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
+                                        <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-6 val_mcc_code">
-                                                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC'); ?>
+                                                <?php
+                                                if (isset($value_array[1]) && $value_array[1] == 'union_code') {
+                                                    Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'));
+                                                } else {
+                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC');
+                                                }
+                                                ?>                
                                             </div>
                                             <?php
                                         }
@@ -192,7 +203,7 @@ $model->p_date = empty($model->p_date) ? date('d-m-Y') : $model->p_date;
                         $format = ['decimal', 2];
                     }
 //                    $attr_arr['attribute'] = $att;
-                    $attr[] = ['attribute' => $att,'label'=>Yii::t('app',$att), 'format' => $format, 'filter' => false];
+                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $att), 'format' => $format, 'filter' => false];
                 }
                 $grid_option = [
                     'id' => 'mis-report-list',

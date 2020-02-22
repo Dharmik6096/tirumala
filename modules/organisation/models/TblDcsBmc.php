@@ -70,7 +70,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
+            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
             [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],

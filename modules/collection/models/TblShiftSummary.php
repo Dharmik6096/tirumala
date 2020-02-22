@@ -3,6 +3,7 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_shift_summary".
@@ -88,6 +89,27 @@ class TblShiftSummary extends \app\models\ChildModel {
             'sync_status' => Yii::t('app', 'Sync Status'),
             'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
         ];
+    }
+
+    public function FTPPendingData() {
+        return $this->find()
+                        ->select(['union_code', 'mcc_plant_code', 'shift_date', 'shift_code',])
+                        ->where(['OR', ['status' => 0], ['status' => NULL]])
+                        ->distinct()
+                        ->orderBy('union_code,mcc_plant_code,shift_date,shift_code')
+                        ->limit(25)
+                        ->asArray()
+                        ->all();
+    }
+
+    public function updateData($data, $status, $inc_cnt = FALSE) {
+        $update = [];
+        $update['status'] = $status;
+        $update['status_datetime'] = date('Y-m-d H:i:s');
+        if ($inc_cnt) {
+            $update['check_count'] = new Expression("isnull(check_count,0)+1");
+        }
+        return $this->updateAll($update, $data);
     }
 
 }

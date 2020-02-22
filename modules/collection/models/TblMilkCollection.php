@@ -83,11 +83,11 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['milk_type_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+        }, 'on' => 'importCsv'],
             [['shift_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+        }, 'on' => 'importCsv'],
             [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['rtpl', 'amount'], 'trim'],
@@ -99,7 +99,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync']],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv']],
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
@@ -117,14 +117,15 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['snf', 'rtpl'], 'double', 'min' => 0, 'on' => ['importCsv']],
             [['fat', 'qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['importCsv']],
             [['dcs_code'], 'unique', 'targetAttribute' => ['member_code', 'dcs_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
-                    return empty($this->getErrors());
-                }, 'on' => ['importCsv']],
+            return empty($this->getErrors());
+        }, 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
             [['dcs_code'], 'pastDateValidate', 'on' => 'importCsv'],
             [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
-            ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')]
+            ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
+            [['tag_1'], 'default', 'value' => 'X'],
         ];
     }
 
@@ -169,6 +170,8 @@ class TblMilkCollection extends \app\models\ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'society_code' => Yii::t('app', 'Society Code'),
             'dcs_name' => Yii::t('app', 'Society Name'),
+            'tag_1' => Yii::t('app', 'SAP Status'),
+            'error_desc' => Yii::t('app', 'Status Desc.'),
         ];
     }
 

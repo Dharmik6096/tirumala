@@ -41,7 +41,7 @@ class TblContactDetails extends \app\models\ChildModel {
             [['mobile_no'], 'CheckDuplicate'],
             [['mobile_no'], 'required', 'on' => 'additional'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
