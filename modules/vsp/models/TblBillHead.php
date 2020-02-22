@@ -111,4 +111,14 @@ class TblBillHead extends \app\models\ChildModel {
         return $this->find()->select(['bill_head_type'])->where(['bill_head_code' => $bill_head_code])->one();
     }
 
+    public function billHeadTypeWise($union, $type, $code) {
+        $query = $this->find()
+                ->innerJoinWith('billHeadCode as apl')
+                ->where(['is_active' => 1, 'is_default' => 0, 'apl.union_code' => $union, 'apl.applicable_for' => $type, 'apl.applicable_code' => $code])
+                ->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
+        $list = $query->all();
+      
+        return \yii\helpers\ArrayHelper::map($list, 'bill_head_code', 'bill_head_name');
+    }
+
 }

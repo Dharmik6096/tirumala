@@ -22,6 +22,8 @@ use app\modules\globalmaster\models\TblCustomerType;
  */
 class TblBillHeadController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['list-dcswise', 'list-unionwise', 'bill-head-list'];
+
     /**
      * Lists all TblBillHead models.
      * @return mixed
@@ -230,6 +232,26 @@ class TblBillHeadController extends \app\controllers\ChildController {
                 });
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($data);
+    }
+
+    public function actionBillHeadList() {
+        $out = null;
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            $unionCode = $value[0];
+            $type = $value[1];
+            $code = $value[2];
+            $model = new TblBillHead();
+            $list = $model->billHeadTypeWise($unionCode, $type, $code);
+            $list = array_unique($list);
+            foreach ($list as $key => $r) {
+                $out[] = array('id' => $key,
+                    'name' => $r);
+            }
+            echo Json::encode(['output' => $out]);
+            return;
+        }
+        echo Json::encode(['output' => '', 'selected' => $selected]);
     }
 
 }

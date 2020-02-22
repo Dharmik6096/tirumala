@@ -12,6 +12,7 @@ use app\modules\vsp\models\TblBillHeadDetailSearch;
 use app\modules\vsp\models\TblBillHeadInstallment;
 use app\modules\organisation\models\TblDcs;
 use app\modules\vsp\models\TblBillHead;
+use yii\widgets\ActiveForm;
 
 /**
  * TblBillHeadDetailController implements the CRUD actions for TblBillHeadDetail model.
@@ -50,36 +51,75 @@ class TblBillHeadDetailController extends ChildController {
      */
     public function actionCreate() {
         $this->model = new TblBillHeadDetail();
+        $searchModel = new TblBillHeadDetailSearch();
+        $dataProvider = $searchModel->gridsearch(Yii::$app->request->get());
         $this->viewFile = 'create';
-        if ($this->model->load(Yii::$app->request->post())) {
-
+        if (Yii::$app->request->post()) {
+            $this->model->load(Yii::$app->request->post());
             $this->model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->model->is_active = 1;
             $no = ($this->model->no_installment <= 0) ? 1 : $this->model->no_installment;
-            $cycleModel = new \app\modules\payment\models\TblDcsPaymentCycle();
+            $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
             $installment = [];
-            $cycle = $this->model->payment_cycle_code;
-            for ($i = 0; $i < $no; $i++) {
-                $instModel = new TblBillHeadInstallment();
-                $instModel->bill_head_detail_code = $this->model->bill_head_detail_code;
-                $instModel->bill_head_code = $this->model->bill_head_code;
-                $instModel->dcs_code = $this->model->dcs_code;
-                $instModel->installement_cycle = ($i + 1);
-                $instModel->installment_amount = ($this->model->amount / $no);
-                $instModel->dcs_payment_cycle_code = $cycle;
-                array_push($installment, $instModel);
-                if ($this->model->no_installment > 1) {
-                    $cycle = $cycleModel->getNextCycleCode($instModel->dcs_payment_cycle_code, $this->model->dcs_code);
+            if ($this->model->validate()) {
+                $cycle = $this->model->payment_cycle_code;
+                for ($i = 0; $i < $no; $i++) {
+                    $instModel = new TblBillHeadInstallment();
+                    $instModel->bill_head_detail_code = $this->model->bill_head_detail_code;
+                    $instModel->bill_head_code = $this->model->bill_head_code;
+                    $instModel->union_code = $this->model->union_code;
+                    $instModel->customer_code = $this->model->customer_code;
+                    $instModel->customer_type = $this->model->customer_type;
+                    $instModel->installement_cycle = ($i + 1);
+                    $instModel->installment_amount = floatval($this->model->amount / $no);
+                    $instModel->payment_cycle_code = $cycle;
+                    array_push($installment, $instModel);
+                    if ($this->model->no_installment > 1) {
+                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $this->model->customer_type, 'BMC');
+                        if (empty($cycle)) {
+                            $msg = Yii::t('app/validation', 'Payment Cycle is not available.');
+                            $record = ['msg' => $msg];
+                            return Json::encode($record);
+                        }
+                    }
                 }
+                if ($this->model->validate()) {
+                    $transaction = $this->generalModel->saveTransaction([$this->model], $installment, ['Bill Head Detail', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'success', 'temp_collection_data' => [], 'msg' => $msg];
+                    } else {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'error', 'temp_collection_data' => [], 'msg' => $msg];
+                    }
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return Json::encode($record);
+                }
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
             }
-            $transaction = $this->generalModel->saveTransaction([$this->model], $installment, ['Bill Head Detail', 'create']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
-            }
+        } else {
+            return $this->render('create', [
+                        'model' => $this->model,
+                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+            ]);
         }
-        return $this->customRender();
+        return $this->render('create', [
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
+//             if ($this->model->validate()) {
+//            $transaction = $this->generalModel->saveTransaction([$this->model], $installment, ['Bill Head Detail', 'create']);
+//            if ($transaction !== FALSE) {
+//                return $this->{$transaction}();
+//            }
+//        }
+//        return $this->customRender();
+//    }
 
     public function actionSocietyBulkInsert() {
 
@@ -192,14 +232,14 @@ class TblBillHeadDetailController extends ChildController {
                 foreach ($data['amount'] as $key => $amount) {
                     if ($amount > 0) {
                         if (empty($data['bill_head_detail'][$key])) {
-                            $this->addData($data, $key, $main, $installment);                           
+                            $this->addData($data, $key, $main, $installment);
                         } else {
                             $editModel = $this->findModel($data['bill_head_detail'][$key]);
                             if ($editModel->amount != $amount) {
                                 $historyDetail = new \app\modules\vsp\models\TblBillHeadDetailHistory();
                                 Yii::$app->operation->history($editModel, $historyDetail, UPDATE);
                                 array_push($main, $historyDetail);
-                                $editModel->amount=$amount;
+                                $editModel->amount = $amount;
                                 array_push($main, $editModel);
                                 $instModel = new TblBillHeadInstallment();
                                 foreach ($instModel->getData($data['bill_head_detail'][$key]) AS $in) {
@@ -232,15 +272,14 @@ class TblBillHeadDetailController extends ChildController {
         $model->bill_head_code = $data['bill_head'][$key];
         $model->amount = $data['amount'][$key];
         $model->is_active = 1;
-        $model->no_installment=1;
+        $model->no_installment = 1;
         $code = Yii::$app->general->getCodeAutoIncrement($model);
         $model->bill_head_detail_code = ($code + $key);
         array_push($main, $model);
         $this->addInstallment($model, $installment);
-        
     }
-    
-    private function addInstallment($model,&$installment){
+
+    private function addInstallment($model, &$installment) {
         $instModel = new TblBillHeadInstallment();
         $instModel->bill_head_detail_code = $model->bill_head_detail_code;
         $instModel->bill_head_code = $model->bill_head_code;
@@ -267,6 +306,13 @@ class TblBillHeadDetailController extends ChildController {
         $type = $headModel->billHeadType(Yii::$app->request->post('bill_head_code'));
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $type]);
+    }
+
+    public function actionListGrid() {
+        $searchModel = new TblBillHeadDetailSearch();
+        $searchModel->setAttributes(Yii::$app->request->get('TblBillHeadDetail'));
+        $dataProvider = $searchModel->gridsearch([]);
+        return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
 }

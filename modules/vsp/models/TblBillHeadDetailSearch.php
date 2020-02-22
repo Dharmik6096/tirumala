@@ -19,6 +19,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         return [
             [['bill_head_detail_code', 'payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'no_installment', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
         ];
     }
 
@@ -71,6 +72,31 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
                 ->andFilterWhere(['like', 'no_installment', $this->no_installment])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+
+        return $dataProvider;
+    }
+
+    public function gridsearch($params) {
+        $this->load($params);
+        $query = TblBillHeadDetail::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        Yii::$app->general->filterByOrg($query, $this);
+        $query->andWhere([
+            'bmc_code' => $this->bmc_code
+        ]);
 
         return $dataProvider;
     }

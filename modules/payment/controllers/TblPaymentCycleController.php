@@ -470,4 +470,26 @@ class TblPaymentCycleController extends ChildController {
         return Json::encode($record);
     }
 
+    public function actionPaymentCycleList() {
+        $out = null;
+
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            $unionCode = $value[0];
+            $code = $value[1];
+            $type = $value[2];
+            $for = $value[3];
+            $where = (array) json_decode($value[4]);
+            $paymentcycleModel = new TblPaymentCycleApplicability();
+            $list = $paymentcycleModel->paymentCycles($unionCode, $code, $type, $for, $where);
+            foreach ($list as $key => $r) {
+                $out[] = array('id' => $key,
+                    'name' => $r);
+            }
+            echo Json::encode(['output' => $out]);
+            return;
+        }
+        echo Json::encode(['output' => '', 'selected' => $selected]);
+    }
+
 }

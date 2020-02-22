@@ -296,12 +296,22 @@ class DropDown extends Component {
 
     public function customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Code'), $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
     }
 
     public function dcsRateChart($model, $form, $depends, $name = 'rate_chart_dcs', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/chart-list', Yii::t('app', 'Select Rate Chart'), $multiple);
+    }
+
+    public function paymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
+    }
+
+    public function billHead($model, $form, $depends, $name = 'bill_head_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/vsp/tbl-bill-head/bill-head-list', Yii::t('app', 'Select Bill Head'), $multiple, $model->$name, $readonly);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {

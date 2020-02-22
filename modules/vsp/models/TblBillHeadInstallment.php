@@ -14,35 +14,33 @@ use Yii;
  * @property string $installement_cycle
  * @property string $installment_amount
  * @property string $installment_date
- * @property string dcs_payment_cycle_code
+ * @property string payment_cycle_code
  */
-class TblBillHeadInstallment extends \app\models\ChildModel
-{
+class TblBillHeadInstallment extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bill_head_installment';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['bill_head_detail_code'], 'integer'],
             [['bill_head_code', 'dcs_code', 'installement_cycle', 'installment_amount'], 'safe'],
-            [['installment_date','dcs_payment_cycle_code'], 'safe'],
+            [['installment_date', 'payment_cycle_code'], 'safe'],
+            [['customer_type', 'customer_code', 'union_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bill_head_installment_code' => 'Bill Head Installment Code',
             'bill_head_detail_code' => 'Bill Head Detail Code',
@@ -54,7 +52,8 @@ class TblBillHeadInstallment extends \app\models\ChildModel
         ];
     }
 
-    public function getData($detail_id){
-        return $this->find()->select(['bill_head_installment_code'])->where(['bill_head_detail_code'=>$detail_id])->all();
+    public function getData($detail_id) {
+        return $this->find()->select(['bill_head_installment_code'])->where(['bill_head_detail_code' => $detail_id])->all();
     }
+
 }
