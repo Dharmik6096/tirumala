@@ -142,10 +142,10 @@ $this->registerJs($script, View::POS_END, 'sample-download');
             cnt++;
             validate = false;
         } else {
-            var fat_start = parseInt(newItem.fat_start);
-            var fat_end = parseInt(newItem.fat_end);
-            var snf_start = parseInt(newItem.snf_start);
-            var snf_end = parseInt(newItem.snf_end);
+            var fat_start = parseFloat(newItem.fat_start);
+            var fat_end = parseFloat(newItem.fat_end);
+            var snf_start = parseFloat(newItem.snf_start);
+            var snf_end = parseFloat(newItem.snf_end);
             var milk_type = newItem.milk_type;
             var milk_quality = newItem.milk_quality;
 

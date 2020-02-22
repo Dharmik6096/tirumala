@@ -187,7 +187,7 @@ if($('#tbldcspurchaseratebased-0-deduction_type').val()=='' || $('#tbldcspurchas
             $.ajax({
                         type: 'post',
                         url: '" . yii\helpers\Url::to(['formula-master/get-formula']) . "',
-                        data: 'wefDate='+wefDate+'&milkType='+milkType+'&rateType='+rateType+'&union_code='+union_code,
+                        data: 'wefDate='+wefDate+'&milkType='+milkType+'&rateType='+rateType+'&union_code='+union_code+'&dropdown=dropdown',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             $('#tbldcspurchaseratebased-0-formula_code').empty();

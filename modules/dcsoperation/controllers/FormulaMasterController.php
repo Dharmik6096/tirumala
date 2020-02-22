@@ -45,7 +45,6 @@ class FormulaMasterController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-
     public function actionCreate() {
         $this->model = new TblFormulaMaster();
         $this->viewFile = 'create';
@@ -69,7 +68,7 @@ class FormulaMasterController extends \app\controllers\ChildController {
                     return $this->{$transaction}();
                 }
             } else {
-                
+
                 $this->model->formula_code = $this->model->getCode();
                 $this->model->is_active = 1;
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['Milk Rate formula', 'create']);
@@ -113,7 +112,6 @@ class FormulaMasterController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    
     public function actionDelete() {
         $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_formula', Yii::$app->request->post('id'), 'formula_code']);
         if ($valueOut == 0) {
@@ -154,7 +152,8 @@ class FormulaMasterController extends \app\controllers\ChildController {
             $model->rate_type_code = Yii::$app->request->post('rateType');
             $model->union_code = Yii::$app->request->post('union_code');
             $model->wef_date = Yii::$app->request->post('wefDate');
-            $formula = $model->getPurchaseRateFormula();
+            $dropdwon = !empty(Yii::$app->request->post('dropdown')) ? TRUE : FALSE;
+            $formula = $model->getPurchaseRateFormula($dropdwon);
 
             $status = !empty($formula) ? 'success' : 'error';
         }

@@ -85,12 +85,12 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
             [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
             [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
             [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
-            [['created_at', 'deleted_at', 'sync_timestamp', 'step', 'updated_at', 'kg_rate', 'is_active', 'is_delete', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type','purchase_rate_code'], 'safe'],
+            [['created_at', 'deleted_at', 'sync_timestamp', 'step', 'updated_at', 'kg_rate', 'is_active', 'is_delete', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type', 'purchase_rate_code'], 'safe'],
             [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
             [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
             [['deduction_type', 'ref_type'], 'string', 'max' => 50],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-          //  [['purchase_rate_code'], 'string', 'max' => 255],
+                //  [['purchase_rate_code'], 'string', 'max' => 255],
 //            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
 //            [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityGrade::className(), 'targetAttribute' => ['milk_quality_type_code' => 'grade_code']],
 //            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
@@ -147,7 +147,7 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
 
 
 
-            $query = $this->find()->where('purchase_rate_code="' . $this->purchase_rate_code . '" and quality_param_code="' . $this->quality_param_code . '" and milk_type_code="' . $this->milk_type_code . '" and milk_quality_type_code="' . $this->milk_quality_type_code . '" and ((' . $this->fixed_point . ' between start_range and end_range))');
+            $query = $this->find()->where('purchase_rate_code=\'' . $this->purchase_rate_code . '\' and quality_param_code=\'' . $this->quality_param_code . '\' and milk_type_code=\'' . $this->milk_type_code . '\' and milk_quality_type_code=\'' . $this->milk_quality_type_code . '\' and ((' . $this->fixed_point . ' between start_range and end_range))');
             $record = $query->count();
             if ($record == 0) {
                 $this->addError($attribute, Yii::t('app/validation', 'Fixed Point value must be in between Start Range and End Range.'));
@@ -159,10 +159,8 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
     public function rangeValidate($attribute, $params) {
 
         if (!empty($this->start_range) && !empty($this->end_range)) {
-
-            $query = $this->find()->where('purchase_rate_code="' . $this->purchase_rate_code . '" and quality_param_code="' . $this->quality_param_code . '" and milk_type_code="' . $this->milk_type_code . '"
-                                             and milk_quality_type_code="' . $this->milk_quality_type_code . '"   and  ((' . $this->start_range . '  between start_range and end_range) OR (' . $this->end_range . ' between start_range  and end_range))');
-
+            $query = $this->find()->where('purchase_rate_code=\'' . $this->purchase_rate_code . '\' and quality_param_code=\'' . $this->quality_param_code . '\' and milk_type_code=\'' . $this->milk_type_code . '\'
+                                             and milk_quality_type_code=\'' . $this->milk_quality_type_code . '\'   and  ((' . $this->start_range . '  between start_range and end_range) OR (' . $this->end_range . ' between start_range  and end_range))');
             $record = $query->one();
             if ($record) {
                 $this->addError($attribute, Yii::t('app/validation', 'Can not use range in between of used range.'));
