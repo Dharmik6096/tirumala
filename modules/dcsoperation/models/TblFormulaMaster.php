@@ -120,10 +120,14 @@ class TblFormulaMaster extends \app\models\ChildModel {
         return str_pad((int) $data['formula_code'] + 1, 10, '0', STR_PAD_LEFT);
     }
 
-    public function getPurchaseRateFormula() {
+    public function getPurchaseRateFormula($dropdwon = FALSE) {
         $formula = ['formula' => '', 'code' => ''];
-        $data = TblFormulaMaster::find()->select('formula_description,formula_code')->where(['milk_type_code' => $this->milk_type_code, 'rate_type_code' => $this->rate_type_code, 'union_code' => $this->union_code])->andWhere(['<=', 'CONVERT(date, wef_date)', $this->wef_date])->orderBy(['formula_code' => SORT_DESC])->one();
-        $formula = ($data) ? ['formula' => $data->formula_description, 'code' => $data->formula_code] : $formula;
+        $data = TblFormulaMaster::find()->select('formula_description,formula_code')->where(['milk_type_code' => $this->milk_type_code, 'rate_type_code' => $this->rate_type_code, 'union_code' => $this->union_code, 'is_active' => 1])->andWhere(['<=', 'CONVERT(date, wef_date)', $this->wef_date])->orderBy(['formula_code' => SORT_DESC])->all();
+        if ($dropdwon) {
+            $formula = ArrayHelper::map($data, 'formula_code', 'formula_description');
+        } else {
+            $formula = ($data) ? ['formula' => $data[0]->formula_description, 'code' => $data[0]->formula_code] : $formula;
+        }
         return $formula;
     }
 

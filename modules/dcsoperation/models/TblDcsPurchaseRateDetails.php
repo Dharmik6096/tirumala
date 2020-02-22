@@ -3,6 +3,7 @@
 namespace app\modules\dcsoperation\models;
 
 use Yii;
+use app\models\GeneralModel;
 
 /**
  * This is the model class for table "tbl_dcs_purchase_rate_details".
@@ -129,7 +130,7 @@ class TblDcsPurchaseRateDetails extends \yii\db\ActiveRecord {
         if (!empty($qp2)) {
             $record2 = $this->baseValue($column, $qp2);
         }
-        $formula = $record1->rateFormula->formula;
+        $formula = $record1->rateFormula->formula_description;
         $array = [
             'FATKG' => $record1->kg_rate,
             'SNFKG' => empty($record2) ? 0 : $record2->kg_rate,
@@ -179,7 +180,7 @@ class TblDcsPurchaseRateDetails extends \yii\db\ActiveRecord {
 
         $models = new TblDcsPurchaseRateDetails();
         $models->purchase_rate_code = $object->purchase_rate_code;
-        $models->code = $models->purchase_rate_code . $incrCode;
+        $models->code = $incrCode;
         $models->milk_quality_type_code = $object->milk_quality_type_code;
         $models->milk_type_code = $object->milk_type_code;
         $models->fat = $fat;
@@ -215,6 +216,7 @@ class TblDcsPurchaseRateDetails extends \yii\db\ActiveRecord {
         $data['code'] = $data['code'] == null ? 0 : $data['code'];
         return (int) $data['code'] + 1;
     }
+
     public function getPurchaseRateCode() {
         return $this->hasOne(TblDcsPurchaseRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
     }
@@ -276,7 +278,7 @@ class TblDcsPurchaseRateDetails extends \yii\db\ActiveRecord {
         } else {
             $record2 = $this->baseValue($column, $qp2);
         }
-        $formula = $record1->rateFormula->formula;
+        $formula = $record1->rateFormula->formula_description;
         $array = [
             $param1 . 'KG' => $record1->kg_rate,
             $param2 . 'KG' => empty($record2) ? 0 : $record2->kg_rate,

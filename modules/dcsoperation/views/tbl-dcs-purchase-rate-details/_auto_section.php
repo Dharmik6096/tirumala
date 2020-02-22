@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
 
-$this->title = Yii::t('app', 'DCS Purchase Rate - Formula based');
+$this->title = Yii::t('app', 'BMC Purchase Rate - Formula based');
 ?>
 <?php
 $form = ActiveForm::begin(['id' => 'manual_form',
@@ -137,7 +137,7 @@ $script = "
     $.ajax({
         type: 'post',
         url: '" . yii\helpers\Url::to(['formula-master/get-formula']) . "',
-        data: 'wefDate='+wefDate+'&milkType='+milkType+'&rateType='+rateType+'&union_code='+union_code,
+        data: 'wefDate='+wefDate+'&milkType='+milkType+'&rateType='+rateType+'&union_code='+union_code+'&dropdown=dropdown',
         success: function(data) {
             var obj1 = $.parseJSON(data);
             $('#tbldcspurchaseratebased-0-formula_code').empty();

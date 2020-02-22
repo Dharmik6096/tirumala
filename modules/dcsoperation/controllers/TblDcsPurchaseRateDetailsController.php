@@ -129,7 +129,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
                     $main_model[] = $this->purchaseModel;
                 } else {
                     $this->purchaseModel = TblDcsPurchaseRate::findOne(Yii::$app->request->get('id'));
-                    $this->purchaseModel->flg_sentbox_entry = 'E';
+                    // $this->purchaseModel->flg_sentbox_entry = 'E';
                     $main_model[] = $this->purchaseModel;
                 }
 
@@ -162,7 +162,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
         $list = [];
         foreach ($modelAttributesLoaded as $key => $model) {
             $model->purchase_rate_code = $this->purchaseModel->purchase_rate_code;
-            $model->rate_based_code = $model->purchase_rate_code . ($model->getCode() + $key);
+            $model->rate_based_code = ($model->getCode() + $key);
             // $model->milk_quality_type_code = array_search('good', array_map('strtolower', $milkQuality->getActiveQualityType()));
             $list[] = $model;
         }
@@ -183,7 +183,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
             $message = $validate[1];
         }
         if ($valid) {
-            $purchaseRate->flg_sentbox_entry = 'N';
+            // $purchaseRate->flg_sentbox_entry = 'N';
             $purchaseRate->save();
             foreach ($milk_type as $m) {
                 $purchaseDetail = new TblDcsPurchaseRateDetails();
@@ -230,7 +230,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
 //        var_dump($milk_type);
 
         $class = '';
-        if ($purchaseDetail->purchaseRateCode->rate_gen_method_code == 2 && (strtoupper($purchaseDetail->purchaseRateCode->originating_org_type) == 'UNION') && $purchaseDetail->purchaseRateCode->flg_sentbox_entry != 'Y') {
+        if ($purchaseDetail->purchaseRateCode->rate_gen_method_code == 2 && (strtoupper($purchaseDetail->purchaseRateCode->originating_org_type) == 'UNION')) {
             $class = 'edit';
         }
 
@@ -383,7 +383,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
             $record = TblDcsPurchaseRateBased::findOne(Yii::$app->request->post('id'));
             $master = $this->deleteBased($record, $master);
             $this->purchaseModel = TblDcsPurchaseRate::findOne($record->purchase_rate_code);
-            $this->purchaseModel->flg_sentbox_entry = 'E';
+            //  $this->purchaseModel->flg_sentbox_entry = 'E';
             $master[] = $this->purchaseModel->save();
             if (in_array(FALSE, $master)) {
                 $transaction->rollback();
@@ -415,7 +415,8 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
         Yii::$app->operation->history($record, $detailHistory, DELETE);
         $master[] = $detailHistory->save(FALSE);
         $master[] = $record->delete();
-        $data = TblDcsPurchaseRateBased::find()->where('purchase_rate_code="' . $purchaseratecode . '" and milk_type_code="' . $milktype . '" and quality_param_code="' . $qualityparam . '" and fixed_point between "' . $startrange . '" and "' . $endrange . '" ')->all();
+        // $data = TblDcsPurchaseRateBased::find()->where('purchase_rate_code="' . $purchaseratecode . '" and milk_type_code="' . $milktype . '" and quality_param_code="' . $qualityparam . '" and fixed_point between "' . $startrange . '" and "' . $endrange . '" ')->all();
+        $data = TblDcsPurchaseRateBased::find()->where('purchase_rate_code=\'' . $purchaseratecode . '\' and milk_type_code=\'' . $milktype . '\' and quality_param_code=\'' . $qualityparam . '\' and fixed_point between \'' . $startrange . '\' and \'' . $endrange . '\' ')->all();
         for ($i = 0; $i < count($data); $i++) {
             $record = TblDcsPurchaseRateBased::findOne($data[$i]->rate_based_code);
             $master = $this->deleteBased($record, $master);
