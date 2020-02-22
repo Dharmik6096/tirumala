@@ -22,38 +22,23 @@ use app\modules\payment\models\TblProductSaleDetails;
 use app\modules\payment\models\TblMemberCreditLimit;
 use app\modules\payment\models\TblMemberCreditLimitHistory;
 use app\modules\payment\models\TblMemberCreditLimitTransaction;
+
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
  */
-class TblProductSaleController extends \app\controllers\ChildController
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblProductSaleController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblProductSale models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblProductSaleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -62,7 +47,6 @@ class TblProductSaleController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-   
     public function actionView($id) {
         $searchModel = new TblProductSaleDetailsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -77,79 +61,74 @@ class TblProductSaleController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new TblProductSale();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->product_sale_code]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
-    
+
     /**
      * Creates a new TblProductSale model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionSalePayment($id)
-    {
+    public function actionSalePayment($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'payment';
         $this->model->scenario = 'validate_credit';
 //        $this->model->scenario='payment';        
-        $appCycleModel=new TblDcsPaymentCycleApplicability();
-        $cycleModel= new \app\modules\payment\models\TblDcsPaymentCycle();
+        $appCycleModel = new TblDcsPaymentCycleApplicability();
+        $cycleModel = new \app\modules\payment\models\TblDcsPaymentCycle();
         if (Yii::$app->request->post()) {
-           // $historyModel = new TblProductHistory();
+            // $historyModel = new TblProductHistory();
             //Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             //var_dump($this->model);exit;
-            if($this->model->validate()){
+            if ($this->model->validate()) {
                 $this->model->is_installment = 1;
                 $this->model->no_of_installment = 1;
-                $installments=[];
-                if($this->model->is_installment==1 && $this->model->amount_due > 0 && $this->model->no_of_installment > 0)
-                {
-                    $installment_amt= ceil($this->model->amount_due/$this->model->no_of_installment);
-                    $cycle=  $this->model->payment_cycle_code;
-                    for($i=0;$i<$this->model->no_of_installment;$i++)
-                    {
-                        if($cycle==0)
-                        {
-                            $this->model->addError('payment_cycle_code','Enough payment cycles not available. Please add payment cycles.');  
+                $installments = [];
+                if ($this->model->is_installment == 1 && $this->model->amount_due > 0 && $this->model->no_of_installment > 0) {
+                    $installment_amt = ceil($this->model->amount_due / $this->model->no_of_installment);
+                    $cycle = $this->model->payment_cycle_code;
+                    for ($i = 0; $i < $this->model->no_of_installment; $i++) {
+                        if ($cycle == 0) {
+                            $this->model->addError('payment_cycle_code', 'Enough payment cycles not available. Please add payment cycles.');
                             return $this->render('payment', [
-                                'model' => $this->model,
-                                'paymentCycle' => $appCycleModel->dcsPaymentCycle($this->model->dcs_code)
+                                        'model' => $this->model,
+                                        'paymentCycle' => $appCycleModel->dcsPaymentCycle($this->model->dcs_code)
                             ]);
                         }
-                        
-                        $installmentModel=new TblSaleInstallments();
+
+                        $installmentModel = new TblSaleInstallments();
 //                        $installmentModel->installment_code=Yii::$app->general->getCodeAutoIncrement($installmentModel)+$i;
-                        $installmentModel->sale_type='product';
-                        $installmentModel->sale_code=$this->model->product_sale_code;
-                        $installmentModel->member_code=$this->model->member_code;
-                        $installmentModel->dcs_code=$this->model->dcs_code;
-                        $installmentModel->union_code=$this->model->union_code;
-                        $installmentModel->main_amount=$this->model->amount_due;
-                        $installmentModel->installment_amount=$installment_amt;
-                        $installmentModel->installment_status=0;
-                        $installmentModel->is_active=1;
-                        $installmentModel->dcs_payment_cycle_code=$cycle;
-                        $installmentModel->payment_cycle_applicabilty_code=$appCycleModel->dcsPaymentCycleAppCode($this->model->dcs_code);
-                        $cycle=$cycleModel->getNextCycleCode($installmentModel->dcs_payment_cycle_code, $this->model->dcs_code);
+                        $installmentModel->sale_type = 'product';
+                        $installmentModel->sale_code = $this->model->product_sale_code;
+                        $installmentModel->member_code = $this->model->member_code;
+                        $installmentModel->dcs_code = $this->model->dcs_code;
+                        $installmentModel->union_code = $this->model->union_code;
+                        $installmentModel->main_amount = $this->model->amount_due;
+                        $installmentModel->installment_amount = $installment_amt;
+                        $installmentModel->installment_status = 0;
+                        $installmentModel->is_active = 1;
+                        $installmentModel->dcs_payment_cycle_code = $cycle;
+                        $installmentModel->payment_cycle_applicabilty_code = $appCycleModel->dcsPaymentCycleAppCode($this->model->dcs_code);
+                        $cycle = $cycleModel->getNextCycleCode($installmentModel->dcs_payment_cycle_code, $this->model->dcs_code);
                         array_push($installments, $installmentModel);
                     }
                     //exit;
                 }
-                
+
                 $credit_limit_model = new TblMemberCreditLimit();
                 $credit_limit_data = $credit_limit_model->find()->where(['member_code' => $this->model->member_code])->one();
 
-                if(!empty($credit_limit_data)){
+                if (!empty($credit_limit_data)) {
                     $credit_limit_history_model = new TblMemberCreditLimitHistory();
                     Yii::$app->operation->history($credit_limit_data, $credit_limit_history_model, UPDATE);
 
@@ -168,12 +147,12 @@ class TblProductSaleController extends \app\controllers\ChildController
                     array_push($installments, $credit_limit_transaction_model);
                 }
 
-                if(!empty($installments)){
+                if (!empty($installments)) {
                     $transaction = $this->generalModel->saveTransaction([$this->model], $installments, ['Product Sale', 'edit']);
-                }else{
+                } else {
                     $this->model->is_installment = 0;
                     $this->model->no_of_installment = 0;
-                    $transaction = $this->generalModel->saveTransaction([$this->model],$installments, ['Product Sale', 'edit']);
+                    $transaction = $this->generalModel->saveTransaction([$this->model], $installments, ['Product Sale', 'edit']);
                 }
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
@@ -181,23 +160,22 @@ class TblProductSaleController extends \app\controllers\ChildController
             }
         }
         return $this->render('payment', [
-                'model' => $this->model,
-                'paymentCycle' => $appCycleModel->dcsPaymentCycle($this->model->dcs_code)
-            ]);
+                    'model' => $this->model,
+                    'paymentCycle' => $appCycleModel->dcsPaymentCycle($this->model->dcs_code)
+        ]);
     }
-    
-    public function actionSaleInstallments($id)
-    {
+
+    public function actionSaleInstallments($id) {
         $searchModel = new TblSaleInstallmentsSearch();
-        $searchModel->sale_code=$id;
+        $searchModel->sale_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('_installment_grid', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
-    
+
 //    public function actionSkipInstallment($id)
 //    {
 //        if (($model = TblSaleInstallments::find()->where(['installment_code'=>$id])->one()) !== null) {
@@ -247,19 +225,18 @@ class TblProductSaleController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            
+
             return $this->redirect(['view', 'id' => $model->product_sale_code]);
         } else {
             
         }
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        return $this->render('update', [
+                    'model' => $model,
+        ]);
     }
 
     /**
@@ -268,8 +245,7 @@ class TblProductSaleController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -282,47 +258,49 @@ class TblProductSaleController extends \app\controllers\ChildController
      * @return TblProductSale the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblProductSale::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
-    public function actionGetSociety()
-    {
-        if(!empty($_POST['union_code']))
-        {
-            $union=  TblUnions::findOne($_POST['union_code']);
-            $dcs=$union->tblDcs;
-            $arr=ArrayHelper::map($dcs, 'dcs_code', 'dcs_name');
-            $record = ['status' => 'success', 'data'=>$arr];
-        }
-        else
-        {
+
+    public function actionGetSociety() {
+        if (!empty($_POST['union_code'])) {
+            $union = TblUnions::findOne($_POST['union_code']);
+            $dcs = $union->tblDcs;
+            $arr = ArrayHelper::map($dcs, 'dcs_code', 'dcs_name');
+            $record = ['status' => 'success', 'data' => $arr];
+        } else {
             $record = ['status' => 'error', 'msg' => 'Can not load society'];
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
         //json_encode($record);
     }
-    
-    public function actionGetMember()
-    {
-        if(!empty($_POST['society']))
-        {
-            $member= TblMember::findAll(['dcs_code'=>$_POST['society'],'is_active'=>1]);
-            $arr=ArrayHelper::map($member, 'member_code', 'member_name');
-            $record = ['status' => 'success', 'data'=>$arr];
-        }
-        else
-        {
+
+    public function actionGetMember() {
+        if (!empty($_POST['society'])) {
+            $member = TblMember::findAll(['dcs_code' => $_POST['society'], 'is_active' => 1]);
+            $arr = ArrayHelper::map($member, 'member_code', 'member_name');
+            $record = ['status' => 'success', 'data' => $arr];
+        } else {
             $record = ['status' => 'error', 'msg' => 'Can not load society'];
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
         //json_encode($record);
     }
+
+    public function actionCreateProductSale() {
+        $model = new TblProductSale();
+        $detailModel = new TblProductSaleDetails();
+
+        return $this->render('_create_product_sale', [
+                    'model' => $model,
+                    'detailModel' => $detailModel,
+        ]);
+    }
+
 }

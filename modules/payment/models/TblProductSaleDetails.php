@@ -38,14 +38,13 @@ class TblProductSaleDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required'],
-            [['sale_detail_code', 'product_code'], 'integer'],
-            [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
-            [['rate', 'qty', 'amount'], 'number', 'min' => 0],
-            [['created_at', 'updated_at', 'rate_app_code'], 'safe'],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
-            [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
+                [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required'],
+                [['sale_detail_code', 'product_code'], 'integer'],
+                [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
+                [['rate', 'qty', 'amount'], 'number', 'min' => 0],
+                [['created_at', 'updated_at', 'rate_app_code', 'discount', 'amount_due', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
+                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
         ];
     }
 
@@ -121,11 +120,11 @@ class TblProductSaleDetails extends \app\models\ChildModel {
                 $type = Yii::$app->general->getforeignkey($product_detail->productSaleCode, 'type');
                 $sale_product['dcs_name'] = '';
                 $sale_product['member_name'] = '';
-                if($type = 'MEMBER'){
+                if ($type = 'MEMBER') {
                     $sale_product['dcs_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->dcsCode, 'dcs_name');
                     $sale_product['member_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->memberCode, 'member_name');
                 }
-                if($type = 'DCS'){
+                if ($type = 'DCS') {
                     $sale_product['dcs_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->dcsBmcCode, 'bmc_name');
                     $sale_product['member_name'] = Yii::$app->general->getforeignkey($product_detail['productSaleCode']->memberDcsCode, 'dcs_name');
                 }

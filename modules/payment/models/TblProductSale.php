@@ -36,7 +36,7 @@ use app\modules\organisation\models\TblDcsBmc;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit;
+    public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code;
 
     /**
      * @inheritdoc
@@ -50,14 +50,14 @@ class TblProductSale extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required'],
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
-            [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type'], 'safe'],
-            [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
-            [['other_amount', 'discount', 'paid_amount'], 'number', 'min' => 0],
-            [['discount'], 'validateDisccount'],
-            [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
-            [['paid_amount'], 'validatePaidAmount'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
+                [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'sale_type', 'customer_type', 'customer_code', 'sale_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
+                [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
+                [['other_amount', 'discount', 'paid_amount'], 'number', 'min' => 0],
+                [['discount'], 'validateDisccount'],
+                [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
+                [['paid_amount'], 'validatePaidAmount'],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
 //                return ($this->amount_due>0);
@@ -107,6 +107,11 @@ class TblProductSale extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'available_credit' => Yii::t('app', ''),
+            'plant_code' => Yii::t('app', 'PLANT'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'customer_code' => 'Name',
+            'customer_type' => 'Type',
         ];
     }
 
@@ -193,17 +198,13 @@ class TblProductSale extends \app\models\ChildModel {
                             'dcs_code', 'union_code', 'member_code'])
                         ->where(['member_code' => $this->member_code])->andWhere("sale_date_time between '$from_date' and '$to_date' ")->asArray()->all();
     }
-    
 
     public function getDcsBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'dcs_code']);
     }
 
-    
-
     public function getMemberDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'member_code']);
     }
-
 
 }

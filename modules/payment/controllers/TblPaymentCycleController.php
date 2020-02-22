@@ -64,11 +64,11 @@ class TblPaymentCycleController extends ChildController {
             $shift_from_type = 1;
             $shift_to_type = 1;
             if ($this->model->from_shift == 2) {
-                $shift_from_time = '16:00:00';
+                $shift_from_time = '18:00:00';
                 $shift_from_type = 2;
             }
             if ($this->model->to_shift == 2) {
-                $shift_to_time = '16:00:00';
+                $shift_to_time = '18:00:00';
                 $shift_to_type = 2;
             }
 
@@ -102,7 +102,7 @@ class TblPaymentCycleController extends ChildController {
                     $from_date->modify("+ 1 day");
                     if ($i == 0) {
                         $from_time = $shift_from_time;
-                        $to_time = '16:00:00';
+                        $to_time = '18:00:00';
                         $from_shift = $shift_from_type;
                         $to_shift = 2;
                     } else if ($from_date >= $to_date) {
@@ -114,7 +114,7 @@ class TblPaymentCycleController extends ChildController {
                         $from_shift = 1;
                         $to_shift = 2;
                         $from_time = '06:00:00';
-                        $to_time = '16:00:00';
+                        $to_time = '18:00:00';
                     }
                     $model->from_date = $shift_from_date . ' ' . $from_time;
                     $model->to_date = $end_date->format('Y-m-d') . ' ' . $to_time;

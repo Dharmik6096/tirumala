@@ -735,6 +735,11 @@ class DropDown extends Component {
                 'data' => ['member' => Yii::t('app', 'Member'), 'bmc' => Yii::t('app', 'BMC'), 'both' => Yii::t('app', 'Both')],
                 'remove_key' => ['both'],
             ],
+            'payment_mode' => [
+                'name' => 'payment_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Cash'), 1 => Yii::t('app', 'Credit')],
+            ],
         ];
         return $records[$l];
     }
