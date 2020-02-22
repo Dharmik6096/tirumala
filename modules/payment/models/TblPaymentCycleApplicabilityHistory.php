@@ -15,6 +15,7 @@ use Yii;
  * @property string $applicable_code
  * @property string $applicable_for
  * @property string $applicable_type
+ * @property string $union_code
  * @property integer $data_lock_bmc
  * @property integer $data_lock_member
  * @property integer $billing_lock_bmc
@@ -29,33 +30,30 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblPaymentCycleApplicabilityHistory extends \yii\db\ActiveRecord
-{
+class TblPaymentCycleApplicabilityHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_payment_cycle_applicability_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['payment_cycle_applicabilty_code', 'payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'integer'],
-            [['from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
-            [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'string'],
+                [['payment_cycle_applicabilty_code', 'payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'integer'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
+                [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'string'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
@@ -80,4 +78,5 @@ class TblPaymentCycleApplicabilityHistory extends \yii\db\ActiveRecord
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
+
 }

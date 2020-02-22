@@ -21,6 +21,7 @@ use app\modules\payment\models\TblPaymentCycle;
  * @property string $applicable_code
  * @property string $applicable_for
  * @property string $applicable_type
+ * @property string $union_code
  * @property integer $data_lock_bmc
  * @property integer $data_lock_member
  * @property integer $billing_lock_bmc
@@ -36,8 +37,6 @@ use app\modules\payment\models\TblPaymentCycle;
  * @property string $updated_by
  */
 class TblPaymentCycleApplicability extends \app\models\ChildModel {
-
-    public $union_code;
 
     /**
      * @inheritdoc

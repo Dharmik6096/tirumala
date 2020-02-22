@@ -637,6 +637,9 @@ class Applicability extends \yii\base\Module {
                                 if ($model->hasAttribute('wef_date')) {
                                     $model->wef_date = $this->model->wef_date;
                                 }
+                                if ($model->hasAttribute('union_code')) {
+                                    $model->union_code = $this->union_code;
+                                }
                                 $model->setAttributes($this->assignStaticData);
                                 $save_model[] = $model;
                             }
@@ -647,6 +650,9 @@ class Applicability extends \yii\base\Module {
                             $model->$setField = $val;
                             if ($model->hasAttribute('wef_date')) {
                                 $model->wef_date = $this->model->wef_date;
+                            }
+                            if ($model->hasAttribute('union_code')) {
+                                $model->union_code = $this->union_code;
                             }
                             $model->setAttributes($this->assignStaticData);
                             $save_model[] = $model;
