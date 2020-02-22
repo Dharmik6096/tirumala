@@ -43,9 +43,10 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['rate_class'], 'default', 'value' => 'A'],
             [['milk_quality_type_code'], 'default', 'value' => 1],
             //[['milk_type_code', 'fat'/* ,'formula' */], 'required'],
-            [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'purchase_rate_code', 'rate_type','rate_class'], 'safe'],
+            [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'purchase_rate_code', 'rate_type', 'rate_class'], 'safe'],
             [['fat', 'rtpl', 'snf'], 'number'],
 //            [['snf_to', 'snf'], 'customValidate','skipOnEmpty'=> false],
 //            [['is_delete', 'milk_quality_type_code'], 'integer'],
@@ -116,16 +117,16 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         $this->purchase_rate_code = $object->purchase_rate_code;
         $this->milk_type_code = $object->milk_type_code;
         $this->rate_type_code = $object->rate_type_code;
-        $key_value = $this->getCode();
+        //$key_value = $this->getCode();
         $save_array = [];
         for (; $i <= $j;) {
             $x = bcadd($object->start2, 0.0, 1);
             $y = bcadd($object->end2, 0.0, 1);
             for (; $x <= $y;) {
                 $rate = $this->calculate($i, $x);
-                $save_array[] = $this->saveData($object, $i, $x, $rate, $key_value);
+                $save_array[] = $this->saveData($object, $i, $x, $rate, 0);
                 $x = bcadd($x, 0.1, 1);
-                $key_value += 1;
+                // $key_value += 1;
             }
             $i = bcadd($i, 0.1, 1);
         }
@@ -204,7 +205,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
 
         $models = new TblPurchaseRateDetails();
         $models->purchase_rate_code = $object->purchase_rate_code;
-        $models->code = $incrCode;
+       // $models->code = $incrCode;
         $models->milk_quality_type_code = $object->milk_quality_type_code;
         $models->milk_type_code = $object->milk_type_code;
         $models->fat = $fat;
@@ -260,7 +261,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         $QltyParam = explode('+', $rateType);
         $this->purchase_rate_code = $prCode;
         $this->milk_type_code = $milkType;
-        $key_value = $this->getCode();
+        //$key_value = $this->getCode();
         $save_array = [];
         if (isset($QltyParam[0])) {
             $modelfat = TblPurchaseRateBased::find()
@@ -281,9 +282,9 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                                 $this->purchase_rate_code = $modelfat[$i]->purchase_rate_code;
                                 $this->milk_type_code = $modelfat[$i]->milk_type_code;
                                 $rate = $this->calculateManual($lowfat, $lowsnf, $modelfat[$i]->quality_param_code, $modelsnf[$j]->quality_param_code, $QltyParam[0], $QltyParam[1]);
-                                $save_array[] = $this->saveData($modelfat[$i], $lowfat, $lowsnf, $rate, ($key_value));
+                                $save_array[] = $this->saveData($modelfat[$i], $lowfat, $lowsnf, $rate, 0);
                                 $lowsnf = floatval(bcadd($lowsnf, 0.1, 1));
-                                $key_value += 1;
+                               // $key_value += 1;
                             }
                         }
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
@@ -293,9 +294,9 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                         $this->purchase_rate_code = $modelfat[$i]->purchase_rate_code;
                         $this->milk_type_code = $modelfat[$i]->milk_type_code;
                         $rate = $this->calculateManual($lowfat, '', $modelfat[$i]->quality_param_code, '', $QltyParam[0], '');
-                        $save_array[] = $this->saveData($modelfat[$i], $lowfat, 0, $rate, ($key_value));
+                        $save_array[] = $this->saveData($modelfat[$i], $lowfat, 0, $rate, 0);
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
-                        $key_value += 1;
+                       // $key_value += 1;
                     }
                 }
             }

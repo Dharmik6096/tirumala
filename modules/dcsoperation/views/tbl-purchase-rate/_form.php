@@ -34,7 +34,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-3 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift', false, 'shift_id'); ?>
     </div>
     <div class="clearfix"></div>
