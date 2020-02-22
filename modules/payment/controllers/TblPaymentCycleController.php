@@ -17,6 +17,7 @@ use yii\helpers\Json;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use app\modules\payment\models\TblPaymentCycleApplicabilityHistory;
 use yii\helpers\Url;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * TblPaymentCycleController implements the CRUD actions for TblPaymentCycle model.
@@ -232,8 +233,140 @@ class TblPaymentCycleController extends ChildController {
                     return $model->getName($model->applicable_for);
                 }],
         ];
+        if (User::canRoute('/payment/tbl-payment-cycle/bmc-data-lock')) {
+            $appModel->fields['data_lock_bmca'] = ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->data_lock_bmc == 0) {
+                        $class = $model->data_lock_bmc == 1 ? 'fa-unlock' : 'fa-lock';
+                        $title = $model->data_lock_bmc == 1 ? 'Data Unlock - BMC' : 'Data Lock - BMC';
+                        $popupWindowTitle = 'Are you sure you want to ' . ($model->data_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' data for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
+                        $options = [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'data-original-title' => $title,
+                            'data-popup-message' => $popupWindowTitle,
+                            'class' => ' generalGridConfirmationPopup ',
+                            'data-post-url' => Url::to(['/payment/tbl-payment-cycle/bmc-data-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
+                        ];
+                        return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/bmc-data-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
+                    } else {
+                        return Yii::t('app', 'Locked');
+                    }
+                },
+                'format' => 'raw',
+                'label' => Yii::t('app', 'Data Lock - BMC'), 'filter' => false];
+        }
+        if (User::canRoute('/payment/tbl-payment-cycle/bmc-sync-lock')) {
+            $appModel->fields['sync_lock_bmca'] = ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->sync_lock_bmc == 0) {
+                        $class = $model->sync_lock_bmc == 1 ? 'fa-unlock' : 'fa-lock';
+                        $title = $model->sync_lock_bmc == 1 ? 'Sync Unlock - BMC' : 'Sync Lock - BMC';
+                        $popupWindowTitle = 'Are you sure you want to ' . ($model->sync_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' Sync for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
+                        $options = [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'data-original-title' => $title,
+                            'data-popup-message' => $popupWindowTitle,
+                            'class' => ' generalGridConfirmationPopup ',
+                            'data-post-url' => Url::to(['/payment/tbl-payment-cycle/bmc-sync-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
+                        ];
+                        return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/bmc-sync-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
+                    } else {
+                        return Yii::t('app', 'Locked');
+                    }
+                },
+                'format' => 'raw',
+                'label' => Yii::t('app', 'Sync Lock - BMC'), 'filter' => false];
+        }
+        if (User::canRoute('/payment/tbl-payment-cycle/bmc-billing-lock')) {
+            $appModel->fields['billing_lock_bmca'] = ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->billing_lock_bmc == 0) {
+                        $class = $model->billing_lock_bmc == 1 ? 'fa-unlock' : 'fa-lock';
+                        $title = $model->billing_lock_bmc == 1 ? 'Billing Unlock - BMC' : 'Billing Lock - BMC';
+                        $popupWindowTitle = 'Are you sure you want to ' . ($model->billing_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' Billing for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
+                        $options = [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'data-original-title' => $title,
+                            'data-popup-message' => $popupWindowTitle,
+                            'class' => ' generalGridConfirmationPopup ',
+                            'data-post-url' => Url::to(['/payment/tbl-payment-cycle/bmc-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
+                        ];
+                        return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/bmc-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
+                    } else {
+                        return Yii::t('app', 'Locked');
+                    }
+                },
+                'format' => 'raw',
+                'label' => Yii::t('app', 'Billing Lock - BMC'), 'filter' => false];
+        }
+        if (User::canRoute('/payment/tbl-payment-cycle/member-data-lock')) {
+            $appModel->fields['data_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->data_lock_member == 0) {
+                        $class = $model->data_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
+                        $title = $model->data_lock_member == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
+                        $popupWindowTitle = 'Are you sure you want to ' . ($model->data_lock_member == 1 ? 'Unlock' : 'Lock') . ' data for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
+                        $options = [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'data-original-title' => $title,
+                            'data-popup-message' => $popupWindowTitle,
+                            'class' => ' generalGridConfirmationPopup ',
+                            'data-post-url' => Url::to(['/payment/tbl-payment-cycle/member-data-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
+                        ];
+                        return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/member-data-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
+                    } else {
+                        return Yii::t('app', 'Locked');
+                    }
+                },
+                'format' => 'raw',
+                'label' => Yii::t('app', 'Data Lock - Member'), 'filter' => false];
+        }
+        if (User::canRoute('/payment/tbl-payment-cycle/member-sync-lock')) {
+            $appModel->fields['sync_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->sync_lock_member == 0) {
+                        $class = $model->sync_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
+                        $title = $model->sync_lock_member == 1 ? 'Sync Unlock - Member' : 'Sync Lock - Member';
+                        $popupWindowTitle = 'Are you sure you want to ' . ($model->sync_lock_member == 1 ? 'Unlock' : 'Lock') . ' Sync for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
+                        $options = [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'data-original-title' => $title,
+                            'data-popup-message' => $popupWindowTitle,
+                            'class' => ' generalGridConfirmationPopup ',
+                            'data-post-url' => Url::to(['/payment/tbl-payment-cycle/member-sync-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
+                        ];
+                        return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/member-sync-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
+                    } else {
+                        return Yii::t('app', 'Locked');
+                    }
+                },
+                'format' => 'raw',
+                'label' => Yii::t('app', 'Sync Lock - Member'), 'filter' => false];
+        }
+        if (User::canRoute('/payment/tbl-payment-cycle/member-billing-lock')) {
+            $appModel->fields['billing_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->billing_lock_member == 0) {
+                        $class = $model->billing_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
+                        $title = $model->billing_lock_member == 1 ? 'Billing Unlock - Member' : 'Billing Lock - Member';
+                        $popupWindowTitle = 'Are you sure you want to ' . ($model->billing_lock_member == 1 ? 'Unlock' : 'Lock') . ' Billing for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
+                        $options = [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'data-original-title' => $title,
+                            'data-popup-message' => $popupWindowTitle,
+                            'class' => ' generalGridConfirmationPopup ',
+                            'data-post-url' => Url::to(['/payment/tbl-payment-cycle/member-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
+                        ];
+                        return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/member-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
+                    } else {
+                        return Yii::t('app', 'Locked');
+                    }
+                },
+                'format' => 'raw',
+                'label' => Yii::t('app', 'Billing Lock - Member'), 'filter' => false];
+        }
         $appModel->actions = [];
-        
+
         return $appModel->customerTypeWiseApplicability();
     }
 
@@ -250,11 +383,11 @@ class TblPaymentCycleController extends ChildController {
     }
 
     public function actionBmcDataLock($payment_cycle_code, $id) {
-        $this->updateRecords($payment_cycle_code, $id, 'billing_lock_bmc', 'Data Lock - BMC', 'Data Unlock - BMC');
+        $this->updateRecords($payment_cycle_code, $id, 'data_lock_bmc', 'Data Lock - BMC', 'Data Unlock - BMC');
     }
 
     public function actionMemberDataLock($payment_cycle_code, $id) {
-        $this->updateRecords($payment_cycle_code, $id, 'billing_lock_member', 'Data Lock - Member', 'Data Unlock - Member');
+        $this->updateRecords($payment_cycle_code, $id, 'data_lock_member', 'Data Lock - Member', 'Data Unlock - Member');
     }
 
     public function actionBmcSyncLock($payment_cycle_code, $id) {
@@ -263,6 +396,14 @@ class TblPaymentCycleController extends ChildController {
 
     public function actionMemberSyncLock($payment_cycle_code, $id) {
         $this->updateRecords($payment_cycle_code, $id, 'sync_lock_member', 'Sync Lock - Member', 'Sync Unlock - Member');
+    }
+
+    public function actionBmcBillingLock($payment_cycle_code, $id) {
+        $this->updateRecords($payment_cycle_code, $id, 'billing_lock_bmc', 'Billing Lock - BMC', 'Billing Unlock - BMC');
+    }
+
+    public function actionMemberBillingLock($payment_cycle_code, $id) {
+        $this->updateRecords($payment_cycle_code, $id, 'billing_lock_member', 'Billing Lock - Member', 'Billing Unlock - Member');
     }
 
     public function actionDeleteApp() {

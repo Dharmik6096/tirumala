@@ -30,6 +30,9 @@ foreach ($fields as $key => $f) {
         if (!empty($f['format'])) {
             $attribute['format'] = $f['format'];
         }
+        if (!empty($f['label'])) {
+            $attribute['label'] = $f['label'];
+        }
     }
     array_push($column, $attribute);
 }
