@@ -19,6 +19,11 @@ use yii\helpers\Html;
 $attribute = [
     //'rate_code',
         ['attribute' => 'product_rate_code', 'value' => 'product_rate_code'],
+        [
+        'attribute' => 'union_code', 'filter' => false,
+        'value' => function($model) {
+            return (!empty($model->union_code) || isset($model->unionCode)) ? $model->unionCode->union_name : '-';
+        }],
         ['attribute' => 'product_code',
         'value' => 'productCode.product_name'],
     'rate',
@@ -36,11 +41,6 @@ $attribute = [
             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
         }],
         ['attribute' => 'vsp_commission', 'value' => 'vsp_commission'],
-        [
-        'attribute' => 'union_code', 'filter' => false,
-        'value' => function($model) {
-            return (!empty($model->union_code) || isset($model->unionCode)) ? $model->unionCode->union_name : '-';
-        }],
 ];
 
 $grid_option = [

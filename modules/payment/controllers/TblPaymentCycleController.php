@@ -216,7 +216,11 @@ class TblPaymentCycleController extends ChildController {
             'from_date' => $cmodel->from_date,
             'to_date' => $cmodel->to_date
         ];
-
+        $fromShift = Yii::$app->general->getforeignkey($cmodel->fromShift, 'shift');
+        $fromShift = !empty($fromShift) && $fromShift != 'N/A' ? substr($fromShift, 0, 1) : '';
+        $toShift = Yii::$app->general->getforeignkey($cmodel->toShift, 'shift');
+        $toShift = !empty($toShift) && $toShift != 'N/A' ? substr($toShift, 0, 1) : '';
+        $appModel->header_title = '[' . Yii::$app->controls->view_date($cmodel->from_date) . '(' . $fromShift . ')' . ' to ' . Yii::$app->controls->view_date($cmodel->to_date) . '(' . $toShift . ')' . ']';
         $appModel->title = Yii::$app->controls->view_date($cmodel->from_date) . ' to ' . Yii::$app->controls->view_date($cmodel->to_date);
         $appModel->fields = ['from_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->from_date);
@@ -253,6 +257,13 @@ class TblPaymentCycleController extends ChildController {
                     }
                 },
                 'format' => 'raw',
+                'contentOptions' => function($model) {
+                    if ($model->data_lock_bmc == 0) {
+                        return ['class' => 'text-center'];
+                    } else {
+                        return [];
+                    }
+                },
                 'label' => Yii::t('app', 'Data Lock - BMC'), 'filter' => false];
         }
         if (User::canRoute('/payment/tbl-payment-cycle/bmc-sync-lock')) {
@@ -275,6 +286,13 @@ class TblPaymentCycleController extends ChildController {
                     }
                 },
                 'format' => 'raw',
+                'contentOptions' => function($model) {
+                    if ($model->sync_lock_bmc == 0) {
+                        return ['class' => 'text-center'];
+                    } else {
+                        return [];
+                    }
+                },
                 'label' => Yii::t('app', 'Sync Lock - BMC'), 'filter' => false];
         }
         if (User::canRoute('/payment/tbl-payment-cycle/bmc-billing-lock')) {
@@ -297,6 +315,13 @@ class TblPaymentCycleController extends ChildController {
                     }
                 },
                 'format' => 'raw',
+                'contentOptions' => function($model) {
+                    if ($model->billing_lock_bmc == 0) {
+                        return ['class' => 'text-center'];
+                    } else {
+                        return [];
+                    }
+                },
                 'label' => Yii::t('app', 'Billing Lock - BMC'), 'filter' => false];
         }
         if (User::canRoute('/payment/tbl-payment-cycle/member-data-lock')) {
@@ -319,6 +344,13 @@ class TblPaymentCycleController extends ChildController {
                     }
                 },
                 'format' => 'raw',
+                'contentOptions' => function($model) {
+                    if ($model->data_lock_member == 0) {
+                        return ['class' => 'text-center'];
+                    } else {
+                        return [];
+                    }
+                },
                 'label' => Yii::t('app', 'Data Lock - Member'), 'filter' => false];
         }
         if (User::canRoute('/payment/tbl-payment-cycle/member-sync-lock')) {
@@ -341,6 +373,13 @@ class TblPaymentCycleController extends ChildController {
                     }
                 },
                 'format' => 'raw',
+                'contentOptions' => function($model) {
+                    if ($model->sync_lock_member == 0) {
+                        return ['class' => 'text-center'];
+                    } else {
+                        return [];
+                    }
+                },
                 'label' => Yii::t('app', 'Sync Lock - Member'), 'filter' => false];
         }
         if (User::canRoute('/payment/tbl-payment-cycle/member-billing-lock')) {
@@ -363,6 +402,13 @@ class TblPaymentCycleController extends ChildController {
                     }
                 },
                 'format' => 'raw',
+                'contentOptions' => function($model) {
+                    if ($model->billing_lock_member == 0) {
+                        return ['class' => 'text-center'];
+                    } else {
+                        return [];
+                    }
+                },
                 'label' => Yii::t('app', 'Billing Lock - Member'), 'filter' => false];
         }
         $appModel->actions = [];

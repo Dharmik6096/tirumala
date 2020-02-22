@@ -115,6 +115,10 @@ class TblProductRateApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_type']);
     }
 
+    public function getCustomerTypeFor() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for']);
+    }
+
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code']);
     }

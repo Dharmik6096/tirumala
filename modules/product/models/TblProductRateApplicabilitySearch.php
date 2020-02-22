@@ -47,7 +47,7 @@ class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
             'query' => $query,
         ]);
 
-        $query->joinWith(['customerType']);
+        $query->joinWith(['customerTypeFor']);
 
         $this->load($params);
 
@@ -60,7 +60,8 @@ class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
             $query->andFilterWhere(['like', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]);
 
         $query->andFilterWhere(['like', 'tbl_product_rate_applicability.applicable_for', $this->applicable_for])
-                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_type])
+//                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_type])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
                 ->andFilterWhere(['like', 'tbl_product_rate_applicability.applicable_code', $this->applicable_code]);
 
         return $dataProvider;

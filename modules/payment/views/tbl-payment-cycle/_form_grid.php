@@ -21,6 +21,9 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_date);
         }],
+        ['attribute' => 'from_shift', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->fromShift, 'shift');
+        }, 'filter' => false],
         ['attribute' => 'to_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -30,6 +33,9 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->to_date);
         }],
+        ['attribute' => 'to_shift', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->toShift, 'shift');
+        }, 'filter' => false],
     'interval_value'
 ];
 
@@ -38,7 +44,7 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => TRUE,
     'actions' => [
-        'view' => true,
+//        'view' => true,
         'applicabilty' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/payment/tbl-payment-cycle/payment-cycle-applicability', 'id' => $model->payment_cycle_code], $options);

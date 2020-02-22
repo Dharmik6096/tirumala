@@ -39,9 +39,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3 mt25">
         <?= $form->field($model, 'is_member_rate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
     </div>
-    <div class="col-sm-3 mt25">
-        <?= Yii::$app->controls->active($model, $form); ?>
-    </div>
+    <!--<div class="col-sm-3 mt25">-->
+        <?php // Yii::$app->controls->active($model, $form); ?>
+    <!--</div>-->
     <div class="col-sm-3">
         <?= $form->field($model, 'vsp_commission')->textInput() ?>
     </div>

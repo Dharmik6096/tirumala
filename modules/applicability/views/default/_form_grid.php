@@ -33,6 +33,9 @@ foreach ($fields as $key => $f) {
         if (!empty($f['label'])) {
             $attribute['label'] = $f['label'];
         }
+        if (!empty($f['contentOptions'])) {
+            $attribute['contentOptions'] = $f['contentOptions'];
+        }
     }
     array_push($column, $attribute);
 }

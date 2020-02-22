@@ -58,6 +58,7 @@ class TblProductRate extends \app\models\ChildModel {
               return $('#tblproductrate-is_member_rate').is(':checked'); 
                }"],
                 [['is_member_rate', 'vsp_commission'], 'default', 'value' => 0],
+                [['is_active'], 'default', 'value' => 1],
                 [['vsp_commission'], 'validateCommission', 'skipOnEmpty' => false],
         ];
     }

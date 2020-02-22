@@ -21,7 +21,7 @@ if (!empty($model)) {
             $checked = in_array($value, $selected);
             $disabled = '';
             if (!$checked) {
-                $checkData = in_array($value, $selectedDataCode);
+                $checkData = in_array(strval($value), $selectedDataCode, true);
                 return "<div class='col-sm-4 dcs-checklist checklist' id='nd-" . $value . "'><div class='checkbox'>" . Html::checkbox($name, $checkData, [
                             'value' => $value,
                             'label' => '<label for="' . $value . '">' . $label . '</label>',

@@ -22,6 +22,11 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
                 $attribute = [
                         ['attribute' => 'product_rate_code_val', 'label' => Yii::t('app', 'Rate Code'), 'value' => 'product_rate_code'],
                         [
+                        'attribute' => 'union_code', 'filter' => false,
+                        'value' => function($model) {
+                            return (!empty($model->union_code) || isset($model->union_code)) ? $model->unionCode->union_name : '-';
+                        }],
+                        [
                         'attribute' => 'product_name',
                         'value' => 'productCode.product_name',
                         'label' => Yii::t('app', 'Product'),
@@ -43,11 +48,6 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
                             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
                         }],
                         ['attribute' => 'vsp_commission', 'value' => 'vsp_commission'],
-                        [
-                        'attribute' => 'union_code', 'filter' => false,
-                        'value' => function($model) {
-                            return (!empty($model->union_code) || isset($model->union_code)) ? $model->unionCode->union_name : '-';
-                        }],
                 ];
 
                 $grid_option = [

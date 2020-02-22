@@ -4,6 +4,7 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use app\modules\dcsoperation\models\TblShift;
 
 /**
  * This is the model class for table "tbl_payment_cycle".
@@ -114,6 +115,14 @@ class TblPaymentCycle extends \app\models\ChildModel {
         } else
             $nextCycle = '';
         return empty($nextCycle) ? '0' : $nextCycle->payment_cycle_code;
+    }
+
+    public function getFromShift() {
+        return $this->hasOne(TblShift::className(), ['id' => 'from_shift']);
+    }
+
+    public function getToShift() {
+        return $this->hasOne(TblShift::className(), ['id' => 'to_shift']);
     }
 
 }
