@@ -42,12 +42,12 @@ class TblPaymentCycle extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
-                ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
-                [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
-                [['interval_value', 'is_active', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
-                [['to_date'], 'customValidate'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
+            ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
+            [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
+            [['interval_value', 'is_active', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
+            [['to_date'], 'customValidate'],
         ];
     }
 
@@ -98,19 +98,16 @@ class TblPaymentCycle extends \app\models\ChildModel {
             return true;
     }
 
-    public function getNextCycleCode($code, $dcsCode = '') {
+    public function getNextCycleCode($code, $dcsCode = '', $customer_type = '', $for = '') {
         if (!empty($code) && $code !== 0) {
             $currCycle = $this->find()->where(['payment_cycle_code' => $code])->one();
             $date = $currCycle->to_date;
-            $date = date('Y-m-d', strtotime($date . ' +1 day'));
-            $nextCycle = $this->find()->select('payment_cycle_code')->where(['CAST(from_date AS DATE)' => $date]);
+            $new_date = date("Y-m-d H:i:s", strtotime($date . '+12 hours'));
+            $nextCycle = $this->find()->select('payment_cycle_code')->where(['from_date' => $new_date]);
             if (empty($dcsCode)) {
                 $nextCycle = $nextCycle->one();
             } else {
-                $subQuery = TblPaymentCycleApplicability::find()->select('payment_cycle_code')->where(['applicabile_code' => $dcsCode])->all();
-                $array = \yii\helpers\ArrayHelper::getColumn($subQuery, 'payment_cycle_code');
-                $nextCycle = $nextCycle->andWhere(['in', 'payment_cycle_code', $array])->one();
-                //var_dump($nextCycle);
+                $nextCycle = TblPaymentCycleApplicability::find()->select('payment_cycle_code')->where(['from_date' => $new_date, 'applicable_code' => $dcsCode, 'applicable_type' => $customer_type, 'applicable_for' => $for])->one();
             }
         } else
             $nextCycle = '';

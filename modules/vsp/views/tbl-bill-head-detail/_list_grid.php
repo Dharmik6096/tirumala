@@ -3,16 +3,6 @@
 use yii\helpers\Html;
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        },
-        'filter' => false,],
-    ['attribute' => 'plant_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
     ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
@@ -29,6 +19,7 @@ $attribute = [
     ['attribute' => 'payment_cycle_code', 'value' => function($model) {
             return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
         }, 'filter' => false],
+    ['attribute' => 'no_installment', 'filter' => false],
     ['attribute' => 'amount', 'filter' => false],
 ];
 $grid_option = [

@@ -182,7 +182,7 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
     }
 
     public function paymentCycles($union_code, $bmc, $type, $for, $where) {
-        return \yii\helpers\ArrayHelper::map($this->find()->select(['from_date', 'to_date', 'payment_cycle_code'])->where(['union_code' => $union_code, 'applicable_code' => $bmc, 'applicable_type' => $type, 'applicable_for' => $for])->andWhere($where)->andWhere(['<', 'to_date', date('Y-m-d')])->orderBy('from_date ASC')->distinct()->all(), function($model) {
+        return \yii\helpers\ArrayHelper::map($this->find()->select(['from_date', 'to_date', 'payment_cycle_code'])->where(['union_code' => $union_code, 'applicable_code' => $bmc, 'applicable_type' => $type, 'applicable_for' => $for])->andWhere($where)->andWhere(['<', 'from_date', date('Y-m-d')])->orderBy('from_date ASC')->distinct()->all(), function($model) {
                     return $model['payment_cycle_code'];
                 }, function($model) {
                     return Yii::$app->controls->view_date($model['from_date']) . ' to ' . Yii::$app->controls->view_date($model['to_date']);
