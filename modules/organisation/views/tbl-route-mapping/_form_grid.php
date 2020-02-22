@@ -37,6 +37,9 @@ $attribute = [
     ['attribute' => 'to_dest', 'value' => function($model) {
             return $model->getDestinationName($model->to_type, $model->to_dest);
         }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'to_type', 'value' => function($model) {
+            return $model->to_type;
+        }, 'visible' => true, 'filter' => TRUE],
     ['attribute' => 'vehicle_type_code', 'value' => 'vehicleType.vehicle_type_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'capacity', 'value' => function($model) use ($cunit) {
             return $model->calcCapacity($cunit);

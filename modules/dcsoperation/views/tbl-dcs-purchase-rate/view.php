@@ -28,6 +28,8 @@ $this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'BMC') . '
                     'model' => $model,
                     'options' => ['class' => 'table table-bordered detail-view'],
                     'attributes' => [
+                        'purchase_rate_code',
+                        'reference_code',
                         [
                             'attribute' => 'wef_date',
                             'format' => 'html',

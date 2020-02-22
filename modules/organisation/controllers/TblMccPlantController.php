@@ -26,7 +26,7 @@ use app\modules\organisation\models\TblMccPlantGroupMappingHistory;
 class TblMccPlantController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['mcc-list', 'get-plant-mcc'];
+    public $freeAccessActions = ['mcc-list', 'get-plant-mcc', 'union-mcc-list'];
 
     /**
      * Lists all TblMccPlant models.
@@ -329,6 +329,23 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $record = $this->generalModel->deleteTransaction([$model, $historyModel]);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionUnionMccList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $mccs = new TblMccPlant();
+                $data = $mccs->getUnionMCCList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

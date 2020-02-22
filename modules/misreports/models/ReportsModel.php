@@ -8,7 +8,7 @@ use yii\base\Model;
 
 class ReportsModel extends Model {
 
-    public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type;
+    public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift;
     public $calibration_day, $p_date, $customer_code, $member_code;
 
     function __construct() {
@@ -23,7 +23,7 @@ class ReportsModel extends Model {
             [['member_code'], 'default', 'value' => 0],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code'], 'safe'],
             [['report_type'], 'required', 'on' => 'BmcCollection'],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'report_type'], 'required', 'on' => 'SapReport'],
+            [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
             [['to_date'], function ($attribute, $params) {
             Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
         }, 'skipOnEmpty' => false],
@@ -55,6 +55,8 @@ class ReportsModel extends Model {
             'to_date' => \Yii::t('app', 'To Date'),
             'to_shift' => \Yii::t('app', 'To Shift'),
             'p_date' => \Yii::t('app', 'As On Date'),
+            'date' => \Yii::t('app', 'Date'),
+            'shift' => \Yii::t('app', 'Shift'),
         ];
     }
 

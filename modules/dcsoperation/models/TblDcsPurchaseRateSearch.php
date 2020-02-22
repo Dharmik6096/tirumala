@@ -15,12 +15,13 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
     public $federation_code;
     public $union_code;
     public $dcs_code;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['purchase_rate_code', 'wef_date', 'shift_id', 'created_at', 'originating_org_type', 'deleted_at', 'description', 'flg_sentbox_entry', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'sync_status', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by','federation_code','union_code','dcs_code'], 'safe'],
+            [['purchase_rate_code', 'wef_date', 'shift_id', 'created_at', 'originating_org_type', 'deleted_at', 'description', 'flg_sentbox_entry', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'sync_status', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by', 'federation_code', 'union_code', 'dcs_code', 'reference_code'], 'safe'],
             [['is_active', 'is_delete'], 'integer'],
         ];
     }
@@ -52,7 +53,7 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
 
 
         $this->load($params);
-           if (Yii::$app->session->get('Unions') !== '' && empty($this->union_code)) {
+        if (Yii::$app->session->get('Unions') !== '' && empty($this->union_code)) {
             $query->andFilterWhere([ 'tbl_dcs_purchase_rate.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         } else {
             $query->andFilterWhere(['tbl_dcs_purchase_rate.union_code' => $this->union_code]);
@@ -67,10 +68,10 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_dcs_purchase_rate.is_active' => $this->is_active,
-           // 'tbl_dcs_purchase_rate.originating_org_type' => $this->originating_org_type,
+                // 'tbl_dcs_purchase_rate.originating_org_type' => $this->originating_org_type,
         ]);
 
-       
+
         if (!empty($this->wef_date))
             $query->andFilterWhere(['like', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]);
 
@@ -79,7 +80,8 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
                 // ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
                 ->andFilterWhere(['like', 'tbl_rate_generate_method.method', $this->rate_gen_method_code])
                 ->andFilterWhere(['like', 'tbl_dcs_purchase_rate.shift_id', $this->shift_id])
-                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability]);
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability])
+                ->andFilterWhere(['like', 'reference_code', $this->reference_code]);
 
         return $dataProvider;
     }

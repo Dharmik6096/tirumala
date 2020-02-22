@@ -798,7 +798,7 @@ class GeneralFunctions extends Component {
     }
 
     public function base64url_decode($data) {
-        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu'])) {
+        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess'])) {
             return $data;
         }
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
@@ -1370,5 +1370,17 @@ class GeneralFunctions extends Component {
             return false;
         }
     }
-
+ public function getSapStatus($label) {
+        $data = [
+            'X' => Yii::t('app', 'New'),
+            'XA' => Yii::t('app', 'Sent'),
+            'AZ' => Yii::t('app', 'Success'),
+            'XE' => Yii::t('app', 'Error'),
+            'Y' => Yii::t('app', 'Edited'),
+            'YA' => Yii::t('app', 'Sent'),
+            'AZ' => Yii::t('app', 'Success'),
+            'YE' => Yii::t('app', 'Error'),
+        ];
+        return !empty($data[$label]) ? $data[$label] : '';
+    }
 }

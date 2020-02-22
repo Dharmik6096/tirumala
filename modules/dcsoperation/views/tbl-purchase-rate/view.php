@@ -26,6 +26,18 @@ $this->title = Yii::$app->label->title('view', 'Purchase Rates');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'purchase_rate_code',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'reference_code',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'union_code',
                                 'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
                                 'valueColOptions' => ['style' => 'width:30%']

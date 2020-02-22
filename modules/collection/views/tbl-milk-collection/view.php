@@ -187,6 +187,20 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                         ],
                     ],
                 ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'tag_1',
+                            'value' => Yii::$app->general->getSapStatus($model->tag_1 . $model->tag_2),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'error_desc',
+                            'value' => $model->error_desc,
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget

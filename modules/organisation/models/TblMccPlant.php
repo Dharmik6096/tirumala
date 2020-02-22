@@ -74,7 +74,7 @@ class TblMccPlant extends \app\models\ChildModel {
             [['email'], 'string', 'max' => 50],
             [['email'], 'email'],
             [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
+            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
             Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
@@ -365,6 +365,22 @@ class TblMccPlant extends \app\models\ChildModel {
 
     public function getTblMccPlantMain() {
         return $this->hasMany(TblMccPlantGroupMapping::className(), ['p_mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getUnionMCCList($unionCode, $RLS = 'TRUE') {
+        $value = $this->getUnionMCC($unionCode, $RLS);
+        $value = ArrayHelper::map($value, 'mcc_plant_code', 'name');
+        return $value;
+    }
+
+    public function getUnionMCC($unionCode = [], $RLS = 'TRUE') {
+        $query = $this->find()->select(['mcc_plant_code', 'name'])->where(['is_active' => 1]);
+        if (!empty($unionCode))
+            $query->andWhere(['union_code' => $unionCode]);
+        if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        return $query->all();
     }
 
 }

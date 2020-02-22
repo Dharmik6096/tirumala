@@ -42,7 +42,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
     public function rules() {
         return [
             [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
-            [['created_at', 'updated_at', 'wef_date'], 'safe'],
+            [['created_at', 'updated_at', 'wef_date', 'reference_code'], 'safe'],
             [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
             [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
         ];
@@ -69,6 +69,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
             'shift_id' => Yii::t('app', 'Shift'),
             'originating_type' => Yii::t('app', 'Originating Type'),
             'union_code' => Yii::t('app', 'Union'),
+            'reference_code' => Yii::t('app', 'SAP Rate ID'),
         ];
     }
 

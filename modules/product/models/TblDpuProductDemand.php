@@ -9,6 +9,8 @@ use app\modules\product\models\TblProduct;
 use app\modules\product\models\TblProductGroup;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\payment\models\TblLoanProduct;
+
 /**
  * This is the model class for table "tbl_DPU_ProductDemand".
  *
@@ -30,25 +32,24 @@ use app\modules\dcsoperation\models\TblShift;
  * @property string $UpdatedBy
  * @property string $ProductStatus
  */
-class TblDpuProductDemand extends \app\models\ChildModel
-{
+class TblDpuProductDemand extends \app\models\ChildModel {
+
     public $bmc_name, $dcs_name, $member_name, $product_name, $unit_code, $type;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_DPU_ProductDemand';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
 //            [['trDate', 'shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'PPrice', 'PQty', 'PAmount', 'CreateOnUtc', 'CreatedBy'], 'required'],
-            [['trDate', 'ApprovedDate', 'UpdateOnUtc','shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'PPrice', 'PQty', 'PAmount', 'CreateOnUtc', 'CreatedBy'], 'safe'],
+            [['trDate', 'ApprovedDate', 'UpdateOnUtc', 'shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'PPrice', 'PQty', 'PAmount', 'CreateOnUtc', 'CreatedBy'], 'safe'],
             [['shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'CreatedBy', 'UpdatedBy', 'ProductStatus'], 'string'],
             [['PPrice', 'PQty', 'PAmount'], 'number'],
             [['Status'], 'integer'],
@@ -58,8 +59,7 @@ class TblDpuProductDemand extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'Id' => Yii::t('app', 'ID'),
             'trDate' => Yii::t('app', 'Tr Date'),
@@ -85,25 +85,29 @@ class TblDpuProductDemand extends \app\models\ChildModel
             'type' => Yii::t('app', 'Type'),
         ];
     }
-    
+
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
-    
+
     public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
     }
-    
+
     public function getProductCode() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
     }
-    
+
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
-    
+
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift']);
     }
-    
+
+    public function getLoanProductCode() {
+        return $this->hasOne(TblLoanProduct::className(), ['product_code' => 'product_code']);
+    }
+
 }

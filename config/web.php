@@ -47,7 +47,7 @@ $config = [
                 'stellapps-services' => 'restservices/stellapps/stellapps-services',
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
-                    ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
+                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
             //  ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
         /* 'urlManager' => [
@@ -230,6 +230,8 @@ $config = [
         'embededdpu' => ['class' => 'app\modules\embededdpu\Embededdpu',],
         'sms' => ['class' => 'app\modules\sms\Sms',],
         'vsp' => ['class' => 'app\modules\vsp\Vsp',],
+        'bkgprocess' => [ 'class' => 'app\modules\bkgprocess\Bkgprocess',],
+        'soap' => [ 'class' => 'app\modules\soap\Soap',],
     ],
     'params' => $params,
 ];

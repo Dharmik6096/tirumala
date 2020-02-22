@@ -74,7 +74,7 @@ $this->title = Yii::$app->label->title('view', 'DPU Product Demand');
                         'columns' => [
                             [
                                 'attribute' => 'product_name',
-                                'value' => Yii::$app->general->getforeignkey($model->productCode, 'product_name'),
+                                'value' => $model->is_loan_product == 1 ? Yii::$app->general->getforeignkey($model->loanProductCode, 'product_name') : Yii::$app->general->getforeignkey($model->productCode, 'product_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [

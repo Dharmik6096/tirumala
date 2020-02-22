@@ -17,7 +17,7 @@ class TblPurchaseRateSearch extends TblPurchaseRate {
      */
     public function rules() {
         return [
-            [['union_code', 'purchase_rate_code', 'wef_date', 'created_at', 'originating_org_type', 'description', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'updated_at', 'created_by', 'updated_by'], 'safe'],
+            [['union_code', 'purchase_rate_code', 'wef_date', 'created_at', 'originating_org_type', 'description', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'updated_at', 'created_by', 'updated_by', 'reference_code'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -82,7 +82,8 @@ class TblPurchaseRateSearch extends TblPurchaseRate {
                 ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
                 ->andFilterWhere(['like', 'tbl_rate_generate_method.method', $this->rate_gen_method_code])
                 // ->andFilterWhere(['like', 'tbl_rate_type.rate_type', $this->rate_type])
-                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability]);
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability])
+                ->andFilterWhere(['like', 'reference_code', $this->reference_code]);
 
         return $dataProvider;
     }
