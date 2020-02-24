@@ -2,7 +2,7 @@
 $this->title = Yii::$app->label->title('create', 'Mapping');
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading"><?= $this->title ?><?= !empty($title) ? ' (' . $title . ')' . $header_title : ''; ?></div>
+    <div class="panel-heading"><?= $this->title ?><?= ($title != '') ? ' (' . $title . ')' . $header_title : $title . $header_title; ?></div>
     <div class="panel-body">
         <?=
         $this->render('_form', [

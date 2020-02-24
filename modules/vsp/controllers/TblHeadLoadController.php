@@ -351,6 +351,7 @@ class TblHeadLoadController extends \app\controllers\ChildController {
         ];
         $appModel->options = ['tanker_rate'];
         $appModel->mcc_field_name = 'applicable_code';
+        $appModel->header_title = ' [Head Load: ' . $model->criteria_description . '] ';
         $customerType = new TblCustomerType();
         $value = $customerType->getCustomerType();
         $appModel->dcs_filters = $value;

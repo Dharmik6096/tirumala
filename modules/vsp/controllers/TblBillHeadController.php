@@ -149,6 +149,8 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $appModel->options = ['tanker_rate'];
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->trans_label = Yii::t('app', 'bill head applicabilities');
+
+        $appModel->header_title = ' [Bill Head: ' . $model->bill_head_name . ', Type: ' . Yii::$app->dropdown->getRecords('calc_type')['data'][$model->bill_head_type] . '] ';
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],

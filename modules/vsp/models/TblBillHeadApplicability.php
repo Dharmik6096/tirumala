@@ -60,8 +60,9 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
             'dcs_code' => Yii::t('app', 'DCS'),
             'bill_head_code' => Yii::t('app', 'Bill Head Code'),
             'union_code' => Yii::t('app', 'Union'),
-            'applicable_for' => Yii::t('app', 'For'),
-            'applicable_code' => Yii::t('app', 'Code'),
+            'applicable_for' => Yii::t('app', 'Applicable For'),
+            'applicable_code' => Yii::t('app', 'Applicable Code'),
+            'mcc_name' => Yii::t('app', 'Applicable Name'),
         ];
     }
 

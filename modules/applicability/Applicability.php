@@ -96,7 +96,7 @@ class Applicability extends \yii\base\Module {
                 $selected = $this->getMcc();
                 $list = $this->loadUnionMcc($this->union_code);
                 $main_field_name = $this->mcc_field_name;
-                $title = 'MCCs';
+                $title = '';
                 break;
             case 'bmc':
                 $selected = []; //$this->getBmc();
