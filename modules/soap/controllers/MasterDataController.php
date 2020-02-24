@@ -152,7 +152,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                 $rate_type_code = 2;
                 $model_name = Yii::$app->path->define($request_param['model'] . 'Details');
                 $purchaseDetailModel = new $model_name();
-                $detailmaxID = $purchaseDetailModel->getCode();
+                // $detailmaxID = $purchaseDetailModel->getCode();
                 $master = [];
                 $based = [];
                 $data = [];
@@ -173,7 +173,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                     unset($rate_array['EffectiveDateTo']);
                     foreach ($rate_array as $snf => $rtpl) {
                         $data [$i] [] = [
-                            $detailmaxID + $cnt,
+                            // $detailmaxID + $cnt,
                             $model_data->purchase_rate_code,
                             $rate_type_code,
                             $milk_qlty_code,
@@ -232,7 +232,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                         $master[] = $error;
                     }
                     foreach ($data as $d) {
-                        \Yii::$app->db->createCommand()->batchInsert(strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $request_param['model'])) . '_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl'], $d)->execute();
+                        \Yii::$app->db->createCommand()->batchInsert(strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $request_param['model'])) . '_details', ['purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl'], $d)->execute();
                     }
                     if ($save_applicability) {
                         $model_name = Yii::$app->path->define($request_param['model'] . 'Applicability');

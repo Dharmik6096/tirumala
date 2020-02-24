@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
 
-<div class="grid-search search-filter">
+<div class="search-filter mt10">
     <?php
     $form = ActiveForm::begin([
                 'method' => 'get',
