@@ -10,10 +10,14 @@ $attribute = [
     //'product_sale_code',
 //    ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter'=>false],
         ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
+        ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'vAlign' => 'middle'],
         ['attribute' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         }, 'vAlign' => 'middle'],
-        ['attribute' => 'customer_code', 'value' => function($model) {
+        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
+        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '';
         }, 'vAlign' => 'middle'],
 //    ['attribute' => 'member_code', 'value' => 'memberCode.member_name'],

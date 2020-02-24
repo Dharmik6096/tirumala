@@ -23,7 +23,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Sale installments'
                         return !empty($model->saleCode) ? Yii::$app->general->getCustomer($model->saleCode, $model->saleCode->customer_type) : 'N/A';
                     }, 'vAlign' => 'middle', 'filter' => false],
                     ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-                        return '<span><div>' . Yii::$app->controls->view_date($model->tblPaymentCycleCode->from_date) . ' to ' . Yii::$app->controls->view_date($model->tblPaymentCycleCode->to_date) . '</div></span>';
+                        if (!empty($model->tblPaymentCycleCode)) {
+                            return '<span><div>' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->tblPaymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->tblPaymentCycleCode, 'to_date')) . '</div></span>';
+                        } else {
+                            return 'N/A';
+                        }
                     }, 'filter' => false, 'format' => 'raw'],
                 //'sale_code',
                 //'sale_date_time',
