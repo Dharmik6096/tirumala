@@ -121,7 +121,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "
     $(document).ready(function(){
-         $('#tblbillheaddetail-no_installment').prop('disabled', true);
+        $('#tblbillheaddetail-no_installment').prop('disabled', true);
         $('#tblbillheaddetail-installment_amount').prop('disabled', true); 
     });
      $('#tblbillheaddetail-bill_head_code').on('change',function(){
