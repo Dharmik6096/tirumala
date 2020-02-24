@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\payment\models\TblPaymentCycle;
 
 /**
  * This is the model class for table "tbl_sale_installments".
@@ -74,6 +75,7 @@ class TblSaleInstallments extends \app\models\ChildModel {
             'installment_amount' => Yii::t('app', 'Installment Amount'),
             'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
             'dcs_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
+            'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'installment_status' => Yii::t('app', 'Installment Paid?'),
             'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -132,6 +134,10 @@ class TblSaleInstallments extends \app\models\ChildModel {
         return $this->find()->select(['installment_code',
                             'installment_amount', 'dcs_payment_cycle_code', 'sale_code', 'sale_type'])
                         ->where(['sale_code' => $invoice_no])->all();
+    }
+
+    public function getTblPaymentCycleCode() {
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
     }
 
 }

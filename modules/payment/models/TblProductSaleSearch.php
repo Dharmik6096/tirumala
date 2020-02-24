@@ -17,7 +17,7 @@ class TblProductSaleSearch extends TblProductSale {
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code'], 'safe'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'sale_mode'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
                 [['is_installment', 'no_of_installment'], 'integer'],
         ];
@@ -48,8 +48,8 @@ class TblProductSaleSearch extends TblProductSale {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode']);
-        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_dcs', 'tbl_product_sale');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -71,8 +71,13 @@ class TblProductSaleSearch extends TblProductSale {
             'tbl_product_sale.is_installment' => $this->is_installment,
             'tbl_product_sale.no_of_installment' => $this->no_of_installment,
         ]);
+        if (!empty($this->sale_mode) || $this->sale_mode == '0') {
+            $query->andFilterWhere(['tbl_product_sale.sale_mode' => (int) $this->sale_mode]);
+        }
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_code], ['like', 'tbl_customer_master.customer_name', $this->customer_code]]);
 
-        $query->andFilterWhere(['like', 'tbl_product_sale.product_sale_code', $this->product_sale_code]);
+        $query->andFilterWhere(['like', 'tbl_product_sale.product_sale_code', $this->product_sale_code])
+                ->andFilterWhere(['like', 'tbl_product_sale.customer_type', $this->customer_type]);
 
         return $dataProvider;
     }

@@ -35,7 +35,7 @@ var initDepdropMs;
                 if (tdsx > 1) {
                     for (var i = tdsx; i < num; i++) {
                         var t = $tds.eq(i).text();
-                        if ($tds.eq(i).text().length > 10 && $tds.eq(i).text().indexOf('<div') < 0)
+                        if ($tds.eq(i).text().length > 10 && $tds.eq(i).text().indexOf('<div') < 0 && $tds.eq(i).html().indexOf('<div') < 0)
                         {
                             $tds.eq(i).text(t.substr(0, 10));
                             $tds.eq(i).attr("title", t);
