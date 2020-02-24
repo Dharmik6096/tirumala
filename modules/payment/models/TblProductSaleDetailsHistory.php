@@ -39,7 +39,7 @@ class TblProductSaleDetailsHistory extends \yii\db\ActiveRecord {
                 [['sale_detail_code', 'product_code'], 'integer'],
                 [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by', 'operation_type'], 'string'],
                 [['rate', 'qty', 'amount'], 'number'],
-                [['created_at', 'updated_at', 'history_created_at', 'discount', 'amount_due', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['created_at', 'updated_at', 'history_created_at', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
 

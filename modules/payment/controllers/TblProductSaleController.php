@@ -22,6 +22,10 @@ use app\modules\payment\models\TblProductSaleDetails;
 use app\modules\payment\models\TblMemberCreditLimit;
 use app\modules\payment\models\TblMemberCreditLimitHistory;
 use app\modules\payment\models\TblMemberCreditLimitTransaction;
+use app\modules\product\models\TblProductRateApplicability;
+use app\modules\product\models\TblProductRate;
+use yii\widgets\ActiveForm;
+use app\modules\payment\models\TblPaymentCycleApplicability;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
@@ -295,11 +299,100 @@ class TblProductSaleController extends \app\controllers\ChildController {
 
     public function actionCreateProductSale() {
         $model = new TblProductSale();
+        $model->scenario = 'saleProduct';
         $detailModel = new TblProductSaleDetails();
-
+        $detailModel->scenario = 'saleProduct';
+        $searchModel = new TblProductSaleSearch();
+        $searchModel->grid_filter = false;
+        $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $detailModel->load(Yii::$app->request->post());
+            $model->product_sale_code = (String) $model->getCode();
+            $detailModel->product_sale_code = $model->product_sale_code;
+            if ($model->validate() && $detailModel->validate()) {
+                $master = [];
+                $child = [];
+                $saleDate = date('Y-m-d', strtotime($model->sale_date_time));
+                $model->sale_date_time = $saleDate;
+                $appCycleAppModel = new TblPaymentCycleApplicability();
+                $appCycleAppModel->applicable_type = $model->customer_type;
+                $appCycleAppModel->applicable_code = $model->bmc_code;
+                $appCycleAppModel->applicable_for = 'BMC';
+                $appCycleAppModelData = $appCycleAppModel->getApplicablePaymentCycle($saleDate);
+                $model->sale_type = 'DCS';
+                $model->other_amount = 0;
+                $model->paid_amount = $model->sale_mode == 1 ? 0 : $model->amount_due;
+                $model->is_installment = $model->sale_mode;
+                $model->no_of_installment = $model->sale_mode;
+                $detailModel->sale_detail_code = (string) Yii::$app->general->getCodeAutoIncrement($detailModel);
+                $detailModel->amount = $model->amount;
+                $master[] = $model;
+                $child[] = $detailModel;
+                if (!empty($model->sale_mode)) {
+                    $installmentModel = new TblSaleInstallments();
+                    $installmentModel->sale_type = 'product';
+                    $installmentModel->sale_code = $model->product_sale_code;
+                    $installmentModel->member_code = $model->member_code;
+                    $installmentModel->dcs_code = $model->dcs_code;
+                    $installmentModel->union_code = $model->union_code;
+                    $installmentModel->main_amount = $model->amount_due;
+                    $installmentModel->installment_amount = $model->amount;
+                    $installmentModel->installment_status = 0;
+                    $installmentModel->is_active = 1;
+                    $installmentModel->payment_cycle_applicabilty_code = $appCycleAppModelData->payment_cycle_applicabilty_code;
+                    $installmentModel->payment_cycle_code = $appCycleAppModelData->payment_cycle_code;
+                    $child[] = $installmentModel;
+                }
+                $transaction = $this->generalModel->saveTransaction($master, $child, ['Product Sale', 'create']);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+            }
+        }
         return $this->render('_create_product_sale', [
                     'model' => $model,
                     'detailModel' => $detailModel,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionLoadRate() {
+        $app = ['rate' => ''];
+        if (!empty($_POST['product_code']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
+            $date = !empty($_POST['sale_date_time']) ? date('Y-m-d', strtotime($_POST['sale_date_time'])) : date('Y-m-d');
+
+            $appQuery = TblProductRateApplicability::find()->innerJoinWith('productRateCode')
+                    ->select(['product_rate_applicability_code', 'tbl_product_rate.rate', 'tbl_product_rate_applicability.wef_date as dt'])->groupBy(['product_rate_applicability_code', 'tbl_product_rate.rate', 'tbl_product_rate_applicability.wef_date'])
+                    ->having(['<=', '[tbl_product_rate_applicability].[wef_date]', $date])
+                    ->where(['tbl_product_rate.product_code' => $_POST['product_code'], 'tbl_product_rate_applicability.applicable_for' => $_POST['customer_type'], 'tbl_product_rate_applicability.is_member_rate' => (int) $_POST['is_member_rate'], 'tbl_product_rate_applicability.applicable_code' => $_POST['customer_code']]);
+            $app = $appQuery->orderBy(['tbl_product_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
+            if (!empty($app)) {
+                $app = ['product_rate_applicability_code' => $app['product_rate_applicability_code'], 'rate' => $app['rate']];
+            }
+        }
+        echo json_encode($app);
+    }
+
+    public function actionListGrid() {
+        $searchModel = new TblProductSaleSearch();
+        $searchModel->grid_filter = false;
+        $searchModel->setAttributes(Yii::$app->request->get('TblProductSale'));
+        $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
+
+        return $this->renderAjax('_list_grid', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 

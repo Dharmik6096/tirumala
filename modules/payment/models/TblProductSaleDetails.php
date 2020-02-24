@@ -38,13 +38,14 @@ class TblProductSaleDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required'],
+                [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required', 'except' => ['saleProduct']],
+                [['product_sale_code', 'product_code', 'qty', 'rate'], 'required', 'on' => ['saleProduct']],
                 [['sale_detail_code', 'product_code'], 'integer'],
                 [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
                 [['rate', 'qty', 'amount'], 'number', 'min' => 0],
-                [['created_at', 'updated_at', 'rate_app_code', 'discount', 'amount_due', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['created_at', 'updated_at', 'rate_app_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
-                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
+//                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
         ];
     }
 

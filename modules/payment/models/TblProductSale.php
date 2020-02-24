@@ -8,6 +8,9 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\payment\models\TblMemberCreditLimit;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\payment\models\TblPaymentCycleApplicability;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_product_sale".
@@ -50,14 +53,17 @@ class TblProductSale extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required', 'except' => ['saleProduct']],
+                [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'sale_date_time', 'sale_mode'], 'required', 'on' => ['saleProduct']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
                 [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'sale_type', 'customer_type', 'customer_code', 'sale_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
-                [['other_amount', 'discount', 'paid_amount'], 'number', 'min' => 0],
+                [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'number', 'min' => 0],
                 [['discount'], 'validateDisccount'],
                 [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
-                [['paid_amount'], 'validatePaidAmount'],
+                [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct']],
+                [['sale_date_time'], 'validatePaymentCycle', 'on' => ['saleProduct']],
+                [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'default', 'value' => 0],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
 //                return ($this->amount_due>0);
@@ -94,7 +100,7 @@ class TblProductSale extends \app\models\ChildModel {
             'dcs_code' => Yii::t('app', 'Society Name'),
             'union_code' => Yii::t('app', 'Union'),
             'member_code' => Yii::t('app', 'Member'),
-            'sale_date_time' => Yii::t('app', 'Sale Date Time'),
+            'sale_date_time' => Yii::t('app', 'Sale Date'),
             'amount' => Yii::t('app', 'Amount'),
             'other_amount' => Yii::t('app', 'Other Amount'),
             'discount' => Yii::t('app', 'Discount'),
@@ -110,8 +116,9 @@ class TblProductSale extends \app\models\ChildModel {
             'plant_code' => Yii::t('app', 'PLANT'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
-            'customer_code' => 'Name',
-            'customer_type' => 'Type',
+            'customer_code' => Yii::t('app', 'Name'),
+            'customer_type' => Yii::t('app', 'Type'),
+            'sale_mode' => Yii::t('app', 'Sale Type'),
         ];
     }
 
@@ -119,7 +126,7 @@ class TblProductSale extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
     }
 
     /**
@@ -203,8 +210,38 @@ class TblProductSale extends \app\models\ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'dcs_code']);
     }
 
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
+    }
+
     public function getMemberDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'member_code']);
+    }
+
+    public function validatePaymentCycle($attribute, $params) {
+        if (!empty($this->sale_date_time) && $this->sale_mode == 1) {
+            $model = new TblPaymentCycleApplicability();
+            $model->applicable_type = $this->customer_type;
+            $model->applicable_code = $this->bmc_code;
+            $model->applicable_for = 'BMC';
+            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->sale_date_time)));
+            if (!empty($modelData)) {
+                if ($modelData->data_lock_bmc == 1) {
+                    $this->addError($attribute, "Payment Cycle is locked for Sale Date.");
+                }
+            } else {
+                $this->addError($attribute, "Payment Cycle not available for Sale Date.");
+                return false;
+            }
+        }
     }
 
 }

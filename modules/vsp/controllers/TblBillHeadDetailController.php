@@ -52,6 +52,7 @@ class TblBillHeadDetailController extends ChildController {
     public function actionCreate() {
         $this->model = new TblBillHeadDetail();
         $searchModel = new TblBillHeadDetailSearch();
+        $searchModel->grid_filter = false;
         $dataProvider = $searchModel->gridsearch(Yii::$app->request->get());
         $this->viewFile = 'create';
         if (Yii::$app->request->post()) {
@@ -310,6 +311,7 @@ class TblBillHeadDetailController extends ChildController {
 
     public function actionListGrid() {
         $searchModel = new TblBillHeadDetailSearch();
+        $searchModel->grid_filter = false;
         $searchModel->setAttributes(Yii::$app->request->get('TblBillHeadDetail'));
         $dataProvider = $searchModel->gridsearch([]);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);

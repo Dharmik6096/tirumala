@@ -10,25 +10,23 @@ use app\modules\payment\models\TblProductSaleDetails;
 /**
  * TblProductSaleDetailsSearch represents the model behind the search form about `app\modules\payment\models\TblProductSaleDetails`.
  */
-class TblProductSaleDetailsSearch extends TblProductSaleDetails
-{
+class TblProductSaleDetailsSearch extends TblProductSaleDetails {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['sale_detail_code'], 'integer'],
-            [['product_sale_code', 'rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['rate', 'qty', 'amount' ,'product_code'], 'safe'],
+                [['sale_detail_code'], 'integer'],
+                [['product_sale_code', 'rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+                [['rate', 'qty', 'amount', 'product_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +38,7 @@ class TblProductSaleDetailsSearch extends TblProductSaleDetails
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblProductSaleDetails::find();
 
         // add conditions that should always apply here
@@ -58,31 +55,24 @@ class TblProductSaleDetailsSearch extends TblProductSaleDetails
             return $dataProvider;
         }
         $query->joinWith(['productCode']);
-        
-        if(isset($params['id'])) {
+
+        if (isset($params['id'])) {
             $query->andWhere([
                 'product_sale_code' => $params['id'],
             ]);
         }
-        Yii::$app->general->filterByNumber($query,$this,['rate', 'qty', 'amount']);
+        Yii::$app->general->filterByNumber($query, $this, ['rate', 'qty', 'amount']);
 
         // grid filtering conditions
         $query->andFilterWhere([
             'sale_detail_code' => $this->sale_detail_code,
-//            'product_code' => $this->product_code,
-//            'rate' => $this->rate,
-//            'qty' => $this->qty,
-//            'amount' => $this->amount,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ]);
 
         $query->andFilterWhere(['like', 'product_sale_code', $this->product_sale_code])
-            ->andFilterWhere(['like', 'rate_app_code', $this->rate_app_code])
-            ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+                ->andFilterWhere(['like', 'rate_app_code', $this->rate_app_code])
+                ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code]);
 
         return $dataProvider;
     }
+
 }

@@ -10,25 +10,23 @@ use app\modules\payment\models\TblProductSale;
 /**
  * TblProductSaleSearch represents the model behind the search form about `app\modules\payment\models\TblProductSale`.
  */
-class TblProductSaleSearch extends TblProductSale
-{
+class TblProductSaleSearch extends TblProductSale {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
-            [['is_installment', 'no_of_installment'], 'integer'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code'], 'safe'],
+                [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
+                [['is_installment', 'no_of_installment'], 'integer'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +38,7 @@ class TblProductSaleSearch extends TblProductSale
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblProductSale::find();
 
         // add conditions that should always apply here
@@ -52,18 +49,17 @@ class TblProductSaleSearch extends TblProductSale
 
         $this->load($params);
         $query->joinWith(['dcsCode']);
-        Yii::$app->general->filterByOrg($query,$this);
+        Yii::$app->general->filterByOrg($query, $this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-        if($this->member_code)
-        {
+        if ($this->member_code) {
             $query->joinWith(['memberCode']);
-            $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);            
+            $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);
         }
-        if(!empty($this->sale_date_time))
+        if (!empty($this->sale_date_time))
             $query->andFilterWhere(['like', 'tbl_product_sale.sale_date_time', date('Y-m-d', strtotime($this->sale_date_time))]);
         // grid filtering conditions
         $query->andFilterWhere([
@@ -80,4 +76,31 @@ class TblProductSaleSearch extends TblProductSale
 
         return $dataProvider;
     }
+
+    public function searchSaleDetails($params) {
+        $query = TblProductSaleDetails::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+        $query->joinWith(['productSaleCode']);
+        $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
+        Yii::$app->general->filterByOrg($query, $this);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->andFilterWhere([
+            'tbl_product_sale.customer_type' => $this->customer_type,
+            'tbl_product_sale.customer_code' => $this->customer_code,
+            'tbl_product_sale.union_code' => $this->union_code,
+        ]);
+        return $dataProvider;
+    }
+
 }

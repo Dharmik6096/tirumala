@@ -48,10 +48,10 @@ class TblSaleInstallments extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['payment_cycle_applicabilty_code', 'installment_status', 'is_active'], 'integer'],
-            [['member_code', 'sale_type', 'sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
-            [['main_amount', 'installment_amount'], 'number'],
-            [['created_at', 'updated_at', 'dcs_payment_cycle_code'], 'safe'],
+                [['payment_cycle_applicabilty_code', 'installment_status', 'is_active'], 'integer'],
+                [['member_code', 'sale_type', 'sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
+                [['main_amount', 'installment_amount'], 'number'],
+                [['created_at', 'updated_at', 'dcs_payment_cycle_code', 'payment_cycle_code'], 'safe'],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
                 //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
                 //[['payment_cycle_applicabilty_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPaymentCycleApplicability::className(), 'targetAttribute' => ['payment_cycle_applicabilty_code' => 'payment_cycle_applicabilty_code']],

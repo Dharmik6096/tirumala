@@ -31,15 +31,17 @@ class Grid extends Widget {
     }
 
     public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = [], $fixed_header = true) {
-        echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
-        if (isset($searchModel->tableSchema->fullName)) {
-            $table_name = $searchModel->tableSchema->fullName;
-            if (Yii::$app->session->get('makerChecker') == 1) {
-                $grid_option = $this->getVerificationActions($table_name, $grid_option);
-            }
-            if (in_array($table_name, array('tbl_member'))) {
-                $kyc_model = new TblKycRecord();
-                echo $this->render('@app/modules/verification/views/verification/kyc_form', ['model' => $kyc_model, 'id' => $grid_option['id']]);
+        if (!isset($searchModel->grid_filter) || $searchModel->grid_filter) {
+            echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
+            if (isset($searchModel->tableSchema->fullName)) {
+                $table_name = $searchModel->tableSchema->fullName;
+                if (Yii::$app->session->get('makerChecker') == 1) {
+                    $grid_option = $this->getVerificationActions($table_name, $grid_option);
+                }
+                if (in_array($table_name, array('tbl_member'))) {
+                    $kyc_model = new TblKycRecord();
+                    echo $this->render('@app/modules/verification/views/verification/kyc_form', ['model' => $kyc_model, 'id' => $grid_option['id']]);
+                }
             }
         }
 
@@ -192,7 +194,6 @@ class Grid extends Widget {
             'dropdownOptions' => [
                 'label' => '<i class="glyphicon"></i>'
             ],
-
             'exportConfig' => $exportConfig,
             'batchSize' => 2000
         ];
@@ -215,7 +216,6 @@ class Grid extends Widget {
                 'showPageSummary' => !empty($grid_option->showPageSummary) ? $grid_option->showPageSummary : false,
 //                        'floatHeader' => $fixed_header,
 //                        'floatOverflowContainer' => $fixed_header,
-
                 'pjax' => false,
                 'panel' => ['heading' => false, 'before' => '',
                     'after' => '<div class="text-right padding-right-5">{pager}</div>',
@@ -225,7 +225,6 @@ class Grid extends Widget {
                         Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
                     ],
                         ['content' => '{dynagrid}'],
-
                     //  '{export}',
                     $fullExportMenu
                 ],
