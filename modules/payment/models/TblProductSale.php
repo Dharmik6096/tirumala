@@ -238,7 +238,7 @@ class TblProductSale extends \app\models\ChildModel {
                     $this->addError($attribute, "Payment Cycle is locked for Sale Date.");
                 }
             } else {
-                $this->addError($attribute, "Payment Cycle not available for Sale Date.");
+                $this->addError($attribute, "Payment Cycle aplicability not available for Sale Date.");
                 return false;
             }
         }

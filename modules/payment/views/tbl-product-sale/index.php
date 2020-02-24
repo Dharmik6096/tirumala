@@ -1,6 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Product Sale'));
-$this->params['menu'][]=Yii::$app->controls->add('Product Sale');
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-plus"></i> Add Product Sale', '/payment/tbl-product-sale/create-product-sale', true);
 ?>
 <div class="tbl-product-sale-index">
     <div class="panel panel-default panel-grid panel-main">
