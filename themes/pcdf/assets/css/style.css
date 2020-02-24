@@ -2377,3 +2377,9 @@ div.crystalstyle{
 .disp_none {
     display: none
 }
+
+.sticky-footer.panel-footer {
+    max-height: 60px;
+    bottom: 0;
+    position: absolute;
+}
