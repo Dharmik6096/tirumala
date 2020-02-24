@@ -314,6 +314,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/vsp/tbl-bill-head/bill-head-list', Yii::t('app', 'Select Bill Head'), $multiple, $model->$name, $readonly);
     }
 
+    public function union_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/union-mcc-list', Yii::t('app', 'Select MCC'), $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -739,6 +744,16 @@ class DropDown extends Component {
                 'name' => 'payment_mode',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Cash'), 1 => Yii::t('app', 'Credit')],
+            ],
+            'sap_file_status' => [
+                'name' => 'sap_file_status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Sent'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error'), 4 => Yii::t('app', 'Re-Sent')],
+            ],
+            'sap_file_type' => [
+                'name' => 'sap_file_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['TblMilkCollection' => Yii::t('app', 'SD'), 'TblBmcCollection' => Yii::t('app', 'WQ')],
             ],
         ];
         return $records[$l];
