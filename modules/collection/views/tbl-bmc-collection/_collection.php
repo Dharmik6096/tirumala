@@ -45,7 +45,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2 show_hide_customer_type create_fields">
-        <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-mcc_plant_code,tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
+        <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
     </div>
     <div class="col-sm-2 rtpl_validate create_fields">
         <?= $form->field($model, 'customer_code')->textInput() ?>

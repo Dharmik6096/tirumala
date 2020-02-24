@@ -121,6 +121,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "
     $(document).ready(function(){
+     reloadGrid();
          $('#tblbillheaddetail-no_installment').prop('disabled', true);
         $('#tblbillheaddetail-installment_amount').prop('disabled', true); 
     });

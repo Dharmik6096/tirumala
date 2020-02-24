@@ -267,6 +267,21 @@ class DropDown extends Component {
     public function customer_type($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-type', Yii::t('app', 'Select Type'), $multiple, $model->$name, $readonly);
+        $script = "$(document).ready(function() {
+                        var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+                        var fieldName = '" . strtolower($name) . "';
+                        $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                            if(length == 1) {
+                                $('#'+modelname+'-'+fieldName).val('DCS');
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+                                $('#'+modelname+'-'+fieldName).trigger('change');
+                            } else {
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().show();               
+                            }
+                        });
+                    });";
+        Yii::$app->view->registerJs($script, View::POS_END, 'customer_type_hide');
     }
 
     public function merge_dcs_customer($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
@@ -513,7 +528,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -908,7 +923,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

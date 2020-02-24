@@ -125,9 +125,8 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
                 $routes = new TblCustomerMaster();
-                $mcc = $parents[0];
-                $bmc = !empty($parents[1]) ? $parents[1] : NULL;
-                $data = $routes->customerType($mcc, $bmc);
+                $bmc = $parents[0];
+                $data = $routes->customerType($bmc);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
