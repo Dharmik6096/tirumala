@@ -294,6 +294,26 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $action, 'Select Bill Head', false, $model->$name, false);
     }
 
+    public function customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
+    }
+
+    public function dcsRateChart($model, $form, $depends, $name = 'rate_chart_dcs', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/chart-list', Yii::t('app', 'Select Rate Chart'), $multiple);
+    }
+
+    public function paymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
+    }
+
+    public function billHead($model, $form, $depends, $name = 'bill_head_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/vsp/tbl-bill-head/bill-head-list', Yii::t('app', 'Select Bill Head'), $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -433,7 +453,7 @@ class DropDown extends Component {
                 });
     }
 
-    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false) {
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false) {
         if (in_array($flag, ['organizations_type'])) {
             (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
         }
@@ -444,8 +464,14 @@ class DropDown extends Component {
         if (!in_array($flag, array('p_type'))) {
             asort($records, SORT_NATURAL | SORT_FLAG_CASE);
         }
+
         if ($addAll) {
             $records = [0 => Yii::t('app', 'All')] + $records;
+        }
+        if ($removeKey) {
+            foreach ($data['remove_key'] as $value) {
+                unset($records[$value]);
+            }
         }
         echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
     }
@@ -707,6 +733,12 @@ class DropDown extends Component {
                 'name' => 'rate_cal_for',
                 'prompt' => Yii::t('app', 'Select Recalc For'),
                 'data' => ['member' => Yii::t('app', 'Member'), 'bmc' => Yii::t('app', 'BMC'), 'both' => Yii::t('app', 'Both')],
+                'remove_key' => ['both'],
+            ],
+            'payment_mode' => [
+                'name' => 'payment_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Cash'), 1 => Yii::t('app', 'Credit')],
             ],
         ];
         return $records[$l];
@@ -779,7 +811,7 @@ class DropDown extends Component {
             'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
             'transfer_master_type' => ['name' => 'master_type', 'fields' => 'master_type,master_type_text', 'prompt' => Yii::t('app', 'Select Type'), 'model' => 'TblTransferType'],
             'app_type' => ['name' => 'app_type', 'fields' => 'operator_type,api_name', 'prompt' => 'Select Type', 'model' => 'TblApiMaster', 'whereCondition' => ['receiver_type' => 'APP_NOTIFICATION']],
-            'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula'],
+            'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
         ];
         return $label[$l];
