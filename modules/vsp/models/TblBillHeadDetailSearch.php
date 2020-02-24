@@ -48,7 +48,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head_detail', 'tbl_bill_head_detail', 'tbl_bill_head_detail');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -70,6 +70,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'amount', $this->amount])
                 ->andFilterWhere(['like', 'no_installment', $this->no_installment])
+                ->andFilterWhere(['like', 'customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 

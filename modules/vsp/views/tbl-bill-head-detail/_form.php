@@ -46,16 +46,16 @@ $form = ActiveForm::begin([
         ?>
         <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 reset_field">
         <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-customer_code', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
     </div>
-    <div class="col-sm-2 number-validate">
+    <div class="col-sm-2 number-validate reset_field">
         <?= $form->field($model, 'amount')->textInput() ?>       
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 reset_field">
         <?= $form->field($model, 'no_installment')->textInput() ?>       
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 reset_field">
         <?= $form->field($model, 'installment_amount')->textInput(['class' => 'form-control', 'min' => 0]) ?>       
     </div>
 
@@ -84,10 +84,12 @@ $form = ActiveForm::begin([
 //                                                                  $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     reloadGrid();
+                                                                    $("#bill-head-detail-form .reset_field input").val("");
+                                                                    $("#bill-head-detail-form .reset_field select").val("");
                                                                     $(".panel-body").scrollTop(0);                                                                    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                    setTimeout(function(){
-                                                                   $("#tblbmccollection-dcs").focus();},100);
+                                                                   $("#tblbillheaddetail-bill_head_code").focus();},100);
                                                                     });
                                                                 }else{
                                                                 
