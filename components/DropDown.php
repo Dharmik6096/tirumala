@@ -513,7 +513,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -755,6 +755,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['TblMilkCollection' => Yii::t('app', 'SD'), 'TblBmcCollection' => Yii::t('app', 'WQ')],
             ],
+            'sap_data_post_status' => [
+                'name' => 'sap_data_post_status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'In-Process'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
+            ],
         ];
         return $records[$l];
     }
@@ -908,7 +913,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

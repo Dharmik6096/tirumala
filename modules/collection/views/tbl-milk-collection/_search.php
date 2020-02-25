@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="grid-search search-filter">
+<div class="grid-search search-filter large-search">
 
     <?php
     $form = ActiveForm::begin([
@@ -31,17 +31,20 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('sap_collection_type', $model, $form, 'form-group', false, false, 'sap_collection_type', false); ?>
     </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('sap_data_post_status', $model, $form, 'form-group', false, false, 'sap_data_post_status', false); ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, false); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'from_shift'); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, false); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'to_shift'); ?>
     </div>
     <div class="col-sm-2">
