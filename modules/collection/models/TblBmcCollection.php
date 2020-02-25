@@ -186,6 +186,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'clr' => Yii::t('app', 'CLR'),
             'route_arrival_time' => Yii::t('app', 'Arrival Time'),
             'qlty_time' => Yii::t('app', 'Sample Time'),
+            'originating_org_type' => Yii::t('app', 'Originated At'),
         ];
     }
 
