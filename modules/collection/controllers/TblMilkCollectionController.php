@@ -152,7 +152,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
             $rate_type = $detail_model->rateTypeCode->rate_type;
             $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
-          
+
             if (!empty($detail_data)) {
                 $response['status'] = 'success';
                 $rtpl_data['list'] = $detail_data;
@@ -191,6 +191,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $sp_param[] = date('Y-m-d', strtotime($searchModel->from_date)) . ' ' . \Yii::$app->general->getshift($searchModel->from_shift) . '.000';
             $sp_param[] = date('Y-m-d', strtotime($searchModel->to_date)) . ' ' . \Yii::$app->general->getshift($searchModel->to_shift) . '.000';
             $sp_param[] = $searchModel->sap_collection_type;
+            $sp_param[] = !empty($searchModel->sap_data_post_status) || $searchModel->sap_data_post_status == '0' ? $searchModel->sap_data_post_status : NULL;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
         }
         $dataProvider = new ArrayDataProvider([

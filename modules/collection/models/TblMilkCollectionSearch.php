@@ -17,13 +17,13 @@ class TblMilkCollectionSearch extends TblMilkCollection {
      */
     public $union_code;
     public $operator_fat, $operator_snf, $operator_qty, $operator_amount;
-    public $from_date, $to_date, $from_shift, $to_shift, $sap_collection_type;
+    public $from_date, $to_date, $from_shift, $to_shift, $sap_collection_type, $sap_data_post_status;
 
     public function rules() {
         return [
             [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
             [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status'], 'safe'],
             [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
             [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode','originating_org_type'], 'safe'],
         ];
