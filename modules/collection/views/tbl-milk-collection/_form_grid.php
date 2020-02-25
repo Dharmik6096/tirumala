@@ -86,11 +86,16 @@ $attribute = [
 //    ['attribute' => 'milk_analyser_type_code', 'filter' => true],
 //    ['attribute' => 'ws_code', 'filter' => true],
             ['attribute' => 'type_of_data_receive'],
+            ['attribute' => 'originating_org_type'],
             ['attribute' => 'tag_1', 'value' => function($model) {
                     return Yii::$app->general->getSapStatus($model->tag_1 . $model->tag_2);
                 }, 'filter' => false],
             ['attribute' => 'error_desc', 'filter' => FALSE],
         ];
+
+
+
+
 
         $grid_option = [
             'id' => 'milk-collection-list',

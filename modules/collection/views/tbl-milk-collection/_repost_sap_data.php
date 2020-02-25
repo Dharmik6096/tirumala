@@ -15,9 +15,10 @@ $this->title = Yii::t('app', 'SAP Data Repost');
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-            <?php 
+            <?php
             $sap_collection_type = $model->sap_collection_type;
-            echo $this->render('_search', ['model' => $model]); ?>
+            echo $this->render('_search', ['model' => $model]);
+            ?>
             <?php
             $action = Url::to(['get-temp-data']);
             $form = ActiveForm::begin([
@@ -28,28 +29,28 @@ $this->title = Yii::t('app', 'SAP Data Repost');
             <?= Html::hiddenInput('flag', $model->sap_collection_type, ['id' => 'flag']); ?>
             <?php
             $attr = [
-                ['class' => 'kartik\grid\CheckboxColumn',
+                    ['class' => 'kartik\grid\CheckboxColumn',
                     'rowSelectedClass' => GridView::TYPE_SUCCESS,
                     'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                     'checkboxOptions' => function($model) {
 //                $status = isset($model['is_approved']) ? Yii::$app->dropdown->getRecords('approval_status')['data'][$model['is_approved']] : '';
 //                $status = !empty($status) && $status == 'Pending' ? false : true;
-                return ['value' => $model['data_post_id']];
-            }],
+                        return ['value' => $model['data_post_id']];
+                    }],
 //                ['attribute' => 'dcs', 'label' => Yii::t('app', 'DCS'), 'filter' => false],
                 ['attribute' => 'mcc_name', 'filter' => false],
-                ['attribute' => 'society_code', 'filter' => false],
-                ['attribute' => 'dcs_name', 'filter' => false],
-                ['attribute' => 'member_code', 'filter' => false],
-                ['attribute' => 'member_name', 'filter' => false],
-                ['attribute' => 'collection_date', 'filter' => false],
-                ['attribute' => 'shift', 'filter' => false],
-                ['attribute' => 'sample_no', 'filter' => false],
-                ['attribute' => 'fat', 'filter' => false],
-                ['attribute' => 'snf', 'filter' => false],
-                ['attribute' => 'quantity', 'filter' => false],
-                ['attribute' => 'sap_status', 'filter' => false],
-                ['attribute' => 'response_description', 'filter' => false],
+                    ['attribute' => 'society_code', 'filter' => false],
+                    ['attribute' => 'dcs_name', 'filter' => false],
+                    ['attribute' => 'member_code', 'filter' => false],
+                    ['attribute' => 'member_name', 'filter' => false],
+                    ['attribute' => 'collection_date', 'filter' => false],
+                    ['attribute' => 'shift', 'filter' => false],
+                    ['attribute' => 'sample_no', 'filter' => false],
+                    ['attribute' => 'fat', 'filter' => false],
+                    ['attribute' => 'snf', 'filter' => false],
+                    ['attribute' => 'quantity', 'filter' => false],
+                    ['attribute' => 'sap_status', 'filter' => false],
+                    ['attribute' => 'response_description', 'filter' => false],
 //                ['attribute' => 'is_approved', 'value' => function ($model) {
 //                        return isset($model['is_approved']) ? Yii::$app->dropdown->getRecords('approval_status')['data'][$model['is_approved']] : '';
 //                    }, 'filter' => false],
@@ -62,15 +63,18 @@ $this->title = Yii::t('app', 'SAP Data Repost');
                 'attributes' => $attr,
                 'active_column' => false,
             ];
-            Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['repost-sap-data'], true);
             ?>
-
+            <div class="col-sm-12">
+                <?php
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['repost-sap-data'], true);
+                ?>
+            </div>
             <?php
             if (!empty($dataProvider->getModels())) {
                 ?>
                 <div class="col-lg-12" >
                     <?= Html::submitButton(Yii::t('app', 'Repost'), ['class' => 'btn btn-default sap-data-repost', 'name' => 'approve']); ?>
-                    <?php // Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default milk-coll-submit', 'name' => 'reject']); ?>
+                    <?php // Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default milk-coll-submit', 'name' => 'reject']);  ?>
                 </div>
             <?php } ?>
             <?php ActiveForm::end(); ?>
