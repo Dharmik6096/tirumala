@@ -39,7 +39,7 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code;
+    public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code, $customer_name;
 
     /**
      * @inheritdoc
@@ -119,6 +119,7 @@ class TblProductSale extends \app\models\ChildModel {
             'customer_code' => Yii::t('app', 'Name'),
             'customer_type' => Yii::t('app', 'Type'),
             'sale_mode' => Yii::t('app', 'Sale Type'),
+            'customer_code' => Yii::t('app', 'Name'),
         ];
     }
 

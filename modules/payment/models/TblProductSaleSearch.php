@@ -12,12 +12,14 @@ use app\modules\payment\models\TblProductSale;
  */
 class TblProductSaleSearch extends TblProductSale {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'sale_mode'], 'safe'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'sale_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
                 [['is_installment', 'no_of_installment'], 'integer'],
         ];
@@ -40,7 +42,7 @@ class TblProductSaleSearch extends TblProductSale {
      */
     public function search($params) {
         $query = TblProductSale::find();
-
+//        $query->select('test');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -48,8 +50,8 @@ class TblProductSaleSearch extends TblProductSale {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode']);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_dcs', 'tbl_product_sale');
+        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'bmcCode', 'bmcCode.tblMccPlant']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_mcc_plant', 'tbl_product_sale');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -62,6 +64,17 @@ class TblProductSaleSearch extends TblProductSale {
         if (!empty($this->sale_date_time))
             $query->andFilterWhere(['like', 'tbl_product_sale.sale_date_time', date('Y-m-d', strtotime($this->sale_date_time))]);
         // grid filtering conditions
+
+
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(tbl_product_sale.sale_date_time as date)', $from_date]);
+        }
+
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(tbl_product_sale.sale_date_time as date)', $to_date]);
+        }
         $query->andFilterWhere([
             'tbl_product_sale.amount' => $this->amount,
             'tbl_product_sale.other_amount' => $this->other_amount,
@@ -74,10 +87,12 @@ class TblProductSaleSearch extends TblProductSale {
         if (!empty($this->sale_mode) || $this->sale_mode == '0') {
             $query->andFilterWhere(['tbl_product_sale.sale_mode' => (int) $this->sale_mode]);
         }
-        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_code], ['like', 'tbl_customer_master.customer_name', $this->customer_code]]);
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
 
         $query->andFilterWhere(['like', 'tbl_product_sale.product_sale_code', $this->product_sale_code])
-                ->andFilterWhere(['like', 'tbl_product_sale.customer_type', $this->customer_type]);
+                ->andFilterWhere(['like', 'tbl_product_sale.customer_type', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_product_sale.customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
 
         return $dataProvider;
     }
