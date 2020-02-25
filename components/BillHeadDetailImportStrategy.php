@@ -8,9 +8,6 @@
 namespace app\components;
 
 use ruskid\csvimporter\ARImportStrategy;
-use app\modules\organisation\models\TblDcsVillageMapping;
-use app\modules\organisation\models\TblSocietyCodes;
-use yii\widgets\ActiveForm;
 use Yii;
 use app\modules\vsp\models\TblBillHeadInstallment;
 
@@ -72,7 +69,6 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                         $model->originating_type = 1;
                         $no = !empty($model->no_installment) ? ($model->no_installment) : 1;
                         $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
-                        $installment = [];
                         $cycle = $model->validatePaymentCycle();
                         for ($i = 0; $i < $no; $i++) {
                             $instModel = new TblBillHeadInstallment();
@@ -90,7 +86,6 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                                 $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC');
                                 if (empty($cycle)) {
                                     return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.')];
-                                    return FALSE;
                                 }
                             }
                         }

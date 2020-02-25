@@ -38,7 +38,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $installment_amount, $customer_name, $installment_start_date;
+    public $installment_amount, $customer_name, $installment_start_date, $ex_code;
 
     public static function tableName() {
         return 'tbl_bill_head_detail';
@@ -50,8 +50,8 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
-            [['bill_head_code', 'bmc_code', 'customer_code', 'customer_type', 'amount'], 'required'],
-            [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => 'importCsv'],
+            [['bill_head_code', 'bmc_code', 'amount', 'customer_code'], 'required'],
+            [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => 'importCsv'],
             [['installment_start_date'], 'required', 'on' => 'importCsv'],
             [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
             [['created_at', 'updated_at', 'installment_amount'], 'safe'],
@@ -169,11 +169,28 @@ class TblBillHeadDetail extends \app\models\ChildModel {
                     $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Code') . ' is invalid'));
                 }
             } else {
-                $bmc = new TblBmcCollection();
-                $this->customer_code = $bmc->validateCustomer($this->union_code, $this->customer_code, $this->customer_type);
-                if (empty($this->customer_code)) {
+                $customer_code = $this->validateCustomer($this->union_code, $this->customer_code, $this->customer_type);
+                if (empty($customer_code)) {
                     $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Code') . ' is invalid'));
                 }
+                $this->customer_code = $customer_code;
+            }
+            $billModel = new TblBillHead();
+            $list = $billModel->billHeadTypeWise($this->union_code, $this->customer_type, $this->customer_code);
+            if (!array_key_exists($this->bill_head_code, $list)) {
+                $this->addError('bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('bill_head_code') . ' is invalid'));
+            }
+
+            $paymentModel = new TblPaymentCycleApplicability();
+            $paymentModel->applicable_type = $this->customer_type;
+            $paymentModel->applicable_code = $this->bmc_code;
+            $paymentModel->applicable_for = 'BMC';
+            $modelData = $paymentModel->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->installment_start_date)));
+            if (empty($modelData)) {
+                $this->addError('installment_start_date', "Payment Cycle aplicability not available for Installment Start Date.");
+                return false;
+            } else {
+                return $this->payment_cycle_code = $modelData->payment_cycle_code;
             }
         }
     }
@@ -190,6 +207,22 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         } else {
             return $this->payment_cycle_code = $modelData->payment_cycle_code;
         }
+    }
+
+    public function validateCustomer($union, $code, $type) {
+        if (!empty($code) && strtolower($type) != 'dcs') {
+            $this->union_code = $union;
+            $this->customer_type = $type;
+            $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
+            $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
+            $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
+            $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            return $data = empty($Code) ? '' : $Code;
+        }
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
     }
 
 }
