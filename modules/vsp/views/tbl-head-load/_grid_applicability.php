@@ -35,7 +35,7 @@ $attribute = [
             } else {
                 return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
             }
-        }, 'label' => Yii::t('app', 'Name'), 'vAlign' => 'middle'],
+        }, 'label' => Yii::t('app', 'Applicable Name'), 'vAlign' => 'middle'],
 ];
 
 $grid_option = [

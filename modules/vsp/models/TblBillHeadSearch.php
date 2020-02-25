@@ -19,7 +19,7 @@ class TblBillHeadSearch extends TblBillHead {
         return [
             [['bill_head_code', 'bill_head_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'general_formula_code'], 'safe'],
             [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type'], 'integer'],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'default_bill_head_code', 'general_formula', 'sequence_no'], 'safe']
         ];
     }
 
@@ -54,7 +54,7 @@ class TblBillHeadSearch extends TblBillHead {
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        $query->joinWith(['defaultBillHeadCode']);
         // grid filtering conditions
         $query->andFilterWhere([
             'is_default' => $this->is_default,
@@ -71,7 +71,10 @@ class TblBillHeadSearch extends TblBillHead {
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'union_code', $this->union_code])
                 ->andFilterWhere(['like', 'tbl_bill_head.bill_head_type', $this->bill_head_type])
-                ->andFilterWhere(['like', 'general_formula_code', $this->general_formula_code]);
+                ->andFilterWhere(['like', 'general_formula_code', $this->general_formula_code])
+                ->andFilterWhere(['like', 'tbl_bill_head_default.default_bill_head_name', $this->default_bill_head_code])
+                ->andFilterWhere(['like', 'general_formula', $this->general_formula])
+                ->andFilterWhere(['like', 'sequence_no', $this->sequence_no]);
 
         return $dataProvider;
     }

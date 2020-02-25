@@ -19,7 +19,7 @@ class TblHeadLoadSearch extends TblHeadLoad {
      */
     public function rules() {
         return [
-            [['entry_type', 'head_load_code', 'created_at', 'criteria_description', 'federation_code', 'criteria_type_code', 'updated_at', 'created_by', 'dcs_code', 'union_code', 'updated_by', 'fix_value', 'min_km'], 'safe'],
+            [['entry_type', 'head_load_code', 'created_at', 'criteria_description', 'federation_code', 'criteria_type_code', 'updated_at', 'created_by', 'dcs_code', 'union_code', 'updated_by', 'fix_value', 'min_km', 'min_qty', 'max_qty'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -75,7 +75,9 @@ class TblHeadLoadSearch extends TblHeadLoad {
                 ->andFilterWhere(['like', 'fix_value', $this->fix_value])
                 ->andFilterWhere(['like', 'min_km', $this->min_km])
                 ->andFilterWhere(['like', 'tbl_head_load.union_code', $this->union_code])
-                ->andFilterWhere(['like', 'tbl_head_load_criteria.criteria_name', $this->criteria_type_code]);
+                ->andFilterWhere(['like', 'tbl_head_load_criteria.criteria_name', $this->criteria_type_code])
+                ->andFilterWhere(['like', 'min_qty', $this->min_qty])
+                ->andFilterWhere(['like', 'max_qty', $this->max_qty]);
 
         return $dataProvider;
     }

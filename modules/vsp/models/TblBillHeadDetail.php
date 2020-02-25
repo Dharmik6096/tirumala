@@ -12,6 +12,9 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\payment\models\TblPaymentCycleApplicability;
+use app\modules\collection\models\TblBmcCollection;
+use app\modules\vsp\models\TblBillHeadInstallment;
 
 /**
  * This is the model class for table "tbl_bill_head_detail".
@@ -35,7 +38,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $installment_amount;
+    public $installment_amount, $customer_name, $installment_start_date;
 
     public static function tableName() {
         return 'tbl_bill_head_detail';
@@ -47,13 +50,23 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
-            [['bill_head_code', 'payment_cycle_code', 'plant_code', 'mcc_plant_code', 'customer_code', 'customer_type', 'amount'], 'required'],
+            [['bill_head_code', 'bmc_code', 'customer_code', 'customer_type', 'amount'], 'required'],
+            [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => 'importCsv'],
+            [['installment_start_date'], 'required', 'on' => 'importCsv'],
             [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
             [['created_at', 'updated_at', 'installment_amount'], 'safe'],
             [['amount'], 'number', 'min' => 0],
             [['no_installment'], 'number', 'min' => 0],
             [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'installment_start_date'], 'safe'],
+            [['no_installment'], 'default', 'value' => 1],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['bill_head_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBillHead::className(), 'targetAttribute' => ['bill_head_code' => 'bill_head_code'], 'on' => ['importCsv']],
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+            [['installment_start_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['installment_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['installment_start_date'], 'convertDate', 'on' => ['importCsv']],
+            [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
         ];
     }
 
@@ -124,5 +137,59 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
+    public function getInstallmentCode() {
+        return $this->hasOne(TblBillHeadInstallment::className(), ['bill_head_detail_code' => 'bill_head_detail_code']);
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->installment_start_date = Yii::$app->controls->view_date($this->installment_start_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->installment_start_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->installment_start_date = !empty($this->installment_start_date) ? Yii::$app->controls->view_date($this->installment_start_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function importData($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+
+            if (empty($this->customer_type) || strtolower($this->customer_type) == 'dcs') {
+                $this->customer_type = 'DCS';
+                $dcs = new TblDcs();
+                $this->customer_code = $dcs->validDcs($this->customer_code, $this->bmc_code);
+                if (empty($this->customer_code)) {
+                    $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Code') . ' is invalid'));
+                }
+            } else {
+                $bmc = new TblBmcCollection();
+                $this->customer_code = $bmc->validateCustomer($this->union_code, $this->customer_code, $this->customer_type);
+                if (empty($this->customer_code)) {
+                    $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Code') . ' is invalid'));
+                }
+            }
+        }
+    }
+
+    public function validatePaymentCycle() {
+        $model = new TblPaymentCycleApplicability();
+        $model->applicable_type = $this->customer_type;
+        $model->applicable_code = $this->bmc_code;
+        $model->applicable_for = 'BMC';
+        $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->installment_start_date)));
+        if (empty($modelData)) {
+            $this->addError('installment_start_date', "Payment Cycle aplicability not available for Installment Start Date.");
+            return false;
+        } else {
+            return $this->payment_cycle_code = $modelData->payment_cycle_code;
+        }
+    }
 
 }
