@@ -3,7 +3,7 @@
 namespace app\modules\vsp\models;
 
 use Yii;
-
+use app\modules\payment\models\TblPaymentCycle;
 /**
  * This is the model class for table "tbl_bill_head_installment".
  *
@@ -54,6 +54,10 @@ class TblBillHeadInstallment extends \app\models\ChildModel {
 
     public function getData($detail_id) {
         return $this->find()->select(['bill_head_installment_code'])->where(['bill_head_detail_code' => $detail_id])->all();
+    }
+
+    public function getPaymentCycleCode() {
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
     }
 
 }

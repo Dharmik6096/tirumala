@@ -6,11 +6,14 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\vsp\models\TblBillHeadDetail;
+use app\modules\vsp\models\TblBillHeadInstallment;
 
 /**
  * TblBillHeadDetailSearch represents the model behind the search form about `app\modules\vsp\models\TblBillHeadDetail`.
  */
 class TblBillHeadDetailSearch extends TblBillHeadDetail {
+
+    public $from_date, $to_date;
 
     /**
      * @inheritdoc
@@ -19,7 +22,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         return [
             [['bill_head_detail_code', 'payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'no_installment', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_name', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -48,6 +51,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         ]);
 
         $this->load($params);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'billHeadCode', 'installmentCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head_detail', 'tbl_bill_head_detail', 'tbl_bill_head_detail');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -64,16 +68,29 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
+
+        if (!empty($this->from_date)) {
+            $from_date = date('Y-m-d', strtotime($this->from_date));
+            $query->andFilterWhere(['>=', 'tbl_bill_head_installment.installment_date', $from_date]);
+        }
+        if (!empty($this->to_date)) {
+            $to_date = date('Y-m-d', strtotime($this->to_date));
+            $query->andFilterWhere(['<=', 'tbl_bill_head_installment.installment_date', $to_date]);
+        }
+
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
 
         $query->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'bill_head_code', $this->bill_head_code])
+                ->andFilterWhere(['like', 'tbl_bill_head.bill_head_name', $this->bill_head_code])
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'amount', $this->amount])
                 ->andFilterWhere(['like', 'no_installment', $this->no_installment])
-                ->andFilterWhere(['like', 'customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
-
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_bill_head_detail.customer_code', $this->customer_code]);
+        $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
         return $dataProvider;
     }
 
@@ -87,7 +104,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             'query' => $query,
             'pagination' => FALSE,
         ]);
-
+        $query->joinWith(['customerType', 'installmentCode']);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -98,7 +115,30 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         $query->andWhere([
             'bmc_code' => $this->bmc_code
         ]);
+        $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
+        return $dataProvider;
+    }
 
+    public function installmentsearch($params) {
+        $this->load($params);
+        $query = TblBillHeadInstallment::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head_installment');
+        $query->andWhere([
+            'bill_head_detail_code' => $this->bill_head_detail_code
+        ]);
         return $dataProvider;
     }
 

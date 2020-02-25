@@ -39,8 +39,12 @@ class TblBillHeadDetailController extends ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $searchModel = new TblBillHeadDetailSearch();
+        $searchModel->bill_head_detail_code = $id;
+        $dataProvider = $searchModel->installmentsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'dataProvider' => $dataProvider, 'searchModel' => $searchModel
         ]);
     }
 
@@ -59,7 +63,7 @@ class TblBillHeadDetailController extends ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->model->is_active = 1;
-            $no = ($this->model->no_installment <= 0) ? 1 : $this->model->no_installment;
+            $no = !empty($this->model->no_installment) ? ($this->model->no_installment) : 1;
             $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
             $installment = [];
             if ($this->model->validate()) {
@@ -74,11 +78,12 @@ class TblBillHeadDetailController extends ChildController {
                     $instModel->installement_cycle = ($i + 1);
                     $instModel->installment_amount = floatval($this->model->amount / $no);
                     $instModel->payment_cycle_code = $cycle;
+                    $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
                     array_push($installment, $instModel);
-                    if ($this->model->no_installment > 1) {
+                    if ($this->model->no_installment > $i + 1) {
                         $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $this->model->customer_type, 'BMC');
                         if (empty($cycle)) {
-                            $msg = Yii::t('app/validation', 'Payment Cycle is not available.');
+                            $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
                             $record = ['msg' => $msg];
                             return Json::encode($record);
                         }

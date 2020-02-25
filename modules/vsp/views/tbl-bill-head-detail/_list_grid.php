@@ -3,13 +3,10 @@
 use yii\helpers\Html;
 
 $attribute = [
-    ['attribute' => 'bmc_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         }, 'filter' => false],
-    ['attribute' => 'customer_code', 'filter' => false],
+    ['attribute' => 'customer_code', 'filter' => false, 'label' => Yii::t('app', 'Code')],
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type);
         }, 'filter' => false],

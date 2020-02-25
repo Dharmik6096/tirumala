@@ -34,11 +34,6 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbillheaddetail-bmc_code', 'customer_type', TRUE, FALSE); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', TRUE, FALSE); ?>
-    </div>
-    <div class="clearfix"></div>
-
-    <div class="col-sm-2">
         <?php
         $where = json_encode(['data_lock_bmc' => 0]);
         echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
@@ -46,6 +41,12 @@ $form = ActiveForm::begin([
         ?>
         <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
     </div>
+    <div class="clearfix"></div>
+
+    <div class="col-sm-2 reset_field">
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', TRUE, FALSE); ?>
+    </div>
+
     <div class="col-sm-2 reset_field">
         <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-customer_code', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
     </div>
@@ -69,6 +70,7 @@ $form = ActiveForm::begin([
                     'type' => 'POST',
                     'url' => Url::to(['create']),
                     'beforeSend' => new JsExpression("function(data){
+                                                $('.error-summary').hide();
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
                                                 }"),
@@ -112,7 +114,7 @@ $form = ActiveForm::begin([
             AjaxSubmitButton::end();
             ?>
             <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
+            <?= Yii::$app->controls->cancel('', ['tbl-bill-head-detail/index']); ?>
         </div>
     </div>
 </div>
@@ -121,34 +123,34 @@ $form = ActiveForm::begin([
 <?php
 $script = "
     $(document).ready(function(){
-        $('#tblbillheaddetail-no_installment').prop('disabled', true);
+//        $('#tblbillheaddetail-no_installment').prop('disabled', true);
         $('#tblbillheaddetail-installment_amount').prop('disabled', true); 
     });
-     $('#tblbillheaddetail-bill_head_code').on('change',function(){
-     var bill_head_code= $(this).val();
-     if(bill_head_code !=''){
-        $.ajax({
-            type: 'post',
-            url: '" . Url::to(['/vsp/tbl-bill-head-detail/bill-head-type']) . "',
-            data: {'bill_head_code' : bill_head_code},            
-            success: function(data) {
-                var type = $.parseJSON(data);
-                if(type.status == 'success' && type.data.bill_head_type==0){
-                     $('#tblbillheaddetail-no_installment').prop('disabled', false);
-                }
-                 else {
-                     $('#tblbillheaddetail-no_installment').prop('disabled', true);
-                     $('#tblbillheaddetail-no_installment').val('');
-                     $('#tblbillheaddetail-installment_amount').val('');
-                 }
-            },
-        });
-      } else {
-            $('#tblbillheaddetail-no_installment').prop('disabled', true);
-            $('#tblbillheaddetail-no_installment').val('');
-            $('#tblbillheaddetail-installment_amount').val('');
-      }
-    });
+//     $('#tblbillheaddetail-bill_head_code').on('change',function(){
+//     var bill_head_code= $(this).val();
+//     if(bill_head_code !=''){
+//        $.ajax({
+//            type: 'post',
+//            url: '" . Url::to(['/vsp/tbl-bill-head-detail/bill-head-type']) . "',
+//            data: {'bill_head_code' : bill_head_code},            
+//            success: function(data) {
+//                var type = $.parseJSON(data);
+//                if(type.status == 'success' && type.data.bill_head_type==0){
+//                     $('#tblbillheaddetail-no_installment').prop('disabled', false);
+//                }
+//                 else {
+//                     $('#tblbillheaddetail-no_installment').prop('disabled', true);
+//                     $('#tblbillheaddetail-no_installment').val('');
+//                     $('#tblbillheaddetail-installment_amount').val('');
+//                 }
+//            },
+//        });
+//      } else {
+//            $('#tblbillheaddetail-no_installment').prop('disabled', true);
+//            $('#tblbillheaddetail-no_installment').val('');
+//            $('#tblbillheaddetail-installment_amount').val('');
+//      }
+//    });
   
     $('#tblbillheaddetail-no_installment').on('change',function(){
         dispDefBillHead();
