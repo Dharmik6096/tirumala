@@ -198,6 +198,14 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                             'attribute' => 'error_desc',
                             'value' => $model->error_desc,
                             'valueColOptions' => ['style' => 'width:30%']
+                        ]
+                    ]
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'originating_org_type',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],

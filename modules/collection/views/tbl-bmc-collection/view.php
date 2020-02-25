@@ -243,6 +243,14 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         ],
                     ],
                 ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'originating_org_type',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget
