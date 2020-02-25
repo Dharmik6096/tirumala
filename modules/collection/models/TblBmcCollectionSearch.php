@@ -22,7 +22,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
             [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no'], 'safe'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-            [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code'], 'safe']
+            [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type'], 'safe']
         ];
     }
 
@@ -89,7 +89,8 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $query->andFilterWhere(['like', 'tbl_bmc_collection.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_bmc_collection.rtpl', $this->rtpl])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
-                ->andFilterWhere(['like', 'tbl_bmc_collection.customer_code', $this->customer_code]);
+                ->andFilterWhere(['like', 'tbl_bmc_collection.customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'tbl_bmc_collection.originating_org_type', $this->originating_org_type]);
         $query->orderBy(['tbl_bmc_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc.bmc_name' => SORT_ASC, 'tbl_bmc_collection.doc_no' => SORT_ASC, 'tbl_bmc_collection.sample_no' => SORT_ASC]);
         return $dataProvider;
     }

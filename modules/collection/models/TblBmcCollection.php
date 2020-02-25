@@ -189,6 +189,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'qlty_time' => Yii::t('app', 'Sample Time'),
             'tag_1' => Yii::t('app', 'SAP Status'),
             'error_desc' => Yii::t('app', 'Status Desc.'),
+            'originating_org_type' => Yii::t('app', 'Originated At'),
         ];
     }
 

@@ -86,6 +86,7 @@ $attribute = [
                 }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
             ['attribute' => 'route_arrival_time', 'filter' => false, 'visible' => false],
             ['attribute' => 'remarks', 'value' => 'remarks', 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
+            ['attribute' => 'originating_org_type'],
             ['attribute' => 'tag_1', 'value' => function($model) {
                     return Yii::$app->general->getSapStatus($model->tag_1 . $model->tag_2);
                 }, 'filter' => false],
