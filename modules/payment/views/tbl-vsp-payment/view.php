@@ -1,43 +1,215 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
+use app\components\GeneralFunctions;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\payment\models\TblVspPayment */
-
-$this->title = $model->vsp_payment_code;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Vsp Payments'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'VSP Payment');
 ?>
-<div class="tbl-vsp-payment-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="form-grid">
+            <div class="table-responsive">
+                <?php
+                $attributes = [
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'union_code',
+                                'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'mcc_plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'bmc_code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'customer_type',
+                                'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'customer_code',
+                                'label' => Yii::t('app', 'Code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->vsp_payment_code], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->vsp_payment_code], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+                            [
+                                'attribute' => 'customer_ex_code',
+                                'label' => Yii::t('app', 'Code Ex.'),
+                                'value' => Yii::$app->general->getCustomer($model, $model->customer_type, TRUE),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'customer_name',
+                                'value' => Yii::$app->general->getCustomer($model, $model->customer_type),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'payment_cycle_code',
+                                'value' => Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'payment_date',
+                                'value' => Yii::$app->controls->view_date($model->payment_date),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'kg_fat',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'kg_snf',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'total_qty',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'amount',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'addition',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'deduction',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'previous_hold',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'previous_due',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'hold_amount',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'adjust_amount',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'final_pay',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'adjust_remark',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'status',
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
+                ];
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'vsp_payment_code',
-            'society_code',
-            'prev_due',
-            'current_amount',
-            'adjust_amount',
-            'net_payable',
-            'adjust_remark',
-            'payment_cycle_applicabilty_code',
-            'payment_date',
-        ],
-    ]) ?>
-
+                // View file rendering the widget
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'deleteOptions' => [// your ajax delete parameters
+                        'params' => ['id' => 1000, 'kvdelete' => true],
+                    ],
+                    'container' => ['id' => 'kv-demo'],
+                ]);
+                ?>
+            </div>
+        </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Bill Head Detail') ?></h5></div>
+        <div class="form-grid">
+            <?php
+            $attribute = [
+                ['attribute' => 'bill_head_code', 'value' => function($model) {
+                        return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
+                    }
+                ],
+                ['attribute' => 'bill_head_type',
+                    'value' => function($model) {
+                        return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
+                    },],
+                ['attribute' => 'amount'],
+            ];
+            $grid_option = [
+                'id' => 'bill-head-detail-list',
+                'attributes' => $attribute,
+                'active_column' => FALSE,
+            ];
+            Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], FALSE);
+            ?>
+        </div> 
+    </div>
 </div>

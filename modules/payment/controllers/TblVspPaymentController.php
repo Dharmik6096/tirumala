@@ -39,6 +39,26 @@ class TblVspPaymentController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+    public function actionIndex() {
+        $searchModel = new TblVspPaymentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionView($id) {
+        $searchModel = new TblVspPaymentTransactionSearch();
+        $searchModel->vsp_payment_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('view', [
+                    'model' => $this->findModel($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+        ]);
+    }
+
     public function actionCreate() {
         $model = new TblVspPayment();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -76,7 +96,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $cnt++;
                 }
             }
-            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment of ' . $cnt . ' Society adjusted succesfully', 'info']);
+            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment of ' . $cnt . ' ' . Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . '  adjusted succesfully', 'info']);
             if ($transaction !== FALSE && $transaction != 'customRender') {
                 return $this->redirect(['create']);
             }

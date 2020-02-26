@@ -51,7 +51,8 @@ $this->title = 'VSP Payment Process : Step 1';
         <div class="row">
             <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
-                    <?= Yii::$app->controls->save('Next', $model); ?>                
+                    <?= Yii::$app->controls->save('Next', $model); ?>   
+                    <?= Yii::$app->controls->cancel(); ?>
                 </div>
             </div>
         </div>

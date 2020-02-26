@@ -785,6 +785,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select milk Return Type'),
                 'data' => ['0' => Yii::t('app', 'Return Back'), 1 => Yii::t('app', 'Drain')],
             ],
+            'bill_head_type' => [
+                'name' => 'bill_head_type',
+                'prompt' => Yii::t('app', 'Select Head Type'),
+                'data' => [0 => Yii::t('app', 'Addition'), 1 => Yii::t('app', 'Deduction')],
+            ],
         ];
         return $records[$l];
     }

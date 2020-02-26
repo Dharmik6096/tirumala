@@ -32,35 +32,32 @@ use Yii;
  * @property string $updated_by
  * @property string $status
  */
-class TblVspPaymentHistory extends \yii\db\ActiveRecord
-{
+class TblVspPaymentHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vsp_payment_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['operation_type', 'dcs_code', 'union_code', 'adjust_remark', 'created_by', 'updated_by', 'status'], 'string'],
+            [['operation_type', 'dcs_code', 'union_code', 'adjust_remark', 'created_by', 'updated_by', 'status'], 'safe'],
             [['history_created_at', 'created_at', 'updated_at'], 'safe'],
-            [['vsp_payment_code'], 'required'],
-            [['vsp_payment_code', 'payment_cycle_code', 'dcs_payment_cycle_applicabilty_code'], 'integer'],
-            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay'], 'number'],
+            [['vsp_payment_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'customer_code', 'customer_type'], 'safe'],
+            [['vsp_payment_code', 'payment_cycle_code', 'dcs_payment_cycle_applicabilty_code'], 'safe'],
+            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'operation_type' => Yii::t('app', 'Operation Type'),
@@ -88,4 +85,5 @@ class TblVspPaymentHistory extends \yii\db\ActiveRecord
             'status' => Yii::t('app', 'Status'),
         ];
     }
+
 }

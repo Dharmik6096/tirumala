@@ -4,6 +4,12 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_vsp_payment".
@@ -12,7 +18,7 @@ use app\modules\organisation\models\TblDcs;
  * @property string $dcs_code
  * @property string $union_code
  * @property integer $payment_cycle_code
- * @property integer $dcs_payment_cycle_applicabilty_code
+ * @property integer $payment_cycle_applicabilty_code
  * @property string $kg_fat
  * @property string $kg_snf
  * @property string $total_qty
@@ -32,7 +38,7 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblVspPayment extends \app\models\ChildModel {
 
-    public $otp_code, $plant_code, $mcc_plant_code;
+    public $otp_code,$customer_name,$customer_ex_code;
 
     /**
      * @inheritdoc
@@ -47,10 +53,10 @@ class TblVspPayment extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status'], 'safe'],
-            [['payment_cycle_code', 'dcs_payment_cycle_applicabilty_code'], 'safe'],
+            [['payment_cycle_code', 'payment_cycle_applicabilty_code'], 'safe'],
             [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount'], 'safe'],
             [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
-            [['payment_cycle_code', 'customer_type', 'bmc_code'], 'required'],
+            [['payment_cycle_code', 'customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
         ];
     }
 
@@ -62,8 +68,8 @@ class TblVspPayment extends \app\models\ChildModel {
             'vsp_payment_code' => Yii::t('app', 'Vsp Payment Code'),
             'dcs_code' => Yii::t('app', 'Society Code'),
             'union_code' => Yii::t('app', 'Union Code'),
-            'payment_cycle_code' => Yii::t('app', 'Payment Cycle Code'),
-            'dcs_payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
+            'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
+            'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
             'kg_fat' => Yii::t('app', 'Kg Fat'),
             'kg_snf' => Yii::t('app', 'Kg Snf'),
             'total_qty' => Yii::t('app', 'Total Qty'),
@@ -101,12 +107,36 @@ class TblVspPayment extends \app\models\ChildModel {
 
     //relationship with dcs
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
     }
 
-    //relationship with dcs
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
+    }
+
+    //relationship with payment cycle
     public function getPaymentCycleCode() {
         return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type', 'union_code' => 'union_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
     public function getRecords() {
