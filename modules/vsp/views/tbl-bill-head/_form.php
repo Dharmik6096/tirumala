@@ -66,9 +66,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->depend_dropdown('general_formula_code', $model, $form, 'tblbillhead-union_code', '', $model->getAttributeLabel('general_formula_code')); ?>
         <?php // Yii::$app->dropdown->dropdown('general_formula_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('general_formula_code'), false, 'general_formula_code'); ?>
-        <?= Html::activeHiddenInput($model, 'general_formula', ['id' => 'general_formula']); ?>
+        <?= Html::activetextInput($model, 'general_formula', ['id' => 'general_formula']); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
     <div class="col-sm-3 h90">
@@ -119,8 +119,7 @@ $script = "
             $('#replace_value').after('<p id=\"error_message\" class=\"help-block help-block-error\">'+message+'</p>');
         }
         $('#tblbillhead-general_formula_code').on('change',function(e){
-             
-             
+            $('#general_formula').val('');
              if($(this).val()){
              var str=$(this).find(\"option:selected\").text();
              formula=str;

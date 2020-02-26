@@ -493,8 +493,8 @@ class TblHeadLoadController extends \app\controllers\ChildController {
         ]);
     }
 
-    protected function customRedirect() {
-        return $this->redirect(['view', 'id' => $this->model->head_load_code]);
-    }
+//    protected function customRedirect() {
+//        return $this->redirect(['view', 'id' => $this->model->head_load_code]);
+//    }
 
 }

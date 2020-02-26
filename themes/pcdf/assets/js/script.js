@@ -93,7 +93,9 @@ var initDepdropMs;
              alert(value.test(v));
              return value;*/
         });
-
+         $(document).on("cut copy paste", '.number-validate', function (e) {
+            e.preventDefault();
+        });
         var specialKeys = new Array();
         specialKeys.push(8);
         $(".qty-validate").bind("keypress", function (e) {
