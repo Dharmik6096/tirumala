@@ -166,7 +166,7 @@ class TblBillHeadController extends \app\controllers\ChildController {
                     } else if ($model->applicable_for == 'DCS') {
                         return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
                     } else {
-                        return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+                        return Yii::$app->general->getforeignkey($model->mainCustomerCode, 'customer_name');
                     }
                 }],
                 //'dcs_name' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],           

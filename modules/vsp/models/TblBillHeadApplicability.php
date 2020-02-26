@@ -42,7 +42,8 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
             [['wef_date', 'applicable_code'], 'required'],
             [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['applicable_code', 'applicable_for'], 'safe']
+            [['applicable_code', 'applicable_for', 'bmc_code'], 'safe'],
+            [['applicable_code'], 'setBMCCode']
         ];
     }
 
@@ -67,7 +68,7 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
     }
 
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
     public function getUnionCode() {
@@ -78,7 +79,7 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblBillHead::className(), ['bill_head_code' => 'bill_head_code']);
     }
 
-    public function getCustomerMasterCode() {
+    public function getMainCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
     }
 
@@ -96,6 +97,10 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
 
     public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'applicable_code']);
+    }
+
+    public function setBMCCode($attribute, $params) {
+        $this->bmc_code = Yii::$app->general->getCustomer($this, $this->applicable_for, FALSE, TRUE);
     }
 
 }
