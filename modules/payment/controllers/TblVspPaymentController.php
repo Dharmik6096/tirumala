@@ -98,7 +98,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             }
             $transaction = $this->generalModel->saveTransaction($save_model, ['Payment of ' . $cnt . ' ' . Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . '  adjusted succesfully', 'info']);
             if ($transaction !== FALSE && $transaction != 'customRender') {
-                return $this->redirect(['create']);
+                return $this->redirect(['index']);
             }
         }
         $query = $model->getRecords();
