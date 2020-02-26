@@ -528,7 +528,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -775,6 +775,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Status'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'In-Process'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
             ],
+            'source_org_type' => [
+                'name' => 'source_org_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC')],
+            ],
+            'return_type' => [
+                'name' => 'return_type',
+                'prompt' => Yii::t('app', 'Select milk Return Type'),
+                'data' => ['0' => Yii::t('app', 'Return Back'), 1 => Yii::t('app', 'Drain')],
+            ],
         ];
         return $records[$l];
     }
@@ -848,6 +858,7 @@ class DropDown extends Component {
             'app_type' => ['name' => 'app_type', 'fields' => 'operator_type,api_name', 'prompt' => 'Select Type', 'model' => 'TblApiMaster', 'whereCondition' => ['receiver_type' => 'APP_NOTIFICATION']],
             'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
+            'reject_reason' => ['name' => 'rejection_reason_code', 'fields' => 'rejection_reason_code,rejection_reason', 'prompt' => Yii::t('app', 'Select Reject Reason'), 'model' => 'TblRejectionReason'],
         ];
         return $label[$l];
     }
@@ -928,7 +939,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
