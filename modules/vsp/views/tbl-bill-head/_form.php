@@ -66,7 +66,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->depend_dropdown('general_formula_code', $model, $form, 'tblbillhead-union_code', '', $model->getAttributeLabel('general_formula_code')); ?>
         <?php // Yii::$app->dropdown->dropdown('general_formula_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('general_formula_code'), false, 'general_formula_code'); ?>
-        <?= Html::activetextInput($model, 'general_formula', ['id' => 'general_formula']); ?>
+        <?= Html::activeHiddenInput($model, 'general_formula', ['id' => 'general_formula']); ?>
     </div>
     <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
