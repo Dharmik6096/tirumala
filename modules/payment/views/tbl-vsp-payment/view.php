@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
 
-$this->title = Yii::$app->label->title('view', 'VSP Payment');
+$this->title = Yii::$app->label->title('view', 'Vendor Payment');
 ?>
 
 <div class="panel panel-default panel-grid panel-main">

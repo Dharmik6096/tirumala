@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'VSP Payment'));
-$this->params['menu'][] = Yii::$app->controls->add('VSP Payment');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vendor Payment'));
+$this->params['menu'][] = Yii::$app->controls->add('Vendor Payment');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

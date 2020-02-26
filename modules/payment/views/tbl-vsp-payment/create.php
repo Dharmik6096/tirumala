@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 
-$this->title = 'VSP Payment Process : Step 1';
+$this->title = 'Vendor Payment Process : Step 1';
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
