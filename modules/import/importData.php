@@ -80,6 +80,7 @@ class importData extends \yii\base\Module {
             'dpu-password' => ['import_class' => 'TblDpuPasswords', 'mapping' => '0', 'mapping_model' => 'TblDpuPasswords', 'import_main_class' => 'DpuPasswordImportStrategy', 'table_name' => 'TblDpuPasswords', 'fields' => 'dcs_code,AdminPwd,SuperPwd,UserPwd', 'scenario' => 'importCsv'],
             'milk-collection' => ['table_name' => 'tbl_milk_collection', 'fields' => 'bmc_code,dcs_code,member,date_time_of_collection,milk_type_code,shift_code,fat,snf,qty,rtpl,amount', 'default_fields' => 'is_active:1,originating_type:1', 'scenario' => 'importCsv'],
             'bill-head-detail' => ['import_class' => 'tbl_bill_head_detail', 'import_main_class' => 'BillHeadDetailImportStrategy', 'table_name' => 'tbl_bill_head_detail', 'fields' => 'bmc_code,customer_type,customer_code,installment_start_date,bill_head_code,amount,no_installment', 'default_fields' => 'is_active:1,originating_type:1', 'scenario' => 'importCsv'],
+            'vsp-outstanding' => ['table_name' => 'tbl_vsp_outstanding', 'fields' => 'bmc_code,customer_type,customer_code,hold_amount,due_amount', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

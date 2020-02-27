@@ -44,7 +44,7 @@ $form = ActiveForm::begin([
     <div class="clearfix"></div>
 
     <div class="col-sm-2 reset_field">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', TRUE, FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', Yii::t('app', 'Name'), TRUE, FALSE); ?>
     </div>
 
     <div class="col-sm-2 reset_field">

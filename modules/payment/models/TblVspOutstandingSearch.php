@@ -19,7 +19,7 @@ class TblVspOutstandingSearch extends TblVspOutstanding {
         return [
             [['vsp_outstanding_code', 'payment_cycle_code'], 'safe'],
             [['union_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['hold_amount', 'due_amount', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'customer_code'], 'safe'],
+            [['hold_amount', 'due_amount', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'customer_code', 'customer_name'], 'safe'],
         ];
     }
 
@@ -54,14 +54,18 @@ class TblVspOutstandingSearch extends TblVspOutstanding {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['dcsCode']);
-        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_vsp_outstanding', 'tbl_vsp_outstanding', 'tbl_vsp_outstanding');
+
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
 
         // grid filtering conditions
         $query->andFilterWhere([
             'hold_amount' => $this->hold_amount,
             'due_amount' => $this->due_amount,
         ]);
+        $query->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_vsp_outstanding.customer_code', $this->customer_code]);
 
         return $dataProvider;
     }

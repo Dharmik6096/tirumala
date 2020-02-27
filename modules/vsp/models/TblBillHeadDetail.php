@@ -50,7 +50,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
-            [['bill_head_code', 'bmc_code', 'amount', 'customer_code'], 'required'],
+            [['bill_head_code', 'bmc_code', 'amount'], 'required'],
             [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => 'importCsv'],
             [['installment_start_date'], 'required', 'on' => 'importCsv'],
             [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
@@ -67,6 +67,8 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['installment_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['installment_start_date'], 'convertDate', 'on' => ['importCsv']],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv']],
+            [['customer_code'], 'required', 'on' => ['importCsv']]
         ];
     }
 
@@ -92,7 +94,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             'bmc_code' => 'BMC',
             'plant_code' => 'Plant',
             'mcc_plant_code' => 'MCC',
-            'customer_code' => 'Name',
+            'customer_code' => 'Code',
             'customer_type' => 'Type',
         ];
     }

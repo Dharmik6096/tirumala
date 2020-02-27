@@ -128,6 +128,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Head Load'), 'url' => ['/vsp/tbl-head-load/index'], 'active' => ($cntrl == 'tbl-head-load')],
                 ['label' => Yii::t('app', 'Milk Rejection'), 'url' => ['/collection/tbl-milk-reject/index'], 'active' => ($cntrl == 'tbl-milk-reject')],
                 ['label' => Yii::t('app', 'Transit Loss'), 'url' => ['/vsp/tbl-bmc-transit-loss/index'], 'active' => ($cntrl == 'tbl-bmc-transit-loss')],
+                ['label' => Yii::t('app', 'VSP Outstanding'), 'url' => ['/payment/tbl-vsp-outstanding/index'], 'active' => ($cntrl == 'tbl-vsp-outstanding')],
             ],
         ],
         [

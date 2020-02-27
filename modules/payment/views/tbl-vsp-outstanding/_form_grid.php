@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 
+?>
+<?php
+
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -25,22 +28,19 @@ $attribute = [
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type);
         }],
-    ['attribute' => 'bill_head_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
-        }],
-    ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-            return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
-        }, 'filter' => false],
-    ['attribute' => 'no_installment'],
-    ['attribute' => 'amount'],
+    'hold_amount',
+    'due_amount',
 ];
+
 $grid_option = [
-    'id' => 'bill-head-detail-list',
+    'id' => 'vsp-outstanding',
     'attributes' => $attribute,
-    'active_column' => FALSE,
+    'active_column' => false,
     'actions' => [
-        'view' => true,
+        'view' => false,
+        'update' => true,
     ]
 ];
+
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
