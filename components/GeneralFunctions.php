@@ -978,7 +978,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1389,6 +1389,10 @@ class GeneralFunctions extends Component {
             'YE' => Yii::t('app', 'Error'),
         ];
         return !empty($data[$label]) ? $data[$label] : '';
+    }
+
+    public function getStaticDropdownVal($flag, $model, $field) {
+        return !empty(Yii::$app->dropdown->getRecords($flag)['data'][$model->{$field}]) ? Yii::$app->dropdown->getRecords($flag)['data'][$model->{$field}] : $model->{$field};
     }
 
 }

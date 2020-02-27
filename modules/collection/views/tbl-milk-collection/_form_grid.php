@@ -85,8 +85,12 @@ $attribute = [
 //    ['attribute' => 'converted_qty_mode'],
 //    ['attribute' => 'milk_analyser_type_code', 'filter' => true],
 //    ['attribute' => 'ws_code', 'filter' => true],
-            ['attribute' => 'type_of_data_receive'],
+            ['attribute' => 'type_of_data_receive', 'visible' => false],
             ['attribute' => 'originating_org_type'],
+            ['attribute' => 'originating_type', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('originating_type', $searchModel, 'originating_type'),
+                'value' => function ($model) {
+                    return Yii::$app->general->getStaticDropdownVal('originating_type', $model, 'originating_type');
+                },],
             ['attribute' => 'tag_1', 'value' => function($model) {
                     return Yii::$app->general->getSapStatus($model->tag_1 . $model->tag_2);
                 }, 'filter' => false],

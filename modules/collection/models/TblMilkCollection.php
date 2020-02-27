@@ -173,6 +173,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'tag_1' => Yii::t('app', 'SAP Status'),
             'error_desc' => Yii::t('app', 'Status Desc.'),
             'originating_org_type' => Yii::t('app', 'Originated At'),
+            'originating_type'=>Yii::t('app', 'Originating Type'),
         ];
     }
 

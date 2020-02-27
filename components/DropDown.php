@@ -234,8 +234,8 @@ class DropDown extends Component {
 
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly);
-        }
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly);
+    }
 
     public function bmcDropdown($model, $form, $depends, $name = 'bmc_code', $islable = '', $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
@@ -796,6 +796,11 @@ class DropDown extends Component {
                 'name' => 'loss_applied_to',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'VSP'), 2 => Yii::t('app', 'TPT')],
+            ],
+            'originating_type' => [
+                'name' => 'originating_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Create'), 1 => Yii::t('app', 'Import'), 2 => Yii::t('app', 'Sync'), 3 => Yii::t('app', 'Auto Entry')],
             ],
         ];
         return $records[$l];

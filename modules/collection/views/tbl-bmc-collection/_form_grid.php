@@ -87,6 +87,10 @@ $attribute = [
             ['attribute' => 'route_arrival_time', 'filter' => false, 'visible' => false],
             ['attribute' => 'remarks', 'value' => 'remarks', 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
             ['attribute' => 'originating_org_type'],
+            ['attribute' => 'originating_type', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('originating_type', $searchModel, 'originating_type'),
+                'value' => function ($model) {
+                    return Yii::$app->general->getStaticDropdownVal('originating_type', $model, 'originating_type');
+                },],
             ['attribute' => 'tag_1', 'value' => function($model) {
                     return Yii::$app->general->getSapStatus($model->tag_1 . $model->tag_2);
                 }, 'filter' => false],
