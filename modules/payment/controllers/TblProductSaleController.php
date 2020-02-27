@@ -337,7 +337,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $installmentModel->dcs_code = $model->dcs_code;
                     $installmentModel->union_code = $model->union_code;
                     $installmentModel->main_amount = $model->amount_due;
-                    $installmentModel->installment_amount = $model->amount;
+                    $installmentModel->installment_amount = $model->amount_due;
                     $installmentModel->installment_status = 0;
                     $installmentModel->is_active = 1;
                     $installmentModel->payment_cycle_applicabilty_code = $appCycleAppModelData->payment_cycle_applicabilty_code;
