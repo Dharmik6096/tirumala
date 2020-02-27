@@ -7,13 +7,20 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 
 $this->title = 'Process for Payment Disburse';
+
+if (!empty($searchModel)) {
+    $bmc_info = Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_name') . ' > ' .
+            Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
+            Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date'))
+    ;
+}
 ?>
 <div class="tbl-member-payment-index">
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">
-            <?= 'VSP Payment Disburse : Step 2' ?> 
+            <?= 'Vednor Payment Disburse : Step 2' . ' (' . $bmc_info . ')' ?> 
             <div id="total-payment">
-                Total Payable :: 0.00
+                Total Payable :: <?= $pay_amount ?>
             </div>
         </div>
         <div class="panel-body">
@@ -26,30 +33,39 @@ $this->title = 'Process for Payment Disburse';
                             'action' => Url::to(['bank-payment'])
                 ]);
                 ?>   
-                <?= Html::activeHiddenInput($searchModel, 'dcs_payment_cycle_code'); ?>
+                <?= Html::activeHiddenInput($searchModel, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($searchModel, 'union_code'); ?>
-                <?php foreach ($searchModel->dcs_code as $dcs_code) { ?>
-                    <?= Html::activeHiddenInput($searchModel, 'dcs_code[]', ['value' => $dcs_code]); ?>
-                <?php } ?>
+                <?= Html::activeHiddenInput($searchModel, 'bmc_code'); ?>
+                <?= Html::activeHiddenInput($searchModel, 'customer_type'); ?>
+                <?php //foreach ($searchModel->dcs_code as $dcs_code) { ?>
+                <?php //Html::activeHiddenInput($searchModel, 'dcs_code[]', ['value' => $dcs_code]); ?>
+                <?php //} ?>
                 <?php
                 $attribute = [
-                    ['class' => 'kartik\grid\CheckboxColumn',
-                        'rowSelectedClass' => GridView::TYPE_SUCCESS,
-                        'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                        'checkboxOptions' => function($model) {
-                    $disabled = FALSE;
-                    if ($model->ifsc == '' || $model->bank_account_no == '') {
-                        $disabled = true;
-                    } else if ($model->is_verified == 2) {
-                        $disabled = true;
-                    } else if (Yii::$app->session->get('makerChecker') == 1 && $model->is_verified == 0) {
-                        $disabled = true;
-                    }
-                    return ['disabled' => $disabled, 'class' => 'checkbox', 'value' => $model['dcs_code']];
-                }],
-                    ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name',
-                        'label' => Yii::t('app', 'DCS')
-                    ],
+                    /* ['class' => 'kartik\grid\CheckboxColumn',
+                      'rowSelectedClass' => GridView::TYPE_SUCCESS,
+                      'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+                      'checkboxOptions' => function($model) {
+                      $disabled = FALSE;
+                      if ($model->ifsc == '' || $model->bank_account_no == '') {
+                      $disabled = true;
+                      } else if ($model->is_verified == 2) {
+                      $disabled = true;
+                      } else if (Yii::$app->session->get('makerChecker') == 1 && $model->is_verified == 0) {
+                      $disabled = true;
+                      }
+                      return ['disabled' => $disabled, 'class' => 'checkbox', 'value' => $model['dcs_code']];
+                      }],
+                      ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name',
+                      'label' => Yii::t('app', 'DCS')
+                      ], */
+                    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
+                    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                            return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
+                        }, 'filter' => false],
+                    ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+                            return Yii::$app->general->getCustomer($model, $model->customer_type);
+                        }],
                     ['attribute' => 'is_verified',
                         'value' => function($model) {
                             return ($model->is_verified == 0) ? 'Not Verified' : ($model->is_verified == 1 ? 'Verified' : 'Rejected');
@@ -107,7 +123,7 @@ $this->title = 'Process for Payment Disburse';
                 ?>
                 <div class="clearfix"></div>
                 <div class="col-md-12" >    
-                    <?= Html::button(Yii::t('app', 'VSP Payment'), ['class' => 'btn btn-primary disburse', 'name' => 'member']); ?>
+                    <?= Html::button(Yii::t('app', 'Vendor Payment'), ['class' => 'btn btn-primary disburse', 'name' => 'member']); ?>
                     <?= Yii::$app->controls->custombutton('Cancel', 'payment-disburse'); ?> 
                 </div>
                 <?= $this->render('/tbl-member-payment/verify-otp', ['model' => $searchModel, 'form' => $form]) ?>
@@ -121,7 +137,7 @@ $this->title = 'Process for Payment Disburse';
 $script = "
    $(document).ready(function(){ 
      $('.kv-panel-before').hide();
-     $('.select-on-check-all').attr('checked','checked');
+    /* $('.select-on-check-all').attr('checked','checked');
      $('.checkbox').not(':disabled').attr('checked','checked');     
      SumAmount();
      $('.select-on-check-all').change(function() {
@@ -129,7 +145,7 @@ $script = "
       });
          $('.checkbox').change(function() {
      SumAmount();
-      });
+      }); */
  function SumAmount()
  {
  var total = parseFloat(0.00);
@@ -144,8 +160,9 @@ $script = "
  }      
     });
    $('.disburse').on('click',function(){
-    $('#error-summary').hide();
-      sendotp();
+   $('#otp-form').submit();
+   // $('#error-summary').hide();
+      //sendotp();
     });
   function sendotp(){
           $.ajax({

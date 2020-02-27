@@ -19,7 +19,7 @@ class TblVspPaymentSearch extends TblVspPayment {
      */
     public function rules() {
         return [
-            [['vsp_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'payment_date', 'from_date', 'to_date'], 'safe'],
+            [['vsp_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'payment_date', 'from_date', 'to_date', 'previous_hold', 'previous_due', 'hold_amount'], 'safe'],
             [['dcs_code', 'union_code', 'adjust_remark', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'customer_code', 'customer_type', 'customer_name', 'customer_ex_code'], 'safe'],
             [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay'], 'number'],
         ];
@@ -72,20 +72,21 @@ class TblVspPaymentSearch extends TblVspPayment {
         }
         $query->andFilterWhere(['=', 'CAST(tbl_vsp_payment.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
         // grid filtering conditions
-        $query->andFilterWhere([
-            'kg_fat' => $this->kg_fat,
-            'kg_snf' => $this->kg_snf,
-            'total_qty' => $this->total_qty,
-            'total_loss' => $this->total_loss,
-            'amount' => $this->amount,
-            'addition' => $this->addition,
-            'deduction' => $this->deduction,
-            'net_payable' => $this->net_payable,
-            'adjust_amount' => $this->adjust_amount,
-            'final_pay' => $this->final_pay,
-        ]);
 
-        $query->andFilterWhere(['like', 'adjust_remark', $this->adjust_remark])
+        $query->andFilterWhere(['like', 'kg_fat', $this->kg_fat])
+                ->andFilterWhere(['like', 'kg_snf', $this->kg_snf])
+                ->andFilterWhere(['like', 'total_qty', $this->total_qty])
+                ->andFilterWhere(['like', 'total_loss', $this->total_loss])
+                ->andFilterWhere(['like', 'amount', $this->amount])
+                ->andFilterWhere(['like', 'addition', $this->addition])
+                ->andFilterWhere(['like', 'deduction', $this->deduction])
+                ->andFilterWhere(['like', 'net_payable', $this->net_payable])
+                ->andFilterWhere(['like', 'adjust_amount', $this->adjust_amount])
+                ->andFilterWhere(['like', 'final_pay', $this->final_pay])
+                ->andFilterWhere(['like', 'previous_hold', $this->previous_hold])
+                ->andFilterWhere(['like', 'previous_due', $this->previous_due])
+                ->andFilterWhere(['like', 'hold_amount', $this->hold_amount])
+                ->andFilterWhere(['like', 'adjust_remark', $this->adjust_remark])
                 ->andFilterWhere(['like', 'tbl_vsp_payment.customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
                 ->andFilterWhere(['like', 'status', $this->status]);

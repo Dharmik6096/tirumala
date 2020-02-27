@@ -9,7 +9,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 Url::remember();
 $this->title = $title;
 ?>
-<div class="tbl-member-payment-index">
+<div class="tbl-vsp-payment-index">
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">
             <?= $this->title; ?>           

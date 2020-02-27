@@ -173,21 +173,19 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
-        $query = [];
-        if (!empty($model->dcs_payment_cycle_code)) {
-            $query = $model->find()->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected']])
-                            ->andWhere(['>', 'final_pay', 0])
-                            ->joinWith(['dcsCode'])
-                            ->asArray()->all();
-        }
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $query,
+        $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
+                    'bmc_code' => $model->bmc_code,
+                    'customer_type' => $model->customer_type,
+                    'status' => ['processed', 'rejected']])
+                ->andWhere(['>', 'final_pay', 0]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
             'pagination' => false
         ]);
         return $this->render('disburse_payment', [
                     'searchModel' => $model,
                     'dataProvider' => $dataProvider,
-                    'title' => 'VSP Payment Disburse : Step 1'
+                    'title' => 'Vendor Payment Disburse : Step 1'
         ]);
     }
 
@@ -195,60 +193,69 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         if (Yii::$app->request->post()) {
             $model = new TblVspPayment();
-            if (isset($_REQUEST['selection'])) {
-                $model->load(Yii::$app->request->post());
-                if (!empty($model->dcs_payment_cycle_code)) {
-                    if (Yii::$app->request->post('flag') == 'vsp') {
-                        $model->dcs_code = Yii::$app->request->post('selection');
-                        $query = $model->find()->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'dcs_code' => $model->dcs_code])
-                                ->all();
+            //   if (isset($_REQUEST['selection'])) {
+            $model->load(Yii::$app->request->post());
+            if (!empty($model->payment_cycle_code)) {
+                if (Yii::$app->request->post('flag') == 'vsp') {
+                    //  $model->dcs_code = Yii::$app->request->post('selection');
+                    $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
+                                'bmc_code' => $model->bmc_code,
+                                'customer_type' => $model->customer_type,
+                                'status' => ['processed', 'rejected']])
+                            ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
+                            ->all();
 
-                        if (Yii::$app->session->get('makerChecker') == 1) {
-                            $payment_cnt = $model->find()->select(['dcs_code', 'final_pay' => 'round(final_pay,0)'])->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'dcs_code' => $model->dcs_code])
-                                    ->andWhere(['<>', 'ifsc', ''])->andWhere(['is not', 'ifsc', NULL])
-                                    ->andWhere(['<>', 'bank_account_no', ''])->andWhere(['is not', 'bank_account_no', NULL])
-                                    ->andWhere(['is_verified' => [1]])
-                                    ->asArray()
-                                    ->all();
-                        } else {
-                            $payment_cnt = $model->find()->select(['dcs_code', 'final_pay' => 'round(final_pay,0)'])->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'dcs_code' => $model->dcs_code])
-                                    ->andWhere(['<>', 'ifsc', ''])->andWhere(['is not', 'ifsc', NULL])
-                                    ->andWhere(['<>', 'bank_account_no', ''])->andWhere(['is not', 'bank_account_no', NULL])
-                                    ->andWhere(['is_verified' => [0, 1]])
-                                    ->asArray()
-                                    ->all();
-                        }
-                        $pay_cnt = count($payment_cnt);
-                        $pay_amout = array_sum(array_column($payment_cnt, 'final_pay'));
-
-                        $dataProvider = new ArrayDataProvider([
-                            'allModels' => $query,
-                            'pagination' => FALSE
-                        ]);
-
-                        $tot_cnt = count($query);
-                        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                            'message' => 'Out of (<b>' . $tot_cnt . '</b>) VSP Payment of (<b>' . $pay_cnt . '</b>)  VSP will be only done.<br/>Total Payable :: <b>' . $pay_amout . '</b>']);
-                        return $this->render('confirm-payment', [
-                                    'searchModel' => $model,
-                                    'dataProvider' => $dataProvider,
-                        ]);
-                    } else {
-                        if ($this->exportCSV($model)) {
-                            return $this->redirect(\yii\helpers\Url::previous());
-                        }
+                    /*   if (Yii::$app->session->get('makerChecker') == 1) {
+                      $payment_cnt = $model->find()->select(['dcs_code', 'final_pay' => 'round(final_pay,0)'])->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'dcs_code' => $model->dcs_code])
+                      ->andWhere(['<>', 'ifsc', ''])->andWhere(['is not', 'ifsc', NULL])
+                      ->andWhere(['<>', 'bank_account_no', ''])->andWhere(['is not', 'bank_account_no', NULL])
+                      ->andWhere(['is_verified' => [1]])
+                      ->asArray()
+                      ->all();
+                      } else {
+                      $payment_cnt = $model->find()->select(['dcs_code', 'final_pay' => 'round(final_pay,0)'])->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'dcs_code' => $model->dcs_code])
+                      ->andWhere(['<>', 'ifsc', ''])->andWhere(['is not', 'ifsc', NULL])
+                      ->andWhere(['<>', 'bank_account_no', ''])->andWhere(['is not', 'bank_account_no', NULL])
+                      ->andWhere(['is_verified' => [0, 1]])
+                      ->asArray()
+                      ->all();
+                      } */
+                    $pay_cnt = count($query);
+                    $pay_amount = array_sum(array_column($query, 'final_pay'));
+                    $dataProvider = new ArrayDataProvider([
+                        'allModels' => $query,
+                        'pagination' => FALSE
+                    ]);
+                    $tot_cnt = count($query);
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                        'message' => 'Out of (<b>' . $tot_cnt . '</b>) Vendor Payment of (<b>' . $pay_cnt . '</b>)  Vendor will be only done.<br/>Total Payable :: <b>' . $pay_amount . '</b>']);
+                    return $this->render('confirm-payment', [
+                                'pay_amount' => $pay_amount,
+                                'searchModel' => $model,
+                                'dataProvider' => $dataProvider,
+                    ]);
+                } else {
+                    if ($this->exportCSV($model)) {
+                        return $this->redirect(\yii\helpers\Url::previous());
                     }
                 }
-            } else {
-                return $this->redirect(\yii\helpers\Url::previous());
             }
+//            } else {
+//                return $this->redirect(\yii\helpers\Url::previous());
+//            }
         }
     }
 
     protected function exportCSV($model) {
         $newModel = new TblVspPayment();
-        $query = $newModel->find()->where(['dcs_payment_cycle_code' => $model->dcs_payment_cycle_code, 'status' => ['processed', 'rejected'], 'tbl_vsp_payment.dcs_code' => $_REQUEST['selection']])
-                ->joinWith(['dcsCode'])
+        $query = $newModel->find()->where(['tbl_vsp_payment.payment_cycle_code' => $model->payment_cycle_code,
+                    'tbl_vsp_payment.bmc_code' => $model->bmc_code,
+                    'tbl_vsp_payment.customer_type' => $model->customer_type,
+                    'tbl_vsp_payment.status' => ['processed', 'rejected'],
+                        // 'tbl_vsp_payment.dcs_code' => $_REQUEST['selection']
+                ])
+                ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
+                ->joinWith(['dcsCode', 'mainCustomerCode'])
                 ->all();
         $header = [
             'mime' => 'application/csv',
@@ -264,8 +271,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                         \PHPExcel_Style_NumberFormat::FORMAT_TEXT
         );
         $rowCount = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Society Code');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Society Name');
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Vendor Code');
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Vendor Name');
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Account No');
         $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Bank');
         $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Branch');
@@ -277,8 +284,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         foreach ($query as $row) {
             if ($row->final_pay > 0) {
                 $rowCount++;
-                $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->dcs_code);
-                $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, $row->dcsCode->dcs_name);
+                $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
+                $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
                 $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, '="' . $row->bank_account_no . '"');
                 $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->bank_name);
                 $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, $row->branch_name);
@@ -302,9 +309,54 @@ class TblVspPaymentController extends \app\controllers\ChildController {
     public function actionBankPayment() {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->post());
-        $model->dcs_code = Yii::$app->request->post('selection');
-        $this->exportTxt($model);
-        return $this->redirect(['payment-disburse']);
+        // $model->dcs_code = Yii::$app->request->post('selection');
+        $this->LockBilling($model);
+        return $this->redirect(['index']);
+    }
+
+    protected function LockBilling($model) {
+        $save_model = [];
+        $newModel = new TblVspPayment();
+        $query = $newModel->find()->where([
+                    'payment_cycle_code' => $model->payment_cycle_code,
+                    'tbl_vsp_payment.bmc_code' => $model->bmc_code,
+                    'tbl_vsp_payment.customer_type' => $model->customer_type,
+                    'status' => ['processed', 'rejected'],
+                ])
+                ->all();
+        $PaymentApp = TblPaymentCycleApplicability::find()
+                ->where(['payment_cycle_code' => $model->payment_cycle_code,
+                    'applicable_code' => $model->bmc_code,
+                    'applicable_for' => 'BMC',
+                    'applicable_type' => $model->customer_type,
+                ])
+                ->one();
+        if (!empty($PaymentApp)) {
+            $PaymentApp->billing_lock_bmc = 1;
+            $save_model[] = $PaymentApp;
+        }
+        foreach ($query as $data) {
+            $outstanding = TblVspOutstanding::find()->where([
+                        'customer_type' => $data->customer_type,
+                        'customer_code' => $data->customer_code
+                    ])->one();
+            if (empty($outstanding)) {
+                $outstanding = new TblVspOutstanding();
+                $outstanding->attributes = $data->attributes;
+            } else {
+                $oshistoryModel = new TblVspOutstandingHistory();
+                Yii::$app->operation->history($outstanding, $oshistoryModel, UPDATE);
+                $save_model[] = $oshistoryModel;
+            }
+            // $outstanding->scenario = 'payment';
+            $outstanding->payment_cycle_code = $data->payment_cycle_code;
+            $outstanding->hold_amount = $data->hold_amount;
+            $outstanding->due_amount = $data->adjust_amount;
+            $save_model[] = $outstanding;
+            $data->status = 'sent';
+            $save_model[] = $data;
+            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+        }
     }
 
     protected function exportTxt($model) {
