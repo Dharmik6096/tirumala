@@ -41,11 +41,12 @@ class TblVspOutstanding extends \app\models\ChildModel {
             [['payment_cycle_code'], 'integer'],
             [['hold_amount', 'due_amount'], 'number'],
             [['created_at', 'updated_at', 'is_active', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['importCsv']],
-            [['union_code'], 'required', 'on' => 'importCsv'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['createPortal']],
+            [['union_code'], 'required', 'on' => ['importCsv']],
             [['hold_amount', 'due_amount'], 'default', 'value' => '0'],
-            [['hold_amount', 'due_amount'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            [['hold_amount', 'due_amount'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['createPortal', 'importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
         ];
     }
@@ -67,7 +68,7 @@ class TblVspOutstanding extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'plant_code' => Yii::t('app', 'Plant'),
-            'customer_code' => Yii::t('app', 'Code'),
+            'customer_code' => Yii::t('app', 'Name'),
             'customer_type' => Yii::t('app', 'Type'),
         ];
     }
