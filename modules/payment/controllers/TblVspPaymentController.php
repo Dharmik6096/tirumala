@@ -174,10 +174,10 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
         $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
-                    'bmc_code' => $model->bmc_code,
-                    'customer_type' => $model->customer_type,
-                    'status' => ['processed', 'rejected']])
-                ->andWhere(['>', 'final_pay', 0]);
+            'bmc_code' => $model->bmc_code,
+            'customer_type' => $model->customer_type,
+            'status' => ['processed', 'rejected']]);
+        //  ->andWhere(['>', 'final_pay', 0]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false
@@ -202,7 +202,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                                 'bmc_code' => $model->bmc_code,
                                 'customer_type' => $model->customer_type,
                                 'status' => ['processed', 'rejected']])
-                            ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
+                            // ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
                             ->all();
 
                     /*   if (Yii::$app->session->get('makerChecker') == 1) {
@@ -254,7 +254,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     'tbl_vsp_payment.status' => ['processed', 'rejected'],
                         // 'tbl_vsp_payment.dcs_code' => $_REQUEST['selection']
                 ])
-                ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
+                // ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
                 ->joinWith(['dcsCode', 'mainCustomerCode'])
                 ->all();
         $header = [
@@ -282,7 +282,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'Final Amount');
         $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjsut Remarks');
         foreach ($query as $row) {
-            if ($row->final_pay > 0) {
+           // if ($row->final_pay > 0) {
                 $rowCount++;
                 $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
                 $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
@@ -294,7 +294,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->adjust_amount);
                 $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
                 $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
-            }
+          //  }
         }
         $fileName = "payment_disburse_vsp." . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
