@@ -265,7 +265,7 @@ class TblProductSale extends \app\models\ChildModel {
                 }
                 $modelData = $model->find()
                         ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                        ->where(['between', 'date_time_of_collection', date('Y-m-d H:i:s', strtotime($modelData->from_date)), date('Y-m-d H:i:s', strtotime($modelData->to_date))])
+                        ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
                         ->andWhere($collWhere)
                         ->one();
                 $creditAmount = 0;
