@@ -42,9 +42,9 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
     </div>
     <div class="clearfix"></div>
-
+   
     <div class="col-sm-2 reset_field">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', Yii::t('app', 'Name'), TRUE, FALSE); ?>
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE); ?>
     </div>
 
     <div class="col-sm-2 reset_field">
