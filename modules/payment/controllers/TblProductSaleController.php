@@ -310,17 +310,17 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $detailModel->load(Yii::$app->request->post());
             $model->product_sale_code = (String) $model->getCode();
             $detailModel->product_sale_code = $model->product_sale_code;
+            $model->sale_type = 'DCS';
+            $saleDate = date('Y-m-d', strtotime($model->sale_date_time));
+            $model->sale_date_time = $saleDate;
             if ($model->validate() && $detailModel->validate()) {
                 $master = [];
                 $child = [];
-                $saleDate = date('Y-m-d', strtotime($model->sale_date_time));
-                $model->sale_date_time = $saleDate;
                 $appCycleAppModel = new TblPaymentCycleApplicability();
                 $appCycleAppModel->applicable_type = $model->customer_type;
                 $appCycleAppModel->applicable_code = $model->bmc_code;
                 $appCycleAppModel->applicable_for = 'BMC';
                 $appCycleAppModelData = $appCycleAppModel->getApplicablePaymentCycle($saleDate);
-                $model->sale_type = 'DCS';
                 $model->other_amount = 0;
                 $model->paid_amount = $model->sale_mode == 1 ? 0 : $model->amount_due;
                 $model->is_installment = $model->sale_mode;

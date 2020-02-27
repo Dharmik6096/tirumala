@@ -11,6 +11,8 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\collection\models\TblMilkCollection;
+use app\modules\collection\models\TblBmcCollection;
 
 /**
  * This is the model class for table "tbl_product_sale".
@@ -237,6 +239,43 @@ class TblProductSale extends \app\models\ChildModel {
             if (!empty($modelData)) {
                 if ($modelData->data_lock_bmc == 1) {
                     $this->addError($attribute, "Payment Cycle is locked for Sale Date.");
+                }
+                $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                $saledAmount = 0;
+                $where = [];
+                $where = ['sale_type' => $this->sale_type, 'sale_mode' => $this->sale_mode, 'customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
+                if (strtolower($this->sale_type) == 'member') {
+                    $where['member_code'] = $this->member_code;
+                }
+                $data = $this->find()
+                        ->select(['amount_due' => 'ISNULL(SUM(ISNULL(amount_due, 0)),0)'])
+                        ->where(['between', 'cast(sale_date_time as date)', $fromDate, $toDate])
+                        ->andWhere($where)
+                        ->one();
+                if (!empty($data->amount_due)) {
+                    $saledAmount = $data->amount_due;
+                }
+                $model = new TblBmcCollection();
+                $collWhere = [];
+                $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
+                if (strtolower($this->sale_type) == 'member') {
+                    $model = new TblMilkCollection();
+                    $collWhere = ['member_code' => $this->member_code];
+                }
+                $modelData = $model->find()
+                        ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                        ->where(['between', 'cast(date_time_of_collection as date)', $modelData->from_date, $modelData->to_date])
+                        ->andWhere($collWhere)
+                        ->one();
+                $creditAmount = 0;
+                if (!empty($modelData->amount)) {
+                    $creditAmount = $modelData->amount;
+                }
+                $availableCredit = $creditAmount - $saledAmount;
+                if ($this->amount_due > $availableCredit) {
+                    $this->addError('amount_due', "Available Credit Limit is " . $availableCredit);
+                    return false;
                 }
             } else {
                 $this->addError($attribute, "Payment Cycle aplicability not available for Sale Date.");

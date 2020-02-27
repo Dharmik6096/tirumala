@@ -272,12 +272,9 @@ class DropDown extends Component {
                         var fieldName = '" . strtolower($name) . "';
                         $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                             var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
-                             if(length == 0) {
-                                $('#'+modelname+'-'+fieldName).val('DCS');
-                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();  
-                                 $('#'+modelname+'-'+fieldName).trigger('select2:select');
-                                $('#'+modelname+'-'+fieldName).trigger('change');
-                            }else if(length == 1) {
+                            if(length == 0) {
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+                            } else if(length == 1) {
                                 $('#'+modelname+'-'+fieldName).val('DCS');
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
                                 $('#'+modelname+'-'+fieldName).trigger('change');

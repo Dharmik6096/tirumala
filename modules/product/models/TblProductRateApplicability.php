@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\payment\models\TblProductSaleDetails;
 
 /**
  * This is the model class for table "tbl_product_rate_applicability".
@@ -166,6 +167,18 @@ class TblProductRateApplicability extends \app\models\ChildModel {
             return $applicable_code;
         }
         return true;
+    }
+
+    public function getProductSaleDetails() {
+        return $this->hasOne(TblProductSaleDetails::className(), ['rate_app_code' => 'product_rate_applicability_code']);
+    }
+
+    public function allowDelete() {
+        if (!empty($this->productSaleDetails)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

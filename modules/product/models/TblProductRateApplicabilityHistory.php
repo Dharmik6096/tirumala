@@ -44,8 +44,7 @@ class TblProductRateApplicabilityHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['id'], 'required'],
-                [['id', 'product_code', 'originating_type', 'is_member_rate'], 'safe'],
+                [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
                 [['rate_app_code', 'created_by', 'updated_by', 'dcs_code', 'product_rate_code', 'union_code', 'operation_type', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['created_at', 'updated_at', 'wef_date', 'history_created_at'], 'safe'],
                 [['rate', 'rate_two'], 'safe'],

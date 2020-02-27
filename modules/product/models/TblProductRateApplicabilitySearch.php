@@ -56,6 +56,7 @@ class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->andFilterWhere(['product_rate_code' => $this->product_rate_code]);
         if (!empty($this->wef_date))
             $query->andFilterWhere(['like', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]);
 

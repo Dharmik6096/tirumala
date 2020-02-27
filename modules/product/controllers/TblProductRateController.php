@@ -13,6 +13,7 @@ use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\product\models\TblProductRateApplicabilitySearch;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\product\models\TblProductRateApplicabilityHistory;
 
 /**
  * TblProductRateController implements the CRUD actions for TblProductRate model.
@@ -174,6 +175,7 @@ class TblProductRateController extends \app\controllers\ChildController {
                 }],
         ];
         $appModel->dcs_filters = $value;
+        $appModel->actions = ['delete' => ['option' => 'product_rate_applicability_code,product_rate_applicability_code,tbl-product-rate/delete-applicability,allowDelete()']];
 
         return $appModel->createApp();
     }
@@ -251,6 +253,16 @@ class TblProductRateController extends \app\controllers\ChildController {
             $appModel->dcs_code = $dl;
             array_push($save_mode, $appModel);
         }
+    }
+
+    public function actionDeleteApplicability() {
+        $model = new TblProductRateApplicability();
+        $model = $model->findOne(Yii::$app->request->post('id'));
+        $historyModel = new TblProductRateApplicabilityHistory();
+        Yii::$app->operation->history($model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }
