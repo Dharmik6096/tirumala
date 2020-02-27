@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 
 $this->title = 'Process for Payment Disburse';
-
+$bmc_info = '';
 if (!empty($searchModel)) {
     $bmc_info = Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_name') . ' > ' .
             Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .

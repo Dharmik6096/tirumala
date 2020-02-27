@@ -14,12 +14,10 @@ $tot_amt = array_sum(array_map(function($array) {
             return $array['final_pay'];
         }, $array));
 
-if (!empty($array)) {
-    $bmc_info = Yii::$app->general->getforeignkey($array[0]->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($array[0]->bmcCode, 'bmc_name') . ' > ' .
-            Yii::$app->general->getforeignkey($array[0]->customerType, 'customer_desc') . ' > ' .
-            Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'))
-    ;
-}
+
+$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
+        Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
+        Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">      
