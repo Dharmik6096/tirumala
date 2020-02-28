@@ -34,7 +34,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->customer_code($model, $form, 'tblvspoutstanding-bmc_code,tblvspoutstanding-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE, $readonly); ?>
     </div>
-    <div class="clearfix"></div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, FALSE, FALSE, $model->getAttributeLabel('transaction_date')); ?>
+    </div>
     <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'hold_amount')->textInput() ?>
     </div>

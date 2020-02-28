@@ -117,8 +117,10 @@ class TblBillHead extends \app\models\ChildModel {
                 ->where(['is_active' => 1, 'is_default' => 0, 'apl.union_code' => $union, 'apl.applicable_for' => $type, 'apl.applicable_code' => $code])
                 ->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
         $list = $query->all();
-      
-        return \yii\helpers\ArrayHelper::map($list, 'bill_head_code', 'bill_head_name');
+
+        return \yii\helpers\ArrayHelper::map($list, 'bill_head_code', function($data) {
+                    return isset($data->bill_head_type) ? $data->bill_head_name . ' (' . Yii::$app->dropdown->getRecords('calc_type')['data'][$data->bill_head_type] . ')' : $data->bill_head_name;
+                });
     }
 
 }

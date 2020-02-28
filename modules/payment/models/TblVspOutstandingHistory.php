@@ -40,7 +40,7 @@ class TblVspOutstandingHistory extends \yii\db\ActiveRecord {
             [['dcs_code', 'union_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
             [['hold_amount', 'due_amount', 'union_code', 'dcs_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
+            [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'transaction_date'], 'safe']
         ];
     }
 

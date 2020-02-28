@@ -12,14 +12,16 @@ use app\modules\payment\models\TblVspOutstanding;
  */
 class TblVspOutstandingSearch extends TblVspOutstanding {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['vsp_outstanding_code', 'payment_cycle_code'], 'safe'],
+            [['vsp_outstanding_code', 'payment_cycle_code', 'from_date', 'to_date'], 'safe'],
             [['union_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['hold_amount', 'due_amount', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'customer_code', 'customer_name'], 'safe'],
+            [['hold_amount', 'due_amount', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'customer_code', 'customer_name', 'transaction_date'], 'safe'],
         ];
     }
 
@@ -59,6 +61,18 @@ class TblVspOutstandingSearch extends TblVspOutstanding {
 
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
 
+        if (!empty($this->transaction_date))
+            $query->andFilterWhere(['=', 'transaction_date', date('Y-m-d', strtotime($this->transaction_date))]);
+        // grid filtering conditions
+
+
+        if (!empty($this->from_date)) {
+            $query->andFilterWhere(['>=', 'transaction_date', date('Y-m-d', strtotime($this->from_date))]);
+        }
+
+        if (!empty($this->to_date)) {
+            $query->andFilterWhere(['<=', 'transaction_date', date('Y-m-d', strtotime($this->to_date))]);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'hold_amount' => $this->hold_amount,

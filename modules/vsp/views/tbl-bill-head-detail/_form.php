@@ -42,7 +42,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
     </div>
     <div class="clearfix"></div>
-   
+
     <div class="col-sm-2 reset_field">
         <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE); ?>
     </div>
@@ -177,7 +177,7 @@ $script = "
             $('#tblbillheaddetail-installment_amount').val('');
         }
     }
-     $(document).on('change', '#tblbillheaddetail-bmc_code', function() {  
+     $(document).on('change', '#tblbillheaddetail-payment_cycle_code', function() {  
         reloadGrid();
     });
     function reloadGrid(){

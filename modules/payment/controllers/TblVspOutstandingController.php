@@ -37,6 +37,7 @@ class TblVspOutstandingController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->model->scenario = 'createPortal';
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->transaction_date = date('Y-m-d', strtotime($this->model->transaction_date));
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Vsp Outstanding', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
@@ -61,6 +62,7 @@ class TblVspOutstandingController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, 'UPDATE');
             $master[] = $historyModel;
             $this->model->load(Yii::$app->request->post());
+            $this->model->transaction_date = date('Y-m-d', strtotime($this->model->transaction_date));
             $master[] = $this->model;
             $transaction = $this->generalModel->saveTransaction($master, ['Vsp Outstanding', 'edit']);
             if ($transaction == 'customRedirect') {

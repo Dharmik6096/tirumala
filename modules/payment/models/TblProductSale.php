@@ -55,17 +55,17 @@ class TblProductSale extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required', 'except' => ['saleProduct']],
-                [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'sale_date_time', 'sale_mode'], 'required', 'on' => ['saleProduct']],
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
-                [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'sale_type', 'customer_type', 'customer_code', 'sale_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
-                [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
-                [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'number', 'min' => 0],
-                [['discount'], 'validateDisccount'],
-                [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
-                [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct']],
-                [['sale_date_time'], 'validatePaymentCycle', 'on' => ['saleProduct']],
-                [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'default', 'value' => 0],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required', 'except' => ['saleProduct']],
+            [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'sale_date_time', 'sale_mode'], 'required', 'on' => ['saleProduct']],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
+            [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'sale_type', 'customer_type', 'customer_code', 'sale_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
+            [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
+            [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'number', 'min' => 0],
+            [['discount'], 'validateDisccount'],
+            [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
+            [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct']],
+            [['sale_date_time'], 'validatePaymentCycle', 'on' => ['saleProduct']],
+            [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'default', 'value' => 0],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
 //                return ($this->amount_due>0);
@@ -107,7 +107,7 @@ class TblProductSale extends \app\models\ChildModel {
             'other_amount' => Yii::t('app', 'Other Amount'),
             'discount' => Yii::t('app', 'Discount'),
             'paid_amount' => Yii::t('app', 'Paid Amount'),
-            'amount_due' => Yii::t('app', 'Amount Due'),
+            'amount_due' => Yii::t('app', 'Total Amount'),
             'is_installment' => Yii::t('app', 'Pay in Installment?'),
             'no_of_installment' => Yii::t('app', 'No Of Installments'),
             'created_at' => Yii::t('app', 'Created At'),

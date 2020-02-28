@@ -112,9 +112,10 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         }
 
         Yii::$app->general->filterByOrg($query, $this);
-        $query->andWhere([
-            'bmc_code' => $this->bmc_code
-        ]);
+        $query->andWhere(['tbl_bill_head_detail.payment_cycle_code' => $this->payment_cycle_code]);
+        $query->andFilterWhere(['bmc_code' => $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_bill_head_detail.customer_type', $this->customer_type]);
+
         $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
         return $dataProvider;
     }

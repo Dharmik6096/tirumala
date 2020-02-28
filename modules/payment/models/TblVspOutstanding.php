@@ -43,11 +43,11 @@ class TblVspOutstanding extends \app\models\ChildModel {
             [['union_code', 'created_by', 'updated_by'], 'string'],
             [['payment_cycle_code'], 'integer'],
             [['hold_amount', 'due_amount'], 'number'],
-            [['created_at', 'updated_at', 'is_active', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['createPortal']],
-            [['bmc_code', 'customer_code'], 'required', 'on' => ['importCsv']],
+            [['created_at', 'updated_at', 'is_active', 'plant_code', 'mcc_plant_code', 'bmc_code', 'transaction_date'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'customer_type', 'bmc_code', 'transaction_date'], 'required', 'on' => ['createPortal']],
+            [['bmc_code', 'customer_code', 'transaction_date'], 'required', 'on' => ['importCsv']],
             [['hold_amount', 'due_amount'], 'default', 'value' => '0'],
-            [['hold_amount', 'due_amount'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['createPortal', 'importCsv']],
+            [['hold_amount', 'due_amount'], 'validateAmount', 'on' => ['createPortal', 'importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
@@ -55,10 +55,13 @@ class TblVspOutstanding extends \app\models\ChildModel {
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
             [['bmc_code'], 'importDataSet', 'on' => ['importCsv']],
-            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.')],
+            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'customer_type', 'bmc_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.')],
             //For show validation message Name instead of Code
-            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'on' => ['createPortal']]
+            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'on' => ['createPortal']],
         ];
     }
 
@@ -125,12 +128,41 @@ class TblVspOutstanding extends \app\models\ChildModel {
             $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            if ($this->transaction_date > date('Y-m-d')) {
+                $this->addError('transaction_date', Yii::t('app/validation', 'Future ' . Yii::t('app/validation', $this->getAttributeLabel('transaction_date')) . ' not allow'));
+            }
             Yii::$app->general->validateCustomer($this);
         }
     }
 
     public function getCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->transaction_date = Yii::$app->controls->view_date($this->transaction_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->transaction_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->transaction_date = !empty($this->transaction_date) ? Yii::$app->controls->view_date($this->transaction_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function validateAmount() {
+        if (empty($this->hold_amount) && empty($this->due_amount)) {
+            $this->addError('hold_amount', Yii::t('app/validation', 'Please Add ' . Yii::t('app/validation', $this->getAttributeLabel('hold_amount')) . ' Or ' . Yii::t('app/validation', $this->getAttributeLabel('due_amount'))));
+        }
+        if (!empty($this->hold_amount) && $this->hold_amount < 0.02) {
+            $this->addError('hold_amount', Yii::t('app/validation', $this->getAttributeLabel('hold_amount') . ' must be greater than 0.01'));
+        }
+        if (!empty($this->due_amount) && $this->due_amount < 0.02) {
+            $this->addError('hold_amount', Yii::t('app/validation', '{attribute} must be greater than 0.01'));
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use kartik\grid\GridView;
 
 ?>
 <?php
@@ -27,6 +28,16 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type);
+        }],
+    [
+        'attribute' => 'transaction_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->transaction_date);
         }],
     'hold_amount',
     'due_amount',
