@@ -40,7 +40,7 @@ class TblProductSaleDetails extends \app\models\ChildModel {
         return [
                 [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required', 'except' => ['saleProduct']],
                 [['product_sale_code', 'product_code', 'qty', 'rate'], 'required', 'on' => ['saleProduct']],
-                [['sale_detail_code', 'product_code'], 'integer'],
+                [['sale_detail_code', 'product_code', 'qty'], 'integer'],
                 [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
                 [['rate', 'qty', 'amount'], 'number', 'min' => 0],
                 [['created_at', 'updated_at', 'rate_app_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
