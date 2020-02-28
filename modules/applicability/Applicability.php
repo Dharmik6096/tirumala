@@ -57,6 +57,7 @@ class Applicability extends \yii\base\Module {
     public $selectedCodes = [];
     public $selectedTypes = [];
     public $assignStaticData = [];
+    public $check_wef_date = false;
 
     /**
      * @inheritdoc
@@ -116,6 +117,7 @@ class Applicability extends \yii\base\Module {
         $hideCustomerType = false;
         if ($this->customer_type_wise_entry) {
             $customerModel = new TblCustomerType();
+            $customerModel->union_code = $this->union_code;
             $this->customer_type_list = $customerModel->getCustomerType();
             $this->customer_type_list['DCS'] = 'DCS';
             if (count($this->customer_type_list) == 1) {
@@ -158,7 +160,8 @@ class Applicability extends \yii\base\Module {
                     'selected_customer_type' => $selected_customer_type,
                     'selectedCodes' => $this->selectedCodes,
                     'selectedTypes' => $this->selectedTypes,
-                    'hideCustomerType' => $hideCustomerType
+                    'hideCustomerType' => $hideCustomerType,
+                    'check_wef_date' => $this->check_wef_date
         ]);
     }
 

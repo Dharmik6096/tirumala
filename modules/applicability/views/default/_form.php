@@ -258,12 +258,13 @@ $script = "
         var fld='{$field_name}';
         var fldcode='{$field_code}';
         var mname='{$model_name}';
-         var wef_date=$('#{$nameforid}-wef_date').val();  
+        var wef_date=$('#{$nameforid}-wef_date').val(); 
+        var checkdate='{$check_wef_date}';
 
         $.ajax({
                         type: 'post',
                         url: '{$furl}',
-                        data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date},
+                        data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')

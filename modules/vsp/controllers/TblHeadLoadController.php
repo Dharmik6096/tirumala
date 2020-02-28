@@ -353,6 +353,7 @@ class TblHeadLoadController extends \app\controllers\ChildController {
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->header_title = ' [Head Load: ' . $model->criteria_description . '] ';
         $customerType = new TblCustomerType();
+        $customerType->union_code = $model->union_code;
         $value = $customerType->getCustomerType();
         $appModel->dcs_filters = $value;
         return $appModel->createApp();
@@ -496,5 +497,4 @@ class TblHeadLoadController extends \app\controllers\ChildController {
 //    protected function customRedirect() {
 //        return $this->redirect(['view', 'id' => $this->model->head_load_code]);
 //    }
-
 }

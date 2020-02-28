@@ -147,6 +147,7 @@ class TblProductRateController extends \app\controllers\ChildController {
         if ($model->is_member_rate == 1) {
             $value = ['DCS' => 'DCS'];
         } else {
+            $customerType->union_code = $model->union_code;
             $value = $customerType->getCustomerType();
         }
 //        $appModel->model->shift_code = $model->shift_id;

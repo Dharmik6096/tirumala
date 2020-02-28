@@ -112,8 +112,12 @@ class DefaultController extends Controller {
         $field_code = Yii::$app->request->post('fcode');
         $model = new $model_name();
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
-
-        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter, 'wef_date' => $wef_date]);
+        $isCheck = Yii::$app->request->post('checkdate');
+        $where = [];
+        if ($isCheck == 1 || $isCheck == TRUE) {
+            $where = ['wef_date' => $wef_date];
+        }
+        $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where);
         switch (1) {
             case key_exists('routes', $filters):
                 $routs = new TblRouteMapping();

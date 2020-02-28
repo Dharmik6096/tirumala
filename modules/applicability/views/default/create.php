@@ -33,7 +33,8 @@ $this->title = Yii::$app->label->title('create', 'Mapping');
             'selected_customer_type' => $selected_customer_type,
             'selectedCodes' => $selectedCodes,
             'selectedTypes' => $selectedTypes,
-            'hideCustomerType' => $hideCustomerType
+            'hideCustomerType' => $hideCustomerType,
+            'check_wef_date' => $check_wef_date
         ])
         ?>
         <div class="row">
