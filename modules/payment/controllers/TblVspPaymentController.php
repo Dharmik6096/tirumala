@@ -282,19 +282,19 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'Final Amount');
         $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjsut Remarks');
         foreach ($query as $row) {
-           // if ($row->final_pay > 0) {
-                $rowCount++;
-                $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
-                $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
-                $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, '="' . $row->bank_account_no . '"');
-                $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->bank_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, $row->branch_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, $row->ifsc);
-                $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->amount);
-                $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->adjust_amount);
-                $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
-                $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
-          //  }
+            // if ($row->final_pay > 0) {
+            $rowCount++;
+            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
+            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
+            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, '="' . $row->bank_account_no . '"');
+            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->bank_name);
+            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, $row->branch_name);
+            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, $row->ifsc);
+            $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->amount);
+            $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->adjust_amount);
+            $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
+            $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
+            //  }
         }
         $fileName = "payment_disburse_vsp." . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
@@ -783,6 +783,18 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 ->bindValue(':dcs_payment_cycle_code', $model->dcs_payment_cycle_code)
                 ->execute();
         /* delete payment data */
+    }
+
+    public function actionCheckPaymentProcessed() {
+        $model = new TblVspPayment();
+        $model->attributes = Yii::$app->request->post();
+        $count = $model->getRecords()->count();
+        $msg = '';
+        if ($count > 0) {
+            $msg = Yii::t('app', 'Payment already processed for selected input.');
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode(['message' => $msg]);
     }
 
 }

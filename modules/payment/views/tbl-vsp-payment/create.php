@@ -59,3 +59,29 @@ $this->title = 'Vendor Payment Process : Step 1';
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+
+<?php
+$script = "
+     $('#tblvsppayment-payment_cycle_code').on('change',function(){
+     var payment_cycle_code= $(this).val();
+     if(payment_cycle_code !=''){
+     var union_code= $('#tblvsppayment-union_code').val();
+     var bmc_code= $('#tblvsppayment-bmc_code').val();
+     var customer_type= $('#tblvsppayment-customer_type').val();
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/payment/tbl-vsp-payment/check-payment-processed']) . "',
+            data: {'payment_cycle_code' : payment_cycle_code,'bmc_code' : bmc_code,'customer_type' : customer_type,'union_code':union_code},            
+            success: function(data) {
+                var data = $.parseJSON(data);
+                var message = data.message;
+               if(message != ''){
+                    bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-info-circle\'></i></div><span>'+message+'</span>');
+               }   
+            }
+        });
+      }
+}); 
+";
+$this->registerJs($script, View::POS_END, 'check-payment-cycle-processed');
+?>

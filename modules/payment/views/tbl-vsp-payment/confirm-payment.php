@@ -104,7 +104,8 @@ if (!empty($searchModel)) {
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
                     ['attribute' => 'final_pay', 'pageSummary' => true, 'value' => function($model) {
-                            return round($model->final_pay);
+                            //return round($model->final_pay);
+                            return $model->final_pay;
                         },
                         'contentOptions' => ['class' => 'final-amount'],
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
@@ -123,7 +124,7 @@ if (!empty($searchModel)) {
                 ?>
                 <div class="clearfix"></div>
                 <div class="col-md-12" >    
-                    <?= Html::button(Yii::t('app', 'Vendor Payment'), ['class' => 'btn btn-primary disburse', 'name' => 'member']); ?>
+                    <?= Html::button(Yii::t('app', 'Disburse'), ['class' => 'btn btn-primary disburse', 'name' => 'member']); ?>
                     <?= Yii::$app->controls->custombutton('Cancel', 'payment-disburse'); ?> 
                 </div>
                 <?= $this->render('/tbl-member-payment/verify-otp', ['model' => $searchModel, 'form' => $form]) ?>
