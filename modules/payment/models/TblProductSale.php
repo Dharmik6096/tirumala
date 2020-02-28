@@ -170,7 +170,7 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function getCode() {
-        $data = $this->find()->select(["MAX(product_sale_code) as product_sale_code"])->where(['union_code' => $this->union_code])->one();
+        $data = $this->find()->select(["MAX(CAST(product_sale_code AS INT)) as product_sale_code"])->where(['union_code' => $this->union_code])->one();
         return $data['product_sale_code'] + 1;
     }
 
