@@ -478,6 +478,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblDcsPurchaseRateApplicabitity();
         $customerType = new TblCustomerType();
+        $customerType->union_code = $model->union_code;
         $value = $customerType->getCustomerType();
         $appModel->model->shift_code = $model->shift_id;
         $appModel->model->wef_date = $model->wef_date;
@@ -490,24 +491,24 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->options = ['tanker_rate'];
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->wef_date);
-                }],
+            return Yii::$app->controls->view_date($model->wef_date);
+        }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
             'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
-                    if ($model->applicable_for == 'PLANT') {
-                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-                    } else if ($model->applicable_for == 'MCC') {
-                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-                    } else if ($model->applicable_for == 'BMC') {
-                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-                    } else if ($model->applicable_for == 'DCS') {
-                        return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
-                    } else {
-                        return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
-                    }
-                }],
+            if ($model->applicable_for == 'PLANT') {
+                return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+            } else if ($model->applicable_for == 'MCC') {
+                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+            } else if ($model->applicable_for == 'BMC') {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+            } else if ($model->applicable_for == 'DCS') {
+                return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
+            } else {
+                return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+            }
+        }],
                 //'dcs_name' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],           
         ];
         $appModel->actions = ['delete' => ['option' => 'applicable_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability']];
