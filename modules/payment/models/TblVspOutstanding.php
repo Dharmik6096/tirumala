@@ -49,6 +49,10 @@ class TblVspOutstanding extends \app\models\ChildModel {
             [['hold_amount', 'due_amount'], 'default', 'value' => '0'],
             [['hold_amount', 'due_amount'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['createPortal', 'importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['customer_type'], function ($attribute, $params) {
+                    $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
+                }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
             [['bmc_code'], 'importDataSet', 'on' => ['importCsv']],
@@ -121,31 +125,7 @@ class TblVspOutstanding extends \app\models\ChildModel {
             $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
-            if (empty($this->customer_type) || strtoupper($this->customer_type) == 'DCS') {
-                $this->customer_type = 'DCS';
-                $dcs = new TblDcs();
-                $this->customer_code = $dcs->validDcs($this->customer_code, $this->bmc_code);
-                if (empty($this->customer_code)) {
-                    $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Code') . ' is invalid'));
-                }
-            } else {
-                $this->customer_code = $this->validateCustomer($this->union_code, $this->customer_code, $this->customer_type);
-                if (empty($this->customer_code)) {
-                    $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Code') . ' is invalid'));
-                }
-            }
-        }
-    }
-
-    public function validateCustomer($union, $code, $type) {
-        if (!empty($code) && strtolower($type) != 'dcs') {
-            $this->union_code = $union;
-            $this->customer_type = $type;
-            $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
-            $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
-            $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
-            return $data = empty($Code) ? '' : $Code;
+            Yii::$app->general->validateCustomer($this);
         }
     }
 

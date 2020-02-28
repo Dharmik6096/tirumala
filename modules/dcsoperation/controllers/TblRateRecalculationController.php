@@ -79,7 +79,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                     }
                 }
 
-                $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', [], $customeCode);
+               return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', [], $customeCode);
             }
         } else {
             $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams);
@@ -115,7 +115,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             $this->model->recalc_for = $searchModel->recalc_for;
             if ($this->model->validate()) {
 
-                $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, 'custom', $codes);
+               return $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, 'custom', $codes);
             }
         }
         $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams, 'sp_Portal_Data_Recalculation_Custom');
@@ -228,7 +228,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             }
         }
 
-        $this->redirect(['index']);
+       return $this->redirect(['index']);
     }
 
     /**

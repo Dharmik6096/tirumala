@@ -63,7 +63,7 @@ class TblBmcCollection extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $date, $weigh_time, $testing_time;
-    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $value, $allow_rate_zero;
+    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $ex_code, $allow_rate_zero;
 
     public static function tableName() {
         return 'tbl_bmc_collection';
@@ -75,20 +75,17 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['milk_type_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+                }, 'on' => 'importCsv'],
             [['milk_quality_type_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
+                }, 'on' => 'importCsv'],
             [['shift_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
-        }, 'on' => 'importCsv'],
-            [['customer_type'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
-        }, 'on' => ['importCsv']],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+                }, 'on' => 'importCsv'],
             [['collection_type'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
+                }, 'on' => 'importCsv'],
             [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
             [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
@@ -96,8 +93,8 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['rtpl', 'amount'], 'trim'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
             [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
-            return $model->collection_type == '2';
-        }, 'whenClient' => "function (attribute, value) { 
+                    return $model->collection_type == '2';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
           }", 'except' => ['post_sap_data', 'androidsync', 'importCsv']],
             [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create']],
@@ -109,18 +106,18 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create']],
-            [['customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['importCsv']],
+            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create', 'update']],
+            [['customer_code', 'bmc_code'], 'required', 'on' => ['importCsv']],
             [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv']],
             [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
             [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
-            return empty($this->getErrors());
-        }, 'on' => ['create', 'update', 'importCsv']],
+                    return empty($this->getErrors());
+                }, 'on' => ['create', 'update', 'importCsv']],
             [['rtpl'], function ($attribute, $params) {
-            Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
-        }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
+                    Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
+                }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
             [['rtpl', 'amount'], 'default', 'value' => 0, 'except' => ['importCsv']],
             [['water'], 'default', 'value' => 0],
             [['doc_no'], 'default', 'value' => 1],
@@ -128,10 +125,14 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/', 'on' => ['create', 'update', 'importCsv']],
             [['customer_code'], 'setUuid', 'on' => ['create', 'update', 'androidsync', 'importCsv']],
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
-            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
             [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['customer_type'], function ($attribute, $params) {
+                    $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
+                }, 'on' => ['importCsv']],
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
             [['tag_1'], 'default', 'value' => 'X'],
         ];
@@ -251,7 +252,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getCustomerCode() {
-        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->value]);
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
     }
 
     public function getMainCustomerCode() {
@@ -276,7 +277,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $this->value = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
+            $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
             $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
             return $data = empty($Code) ? '' : $Code;
         }
@@ -318,22 +319,13 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'mcc_plant_code');
             $this->date_time_of_collection = !empty($this->date_time_of_collection) ? date('Y-m-d', strtotime($this->date_time_of_collection)) : '';
             $this->date_time_of_collection = $this->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->shift_code);
-
+            Yii::$app->general->validateCustomer($this);
             if (strtoupper($this->customer_type) == 'DCS') {
-                $dcs = new TblDcs();
-                $this->dcs_code = $dcs->validDcs($this->customer_code, $this->bmc_code);
-                if (empty($this->dcs_code)) {
-                    $this->addError('customer_code', Yii::t('app/validation', $this->getAttributeLabel('customer_code') . ' is invalid'));
-                }
-                $this->customer_code = $this->dcs_code;
+                $this->dcs_code = $this->customer_code;
                 $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
                 $this->route_code = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
             } else {
                 $this->dcs_code = NULL;
-                $this->customer_code = $this->validateCustomer($this->union_code, $this->customer_code, $this->customer_type);
-                if (empty($this->customer_code)) {
-                    $this->addError('customer_code', Yii::t('app/validation', $this->getAttributeLabel('customer_code') . ' is invalid'));
-                }
                 $this->village_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'village_code');
                 $this->route_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
             }

@@ -978,7 +978,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1393,6 +1393,30 @@ class GeneralFunctions extends Component {
 
     public function getStaticDropdownVal($flag, $model, $field) {
         return !empty(Yii::$app->dropdown->getRecords($flag)['data'][$model->{$field}]) ? Yii::$app->dropdown->getRecords($flag)['data'][$model->{$field}] : $model->{$field};
+    }
+
+    public function validateCustomer($model) {
+        if (empty($model->customer_type) || strtoupper($model->customer_type) == 'DCS') {
+            $model->customer_type = 'DCS';
+            $dcs = new TblDcs();
+            $model->customer_code = $dcs->validDcs($model->customer_code, $model->bmc_code);
+        } else {
+            $model->customer_type = strtoupper($model->customer_type);
+            $model->customer_code = $this->validateCustomerCode($model);
+        }
+        if (empty($model->customer_code)) {
+            $model->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Code') . ' is invalid'));
+        }
+    }
+
+    public function validateCustomerCode($model) {
+        if (strtolower($model->customer_type) != 'dcs') {
+            $prefix = $this->getforeignkey($model->customerType, 'code_prefix');
+            $length = $this->getforeignkey($model->customerType, 'code_length');
+            $model->ex_code = $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT);
+            $Code = $this->getforeignkey($model->customerCode, 'customer_code');
+            return $data = empty($Code) ? '' : $Code;
+        }
     }
 
 }
