@@ -13,6 +13,7 @@ $(document).ready(function () {
         'TSKG': '>',
         'CLR': '~',
         'AMT': '^',
+        'AMOUNT': '^',
         'QTY': '^',
         'KGFAT': '^',
         'KGSNF': '^',

@@ -45,32 +45,35 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
                     <?= Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE); ?>
                 </div>
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE); ?>
-                </div>
-                <div class="col-sm-2">
                     <?= Yii::$app->controls->date($model, $form, 'sale_date_time', '', true); ?>
                 </div>
-                <div class="clearfix"></div>
                 <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE); ?>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-sm-2 reset_field">
                     <?= Yii::$app->dropdown->dropdownStatic('payment_mode', $model, $form, 'form-group', $model->getAttributeLabel('sale_mode'), false, 'sale_mode', false); ?>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 reset_field">
                     <?php Yii::$app->dropdown->depend_dropdown('product', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 reset_field">
                     <?= $form->field($detailModel, 'rate')->textInput(['readOnly' => true]) ?>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 reset_field">
                     <?= $form->field($detailModel, 'qty')->textInput() ?>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 reset_field">
                     <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 reset_field">
                     <?= $form->field($model, 'discount')->textInput() ?>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 reset_field">
                     <?= $form->field($model, 'amount_due')->textInput(['readOnly' => true]) ?>
+                </div>
+                <div class="col-sm-2 noOfInstallment reset_field">
+                    <?= $form->field($model, 'no_of_installment')->textInput() ?>
                 </div>
                 <?= $form->field($detailModel, 'rate_app_code', ['template' => '{input}'])->hiddenInput()->label(false) ?>
                 <div class="clearfix"></div>
@@ -100,9 +103,10 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
 //                                                                  $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $(".panel-body").scrollTop(0);
-                                                                    $("input").val("");
-                                                                    $("#tblproductsale-sale_mode").val("");
-                                                                    $("#tblproductsaledetails-product_code").val("");
+                                                                    $(". reset_field input").val("");
+                                                                    $(". reset_field select").val("");
+//                                                                    $("#tblproductsale-sale_mode").val("");
+//                                                                    $("#tblproductsaledetails-product_code").val("");
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                         setTimeout(function(){
                                                                             $("#tblbillheaddetail-customer_type").focus();
@@ -148,6 +152,7 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
 $script = "
     $(document).on('change','#tblproductsale-sale_date_time',function(){
         setRate();
+        reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-bmc_code',function(){
         setRate();
@@ -170,7 +175,16 @@ $script = "
     $(document).on('change','#tblproductsale-discount',function(){
         setAmount();
     });
-    
+    setNoOfInstallment();
+    $(document).on('change','#tblproductsale-sale_mode',function(){
+        setNoOfInstallment();
+    });
+    function setNoOfInstallment(){
+        $('.noOfInstallment').hide();
+        if($('#tblproductsale-sale_mode').val() == 1) {
+            $('.noOfInstallment').show();
+        }
+    }
     function setRate(){
         var product_code=$('#tblproductsaledetails-product_code').val();
         var csrfToken = $('meta[name=\"csrf-token\"]').attr('content');
@@ -222,7 +236,9 @@ $script = "
     }
     
     function reloadGrid(loaderType = 'hide_loader') {
-        var url = '" . Url::to(['/payment/tbl-product-sale/list-grid']) . "'+ '?' + $('#create-product-sale-form').serialize();
+        var saleDate = $('#tblproductsale-sale_date_time').val();
+        if(saleDate != '' && saleDate != undefined && saleDate != null) {
+            var url = '" . Url::to(['/payment/tbl-product-sale/list-grid']) . "'+ '?' + $('#create-product-sale-form').serialize();
             $.ajax({
                 type: 'get',
                 url: url,
@@ -236,6 +252,9 @@ $script = "
                     $('#pageloader').hide();
                 },
             });
+        } else {
+            $('#gridcontentSet').html('');
+        }
     }
     
 ";

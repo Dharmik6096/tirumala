@@ -902,7 +902,7 @@ input[type="hidden"] + .help-block{
     width: 332px;
     height: auto;
 
-    margin: 100px auto;
+    margin: 40px auto;
     padding: 20px 20px 9px;
 
     background: #3b3e47;
@@ -2386,4 +2386,8 @@ div.crystalstyle{
 
 .mt23 {
     margin-top: 23px !important
+}
+
+.div_margin_0 div {
+    margin: 0px !important
 }

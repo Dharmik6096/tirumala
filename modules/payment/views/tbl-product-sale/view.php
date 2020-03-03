@@ -67,66 +67,71 @@ $this->title = Yii::$app->label->title('view', 'Product Sales');
                         [
                         'columns' => [
                                 [
+                                'attribute' => 'member_code',
+                                'value' => Yii::$app->general->getforeignkey($model->memberCode, 'member_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
                                 'attribute' => 'sale_date_time',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->sale_date_time)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'sale_mode',
                                 'value' => isset($model->sale_mode) ? Yii::$app->dropdown->getRecords('payment_mode')['data'][$model->sale_mode] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'amount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'other_amount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'discount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'paid_amount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'is_installment',
                                 'format' => 'html',
                                 'value' => $model->is_installment ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
-                                'attribute' => 'no_of_installment',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
                         ],
                     ],
                         [
                         'columns' => [
                                 [
+                                'attribute' => 'no_of_installment',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                                [
                                 'attribute' => 'amount_due',
                                 'format' => Yii::$app->general->CurrencyFormat(),
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],

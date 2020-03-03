@@ -36,20 +36,20 @@ class TblBillHead extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no'], 'required'],
-            [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
-            [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
-            [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code'], 'safe'],
-            [['is_active'], 'default', 'value' => '1'],
-            [['is_disburse_allowed'], 'default', 'value' => '1'],
-            [['is_default'], 'default', 'value' => '0'],
-            ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
-            ['default_bill_head_code', 'required', 'when' => function ($model) {
+                [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no'], 'required'],
+                [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
+                [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
+                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code'], 'safe'],
+                [['is_active'], 'default', 'value' => '1'],
+                [['is_disburse_allowed'], 'default', 'value' => '1'],
+                [['is_default'], 'default', 'value' => '0'],
+                ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
+                ['default_bill_head_code', 'required', 'when' => function ($model) {
                     return $model->is_default == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbillhead-is_default').is(':checked'); 
           }"],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
+                [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
         ];
     }
 
@@ -71,6 +71,7 @@ class TblBillHead extends \app\models\ChildModel {
             'bill_head_type' => Yii::t('app', 'Bill Head Type'),
             'default_bill_head_code' => Yii::t('app', 'Default Bill Head Type'),
             'general_formula_code' => Yii::t('app', 'Formula'),
+            'sequence_no' => Yii::t('app', 'Sequence No.'),
         ];
     }
 

@@ -88,7 +88,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             'dcs_code' => 'DCS',
             'amount' => 'Amount',
             'is_installment' => 'Is Installment',
-            'no_installment' => 'No Of Installment',
+            'no_installment' => 'No. of Installment',
             'is_active' => 'Is Active',
             'created_at' => 'Created At',
             'created_by' => 'Created By',

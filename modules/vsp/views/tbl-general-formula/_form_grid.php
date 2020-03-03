@@ -6,11 +6,13 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'formula_name'],
-    ['attribute' => 'formula'],
+        ['attribute' => 'formula_name'],
+        ['attribute' => 'formula', 'value' => function($model) {
+            return '<div>' . $model->formula . '</div>';
+        }, 'format' => 'raw'],
 ];
 
 $grid_option = [

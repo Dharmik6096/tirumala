@@ -70,28 +70,28 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
             ],
             ['attribute' => 'hold_amount',
                 'format' => 'raw',
-                'contentOptions' => ['class' => 'no_padding_input'],
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
             return Html::activeHiddenInput($model, 'vsp_payment_code[' . $index . ']', ['value' => $model->vsp_payment_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
         },
             ],
             ['attribute' => 'adjust_amount',
                 'format' => 'raw',
-                'contentOptions' => ['class' => 'no_padding_input'],
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
             return Html::activeHiddenInput($model, 'vsp_payment_code[' . $index . ']', ['value' => $model->vsp_payment_code]) . $form->field($model, 'adjust_amount[' . $index . ']')->textInput(['value' => $model->adjust_amount, 'class' => 'number-validate adjust-amount cal-amount form-control',])->label(FALSE);
         },
             ],
             ['attribute' => 'net_payable',
                 'format' => 'raw',
-                'contentOptions' => ['class' => 'no_padding_input'],
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
             return $form->field($model, 'net_payable[' . $index . ']')->textInput(['class' => 'number-validate net-amount form-control', "disabled" => TRUE, 'value' => $model->final_pay])->label(FALSE);
         },
             ],
             ['attribute' => 'adjust_remark',
                 'format' => 'raw',
-                'contentOptions' => ['class' => 'no_padding_input'],
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
             return $form->field($model, 'adjust_remark[' . $index . ']')->textInput(['value' => $model->adjust_remark])->label(FALSE);
         },

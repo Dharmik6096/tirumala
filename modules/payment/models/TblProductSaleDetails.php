@@ -4,6 +4,7 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\product\models\TblProduct;
+use app\modules\payment\models\TblSaleInstallments;
 
 /**
  * This is the model class for table "tbl_product_sale_details".
@@ -38,13 +39,13 @@ class TblProductSaleDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required', 'except' => ['saleProduct']],
-            [['product_sale_code', 'product_code', 'qty', 'rate'], 'required', 'on' => ['saleProduct']],
-            [['sale_detail_code', 'product_code', 'qty'], 'integer'],
-            [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
-            [['rate', 'qty', 'amount'], 'number', 'min' => 0],
-            [['created_at', 'updated_at', 'rate_app_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
+                [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required', 'except' => ['saleProduct']],
+                [['product_sale_code', 'product_code', 'qty', 'rate'], 'required', 'on' => ['saleProduct']],
+                [['sale_detail_code', 'product_code', 'qty'], 'integer'],
+                [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
+                [['rate', 'qty', 'amount'], 'number', 'min' => 0],
+                [['created_at', 'updated_at', 'rate_app_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
 //                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
         ];
     }
@@ -139,6 +140,10 @@ class TblProductSaleDetails extends \app\models\ChildModel {
             }
         }
         return $sale_details;
+    }
+
+    public function getSaleInstallments() {
+        return $this->hasMany(TblSaleInstallments::className(), ['sale_code' => 'product_sale_code']);
     }
 
 }

@@ -8,23 +8,25 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 </div>
 <?php
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false,
         'filter' => false,],
-    ['attribute' => 'bill_head_code', 'visible' => false],
-    ['attribute' => 'bill_head_name'],
-    ['attribute' => 'bill_head_type',
+        ['attribute' => 'bill_head_code', 'visible' => false],
+        ['attribute' => 'bill_head_name'],
+        ['attribute' => 'bill_head_type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('calc_type', $searchModel, 'bill_head_type'),
         'value' => function($model) {
             return isset($model->bill_head_type) ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->bill_head_type] : 'N/A';
         },],
-    ['attribute' => 'default_bill_head_code',
+        ['attribute' => 'default_bill_head_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->defaultBillHeadCode, 'default_bill_head_name');
         },],
-    ['attribute' => 'general_formula'],
-    ['attribute' => 'sequence_no'],
+        ['attribute' => 'general_formula', 'value' => function($model) {
+            return '<div>' . $model->general_formula . '</div>';
+        }, 'format' => 'raw'],
+        ['attribute' => 'sequence_no'],
 ];
 $grid_option = [
     'id' => 'bill-head-list',

@@ -20,7 +20,9 @@ $attribute = [
         ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '';
         }, 'vAlign' => 'middle'],
-//    ['attribute' => 'member_code', 'value' => 'memberCode.member_name'],
+        ['attribute' => 'member_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+        }],
     //'member_code',
     //'sale_date_time',
     [

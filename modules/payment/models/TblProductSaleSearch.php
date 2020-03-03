@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\payment\models\TblProductSale;
+use app\modules\payment\models\TblPaymentCycleApplicability;
 
 /**
  * TblProductSaleSearch represents the model behind the search form about `app\modules\payment\models\TblProductSale`.
@@ -107,13 +108,25 @@ class TblProductSaleSearch extends TblProductSale {
         ]);
 
         $this->load($params);
-        $query->joinWith(['productSaleCode']);
+        $query->joinWith(['productSaleCode', 'saleInstallments']);
         $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
         Yii::$app->general->filterByOrg($query, $this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
+        }
+        if (!empty($this->sale_date_time)) {
+            $model = new TblPaymentCycleApplicability();
+            $model->applicable_type = $this->customer_type;
+            $model->applicable_code = $this->bmc_code;
+            $model->applicable_for = 'BMC';
+            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->sale_date_time)));
+            if (!empty($modelData)) {
+                $query->andFilterWhere(['or', ['between', 'cast(tbl_product_sale.sale_date_time as date)', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))], ['between', 'tbl_sale_installments.installment_date', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))]]);
+            } else {
+                $query->andFilterWhere(['or', ['cast(tbl_product_sale.sale_date_time as date)' => date('Y-m-d', strtotime($this->sale_date_time))], ['tbl_sale_installments.installment_date' => date('Y-m-d', strtotime($this->sale_date_time))]]);
+            }
         }
         $query->andFilterWhere([
             'tbl_product_sale.customer_type' => $this->customer_type,

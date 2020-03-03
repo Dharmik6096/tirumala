@@ -26,6 +26,7 @@ use app\modules\product\models\TblProductRateApplicability;
 use app\modules\product\models\TblProductRate;
 use yii\widgets\ActiveForm;
 use app\modules\payment\models\TblPaymentCycleApplicability;
+use app\modules\payment\models\TblPaymentCycle;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
@@ -323,37 +324,59 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $appCycleAppModelData = $appCycleAppModel->getApplicablePaymentCycle($saleDate);
                 $model->other_amount = 0;
                 $model->paid_amount = $model->sale_mode == 1 ? 0 : $model->amount_due;
-                $model->is_installment = $model->sale_mode;
-                $model->no_of_installment = $model->sale_mode;
+                $model->is_installment = $model->sale_mode == 1 ? 1 : 0;
+                $model->no_of_installment = $model->sale_mode == 1 ? $model->no_of_installment : 0;
                 $detailModel->sale_detail_code = (string) Yii::$app->general->getCodeAutoIncrement($detailModel);
                 $detailModel->amount = $model->amount;
                 $master[] = $model;
                 $child[] = $detailModel;
                 if (!empty($model->sale_mode)) {
-                    $installmentModel = new TblSaleInstallments();
-                    $installmentModel->sale_type = 'product';
-                    $installmentModel->sale_code = $model->product_sale_code;
-                    $installmentModel->member_code = $model->member_code;
-                    $installmentModel->dcs_code = $model->dcs_code;
-                    $installmentModel->union_code = $model->union_code;
-                    $installmentModel->main_amount = $model->amount_due;
-                    $installmentModel->installment_amount = $model->amount_due;
-                    $installmentModel->installment_status = 0;
-                    $installmentModel->is_active = 1;
-                    $installmentModel->payment_cycle_applicabilty_code = $appCycleAppModelData->payment_cycle_applicabilty_code;
-                    $installmentModel->payment_cycle_code = $appCycleAppModelData->payment_cycle_code;
-                    $child[] = $installmentModel;
+                    $no = !empty($model->no_of_installment) ? ($model->no_of_installment) : 1;
+                    $cycle = $appCycleAppModelData->payment_cycle_code;
+                    $appCode = $appCycleAppModelData->payment_cycle_applicabilty_code;
+                    $instAmount = floatval($model->amount_due / $no);
+                    for ($i = 0; $i < $no; $i++) {
+                        if (empty($cycle)) {
+                            $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
+                            $record = ['msg' => $msg];
+                            return Json::encode($record);
+                        } else {
+                            $installmentModel = new TblSaleInstallments();
+                            $installmentModel->sale_type = 'product';
+                            $installmentModel->sale_code = $model->product_sale_code;
+                            $installmentModel->member_code = $model->member_code;
+                            $installmentModel->dcs_code = $model->dcs_code;
+                            $installmentModel->union_code = $model->union_code;
+                            $installmentModel->main_amount = $model->amount_due;
+                            $installmentModel->installment_amount = $instAmount;
+                            $installmentModel->installment_status = 0;
+                            $installmentModel->is_active = 1;
+                            $installmentModel->payment_cycle_applicabilty_code = $appCode;
+                            $installmentModel->payment_cycle_code = $cycle;
+                            $paymentCycleDate = Yii::$app->general->getforeignkey($installmentModel->tblPaymentCycleCode, 'from_date');
+                            $paymentCycleDate = !empty($paymentCycleDate) && $paymentCycleDate != 'N/A' ? date('Y-m-d', strtotime($paymentCycleDate)) : NULL;
+                            $installmentModel->installment_date = $paymentCycleDate;
+                            $child[] = $installmentModel;
+                            $appCycleAppModel = new TblPaymentCycle();
+                            $cycle = $appCycleAppModel->getNextCycleCode($installmentModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC', $appCode);
+                        }
+                    }
                 }
-                $transaction = $this->generalModel->saveTransaction($master, $child, ['Product Sale', 'create']);
-                if ($transaction == 'customRedirect') {
-                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                    $record = ['status' => 'success', 'msg' => $msg];
+                if ($model->validate()) {
+                    $transaction = $this->generalModel->saveTransaction($master, $child, ['Product Sale', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'success', 'msg' => $msg];
+                    } else {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'error', 'msg' => $msg];
+                    }
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return Json::encode($record);
                 } else {
-                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                    $record = ['status' => 'error', 'msg' => $msg];
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
                 }
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return Json::encode($record);
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));

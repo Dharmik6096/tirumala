@@ -42,12 +42,12 @@ class TblPaymentCycle extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
-            ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
-            [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
-            [['interval_value', 'is_active', 'originating_type'], 'safe'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
-            [['to_date'], 'customValidate'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
+                ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
+                [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
+                [['interval_value', 'is_active', 'originating_type'], 'safe'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
+                [['to_date'], 'customValidate'],
         ];
     }
 
@@ -98,7 +98,7 @@ class TblPaymentCycle extends \app\models\ChildModel {
             return true;
     }
 
-    public function getNextCycleCode($code, $dcsCode = '', $customer_type = '', $for = '') {
+    public function getNextCycleCode($code, $dcsCode = '', $customer_type = '', $for = '', &$appCode = '') {
         if (!empty($code) && $code !== 0) {
             $currCycle = $this->find()->where(['payment_cycle_code' => $code])->one();
             $date = $currCycle->to_date;
@@ -107,7 +107,10 @@ class TblPaymentCycle extends \app\models\ChildModel {
             if (empty($dcsCode)) {
                 $nextCycle = $nextCycle->one();
             } else {
-                $nextCycle = TblPaymentCycleApplicability::find()->select('payment_cycle_code')->where(['from_date' => $new_date, 'applicable_code' => $dcsCode, 'applicable_type' => $customer_type, 'applicable_for' => $for])->one();
+                $nextCycle = TblPaymentCycleApplicability::find()->select('payment_cycle_code,payment_cycle_applicabilty_code')->where(['from_date' => $new_date, 'applicable_code' => $dcsCode, 'applicable_type' => $customer_type, 'applicable_for' => $for])->one();
+                if (!empty($nextCycle)) {
+                    $appCode = $nextCycle->payment_cycle_applicabilty_code;
+                }
             }
         } else
             $nextCycle = '';

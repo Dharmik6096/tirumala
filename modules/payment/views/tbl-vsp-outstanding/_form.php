@@ -37,10 +37,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, FALSE, FALSE, $model->getAttributeLabel('transaction_date')); ?>
     </div>
-    <div class="col-sm-3 number-validate">
+    <div class="clearfix"></div>
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'hold_amount')->textInput() ?>
     </div>
-    <div class="col-sm-3 number-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'due_amount')->textInput() ?>
     </div>
 </div>   

@@ -20,13 +20,13 @@ $action = Url::to(['update-transit-loss']);
     $attribute = [
         ['attribute' => 'bmc_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-            }, 'vAlign' => 'middle', 'filter' => false],
+            }, 'filter' => false],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code');
-            }, 'vAlign' => 'middle', 'filter' => false],
+            }, 'filter' => false],
         ['attribute' => 'dcs_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-            }, 'vAlign' => 'middle', 'filter' => false],
+            }, 'filter' => false],
         [
             'attribute' => 'date_time_of_collection',
             'value' => function($model) {
@@ -49,7 +49,7 @@ $action = Url::to(['update-transit-loss']);
         ['attribute' => 'loss_applied_to',
             'format' => 'raw',
             'contentOptions' => function($model) {
-                return ['class' => 'text-center'];
+                return ['class' => 'text-center div_margin_0'];
             },
             'value' => function ($model, $key, $index) use ($form) {
                 return Html::activeHiddenInput($model, 'transit_loss_code[' . $index . ']', ['value' => $model->transit_loss_code]) . $form->field($model, 'loss_applied_to[' . $index . ']')->inline()->radioList([1 => 'VSP', 2 => 'TPT'], ['value' => $model->loss_applied_to])->label(false);

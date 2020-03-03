@@ -72,7 +72,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
     <div class="col-sm-3 h90">
-        <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox mt25">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+        <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox mt25 height_65">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
     </div>
     <div class="col-sm-3" id="defaultbill">
         <?= Yii::$app->dropdown->dropdown('default_bill_head_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_bill_head_code'), false, 'default_bill_head_code'); ?>
