@@ -135,6 +135,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
             [['tag_1'], 'default', 'value' => 'X'],
+            [['adt_param', 'adt_value'], 'safe']
         ];
     }
 
@@ -192,6 +193,8 @@ class TblBmcCollection extends \app\models\ChildModel {
             'error_desc' => Yii::t('app', 'Status Desc.'),
             'originating_org_type' => Yii::t('app', 'Originated At'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'adt_param' => Yii::t('app', 'Adultration Param'),
+            'adt_value' => Yii::t('app', 'Adultration Value'),
         ];
     }
 

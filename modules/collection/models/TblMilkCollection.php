@@ -83,11 +83,11 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function rules() {
         return [
             [['milk_type_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+                }, 'on' => 'importCsv'],
             [['shift_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+                }, 'on' => 'importCsv'],
             [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['rtpl', 'amount'], 'trim'],
@@ -117,8 +117,8 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['snf', 'rtpl'], 'double', 'min' => 0, 'on' => ['importCsv']],
             [['fat', 'qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['importCsv']],
             [['dcs_code'], 'unique', 'targetAttribute' => ['member_code', 'dcs_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
-            return empty($this->getErrors());
-        }, 'on' => ['importCsv']],
+                    return empty($this->getErrors());
+                }, 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
@@ -126,6 +126,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
             ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
             [['tag_1'], 'default', 'value' => 'X'],
+            [['adt_param', 'adt_value'], 'safe']
         ];
     }
 
@@ -173,7 +174,9 @@ class TblMilkCollection extends \app\models\ChildModel {
             'tag_1' => Yii::t('app', 'SAP Status'),
             'error_desc' => Yii::t('app', 'Status Desc.'),
             'originating_org_type' => Yii::t('app', 'Originated At'),
-            'originating_type'=>Yii::t('app', 'Originating Type'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'adt_param' => Yii::t('app', 'Adultration Param'),
+            'adt_value' => Yii::t('app', 'Adultration Value'),
         ];
     }
 

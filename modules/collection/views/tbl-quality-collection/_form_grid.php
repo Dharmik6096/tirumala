@@ -49,6 +49,11 @@ $attribute = [
     ['attribute' => 'qlty_auto', 'value' => function($model) {
             return isset($model->qlty_auto) ? Yii::$app->dropdown->getRecords('is_quality_auto')['data'][$model->qlty_auto] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('is_quality_auto', $searchModel, 'qlty_auto'),],
+    ['attribute' => 'protein', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'density', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'lactose', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'adt_param', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'adt_value', 'filter' => FALSE, 'visible' => false],
 ];
 
 $grid_option = [

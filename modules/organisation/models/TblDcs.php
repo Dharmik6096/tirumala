@@ -263,7 +263,7 @@ class TblDcs extends ChildModel {
             'email' => Yii::t('app', 'Email'),
             'ifsc' => Yii::t('app', 'IFSC'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'is_bmc' => Yii::t('app', 'Society Pouring Type'),
+            'is_bmc' => Yii::t('app', 'Is BMC'),
             'mobile_no' => Yii::t('app', 'Mobile No'),
             'pan_no' => Yii::t('app', 'PAN No'),
             'phone_no' => Yii::t('app', 'Phone No'),

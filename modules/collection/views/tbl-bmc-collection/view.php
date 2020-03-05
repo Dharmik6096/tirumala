@@ -246,10 +246,22 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'adt_param',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'adt_value',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'originating_org_type',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [ 'attribute' => 'originating_type',
+                        ['attribute' => 'originating_type',
                             'value' => Yii::$app->general->getStaticDropdownVal('originating_type', $model, 'originating_type'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],

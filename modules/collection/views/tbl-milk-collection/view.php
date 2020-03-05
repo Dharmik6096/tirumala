@@ -204,6 +204,18 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'adt_param',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'adt_value',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'originating_org_type',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
