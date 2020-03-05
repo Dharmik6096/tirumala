@@ -2391,3 +2391,7 @@ div.crystalstyle{
 .div_margin_0 div {
     margin: 0px !important
 }
+.modal-content .grid-view > .panel.panel-default{
+    min-height: auto !important;
+    height: auto !important;
+}

@@ -60,6 +60,10 @@ $attribute = [
     ['attribute' => 'final_pay'],
     ['attribute' => 'adjust_remark'],
     ['attribute' => 'status'],
+    ['attribute' => 'bank_name', 'visible' => false],
+    ['attribute' => 'branch_name', 'visible' => false],
+    ['attribute' => 'ifsc', 'visible' => false],
+    ['attribute' => 'bank_account_no', 'visible' => false],
 ];
 
 
@@ -68,10 +72,10 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'view' =>TRUE
-            ]
-        ];
+        'view' => TRUE
+    ]
+];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-        ?>
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
         
