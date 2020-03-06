@@ -235,16 +235,12 @@ class Applicability extends \yii\base\Module {
                         $appModel->$field_name = $this->field_value;
                         //$appModel->union_code = $this->union_code;  
 
-                        $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
-
-                        $check = $this->checkDuplicate($appModel);
-                        if ($check == 1) {
-                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
-                            return $this->customRender();
-                        }
-
                         $appModel->union_code = $this->union_code;
+
                         $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
+                        if ($model->hasAttribute('shift_code')) {
+                            $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
+                        }
                         $check = $this->checkDuplicate($appModel);
                         if ($check == 1) {
                             $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
