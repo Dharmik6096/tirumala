@@ -167,8 +167,6 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-    
-    
     public function actionBmcCollection() {
         $this->report = 'BmcCollection';
         return $this->actionIndex();
@@ -228,13 +226,17 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'DifferenceReportVillageWise';
         return $this->actionIndex();
     }
-    
+
     public function actionGprsDataReconciliation() {
         $this->report = 'GprsDataReconciliation';
         return $this->actionIndex();
     }
 
-    
+    public function actionBmcPayment() {
+        $this->report = 'BMCPayment';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -260,7 +262,7 @@ class DefaultController extends \app\controllers\ChildController {
                 $model->{$value} = date('Y-m-d', strtotime($model->{$value}));
                 if (isset($value_array[2])) {
                     $shift = \Yii::$app->general->getshift($model->{$value_array[2]});
-                    $model->{$value} .=' ' . $shift . '.000';
+                    $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
             if ($value == 'p_dcs_payment') {
@@ -270,14 +272,14 @@ class DefaultController extends \app\controllers\ChildController {
             } else {
                 $controls[$value] = $model->{$value};
             }
-        }        
+        }
         //$controls['locale'] = Yii::$app->session->get('LanguageCode');
         $controls['locale'] = 'en';
         //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
         $controls['REPORT_LOCALE'] = 'en';
         //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
         $controls['digit_config'] = 0;
-        
+
 //      var_dump($controls);die;
         $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
 
@@ -298,7 +300,6 @@ class DefaultController extends \app\controllers\ChildController {
 
     private function getLabels($l) {
         $label = [
-
             'MemberMilkCollectionSummary' => [
                 'param' => 'p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_member_code:p_dcs_code,p_language_code,p_union_code,p_report_name',
                 'path' => 'milkcollection/MemberMilkCollectionSummary',
@@ -547,6 +548,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'bmccollection/DPUGPRSDataReconciliation',
                 'scenario' => 'GprsDataReconciliation',
                 'title' => '313 - DPU-GPRS Data Reconciliation',
+            ],
+            'BMCPayment' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string,p_language_code,p_report_name',
+                'path' => 'bmccollection/BMCPayment',
+                'scenario' => 'BMCPayment',
+                'title' => '601 - BMC Payment',
             ],
         ];
         return $label[$l];

@@ -257,6 +257,13 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', '507 - Cleaning Flag Bmc'), 'url' => ['/misreports/default/cleaning-flag-bmc']],
                     ]
                 ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
+                    ]
+                ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
