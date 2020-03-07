@@ -39,6 +39,9 @@ class Webservice extends \yii\base\Module {
             'eipl' => [
                 'class' => 'app\modules\webservice\eipl\Eipl',
             ],
+            'emilkprolite' => [
+                'class' => 'app\modules\webservice\emilkprolite\emilkProLite',
+            ],
         ];
     }
 
