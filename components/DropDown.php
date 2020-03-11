@@ -530,7 +530,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -802,6 +802,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Create'), 1 => Yii::t('app', 'Import'), 2 => Yii::t('app', 'Sync'), 3 => Yii::t('app', 'Auto Entry')],
             ],
+            'p_organization_type' => [
+                'name' => 'organization_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }
@@ -956,7 +961,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -973,6 +978,11 @@ class DropDown extends Component {
                 'initialize' => true,
             ]
         ])->label(Yii::t('app', $label));
+    }
+
+    public function org_type_rate($model, $form, $depends, $name = 'p_purchase_rate_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name); ///organisation/tbl-dcs/dcs-list
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/get-org-rate', Yii::t('app', 'Select'), $multiple, $extra_param, $readonly);
     }
 
 }

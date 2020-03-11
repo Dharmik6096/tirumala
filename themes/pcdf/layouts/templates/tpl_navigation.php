@@ -180,10 +180,10 @@ echo GhostMenu::widget([
                         ['label' => '201-' . Yii::t('app', 'Union Collection Report'), 'url' => ['/report/default/union-count']],
                         ['label' => '202-' . Yii::t('app', 'Society Collection Data Report'), 'url' => ['/report/default/list']],
                         ['label' => '203-' . Yii::t('app', 'Society Collection Summary Report'), 'url' => ['/report/default/index']],
-                        ['label' => '204-' . Yii::t('app', 'No Collection Summary Report'), 'url' => ['/report/default/no-collection-society']],
-                        ['label' => '205-' . Yii::t('app', 'No Collection Society Report'), 'url' => ['/report/default/no-collection-shifts']],
-                        ['label' => '206-' . Yii::t('app', 'No Network Summary Report'), 'url' => ['/report/default/dpu-request-summary']],
-                        ['label' => '207-' . Yii::t('app', 'No Network Detail Report'), 'url' => ['/report/default/dpu-request']],
+//                        ['label' => '204-' . Yii::t('app', 'No Collection Summary Report'), 'url' => ['/report/default/no-collection-society']],
+//                        ['label' => '205-' . Yii::t('app', 'No Collection Society Report'), 'url' => ['/report/default/no-collection-shifts']],
+//                        ['label' => '206-' . Yii::t('app', 'No Network Summary Report'), 'url' => ['/report/default/dpu-request-summary']],
+//                        ['label' => '207-' . Yii::t('app', 'No Network Detail Report'), 'url' => ['/report/default/dpu-request']],
                         ['label' => '208-' . Yii::t('app', 'Society-Shift Collection Completed'), 'url' => ['/report/default/shift-report']],
                         ['label' => '209-' . Yii::t('app', 'Society-Day Crosstab'), 'url' => ['/report/default/daily-report']],
                         ['label' => '210-' . Yii::t('app', 'Union-Day Crosstab'), 'url' => ['/report/default/union-report']],
@@ -201,6 +201,7 @@ echo GhostMenu::widget([
                         //  ['label' => Yii::t('app', 'Cleaning Not Done'), 'url' => ['/report/default/cleaning-not-done']],
                         // ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
                         ['label' => '222-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/default/rate-applicability-details']],
+                        ['label' => '223-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/default/rate-acknowledgement']],
                     ]
                 ],
                 [

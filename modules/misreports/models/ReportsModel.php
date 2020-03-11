@@ -9,7 +9,7 @@ use yii\base\Model;
 class ReportsModel extends Model {
 
     public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift;
-    public $calibration_day, $p_date, $customer_code, $member_code;
+    public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code;
 
     function __construct() {
         
@@ -20,25 +20,26 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['member_code'], 'default', 'value' => 0],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code'], 'safe'],
-            [['report_type'], 'required', 'on' => 'BmcCollection'],
-            [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
-            [['to_date'], function ($attribute, $params) {
-            Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-        }, 'skipOnEmpty' => false],
-            [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapStatusReport'],
-            [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
-            [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
-            [['union_code', 'plant_code', 'mcc_code', 'from_date', 'calibration_day'], 'required', 'on' => ['CalibrationFlag', 'CleaningFlagBmc']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['AnalyzerCleaningReview', 'AnalyzerCleaningPendingActivity', 'AnalyzerPcbReplacement']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date'], 'required', 'on' => ['CleaningFlag', 'EkoMilkCalibration']],
-            [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['TotalMilkCollectionDateShift', 'CollectionDataSummary', 'MccShiftCrossTab']],
-            [['union_code'], 'required', 'on' => ['RateApplicabilityDetails', 'MccShiftCrossTab']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MemberCollectionPassbook', 'MemberCollectionDayWise', 'MemberCollectionSummary']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'p_date'], 'required', 'on' => ['MemberCollectionPaymentcycleWise', 'MemberCollectionMonthWise']],
-            [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
-            [['union_code', 'report_type'], 'required', 'on' => ['CollectionDataSummary']],
+                [['member_code'], 'default', 'value' => 0],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code'], 'safe'],
+                [['report_type'], 'required', 'on' => 'BmcCollection'],
+                [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
+                [['to_date'], function ($attribute, $params) {
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+                }, 'skipOnEmpty' => false],
+                [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapStatusReport'],
+                [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
+                [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
+                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'calibration_day'], 'required', 'on' => ['CalibrationFlag', 'CleaningFlagBmc']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['AnalyzerCleaningReview', 'AnalyzerCleaningPendingActivity', 'AnalyzerPcbReplacement']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date'], 'required', 'on' => ['CleaningFlag', 'EkoMilkCalibration']],
+                [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['TotalMilkCollectionDateShift', 'CollectionDataSummary', 'MccShiftCrossTab']],
+                [['union_code'], 'required', 'on' => ['RateApplicabilityDetails', 'MccShiftCrossTab']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MemberCollectionPassbook', 'MemberCollectionDayWise', 'MemberCollectionSummary']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'p_date'], 'required', 'on' => ['MemberCollectionPaymentcycleWise', 'MemberCollectionMonthWise']],
+                [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
+                [['union_code', 'report_type'], 'required', 'on' => ['CollectionDataSummary']],
+                [['p_organization_type', 'p_purchase_rate_code'], 'required', 'on' => ['RateAcknowledgement']],
         ];
     }
 
@@ -57,6 +58,8 @@ class ReportsModel extends Model {
             'p_date' => \Yii::t('app', 'As On Date'),
             'date' => \Yii::t('app', 'Date'),
             'shift' => \Yii::t('app', 'Shift'),
+            'p_organization_type' => \Yii::t('app', 'Organization Type'),
+            'p_purchase_rate_code' => \Yii::t('app', 'Rate'),
         ];
     }
 

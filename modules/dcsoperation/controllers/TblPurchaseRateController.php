@@ -31,7 +31,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 class TblPurchaseRateController extends \app\controllers\ChildController {
 
     public $purchaseModel;
-    public $freeAccessActions = ['chart-list'];
+    public $freeAccessActions = ['chart-list', 'get-org-rate'];
 
     /**
      * Lists all TblPurchaseRate models.
@@ -526,6 +526,30 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                 } else {
                     $RateModel = new TblDcsPurchaseRate();
                     $list = $RateModel->getRateChartList($value[0]);
+                }
+                foreach ($list as $key => $r) {
+                    $out[] = array('id' => $key,
+                        'name' => $r);
+                }
+            }
+            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
+            return;
+        }
+    }
+
+    public function actionGetOrgRate() {
+        $out = NULL;
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            $union_code = Yii::$app->session->get('Unions');
+            $union_code = !empty($union_code) ? explode(',', $union_code) : $union_code;
+            if (!empty($value[0])) {
+                if (strtolower($value[0]) == 'dcs') {
+                    $RateModel = new TblPurchaseRate();
+                    $list = $RateModel->getRateChartList($union_code);
+                } else {
+                    $RateModel = new TblDcsPurchaseRate();
+                    $list = $RateModel->getRateChartList($union_code);
                 }
                 foreach ($list as $key => $r) {
                     $out[] = array('id' => $key,
