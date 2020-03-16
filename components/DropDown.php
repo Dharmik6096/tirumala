@@ -229,12 +229,7 @@ class DropDown extends Component {
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
-        if ((Yii::$app->session->get('hasBMC') == 0)) {
-            $script = "$(document).ready(function() {
-                   $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
-                    });";
-            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
-        }
+      
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
         if ((Yii::$app->session->get('hasBMC') == 0)) {
             $script = "$(document).ready(function() {
