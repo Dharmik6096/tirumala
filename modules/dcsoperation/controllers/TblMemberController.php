@@ -243,6 +243,7 @@ class TblMemberController extends \app\controllers\ChildController {
     private function setModel() {
         $this->model->dob = empty($this->model->dob) ? NULL : $this->model->dob;
         $this->model->member_name = ucwords($this->model->member_name);
+        $this->model->ex_member_code = str_pad(substr($this->model->ex_member_code, -4), 4, '0', STR_PAD_LEFT);
     }
 
     public function actionAppInformation() {
