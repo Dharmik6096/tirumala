@@ -145,6 +145,25 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('p_organization_type'))) {
+                                            if (isset($value_array[1]) && $value_array[1] == 'static') {
+                                                ?>
+
+                                                <div class="col-sm-6">
+                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('p_organization_type'), false, 'p_organization_type') ?> 
+                                                </div>
+                                                <?php
+                                            }
+                                        }
+                                        if (in_array($value, array('p_purchase_rate_code'))) {
+                                            if (isset($value_array[1]) && $value_array[1] == 'p_organization_type') {
+                                                ?>
+                                                <div class="col-sm-6 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {
