@@ -168,6 +168,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $res_data['rate']['bmcApplicableRate'] = "";
                 $res_data['memberDownload'] = FALSE;
                 $res_data['welcomeMessage'] = 'Welcome to Everest Instruments Pvt. Ltd.';
+                $res_data['shift_timing'] = [];
                 $mcc_bmc_config = TRUE;
                 $MappedMilkType = [];
                 $org_code = $data['organization_code'];
@@ -306,6 +307,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         if (!empty($bmc_rate)) {
                             $res_data['rate']['bmcApplicableRate'] = implode(',', array_column($bmc_rate, 'purchase_rate_code'));
                         }
+                    }
+
+                    $shiftTimigData = Yii::$app->general->getSpData('sp_app_amcs_v2_collection_shift_time', [$org_type, $org_code]);
+                    if (!empty($shiftTimigData)) {
+                        $res_data['shift_timing'] = $shiftTimigData;
                     }
                 }
             }
