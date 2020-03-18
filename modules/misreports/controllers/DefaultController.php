@@ -204,6 +204,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRateAcknowledgement() {
+        $this->report = 'RateAcknowledgement';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -539,6 +544,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_rpt_mis_mcc_shift_wise_dcs_count',
                 'scenario' => 'MccShiftCrossTab',
                 'title' => '120 - MCC-Shift Collection Count',
+            ],
+            'RateAcknowledgement' => [
+                'param' => 'p_organization_type:static:p_organization_type,p_purchase_rate_code:p_organization_type',
+                'sp_name' => 'sp_mis_rate_download_acknowledgement',
+                'scenario' => 'RateAcknowledgement',
+                'title' => '223 - Rate Acknowledgement',
             ],
         ];
         return $label[$l];
