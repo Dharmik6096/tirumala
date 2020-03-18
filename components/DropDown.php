@@ -739,7 +739,7 @@ class DropDown extends Component {
             'login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['MEMBER' => Yii::t('app', 'MEMBER')],
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION')],
             ],
             'is_quality_auto' => [
                 'name' => 'is_quality_auto',
