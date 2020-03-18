@@ -19,7 +19,7 @@ if ($model->isNewRecord) {
     $disabled = true;
 }
 $model->destination_type = 0;
-$model->is_bmc = 0;
+$bmcDisable = $model->is_bmc == 1 ? 'disabled' : '';
 $model->destination_code = 0;
 //$model->route_code = 0;
 $summary_model = $type == 'create' ? [$model, $bankDetails, $contactDetails] : $model;
@@ -56,7 +56,7 @@ $form = ActiveForm::begin([
     <?= Html::activeHiddenInput($model, 'destination_code') ?>
     <?= Html::activeHiddenInput($model, 'route_code') ?>
 
-    <div class="col-sm-3">
+    <div class="col-sm-3 <?= $bmcDisable ?>">
         <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disabled); ?>
     </div>
     <div class="col-sm-3 number-validate">

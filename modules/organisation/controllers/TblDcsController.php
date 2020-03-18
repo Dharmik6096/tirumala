@@ -92,10 +92,8 @@ class TblDcsController extends ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
-
+    public function actionCreate($bmc_code = '', $is_bmc = 0) {
         $this->model = new TblDcs();
-
         $this->viewFile = 'create';
         $this->model->scenario = 'createDcs';
         $this->bankDetails = new TblBankDetails();
@@ -104,7 +102,8 @@ class TblDcsController extends ChildController {
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
         $validate = 1;
-
+        $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
+        $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->dcs_code = $this->model->getCode();
 

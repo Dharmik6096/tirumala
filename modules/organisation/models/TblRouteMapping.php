@@ -354,5 +354,8 @@ class TblRouteMapping extends \app\models\ChildModel {
                 });
         return $array;
     }
+     public function getTblRouteMappingSources() {
+        return $this->hasMany(TblRouteMappingSources::className(), ['route_code' => 'route_code'])->andFilterWhere(['from_type' => $this->from_type]);
+    }
 
 }

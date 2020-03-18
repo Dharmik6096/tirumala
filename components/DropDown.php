@@ -229,7 +229,29 @@ class DropDown extends Component {
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
+      
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
+        if ((Yii::$app->session->get('hasBMC') == 0)) {
+            $script = "$(document).ready(function() {
+                        var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+                        var fieldName = '" . strtolower($name) . "';
+                        $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                            var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                                var mccCode = $('#" . $depends . "').val();
+                            if(mccCode!='' && length == 0) {
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().show();
+                            } else if(length == 1) {
+                                $('#'+modelname+'-'+fieldName).val(bmc);
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+                                $('#'+modelname+'-'+fieldName).trigger('change');
+                            } else {
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
+                            }
+                        });
+                    });";
+            Yii::$app->view->registerJs($script, View::POS_END, 'bmc_hide');
+        }
     }
 
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
@@ -530,7 +552,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -961,7 +983,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
