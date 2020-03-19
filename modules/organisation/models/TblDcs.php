@@ -223,7 +223,7 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
                 }, 'on' => 'importCsv'],
             [['dcs_type_code'], 'integer'],
-//            [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
+            [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
         ];
     }
 
