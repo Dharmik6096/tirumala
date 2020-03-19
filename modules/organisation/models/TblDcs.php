@@ -107,7 +107,7 @@ class TblDcs extends ChildModel {
     public $tmcc_code;
     public $is_sentbox;
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
-    public $department, $middle_name, $surname, $local_lastname, $local_surname;
+    public $department, $middle_name, $surname, $local_middlename, $local_surname;
 
     /**
      * @inheritdoc
@@ -208,14 +208,14 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateOnUnionConfig($this, 'rate_chart_member', 'dcs_create_with_member_rate', 1);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv', 'createDcs']],
             [['dcs_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'createDcs']],
-            [['department', 'middle_name', 'surname', 'local_lastname', 'local_surname', 'bank_code', 'origination_type'], 'safe'],
+            [['department', 'middle_name', 'surname', 'local_middlename', 'local_surname', 'bank_code', 'origination_type'], 'safe'],
             [['milk_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
                 }, 'on' => 'importCsv'],
             [['milk_type_code'], 'integer', 'on' => ['importCsv']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department'], 'on' => ['importCsv']],
-            [['local_contact_person', 'local_lastname', 'local_surname'], function ($attribute, $params) {
+            [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
             [['ifsc'], 'setBankDetail', 'on' => ['importCsv']],
@@ -223,7 +223,7 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
                 }, 'on' => 'importCsv'],
             [['dcs_type_code'], 'integer'],
-            [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
+//            [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
         ];
     }
 
@@ -957,7 +957,7 @@ class TblDcs extends ChildModel {
         $contact_model->local_contact_person = $model->local_contact_person;
         $contact_model->lastname = $model->middle_name;
         $contact_model->surname = $model->surname;
-        $contact_model->local_lastname = $model->local_lastname;
+        $contact_model->local_lastname = $model->local_middlename;
         $contact_model->local_surname = $model->local_surname;
         $contact_model->mobile_no = $model->mobile_no;
         if (!$contact_model->validate()) {
