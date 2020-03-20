@@ -84,6 +84,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
             [['mcc_plant_code'], 'setField'],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+            [['bmc_code'], 'unique']
         ];
     }
 

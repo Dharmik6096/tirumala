@@ -98,7 +98,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                 $validate = Yii::$app->warning->unique($this->model, 'bmc_name', $this->model->bmc_name);
             if ($validate == 1) {
                 $transaction = $this->generalModel->saveTransaction($master, [$this->contactDetails], ['Society BMC', 'create']);
-                if ($transaction !== FALSE) {
+                if ($transaction == 'customRedirect') {
                     if ($this->model->bmc_type_code == '2') {
                         return $this->redirect(['tbl-dcs/create', 'bmc_code' => $this->model->bmc_code, 'is_bmc' => 1]);
                     } else {
