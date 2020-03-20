@@ -224,6 +224,8 @@ class LoginForm extends Model {
                 foreach ($unionConfigData as $data) {
                     $unionConfigArray[$data->union_code][$data->config_key] = $data->config_result_key;
                 }
+                $unions = models\TblUnions::find()->where(['union_code' => explode(',', $union), 'is_active' => 1, 'has_bmc' => 1])->count();
+                $hasBMC = !empty($unions) && count($unions) > 0 ? 1 : 0;
                 break;
         }
         $language_code = 'en';
@@ -246,6 +248,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('organization_logo', $organization_logo);
         Yii::$app->session->set('eiplCode', $language);
         Yii::$app->session->set('unionConfig', $unionConfigArray);
+        Yii::$app->session->set('hasBMC', $hasBMC);
         return true;
     }
 

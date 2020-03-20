@@ -10,6 +10,7 @@ use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblDistricts;
 use app\modules\geo\models\TblStates;
+use app\modules\organisation\models\TblBranch;
 
 class DcsImport extends TblDcs {
 
@@ -18,17 +19,19 @@ class DcsImport extends TblDcs {
         $array = parent::rules();
 
         $rules = [
-                [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
-                [['dpu_type'], 'required', 'on' => 'importCsv'],
-                [['union_code'], 'validateUnionCode'],
-                [['hamlet_code'], 'validateHamlet'],
-                [['dcs_type_code'], 'validateDcsType'],
-                [['registration_date', 'effective_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true],
-                [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
-                [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
-                [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
-                [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
-                [['dpu_type'], function ($attribute, $params) {
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
+            [['dpu_type'], 'required', 'on' => 'importCsv'],
+            [['union_code'], 'validateUnionCode'],
+            [['hamlet_code'], 'validateHamlet'],
+            [['dcs_type_code'], 'validateDcsType'],
+            [['registration_date', 'effective_date'], 'convertDateDot'],
+            [['registration_date', 'effective_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018')],
+            [['registration_date', 'effective_date'], 'convertDate'],
+            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
+            [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
+            [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
+            [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+            [['dpu_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'dpu_type');
                 }, 'on' => 'importCsv']
         ];
@@ -122,6 +125,26 @@ class DcsImport extends TblDcs {
         if ($unions['msg'] != '') {
             $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " '" . $this->union_code . "'" . ' is invalid.'));
             return false;
+        }
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->registration_date = Yii::$app->controls->view_date($this->registration_date, 'php:d.m.Y');
+        } catch (\Throwable $e) {
+            $this->registration_date = '-';
+        }
+        try {
+            $this->effective_date = Yii::$app->controls->view_date($this->effective_date, 'php:d.m.Y');
+        } catch (\Throwable $e) {
+            $this->effective_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->registration_date = !empty($this->registration_date) ? Yii::$app->controls->view_date($this->registration_date, 'php:Y-m-d') : NULL;
+            $this->effective_date = !empty($this->effective_date) ? Yii::$app->controls->view_date($this->effective_date, 'php:Y-m-d') : NULL;
         }
     }
 

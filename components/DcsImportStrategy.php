@@ -12,7 +12,7 @@ use app\modules\organisation\models\TblDcsVillageMapping;
 use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;
 use Yii;
-
+use app\modules\organisation\models\TblDcsMilkType;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -63,7 +63,16 @@ class DcsImportStrategy extends ARImportStrategy {
                             $addedAttributes[$config['attribute']] = $config['attribute'];
                         }
                     }
-
+                    if (isset($this->defaultFields)) {
+                        foreach ($this->defaultFields as $default) {
+                            //                        var_dump($default['value']);exit;
+                            if (isset($default['attribute']) && $model->hasAttribute($default['attribute'])) {
+                                $value = $default['value'];
+                                //Set value to the model
+                                $model->setAttribute($default['attribute'], $value);
+                            }
+                        }
+                    }
                     $modelList = [];
                     $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_plant_code');
                     $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
@@ -103,8 +112,16 @@ class DcsImportStrategy extends ARImportStrategy {
 //                        foreach ($list as $row){
 //                            array_push($modelList, $row);
 //                        }
+                        $modelMilk = new TblDcsMilkType();
+                        $modelMilk->dcs_code = $model->dcs_code;
+                        $modelMilk->milk_type_code = $model->milk_type_code;
+                        $modelMilk->is_active = 1;
+                        $modelMilk->scenario = 'dcsImport';
 
+                        array_push($modelList, $modelMilk);
+                        $errors = [];
                         $model->setModelData($model, $modelList);
+                        $model->setbankContacts($model, $modelList, $errors);
 
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
@@ -121,6 +138,12 @@ class DcsImportStrategy extends ARImportStrategy {
                             $message = '';
                             foreach ($model->getErrors() as $errorkey => $value) {
                                 $message .= $value[0] . '<br>';
+                            }
+
+                            foreach ($errors as $array) {
+                                foreach ($array as $errorkey => $value) {
+                                    $message .= $value[0] . '<br>';
+                                }
                             }
                             return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                         }

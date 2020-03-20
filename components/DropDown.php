@@ -229,7 +229,29 @@ class DropDown extends Component {
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
+      
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
+        if ((Yii::$app->session->get('hasBMC') == 0)) {
+            $script = "$(document).ready(function() {
+                        var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+                        var fieldName = '" . strtolower($name) . "';
+                        $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            var length = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').length;
+                            var bmc = $('#'+modelname+'-'+fieldName+' option[value!=\'\']').val();
+                                var mccCode = $('#" . $depends . "').val();
+                            if(mccCode!='' && length == 0) {
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().show();
+                            } else if(length == 1) {
+                                $('#'+modelname+'-'+fieldName).val(bmc);
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+                                $('#'+modelname+'-'+fieldName).trigger('change');
+                            } else {
+                                $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
+                            }
+                        });
+                    });";
+            Yii::$app->view->registerJs($script, View::POS_END, 'bmc_hide');
+        }
     }
 
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
@@ -802,6 +824,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Create'), 1 => Yii::t('app', 'Import'), 2 => Yii::t('app', 'Sync'), 3 => Yii::t('app', 'Auto Entry')],
             ],
+            'p_organization_type' => [
+                'name' => 'organization_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }
@@ -973,6 +1000,11 @@ class DropDown extends Component {
                 'initialize' => true,
             ]
         ])->label(Yii::t('app', $label));
+    }
+
+    public function org_type_rate($model, $form, $depends, $name = 'p_purchase_rate_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name); ///organisation/tbl-dcs/dcs-list
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/get-org-rate', Yii::t('app', 'Select'), $multiple, $extra_param, $readonly);
     }
 
 }

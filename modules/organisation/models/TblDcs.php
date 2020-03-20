@@ -36,6 +36,8 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\general\models\TblCollectionIncentiveDeduction;
 use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\general\models\TblDepartment;
+
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
 //use app\modules\vsp\models\TblBillHeadDetail;
@@ -105,6 +107,7 @@ class TblDcs extends ChildModel {
     public $tmcc_code;
     public $is_sentbox;
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
+    public $department, $middle_name, $surname, $local_middlename, $local_surname;
 
     /**
      * @inheritdoc
@@ -122,6 +125,7 @@ class TblDcs extends ChildModel {
             [['dcs_short_name', 'hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
             [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
+            [['milk_type_code', 'contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
             [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
             [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
@@ -132,7 +136,7 @@ class TblDcs extends ChildModel {
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
 //            [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
             [['dcs_code', 'gst_no'], 'unique'],
-            [['allow_multi_family_member', /* 'destination_type', */ 'dcs_type_code'], 'integer'],
+            [['allow_multi_family_member', /* 'destination_type', */], 'integer'],
             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
@@ -204,6 +208,22 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateOnUnionConfig($this, 'rate_chart_member', 'dcs_create_with_member_rate', 1);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv', 'createDcs']],
             [['dcs_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'createDcs']],
+            [['department', 'middle_name', 'surname', 'local_middlename', 'local_surname', 'bank_code', 'origination_type'], 'safe'],
+            [['milk_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+                }, 'on' => 'importCsv'],
+            [['milk_type_code'], 'integer', 'on' => ['importCsv']],
+            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
+            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department'], 'on' => ['importCsv']],
+            [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+            [['ifsc'], 'setBankDetail', 'on' => ['importCsv']],
+            [['dcs_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
+                }, 'on' => 'importCsv'],
+            [['dcs_type_code'], 'integer'],
+            [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
         ];
     }
 
@@ -790,8 +810,8 @@ class TblDcs extends ChildModel {
         $this->pan_no = strtoupper($this->pan_no);
         $this->dcs_short_name = ucwords($this->dcs_short_name);
         $this->route_code = empty($this->route_code) ? null : $this->route_code;
-        $this->registration_date = ($this->registration_date == '') ? null : Yii::$app->formatter->asDate($this->registration_date, 'php:Y-m-d');
-        $this->effective_date = ($this->effective_date == '') ? null : Yii::$app->formatter->asDate($this->effective_date, 'php:Y-m-d');
+//        $this->registration_date = ($this->registration_date == '') ? null : Yii::$app->formatter->asDate($this->registration_date, 'php:Y-m-d');
+//        $this->effective_date = ($this->effective_date == '') ? null : Yii::$app->formatter->asDate($this->effective_date, 'php:Y-m-d');
     }
 
     public function getDpuIncentiveMaster() {
@@ -903,5 +923,47 @@ class TblDcs extends ChildModel {
 //    public function getBillHeadTransactions() {
 //        return $this->hasMany(TblBillHeadDetail::className(), ['dcs_code' => 'dcs_code']);
 //    }
+    public function getIfscDetail() {
+        return $this->hasOne(TblBranch::className(), ['ifsc' => 'ifsc'])->andwhere(['is_active' => 1]);
+    }
+
+    public function setBankDetail($attribute, $params) {
+
+        if (empty($this->getErrors()) && !empty($this->ifsc)) {
+            $this->branch_code = Yii::$app->general->getforeignkey($this->ifscDetail, 'branch_code');
+            $this->bank_code = Yii::$app->general->getforeignkey($this->ifscDetail, 'bank_code');
+            if (empty($this->branch_code)) {
+                $this->addError('ifsc', Yii::t('app/validation', $this->getAttributeLabel('ifsc') . ' is Invalid.'));
+                return false;
+            }
+        }
+    }
+
+    public function setbankContacts($model, &$saveModel, &$errors) {
+        $branch_model = new TblBankDetails();
+        $branch_model->setModel('society', $model->dcs_code);
+        $branch_model->ifsc = $model->ifsc;
+        $branch_model->bank_account_no = $model->bank_account_no;
+        if (!$branch_model->validate()) {
+            $errors[] = $branch_model->getErrors();
+        }
+        array_push($saveModel, $branch_model);
+
+        $contact_model = new TblContactDetails();
+        $contact_model->setModel('society', $model->dcs_code);
+        $contact_model->department = $model->department;
+        $contact_model->contact_person = $model->contact_person;
+        $contact_model->firstname = $model->contact_person;
+        $contact_model->local_contact_person = $model->local_contact_person;
+        $contact_model->lastname = $model->middle_name;
+        $contact_model->surname = $model->surname;
+        $contact_model->local_lastname = $model->local_middlename;
+        $contact_model->local_surname = $model->local_surname;
+        $contact_model->mobile_no = $model->mobile_no;
+        if (!$contact_model->validate()) {
+            $errors[] = $contact_model->getErrors();
+        }
+        array_push($saveModel, $contact_model);
+    }
 
 }

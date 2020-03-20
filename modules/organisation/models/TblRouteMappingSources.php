@@ -86,7 +86,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
     public function getDestinations($code, $route_type, $union_code, $route_dest_type = 'from') {
 
         $results = new TblRouteMapping();
-        $results = $results->getDestinations($route_type, $union_code, $route_dest_type = 'from');
+        $results = $results->getDestinations($route_type, $union_code, $route_dest_type = 'from', $code);
         $values = $this->find()->select('from_dest')->where(['route_code' => $code->route_code, 'is_active' => 1])->asArray()->all();
         $selected = [];
         //var_dump($results);exit;

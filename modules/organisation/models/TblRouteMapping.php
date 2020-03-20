@@ -154,7 +154,7 @@ class TblRouteMapping extends \app\models\ChildModel {
         return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
     }
 
-    public function getDestinations($route_type, $union_code, $route_dest_type = 'to') {
+    public function getDestinations($route_type, $union_code, $route_dest_type = 'to', $routeData = '') {
         $results = '';
         $subQuery = (new Query())
                 ->select('*')
@@ -168,7 +168,19 @@ class TblRouteMapping extends \app\models\ChildModel {
         switch (1) {
             case ($route_type == 'can' && $route_dest_type == 'from'):
                 $dcs_sub_query = $subQuery->where('t.dcs_code = rms.from_dest');
-                $results = (new Query())->select(['dcs_code AS code', 'dcs_name AS name', new Expression("'Society' as tname")])->from('tbl_dcs t')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $dcs_sub_query])->all();
+                $results = (new Query())->select(['dcs_code AS code', 'dcs_name AS name', new Expression("'Society' as tname")])->from('tbl_dcs t')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $dcs_sub_query]);
+                if (!empty($routeData)) {
+                    if (strtolower($routeData->to_type) == 'bmc' && !empty($routeData->to_dest)) {
+                        $results->andFilterWhere(['bmc_code' => $routeData->to_dest]);
+                    }
+                    if (strtolower($routeData->to_type) == 'mcc' && !empty($routeData->to_dest)) {
+                        $results->andFilterWhere(['mcc_plant_code' => $routeData->to_dest]);
+                    }
+                    if (strtolower($routeData->to_type) == 'plant' && !empty($routeData->to_dest)) {
+                        $results->andFilterWhere(['plant_code' => $routeData->to_dest]);
+                    }
+                }
+                $results = $results->all();
                 return $results;
 
             case ($route_type == 'tanker' && $route_dest_type == 'from'):
@@ -353,6 +365,10 @@ class TblRouteMapping extends \app\models\ChildModel {
                     return $value['route_name'] . ' - ' . strtoupper($value['to_type']);
                 });
         return $array;
+    }
+
+    public function getTblRouteMappingSources() {
+        return $this->hasMany(TblRouteMappingSources::className(), ['route_code' => 'route_code'])->andFilterWhere(['from_type' => $this->from_type]);
     }
 
 }
