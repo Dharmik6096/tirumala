@@ -42,7 +42,7 @@ $attribute = [
             'actions' => [
                 'view' => true,
                 'update' => true,
-                'delete' => ['option' => 'code,name,user-management/user/delete'],
+                'delete' => ['option' => 'code,name,/user-management/auth-item-group/delete'],
             ]
         ];
 
@@ -51,48 +51,48 @@ $attribute = [
 
         <?php
 
-        $script = "
-            $('#permission-group-list').on('click','.permission-group-record',function(e){
-                    var id= $(this).attr('data-val');
-                    var name = $(this).attr('data-name');
-                    bootbox.confirm({
-                        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to delete this permision group \"'+name+'\"?</span></div></div>',
-                        buttons: {
-                            'cancel': {
-                                            label: 'Cancel',
-                                            className: 'btn btn-danger'
-                              },
-                            'confirm': {
-                                            label: 'Ok',
-                                            className: 'btn btn-primary'
-                             }
-                        },
-                        callback: function(result) {
-                            if (result) {
-                              $('#loader').show();
-                                 $.ajax({
-                                        type: 'post',
-                                        url: '" . Yii::$app->request->baseUrl . "/index.php?r=user-management/auth-item-group/delete&id=' + id,
-                                        //data: 'id='+id,
-                                        success: function(data) {
-
-                                            var obj1 = $.parseJSON(data);
-                                            if (obj1.status == 'success')
-                                            {
-                                                $.pjax.reload({container: '#permission-group-list'});
-                                                bootbox.alert(obj1.msg);
-                                            }
-                                            else if (obj1.status == 'error'){
-                                                bootbox.alert(obj1.msg);
-                                            }
-                                        },
-                                        error:function(data){
-                                                    //alert('Your data has not been submitted..Please try again');
-                                                }
-                            });
-                            }
-                        }
-                    });
-                });";
-        $this->registerJs($script, View::POS_END, 'delete-manager');
+//        $script = "
+//            $('#permission-group-list').on('click','.permission-group-record',function(e){
+//                    var id= $(this).attr('data-val');
+//                    var name = $(this).attr('data-name');
+//                    bootbox.confirm({
+//                        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to delete this permision group \"'+name+'\"?</span></div></div>',
+//                        buttons: {
+//                            'cancel': {
+//                                            label: 'Cancel',
+//                                            className: 'btn btn-danger'
+//                              },
+//                            'confirm': {
+//                                            label: 'Ok',
+//                                            className: 'btn btn-primary'
+//                             }
+//                        },
+//                        callback: function(result) {
+//                            if (result) {
+//                              $('#loader').show();
+//                                 $.ajax({
+//                                        type: 'post',
+//                                        url: '" . Yii::$app->request->baseUrl . "/index.php?r=user-management/auth-item-group/delete&id=' + id,
+//                                        //data: 'id='+id,
+//                                        success: function(data) {
+//
+//                                            var obj1 = $.parseJSON(data);
+//                                            if (obj1.status == 'success')
+//                                            {
+//                                                $.pjax.reload({container: '#permission-group-list'});
+//                                                bootbox.alert(obj1.msg);
+//                                            }
+//                                            else if (obj1.status == 'error'){
+//                                                bootbox.alert(obj1.msg);
+//                                            }
+//                                        },
+//                                        error:function(data){
+//                                                    //alert('Your data has not been submitted..Please try again');
+//                                                }
+//                            });
+//                            }
+//                        }
+//                    });
+//                });";
+//        $this->registerJs($script, View::POS_END, 'delete-manager');
         ?>
