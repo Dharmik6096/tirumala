@@ -944,6 +944,8 @@ class TblDcs extends ChildModel {
         $branch_model->setModel('society', $model->dcs_code);
         $branch_model->ifsc = $model->ifsc;
         $branch_model->bank_account_no = $model->bank_account_no;
+        $branch_model->bank_code = $model->bank_code;
+        $branch_model->branch_code = $model->branch_code;
         if (!$branch_model->validate()) {
             $errors[] = $branch_model->getErrors();
         }
