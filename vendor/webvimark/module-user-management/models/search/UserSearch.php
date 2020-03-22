@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use webvimark\modules\UserManagement\models\User;
+use app\models\TblUserOrganizationMapping;
 
 /**
  * UserSearch represents the model behind the search form about `webvimark\modules\UserManagement\models\User`.
@@ -29,7 +30,7 @@ class UserSearch extends User {
         $query = User::find();
         $query->joinWith(['userType', 'departmentCode']);
         if (!Yii::$app->user->isSuperadmin && Yii::$app->session->get('organizations_type') != 'FEDERATION') {
-            $query->joinWith(['organizations']);
+            //  $query->joinWith(['organizations']);
             $org_array = [];
             $unions = explode(',', Yii::$app->session->get('Unions'));
             $feds = explode(',', Yii::$app->session->get('Federations'));
@@ -45,10 +46,17 @@ class UserSearch extends User {
             $org_string = "'" . implode(',', $org_array) . "'";
             $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
             $org_codes = $command->sql;
+
+            $organization_mapping = TblUserOrganizationMapping::find()->distinct()->select(['user_id'])
+                    ->where(['tbl_user_organization_mapping.organization_type' => Yii::$app->general->getChildOrgs()[0]])
+                    ->andWhere('tbl_user_organization_mapping.organization_code in (' . $org_codes . ')');
+
             $query->where(['superadmin' => 0]);
-            $query->andWhere(['tbl_user_organization_mapping.organization_type' => Yii::$app->general->getChildOrgs()[0]]);
-            $query->andWhere('tbl_user_organization_mapping.organization_code in (' . $org_codes . ')');
-            $query->orWhere(['user_id' => Yii::$app->session->get('UserCode')]);
+            $query->andWhere(['user.id' => $organization_mapping]);
+
+            // $query->andWhere(['tbl_user_organization_mapping.organization_type' => Yii::$app->general->getChildOrgs()[0]]);
+            // $query->andWhere('tbl_user_organization_mapping.organization_code in (' . $org_codes . ')');
+            $query->orWhere(['user.id' => Yii::$app->session->get('UserCode')]);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

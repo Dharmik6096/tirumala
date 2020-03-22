@@ -548,7 +548,7 @@ class GeneralFunctions extends Component {
                 $i = 2;
                 break;
             case 3:
-                $orgs = ['DCS', 'PLANT', 'MCC', 'BMC'];
+                $orgs = ['UNION', 'DCS', 'PLANT', 'MCC', 'BMC'];
                 $i = 3;
                 break;
             case 4:
@@ -978,7 +978,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
