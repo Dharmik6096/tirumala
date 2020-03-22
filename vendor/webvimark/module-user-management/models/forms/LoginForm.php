@@ -150,6 +150,7 @@ class LoginForm extends Model {
         $language = '';
         $with_member_rate = 0;
         $unionConfigArray = [];
+        $hasBMC = 1;
         switch ($main_org_type) {
 
             case 'PCDF':
