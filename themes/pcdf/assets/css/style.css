@@ -1225,7 +1225,7 @@ input[type="hidden"] + .help-block{
     padding: 1px 10px;
     margin: 0 0 15px;
 }
-.app-check-list{
+.app-check-list, .app-check-list-mcc, .app-check-list-bmc{
     background: none;
     border: 1px solid #ddd;
     padding:5px 10px;
@@ -1237,7 +1237,7 @@ input[type="hidden"] + .help-block{
 .app-check-all label{
     font-weight: 600;
 }
-.app-check-list #dcs-wrap .help-block{
+.app-check-list #dcs-wrap .help-block, .app-check-list #mcc-wrap .help-block, .app-check-list #bmc-wrap .help-block{
     height: 0;
     margin: 0;
 }

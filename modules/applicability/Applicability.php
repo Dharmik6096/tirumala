@@ -111,6 +111,8 @@ class Applicability extends \yii\base\Module {
                 $main_field_name = 'dcs_code';
                 $title = 'Societies';
         }
+
+        $mccList = $this->loadUnionMcc($this->union_code);
         $searchModel = $this->searchModel;
         $searchModel->$field_name = $this->field_value;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -161,7 +163,8 @@ class Applicability extends \yii\base\Module {
                     'selectedCodes' => $this->selectedCodes,
                     'selectedTypes' => $this->selectedTypes,
                     'hideCustomerType' => $hideCustomerType,
-                    'check_wef_date' => $this->check_wef_date
+                    'check_wef_date' => $this->check_wef_date,
+                    'mccList' => $mccList
         ]);
     }
 
@@ -585,7 +588,7 @@ class Applicability extends \yii\base\Module {
 
     public function loadUnionMcc($union_code) {
         $mccModel = new TblMccPlant();
-        $mccList = $mccModel->getMccs($union_code);
+        $mccList = $mccModel->getMccs($union_code, [], true);
         return $mccList;
     }
 

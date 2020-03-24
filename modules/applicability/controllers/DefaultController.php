@@ -158,4 +158,12 @@ class DefaultController extends Controller {
         return Json::encode(['status' => 'success', 'data' => $filter_data]);
     }
 
+    public function actionLoadBmcData() {
+        $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? Yii::$app->request->post('selected_mcc') : [];
+        $unionCode = !empty(Yii::$app->request->post('union_code')) ? Yii::$app->request->post('union_code') : '';
+        $bmcModel = new TblDcsBmc();
+        $bmcList = $bmcModel->getMccBmcList($unionCode, json_decode($mccCodes));
+        return Json::encode(['status' => 'success', 'data' => $bmcList]);
+    }
+
 }
