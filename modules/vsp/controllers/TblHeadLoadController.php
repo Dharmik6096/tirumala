@@ -332,7 +332,9 @@ class TblHeadLoadController extends \app\controllers\ChildController {
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'shift_for' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCodeFor.shift', 'class' => ''],
-            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_for' => ['view' => ['grid'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
             'name' => ['view' => ['grid'], 'value' => function($model) {
                     if ($model->applicable_for == 'PLANT') {

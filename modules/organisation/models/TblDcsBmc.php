@@ -387,7 +387,7 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasMany(TblBmcGroupMapping::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getBmcs($unionCode, $notIn = []) {
+    public function getBmcs($unionCode, $notIn = [], $concatCode = false) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('BMC') !== '') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
@@ -396,7 +396,9 @@ class TblDcsBmc extends \app\models\ChildModel {
             $query->andWhere(['not in', 'bmc_code', $notIn]);
         }
         $bmc = $query->all();
-        $bmc = ArrayHelper::map($bmc, 'bmc_code', 'bmc_name');
+        $bmc = ArrayHelper::map($bmc, 'bmc_code', function($bmc) use ($concatCode) {
+                    return $bmc->bmc_name . ($concatCode ? ' - ' . $bmc->bmc_code : '');
+                });
         asort($bmc, SORT_NATURAL | SORT_FLAG_CASE);
         return $bmc;
     }

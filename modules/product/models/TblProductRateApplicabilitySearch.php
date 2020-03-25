@@ -12,6 +12,7 @@ use app\modules\product\models\TblProductRateApplicability;
  */
 class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
 
+    public $name;
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
         return [
                 [['product_rate_applicability_code', 'product_code', 'originating_type'], 'safe'],
                 [['wef_date', 'product_rate_code', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['rate', 'rate_two'], 'safe'],
+                [['rate', 'rate_two', 'name'], 'safe'],
         ];
     }
 
@@ -47,7 +48,7 @@ class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
             'query' => $query,
         ]);
 
-        $query->joinWith(['customerTypeFor']);
+        $query->joinWith(['customerTypeFor', 'plantCode', 'mccPlantCode', 'bmcCode', 'dispDcsCode', 'mainCustomerCode']);
 
         $this->load($params);
 
@@ -58,11 +59,17 @@ class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
         }
         $query->andFilterWhere(['product_rate_code' => $this->product_rate_code]);
         if (!empty($this->wef_date))
-            $query->andFilterWhere(['like', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]);
+            $query->andFilterWhere(['cast(wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
 
-        $query->andFilterWhere(['like', 'tbl_product_rate_applicability.applicable_for', $this->applicable_for])
-//                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_type])
-                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_name', $this->name],
+                ['like', 'tbl_customer_master.customer_name', $this->name],
+                ['like', 'tbl_plant.name', $this->name],
+                ['like', 'tbl_mcc_plant.name', $this->name],
+                ['like', 'tbl_bmc.bmc_name', $this->name]
+        ]);
+
+        $query->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
                 ->andFilterWhere(['like', 'tbl_product_rate_applicability.applicable_code', $this->applicable_code]);
 
         return $dataProvider;

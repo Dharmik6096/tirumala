@@ -58,6 +58,8 @@ class Applicability extends \yii\base\Module {
     public $selectedTypes = [];
     public $assignStaticData = [];
     public $check_wef_date = false;
+    public $selectedMccCode = [];
+    public $selectedBmcCode = [];
 
     /**
      * @inheritdoc
@@ -164,7 +166,9 @@ class Applicability extends \yii\base\Module {
                     'selectedTypes' => $this->selectedTypes,
                     'hideCustomerType' => $hideCustomerType,
                     'check_wef_date' => $this->check_wef_date,
-                    'mccList' => $mccList
+                    'mccList' => $mccList,
+                    'selectedMccCode' => $this->selectedMccCode,
+                    'selectedBmcCode' => $this->selectedBmcCode
         ]);
     }
 
@@ -195,12 +199,15 @@ class Applicability extends \yii\base\Module {
                 $main_field_name = 'dcs_code';
                 $title = 'Society';
         }
+        $hasError = false;
+        $postData = [];
         if (Yii::$app->request->post()) {
             //$model->union_code = $this->union_code;
             $model->$field_name = $this->field_value;
 
             if ($model->load(Yii::$app->request->post())) {
-                $model->setAttributes(Yii::$app->request->post());
+                $postData = Yii::$app->request->post();
+                $model->setAttributes($postData);
                 $model->setAttributes($this->assignStaticData);
                 if ($model->validate()) {
                     $dataold = $this->model->find()->where([$this->field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->all();
@@ -253,7 +260,7 @@ class Applicability extends \yii\base\Module {
                         array_push($mappingList, $appModel);
                     }
                     $transaction = $this->generalModel->appTransaction($mappingList, [$this->trans_label, 'create']);
-                    if ($transaction !== FALSE) {
+                    if ($transaction == 'customRedirect') {
                         $mname = \yii\helpers\StringHelper::basename(get_class($this->model));
                         if ($transaction == 'customRedirect' && $mname == 'TblPurchaseRateApplicability') {
                             $files = [];
@@ -278,7 +285,32 @@ class Applicability extends \yii\base\Module {
                                     $app->generateEncFile($value[$cp_code], $cp_path);
                             }
                         }
+                        $this->selectedMccCode = [];
+                        $this->selectedBmcCode = [];
                         return $this->{$transaction}();
+                    } else {
+                        $hasError = true;
+                    }
+                } else {
+                    $hasError = true;
+                }
+                if ($hasError) {
+                    $pData = array_values($postData);
+                    $mccCode = array_map(function($a) {
+                        return !empty($a['f_mcc_code']) ? $a['f_mcc_code'] : [];
+                    }, $pData);
+                    foreach ($mccCode as $m) {
+                        if (!empty($m)) {
+                            $this->selectedMccCode = $m;
+                        }
+                    }
+                    $bmcCode = array_map(function($a) {
+                        return !empty($a['f_bmc_code']) ? $a['f_bmc_code'] : [];
+                    }, $pData);
+                    foreach ($bmcCode as $m) {
+                        if (!empty($m)) {
+                            $this->selectedBmcCode = $m;
+                        }
                     }
                 }
             }

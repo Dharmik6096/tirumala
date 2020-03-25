@@ -154,7 +154,9 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
-            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_for' => ['view' => ['grid'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
             'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
                     if ($model->applicable_for == 'PLANT') {

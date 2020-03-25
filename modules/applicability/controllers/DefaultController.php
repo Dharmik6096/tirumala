@@ -118,6 +118,8 @@ class DefaultController extends Controller {
             $where = ['wef_date' => $wef_date];
         }
         $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where);
+        $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
+        $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? json_decode(Yii::$app->request->post('selected_bmc')) : [];
         switch (1) {
             case key_exists('routes', $filters):
                 $routs = new TblRouteMapping();
@@ -129,19 +131,19 @@ class DefaultController extends Controller {
                 break;
             case in_array($filter, ['PLANT']):
                 $plantModel = new TblPlant();
-                $filter_data['applicable_code'] = $plantModel->getPlantList($union_code, TRUE, $modelQuery);
+                $filter_data['applicable_code'] = $plantModel->getPlantList($union_code, TRUE, $modelQuery, true);
                 break;
             case in_array($filter, ['MCC']):
                 $mccModel = new TblMccPlant();
-                $filter_data['applicable_code'] = $mccModel->getMccs($union_code, $modelQuery);
+                $filter_data['applicable_code'] = $mccModel->getMccs($union_code, $modelQuery, true);
                 break;
             case in_array($filter, ['BMC']):
                 $bmcModel = new TblDcsBmc();
-                $filter_data['applicable_code'] = $bmcModel->getBmcs($union_code, $modelQuery);
+                $filter_data['applicable_code'] = $bmcModel->getBmcs($union_code, $modelQuery, true);
                 break;
             case in_array($filter, ['DCS']):
                 $bmcModel = new TblDcs();
-                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery);
+                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes);
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();
@@ -149,7 +151,7 @@ class DefaultController extends Controller {
 //                break;
             default :
                 $vendorModel = new TblCustomerMaster();
-                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, $filter, $modelQuery);
+                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, $filter, $modelQuery, true, true, $mccCodes, $bmcCodes);
         }
         if (key_exists('mcc', $filters)) {
             $mcc = new TblMccPlant();

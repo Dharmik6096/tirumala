@@ -12,13 +12,15 @@ use app\modules\vsp\models\TblBillHeadApplicability;
  */
 class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
 
+    public $mcc_name;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['bill_head_applicabilty_code'], 'integer'],
-            [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
+                [['bill_head_applicabilty_code'], 'integer'],
+                [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code', 'applicable_for', 'applicable_code', 'mcc_name'], 'safe'],
         ];
     }
 
@@ -54,16 +56,22 @@ class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['dcsCode']);
+        $query->joinWith(['mainCustomerCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType']);
 
+        if (!empty($this->wef_date))
+            $query->andFilterWhere(['cast(tbl_bill_head_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
         // grid filtering conditions
-        $query->andFilterWhere([
-            'tbl_bill_head_applicability.bill_head_applicabilty_code' => $this->bill_head_applicabilty_code,
-            'tbl_bill_head_applicability.wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : '',
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_name', $this->mcc_name],
+                ['like', 'tbl_customer_master.customer_name', $this->mcc_name],
+                ['like', 'tbl_plant.name', $this->mcc_name],
+                ['like', 'tbl_mcc_plant.name', $this->mcc_name],
+                ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
-                ->andFilterWhere(['like', 'tbl_bill_head_applicability.bill_head_code', $this->bill_head_code])
+        $query->andFilterWhere(['like', 'tbl_bill_head_applicability.applicable_code', $this->applicable_code])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
                 ->andFilterWhere(['like', 'tbl_bill_head_applicability.union_code', $this->union_code]);
 
         return $dataProvider;

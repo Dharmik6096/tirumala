@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * This is the model class for table "tbl_head_load_applicability".
@@ -212,4 +213,7 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'applicable_code']);
     }
 
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
+    }
 }
