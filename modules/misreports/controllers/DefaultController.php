@@ -546,7 +546,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '120 - MCC-Shift Collection Count',
             ],
             'RateAcknowledgement' => [
-                'param' => 'p_organization_type:static:p_organization_type,p_purchase_rate_code:p_organization_type',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,rate_type:static:rate_type,p_purchase_rate_code:rate_type,p_organization_type:static:p_organization_type',
                 'sp_name' => 'sp_mis_rate_download_acknowledgement',
                 'scenario' => 'RateAcknowledgement',
                 'title' => '223 - Rate Acknowledgement',

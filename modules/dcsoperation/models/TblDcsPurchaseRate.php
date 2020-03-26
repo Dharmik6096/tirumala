@@ -175,7 +175,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
     }
 
     public function getRateChartList($union_code) {
-        $data = $this->find()->where(['union_code' => $union_code])->all();
+        $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
         return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
                     return $data->purchase_rate_code . ' (' . $data->description . ')';
                 });

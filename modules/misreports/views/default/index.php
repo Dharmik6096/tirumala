@@ -155,11 +155,22 @@ if (isset($data['url1'])) {
                                                 <?php
                                             }
                                         }
+                                        if (in_array($value, array('rate_type'))) {
+                                            if (isset($value_array[1]) && $value_array[1] == 'static') {
+                                                ?>
+
+                                                <div class="col-sm-6">
+                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('rate_type'), false, 'rate_type') ?> 
+                                                </div>
+                                                <?php
+                                            }
+                                        }
                                         if (in_array($value, array('p_purchase_rate_code'))) {
-                                            if (isset($value_array[1]) && $value_array[1] == 'p_organization_type') {
+                                            if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-6 val_dcs_code">
-                                                    <?= Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
+                                                    <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
                                             }
