@@ -14,8 +14,10 @@ use yii\helpers\Html;
         <?php
         if (isset($method) && $method == 1)
             echo $this->render('_manual_section', ['purchaseBasedModel' => $purchaseBasedModel[0], 'jsonEncoded' => $jsonEncoded, 'quality_param' => $quality_param]);
-        else
+        else if (isset($method) && $method == 2)
             echo $this->render('_auto_section', ['purchaseBasedModel' => $purchaseBasedModel, 'jsonEncoded' => $jsonEncoded, 'quality_param' => $quality_param]);
+        else
+            echo $this->render('_only_formula_section', ['purchaseBasedModel' => $purchaseBasedModel, 'jsonEncoded' => $jsonEncoded, 'quality_param' => $quality_param]);
         ?>
     </div>
 </div>

@@ -25,7 +25,6 @@ use yii\helpers\ArrayHelper;
  * @property integer $milk_quality_type_code
  * @property double $start_range
  * @property double $step
- * @property string $sync_timestamp
  * @property string $updated_at
  * @property integer $milk_type_code
  * @property string $created_by
@@ -33,7 +32,6 @@ use yii\helpers\ArrayHelper;
  * @property string $purchase_rate_code
  * @property string $updated_by
  * @property integer $is_active
- * @property integer $is_delete
  *
  * @property TblAnimalType $milkTypeCode
  * @property User $createdBy
@@ -45,7 +43,6 @@ use yii\helpers\ArrayHelper;
 class TblDcsPurchaseRateBased extends \app\models\ChildModel {
 
     public $quality_param_code_name;
-    public $formula;
 
     /**
      * @inheritdoc
@@ -70,7 +67,8 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
             [['deduction_type', 'fixed_point', 'kg_rate', 'ref_type', 'step', 'value'], 'default', 'value' => '0'],
             [['quality_param_code', 'deduction_type', 'ref_type', 'kg_rate'], 'required', 'on' => 'manualForm'],
             [['milk_type_code', 'end_range', 'start_range', 'rate_type', 'milk_quality_type_code'], 'required'],
-            [['formula_code', 'kg_rate'], 'required', 'except' => 'excel'],
+            [['formula_code', 'kg_rate'], 'required', 'except' => ['excel', 'formulaOnly']],
+            [['formula', 'kg_rate'], 'required', 'on' => ['formulaOnly']],
             [['end_range', 'start_range'], 'number', 'min' => 0.1, 'max' => 99, 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => 'Range should single decimal number.'],
             [['fixed_point'], 'number', 'numberPattern' => '/^\d+(.\d{1,1})?$/', 'message' => 'Fixed Point should single decimal number.'],
             [['kg_rate'], 'number', 'min' => 1, 'except' => 'excel'],
@@ -85,7 +83,7 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
             [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
             [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
             [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
-            [['created_at', 'deleted_at', 'sync_timestamp', 'step', 'updated_at', 'kg_rate', 'is_active', 'is_delete', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type', 'purchase_rate_code'], 'safe'],
+            [['created_at', 'deleted_at', 'step', 'updated_at', 'kg_rate', 'is_active', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type', 'purchase_rate_code'], 'safe'],
             [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
             [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
             [['deduction_type', 'ref_type'], 'string', 'max' => 50],
@@ -232,14 +230,12 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
             'quality_param_code' => Yii::t('app', 'Quality Param'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
             'start_range' => Yii::t('app', 'Start Range'),
-            'sync_timestamp' => Yii::t('app', 'Sync Timestamp'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'created_by' => Yii::t('app', 'Created By'),
             'purchase_rate_code' => Yii::t('app', 'Purchase Rate'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'is_delete' => Yii::t('app', 'Is Delete'),
         ];
     }
 
@@ -338,8 +334,6 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
         // grid filtering conditions
         $query->andFilterWhere([
             'created_at' => $this->created_at,
-            'is_delete' => $this->is_delete,
-            'sync_timestamp' => $this->sync_timestamp,
             'purchase_rate_code' => $this->purchase_rate_code,
             'milk_quality_type_code' => $this->milk_quality_type_code,
         ]);
