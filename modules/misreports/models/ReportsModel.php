@@ -20,7 +20,7 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['member_code'], 'default', 'value' => 0],
+            [['member_code', 'p_purchase_rate_code'], 'default', 'value' => 0],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type'], 'safe'],
             [['report_type'], 'required', 'on' => 'BmcCollection'],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
@@ -39,7 +39,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'p_date'], 'required', 'on' => ['MemberCollectionPaymentcycleWise', 'MemberCollectionMonthWise']],
             [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
             [['union_code', 'report_type'], 'required', 'on' => ['CollectionDataSummary']],
-            [['p_organization_type', 'p_purchase_rate_code', 'rate_type', 'union_code', 'plant_code'], 'required', 'on' => ['RateAcknowledgement']],
+            [['p_organization_type', 'rate_type', 'union_code', 'plant_code'], 'required', 'on' => ['RateAcknowledgement']],
         ];
     }
 
