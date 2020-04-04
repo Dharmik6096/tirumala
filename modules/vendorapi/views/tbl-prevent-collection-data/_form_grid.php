@@ -57,6 +57,9 @@ $grid_option = [
     'id' => 'prevent-collection-data',
     'attributes' => $attribute,
     'active_column' => false,
+    'actions' => [
+        'delete' => ['option' => 'prevent_collection_data_id,prevent_collection_data_id,tbl-prevent-collection-data/delete'],
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

@@ -8,6 +8,9 @@ use app\modules\vendorapi\models\TblPreventCollectionDataSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\vendorapi\models\TblPreventCollectionDataHistory;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
  * TblPreventCollectionDataController implements the CRUD actions for TblPreventCollectionData model.
@@ -97,10 +100,13 @@ class TblPreventCollectionDataController extends \app\controllers\ChildControlle
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $historyModel = new TblPreventCollectionDataHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**
