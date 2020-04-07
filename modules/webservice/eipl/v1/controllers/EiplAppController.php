@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblRouteMapping;
 use app\modules\webservice\eipl\v1\V1;
 //use app\modules\webservice\eipl\models\TblUserAppScheduler;
 use app\modules\webservice\eipl\models\TblEiplAppLoginTemp;
+use app\modules\dcsoperation\models\TblShift;
 
 class EiplAppController extends MasterController {
 
@@ -272,6 +273,8 @@ class EiplAppController extends MasterController {
                     $resp['member'] = count($member) > $countVar ? [] : $member;
                     $resp['gender'] = Yii::$app->dropdown->getTableData('gender');
                     $resp['relation'] = Yii::$app->dropdown->getTableData('relation');
+                    $ShiftModel = new TblShift();
+                    $resp['shiftDetail'] = $ShiftModel->getShiftData();
                     $response[] = $resp;
                     $this->response->setData($response);
 //        $resp['allow_scheduler'] = $allowScheduler;
