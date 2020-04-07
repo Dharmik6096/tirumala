@@ -66,7 +66,7 @@ class TblShift extends \yii\db\ActiveRecord {
     }
 
     public function getShiftData() {
-        return $this->find()->select(['id as shiftId','shift as shiftName','short_name as shortName','shift_time as shiftTime'])->where(['is_active' => 1])->where(['!=', 'id', '3'])->asArray()->all();
+        return $this->find()->select(['shiftId' => 'id', 'shiftName' => 'shift', 'shortName' => 'short_name', 'shiftTime' => 'shift_time'])->where(['is_active' => 1])->where(['!=', 'id', '3'])->asArray()->all();
     }
 
 }
