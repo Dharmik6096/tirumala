@@ -122,7 +122,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="login-content text-center">
-                                        <h3>Welcome to EIPL Milk Procurement Portal</h3>
+                                        <h3>Welcome to EIPL Milk Procurement Portal (EVEREST)</h3>
                                         <hr>
                                         <?php $image_path = Yii::$app->request->baseUrl . '/themes/pcdf/assets/images/'; ?>
                                         <div class="col-sm-6">
