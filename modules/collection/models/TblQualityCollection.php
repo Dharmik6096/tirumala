@@ -61,18 +61,19 @@ class TblQualityCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['uuid'], 'required', 'except' => ['androidsync']],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'date_time_of_collection', 'shift_code', 'sample_no', 'doc_no', 'fat', 'snf'], 'required', 'on' => ['PortalCreate']],
-            [['uuid', 'shift_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'device_id', 'version_no', 'originating_org_code', 'originating_org_type', 'milk_analyser_type_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
-            [['sample_no', 'retest_count', 'doc_no', 'auto_flag', 'originating_type', 'qlty_auto'], 'safe'],
-            [['date_time_of_collection', 'quality_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['fat', 'snf', 'clr', 'water'], 'safe'],
-            [['fat', 'snf', 'clr', 'water'], 'number', 'except' => ['androidsync']],
-            [['fat', 'snf', 'clr', 'water'], 'double', 'min' => 0, 'max' => 99, 'except' => ['androidsync']],
-            [['fat', 'snf', 'clr', 'water', 'retest_count'], 'default', 'value' => 0],
-            [['auto_flag'], 'default', 'value' => '1'],
-            [['sample_no'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'mcc_plant_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
-            [['protein', 'density', 'lactose', 'adt_param', 'adt_value'], 'safe']
+                [['uuid'], 'required', 'except' => ['androidsync']],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'date_time_of_collection', 'shift_code', 'sample_no', 'doc_no', 'fat', 'snf'], 'required', 'on' => ['PortalCreate']],
+                [['uuid', 'shift_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'device_id', 'version_no', 'originating_org_code', 'originating_org_type', 'milk_analyser_type_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
+                [['sample_no', 'retest_count', 'doc_no', 'auto_flag', 'originating_type', 'qlty_auto'], 'safe'],
+                [['date_time_of_collection', 'quality_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['fat', 'snf', 'clr', 'water'], 'safe'],
+                [['fat', 'snf', 'clr', 'water'], 'number', 'except' => ['androidsync']],
+                [['fat', 'snf', 'clr', 'water'], 'double', 'min' => 0, 'max' => 99, 'except' => ['androidsync']],
+                [['fat', 'snf', 'clr', 'water', 'retest_count'], 'default', 'value' => 0],
+                [['auto_flag'], 'default', 'value' => '1'],
+                [['sample_no'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'mcc_plant_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
+                [['protein', 'density', 'lactose', 'adt_param', 'adt_value'], 'safe'],
+                [['uuid'], 'validateBmcCode'],
         ];
     }
 
@@ -138,6 +139,17 @@ class TblQualityCollection extends \app\models\ChildModel {
 
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDefaultBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'mcc_plant_code'])->andOnCondition(['tbl_bmc.is_mcc' => 1]);
+    }
+
+    public function validateBmcCode() {
+        if (empty($this->bmc_code)) {
+            $bmcCode = Yii::$app->general->getforeignkey($this->defaultBmcCode, 'bmc_code');
+            $this->bmc_code = !empty($bmcCode) && $bmcCode != 'N/A' ? $bmcCode : $this->bmc_code;
+        }
     }
 
 }
