@@ -146,9 +146,10 @@ class TblQualityCollection extends \app\models\ChildModel {
     }
 
     public function validateBmcCode() {
-        if (empty($this->bmc_code)) {
+        if (empty($this->bmc_code) || empty($this->own_bmc_code)) {
             $bmcCode = Yii::$app->general->getforeignkey($this->defaultBmcCode, 'bmc_code');
-            $this->bmc_code = !empty($bmcCode) && $bmcCode != 'N/A' ? $bmcCode : $this->bmc_code;
+            $this->bmc_code = !empty($bmcCode) && $bmcCode != 'N/A' && empty($this->bmc_code) ? $bmcCode : $this->bmc_code;
+            $this->own_bmc_code = !empty($bmcCode) && $bmcCode != 'N/A' && empty($this->own_bmc_code) ? $bmcCode : $this->own_bmc_code;
         }
     }
 
