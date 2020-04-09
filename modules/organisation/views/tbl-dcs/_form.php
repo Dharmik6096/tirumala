@@ -19,6 +19,7 @@ if ($model->isNewRecord) {
     $disabled = true;
 }
 $model->destination_type = 0;
+$model->is_bmc = !empty($model->is_bmc) ? $model->is_bmc : 0;
 $bmcDisable = $model->is_bmc == 1 ? 'disabled' : '';
 $model->destination_code = 0;
 //$model->route_code = 0;
