@@ -44,7 +44,7 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'dcs/master' => [
-                'param' => 'select_param:[bmc_code],[dcs_code_ex] as dcs_code,[dcs_name],1 as dpu_sync_allowed,1 as dpu_connection_type,\'98216CAA89BB76436941ABCCC8885442\' as dpu_enc_key,\'\' as dpu_salt,\'v1\' as dpu_version,\'AES\' as dpu_enc_type#organization_type#organization_code#table:tbl_dcs', 'sp' => 'sp_app_eipl_v1_master_data',
+                'param' => 'select_param:[bmc_code],[dcs_code],[dcs_name],1 as dpu_sync_allowed,1 as dpu_connection_type,\'98216CAA89BB76436941ABCCC8885442\' as dpu_enc_key,\'\' as dpu_salt,\'v1\' as dpu_version,\'AES\' as dpu_enc_type#organization_type#organization_code#table:tbl_dcs', 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'member/master' => [
                 'param' => 'select_param:[dcs_code],[member_code],[member_name],convert(varchar,registration_date,105) as registration_date#organization_type#organization_code#table:tbl_member',
