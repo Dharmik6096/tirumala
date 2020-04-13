@@ -27,7 +27,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('app_type', $model, $form, '', TRUE, false, 'app_type'); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), TRUE, 'login_type', false); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
@@ -48,7 +48,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblbulknotification-dcs_code', '', Yii::t('app', 'Member')); ?>
     </div>
-     <div class="col-sm-2">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->valid_date($model, $form, 'wef_date'); ?>
     </div>
     <div class="col-sm-2">

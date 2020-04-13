@@ -172,7 +172,8 @@ $config = [
     ],
     'modules' => [
         'user-management' => [
-            'class' => 'webvimark\modules\UserManagement\UserManagementModule',
+            'class' => 'app\modules\usermanagement\usermanagement',
+//            'class' => 'webvimark\modules\UserManagement\UserManagementModule',
             // 'enableRegistration' => true,
             // Here you can set your handler to change layout for any controller or action
             // Tip: you can use this event in any module
@@ -233,6 +234,7 @@ $config = [
         'vsp' => ['class' => 'app\modules\vsp\Vsp',],
         'bkgprocess' => ['class' => 'app\modules\bkgprocess\Bkgprocess',],
         'soap' => ['class' => 'app\modules\soap\Soap',],
+        'usermanagement' => ['class' => 'app\modules\usermanagement\usermanagement',],
         'emilkprolite' => ['class' => 'app\modules\webservice\emilkprolite\emilkProLite',],
     ],
     'params' => $params,

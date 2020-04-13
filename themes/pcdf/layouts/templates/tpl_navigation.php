@@ -277,6 +277,8 @@ echo GhostMenu::widget([
 //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                 ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],
                 ['label' => 'Group', 'url' => ['/user-management/auth-item-group/index'], 'active' => ($cntrl == 'auth-item-group'),],
+                ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
+                ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
             ],
         ],
         [
