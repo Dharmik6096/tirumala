@@ -74,8 +74,8 @@ class AdminDefaultController extends BaseController {
         $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
         $getModelName = explode('\\', $this->modelClass);
         $name = end($getModelName);
-        
-        
+
+
         if ($searchModel) {
             $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
         } else {
@@ -85,7 +85,7 @@ class AdminDefaultController extends BaseController {
             ]);
         }
 
-           return $this->renderIsAjax('index', compact('dataProvider', 'searchModel'));
+        return $this->renderIsAjax('index', compact('dataProvider', 'searchModel'));
     }
 
     /**
@@ -153,21 +153,21 @@ class AdminDefaultController extends BaseController {
             $model->scenario = $this->scenarioOnUpdate;
         }
         $tableName = $model->tableName();
-        if($tableName=="{{%user}}"){
+        if ($tableName == "{{%user}}") {
             $oldUsername = $model->username;
             $model->username = Yii::$app->general->getUserName($model->username);
         }
         if (Yii::$app->request->post()) {
-        //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
-            if($model->validate()){
-                if($tableName=="{{%user}}"){
- 
+            //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
+            if ($model->validate()) {
+                if ($tableName == "{{%user}}") {
+
                     $historyModel = new UserHistory();
-                    Yii::$app->operation->history($model,$historyModel,UPDATE);
+                    Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $model->load(Yii::$app->request->post());
                     $model->username = $oldUsername;
                     $model->save();
-                }else{
+                } else {
                     $model->load(Yii::$app->request->post());
                     $model->save();
                 }
@@ -179,11 +179,11 @@ class AdminDefaultController extends BaseController {
                     'message' => Html::encode('Record successfully updated.'),
                     'title' => Html::encode('Success'),
                 ]);
-                
+
 //                if($tableName=="{{%user}}")
 //                    return $this->redirect(['organization-map','id'=>$model->id]);
 //                else
-                    return $this->redirect(['index']);
+                return $this->redirect(['index']);
                 //return $redirect === false ? '' : $this->redirect($redirect);
             }
         }
@@ -208,8 +208,8 @@ class AdminDefaultController extends BaseController {
      *
      * @return mixed
      */
-    public function actionDelete($id) {
-
+    public function actionDelete($id = '') {
+        $id = \Yii::$app->request->post('id');
         $model = $this->findModel($id);
         $className = \yii\helpers\StringHelper::basename(get_class($model));
         if ($className == 'User') {
