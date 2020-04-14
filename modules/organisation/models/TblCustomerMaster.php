@@ -244,7 +244,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $array = \yii\helpers\ArrayHelper::map($data, 'customer_type', function($data) {
                     return Yii::$app->general->getforeignkey($data->customerType, 'customer_desc');
                 });
-        $array['DCS'] = 'DCS';
+        $array['DCS'] = Yii::t('app', 'DCS');
         return $array;
     }
 

@@ -30,7 +30,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['route-list','all-route-list'];
+    public $freeAccessActions = ['route-list', 'all-route-list'];
 
     /**
      * @inheritdoc
@@ -263,7 +263,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         $searchModel->route_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         foreach ($values['destinations'] as $value) {
-            $dest[$value['code'] . '-' . $value['tname']] = $value['name'] . '('.$value['code'].')-' . $value['tname'];
+            $dest[$value['code'] . '-' . $value['tname']] = $value['name'] . '(' . $value['code'] . ')-' . Yii::t('app', $value['tname']);
         }
         if (Yii::$app->request->post()) {
             $route_code = Yii::$app->request->post('TblRouteMappingSources')['route_code'];

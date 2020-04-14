@@ -170,7 +170,7 @@ $form = ActiveForm::begin([
     <?php //$form->field($model, 'service_tax')->textInput(['maxlength' => true]) ?>
         </div>-->
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('dcs_type_code', $model, $form, 'form-group col-sm-3', 'Society Type'); ?>
+        <?= Yii::$app->dropdown->dropdown('dcs_type_code', $model, $form, 'form-group col-sm-3', Yii::t('app','Society Type')); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('organisation_type', $model, $form, 'form-group col-sm-3', 'Organisation Type'); ?>

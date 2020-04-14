@@ -127,4 +127,9 @@ return [
     'avg_rate' => 'Avg.Rate',
     'avg_fat' => 'Avg.FAT(%)',
     'avg_snf' => 'Avg.SNF(%)',
+    'Soc. Code' => 'Collection Center Code',
+    'DCS Milk Dispatch' => 'Collection Center Milk Dispatch',
+    'Societies' => 'Collection Centers',
+    'society_code' => 'Collection Centers',
+    'society' => 'collection_center',
 ];

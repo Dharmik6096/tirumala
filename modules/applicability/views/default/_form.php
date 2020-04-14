@@ -199,8 +199,9 @@ $script = "
             var id= 0;
             addSociety(flag,id,chkbx);
         }
+       var fltl=$(this).closest('label').text();
         $('#checkAll').prop('checked', false);
-        $('#header').text(fl);
+        $('#header').text(fltl);
         $('#'+fl+'-list').show();
         $('#dcs_code-list').empty();
     });
