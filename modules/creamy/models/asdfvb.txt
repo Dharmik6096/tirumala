@@ -1,0 +1,16 @@
+8053994555
+
+
+GVPN Credentials
+User ID: gvpn_evrstdev
+Password: E!pl@N@2018
+
+Remote Server
+Server IP Address: 172.16.5.87
+User id: rsplgroup\nifadmin
+Password : Nifpl$1234
+
+DB
+DB Name: NIF
+Username: eipl
+Password: E!pl@2019

@@ -26,15 +26,27 @@ class EiplAppController extends MasterController {
         if (!empty($detail)) {
             $temp_model = new TblEiplAppLoginTemp();
             $temp_model->attributes = $model->attributes;
-            $temp_model->otp_code = rand(1000, 9999);
-            $modelSave[] = $temp_model;
+			if (YII_ENV_DEV) {
+            $temp_model->otp_code ="1234";
+            }
+			else
+			{
+				$temp_model->otp_code = rand(1000, 9999);
+			}
+			$modelSave[] = $temp_model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app registration', 'create']);
             if ($transaction == 'customRedirect') {
                 $message = 'Dear Your OTP Pin is ' . $temp_model->otp_code . '.Enter this pin to login your account.';
                 $sms_data = [];
                 $sms_data['refecence_code'] = (string) $temp_model->app_login_id;
                 $sms_data['module_type'] = 'app_activation';
-                Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true);
+				if (YII_ENV_DEV) {
+                //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true);
+				}
+				else
+				{
+					Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true);
+				}
                 foreach ($detail as $key => $subArr) {
                     unset($detail[$key]['master_type']);
                     unset($detail[$key]['master_code']);
