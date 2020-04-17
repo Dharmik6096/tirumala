@@ -380,7 +380,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
     }
 
     public function getCustomerTypeFor() {
-        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for']);
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
     }
 
 }

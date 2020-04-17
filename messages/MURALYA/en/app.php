@@ -132,4 +132,5 @@ return [
     'Societies' => 'Collection Centers',
     'society_code' => 'Collection Centers',
     'society' => 'collection_center',
+    'SOCIETY' => 'Collection Center',
 ];
