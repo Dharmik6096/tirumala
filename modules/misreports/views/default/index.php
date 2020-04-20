@@ -233,7 +233,8 @@ if (isset($data['url1'])) {
                         $format = ['decimal', 2];
                     }
 //                    $attr_arr['attribute'] = $att;
-                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $att), 'format' => $format, 'filter' => false];
+                    $str = ucwords(str_replace('_', ' ', $att));;
+                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
                 }
                 $grid_option = [
                     'id' => 'mis-report-list',

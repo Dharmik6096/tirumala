@@ -48,12 +48,12 @@ class TblProductRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'wef_date'], 'required'],
-                [['wef_date', 'created_at', 'updated_at'], 'safe'],
-                [['product_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
-                [['rate', 'rate_two'], 'safe'],
-                [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
+            [['applicable_code', 'wef_date'], 'required'],
+            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['product_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
+            [['rate', 'rate_two'], 'safe'],
+            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
         ];
     }
 
@@ -113,11 +113,11 @@ class TblProductRateApplicability extends \app\models\ChildModel {
     }
 
     public function getCustomerType() {
-        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_type']);
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_type', 'union_code' => 'union_code']);
     }
 
     public function getCustomerTypeFor() {
-        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for']);
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
     }
 
     public function getBmcCode() {

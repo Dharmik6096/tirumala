@@ -494,7 +494,9 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
-            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_for' => ['view' => ['grid'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
+                }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
             'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
                     if ($model->applicable_for == 'PLANT') {

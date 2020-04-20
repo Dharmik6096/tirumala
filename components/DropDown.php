@@ -831,7 +831,7 @@ class DropDown extends Component {
             'p_organization_type' => [
                 'name' => 'organization_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+                'data' => ['MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'VLC' => Yii::t('app', 'DCS')],
             ],
             'rate_type' => [
                 'name' => 'rate_type',
