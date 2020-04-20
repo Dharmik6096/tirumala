@@ -5,10 +5,10 @@ namespace app\modules\payment\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_member_payment_history".
+ * This is the model class for table "tbl_member_payment_alias_history".
  *
  * @property integer $id
- * @property integer $member_payment_code
+ * @property integer $member_payment_alias_code
  * @property string $union_code
  * @property string $plant_code
  * @property string $mcc_plant_code
@@ -56,13 +56,13 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblMemberPaymentHistory extends \yii\db\ActiveRecord {
+class TblMemberPaymentAliasHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_member_payment_history';
+        return 'tbl_member_payment_alias_history';
     }
 
     /**
@@ -70,7 +70,7 @@ class TblMemberPaymentHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['member_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack', 'is_verified'], 'safe'],
+                [['member_payment_alias_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack', 'is_verified'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'safe'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'adjust_amount'], 'safe'],
                 [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at'], 'safe'],
@@ -83,7 +83,7 @@ class TblMemberPaymentHistory extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'member_payment_code' => Yii::t('app', 'Member Payment Code'),
+            'member_payment_alias_code' => Yii::t('app', 'Member Payment Alias Code'),
             'union_code' => Yii::t('app', 'Union Code'),
             'plant_code' => Yii::t('app', 'Plant Code'),
             'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),

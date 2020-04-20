@@ -10,51 +10,71 @@ use app\modules\organisation\models\TblBranch;
 use yii\helpers\ArrayHelper;
 use app\modules\verification\models\TblVerification;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
+use app\modules\payment\models\TblPaymentCycleApplicability;
+use app\modules\payment\models\TblPaymentCycle;
 
 /**
- * This is the model class for table "tbl_member_payment".
+ * This is the model class for table "tbl_member_payment_alias".
  *
- * @property integer $member_payment_code
+ * @property integer $member_payment_alias_code
  * @property string $union_code
+ * @property string $plant_code
+ * @property string $mcc_plant_code
+ * @property string $bmc_code
  * @property string $dcs_code
- * @property integer $dcs_payment_cycle_applicabilty_code
- * @property integer $dcs_payment_cycle_code
- * @property string $total_amount
- * @property string $total_deduction
- * @property string $final_amount
- * @property string $disburse_amount
- * @property string $disburse_date
  * @property string $member_code
- * @property string $payment_date
- * @property string $approved_by
- * @property string $status
- * @property string $transfer_mode
- * @property string $error_code
- * @property string $error_log
- * @property integer $ack
- * @property string $created_at
- * @property string $created_by
- * @property string $updated_at
- * @property string $updated_by
+ * @property integer $payment_cycle_code
+ * @property integer $payment_cycle_applicabilty_code
  * @property string $qty
  * @property string $avg_fat
  * @property string $avg_snf
  * @property string $kg_fat
  * @property string $kg_snf
  * @property string $avg_rate
-
+ * @property string $total_amount
+ * @property string $total_deduction
+ * @property string $final_amount
+ * @property string $disburse_amount
+ * @property string $adjust_amount
+ * @property string $adjust_remark
+ * @property string $disburse_date
+ * @property string $payment_date
+ * @property string $payment_status
+ * @property string $approved_by
+ * @property string $transfer_mode
+ * @property string $error_code
+ * @property string $error_log
+ * @property integer $ack
+ * @property string $bank_name
+ * @property string $bank_code
+ * @property string $branch_name
+ * @property string $branch_code
+ * @property string $ifsc
+ * @property string $bank_account_no
+ * @property integer $is_verified
+ * @property string $vsp_payment_reference_no
+ * @property string $utr_no
+ * @property string $reference_no
+ * @property string $process_date
+ * @property string $reject_reason
+ * @property string $bank_status
+ * @property string $payment_transaction_code
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
  */
-class TblMemberPayment extends \app\models\ChildModel {
+class TblMemberPaymentAlias extends \app\models\ChildModel {
 
-    /**
-     * @inheritdoc
-     */
     public $payment_cycle;
     public $otp_code;
     public $net_amount;
 
+    /**
+     * @inheritdoc
+     */
     public static function tableName() {
-        return 'tbl_member_payment';
+        return 'tbl_member_payment_alias';
     }
 
     /**
@@ -62,13 +82,11 @@ class TblMemberPayment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
                 [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack', 'is_verified'], 'integer'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'adjust_amount'], 'number'],
-                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at'], 'safe'],
-                [['payment_cycle_code', 'bmc_code', 'dcs_code'], 'required'],
-                [['disburse_date', 'payment_date', 'payment_cycle', 'created_at', 'created_by', 'updated_at', 'updated_by', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'dcs_payment_cycle_code', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'is_verified', 'vsp_payment_reference_no', 'adjust_amount', 'transfer_mode'], 'safe'],
-                [['adjust_amount'], 'double'],
+                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount'], 'safe'],
+                [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
         ];
     }
 
@@ -77,14 +95,14 @@ class TblMemberPayment extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'member_payment_code' => Yii::t('app', 'Member Payment Code'),
+            'member_payment_alias_code' => Yii::t('app', 'Member Payment Alias Code'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
-            'mcc_plant_code' => Yii::t('app', 'MCc'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'Society'),
             'member_code' => Yii::t('app', 'Member'),
-            'payment_cycle_code' => Yii::t('app', 'Payment Cycle Code'),
+            'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
             'total_amount' => Yii::t('app', 'Total Amount'),
             'total_deduction' => Yii::t('app', 'Total Deduction'),
@@ -127,14 +145,6 @@ class TblMemberPayment extends \app\models\ChildModel {
         ];
     }
 
-    /**
-     * @inheritdoc
-     * @return TblMemberPaymentQuery the active query used by this AR class.
-     */
-    public static function find() {
-        return new TblMemberPaymentQuery(get_called_class());
-    }
-
     //relationship with dcs
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
@@ -146,7 +156,7 @@ class TblMemberPayment extends \app\models\ChildModel {
 
     //relationship with dcs
     public function getPaymentCycleCode() {
-        return $this->hasOne(TblDcsPaymentCycle::className(), ['dcs_payment_cycle_code' => 'dcs_payment_cycle_code']);
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
     }
 
     public function getBankCode() {
@@ -177,12 +187,21 @@ class TblMemberPayment extends \app\models\ChildModel {
                         ->where(['module_name' => 'TblMember', 'module_field' => 'bank_account_no', 'status' => 2, 'is_verified' => 1]);
     }
 
-    public function getRecords() {
-        return $this->find()->where(['union_code' => $this->union_code, 'dcs_payment_cycle_code' => $this->dcs_payment_cycle_code, 'dcs_code' => $this->dcs_code]);
+    public function getPaymentCycleApplicabilityCode() {
+        return $this->hasOne(TblPaymentCycleApplicability::className(), ['payment_cycle_applicabilty_code' => 'payment_cycle_applicabilty_code']);
     }
 
-    public function getPaymentCycleApplicabilityCode() {
-        return $this->hasOne(TblDcsPaymentCycleApplicability::className(), ['dcs_payment_cycle_applicabilty_code' => 'dcs_payment_cycle_applicabilty_code']);
+    public function getTblPaymentCycleApplicability() {
+        return $this->hasOne(TblPaymentCycleApplicability::className(), ['payment_cycle_applicabilty_code' => 'payment_cycle_applicabilty_code']);
+    }
+
+    public function getSmsRecords() {
+        return $this->find()->innerJoinWith('memberCode')->where(['status' => 'disbursed', 'payment_transaction_code' => NULL, 'ack' => null])->andWhere(['and', ['IS NOT', 'tbl_member.mobile_no', NULL], ['<>', 'tbl_member.mobile_no', '']])->limit(2000)->all();
+    }
+
+    public function getRecords() {
+        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code])
+                        ->andWhere(['!=', 'payment_status', 'Lock']);
     }
 
 }
