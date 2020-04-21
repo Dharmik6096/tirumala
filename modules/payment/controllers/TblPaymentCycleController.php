@@ -385,6 +385,7 @@ class TblPaymentCycleController extends ChildController {
         if (User::canRoute('/payment/tbl-payment-cycle/member-billing-lock')) {
             $appModel->fields['billing_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
                     if ($model->billing_lock_member == 0) {
+                        return Yii::t('app', 'Pending');
                         $class = $model->billing_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
                         $title = $model->billing_lock_member == 1 ? 'Billing Unlock - Member' : 'Billing Lock - Member';
                         $popupWindowTitle = 'Are you sure you want to ' . ($model->billing_lock_member == 1 ? 'Unlock' : 'Lock') . ' Billing for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
@@ -404,7 +405,7 @@ class TblPaymentCycleController extends ChildController {
                 'format' => 'raw',
                 'contentOptions' => function($model) {
                     if ($model->billing_lock_member == 0) {
-                        return ['class' => 'text-center'];
+                        return [];//['class' => 'text-center'];
                     } else {
                         return [];
                     }

@@ -49,7 +49,7 @@ $this->title = 'Process for Payment Disburse';
 //                        }],
                         ['attribute' => 'dcs_code', 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-                        }, 'value' => 'dcsCode.dcs_name'],
+                        }],
                         ['attribute' => 'member_code', 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
                         }],

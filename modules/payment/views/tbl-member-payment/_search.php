@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->unionpaymentcycle($model, $form, 'tblmemberpayment-union_code', 'dcs_payment_cycle_code'); ?>
+        <?php // Yii::$app->dropdown->unionpaymentcycle($model, $form, 'tblmemberpayment-union_code', 'dcs_payment_cycle_code'); ?>
     </div>
 
     <div class="form-group">

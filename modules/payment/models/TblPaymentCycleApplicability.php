@@ -196,4 +196,11 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
                         ->one();
     }
 
+    public function getStatusCount($where = []) {
+        return $this->find()
+                        ->where(['payment_cycle_code' => $this->payment_cycle_code, 'applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'applicable_type' => $this->applicable_type])
+                        ->andWhere($where)
+                        ->count();
+    }
+
 }

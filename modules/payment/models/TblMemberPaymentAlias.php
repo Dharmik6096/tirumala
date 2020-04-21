@@ -4,6 +4,7 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\organisation\models\TblBanks;
 use app\modules\organisation\models\TblBranch;
@@ -85,7 +86,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
                 [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack', 'is_verified'], 'integer'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'adjust_amount'], 'number'],
-                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount'], 'safe'],
+                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
                 [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
         ];
     }
@@ -104,11 +105,11 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             'member_code' => Yii::t('app', 'Member'),
             'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
-            'total_amount' => Yii::t('app', 'Total Amount'),
-            'total_deduction' => Yii::t('app', 'Total Deduction'),
-            'final_amount' => Yii::t('app', 'Final Amount'),
+            'total_amount' => Yii::t('app', 'Milk Amount(+)'),
+            'total_deduction' => Yii::t('app', 'Deduction(-)'),
+            'final_amount' => Yii::t('app', 'Final Pay'),
             'disburse_amount' => Yii::t('app', 'Disburse Amount'),
-            'adjust_amount' => Yii::t('app', 'Adjustment Amount'),
+            'adjust_amount' => Yii::t('app', 'Additional Pay(+)'),
             'disburse_date' => Yii::t('app', 'Disburse Date'),
             'payment_date' => Yii::t('app', 'Payment Date'),
             'payment_status' => Yii::t('app', 'Status'),
@@ -135,13 +136,17 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'qty' => Yii::t('app', 'Qty'),
-            'avg_fat' => Yii::t('app', 'Avg FAT'),
-            'avg_snf' => Yii::t('app', 'Avg SNF'),
-            'kg_fat' => Yii::t('app', 'Kg FAT'),
-            'kg_snf' => Yii::t('app', 'Kg SNF'),
+            'qty' => Yii::t('app', 'Total Qty'),
+            'avg_fat' => Yii::t('app', 'AvgFAT'),
+            'avg_snf' => Yii::t('app', 'AvgSNF'),
+            'kg_fat' => Yii::t('app', 'KgFAT'),
+            'kg_snf' => Yii::t('app', 'KgSNF'),
             'avg_rate' => Yii::t('app', 'Avg Rate'),
             'adjust_remark' => Yii::t('app', 'Remarks'),
+            'addition' => Yii::t('app', 'Addition(+)'),
+            'previous_hold' => Yii::t('app', 'Previous Hold(+)'),
+            'previous_due' => Yii::t('app', 'Previous Due(-)'),
+            'hold_amount' => Yii::t('app', 'Hold Amount(-)'),
         ];
     }
 
@@ -199,9 +204,29 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         return $this->find()->innerJoinWith('memberCode')->where(['status' => 'disbursed', 'payment_transaction_code' => NULL, 'ack' => null])->andWhere(['and', ['IS NOT', 'tbl_member.mobile_no', NULL], ['<>', 'tbl_member.mobile_no', '']])->limit(2000)->all();
     }
 
-    public function getRecords() {
-        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code])
-                        ->andWhere(['!=', 'payment_status', 'Lock']);
+    public function getRecords($checkDcs = true) {
+        $query = $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])
+                ->andWhere(['!=', 'payment_status', 'Lock']);
+        if ($checkDcs) {
+            $query->andWhere(['dcs_code' => $this->dcs_code]);
+        }
+        return $query;
+    }
+
+    public function getStatusLockedCount($status) {
+        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])
+                        ->andWhere(['payment_status' => $status])->count();
+    }
+
+    public function getExceptData($notIn = []) {
+        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])
+                        ->andWhere(['!=', 'payment_status', 'Lock'])
+                        ->andWhere(['NOT IN', 'member_payment_alias_code', $notIn])
+                        ->all();
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

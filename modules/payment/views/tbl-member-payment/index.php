@@ -1,27 +1,20 @@
 <?php
-
-use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
-use yii\web\View;
-use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
-
-Url::remember();
-$this->title = $title;
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Member Payment'));
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Farmer Payment'), ['/payment/tbl-member-payment/create-payment'], true);
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Farmer Payment'), ['/payment/tbl-member-payment/member-payment-disburse'], true);
 ?>
-<div class="tbl-member-payment-index">
-    <div class="panel panel-default panel-grid panel-main">
-        <div class="panel-heading">
-<?= $this->title; ?>           
-        </div>
-        <div class="panel-body">
-            <div class="grid-search large-search hidden-print">
-<?php echo $this->render('_search', ['model' => $searchModel]); ?>
-            </div>
-            <div class="clearfix"></div>
-            <?php
-            echo $this->render('_form_grid_export', ['model' => $searchModel, 'dataProvider' => $dataProvider]);
-            ?>
-        </div>
+
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= $this->title; ?>
+    </div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form_grid', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ])
+        ?>
     </div>
 </div>
+

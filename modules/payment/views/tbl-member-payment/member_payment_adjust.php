@@ -5,7 +5,9 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 
-$this->title = 'Farmer Payment Process : Step 3';
+$this->title = Yii::t('app', 'Member Payment Process : Step 3');
+$bmc_info = Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' > ' .
+        Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'to_date'));
 ?>
 <?php
 $array = $dataProvider->getModels();
@@ -16,7 +18,7 @@ $tot_amt = array_sum(array_map(function($array) {
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">      
         <div class="panel-heading">
-            <?= $this->title ?>  
+            <?= $this->title . ' (' . $bmc_info . ')' ?>   
             <div id="total-payment">
                 Total Payable :: <?= $tot_amt; ?>
             </div>
@@ -33,48 +35,73 @@ $tot_amt = array_sum(array_map(function($array) {
         ?>
         <?php
         $attribute = [
-                ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name'],
-                ['attribute' => 'member_code', 'value' => 'memberCode.member_name'],
-                ['attribute' => 'qty'],
-                ['attribute' => 'avg_fat'],
-                ['attribute' => 'avg_snf'],
-                ['attribute' => 'avg_rate'],
-                ['attribute' => 'total_amount', 'value' => 'total_amount',
-                // 'hAlign' => Yii::$app->general->ColoumnAlign(),
-                // 'format' => Yii::$app->general->CurrencyFormat(),
+                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
+                }],
+                ['attribute' => 'dcs_code', 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                }],
+                ['attribute' => 'member_code', 'value' => function($model) {
+                    return substr($model->member_code, -4);
+                }, 'label' => Yii::t('app', 'Member Code')],
+                ['attribute' => 'member_code', 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+                }],
+                ['attribute' => 'kg_fat'],
+                ['attribute' => 'kg_snf'],
+                ['attribute' => 'qty', 'pageSummary' => true],
+//                ['attribute' => 'avg_fat'],
+//                ['attribute' => 'avg_snf'],
+//            ['attribute' => 'avg_rate'],
+            ['attribute' => 'total_amount', 'value' => 'total_amount',
+                'pageSummary' => true
+            ],
+                ['attribute' => 'addition', 'value' => 'addition',
                 'pageSummary' => true
             ],
                 ['attribute' => 'total_deduction', 'value' => 'total_deduction',
-                // 'hAlign' => Yii::$app->general->ColoumnAlign(),
-                //  'format' => Yii::$app->general->CurrencyFormat(),
                 'pageSummary' => true
             ],
-                ['attribute' => 'final_amount', 'value' => 'final_amount',
-                'value' => function ($model) {
-                    return $model->total_amount - $model->total_deduction;
-                },
-                //  'hAlign' => Yii::$app->general->ColoumnAlign(),
-                //   'format' => Yii::$app->general->CurrencyFormat(),
+                ['attribute' => 'previous_hold', 'pageSummary' => true
+            ],
+                ['attribute' => 'previous_due', 'pageSummary' => true
+            ],
+                ['attribute' => 'final_amount',
                 'pageSummary' => true,
+                'value' => function ($model) {
+                    $addition = !empty($model->addition) ? $model->addition : 0;
+                    $deduction = !empty($model->total_deduction) ? $model->total_deduction : 0;
+                    return $model->net_payable + $addition - $deduction;
+                },
                 'contentOptions' => ['class' => 'final-amount'],
+            ],
+                ['attribute' => 'hold_amount',
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
+                'value' => function ($model, $key, $index) use ($form) {
+                    return Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['value' => $model->member_payment_alias_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
+                },
             ],
                 ['attribute' => 'adjust_amount',
                 'format' => 'raw',
                 //  'pageSummary' => true,
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
-                    return Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']) . Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['value' => $model->member_payment_alias_code]) . $form->field($model, 'adjust_amount[' . $index . ']')->textInput(['value' => $model->adjust_amount, 'class' => 'adjust-amount form-control',])->label(FALSE);
+                    return Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']) . $form->field($model, 'adjust_amount[' . $index . ']')->textInput(['value' => $model->adjust_amount, 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'net_amount',
+                ['attribute' => 'net_payable',
                 'format' => 'raw',
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 //  'pageSummary' => true,
                 'value' => function ($model, $key, $index) use ($form) {
-                    $val = !empty($model->adjust_amount) ? $model->adjust_amount + $model->total_amount - $model->total_deduction : '';
-                    return $form->field($model, 'net_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $val])->label(FALSE);
+                    return $form->field($model, 'net_payable[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $model->final_amount])->label(FALSE);
                 },
             ],
                 ['attribute' => 'adjust_remark',
                 'format' => 'raw',
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
                     return $form->field($model, 'adjust_remark[' . $index . ']')->textInput(['value' => $model->adjust_remark])->label(FALSE);
                 },
@@ -92,9 +119,9 @@ $tot_amt = array_sum(array_map(function($array) {
         ?>
     </div>
     <div class="panel-footer" >
-        <?php //Yii::$app->controls->save('Confirm', $model);      ?>
+        <?php //Yii::$app->controls->save('Confirm', $model);        ?>
         <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
-        <?= Html::button(Yii::t('app', 'Process and Lock'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
+        <?= Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
         <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?> 
     </div>
 </div>
@@ -109,7 +136,59 @@ $("#adjust-lock").click(function() {
     $("#payment-adjust").submit();
 });
 ';
-$script .= " $('.adjust-amount').on('blur',function(){     
+$script .= " 
+    
+    $('.cal-amount').on('blur',function(){
+        var id = $(this).attr('id');
+        var parent = $(this).parents('tr');
+        var adjust = parseFloat(parent.find('.adjust-amount').val());
+        var final = parseFloat(parent.find('.final-amount').text());
+        var hold = parseFloat(parent.find('.hold-amount').val());
+        parent.find('.net-amount').val('');
+        if(adjust == '' ||  isNaN(adjust)){
+            adjust=0;
+        }
+        if(hold == '' ||  isNaN(hold)){
+            hold=0;
+        }
+        var net = final + adjust - hold;  
+        if(net != '' && net < 0){
+         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
+                bootbox.hideAll();
+                    $('#'+id).focus().select();
+            });
+            return false;
+        } else {              
+        if(net != '' &&  !isNaN(net)){
+         parent.find('.net-amount').val(net.toFixed(2));
+          SumAmount();
+        }
+       }
+    });
+
+
+
+function SumAmount()
+ {
+ var total = parseFloat(0.00);
+      $('.adjust-amount').each(function() {
+      var adjust =  parseFloat($(this).val());
+  if(adjust != '' &&  !isNaN(adjust)){
+          total = total + adjust;  
+          }
+        }).get();
+   $('.hold-amount').each(function() {
+      var hold =  parseFloat($(this).val());
+  if(hold != '' &&  !isNaN(hold)){
+          total = total - hold;  
+          }
+        }).get();
+        total=$tot_amt+total;
+ $('#total-payment').html('Total Payable :: '+total.toFixed(2));
+ }     
+
+
+$('.adjust-amountasd').on('blur',function(){     
         var adjust = parseFloat($(this).val());
         var id = $(this).attr('id');
         var parent = $(this).parents('tr');
@@ -129,7 +208,7 @@ $script .= " $('.adjust-amount').on('blur',function(){
         }
        }
     });";
-$script .= " function SumAmount()
+$script .= " function SumAmountold()
  {
  var total = parseFloat(0.00);
       $('.adjust-amount').each(function() {

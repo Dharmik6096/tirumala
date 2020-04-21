@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
                 'validateOnSubmit' => true,
     ]);
     ?>   
-    <div class="row">
+    <div class="col-sm-12 mt10 padding-left-0">
         <div class="col-sm-3" id="union">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
         </div>
@@ -45,11 +45,12 @@ use yii\widgets\ActiveForm;
             ?>
             <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblmemberpaymentalias-union_code,tblmemberpaymentalias-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
         </div>
+
+        <div class=" col-sm-3 form-group mt23">
+            <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
+        </div>
     </div>
 
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-    </div>
 
     <?php ActiveForm::end(); ?>
 

@@ -8,9 +8,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 
 $action = Url::to(['disburse-member-payment']);
-$this->title = 'Process for Payment Disburse';
 ?>
-<div class="grid-search no-effect" >
+<div class="" >
     <?php
     $form = ActiveForm::begin([
                 'action' => $action,
@@ -27,31 +26,45 @@ $this->title = 'Process for Payment Disburse';
     </div>
     <?php
     $attribute = [
-            ['class' => 'kartik\grid\CheckboxColumn',
-            'rowSelectedClass' => GridView::TYPE_SUCCESS,
-            'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-            'checkboxOptions' => function($model) {
-                return ['value' => $model['dcs_code']];
+//            ['class' => 'kartik\grid\CheckboxColumn',
+//            'rowSelectedClass' => GridView::TYPE_SUCCESS,
+//            'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+//            'checkboxOptions' => function($model) {
+//                return ['value' => $model['dcs_code']];
+//            }],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
             }],
-            ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'label' => Yii::t('app', 'Society')],
+            ['attribute' => 'dcs_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+            }],
             ['attribute' => 'member_count'],
-            ['attribute' => 'qty'],
-            ['attribute' => 'avg_fat'],
-            ['attribute' => 'avg_snf'],
-            ['attribute' => 'avg_rate'],
-            ['attribute' => 'total_amount', 'pageSummary' => true, 'value' => 'total_amount',
-            'hAlign' => Yii::$app->general->ColoumnAlign(),
-            'format' => Yii::$app->general->CurrencyFormat(),
+            ['attribute' => 'kg_fat'],
+            ['attribute' => 'kg_snf'],
+            ['attribute' => 'qty', 'pageSummary' => true],
+            ['attribute' => 'total_amount', 'value' => 'total_amount',
+            'pageSummary' => true
         ],
-            ['attribute' => 'total_deduction', 'pageSummary' => true, 'value' => 'total_deduction',
-            'hAlign' => Yii::$app->general->ColoumnAlign(),
-            'format' => Yii::$app->general->CurrencyFormat(),
+            ['attribute' => 'addition', 'value' => 'addition',
+            'pageSummary' => true
         ],
-            ['attribute' => 'final_amount', 'pageSummary' => true, 'value' => 'final_amount',
-            'hAlign' => Yii::$app->general->ColoumnAlign(),
-            'format' => Yii::$app->general->CurrencyFormat(),
+            ['attribute' => 'total_deduction', 'value' => 'total_deduction',
+            'pageSummary' => true
         ],
-            ['attribute' => 'member_count', 'pageSummary' => true, 'value' => 'member_count'],
+            ['attribute' => 'previous_hold', 'pageSummary' => true
+        ],
+            ['attribute' => 'previous_due', 'pageSummary' => true
+        ],
+            ['attribute' => 'final_amount',
+            'pageSummary' => true,
+            'value' => function ($model) {
+                $addition = !empty($model->addition) ? $model->addition : 0;
+                $deduction = !empty($model->total_deduction) ? $model->total_deduction : 0;
+                return $model->net_payable + $addition - $deduction;
+            },
+            'contentOptions' => ['class' => 'final-amount'],
+        ],
     ];
 
     $grid_option = [
@@ -67,12 +80,12 @@ $this->title = 'Process for Payment Disburse';
         ]
     ];
 
-    Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['create'], false);
+    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
     ?>
     <div class="clearfix"></div>
     <?php if (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
-        <div class="col-md-12" >
-            <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary bank', 'name' => 'member']); ?>
+        <div class="col-md-12 mt10" >
+            <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary sub', 'name' => 'member']); ?>
             <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>
         </div>
     <?php } ?>
@@ -84,14 +97,21 @@ $this->title = 'Process for Payment Disburse';
 
 <?php
 $script = "
-            $('.kv-panel-before').hide();
+    $('.kv-panel-before').hide();
     $('.sub').on('click',function(){
+//        var checkBoxCount = $('.kv-row-checkbox:checked').length;
+//        if(checkBoxCount > 0) {
+//            $('#flag').val($(this).prop('name'));
+//            $('form#w1').submit();
+//        } else {
+//            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Please Select atleast one Record') . "</span>');
+//        }
         $('#flag').val($(this).prop('name'));
         $('form#w1').submit();
     });
     
     $('.bank').on('click',function(){
-    $('#error-summary').hide();
+        $('#error-summary').hide();
         $('#flag').val($(this).prop('name'));
         $('form#w1').submit();
 //         $.ajax({

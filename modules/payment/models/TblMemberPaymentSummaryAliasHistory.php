@@ -55,7 +55,7 @@ class TblMemberPaymentSummaryAliasHistory extends \yii\db\ActiveRecord {
                 [['payment_sumary_alias_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'error_code', 'error_log', 'created_by', 'updated_by'], 'safe'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'safe'],
-                [['disburse_date', 'payment_date', 'created_at', 'updated_at'], 'safe'],
+                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
 

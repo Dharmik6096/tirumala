@@ -3,6 +3,12 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\payment\models\TblPaymentCycle;
 
 /**
  * This is the model class for table "tbl_member_payment_summary".
@@ -54,7 +60,7 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'error_code', 'error_log', 'created_by', 'updated_by'], 'string'],
                 [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack'], 'safe'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'safe'],
-                [['disburse_date', 'payment_date', 'created_at', 'updated_at'], 'safe'],
+                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
 
@@ -64,23 +70,23 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'payment_sumary_code' => Yii::t('app', 'Payment Sumary Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'member_count' => Yii::t('app', 'Member Count'),
             'payment_cycle_code' => Yii::t('app', 'Payment Cycle Code'),
             'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
-            'qty' => Yii::t('app', 'Qty'),
-            'avg_fat' => Yii::t('app', 'Avg Fat'),
-            'avg_snf' => Yii::t('app', 'Avg Snf'),
-            'kg_fat' => Yii::t('app', 'Kg Fat'),
-            'kg_snf' => Yii::t('app', 'Kg Snf'),
+            'qty' => Yii::t('app', 'Total Qty'),
+            'avg_fat' => Yii::t('app', 'AvgFAT'),
+            'avg_snf' => Yii::t('app', 'AvgSNF'),
+            'kg_fat' => Yii::t('app', 'KgFAT'),
+            'kg_snf' => Yii::t('app', 'KgSNF'),
             'avg_rate' => Yii::t('app', 'Avg Rate'),
-            'total_amount' => Yii::t('app', 'Total Amount'),
-            'total_deduction' => Yii::t('app', 'Total Deduction'),
-            'final_amount' => Yii::t('app', 'Final Amount'),
+            'total_amount' => Yii::t('app', 'Milk Amount(+)'),
+            'total_deduction' => Yii::t('app', 'Deduction(-)'),
+            'final_amount' => Yii::t('app', 'Final Pay'),
             'disburse_amount' => Yii::t('app', 'Disburse Amount'),
             'disburse_date' => Yii::t('app', 'Disburse Date'),
             'payment_date' => Yii::t('app', 'Payment Date'),
@@ -92,7 +98,35 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'addition' => Yii::t('app', 'Addition(+)'),
+            'previous_hold' => Yii::t('app', 'Previous Hold(+)'),
+            'previous_due' => Yii::t('app', 'Previous Due(-)'),
+            'hold_amount' => Yii::t('app', 'Hold Amount(-)'),
         ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getPaymentCycleCode() {
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
     }
 
 }
