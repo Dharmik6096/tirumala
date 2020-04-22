@@ -21,7 +21,7 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
     public function rules() {
         return [
                 [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code', 'from_datetime', 'to_datetime'], 'safe'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'additional_pay'], 'number'],
         ];
     }
@@ -65,16 +65,16 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
 
     public function appendQuery($query, $tableName) {
         $query->select([$tableName . '.union_code', $tableName . '.plant_code', $tableName . '.mcc_plant_code', $tableName . '.bmc_code', $tableName . '.dcs_code', $tableName . '.payment_cycle_code', $tableName . '.payment_date', $tableName . '.member_count', $tableName . '.kg_fat', $tableName . '.kg_snf', $tableName . '.qty', $tableName . '.avg_fat', $tableName . '.avg_snf', $tableName . '.avg_rate', $tableName . '.total_amount', $tableName . '.total_addition', $tableName . '.total_deduction', $tableName . '.previous_hold', $tableName . '.previous_due', $tableName . '.net_payable', $tableName . '.hold_amount', $tableName . '.additional_pay', $tableName . '.final_amount', $tableName . '.payment_status']);
-        $query->joinWith(['dcsCode', 'paymentCycleCode']);
+        $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this, $tableName, $tableName, $tableName);
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['>=', 'cast(tbl_payment_cycle.from_date as date)', $from_date]);
+            $query->andFilterWhere(['>=', 'cast(' . $tableName . '.from_datetime as date)', $from_date]);
         }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['<=', 'cast(tbl_payment_cycle.from_date as date)', $to_date]);
+            $query->andFilterWhere(['<=', 'cast(' . $tableName . '.from_datetime as date)', $to_date]);
         }
         $query->andFilterWhere(['=', 'CAST(' . $tableName . '.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
         // grid filtering conditions

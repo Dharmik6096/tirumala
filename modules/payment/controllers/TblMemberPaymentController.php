@@ -280,13 +280,13 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
     private function getMemberDcsSpData($model, $reGenerate = 0) {
         // use for generate or regenerate data for Member Payment
-        $fromDate = date('Y-m-d', strtotime($model->paymentCycleCode->from_date));
-        $toDate = date('Y-m-d', strtotime($model->paymentCycleCode->to_date));
+        $fromDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
+        $toDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
         $spname = 'sp_member_dcs_payment_processing_data';
         $spParam = [];
         $spParam[] = $fromDate;
         $spParam[] = $toDate;
-//        $spParam[] = $model->union_code;
+        $spParam[] = $model->union_code;
 //        $spParam[] = $model->plant_code;
 //        $spParam[] = $model->mcc_plant_code;
         $spParam[] = $model->bmc_code;
@@ -319,22 +319,12 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
     public function actionPaymentMembersList($cycle, $dcs_code) {
         //Farmer Payment Disburse : Display member wise data
-        $model = new TblMemberPaymentAlias();
-        $model->payment_cycle_code = $cycle;
-        $model->dcs_code = $dcs_code;
-        if (!empty($model->payment_cycle_code)) {
-            $newModel = new TblMemberPaymentAlias();
-            $query = $newModel->find()
-                    ->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'tbl_member_payment_alias.dcs_code' => $dcs_code])
-                    ->all();
-        } else {
-            $query = $model->find()->where('0=1')->all();
-        }
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $query,
-        ]);
+        $searchModel = new TblMemberPaymentAliasSearch();
+        $searchModel->payment_cycle_code = $cycle;
+        $searchModel->dcs_code = $dcs_code;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('member_list_index', [
-                    'searchModel' => $model,
+                    'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
     }
@@ -413,21 +403,12 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     if ($transaction == 'customRedirect') {
                         $this->redirect(['index']);
                     }
-//                        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-//                            'message' => 'Out of (<b>' . $tot_cnt . '</b>) Farmer Payment of (<b>' . $payment_cnt . '</b>)  Farmer will be only done.<br/>']);
-//                        return $this->render('disburse_member_payment', [
-//                                    'searchModel' => $model,
-//                                    'dataProvider' => $dataProvider,
-//                        ]);
                 } else {
                     if ($this->exportMemberCSV($model)) {
                         return $this->redirect(\yii\helpers\Url::previous());
                     }
                 }
             }
-//            } else {
-//                return $this->redirect(\yii\helpers\Url::previous());
-//            }
         }
     }
 
@@ -452,50 +433,52 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         );
         $rowCount = 1;
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Society Code');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Society Name');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Member Code');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Member Name');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Account No');
-        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'Bank');
-        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Branch');
-        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'IFSC');
-        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'KgFAT');
-        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'KgSNF');
-        $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, 'Total Qty');
-        $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, 'Milk Amount(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, 'Addition(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, 'Deduction(-)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, 'Previous Hold(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, 'Previous Due(-)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, 'Final Pay');
-        $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, 'Hold Amount(-)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, 'Additional Pay(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, 'Net Payable');
-        $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, 'Remarks');
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Code Ex.');
+        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Society');
+        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Member Code');
+        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Member Name');
+        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'Account No');
+        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Bank');
+        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Branch');
+        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'IFSC');
+        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'KgFAT');
+        $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, 'KgSNF');
+        $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, 'Total Qty');
+        $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, 'Milk Amount(+)');
+        $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, 'Addition(+)');
+        $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, 'Deduction(-)');
+        $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, 'Previous Hold(+)');
+        $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, 'Previous Due(-)');
+        $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, 'Final Pay');
+        $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, 'Hold Amount(-)');
+        $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, 'Additional Pay(+)');
+        $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, 'Net Payable');
+        $objPHPExcel->getActiveSheet()->SetCellValue('V' . $rowCount, 'Remarks');
         foreach ($query as $row) {
             if ($row->final_amount > 0) {
                 $rowCount++;
                 $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->dcs_code);
-                $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, $row->dcsCode->dcs_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, $row->member_code);
-                $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->memberCode->member_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, '="' . $row->bank_account_no . '"');
-                $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, $row->bank_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->branch_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->ifsc);
-                $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->kg_fat);
-                $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->kg_snf);
-                $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, $row->qty);
-                $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, $row->total_amount);
-                $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, $row->total_addition);
-                $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, $row->total_deduction);
-                $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, $row->previous_hold);
-                $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, $row->previous_due);
-                $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, $row->net_payable); // Final Pay
-                $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, $row->hold_amount);
-                $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, $row->additional_pay);
-                $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, $row->final_amount); //Net Payable
-                $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, $row->adjust_remark);
+                $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_code_ex'));
+                $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_name'));
+                $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->member_code);
+                $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, Yii::$app->general->getforeignkey($row->memberCode, 'member_name'));
+                $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, '="' . $row->bank_account_no . '"');
+                $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->bank_name);
+                $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->branch_name);
+                $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->ifsc);
+                $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->kg_fat);
+                $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, $row->kg_snf);
+                $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, $row->qty);
+                $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, $row->total_amount);
+                $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, $row->total_addition);
+                $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, $row->total_deduction);
+                $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, $row->previous_hold);
+                $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, $row->previous_due);
+                $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, $row->net_payable); // Final Pay
+                $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, $row->hold_amount);
+                $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, $row->additional_pay);
+                $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, $row->final_amount); //Net Payable
+                $objPHPExcel->getActiveSheet()->SetCellValue('V' . $rowCount, $row->adjust_remark);
             }
         }
         $fileName = "payment_disburse." . $header['extension'] .
@@ -520,11 +503,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionView() {
-        $model = new TblMemberPayment();
+        $model = new TblMemberPaymentSummary();
         $model->setAttributes(Yii::$app->request->get());
         $searchModel = new TblMemberPaymentSearch();
         if ($model->payment_status != 'Disburse') {
-            $model = new TblMemberPaymentAlias();
+            $model = new TblMemberPaymentSummaryAlias();
             $model->setAttributes(Yii::$app->request->get());
             $searchModel = new TblMemberPaymentAliasSearch();
         }

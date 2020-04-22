@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Member Payment Process : Step 3');
 $bmc_info = Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' > ' .
-        Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'to_date'));
+        Yii::$app->controls->view_date($aliasModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($aliasModel->to_datetime);
 ?>
 <?php
 $array = $dataProvider->getModels();

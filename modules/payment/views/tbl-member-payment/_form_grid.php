@@ -37,7 +37,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'label' => Yii::t('app', 'DCS')],
         ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-            return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
+            return Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
         }, 'filter' => false, 'format' => 'raw'],
         [
         'attribute' => 'payment_date',
@@ -76,7 +76,7 @@ $grid_option = [
     'actions' => [
         'detail-view' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View'), 'class' => ''];
-            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/payment/tbl-member-payment/view', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'paymentStatus' => $model->payment_status], $options);
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/payment/tbl-member-payment/view', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'payment_status' => $model->payment_status], $options);
         },
     ]
 ];

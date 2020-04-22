@@ -8,7 +8,7 @@ use kartik\grid\GridView;
 
 $this->title = Yii::t('app', 'Member Payment Process : Step 2');
 $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
-        Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
+        Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
 ?>
 <?php
 $array = $dataProvider->getModels();

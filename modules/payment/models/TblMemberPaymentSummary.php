@@ -57,7 +57,7 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'created_by', 'updated_by'], 'string'],
                 [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'safe'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'safe'],
-                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay'], 'safe'],
+                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay', 'from_datetime', 'to_datetime'], 'safe'],
         ];
     }
 
@@ -123,6 +123,10 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
 
     public function getPaymentCycleCode() {
         return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
+    }
+
+    public function getData() {
+        return $this->find()->where(['payment_cycle_code' => $this->payment_cycle_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code])->one();
     }
 
 }
