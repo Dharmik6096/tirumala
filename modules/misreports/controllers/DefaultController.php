@@ -209,6 +209,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorPayment() {
+        $this->report = 'VendorPayment';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -550,6 +555,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_rate_download_acknowledgement',
                 'scenario' => 'RateAcknowledgement',
                 'title' => '223 - Rate Acknowledgement',
+            ],
+            'VendorPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code',
+                'sp_name' => 'sp_mis_vendor_payment',
+                'scenario' => 'VendorPayment',
+                'title' => '224 - Vendor Payment',
             ],
         ];
         return $label[$l];
