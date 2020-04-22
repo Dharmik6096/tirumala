@@ -560,7 +560,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code',
                 'sp_name' => 'sp_mis_vendor_payment',
                 'scenario' => 'VendorPayment',
-                'title' => '224 - Vendor Payment',
+                'title' => '602 - Vendor Payment',
             ],
         ];
         return $label[$l];
