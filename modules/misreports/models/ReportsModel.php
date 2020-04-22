@@ -9,7 +9,7 @@ use yii\base\Model;
 class ReportsModel extends Model {
 
     public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift;
-    public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type;
+    public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code;
 
     function __construct() {
         
@@ -20,8 +20,8 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['member_code', 'p_purchase_rate_code'], 'default', 'value' => 0],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type'], 'safe'],
+            [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type'], 'default', 'value' => 0],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code'], 'safe'],
             [['report_type'], 'required', 'on' => 'BmcCollection'],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
             [['to_date'], function ($attribute, $params) {
@@ -40,6 +40,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
             [['union_code', 'report_type'], 'required', 'on' => ['CollectionDataSummary']],
             [['p_organization_type', 'rate_type', 'union_code', 'plant_code'], 'required', 'on' => ['RateAcknowledgement']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['VendorPayment']],
         ];
     }
 
@@ -60,6 +61,9 @@ class ReportsModel extends Model {
             'shift' => \Yii::t('app', 'Shift'),
             'p_organization_type' => \Yii::t('app', 'Organization Type'),
             'p_purchase_rate_code' => \Yii::t('app', 'Rate'),
+            'vendor_code' => \Yii::t('app', 'Name'),
+            'customer_type' => \Yii::t('app', 'Type'),
+            'payment_cycle_code' => \Yii::t('app', 'Payment Cycle'),
         ];
     }
 
