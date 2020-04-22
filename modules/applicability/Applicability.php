@@ -85,7 +85,7 @@ class Applicability extends \yii\base\Module {
                 $list = $this->loadUnionDcs($selected, '');
                 $list = ArrayHelper::map($list, 'dcs_code', 'dcs_name');
                 $main_field_name = 'dcs_code';
-                $title = 'Societies';
+                $title = Yii::t('app', 'Societies');
                 break;
             case 'mcc':
                 $selected = $this->getMcc();
@@ -109,7 +109,7 @@ class Applicability extends \yii\base\Module {
                 $selected = [];
                 $list = [];
                 $main_field_name = 'dcs_code';
-                $title = 'Societies';
+                $title = Yii::t('app', 'Societies');
         }
         $searchModel = $this->searchModel;
         $searchModel->$field_name = $this->field_value;
@@ -119,7 +119,7 @@ class Applicability extends \yii\base\Module {
             $customerModel = new TblCustomerType();
             $customerModel->union_code = $this->union_code;
             $this->customer_type_list = $customerModel->getCustomerType();
-            $this->customer_type_list['DCS'] = 'DCS';
+            $this->customer_type_list['DCS'] = Yii::t('app', 'DCS');
             if (count($this->customer_type_list) == 1) {
                 $hideCustomerType = true;
                 $this->selectedTypes = !empty($this->selectedTypes) ? $this->selectedTypes : ['DCS'];

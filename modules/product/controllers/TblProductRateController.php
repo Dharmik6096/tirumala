@@ -145,7 +145,7 @@ class TblProductRateController extends \app\controllers\ChildController {
         $appModel->model = new TblProductRateApplicability();
         $customerType = new TblCustomerType();
         if ($model->is_member_rate == 1) {
-            $value = ['DCS' => 'DCS'];
+            $value = ['DCS' => Yii::t('app', 'DCS')];
         } else {
             $customerType->union_code = $model->union_code;
             $value = $customerType->getCustomerType();

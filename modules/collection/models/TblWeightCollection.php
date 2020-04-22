@@ -90,6 +90,7 @@ class TblWeightCollection extends \app\models\ChildModel {
             [['producer_flag'], 'default', 'value' => 'Y'],
             [['cans', 'rejected_can', 'rejected_qty'], 'default', 'value' => '0'],
             [['date_time_of_collection', 'shift_code'], 'backendData', 'except' => ['androidsync']],
+            [['uuid'], 'validateBmcCode'],
         ];
     }
 
@@ -184,7 +185,7 @@ class TblWeightCollection extends \app\models\ChildModel {
     }
 
     public function getCustomerType() {
-        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type']);
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type', 'union_code' => 'union_code']);
     }
 
     public function getMainCustomerCode() {
@@ -205,6 +206,18 @@ class TblWeightCollection extends \app\models\ChildModel {
 
     public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getDefaultBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'mcc_plant_code'])->andOnCondition(['tbl_bmc.is_mcc' => 1]);
+    }
+
+    public function validateBmcCode() {
+        if (empty($this->bmc_code) || empty($this->own_bmc_code)) {
+            $bmcCode = Yii::$app->general->getforeignkey($this->defaultBmcCode, 'bmc_code');
+            $this->bmc_code = !empty($bmcCode) && $bmcCode != 'N/A' && empty($this->bmc_code) ? $bmcCode : $this->bmc_code;
+            $this->own_bmc_code = !empty($bmcCode) && $bmcCode != 'N/A' && empty($this->own_bmc_code) ? $bmcCode : $this->own_bmc_code;
+        }
     }
 
 }

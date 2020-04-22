@@ -277,6 +277,8 @@ echo GhostMenu::widget([
 //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                 ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],
                 ['label' => 'Group', 'url' => ['/user-management/auth-item-group/index'], 'active' => ($cntrl == 'auth-item-group'),],
+                ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
+                ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
             ],
         ],
         [
@@ -336,6 +338,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'SAP Data'), 'url' => ['/vendorapi/tbl-vendor-api-data/index'], 'active' => ($cntrl == 'tbl-vendor-api-data')],
                         ['label' => Yii::t('app', 'Installation Identity'), 'url' => ['/installation/tbl-android-installation/index'], 'active' => ($cntrl == 'tbl-android-installation')],
                         ['label' => Yii::t('app', 'Pendrive Sync'), 'url' => ['/syncutility/pendrive-sync/index'], 'active' => ($cntrl == 'pendrive-sync')],
+                        ['label' => Yii::t('app', 'Prevent BMC Collection Data'), 'url' => ['/vendorapi/tbl-prevent-collection-data/index'], 'active' => ($cntrl == 'tbl-prevent-collection-data')],
                     ]
                 ],
                 [
