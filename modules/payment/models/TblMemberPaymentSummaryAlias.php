@@ -35,9 +35,6 @@ use app\modules\payment\models\TblPaymentCycle;
  * @property string $disburse_date
  * @property string $payment_date
  * @property string $payment_status
- * @property string $error_code
- * @property string $error_log
- * @property integer $ack
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -57,10 +54,10 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'error_code', 'error_log', 'created_by', 'updated_by'], 'string'],
-                [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack'], 'integer'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'created_by', 'updated_by'], 'string'],
+                [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'number'],
-                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay'], 'safe'],
         ];
     }
 
@@ -86,22 +83,20 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
             'avg_rate' => Yii::t('app', 'AvgRate'),
             'total_amount' => Yii::t('app', 'Milk Amount(+)'),
             'total_deduction' => Yii::t('app', 'Deduction(-)'),
-            'final_amount' => Yii::t('app', 'Final Pay'),
+            'final_amount' => Yii::t('app', 'Net Payable'),
             'disburse_amount' => Yii::t('app', 'Disburse Amount'),
             'disburse_date' => Yii::t('app', 'Disburse Date'),
             'payment_date' => Yii::t('app', 'Payment Date'),
             'payment_status' => Yii::t('app', 'Payment Status'),
-            'error_code' => Yii::t('app', 'Error Code'),
-            'error_log' => Yii::t('app', 'Error Log'),
-            'ack' => Yii::t('app', 'Ack'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'addition' => Yii::t('app', 'Addition(+)'),
+            'total_addition' => Yii::t('app', 'Addition(+)'),
             'previous_hold' => Yii::t('app', 'Previous Hold(+)'),
             'previous_due' => Yii::t('app', 'Previous Due(-)'),
             'hold_amount' => Yii::t('app', 'Hold Amount(-)'),
+            'net_payable' => Yii::t('app', 'Final Pay'),
         ];
     }
 

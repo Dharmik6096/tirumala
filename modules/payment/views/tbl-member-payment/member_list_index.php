@@ -24,10 +24,13 @@ $this->title = 'Members';
             <?php
             $attribute = [
                     ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+                    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                        return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
+                    }],
                     ['attribute' => 'dcs_code', 'value' => function($model) {
                         return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-                    }], //'dcsCode.dcs_name'],
-                ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code')],
+                    }],
+                    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Code')],
                     ['attribute' => 'member_code', 'value' => function($model) {
                         return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
                     }],
@@ -35,16 +38,14 @@ $this->title = 'Members';
                     ['attribute' => 'kg_snf'],
                     ['attribute' => 'qty', 'pageSummary' => true],
                     ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
-                    ['attribute' => 'addition', 'value' => 'addition',
-                    'pageSummary' => true],
-                    ['attribute' => 'total_deduction', 'value' => 'total_deduction',
-                    'pageSummary' => true],
+                    ['attribute' => 'total_addition', 'pageSummary' => true],
+                    ['attribute' => 'total_deduction', 'pageSummary' => true],
                     ['attribute' => 'previous_hold', 'pageSummary' => true],
                     ['attribute' => 'previous_due', 'pageSummary' => true],
-                    ['attribute' => 'net_payable', 'pageSummary' => true, 'label' => Yii::t('app', 'Final Pay')],
+                    ['attribute' => 'net_payable', 'pageSummary' => true],
                     ['attribute' => 'hold_amount', 'pageSummary' => true],
-                    ['attribute' => 'adjust_amount', 'pageSummary' => true],
-                    ['attribute' => 'final_amount', 'pageSummary' => true, 'label' => Yii::t('app', 'Net Payable')],
+                    ['attribute' => 'additional_pay', 'pageSummary' => true],
+                    ['attribute' => 'final_amount', 'pageSummary' => true],
                     ['attribute' => 'adjust_remark', 'pageSummary' => true],
             ];
 

@@ -6,22 +6,23 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\payment\models\TblMemberPaymentSummary;
+use app\modules\payment\models\TblMemberPaymentSummaryAlias;
 
 /**
  * TblMemberPaymentSummarySearch represents the model behind the search form about `app\modules\payment\models\TblMemberPaymentSummary`.
  */
 class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
 
-    public $from_date, $to_date, $dcs_name;
+    public $from_date, $to_date, $dcs_name, $ex_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'error_code', 'error_log', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'number'],
+                [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code'], 'safe'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'additional_pay'], 'number'],
         ];
     }
 
@@ -41,48 +42,63 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
      * @return ActiveDataProvider
      */
     public function search($params) {
+        $this->load($params);
+
+        $pendingDataQuery = TblMemberPaymentSummaryAlias::find();
+        $this->appendQuery($pendingDataQuery, 'tbl_member_payment_summary_alias');
+
         $query = TblMemberPaymentSummary::find();
+        $this->appendQuery($query, 'tbl_member_payment_summary');
 
-        // add conditions that should always apply here
-
+        $query->union($pendingDataQuery);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        $this->load($params);
-        $query->joinWith(['dcsCode', 'paymentCycleCode']);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_member_payment_summary', 'tbl_member_payment_summary', 'tbl_member_payment_summary');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'member_count' => $this->member_count,
-            'tbl_member_payment_summary.payment_cycle_code' => $this->payment_cycle_code,
-            'qty' => $this->qty,
-            'avg_fat' => $this->avg_fat,
-            'avg_snf' => $this->avg_snf,
-            'kg_fat' => $this->kg_fat,
-            'kg_snf' => $this->kg_snf,
-            'avg_rate' => $this->avg_rate,
-            'total_amount' => $this->total_amount,
-            'total_deduction' => $this->total_deduction,
-            'final_amount' => $this->final_amount,
-            'disburse_amount' => $this->disburse_amount,
-            'disburse_date' => $this->disburse_date,
-            'payment_date' => $this->payment_date,
-        ]);
-
-        $query->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
-                ->andFilterWhere(['like', 'tbl_member_payment_summary.dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'tbl_member_payment_summary.mcc_plant_code', $this->mcc_plant_code])
-                ->andFilterWhere(['like', 'tbl_member_payment_summary.bmc_code', $this->bmc_code]);
-
         return $dataProvider;
+    }
+
+    public function appendQuery($query, $tableName) {
+        $query->select([$tableName . '.union_code', $tableName . '.plant_code', $tableName . '.mcc_plant_code', $tableName . '.bmc_code', $tableName . '.dcs_code', $tableName . '.payment_cycle_code', $tableName . '.payment_date', $tableName . '.member_count', $tableName . '.kg_fat', $tableName . '.kg_snf', $tableName . '.qty', $tableName . '.avg_fat', $tableName . '.avg_snf', $tableName . '.avg_rate', $tableName . '.total_amount', $tableName . '.total_addition', $tableName . '.total_deduction', $tableName . '.previous_hold', $tableName . '.previous_due', $tableName . '.net_payable', $tableName . '.hold_amount', $tableName . '.additional_pay', $tableName . '.final_amount', $tableName . '.payment_status']);
+        $query->joinWith(['dcsCode', 'paymentCycleCode']);
+        Yii::$app->general->filterByOrg($query, $this, $tableName, $tableName, $tableName);
+
+        if (!empty($this->from_date)) {
+            $from_date = date('Y-m-d', strtotime($this->from_date));
+            $query->andFilterWhere(['>=', 'cast(tbl_payment_cycle.from_date as date)', $from_date]);
+        }
+        if (!empty($this->to_date)) {
+            $to_date = date('Y-m-d', strtotime($this->to_date));
+            $query->andFilterWhere(['<=', 'cast(tbl_payment_cycle.from_date as date)', $to_date]);
+        }
+        $query->andFilterWhere(['=', 'CAST(' . $tableName . '.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
+        // grid filtering conditions
+        $query->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
+                ->andFilterWhere(['like', $tableName . '.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', $tableName . '.mcc_plant_code', $this->mcc_plant_code])
+                ->andFilterWhere(['like', $tableName . '.bmc_code', $this->bmc_code])
+                ->andFilterWhere(['like', $tableName . '.kg_fat', $this->kg_fat])
+                ->andFilterWhere(['like', $tableName . '.kg_snf', $this->kg_snf])
+                ->andFilterWhere(['like', $tableName . '.qty', $this->qty])
+                ->andFilterWhere(['like', $tableName . '.avg_fat', $this->avg_fat])
+                ->andFilterWhere(['like', $tableName . '.avg_snf', $this->avg_snf])
+                ->andFilterWhere(['like', $tableName . '.avg_rate', $this->avg_rate])
+                ->andFilterWhere(['like', $tableName . '.total_amount', $this->total_amount])
+                ->andFilterWhere(['like', $tableName . '.total_addition', $this->total_addition])
+                ->andFilterWhere(['like', $tableName . '.total_deduction', $this->total_deduction])
+                ->andFilterWhere(['like', $tableName . '.previous_hold', $this->previous_hold])
+                ->andFilterWhere(['like', $tableName . '.previous_due', $this->previous_due])
+                ->andFilterWhere(['like', $tableName . '.net_payable', $this->net_payable])
+                ->andFilterWhere(['like', $tableName . '.hold_amount', $this->hold_amount])
+                ->andFilterWhere(['like', $tableName . '.additional_pay', $this->additional_pay])
+                ->andFilterWhere(['like', $tableName . '.final_amount', $this->final_amount])
+                ->andFilterWhere(['like', $tableName . '.payment_status', $this->payment_status])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->ex_code]);
     }
 
 }

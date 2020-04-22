@@ -306,7 +306,7 @@ class TblPaymentCycleController extends ChildController {
                             'data-placement' => 'top',
                             'data-original-title' => $title,
                             'data-popup-message' => $popupWindowTitle,
-                            'class' => ' generalGridConfirmationPopup ',
+                            'class' => ' generalGridConfirmationPopupa disabled ',
                             'data-post-url' => Url::to(['/payment/tbl-payment-cycle/bmc-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
                         ];
                         return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/bmc-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
@@ -385,7 +385,7 @@ class TblPaymentCycleController extends ChildController {
         if (User::canRoute('/payment/tbl-payment-cycle/member-billing-lock')) {
             $appModel->fields['billing_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
                     if ($model->billing_lock_member == 0) {
-                        return Yii::t('app', 'Pending');
+//                        return Yii::t('app', 'Pending');
                         $class = $model->billing_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
                         $title = $model->billing_lock_member == 1 ? 'Billing Unlock - Member' : 'Billing Lock - Member';
                         $popupWindowTitle = 'Are you sure you want to ' . ($model->billing_lock_member == 1 ? 'Unlock' : 'Lock') . ' Billing for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
@@ -394,9 +394,10 @@ class TblPaymentCycleController extends ChildController {
                             'data-placement' => 'top',
                             'data-original-title' => $title,
                             'data-popup-message' => $popupWindowTitle,
-                            'class' => ' generalGridConfirmationPopup ',
+                            'class' => ' generalGridConfirmationPopupa disabled ',
                             'data-post-url' => Url::to(['/payment/tbl-payment-cycle/member-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
                         ];
+//                        return '<i class="fa ' . $class . '"></i>';
                         return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['/payment/tbl-payment-cycle/member-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code], $options);
                     } else {
                         return Yii::t('app', 'Locked');
@@ -405,7 +406,7 @@ class TblPaymentCycleController extends ChildController {
                 'format' => 'raw',
                 'contentOptions' => function($model) {
                     if ($model->billing_lock_member == 0) {
-                        return [];//['class' => 'text-center'];
+                        return ['class' => 'text-center'];
                     } else {
                         return [];
                     }

@@ -51,31 +51,12 @@ $tot_amt = array_sum(array_map(function($array) {
                 ['attribute' => 'kg_fat'],
                 ['attribute' => 'kg_snf'],
                 ['attribute' => 'qty', 'pageSummary' => true],
-//                ['attribute' => 'avg_fat'],
-//                ['attribute' => 'avg_snf'],
-//            ['attribute' => 'avg_rate'],
-            ['attribute' => 'total_amount', 'value' => 'total_amount',
-                'pageSummary' => true
-            ],
-                ['attribute' => 'addition', 'value' => 'addition',
-                'pageSummary' => true
-            ],
-                ['attribute' => 'total_deduction', 'value' => 'total_deduction',
-                'pageSummary' => true
-            ],
-                ['attribute' => 'previous_hold', 'pageSummary' => true
-            ],
-                ['attribute' => 'previous_due', 'pageSummary' => true
-            ],
-                ['attribute' => 'final_amount',
-                'pageSummary' => true,
-                'value' => function ($model) {
-                    $addition = !empty($model->addition) ? $model->addition : 0;
-                    $deduction = !empty($model->total_deduction) ? $model->total_deduction : 0;
-                    return $model->net_payable + $addition - $deduction;
-                },
-                'contentOptions' => ['class' => 'final-amount'],
-            ],
+                ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
+                ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
+                ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
+                ['attribute' => 'previous_hold', 'pageSummary' => true],
+                ['attribute' => 'previous_due', 'pageSummary' => true],
+                ['attribute' => 'net_payable', 'pageSummary' => true, 'contentOptions' => ['class' => 'final-amount'],],
                 ['attribute' => 'hold_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
@@ -83,20 +64,20 @@ $tot_amt = array_sum(array_map(function($array) {
                     return Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['value' => $model->member_payment_alias_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'adjust_amount',
+                ['attribute' => 'additional_pay',
                 'format' => 'raw',
                 //  'pageSummary' => true,
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
-                    return Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']) . $form->field($model, 'adjust_amount[' . $index . ']')->textInput(['value' => $model->adjust_amount, 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE);
+                    return Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']) . $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $model->additional_pay, 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'net_payable',
+                ['attribute' => 'final_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 //  'pageSummary' => true,
                 'value' => function ($model, $key, $index) use ($form) {
-                    return $form->field($model, 'net_payable[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $model->final_amount])->label(FALSE);
+                    return $form->field($model, 'final_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $model->final_amount])->label(FALSE);
                 },
             ],
                 ['attribute' => 'adjust_remark',

@@ -43,28 +43,15 @@ $action = Url::to(['disburse-member-payment']);
             ['attribute' => 'kg_fat'],
             ['attribute' => 'kg_snf'],
             ['attribute' => 'qty', 'pageSummary' => true],
-            ['attribute' => 'total_amount', 'value' => 'total_amount',
-            'pageSummary' => true
-        ],
-            ['attribute' => 'addition', 'value' => 'addition',
-            'pageSummary' => true
-        ],
-            ['attribute' => 'total_deduction', 'value' => 'total_deduction',
-            'pageSummary' => true
-        ],
-            ['attribute' => 'previous_hold', 'pageSummary' => true
-        ],
-            ['attribute' => 'previous_due', 'pageSummary' => true
-        ],
-            ['attribute' => 'final_amount',
-            'pageSummary' => true,
-            'value' => function ($model) {
-                $addition = !empty($model->addition) ? $model->addition : 0;
-                $deduction = !empty($model->total_deduction) ? $model->total_deduction : 0;
-                return $model->net_payable + $addition - $deduction;
-            },
-            'contentOptions' => ['class' => 'final-amount'],
-        ],
+            ['attribute' => 'total_amount', 'pageSummary' => true],
+            ['attribute' => 'total_addition', 'pageSummary' => true],
+            ['attribute' => 'total_deduction', 'pageSummary' => true],
+            ['attribute' => 'previous_hold', 'pageSummary' => true],
+            ['attribute' => 'previous_due', 'pageSummary' => true],
+            ['attribute' => 'net_payable', 'pageSummary' => true,],
+            ['attribute' => 'hold_amount', 'pageSummary' => true,],
+            ['attribute' => 'additional_pay', 'pageSummary' => true,],
+            ['attribute' => 'final_amount', 'pageSummary' => true,],
     ];
 
     $grid_option = [

@@ -30,9 +30,6 @@ use Yii;
  * @property string $disburse_date
  * @property string $payment_date
  * @property string $payment_status
- * @property string $error_code
- * @property string $error_log
- * @property integer $ack
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -52,10 +49,10 @@ class TblMemberPaymentSummaryAliasHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['payment_sumary_alias_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'error_code', 'error_log', 'created_by', 'updated_by'], 'safe'],
+                [['payment_sumary_alias_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'created_by', 'updated_by'], 'safe'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'safe'],
-                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay', 'operation_type', 'history_created_at', 'history_created_by'], 'safe'],
         ];
     }
 
@@ -87,9 +84,6 @@ class TblMemberPaymentSummaryAliasHistory extends \yii\db\ActiveRecord {
             'disburse_date' => Yii::t('app', 'Disburse Date'),
             'payment_date' => Yii::t('app', 'Payment Date'),
             'payment_status' => Yii::t('app', 'Payment Status'),
-            'error_code' => Yii::t('app', 'Error Code'),
-            'error_log' => Yii::t('app', 'Error Log'),
-            'ack' => Yii::t('app', 'Ack'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),

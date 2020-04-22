@@ -27,16 +27,13 @@ use Yii;
  * @property string $total_deduction
  * @property string $final_amount
  * @property string $disburse_amount
- * @property string $adjust_amount
+ * @property string $additional_pay
  * @property string $adjust_remark
  * @property string $disburse_date
  * @property string $payment_date
  * @property string $payment_status
  * @property string $approved_by
  * @property string $transfer_mode
- * @property string $error_code
- * @property string $error_log
- * @property integer $ack
  * @property string $bank_name
  * @property string $bank_code
  * @property string $branch_name
@@ -70,10 +67,10 @@ class TblMemberPaymentHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['member_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'ack', 'is_verified'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'error_code', 'error_log', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'safe'],
-                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'adjust_amount'], 'safe'],
-                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['member_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'safe'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay', 'operation_type', 'history_created_at', 'history_created_by'], 'safe'],
+                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
 
@@ -102,16 +99,13 @@ class TblMemberPaymentHistory extends \yii\db\ActiveRecord {
             'total_deduction' => Yii::t('app', 'Total Deduction'),
             'final_amount' => Yii::t('app', 'Final Amount'),
             'disburse_amount' => Yii::t('app', 'Disburse Amount'),
-            'adjust_amount' => Yii::t('app', 'Adjust Amount'),
+            'additional_pay' => Yii::t('app', 'Adjust Amount'),
             'adjust_remark' => Yii::t('app', 'Adjust Remark'),
             'disburse_date' => Yii::t('app', 'Disburse Date'),
             'payment_date' => Yii::t('app', 'Payment Date'),
             'payment_status' => Yii::t('app', 'Payment Status'),
             'approved_by' => Yii::t('app', 'Approved By'),
             'transfer_mode' => Yii::t('app', 'Transfer Mode'),
-            'error_code' => Yii::t('app', 'Error Code'),
-            'error_log' => Yii::t('app', 'Error Log'),
-            'ack' => Yii::t('app', 'Ack'),
             'bank_name' => Yii::t('app', 'Bank Name'),
             'bank_code' => Yii::t('app', 'Bank Code'),
             'branch_name' => Yii::t('app', 'Branch Name'),

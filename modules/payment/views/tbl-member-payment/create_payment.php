@@ -117,6 +117,7 @@ $this->title = Yii::t('app', 'Member Payment Process : Step 1');
                     ]);
                     AjaxSubmitButton::end();
                     ?>
+                    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
                     <?php // Yii::$app->controls->save('Next', $model); ?>   
                     <?php // Yii::$app->controls->cancel(); ?>
                 </div>

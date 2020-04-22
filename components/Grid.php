@@ -46,7 +46,7 @@ class Grid extends Widget {
         }
 
         $module = Yii::$app->controller->module->id;
-        if (isset($searchModel->tableSchema->primaryKey[0]) && !($dataProvider instanceof yii\data\ArrayDataProvider)) {
+        if ((!isset($grid_option['default_sorting']) || $grid_option['default_sorting']) && isset($searchModel->tableSchema->primaryKey[0]) && !($dataProvider instanceof yii\data\ArrayDataProvider)) {
             $primary = $searchModel->tableSchema->primaryKey;
             $sort = [];
             $sort_type = in_array($module, ['geo', 'organisation', 'globalmaster']) ? SORT_ASC : SORT_DESC;
