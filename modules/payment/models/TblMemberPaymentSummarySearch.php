@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\payment\models\TblMemberPaymentSummary;
 use app\modules\payment\models\TblMemberPaymentSummaryAlias;
+use yii\db\ActiveQuery;
 
 /**
  * TblMemberPaymentSummarySearch represents the model behind the search form about `app\modules\payment\models\TblMemberPaymentSummary`.
@@ -20,9 +21,9 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
      */
     public function rules() {
         return [
-                [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code', 'from_datetime', 'to_datetime'], 'safe'],
-                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'additional_pay'], 'number'],
+            [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code', 'from_datetime', 'to_datetime'], 'safe'],
+            [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'additional_pay'], 'number'],
         ];
     }
 
@@ -50,11 +51,18 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
         $query = TblMemberPaymentSummary::find();
         $this->appendQuery($query, 'tbl_member_payment_summary');
 
-        $query->union($pendingDataQuery);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+        $unionQuery = (new ActiveQuery(TblMemberPaymentSummary::className()))->from([
+                    'payment_data' => $query->union($pendingDataQuery, TRUE)
+                ])->orderBy(['from_datetime' => SORT_DESC, 'dcs_code' => SORT_ASC]);
 
+        $dataProvider = new ActiveDataProvider([
+            // 'id' => 'member_payment_dataprovider',
+            // 'totalCount' => count($unionQuery->all()),
+            'query' => $unionQuery,
+                //    'pagination' => ['pageSize' => null],
+                // 'sort' => ['defaultOrder' => ['from_datetime' => SORT_DESC, 'dcs_code' => SORT_ASC]],
+        ]);
+        // $dataProvider->setPagination(['pageSize' => null]);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -64,7 +72,7 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
     }
 
     public function appendQuery($query, $tableName) {
-        $query->select([$tableName . '.union_code', $tableName . '.plant_code', $tableName . '.mcc_plant_code', $tableName . '.bmc_code', $tableName . '.dcs_code', $tableName . '.payment_cycle_code', $tableName . '.payment_date', $tableName . '.member_count', $tableName . '.kg_fat', $tableName . '.kg_snf', $tableName . '.qty', $tableName . '.avg_fat', $tableName . '.avg_snf', $tableName . '.avg_rate', $tableName . '.total_amount', $tableName . '.total_addition', $tableName . '.total_deduction', $tableName . '.previous_hold', $tableName . '.previous_due', $tableName . '.net_payable', $tableName . '.hold_amount', $tableName . '.additional_pay', $tableName . '.final_amount', $tableName . '.payment_status']);
+        $query->select([$tableName . '.union_code', $tableName . '.plant_code', $tableName . '.mcc_plant_code', $tableName . '.bmc_code', $tableName . '.dcs_code', $tableName . '.payment_cycle_code', $tableName . '.payment_date', $tableName . '.member_count', $tableName . '.kg_fat', $tableName . '.kg_snf', $tableName . '.qty', $tableName . '.avg_fat', $tableName . '.avg_snf', $tableName . '.avg_rate', $tableName . '.total_amount', $tableName . '.total_addition', $tableName . '.total_deduction', $tableName . '.previous_hold', $tableName . '.previous_due', $tableName . '.net_payable', $tableName . '.hold_amount', $tableName . '.additional_pay', $tableName . '.final_amount', $tableName . '.payment_status', $tableName . '.from_datetime', $tableName . '.to_datetime']);
         $query->joinWith(['dcsCode']);
         Yii::$app->general->filterByOrg($query, $this, $tableName, $tableName, $tableName);
 
