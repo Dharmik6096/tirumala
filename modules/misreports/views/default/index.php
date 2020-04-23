@@ -153,7 +153,7 @@ if (isset($data['url1'])) {
                                             <?php
                                         }
                                         if (in_array($value, array('payment_cycle_code'))) {
-                                            $where = json_encode(['data_lock_bmc' => 1, 'billing_lock_bmc' => 0]);
+                                            $where = json_encode(['data_lock_bmc' => 1]);
                                             echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                                             echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                                             ?>

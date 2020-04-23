@@ -143,4 +143,5 @@ return [
     'Vlcc Name' => 'Collection Center Name',
     'Functional Society' => 'Functional Collection Center',
     'Functional Society Count' => 'Functional Collection Center Count',
+    'DCS Wise' => 'Collection Center Wise',
 ];
