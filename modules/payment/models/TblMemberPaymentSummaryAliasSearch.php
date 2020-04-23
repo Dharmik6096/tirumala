@@ -18,7 +18,7 @@ class TblMemberPaymentSummaryAliasSearch extends TblMemberPaymentSummaryAlias {
     public function rules() {
         return [
                 [['payment_sumary_alias_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'originating_type'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_datetime', 'to_datetime'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'safe'],
                 [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable'], 'number'],
         ];
     }

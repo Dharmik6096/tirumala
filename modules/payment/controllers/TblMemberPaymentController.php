@@ -360,6 +360,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
                         $mainModel = new TblMemberPaymentSummary();
                         $mainModel->attributes = $summaryData->attributes;
+                        $mainModel->created_at = NULL;
+                        $mainModel->created_by = NULL;
                         $mainModel->payment_status = 'Disburse';
                         $mainModel->payment_date = date('Y-m-d H:i:s');
                         $save_model[] = $mainModel;
@@ -374,6 +376,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         Yii::$app->operation->history($Data, $historyModel, UPDATE);
                         $mainModel = new TblMemberPayment();
                         $mainModel->attributes = $Data->attributes;
+                        $mainModel->created_at = NULL;
+                        $mainModel->created_by = NULL;
                         $mainModel->payment_status = 'Disburse';
                         $mainModel->payment_date = date('Y-m-d H:i:s');
                         $save_model[] = $mainModel;
@@ -384,6 +388,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                         $outstanding = new TblMemberOutstanding();
                         $outstanding->attributes = $Data->attributes;
+                        $outstanding->created_at = NULL;
+                        $outstanding->created_by = NULL;
                         $outstandingData = $outstanding->getRecord();
                         if (!empty($outstandingData)) {
                             $outstanding = $outstandingData;

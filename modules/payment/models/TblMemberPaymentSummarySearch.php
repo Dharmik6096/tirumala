@@ -22,7 +22,7 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
     public function rules() {
         return [
             [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code', 'from_datetime', 'to_datetime'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'safe'],
             [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'additional_pay'], 'number'],
         ];
     }
