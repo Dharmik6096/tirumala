@@ -149,7 +149,7 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $appModel->options = ['tanker_rate'];
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->trans_label = Yii::t('app', 'bill head applicabilities');
-
+        $appModel->model->bill_head_for = $model->bill_head_for;
         $appModel->header_title = ' [Bill Head: ' . $model->bill_head_name . ', Type: ' . Yii::$app->dropdown->getRecords('calc_type')['data'][$model->bill_head_type] . '] ';
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
@@ -171,9 +171,13 @@ class TblBillHeadController extends \app\controllers\ChildController {
                 }],
                 //'dcs_name' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],           
         ];
-        $customerType = new TblCustomerType();
-        $customerType->union_code = $model->union_code;
-        $value = $customerType->getCustomerType();
+        if ($model->bill_head_for == 'MEMBER') {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType = new TblCustomerType();
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType();
+        }
         $appModel->actions = ['delete' => ['option' => 'bill_head_applicabilty_code,bill_head_applicabilty_code,tbl-bill-head/delete-applicability']];
 //        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
         $appModel->dcs_filters = $value;

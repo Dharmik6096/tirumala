@@ -233,7 +233,7 @@ class DropDown extends Component {
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
-      
+
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
         if ((Yii::$app->session->get('hasBMC') == 0)) {
             $script = "$(document).ready(function() {
@@ -837,6 +837,11 @@ class DropDown extends Component {
                 'name' => 'rate_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'BMC' => Yii::t('app', 'BMC')],
+            ],
+            'bill_head_for' => [
+                'name' => 'bill_head_for',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR'), 'TRANSPORTER' => Yii::t('app', 'TRANSPORTER')],
             ],
         ];
         return $records[$l];

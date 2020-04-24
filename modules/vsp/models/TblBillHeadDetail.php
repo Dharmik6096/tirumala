@@ -54,7 +54,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => 'importCsv'],
             [['installment_start_date'], 'required', 'on' => 'importCsv'],
             [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
-            [['created_at', 'updated_at', 'installment_amount'], 'safe'],
+            [['created_at', 'updated_at', 'installment_amount', 'bill_head_for'], 'safe'],
             [['amount'], 'number', 'min' => 0],
             [['no_installment'], 'number', 'min' => 0],
             [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],

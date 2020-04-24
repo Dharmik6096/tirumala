@@ -68,6 +68,10 @@ $form = ActiveForm::begin([
         <?php // Yii::$app->dropdown->dropdown('general_formula_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('general_formula_code'), false, 'general_formula_code'); ?>
         <?= Html::activeHiddenInput($model, 'general_formula', ['id' => 'general_formula']); ?>
     </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('bill_head_for', $model, $form, 'form-group', $model->getAttributeLabel('bill_head_for'), false, 'bill_head_for', false); ?> 
+    </div>
+
     <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
