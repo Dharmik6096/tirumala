@@ -26,7 +26,11 @@ $attribute = [
     ['attribute' => 'general_formula', 'value' => function($model) {
             return '<div>' . $model->general_formula . '</div>';
         }, 'format' => 'raw'],
-    ['attribute' => 'bill_head_for'],
+    ['attribute' => 'bill_head_for',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('bill_head_for', $searchModel, 'bill_head_for'),
+        'value' => function($model) {
+            return isset($model->bill_head_for) ? Yii::$app->dropdown->getRecords('bill_head_for')['data'][$model->bill_head_for] : 'N/A';
+        },],
     ['attribute' => 'sequence_no'],
 ];
 $grid_option = [

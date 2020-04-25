@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use app\modules\collection\models\TblBmcCollection;
 use app\modules\vsp\models\TblBillHeadInstallment;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_bill_head_detail".
@@ -38,7 +39,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $installment_amount, $customer_name, $installment_start_date, $ex_code;
+    public $installment_amount, $customer_name, $installment_start_date, $ex_code, $code;
 
     public static function tableName() {
         return 'tbl_bill_head_detail';
@@ -51,6 +52,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         return [
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
             [['bill_head_code', 'bmc_code', 'amount'], 'required'],
+            [['dcs_code'], 'required', 'on' => ['memberBillHead']],
             [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => 'importCsv'],
             [['installment_start_date'], 'required', 'on' => 'importCsv'],
             [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
@@ -202,6 +204,10 @@ class TblBillHeadDetail extends \app\models\ChildModel {
 
     public function getCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
 }

@@ -4,6 +4,7 @@ namespace app\modules\vsp\models;
 
 use Yii;
 use app\modules\payment\models\TblPaymentCycle;
+
 /**
  * This is the model class for table "tbl_bill_head_installment".
  *
@@ -33,7 +34,7 @@ class TblBillHeadInstallment extends \app\models\ChildModel {
             [['bill_head_detail_code'], 'integer'],
             [['bill_head_code', 'dcs_code', 'installement_cycle', 'installment_amount'], 'safe'],
             [['installment_date', 'payment_cycle_code'], 'safe'],
-            [['customer_type', 'customer_code', 'union_code'], 'safe'],
+            [['customer_type', 'customer_code', 'union_code', 'bill_head_for'], 'safe'],
         ];
     }
 

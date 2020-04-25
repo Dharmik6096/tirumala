@@ -8,7 +8,7 @@ use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
 $form = ActiveForm::begin([
-            'options' => ['id' => 'bill-head-detail-form'],
+            'options' => ['id' => 'member-bill-head-detail-form'],
             'validateOnBlur' => false,
             'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
@@ -30,26 +30,31 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbillheaddetail-mcc_plant_code', 'bmc_code', TRUE); ?>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbillheaddetail-bmc_code', 'customer_type', TRUE, FALSE); ?>
+    <div class="col-sm-2" style="display:none">
+        <?= Html::activeTextInput($model, 'customer_type'); ?>
+        <?= $form->field($model, 'customer_code')->textInput(); ?>
     </div>
     <div class="col-sm-2">
         <?php
-        $where = json_encode(['data_lock_bmc' => 0]);
+        $where = json_encode(['data_lock_member' => 0]);
         echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
         echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
-        echo Html::hiddenInput('head_for', 'VENDOR', ['id' => 'head_for']);
+        echo Html::hiddenInput('head_for', 'MEMBER', ['id' => 'head_for']);
         ?>
         <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
     </div>
-    <div class="clearfix"></div>
-
-    <div class="col-sm-2 reset_field">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE); ?>
     </div>
-
+    <div class="clearfix"></div>
     <div class="col-sm-2 reset_field">
-        <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-customer_code,head_for', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
+        <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-dcs_code,head_for', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
+    </div>
+    <div class="col-sm-1 reset_field">
+        <?= $form->field($model, 'code')->textInput()->label('Code') ?>
+    </div>
+    <div class="col-sm-2 reset_field">
+        <?= $form->field($model, 'customer_name')->textInput(['readonly' => true])->label('Name') ?>
     </div>
     <div class="col-sm-2 number-validate reset_field">
         <?= $form->field($model, 'amount')->textInput() ?>       
@@ -69,7 +74,7 @@ $form = ActiveForm::begin([
                 'label' => Yii::t('app', 'Save'),
                 'ajaxOptions' => [
                     'type' => 'POST',
-                    'url' => Url::to(['create']),
+                    'url' => Url::to(['create-member-bill-detail']),
                     'beforeSend' => new JsExpression("function(data){
                                                 $('.error-summary').hide();
                                                 $('#loadercontent').show();
@@ -87,8 +92,8 @@ $form = ActiveForm::begin([
 //                                                                  $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     reloadGrid();
-                                                                    $("#bill-head-detail-form .reset_field input").val("");
-                                                                    $("#bill-head-detail-form .reset_field select").val("");
+                                                                    $("#member-bill-head-detail-form .reset_field input").val("");
+                                                                    $("#member-bill-head-detail-form .reset_field select").val("");
                                                                     $(".panel-body").scrollTop(0);                                                                    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                    setTimeout(function(){
@@ -127,31 +132,43 @@ $script = "
 //        $('#tblbillheaddetail-no_installment').prop('disabled', true);
         $('#tblbillheaddetail-installment_amount').prop('disabled', true); 
     });
-//     $('#tblbillheaddetail-bill_head_code').on('change',function(){
-//     var bill_head_code= $(this).val();
-//     if(bill_head_code !=''){
-//        $.ajax({
-//            type: 'post',
-//            url: '" . Url::to(['/vsp/tbl-bill-head-detail/bill-head-type']) . "',
-//            data: {'bill_head_code' : bill_head_code},            
-//            success: function(data) {
-//                var type = $.parseJSON(data);
-//                if(type.status == 'success' && type.data.bill_head_type==0){
-//                     $('#tblbillheaddetail-no_installment').prop('disabled', false);
-//                }
-//                 else {
-//                     $('#tblbillheaddetail-no_installment').prop('disabled', true);
-//                     $('#tblbillheaddetail-no_installment').val('');
-//                     $('#tblbillheaddetail-installment_amount').val('');
-//                 }
-//            },
-//        });
-//      } else {
-//            $('#tblbillheaddetail-no_installment').prop('disabled', true);
-//            $('#tblbillheaddetail-no_installment').val('');
-//            $('#tblbillheaddetail-installment_amount').val('');
-//      }
-//    });
+    
+    $(document).on('change', '#tblbillheaddetail-code', function() {  
+        $('#tblbillheaddetail-customer_code').val('');
+            $('#tblbillheaddetail-customer_name').val('');
+        setMemberCode();
+    });
+       
+    function setMemberCode(){
+        var dcs = $('#tblbillheaddetail-dcs_code').val();
+        var code = $('#tblbillheaddetail-code').val();
+        if(dcs != '' && dcs != null && dcs != undefined && code != ''){
+            var member_code = dcs.concat(code);
+            $('#tblbillheaddetail-customer_code').val(member_code);
+             $.ajax({
+            type: 'post',
+            url:'" . Url::to(['validate-member']) . "',
+            data: {'member_code':member_code},
+            success: function(data) {                                        
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success')
+                {
+                    $('#tblbillheaddetail-customer_name').val(obj.member_details.member_name);
+                }else{
+                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Please enter valid Member Code(Last 4 digit).') . "</span></div></div>', function(result){
+                 setTimeout(function(){
+                 $('#tblbillheaddetail-code').focus();},100);
+                    }); 
+                    $('#tblbillheaddetail-code').val('');
+                    $('#tblbillheaddetail-customer_name').val('');
+                }
+            },
+            error:function(data){
+		
+	    }
+	});
+        }
+    }
   
     $('#tblbillheaddetail-no_installment').on('change',function(){
         dispDefBillHead();
@@ -182,7 +199,7 @@ $script = "
         reloadGrid();
     });
     function reloadGrid(){
-            var url = '" . Url::to(['/vsp/tbl-bill-head-detail/list-grid']) . "'+ '?' + $('#bill-head-detail-form').serialize();
+            var url = '" . Url::to(['/vsp/tbl-bill-head-detail/member-list-grid']) . "'+ '?' + $('#member-bill-head-detail-form').serialize();
                 $.ajax({
                     type: 'get',
                     url: url,
@@ -199,5 +216,5 @@ $script = "
     }
     
 ";
-$this->registerJs($script, View::POS_END, 'bill-head-detail-form');
+$this->registerJs($script, View::POS_END, 'member-bill-head-detail-form');
 ?>

@@ -248,8 +248,9 @@ class TblBillHeadController extends \app\controllers\ChildController {
             $unionCode = $value[0];
             $type = $value[1];
             $code = $value[2];
+            $headFor = $value[3];
             $model = new TblBillHead();
-            $list = $model->billHeadTypeWise($unionCode, $type, $code);
+            $list = $model->billHeadTypeWise($unionCode, $type, $code, $headFor);
             $list = array_unique($list);
             foreach ($list as $key => $r) {
                 $out[] = array('id' => $key,

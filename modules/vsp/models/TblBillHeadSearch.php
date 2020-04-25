@@ -19,7 +19,7 @@ class TblBillHeadSearch extends TblBillHead {
         return [
             [['bill_head_code', 'bill_head_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'general_formula_code'], 'safe'],
             [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type'], 'integer'],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'default_bill_head_code', 'general_formula', 'sequence_no'], 'safe']
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'default_bill_head_code', 'general_formula', 'sequence_no', 'bill_head_for'], 'safe']
         ];
     }
 
@@ -62,6 +62,7 @@ class TblBillHeadSearch extends TblBillHead {
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'is_disburse_allowed' => $this->is_disburse_allowed,
+            'bill_head_for' => $this->bill_head_for,
 //            'bill_head_type' => $this->bill_head_type,
         ]);
 

@@ -1310,6 +1310,8 @@ class GeneralFunctions extends Component {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
+            } else if (strtolower($type) == 'member') {
+                $name = $this->getforeignkey($model->memberCode, 'ex_member_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_code_ex');
             }
@@ -1322,6 +1324,8 @@ class GeneralFunctions extends Component {
         } else {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_name');
+            } else if (strtolower($type) == 'member') {
+                $name = $this->getforeignkey($model->memberCode, 'member_name');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_name');
             }
@@ -1337,14 +1341,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
