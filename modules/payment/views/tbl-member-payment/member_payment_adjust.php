@@ -6,8 +6,12 @@ use yii\web\View;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Member Payment Process : Step 3');
+$fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'from_date'));
+$toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'to_date'));
+
 $bmc_info = Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' > ' .
-        Yii::$app->controls->view_date($aliasModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($aliasModel->to_datetime);
+        $fromDate . ' to ' . $toDate;
+$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 ?>
 <?php
 $array = $dataProvider->getModels();
@@ -114,7 +118,28 @@ $script = '$("#adjust").click(function() {
 });
 $("#adjust-lock").click(function() {
     $(".process_lock_flag").val("Lock");
-    $("#payment-adjust").submit();
+    
+
+
+    var message = "' . $message . '";
+    bootbox.confirm({
+        message: "<div class=\"bg-danger\"><i class=\"fa fa-question-circle\"></i></div><span>"+message+"</span>",
+        buttons: {
+            confirm: {
+                label: "' . Yii::t('app', 'Yes') . '",
+                className: "btn-primary"
+            },
+            cancel: {
+                label: "' . Yii::t('app', 'No') . '",
+                className: "btn-danger"
+            }
+        },
+        callback: function (result) {
+            if(result){
+                $("#payment-adjust").submit();
+            }
+        }
+    });
 });
 ';
 $script .= " 

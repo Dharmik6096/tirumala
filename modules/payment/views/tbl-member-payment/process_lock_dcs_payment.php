@@ -5,10 +5,14 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Member Payment Process : Step 2');
+$fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
+$toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
 $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
-        Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
+        $fromDate . ' to ' . $toDate;
+$message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 ?>
 <?php
 $array = $dataProvider->getModels();
@@ -81,6 +85,12 @@ $tot_amt = array_sum(array_map(function($array) {
                     'attributes' => $attribute,
                     'active_column' => false,
                     'showPageSummary' => true,
+                    'actions' => [
+                        'members' => function ($url, $model) {
+                            $options = ['data-toggle' => 'tooltip', 'target' => '_blank', 'data-placement' => 'top', 'data-original-title' => 'View Members'];
+                            return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members-list', 'cycle' => $model->payment_cycle_code, 'dcs_code' => $model->dcs_code], $options);
+                        },
+                    ]
                         //'actions' => []
                 ];
 
@@ -120,7 +130,26 @@ $('#adjust').click(function() {
 });
 $('#adjust-lock').click(function() {
     $('.process_lock_flag').val('Lock');
-    $('#member-wise-payment-summary-form').submit();
+    
+    var message = '" . $message . "';
+    bootbox.confirm({
+        message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
+        buttons: {
+            confirm: {
+                label: '" . Yii::t('app', 'Yes') . " ',
+                className: 'btn-primary'
+            },
+            cancel: {
+                label: '" . Yii::t('app', 'No') . "' ,
+                className: 'btn-danger'
+            }
+        },
+        callback: function (result) {
+            if(result){
+                $('#member-wise-payment-summary-form').submit();
+            }
+        }
+    });
 //    $('form#w1').submit();
 });";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
