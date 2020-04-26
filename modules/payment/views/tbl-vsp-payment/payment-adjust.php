@@ -11,9 +11,11 @@ $this->title = 'Vendor Payment Process : Step 2';
 <?php
 $array = $dataProvider->getModels();
 $tot_amt = array_sum(array_map(function($array) {
-            return $array['final_pay'];
+            return $array['net_payable'];
         }, $array));
-
+$final_amt = array_sum(array_map(function($array) {
+            return $array['net_payable']+$array['adjust_amount']-$array['hold_amount'];
+        }, $array));
 
 $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
         Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
@@ -24,7 +26,7 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
         <div class="panel-heading">
             <?= $this->title . ' (' . $bmc_info . ')' ?>  
             <div id="total-payment">
-                Total Payable :: <?= $tot_amt; ?>
+                Total Payable :: <?= $final_amt; ?>
             </div>
         </div>     
         <?php
@@ -64,7 +66,7 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
             ],
             ['attribute' => 'previous_due', 'pageSummary' => true
             ],
-            ['attribute' => 'final_pay', 'value' => 'final_pay',
+            ['attribute' => 'final_pay', 'value' => 'net_payable',
                 'pageSummary' => true,
                 'contentOptions' => ['class' => 'final-amount'],
             ],
@@ -127,17 +129,30 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
         <?php ActiveForm::end(); ?>
         <div id='bill_head_view'></div>
         <?php
-        $script = '$("#adjust").click(function() {
-   $("#payment-adjust").submit();
+        $script = "$('#adjust').click(function() {
+            var data_ok=1;
+          $('.net-amount').each(function() {
+             var netamount =  parseFloat($(this).val());
+         if(netamount<0){
+            data_ok=0;
+            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
+                bootbox.hideAll();
+            });
+            return false; 
+          }
+        });
+    if(data_ok==1){
+        $('#payment-adjust').submit();
+    }
 });
-';
+";
         $script .=" $('.cal-amount').on('blur',function(){     
         var id = $(this).attr('id');
         var parent = $(this).parents('tr');
         var adjust = parseFloat(parent.find('.adjust-amount').val());
         var final = parseFloat(parent.find('.final-amount').text());
         var hold = parseFloat(parent.find('.hold-amount').val());
-        parent.find('.net-amount').val('');
+  
         if(adjust == '' ||  isNaN(adjust)){
         adjust=0;
         }
@@ -145,17 +160,15 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
         hold=0;
         }
         var net = final + adjust - hold;  
-        if(net != '' && net < 0){
+         parent.find('.net-amount').val(net.toFixed(2));
+       if(net != '' && net < 0){
          bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
                 bootbox.hideAll();
                     $('#'+id).focus().select();
             });
             return false;
-        } else {              
-        if(net != '' &&  !isNaN(net)){
-         parent.find('.net-amount').val(net.toFixed(2));
-          SumAmount();
-        }
+        } else {                   
+          SumAmount();    
        }
     });";
         $script.=" function SumAmount()

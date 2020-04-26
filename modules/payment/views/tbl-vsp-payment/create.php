@@ -40,7 +40,7 @@ $this->title = 'Vendor Payment Process : Step 1';
             </div>
             <div class="col-sm-2">
                 <?php
-                $where = json_encode(['data_lock_bmc' => 1, 'billing_lock_bmc' => 0]);
+                $where = json_encode(['data_lock_bmc' => 1, 'billing_lock_bmc' => 0, 'billing_lock_member' => 1]);
                 echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                 echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                 ?>
@@ -62,7 +62,18 @@ $this->title = 'Vendor Payment Process : Step 1';
 
 <?php
 $script = "
-     $('#tblvsppayment-payment_cycle_code').on('change',function(){
+  $('#tblvsppayment-customer_type').on('change',function(){
+     var customer_type= $(this).val();
+    var where_data_lock='';     
+    if(customer_type =='DCS'){
+       where_data_lock={'data_lock_bmc':1,'billing_lock_bmc':0,'billing_lock_member':1};
+     }else{
+         where_data_lock={'data_lock_bmc':1,'billing_lock_bmc':0};
+     }
+      $('#data_lock_bmc').val(JSON.stringify(where_data_lock));
+});     
+
+  $('#tblvsppayment-payment_cycle_code').on('change',function(){
      var payment_cycle_code= $(this).val();
      if(payment_cycle_code !=''){
      var union_code= $('#tblvsppayment-union_code').val();

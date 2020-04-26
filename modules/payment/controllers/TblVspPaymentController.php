@@ -90,7 +90,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $data->adjust_amount = $adjust_amt[$key];
                     $data->adjust_remark = $adjust_remark[$key];
                     $data->hold_amount = $hold_amt[$key];
-                    $data->final_pay = $data->final_pay + $adjust_amt[$key] - $hold_amt[$key];
+                    $data->final_pay = $data->net_payable + $adjust_amt[$key] - $hold_amt[$key];
                     $save_model[] = $historyModel;
                     $save_model[] = $data;
                     $cnt++;
