@@ -8,6 +8,11 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 
 $action = Url::to(['disburse-member-payment']);
+$fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
+$toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
+$message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+
+
 ?>
 <div class="" >
     <?php
@@ -93,8 +98,40 @@ $script = "
 //        } else {
 //            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Please Select atleast one Record') . "</span>');
 //        }
-        $('#flag').val($(this).prop('name'));
-        $('form#w1').submit();
+        var flagName = $(this).prop('name');
+        $('#flag').val(flagName);
+        if(flagName == 'member') {
+            var negativeCount = " . $negativeValCount . ";
+            var message = '" . $message . "';
+
+            if(negativeCount > 0) {
+                var dispMessage = '" . Yii::t('app', 'Not allow to disburse as Payment is negative for Member') . "';
+                bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
+            } else {
+                bootbox.confirm({
+                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
+                    buttons: {
+                        confirm: {
+                            label: '" . Yii::t('app', 'Yes') . " ',
+                            className: 'btn-primary'
+                        },
+                        cancel: {
+                            label: '" . Yii::t('app', 'No') . "' ,
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if(result){
+                            $('form#w1').submit();
+                        }
+                    }
+                });
+            }
+
+
+        } else {
+            $('form#w1').submit();
+        }
     });
     
     $('.bank').on('click',function(){

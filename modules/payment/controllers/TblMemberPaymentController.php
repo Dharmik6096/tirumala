@@ -124,10 +124,15 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $searchModel = new TblMemberPaymentSummaryAliasSearch();
             $searchModel->attributes = $model->attributes;
             $dataProvider = $searchModel->search([]);
+            $negativeValCount = 0;
+            $memberPaymentModel = new TblMemberPaymentAlias();
+            $memberPaymentModel->attributes = $model->attributes;
+            $negativeValCount = $memberPaymentModel->getNegativeValCount();
             return $this->render('process_lock_dcs_payment', [
                         'model' => $model,
                         'searchModel' => $searchModel,
-                        'dataProvider' => $dataProvider
+                        'dataProvider' => $dataProvider,
+                        'negativeValCount' => $negativeValCount
             ]);
         }
     }
@@ -185,6 +190,12 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         // Farmer Payment Process: Process or Lock Data
         $model = new TblMemberPaymentAlias();
         $model->attributes = Yii::$app->request->get();
+
+        $negativeValCount = 0;
+        $memberPaymentModel = new TblMemberPaymentAlias();
+        $memberPaymentModel->attributes = $model->attributes;
+        $negativeValCount = $memberPaymentModel->getNegativeValCount();
+
         if (Yii::$app->request->post('TblMemberPaymentAlias')) {
             $postData = Yii::$app->request->post();
             $adjust_id = Yii::$app->request->post('TblMemberPaymentAlias')['member_payment_alias_code'];
@@ -275,6 +286,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     'model' => $model,
                     'aliasModel' => $aliasModel,
                     'dataProvider' => $dataProvider,
+                    'negativeValCount' => $negativeValCount
         ]);
     }
 
@@ -309,11 +321,16 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //                    'searchModel' => $searchModel,
 //                    'dataProvider' => $dataProvider
 //        ]);
+
+        $memberPaymentModel = new TblMemberPaymentAlias();
+        $memberPaymentModel->attributes = $model->attributes;
+        $negativeValCount = $memberPaymentModel->getNegativeValCount();
         return $this->render('member_payment_disburse', [
                     'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
-                    'title' => 'Member Payment Disburse : Step 1'
+                    'title' => 'Member Payment Disburse : Step 1',
+                    'negativeValCount' => $negativeValCount
         ]);
     }
 

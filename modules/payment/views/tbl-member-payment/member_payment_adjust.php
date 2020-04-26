@@ -119,31 +119,50 @@ $script = '$("#adjust").click(function() {
 $("#adjust-lock").click(function() {
     $(".process_lock_flag").val("Lock");
     
-
-
-    var message = "' . $message . '";
-    bootbox.confirm({
-        message: "<div class=\"bg-danger\"><i class=\"fa fa-question-circle\"></i></div><span>"+message+"</span>",
-        buttons: {
-            confirm: {
-                label: "' . Yii::t('app', 'Yes') . '",
-                className: "btn-primary"
-            },
-            cancel: {
-                label: "' . Yii::t('app', 'No') . '",
-                className: "btn-danger"
-            }
-        },
-        callback: function (result) {
-            if(result){
-                $("#payment-adjust").submit();
+    var negativeVal = "No";
+    $(".final-amount").each(function() {
+        var parent = $(this).parents("tr");
+        var final = parseFloat(parent.find(".final-amount").text());
+        var netPay = parseFloat(parent.find(".net-amount").val());
+        if(final == "" ||  isNaN(final)){
+            final=0;
+        }
+        if(final < 0){
+            if(netPay == "" || (!isNaN(netPay) && netPay < 0)) {
+                negativeVal = "Yes";
             }
         }
     });
+    var message = "' . $message . '";
+    var negativeCount = ' . $negativeValCount . ';
+    if(negativeCount > 0 || negativeVal == "Yes") {
+        var dispMessage = "' . Yii::t('app', 'Not allow to confirm as Payment is negative for Member') . '";
+        bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
+    } else {
+        bootbox.confirm({
+            message: "<div class=\"bg-danger\"><i class=\"fa fa-question-circle\"></i></div><span>"+message+"</span>",
+            buttons: {
+                confirm: {
+                    label: "' . Yii::t('app', 'Yes') . '",
+                    className: "btn-primary"
+                },
+                cancel: {
+                    label: "' . Yii::t('app', 'No') . '",
+                    className: "btn-danger"
+                }
+            },
+            callback: function (result) {
+                if(result){
+                    $("#payment-adjust").submit();
+                }
+            }
+        });
+    
+    }
 });
 ';
 $script .= " 
-    
+
     $('.cal-amount').on('blur',function(){
         var id = $(this).attr('id');
         var parent = $(this).parents('tr');

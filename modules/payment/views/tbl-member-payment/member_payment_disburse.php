@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'Member Payment Disburse');
             <!--</div>-->
             <div class="clearfix"></div>
             <?php
-            echo $this->render('_disburse_form_grid_export', ['searchModel' => $searchModel, 'model' => $model, 'dataProvider' => $dataProvider]);
+            echo $this->render('_disburse_form_grid_export', ['searchModel' => $searchModel, 'model' => $model, 'dataProvider' => $dataProvider, 'negativeValCount' => $negativeValCount]);
             ?>
         </div>
     </div>
