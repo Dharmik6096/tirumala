@@ -76,14 +76,21 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                             $instModel->bill_head_code = $model->bill_head_code;
                             $instModel->union_code = $model->union_code;
                             $instModel->customer_code = $model->customer_code;
+                            $instModel->dcs_code = $model->dcs_code;
+                            if (!empty($instModel->dcs_code)) {
+                                $customer_type = 'DCS';
+                            } else {
+                                $customer_type = $model->customer_type;
+                            }
                             $instModel->customer_type = $model->customer_type;
+                            $instModel->bill_head_for = $model->bill_head_for;
                             $instModel->installement_cycle = ($i + 1);
                             $instModel->installment_amount = floatval($model->amount / $no);
                             $instModel->payment_cycle_code = $cycle;
                             $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
                             $modelList[] = $instModel;
                             if ($model->no_installment > $i + 1) {
-                                $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC');
+                                $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $model->bmc_code, $customer_type, 'BMC');
                                 if (empty($cycle)) {
                                     return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.')];
                                 }
@@ -115,7 +122,6 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                         }
                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                     }
-
                 } catch (UserException $e) {
                     $trans->rollback();
                     return ['total' => 0, 'status' => 'error', 'msg' => $e->getMessage(), 'pk' => 0];

@@ -51,7 +51,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-dcs_code,head_for', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
     </div>
     <div class="col-sm-1 reset_field">
-        <?= $form->field($model, 'code')->textInput()->label('Code') ?>
+        <?= $form->field($model, 'member_code')->textInput()->label('Code') ?>
     </div>
     <div class="col-sm-2 reset_field">
         <?= $form->field($model, 'customer_name')->textInput(['readonly' => true])->label('Name') ?>
@@ -133,7 +133,7 @@ $script = "
         $('#tblbillheaddetail-installment_amount').prop('disabled', true); 
     });
     
-    $(document).on('change', '#tblbillheaddetail-code', function() {  
+    $(document).on('change', '#tblbillheaddetail-member_code', function() {  
         $('#tblbillheaddetail-customer_code').val('');
             $('#tblbillheaddetail-customer_name').val('');
         setMemberCode();
@@ -141,7 +141,7 @@ $script = "
        
     function setMemberCode(){
         var dcs = $('#tblbillheaddetail-dcs_code').val();
-        var code = $('#tblbillheaddetail-code').val();
+        var code = $('#tblbillheaddetail-member_code').val();
         if(dcs != '' && dcs != null && dcs != undefined && code != ''){
             var member_code = dcs.concat(code);
             $('#tblbillheaddetail-customer_code').val(member_code);
@@ -157,9 +157,9 @@ $script = "
                 }else{
                  bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Please enter valid Member Code(Last 4 digit).') . "</span></div></div>', function(result){
                  setTimeout(function(){
-                 $('#tblbillheaddetail-code').focus();},100);
+                 $('#tblbillheaddetail-member_code').focus();},100);
                     }); 
-                    $('#tblbillheaddetail-code').val('');
+                    $('#tblbillheaddetail-member_code').val('');
                     $('#tblbillheaddetail-customer_name').val('');
                 }
             },

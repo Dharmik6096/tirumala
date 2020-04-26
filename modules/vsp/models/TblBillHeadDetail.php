@@ -39,7 +39,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $installment_amount, $customer_name, $installment_start_date, $ex_code, $code;
+    public $installment_amount, $customer_name, $installment_start_date, $ex_code, $member_code;
 
     public static function tableName() {
         return 'tbl_bill_head_detail';
@@ -52,9 +52,10 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         return [
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
             [['bill_head_code', 'bmc_code', 'amount'], 'required'],
-            [['dcs_code'], 'required', 'on' => ['memberBillHead']],
-            [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => 'importCsv'],
-            [['installment_start_date'], 'required', 'on' => 'importCsv'],
+            [['dcs_code'], 'required', 'on' => ['memberBillHead', 'importDetailCsv']],
+            [['member_code'], 'required', 'on' => ['importDetailCsv']],
+            [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => ['importCsv', 'importDetailCsv']],
+            [['installment_start_date'], 'required', 'on' => ['importCsv', 'importDetailCsv']],
             [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
             [['created_at', 'updated_at', 'installment_amount', 'bill_head_for'], 'safe'],
             [['amount'], 'number', 'min' => 0],
@@ -69,11 +70,11 @@ class TblBillHeadDetail extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-            [['installment_start_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['installment_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['installment_start_date'], 'convertDate', 'on' => ['importCsv']],
-            [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv']],
+            [['installment_start_date'], 'convertDateDot', 'on' => ['importCsv', 'importDetailCsv']],
+            [['installment_start_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importDetailCsv']],
+            [['installment_start_date'], 'convertDate', 'on' => ['importCsv', 'importDetailCsv']],
+            [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
+            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv', 'importDetailCsv']],
             [['customer_code'], 'required', 'on' => ['importCsv']]
         ];
     }
@@ -168,14 +169,34 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
-            Yii::$app->general->validateCustomer($this);
+            if (!empty($this->dcs_code)) {
+                $this->customer_code = $this->dcs_code;
+                $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+                if ($bmc_code != $this->bmc_code) {
+                    $this->addError('dcs_code', Yii::t('app/validation', $this->getAttributeLabel('dcs_code') . ' is invalid'));
+                }
+                $member = $this->dcs_code . $this->member_code;
+                $this->customer_code = $member;
+                if (empty($this->memberCode)) {
+                    $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' is invalid'));
+                }
+                $this->bill_head_for = 'MEMBER';
+                $this->customer_type = 'MEMBER';
+                $customer_type = 'DCS';
+                $customer_code = $this->dcs_code;
+            } else {
+                $this->bill_head_for = 'VENDOR';
+                Yii::$app->general->validateCustomer($this);
+                $customer_type = $this->customer_type;
+                $customer_code = $this->customer_code;
+            }
             $billModel = new TblBillHead();
-            $list = $billModel->billHeadTypeWise($this->union_code, $this->customer_type, $this->customer_code);
+            $list = $billModel->billHeadTypeWise($this->union_code, $customer_type, $customer_code, $this->bill_head_for);
             if (!array_key_exists($this->bill_head_code, $list)) {
                 $this->addError('bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('bill_head_code') . ' is invalid'));
             }
             $paymentModel = new TblPaymentCycleApplicability();
-            $paymentModel->applicable_type = $this->customer_type;
+            $paymentModel->applicable_type = $customer_type;
             $paymentModel->applicable_code = $this->bmc_code;
             $paymentModel->applicable_for = 'BMC';
             $modelData = $paymentModel->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->installment_start_date)));

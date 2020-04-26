@@ -351,6 +351,12 @@ class TblBillHeadDetailController extends ChildController {
                     $instModel->bill_head_detail_code = $this->model->bill_head_detail_code;
                     $instModel->bill_head_code = $this->model->bill_head_code;
                     $instModel->union_code = $this->model->union_code;
+                    $instModel->dcs_code = $this->model->dcs_code;
+                    if (!empty($instModel->dcs_code)) {
+                        $customer_type = 'DCS';
+                    } else {
+                        $customer_type = $this->model->customer_type;
+                    }
                     $instModel->customer_code = $this->model->customer_code;
                     $instModel->customer_type = $this->model->customer_type;
                     $instModel->bill_head_for = $this->model->bill_head_for;
@@ -360,7 +366,7 @@ class TblBillHeadDetailController extends ChildController {
                     $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
                     array_push($installment, $instModel);
                     if ($this->model->no_installment > $i + 1) {
-                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $this->model->customer_type, 'BMC');
+                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $customer_type, 'BMC');
                         if (empty($cycle)) {
                             $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
                             $record = ['msg' => $msg];

@@ -43,7 +43,7 @@ class TblBillHead extends \app\models\ChildModel {
             [['is_active'], 'default', 'value' => '1'],
             [['is_disburse_allowed'], 'default', 'value' => '1'],
             [['is_default'], 'default', 'value' => '0'],
-            ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
+            ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code', 'bill_head_for'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
             ['default_bill_head_code', 'required', 'when' => function ($model) {
                     return $model->is_default == 1;
                 }, 'whenClient' => "function (attribute, value) { 

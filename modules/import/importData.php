@@ -81,6 +81,7 @@ class importData extends \yii\base\Module {
             'milk-collection' => ['table_name' => 'tbl_milk_collection', 'fields' => 'bmc_code,dcs_code,member,date_time_of_collection,milk_type_code,shift_code,fat,snf,qty,rtpl,amount', 'default_fields' => 'is_active:1,originating_type:1', 'scenario' => 'importCsv'],
             'bill-head-detail' => ['import_class' => 'tbl_bill_head_detail', 'import_main_class' => 'BillHeadDetailImportStrategy', 'table_name' => 'tbl_bill_head_detail', 'fields' => 'bmc_code,customer_type,customer_code,installment_start_date,bill_head_code,amount,no_installment', 'default_fields' => 'is_active:1,originating_type:1', 'scenario' => 'importCsv'],
             'vsp-outstanding' => ['table_name' => 'tbl_vsp_outstanding', 'fields' => 'bmc_code,customer_type,customer_code,transaction_date,hold_amount,due_amount', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
+            'member-bill-head-detail' => ['import_class' => 'tbl_bill_head_detail', 'import_main_class' => 'BillHeadDetailImportStrategy', 'table_name' => 'tbl_bill_head_detail', 'fields' => 'bmc_code,dcs_code,member_code,installment_start_date,bill_head_code,amount,no_installment', 'default_fields' => 'is_active:1,originating_type:1', 'scenario' => 'importDetailCsv'],
         ];
         return $label[$l];
     }
