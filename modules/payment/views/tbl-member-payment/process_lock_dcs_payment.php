@@ -86,6 +86,10 @@ $tot_amt = array_sum(array_map(function($array) {
                     'active_column' => false,
                     'showPageSummary' => true,
                     'actions' => [
+                        'bill-head' => function ($url, $model) {
+                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
+                            return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code], $options);
+                        },
                         'members' => function ($url, $model) {
                             $options = ['data-toggle' => 'tooltip', 'target' => '_blank', 'data-placement' => 'top', 'data-original-title' => 'View Members'];
                             return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members-list', 'cycle' => $model->payment_cycle_code, 'dcs_code' => $model->dcs_code], $options);
@@ -114,9 +118,43 @@ $tot_amt = array_sum(array_map(function($array) {
         </div>
     </div>
 </div>
+<div id='bill_head_view'></div>
 <?php
 $script = "
 $('.kv-panel-before').hide(); 
+
+$(document).on('click','.view-head',function(e){
+    var payment_cycle_code= $(this).attr('data-payment_cycle_code');
+    var bmc_code= $(this).attr('data-bmc_code');
+    var dcs_code= $(this).attr('data-dcs_code');
+    ViewBillHead(payment_cycle_code, bmc_code, dcs_code);
+});
+
+function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
+    if(payment_cycle_code != '' && bmc_code != '' && dcs_code != ''){         
+    $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/payment/tbl-member-payment/bill-head']) . "',
+            data: {'payment_cycle_code' : payment_cycle_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code},
+            beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+            },
+            success: function(data) {
+                $('#bill_head_view').html(data);
+                $('#BillHeadModal').modal('toggle');              
+                $('#loadercontent').hide();
+                $('#pageloader').hide();                                                                  
+            },
+            error: function(data) {  
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    }
+}
+
+
 $('#adjust').click(function() {
     $('.process_lock_flag').val('Process');
     var checkBoxCount = $('.kv-row-checkbox:checked').length;
@@ -134,7 +172,7 @@ $('#adjust-lock').click(function() {
     var message = '" . $message . "';
         
     if(negativeCount > 0) {
-        var dispMessage = '" . Yii::t('app', 'Not allow to confirm as Payment is negative for Member') . "';
+        var dispMessage = '" . Yii::t('app', 'Net Payable must be Positive for each Member.') . "';
         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
     } else {
         bootbox.confirm({
