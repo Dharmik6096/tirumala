@@ -130,26 +130,32 @@ $('#adjust').click(function() {
 });
 $('#adjust-lock').click(function() {
     $('.process_lock_flag').val('Lock');
-    
+    var negativeCount = " . $negativeValCount . ";
     var message = '" . $message . "';
-    bootbox.confirm({
-        message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
-        buttons: {
-            confirm: {
-                label: '" . Yii::t('app', 'Yes') . " ',
-                className: 'btn-primary'
+        
+    if(negativeCount > 0) {
+        var dispMessage = '" . Yii::t('app', 'Not allow to confirm as Payment is negative for Member') . "';
+        bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+dispMessage+'</span>');
+    } else {
+        bootbox.confirm({
+            message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
+            buttons: {
+                confirm: {
+                    label: '" . Yii::t('app', 'Yes') . " ',
+                    className: 'btn-primary'
+                },
+                cancel: {
+                    label: '" . Yii::t('app', 'No') . "' ,
+                    className: 'btn-danger'
+                }
             },
-            cancel: {
-                label: '" . Yii::t('app', 'No') . "' ,
-                className: 'btn-danger'
+            callback: function (result) {
+                if(result){
+                    $('#member-wise-payment-summary-form').submit();
+                }
             }
-        },
-        callback: function (result) {
-            if(result){
-                $('#member-wise-payment-summary-form').submit();
-            }
-        }
-    });
+        });
+    }
 //    $('form#w1').submit();
 });";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');

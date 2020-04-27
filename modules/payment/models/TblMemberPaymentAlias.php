@@ -243,4 +243,16 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         return $this->find()->where(['payment_cycle_code' => $this->payment_cycle_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code])->one();
     }
 
+    public function getNegativeValCount() {
+        $query = $this->find()
+                ->where(['payment_cycle_code' => $this->payment_cycle_code, 'bmc_code' => $this->bmc_code])
+                ->andWhere(['<', 'final_amount', 0]);
+
+        if (!empty($this->dcs_code)) {
+            $query->andWhere(['not in', 'dcs_code', $this->dcs_code]);
+        }
+
+        return $query->count();
+    }
+
 }
