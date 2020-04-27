@@ -750,7 +750,7 @@ form .checkbox input[type="checkbox"] + span + span {
     display: none !important;
 }
 form .checkbox input[type="checkbox"]{
-    /*display: none;*/
+    display: none;
     margin-left: 0;
 }
 form .checkbox input[type="checkbox"]:focus + label:before,

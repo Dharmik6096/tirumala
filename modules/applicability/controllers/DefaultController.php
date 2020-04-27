@@ -94,7 +94,7 @@ class DefaultController extends Controller {
         }
         //echo 'here';exit;
         $dcs_list = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
-                    return $dcs->dcs_name . '-' . $dcs->dcs_code;
+                    return $dcs->dcs_name . '-' . $dcs->dcs_code_ex;
                 });
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $dcs_list, 'dcsalert' => $dcsalert, 'dcsarray' => $removedcs]);
@@ -143,7 +143,7 @@ class DefaultController extends Controller {
                 break;
             case in_array($filter, ['DCS']):
                 $bmcModel = new TblDcs();
-                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes);
+                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'dcs_code_ex');
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();

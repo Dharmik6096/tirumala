@@ -465,6 +465,9 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
+                }],
             'dcs_name' => ['view' => ['grid'], 'value' => function($model) {
                     return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                 }],

@@ -12,7 +12,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
  */
 class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabitity {
 
-    public $mcc_name;
+    public $mcc_name, $code_ex, $shift_code;
 
     /**
      * @inheritdoc
@@ -22,7 +22,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
             //   [['rate_app_code', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code'], 'safe'],
             //   [['is_active'], 'boolean'],
             //   [['shift_code'], 'integer'],
-                [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for'], 'safe'],
+                [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code'], 'safe'],
         ];
     }
 
@@ -46,7 +46,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         $query->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
         $query->orderBy(['wef_date' => SORT_DESC]);
         // add conditions that should always apply here
-        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType']);
+        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -60,9 +60,6 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'shift_code' => $this->shift_code,
-        ]);
 
         if (!empty($this->wef_date))
             $query->andFilterWhere(['cast(tbl_dcs_purchase_rate_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
@@ -75,11 +72,16 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
                 ['like', 'tbl_mcc_plant.name', $this->mcc_name],
                 ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
         ]);
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
+        ]);
 
         $query->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_code', $this->applicable_code])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
 //                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_for', $this->applicable_for])
-                ->andFilterWhere(['like', 'union_code', $this->union_code]);
+                ->andFilterWhere(['like', 'union_code', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code]);
 
         return $dataProvider;
     }

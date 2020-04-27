@@ -12,7 +12,7 @@ use app\modules\vsp\models\TblBillHeadApplicability;
  */
 class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
 
-    public $mcc_name;
+    public $mcc_name, $code_ex;
 
     /**
      * @inheritdoc
@@ -20,7 +20,7 @@ class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
     public function rules() {
         return [
                 [['bill_head_applicabilty_code'], 'integer'],
-                [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code', 'applicable_for', 'applicable_code', 'mcc_name'], 'safe'],
+                [['created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'bill_head_code', 'union_code', 'applicable_for', 'applicable_code', 'mcc_name', 'code_ex'], 'safe'],
         ];
     }
 
@@ -68,6 +68,11 @@ class TblBillHeadApplicabilitySearch extends TblBillHeadApplicability {
                 ['like', 'tbl_plant.name', $this->mcc_name],
                 ['like', 'tbl_mcc_plant.name', $this->mcc_name],
                 ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
+        ]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex],
         ]);
 
         $query->andFilterWhere(['like', 'tbl_bill_head_applicability.applicable_code', $this->applicable_code])

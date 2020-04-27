@@ -12,7 +12,7 @@ use app\modules\vsp\models\TblHeadLoadApplicability;
  */
 class TblHeadLoadApplicabilitySearch extends TblHeadLoadApplicability {
 
-    public $name;
+    public $name, $code_ex;
 
     /**
      * @inheritdoc
@@ -21,7 +21,7 @@ class TblHeadLoadApplicabilitySearch extends TblHeadLoadApplicability {
         return [
             //  [['code', 'created_at', 'created_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'head_load_code', 'sub_center_code'], 'safe'],
             // [['is_delete'], 'boolean'],
-                [['wef_date', 'applicable_for', 'applicable_code', 'name'], 'safe'],
+                [['wef_date', 'applicable_for', 'applicable_code', 'name', 'code_ex'], 'safe'],
         ];
     }
 
@@ -68,6 +68,11 @@ class TblHeadLoadApplicabilitySearch extends TblHeadLoadApplicability {
                 ['like', 'tbl_plant.name', $this->name],
                 ['like', 'tbl_mcc_plant.name', $this->name],
                 ['like', 'tbl_bmc.bmc_name', $this->name]
+        ]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
         ]);
 
         // grid filtering conditions

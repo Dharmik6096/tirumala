@@ -183,7 +183,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $data = $query->all();
         if ($concatCode) {
             $data = ArrayHelper::map($data, 'customer_code', function($data) {
-                        return $data->customer_name . ' - ' . $data->customer_code;
+                        return $data->customer_name . ' - ' . $data->customer_code_ex;
                     });
         } else {
             $data = ArrayHelper::map($data, 'customer_code', 'customer_name');
