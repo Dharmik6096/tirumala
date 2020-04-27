@@ -3,7 +3,8 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\helpers\Html;
+use yii\helpers\Html;;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 Url::remember();
 
@@ -89,6 +90,12 @@ $this->title = 'Members';
                 'attributes' => $attribute,
                 'active_column' => false,
                 'showPageSummary' => true,
+                'actions' => [
+                    'member-bill-head' => function ($url, $model) {
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
+                        return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
+                    },
+                ]
             ];
 
             Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
@@ -98,3 +105,44 @@ $this->title = 'Members';
         </div>
     </div>
 </div>
+
+
+<div id='bill_head_view'></div>
+<?php
+$script = " 
+
+
+$(document).on('click','.view-head',function(e){
+    var payment_cycle_code= $(this).attr('data-payment_cycle_code');
+    var bmc_code= $(this).attr('data-bmc_code');
+    var dcs_code= $(this).attr('data-dcs_code');
+    var member_code= $(this).attr('data-member_code');
+    ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code);
+});
+
+function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
+    if(payment_cycle_code != '' && bmc_code != '' && dcs_code != ''){         
+    $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/payment/tbl-member-payment/member-bill-head']) . "',
+            data: {'payment_cycle_code' : payment_cycle_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code, 'member_code': member_code},
+            beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+            },
+            success: function(data) {
+                $('#bill_head_view').html(data);
+                $('#BillHeadModal').modal('toggle');              
+                $('#loadercontent').hide();
+                $('#pageloader').hide();                                                                  
+            },
+            error: function(data) {  
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    }
+}";
+
+$this->registerJs($script, View::POS_END, 'member-payment-head-script');
+?>

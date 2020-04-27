@@ -41,6 +41,8 @@ use app\modules\payment\models\TblMemberPaymentSummaryAliasSearch;
 use app\modules\payment\models\TblMemberOutstanding;
 use app\modules\payment\models\TblMemberOutstandingHistory;
 use app\modules\payment\models\TblMemberPaymentAliasSearch;
+use app\modules\payment\models\TblMemberPaymentHeadSummarySearch;
+use app\modules\payment\models\TblMemberPaymentHeadSearch;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -245,6 +247,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $memberPayment->payment_status = $processFlag;
                 $save_model[] = $historyModel;
                 $save_model[] = $memberPayment;
+                $dcsCode = $memberPayment->dcs_code;
                 $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
                 $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
                 $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
@@ -541,11 +544,40 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $searchModel->setAttributes(Yii::$app->request->get());
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $headSearchModel = new TblMemberPaymentHeadSummarySearch();
+        $headSearchModel->setAttributes(Yii::$app->request->get());
+        $headDataProvider = $headSearchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'headSearchModel' => $headSearchModel,
+                    'headDataProvider' => $headDataProvider,
         ]);
     }
 
+    public function actionBillHead() {
+        if (!empty($_POST['payment_cycle_code']) && !empty($_POST['bmc_code']) && !empty($_POST['dcs_code'])) {
+            $searchModel = new TblMemberPaymentHeadSummarySearch();
+            $searchModel->setAttributes(Yii::$app->request->post());
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            return $this->renderAjax('bill-head-view', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+            ]);
+        }
+    }
+    
+    public function actionMemberBillHead() {
+        if (!empty($_POST['payment_cycle_code']) && !empty($_POST['bmc_code']) && !empty($_POST['dcs_code']) && !empty($_POST['member_code'])) {
+            $searchModel = new TblMemberPaymentHeadSearch();
+            $searchModel->setAttributes(Yii::$app->request->post());
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            return $this->renderAjax('member-bill-head-view', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+            ]);
+        }
+    }
 }
