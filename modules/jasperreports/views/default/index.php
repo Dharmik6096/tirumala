@@ -244,6 +244,30 @@ $defaultToggle = true;
                                         if (in_array($value, array('p_ltr_kg'))) {
                                             echo Yii::$app->dropdown->dropdownStatic('p_ltr_kg', $model, $form, 'col-sm-6 form-group', $model->getAttributeLabel($value), false, $value, false);
                                         }
+                                        if (in_array($value, array('p_customer_type'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->customer_type($model, $form, 'reportsmodel-p_bmc_code', 'p_customer_type', $model->getAttributeLabel('p_customer_type'), FALSE); ?>
+                                            </div> 
+                                            <?php
+                                        }
+                                        if (in_array($value, array('p_customer_code'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodel-p_bmc_code,reportsmodel-p_customer_type', 'p_customer_code', $model->getAttributeLabel('p_customer_code'), FALSE); ?>
+                                            </div> 
+                                            <?php
+                                        }
+                                        if (in_array($value, array('p_payment_cycle_code'))) {
+                                            $where = json_encode(['data_lock_bmc' => 1]);
+                                            echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
+                                            echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-p_bmc_code,reportsmodel-p_customer_type,applicable_for,data_lock_bmc', 'p_payment_cycle_code', $model->getAttributeLabel('p_payment_cycle_code'), FALSE, FALSE); ?>
+                                            </div>                                        
+                                            <?php
+                                        }
                                     }
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
@@ -464,7 +488,7 @@ if('" . $report . "'=='BlockWiseCollection'){
     });
     
 }
-if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'){
+if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'){
     $('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_plant_code . "'=='0'){

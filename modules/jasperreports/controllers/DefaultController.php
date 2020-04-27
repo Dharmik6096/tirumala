@@ -237,6 +237,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorMilkPayment() {
+        $this->report = 'VendorMilkPayment';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -554,6 +559,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'bmccollection/BMCPayment',
                 'scenario' => 'BMCPayment',
                 'title' => '601 - BMC Payment',
+            ],
+            'VendorMilkPayment' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
+                'path' => 'vsp/VspPaymentBill',
+                'scenario' => 'VendorMilkPayment',
+                'title' => '604 - Vendor Milk Payment',
             ],
         ];
         return $label[$l];

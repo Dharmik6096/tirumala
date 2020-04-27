@@ -36,40 +36,29 @@ use Yii;
  * @property integer $quality_param_code
  * @property integer $rate_type
  */
-class TblDcsPurchaseRateBasedHistory extends \yii\db\ActiveRecord
-{
+class TblDcsPurchaseRateBasedHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_purchase_rate_based_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['created_at', 'deleted_at', 'history_created_at', 'sync_time_stamp', 'updated_at'], 'safe'],
-            [['deduction_type', 'ref_type', 'step', 'milk_quality_type_code', 'milk_type_code', 'quality_param_code', 'rate_type'], 'integer'],
-            [['end_range', 'fixed_point', 'kg_rate', 'start_range', 'value'], 'number'],
-            [['is_delete'], 'boolean'],
-            [['created_by', 'deleted_by', 'updated_by'], 'string', 'max' => 14],
-            [['flg_sentbox_entry', 'sync_status'], 'string', 'max' => 1],
-            [['operation_type'], 'string', 'max' => 10],
-            [['rate_based_code'], 'string', 'max' => 20],
-            [['formula_code'], 'string', 'max' => 30],
-            [['purchase_rate_code'], 'string', 'max' => 11],
+            [['rate_based_code', 'created_at', 'created_by', 'deduction_type', 'end_range', 'fixed_point', 'is_delete', 'kg_rate', 'ref_type', 'start_range', 'step', 'updated_at', 'updated_by', 'value', 'formula_code', 'milk_quality_type_code', 'milk_type_code', 'purchase_rate_code', 'quality_param_code', 'rate_type', 'originating_org_code',
+            'originating_org_type', 'originating_type', 'formula', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'created_at' => 'Created At',
@@ -101,4 +90,5 @@ class TblDcsPurchaseRateBasedHistory extends \yii\db\ActiveRecord
             'rate_type' => 'Rate Type',
         ];
     }
+
 }

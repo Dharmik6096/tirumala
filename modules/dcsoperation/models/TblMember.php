@@ -538,4 +538,8 @@ class TblMember extends ChildModel {
         $this->ex_member_code = str_pad($this->ex_member_code, 4, '0', STR_PAD_LEFT);
     }
 
+    public function validMember($member) {
+        return $this->find()->where(['member_code' => $member, 'is_active' => 1])->one();
+    }
+
 }

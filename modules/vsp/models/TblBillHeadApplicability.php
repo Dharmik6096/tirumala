@@ -43,7 +43,7 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
                 [['wef_date', 'applicable_code'], 'required'],
                 [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-                [['applicable_code', 'applicable_for', 'bmc_code'], 'safe'],
+                [['applicable_code', 'applicable_for', 'bmc_code', 'bill_head_for'], 'safe'],
                 [['applicable_code'], 'setBMCCode']
         ];
     }

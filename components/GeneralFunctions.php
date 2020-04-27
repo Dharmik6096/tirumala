@@ -912,7 +912,7 @@ class GeneralFunctions extends Component {
         return $data == '' ? (!empty($value->$field) ? $value->$field : 'N/A') : 'N/A';
     }
 
-    public function getSpData($sp, $param) {
+    public function getSpData($sp, $param, $execute = false) {
         $str = '';
         $count = count($param);
         for ($i = 1; $i <= $count; $i++) {
@@ -925,7 +925,11 @@ class GeneralFunctions extends Component {
             $command->bindValue(':paramName' . $i, $value);
             $i++;
         }
-        return $command->queryAll();
+        if ($execute) {
+            return $command->execute();
+        } else {
+            return $command->queryAll();
+        }
     }
 
     public function validateGlobalData($model, $attribute, $flag, $limit = FALSE, $show_error = true, $where = []) {
@@ -978,7 +982,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1306,6 +1310,8 @@ class GeneralFunctions extends Component {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
+            } else if (strtolower($type) == 'member') {
+                $name = $this->getforeignkey($model->memberCode, 'ex_member_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_code_ex');
             }
@@ -1318,6 +1324,8 @@ class GeneralFunctions extends Component {
         } else {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_name');
+            } else if (strtolower($type) == 'member') {
+                $name = $this->getforeignkey($model->memberCode, 'member_name');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'customer_name');
             }

@@ -52,8 +52,8 @@ class FormulaMasterController extends \app\controllers\ChildController {
 
             $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
 
-            $rows = $this->model->getSameTypeData();
-
+            // $rows = $this->model->getSameTypeData();
+            $rows['formula_code'] = 0;
             if ($rows['formula_code'] > 0) {
 
                 $this->model->formula_code = $this->model->getCode();

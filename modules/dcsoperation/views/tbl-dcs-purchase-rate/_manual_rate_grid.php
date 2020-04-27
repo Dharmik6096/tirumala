@@ -14,11 +14,21 @@ use yii\widgets\Pjax;
 <?php
 
 $attribute = [
-    ['attribute' => 'rate_type','label'=>Yii::t('app','Rate Type'), 'value' => function($model) { return Yii::$app->general->getforeignkey($model->rateType, 'rate_type'); }, 'vAlign' => 'middle', 'filter' => false],
-     ['attribute' => 'formula_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->rateFormula, 'formula'); }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'quality_param_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->qualityParamCode, 'param'); }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'milk_quality_type_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->milkQualityTypeCode, 'milk_quality_type_name'); }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'milk_type_code', 'value' => function($model) { return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name'); }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'rate_type', 'label' => Yii::t('app', 'Rate Type'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->rateType, 'rate_type');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'formula_code', 'value' => function($model) {
+            return !empty($model->formula_code) ? Yii::$app->general->getforeignkey($model->rateFormula, 'formula_description') : $model->formula;
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'quality_param_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->qualityParamCode, 'param');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->milkQualityTypeCode, 'milk_quality_type_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'milk_type_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'start_range', 'value' => 'start_range', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'end_range', 'value' => 'end_range', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'kg_rate', 'value' => 'kg_rate', 'vAlign' => 'middle', 'filter' => false],

@@ -209,6 +209,21 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorPayment() {
+        $this->report = 'VendorPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPayment() {
+        $this->report = 'MemberPaymentDcsWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberPaymentMemberWise';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -550,6 +565,26 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_rate_download_acknowledgement',
                 'scenario' => 'RateAcknowledgement',
                 'title' => '223 - Rate Acknowledgement',
+            ],
+            'VendorPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code',
+                'sp_name' => 'sp_mis_vendor_payment',
+                'scenario' => 'VendorPayment',
+                'title' => '602 - Vendor Payment',
+            ],
+            'MemberPaymentDcsWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_billing_dcs_wise',
+                'scenario' => 'MemberPayment',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+            ],
+            'MemberPaymentMemberWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_billing_member_wise',
+                'scenario' => 'MemberPayment',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
             ],
         ];
         return $label[$l];

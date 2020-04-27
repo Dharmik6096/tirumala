@@ -156,6 +156,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                     $customerType = $searchModel->customer_type;
                 } else {
                     $customerType = [];
+					/*
                     foreach ($dcs_codes as $detail) {
                         $customerType[] = $detail->customer_type;
                     }
@@ -167,6 +168,19 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         $setVal[] = $code;
                     }
                     $dcs_codes = array_merge($dcs_codes, $setVal);
+					*/
+					$dcsCodes = !empty($dcs_codes[0]) ? $dcs_codes : [];
+                    foreach ($dcsCodes as $detail) {
+                        $customerType[] = $detail->customer_type;
+                    }
+                    $setVal = [];
+                    foreach ($customeCode as $a) {
+                        $code = [];
+                        $code['customer_type'] = 'DCS';
+                        $code['customer_code'] = $a;
+                        $setVal[] = $code;
+                    }
+                    $dcs_codes = array_merge($dcsCodes, $setVal);
                 }
                 $calcFor = 'BMC';
             }

@@ -38,6 +38,7 @@ $form = ActiveForm::begin([
         $where = json_encode(['data_lock_bmc' => 0]);
         echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
         echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+        echo Html::hiddenInput('head_for', 'VENDOR', ['id' => 'head_for']);
         ?>
         <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
     </div>
@@ -48,7 +49,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2 reset_field">
-        <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-customer_code', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
+        <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-customer_code,head_for', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
     </div>
     <div class="col-sm-2 number-validate reset_field">
         <?= $form->field($model, 'amount')->textInput() ?>       

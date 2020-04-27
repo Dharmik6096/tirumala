@@ -971,4 +971,11 @@ class TblDcs extends ChildModel {
         array_push($saveModel, $contact_model);
     }
 
+    public function getRecords($notInDcs = []) {
+        return $this->find()
+                ->andWhere(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'is_active' => 1])
+                ->andWhere(['not in', 'dcs_code', $notInDcs])
+                ->all();
+    }
+
 }

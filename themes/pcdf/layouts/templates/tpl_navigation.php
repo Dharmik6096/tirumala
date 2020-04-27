@@ -109,6 +109,8 @@ echo GhostMenu::widget([
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Payment <b class="caret"></b></a>',
             'items' => [
                 ['label' => Yii::t('app', 'Payment Cycle'), 'url' => ['/payment/tbl-payment-cycle/index'], 'active' => ($cntrl == 'tbl-dcs-payment-cycle')],
+                ['label' => Yii::t('app', 'Member Payment Restrict'), 'url' => ['/payment/tbl-member-payment-restrict/index'], 'active' => ($cntrl == 'tbl-member-payment-restrict' && $action == 'index')],
+                ['label' => Yii::t('app', 'Member Payment'), 'url' => ['/payment/tbl-member-payment/index'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'index')],
                 ['label' => Yii::t('app', 'Vendor Payment'), 'url' => ['/payment/tbl-vsp-payment/index'], 'active' => ($cntrl == 'tbl-vsp-payment' && $action == 'index')],
 //                ['label' => Yii::t('app', 'Member Payment Process'), 'url' => ['/payment/tbl-member-payment/create'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'create')],
 //                ['label' => Yii::t('app', 'Member Payment Disburse'), 'url' => ['/payment/tbl-member-payment/export-payment-list'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'export-payment-list')],
@@ -263,6 +265,9 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
                     'items' => [
                         ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
+                        ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/default/vendor-payment']],
+                        ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/default/member-payment']],
+                        ['label' => '604-' . Yii::t('app', 'Vendor Milk Payment'), 'url' => ['/jasperreports/default/vendor-milk-payment']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -277,6 +282,8 @@ echo GhostMenu::widget([
 //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                 ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],
                 ['label' => 'Group', 'url' => ['/user-management/auth-item-group/index'], 'active' => ($cntrl == 'auth-item-group'),],
+                ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
+                ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
             ],
         ],
         [
@@ -336,6 +343,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'SAP Data'), 'url' => ['/vendorapi/tbl-vendor-api-data/index'], 'active' => ($cntrl == 'tbl-vendor-api-data')],
                         ['label' => Yii::t('app', 'Installation Identity'), 'url' => ['/installation/tbl-android-installation/index'], 'active' => ($cntrl == 'tbl-android-installation')],
                         ['label' => Yii::t('app', 'Pendrive Sync'), 'url' => ['/syncutility/pendrive-sync/index'], 'active' => ($cntrl == 'pendrive-sync')],
+                        ['label' => Yii::t('app', 'Prevent BMC Collection Data'), 'url' => ['/vendorapi/tbl-prevent-collection-data/index'], 'active' => ($cntrl == 'tbl-prevent-collection-data')],
                     ]
                 ],
                 [

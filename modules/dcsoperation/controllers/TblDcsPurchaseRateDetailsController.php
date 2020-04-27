@@ -101,11 +101,15 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
 
             if ($method == 1) {
                 $modelAttributesLoaded[0]->scenario = 'manualForm';
+            } else if ($method == 4) {
+                $modelAttributesLoaded[0]->scenario = 'formulaOnly';
             }
 
             for ($i = 1; $i < count($modelAttributesLoaded); $i++) {
                 if ($method == 1) {
                     $modelAttributesLoaded[$i]->scenario = 'manualForm';
+                } else if ($method == 4) {
+                    $modelAttributesLoaded[$i]->scenario = 'formulaOnly';
                 }
                 $modelAttributesLoaded[$i]['purchase_rate_code'] = (string) Yii::$app->request->get('id');
                 $modelAttributesLoaded[$i]['milk_type_code'] = $modelAttributesLoaded[0]['milk_type_code'];
@@ -135,7 +139,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
 
                 $list = $this->saveBaseData($modelAttributesLoaded);
                 $main_model = array_merge($main_model, $list);
-                if ($method == 2) {
+                if ($method == 2 || $method == 4) {
                     //TblDcsPurchaseRateBased::deleteAll(['purchase_rate_code' => Yii ::$app->request->get('id'), 'milk_type_code' => $modelAttributesLoaded[0]['milk_type_code']]);
                     $data = TblDcsPurchaseRateBased::find()->where(['purchase_rate_code' => Yii ::$app->request->get('id'), 'milk_type_code' => $modelAttributesLoaded[0]['milk_type_code'], 'milk_quality_type_code' => $modelAttributesLoaded[0]['milk_quality_type_code']])->all();
                     for ($i = 0; $i < count($data); $i++) {

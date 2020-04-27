@@ -18,21 +18,19 @@ use Yii;
  * @property string $deleted_at
  * @property string $updated_by
  */
-class TblShift extends \yii\db\ActiveRecord
-{
+class TblShift extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_shift';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['shift'], 'required'],
             [['is_active', 'is_delete'], 'integer'],
@@ -45,8 +43,7 @@ class TblShift extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'shift' => Yii::t('app', 'Shift'),
@@ -64,8 +61,12 @@ class TblShift extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblShiftQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblShiftQuery(get_called_class());
     }
+
+    public function getShiftData() {
+        return $this->find()->select(['shiftId' => 'id', 'shiftName' => 'shift', 'shortName' => 'short_name', 'shiftTime' => 'shift_time'])->where(['is_active' => 1])->where(['!=', 'id', '3'])->asArray()->all();
+    }
+
 }

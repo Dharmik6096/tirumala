@@ -173,6 +173,18 @@ class SearchFilter {
             'TblVspOutstandingSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
+            'TblPreventCollectionDataSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],
+            ],
+            'TblProductRateSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblMemberPaymentSummarySearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblMemberPaymentRestrictSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

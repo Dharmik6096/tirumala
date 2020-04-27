@@ -10,26 +10,23 @@ use app\modules\payment\models\TblMemberPayment;
 /**
  * TblMemberPaymentSearch represents the model behind the search form about `app\modules\payment\models\TblMemberPayment`.
  */
-class TblMemberPaymentSearch extends TblMemberPayment
-{
-    public $payment_cycle;
+class TblMemberPaymentSearch extends TblMemberPayment {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['member_payment_code', 'dcs_payment_cycle_applicabilty_code', 'ack'], 'integer'],
-            [['union_code', 'dcs_code', 'disburse_date', 'member_code', 'payment_date', 'approved_by', 'status', 'transfer_mode', 'error_code', 'error_log','payment_cycle'], 'safe'],
-            [['total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'number'],
+                [['member_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'integer'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'disburse_date', 'payment_date', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'safe'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -41,8 +38,8 @@ class TblMemberPaymentSearch extends TblMemberPayment
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
+        
         $query = TblMemberPayment::find();
 
         // add conditions that should always apply here
@@ -53,34 +50,20 @@ class TblMemberPaymentSearch extends TblMemberPayment
 
         $this->load($params);
 
-        if (!$this->validate() || empty($this->payment_cycle)) {
+        if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            $query->where('0=1');
+            // $query->where('0=1');
             return $dataProvider;
         }
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'member_payment_code' => $this->member_payment_code,
-            'dcs_payment_cycle_applicabilty_code' => $this->dcs_payment_cycle_applicabilty_code,
-            'total_amount' => $this->total_amount,
-            'total_deduction' => $this->total_deduction,
-            'final_amount' => $this->final_amount,
-            'disburse_amount' => $this->disburse_amount,
-            'disburse_date' => $this->disburse_date,
-            'payment_date' => $this->payment_date,
-            'ack' => $this->ack,
+            'payment_cycle_code' => $this->payment_cycle_code,
+            'bmc_code' => $this->bmc_code,
+            'dcs_code' => $this->dcs_code,
         ]);
-
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'member_code', $this->member_code])
-            ->andFilterWhere(['like', 'approved_by', $this->approved_by])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'transfer_mode', $this->transfer_mode])
-            ->andFilterWhere(['like', 'error_code', $this->error_code])
-            ->andFilterWhere(['like', 'error_log', $this->error_log]);
 
         return $dataProvider;
     }
+
 }

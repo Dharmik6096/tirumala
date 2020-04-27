@@ -13,11 +13,14 @@ use app\modules\vsp\models\TblBillHeadInstallment;
 use app\modules\organisation\models\TblDcs;
 use app\modules\vsp\models\TblBillHead;
 use yii\widgets\ActiveForm;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * TblBillHeadDetailController implements the CRUD actions for TblBillHeadDetail model.
  */
 class TblBillHeadDetailController extends ChildController {
+
+    public $freeAccessActions = ['validate-member'];
 
     /**
      * Lists all TblBillHeadDetail models.
@@ -63,6 +66,7 @@ class TblBillHeadDetailController extends ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->model->is_active = 1;
+            $this->model->bill_head_for = Yii::$app->general->getforeignkey($this->model->billHeadCode, 'bill_head_for');
             $no = !empty($this->model->no_installment) ? ($this->model->no_installment) : 1;
             $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
             $installment = [];
@@ -75,6 +79,7 @@ class TblBillHeadDetailController extends ChildController {
                     $instModel->union_code = $this->model->union_code;
                     $instModel->customer_code = $this->model->customer_code;
                     $instModel->customer_type = $this->model->customer_type;
+                    $instModel->bill_head_for = $this->model->bill_head_for;
                     $instModel->installement_cycle = ($i + 1);
                     $instModel->installment_amount = floatval($this->model->amount / $no);
                     $instModel->payment_cycle_code = $cycle;
@@ -320,6 +325,101 @@ class TblBillHeadDetailController extends ChildController {
         $searchModel->setAttributes(Yii::$app->request->get('TblBillHeadDetail'));
         $dataProvider = $searchModel->gridsearch([]);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+    }
+
+    public function actionCreateMemberBillDetail() {
+        $this->model = new TblBillHeadDetail();
+        $searchModel = new TblBillHeadDetailSearch();
+        $searchModel->grid_filter = false;
+        $dataProvider = $searchModel->gridsearch(Yii::$app->request->get());
+        $this->viewFile = 'create';
+        $this->model->customer_type = 'DCS';
+        if (Yii::$app->request->post()) {
+            $this->model->load(Yii::$app->request->post());
+            $this->model->bill_head_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $this->model->is_active = 1;
+            $this->model->customer_type = 'MEMBER';
+            $this->model->bill_head_for = Yii::$app->general->getforeignkey($this->model->billHeadCode, 'bill_head_for');
+            $this->model->scenario = 'memberBillHead';
+            $no = !empty($this->model->no_installment) ? ($this->model->no_installment) : 1;
+            $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
+            $installment = [];
+            if ($this->model->validate()) {
+                $cycle = $this->model->payment_cycle_code;
+                for ($i = 0; $i < $no; $i++) {
+                    $instModel = new TblBillHeadInstallment();
+                    $instModel->bill_head_detail_code = $this->model->bill_head_detail_code;
+                    $instModel->bill_head_code = $this->model->bill_head_code;
+                    $instModel->union_code = $this->model->union_code;
+                    $instModel->dcs_code = $this->model->dcs_code;
+                    if (!empty($instModel->dcs_code)) {
+                        $customer_type = 'DCS';
+                    } else {
+                        $customer_type = $this->model->customer_type;
+                    }
+                    $instModel->customer_code = $this->model->customer_code;
+                    $instModel->customer_type = $this->model->customer_type;
+                    $instModel->bill_head_for = $this->model->bill_head_for;
+                    $instModel->installement_cycle = ($i + 1);
+                    $instModel->installment_amount = floatval($this->model->amount / $no);
+                    $instModel->payment_cycle_code = $cycle;
+                    $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
+                    array_push($installment, $instModel);
+                    if ($this->model->no_installment > $i + 1) {
+                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $customer_type, 'BMC');
+                        if (empty($cycle)) {
+                            $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
+                            $record = ['msg' => $msg];
+                            return Json::encode($record);
+                        }
+                    }
+                }
+                if ($this->model->validate()) {
+                    $transaction = $this->generalModel->saveTransaction([$this->model], $installment, ['Member Bill Head Detail', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'success', 'temp_collection_data' => [], 'msg' => $msg];
+                    } else {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'error', 'temp_collection_data' => [], 'msg' => $msg];
+                    }
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return Json::encode($record);
+                }
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
+            }
+        } else {
+            return $this->render('create_member_bill', [
+                        'model' => $this->model,
+                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+            ]);
+        }
+        return $this->render('create_member_bill', [
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionValidateMember() {
+        $member = Yii::$app->request->post('member_code');
+        $model = new TblMember();
+        $data = $model->validMember($member);
+        if (!empty($data)) {
+            return Json::encode(['status' => 'success', 'member_details' => $data]);
+        } else {
+            return Json::encode(['status' => 'error']);
+        }
+    }
+
+    public function actionMemberListGrid() {
+        $searchModel = new TblBillHeadDetailSearch();
+        $searchModel->grid_filter = false;
+        $searchModel->setAttributes(Yii::$app->request->get('TblBillHeadDetail'));
+        $dataProvider = $searchModel->membergridsearch([]);
+        return $this->renderAjax('_member_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
 }
