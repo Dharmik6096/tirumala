@@ -13,10 +13,11 @@ $param = (!empty(Yii::$app->request->get('local_fields'))) ? Yii::$app->request-
 //print_r($data);
 //exit;
 $readonly = false;
+$appendId = !empty($appendId) ? $appendId : '';
 ?>
 
 
-<div class="modal modal-default fade" id="importModal" role="dialog">
+<div class="modal modal-default fade" id="importModal<?= $appendId ?>" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -28,7 +29,7 @@ $readonly = false;
             $form = ActiveForm::begin(['options' => [
                             'validateOnBlur' => true,
                             'class' => 'popup-form',
-                            'id' => 'import-form',
+                            'id' => 'import-form' . $appendId,
                             'enableAjaxValidation' => false,
                         ], 'fieldConfig' => [
             ]]);
@@ -37,14 +38,14 @@ $readonly = false;
                 <div id='sample_download'>
                     <?= Html::a('Download Sample', ['/import/default/download-sample', 'flag' => $type, 'local_field' => $param], ['class' => 'btn btn-primary']); ?>
                 </div>    
-                <?= Html::hiddenInput('mapping', 0, ['id' => 'mappingField']); ?>
+                <?= Html::hiddenInput('mapping', 0, ['id' => 'mappingField' . $appendId]); ?>
                 <div class="modal-msg">
                     <h4><?= Yii::t('app', 'Upload file having fields in following manner') ?> :</h4>
                     <p class="fields"><?php echo str_replace(',', ', ', $data['fields']); ?></p>
                 </div>
                 <?php
                 $i = 0;
-                echo Html::hiddenInput('file_name', '', ['id' => 'file_name']);
+                echo Html::hiddenInput('file_name', '', ['id' => 'file_name' . $appendId]);
                 echo Html::hiddenInput('local_field', $param);
                 ?>
                 <?php if ($type == 'member_limited') { ?>
@@ -61,7 +62,7 @@ $readonly = false;
                 <?php } ?>
                 <?=
                 Dropzone::widget([
-                    'id' => 'mainDrop',
+                    'id' => 'mainDrop' . $appendId,
                     'options' => [
                         'acceptedMimeTypes' => ".csv,.xls,.xlsx",
                         'url' => Url::to(['/import/default/import-file',
@@ -72,15 +73,16 @@ $readonly = false;
                     ],
                     'clientEvents' => [
                         'success' => "function( file, response ){
+                                            var appendId = '" . $appendId . "';
                                             var data=$.parseJSON(response);
                                             if(data.status=='success')
-                                                $('#file_name').val(data.msg);
+                                                $('#file_name'+appendId).val(data.msg);
                                             else
                                                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
                                                 
                                         }",
                         'removedfile' => "function(file){
-                                                        $('#file_name').val('');
+                                                        $('#file_name'+appendId).val('');
                                            }",
                         'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
                     ]
@@ -91,7 +93,6 @@ $readonly = false;
             <div class="modal-footer">
                 <?php
                 AjaxSubmitButton::begin([
-
                     'label' => Yii::t('app', 'Save'),
                     'ajaxOptions' => [
                         'type' => 'POST',
@@ -101,30 +102,32 @@ $readonly = false;
                                             $("#pageloader").show();
                                     }'),
                         'success' => new \yii\web\JsExpression('function(data){
+                                            var appendId = "' . $appendId . '";
                                             $("#pageloader").hide();
                                             $("#loadercontent").hide();
                                             var obj1 = $.parseJSON(data);
                                             if (obj1.status == "success"){
-                                                $("#importModal").modal("toggle");
-                                                $("#import-form")[0].reset();
+                                                $("#importModal' . $appendId . '").modal("toggle");
+                                                $("#import-form' . $appendId . '")[0].reset();
                                                 Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }else{
-                                                $("#importModal").modal("toggle");
-                                                $("#import-form")[0].reset();
+                                                $("#importModal' . $appendId . '").modal("toggle");
+                                                $("#import-form' . $appendId . '")[0].reset();
                                                 Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }
                              }'),
                         'error' => new \yii\web\JsExpression('function(){
+                                    var appendId = "' . $appendId . '";
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
-                                    if($("#file_name").val()==""){
-                                     bootbox.alert("Please select file.");
+                                    if($("#file_name' . $appendId . '").val()==""){
+                                        bootbox.alert("Please select file.");
                                     }else{
-                                        $("#importModal").modal("toggle");
-                                        $("#import-form")[0].reset();
-                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                        $("#importModal' . $appendId . '").modal("toggle");
+                                        $("#import-form' . $appendId . '")[0].reset();
+                                        Dropzone.forElement("#mainDrop' . $appendId . '").removeAllFiles(true);
                                         bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>You have error in your file</span></div></div>");
                                     }
                              }'),
@@ -143,11 +146,12 @@ $readonly = false;
 
 <?php
 $script = "
-            $('.import-file').on('click',function(e){
-                    $('#importModal').modal('toggle');
+            var appendId = '" . $appendId . "';
+            $('.import-file" . $appendId . "').on('click',function(e){
+                    $('#importModal" . $appendId . "').modal('toggle');
                     var flg = $(this).attr('data-map-flag');
                     
-                    var ref = $('#importModal #sample_download a').attr('href');
+                    var ref = $('#importModal" . $appendId . " #sample_download a').attr('href');
                     if(flg == 1){
                         ref = ref+'&mapping='+flg;
                     } else {
@@ -155,9 +159,9 @@ $script = "
                             ref = ref.replace('&mapping=1', '');
                         }
                     }
-                    $('#importModal #sample_download a').attr('href',ref);
+                    $('#importModal" . $appendId . " #sample_download a').attr('href',ref);
 
-                    $('#mappingField').val(flg);
+                    $('#mappingField" . $appendId . "').val(flg);
                     var type = '" . $type . "';
                     $.ajax({
                             type: 'post',
@@ -173,7 +177,7 @@ $script = "
                     });
             });
            $('.close-import').on('click',function(e){
-                Dropzone.forElement('#mainDrop').removeAllFiles(true);
+                Dropzone.forElement('#mainDrop" . $appendId . "').removeAllFiles(true);
             });
 
             $('#mapping').on('change',function(e){
@@ -216,5 +220,5 @@ $script = "
 //                });
 //            });
 ";
-$this->registerJs($script, View::POS_END, 'import-manager');
+$this->registerJs($script, View::POS_END, 'import-manager' . $appendId);
 ?>
