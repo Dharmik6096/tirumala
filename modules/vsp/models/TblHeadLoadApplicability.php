@@ -79,7 +79,7 @@ class TblHeadLoadApplicability extends \app\models\ChildModel {
             'head_load_code' => Yii::t('app', 'Head Load'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'shift_for' => Yii::t('app', 'Applicable Shift'),
-            'shift_code' => Yii::t('app', 'Wef Shift'),
+            'shift_code' => Yii::t('app', 'Shift'),
             'applicable_for' => Yii::t('app', 'Applicable For'),
             'applicable_code' => Yii::t('app', 'Applicable Code'),
             'name' => Yii::t('app', 'Applicable Name'),

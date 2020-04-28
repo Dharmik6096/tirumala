@@ -30,10 +30,10 @@ $attribute = [
         ['attribute' => 'applicable_for', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
         }, 'vAlign' => 'middle',],
+        ['attribute' => 'applicable_code', 'vAlign' => 'middle',],
         ['attribute' => 'code_ex', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
         }, 'vAlign' => 'middle',],
-        ['attribute' => 'applicable_code', 'vAlign' => 'middle',],
         ['attribute' => 'mcc_name', 'value' => function($model) {
             if ($model->applicable_for == 'PLANT') {
                 return Yii::$app->general->getforeignkey($model->plantCode, 'name');

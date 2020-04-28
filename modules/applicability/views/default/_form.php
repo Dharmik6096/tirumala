@@ -60,7 +60,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 if (isset($f['class'])) {
                     $divPrefix = '<div class="col-sm-3 ' . $f['class'] . '">';
                 }
-                echo $divPrefix . Yii::$app->dropdown->dropdown($f['flag'], $model, $form, '', 'Shift', false, $key) . $divPostfix;
+                echo $divPrefix . Yii::$app->dropdown->dropdown($f['flag'], $model, $form, '', $model->getAttributeLabel($key), false, $key) . $divPostfix;
             }
         }
     }
@@ -506,7 +506,7 @@ $script = "
                         }
                     });
                     }
-                    addFilterData($('#{$nameforid}-union_code').val(), $('.applicable_for').val(), 'applicable_code', selectAppCode);
+                    addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code', selectAppCode);
                 }
             },
             error:function(data) {
@@ -516,11 +516,11 @@ $script = "
     }
     $('#checkAllBmcList').click(function (event) {
         $('.bmcCheckboxes').prop('checked', $(this).is(':checked'));
-        addFilterData($('#{$nameforid}-union_code').val(), $('.applicable_for').val(), 'applicable_code');
+        addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code');
     });
     
     $(document).on('click', '.bmcCheckboxes', function(){
-        addFilterData($('#{$nameforid}-union_code').val(), $('.applicable_for').val(), 'applicable_code');
+        addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code');
     })
     function setMccBmcData(){
         var selectMcc = '" . $selectedMccCode . "';

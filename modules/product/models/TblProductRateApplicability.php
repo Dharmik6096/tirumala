@@ -88,7 +88,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
     }
 
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
     public function getProductRateCode() {
