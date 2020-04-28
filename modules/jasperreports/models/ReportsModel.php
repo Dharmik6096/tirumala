@@ -50,7 +50,7 @@ class ReportsModel extends Model {
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_dcs_payment'], 'required', 'on' => 'MemberRegister'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment'], 'required', 'on' => 'MemberWisePaymentRegister'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code'], 'required', 'on' => 'MemberClassificationRegister'],
-            [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code'], 'safe'],
+            [['p_union_name', 'p_dcs_name', 'p_route_name', 'p_union_code', 'p_customer_type', 'p_customer_code', 'p_payment_cycle_code', 'p_member_code'], 'safe'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_member_code', 'p_dcs_payment', 'p_is_bank'], 'required', 'on' => 'MemberPaymentHeldup'],
             [['union_code', 'p_district_code', 'p_sub_district_code', 'p_block_name', 'p_from_date', 'p_to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'BlockWiseMilkCollection'],
             [['union_code', 'p_dcs_payment'], 'required', 'on' => 'PaymentAuth'],
@@ -76,6 +76,7 @@ class ReportsModel extends Model {
                 }, 'skipOnEmpty' => false],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => 'BMCPayment'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => 'VendorMilkPayment'],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => 'MemberMilkPayment'],
         ];
     }
 

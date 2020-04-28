@@ -86,7 +86,7 @@ class Controls extends Component {
         echo $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
     }
 
-    public function import($flag, $view, $text = '', $fields = []) {
+    public function import($flag, $view, $text = '', $fields = [], $appendId = '') {
         if ($flag == 'member_limited')
             $model = new TblMember();
         else
@@ -99,9 +99,9 @@ class Controls extends Component {
         $btnText = !empty($text) ? $text : 'Import Data';
         if (User::canRoute($url)) {
             $check = \app\modules\import\importData::getLabels($flag);
-            echo $view->render('@app/modules/import/views/default/index', ['type' => $flag, 'model' => $model]);
+            echo $view->render('@app/modules/import/views/default/index', ['type' => $flag, 'model' => $model, 'appendId' => $appendId]);
             if (empty($check['mapping'])) {
-                return Html::a(Yii::t('app', '<i class="fa fa-download"></i> ' . $btnText), 'javascript:void(0)', ['class' => 'btn btn-danger btn-block apply-shortcut import-file', 'data-map-flag' => 0, 'id' => 'import-file', 'shortcut_key' => 'ctrl+alt+i']);
+                return Html::a(Yii::t('app', '<i class="fa fa-download"></i> ' . $btnText), 'javascript:void(0)', ['class' => 'btn btn-danger btn-block apply-shortcut import-file' . $appendId, 'data-map-flag' => 0, 'id' => 'import-file' . $appendId, 'shortcut_key' => 'ctrl+alt+i']);
             } else {
                 $mappField = explode(',', $check['mapping_fields']);
                 $code = '<a href="" class="btn btn-danger btn-block dropdown-toggle" data-toggle="dropdown"><i class="fa fa-download"></i> Import Data <span class="caret"></span></a>

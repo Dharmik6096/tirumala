@@ -6,7 +6,7 @@ $this->params['menu'][] = Yii::$app->controls->add('Member Head Wise Transaction
 //$this->params['menu'][]=Yii::$app->controls->custombutton('Society Wise Transaction','/vsp/tbl-bill-head-detail/society-wise-transaction',true);
 //$this->params['menu'][]=Yii::$app->controls->custombutton('Head Wise Bulk Entry','/vsp/tbl-bill-head-detail/society-bulk-insert',true);
 $this->params['menu'][] = Yii::$app->controls->import('bill-head-detail', $this);
-//$this->params['menu'][] = Yii::$app->controls->import('member-bill-head-detail', $this);
+$this->params['menu'][] = Yii::$app->controls->import('member-bill-head-detail', $this, Yii::t('app', 'Member Bill Head Import'), [], 'member_bill');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

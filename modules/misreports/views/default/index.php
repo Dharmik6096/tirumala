@@ -156,6 +156,10 @@ if (isset($data['url1'])) {
                                             $where = json_encode(['data_lock_bmc' => 1]);
                                             echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                                             echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+
+                                            if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {
+                                                echo Html::hiddenInput('customer_type', $value_array[2], ['id' => 'reportsmodel-customer_type']);
+                                            }
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
@@ -179,12 +183,12 @@ if (isset($data['url1'])) {
                                                 <?php
                                             }
                                         }
-                                        if (in_array($value, array('rate_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
                                                 <div class="col-sm-6">
-                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('rate_type'), false, 'rate_type') ?> 
+                                                    <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                                 </div>
                                                 <?php
                                             }

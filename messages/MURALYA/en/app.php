@@ -144,4 +144,6 @@ return [
     'Functional Society' => 'Functional Collection Center',
     'Functional Society Count' => 'Functional Collection Center Count',
     'DCS Wise' => 'Collection Center Wise',
+    'Dcs Count' => 'Collection Center Count',
+    '208 - Society-Shift Collection Completed' => '208 - Collection Center-Shift Collection Completed',
 ];
