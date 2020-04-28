@@ -43,14 +43,21 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
     </div>
     <div class="clearfix"></div>
-
-    <div class="col-sm-2 reset_field">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE); ?>
+    <div class="col-sm-2 reset_field" style="display:none">
+        <?= $form->field($model, 'customer_code')->textInput(); ?>
     </div>
-
+    <div class="col-sm-1 reset_field">
+        <?= $form->field($model, 'member_code')->textInput()->label('Code') ?>
+    </div>
+    <div class="col-sm-2 reset_field">
+        <?= $form->field($model, 'customer_name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
+    </div>
     <div class="col-sm-2 reset_field">
         <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-customer_code,head_for', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
     </div>
+    <!--    <div class="col-sm-2 reset_field">
+    <?php // echo Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'customer_code', Yii::t('app', 'Name'), FALSE); ?>
+        </div>-->
     <div class="col-sm-2 number-validate reset_field">
         <?= $form->field($model, 'amount')->textInput() ?>       
     </div>
@@ -198,6 +205,41 @@ $script = "
                 });
     }
     
+    $('#tblbillheaddetail-customer_type').change(function(){
+          $('#tblbillheaddetail-customer_code').val('');
+          $('#tblbillheaddetail-member_code').val('');
+          $('#tblbillheaddetail-customer_name').val('');
+    });
+
+    $('#tblbillheaddetail-member_code').change(function(){
+        var dcs = $(this).val();
+        var type= $('#tblbillheaddetail-customer_type').val(); 
+        var union= $('#tblbillheaddetail-union_code').val(); 
+        var bmc= $('#tblbillheaddetail-bmc_code').val(); 
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['validate-dcs']) . "',
+            data: {'dcs_code':dcs,'customer_type':type,'union_code':union,'bmc_code':bmc},
+            success: function(data) {                                        
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success')
+                {
+                    $('#tblbillheaddetail-customer_name').val(obj.data); 
+                    $('#tblbillheaddetail-customer_code').val(obj.code); 
+                    $('#tblbillheaddetail-customer_code').trigger('change');
+                }else{
+                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter valid Code</span></div></div>');
+                        $('#tblbillheaddetail-member_code').val('');                    
+                        $('#tblbillheaddetail-customer_code').val('');                    
+                        $('#tblbillheaddetail-customer_name').val('');                    
+                        $('#tblbillheaddetail-customer_code').focus();
+                }
+            },
+            error:function(data){
+		
+	    }
+	});
+    });
 ";
 $this->registerJs($script, View::POS_END, 'bill-head-detail-form');
 ?>
