@@ -843,6 +843,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR'), 'TRANSPORTER' => Yii::t('app', 'TRANSPORTER')],
             ],
+            'bank_type' => [
+                'name' => 'bank_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal')],
+            ],
         ];
         return $records[$l];
     }

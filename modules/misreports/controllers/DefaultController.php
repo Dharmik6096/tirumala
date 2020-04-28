@@ -224,6 +224,16 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorBankPayment() {
+        $this->report = 'VendorBankPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberBankPayment() {
+        $this->report = 'MemberBankPayment';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -585,6 +595,18 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPayment',
                 'title' => '603 - Member Payment',
                 'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+            ],
+            'VendorBankPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,payment_cycle_code,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_vendor_bank_payment',
+                'scenario' => 'VendorBankPayment',
+                'title' => '606 - Vendor Bank Payment',
+            ],
+            'MemberBankPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,payment_cycle_code:default:dcs,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_member_bank_payment',
+                'scenario' => 'MemberBankPayment',
+                'title' => '607 - Member Bank Payment',
             ],
         ];
         return $label[$l];

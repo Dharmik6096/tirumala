@@ -262,6 +262,9 @@ $defaultToggle = true;
                                             $where = json_encode(['data_lock_bmc' => 1]);
                                             echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                                             echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+                                            if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {
+                                                echo Html::hiddenInput('p_customer_type', $value_array[2], ['id' => 'reportsmodel-p_customer_type']);
+                                            }
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-p_bmc_code,reportsmodel-p_customer_type,applicable_for,data_lock_bmc', 'p_payment_cycle_code', $model->getAttributeLabel('p_payment_cycle_code'), FALSE, FALSE); ?>
@@ -488,7 +491,7 @@ if('" . $report . "'=='BlockWiseCollection'){
     });
     
 }
-if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'){
+if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'){
     $('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_plant_code . "'=='0'){
