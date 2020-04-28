@@ -58,18 +58,20 @@ class DefaultController extends Controller {
             //$list=  ArrayHelper::getColumn($list, 'dcs_code');
             //$values=  array_values($list);
             //$values=[];
-            $dcsalertarray = $module->getDcsAlert($union_code, $id);
-            $dcsalert = $dcsalertarray[0];
-            $removedcs = $dcsalertarray[1];
+            //Comment as Set Validation from DB Side: Hardik
+//            $dcsalertarray = $module->getDcsAlert($union_code, $id);
+//            $dcsalert = $dcsalertarray[0];
+//            $removedcs = $dcsalertarray[1];
             //var_dump($values);exit;
         } else if ($ratechart) {
             //$list=$module->model->getPaymentCycleDcs($module->field_value);
             //$list=  ArrayHelper::getColumn($list, 'dcs_code');
             //$values=  array_values($list);
             //$values=[];
-            $dcsalertarray = $module->getDcsAlertRateChart($union_code, $id, $wef_date, $module->shift_type);
-            $dcsalert = $dcsalertarray[0];
-            $removedcs = $dcsalertarray[1];
+            //Comment as Set Validation from DB Side: Hardik
+//            $dcsalertarray = $module->getDcsAlertRateChart($union_code, $id, $wef_date, $module->shift_type);
+//            $dcsalert = $dcsalertarray[0];
+//            $removedcs = $dcsalertarray[1];
             //var_dump($values);exit;
         }
         switch ($flag) {

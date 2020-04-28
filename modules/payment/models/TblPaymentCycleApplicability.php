@@ -55,7 +55,7 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
                 [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
                 [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
                 [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
-                [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false],
+//                [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
         ];
     }
 

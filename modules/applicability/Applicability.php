@@ -210,6 +210,7 @@ class Applicability extends \yii\base\Module {
                 $model->setAttributes($postData);
                 $model->setAttributes($this->assignStaticData);
                 if ($model->validate()) {
+                    $saveModel = [];
                     $dataold = $this->model->find()->where([$this->field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->all();
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);
                     $toRevoke = array_intersect($returnedArray, $model->{$main_field_name});
@@ -217,84 +218,113 @@ class Applicability extends \yii\base\Module {
                     //$toAssign = array_diff($returnedArray, $model->dcs_code);
                     //$toRevoke = array_diff($model->dcs_code, $returnedArray);
                     $mappingList = [];
+                    $errorArr = [];
                     //var_dump($returnedArray);
                     //var_dump($model->dcs_code);
                     foreach ($toRevoke as $value) {
                         if (!empty($value)) {
-                            //echo $value.'<br/>';
+                            try {
+                                //echo $value.'<br/>';
+                                $r = new ReflectionClass($this->model->className());
+                                $appModel = $r->newInstanceArgs();
+                                $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->one();
+                                $h = new ReflectionClass($this->historyModel->className());
+                                $appHistory = $h->newInstanceArgs();
+                                Yii::$app->operation->history($appModel, $appHistory, DELETE);
+                                $saveModel[] = $appHistory->save();
+                                $saveModel[] = $appModel->delete();
+                            } catch (UserException $e) {
+                                $saveModel[] = false;
+                                $hasError = true;
+                                $errorArr[] = $e->getMessage();
+                            } catch (\yii\db\Exception $e) {
+                                $saveModel[] = false;
+                                $hasError = true;
+                                $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
+                            }
+//                                array_push($mappingList, $appHistory);
+//                                array_push($mappingList, $appModel);
+                        }
+                    }
+                    foreach ($toAssign as $value) {
+                        try {
                             $r = new ReflectionClass($this->model->className());
                             $appModel = $r->newInstanceArgs();
-                            $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->one();
-                            $h = new ReflectionClass($this->historyModel->className());
-                            $appHistory = $h->newInstanceArgs();
-                            Yii::$app->operation->history($appModel, $appHistory, DELETE);
-                            array_push($mappingList, $appHistory);
-                            array_push($mappingList, $appModel);
-                        }
-                    }
+                            $data = $model->attributes;
+                            $appModel->setAttributes($data);
+                            $appModel->setAttributes($this->assignStaticData);
+                            $primaryKey = $model->tableSchema->primaryKey[0];
+                            unset($appModel->$primaryKey);
+                            $appModel->{$main_field_name} = $value;
+                            $appModel->$field_name = $this->field_value;
+                            //$appModel->union_code = $this->union_code;  
 
-                    foreach ($toAssign as $value) {
-                        $r = new ReflectionClass($this->model->className());
-                        $appModel = $r->newInstanceArgs();
-                        $data = $model->attributes;
-                        $appModel->setAttributes($data);
-                        $appModel->setAttributes($this->assignStaticData);
-                        $primaryKey = $model->tableSchema->primaryKey[0];
-                        unset($appModel->$primaryKey);
-                        $appModel->{$main_field_name} = $value;
-                        $appModel->$field_name = $this->field_value;
-                        //$appModel->union_code = $this->union_code;  
+                            $appModel->union_code = $this->union_code;
 
-                        $appModel->union_code = $this->union_code;
-
-                        $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
-                        if ($model->hasAttribute('shift_code')) {
-                            $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
-                        }
-                        $check = $this->checkDuplicate($appModel);
-                        if ($check == 1) {
-                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
-                            return $this->customRender();
-                        }
-
-                        array_push($mappingList, $appModel);
-                    }
-                    $transaction = $this->generalModel->appTransaction($mappingList, [$this->trans_label, 'create']);
-                    if ($transaction == 'customRedirect') {
-                        $mname = \yii\helpers\StringHelper::basename(get_class($this->model));
-                        if ($transaction == 'customRedirect' && $mname == 'TblPurchaseRateApplicability') {
-                            $files = [];
-                            foreach ($mappingList as $mapping) {
-                                $cmname = \yii\helpers\StringHelper::basename(get_class($mapping));
-                                if ($cmname == 'TblPurchaseRateApplicability' && Yii::$app->general->isVendor($mapping->dcs_code, 'BIPL')) {
-                                    $rfiles = $mapping->generateBiplRateFiles();
-                                    if ($rfiles != false) {
-                                        if (!empty($files))
-                                            $files = array_merge($files, $rfiles);
-                                        else
-                                            $files = $rfiles;
-                                    }
-                                }
+                            $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
+                            if ($model->hasAttribute('shift_code')) {
+                                $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
                             }
-                            $files = array_values($files);
-                            $app = new TblPurchaseRateApplicability();
-                            foreach ($files as $key => $value) {
-                                $cp_code = key($value);
-                                $cp_path = Yii::$app->params['biplDirPath'] . 'EKOMILK/' . $cp_code . '/' . 'MASFILES';
-                                if (Yii::$app->general->checkDirectory($cp_path))
-                                    $app->generateEncFile($value[$cp_code], $cp_path);
+                            $check = $this->checkDuplicate($appModel);
+                            if ($check == 1) {
+                                $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                return $this->customRender();
                             }
+                            $saveModel[] = $appModel->save();
+                        } catch (UserException $e) {
+                            $saveModel[] = false;
+                            $hasError = true;
+                            $errorArr[] = $e->getMessage();
+                        } catch (\yii\db\Exception $e) {
+                            $saveModel[] = false;
+                            $hasError = true;
+                            $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
                         }
-                        $this->selectedMccCode = [];
-                        $this->selectedBmcCode = [];
-                        return $this->{$transaction}();
+//                            array_push($mappingList, $appModel);
+                    }
+                    $this->selectedMccCode = [];
+                    $this->selectedBmcCode = [];
+                    if (!in_array(FALSE, $saveModel)) {
+                        Yii::$app->display->message(true, $this->trans_label, 'create');
+                        return $this->customRedirect();
                     } else {
-                        $hasError = true;
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => implode('<br/>', $errorArr)]);
                     }
+//                        $transaction = $this->generalModel->appTransaction($mappingList, [$this->trans_label, 'create']);
+//                        if ($transaction == 'customRedirect') {
+//                            $mname = \yii\helpers\StringHelper::basename(get_class($this->model));
+//                            if ($transaction == 'customRedirect' && $mname == 'TblPurchaseRateApplicability') {
+//                                $files = [];
+//                                foreach ($mappingList as $mapping) {
+//                                    $cmname = \yii\helpers\StringHelper::basename(get_class($mapping));
+//                                    if ($cmname == 'TblPurchaseRateApplicability' && Yii::$app->general->isVendor($mapping->dcs_code, 'BIPL')) {
+//                                        $rfiles = $mapping->generateBiplRateFiles();
+//                                        if ($rfiles != false) {
+//                                            if (!empty($files))
+//                                                $files = array_merge($files, $rfiles);
+//                                            else
+//                                                $files = $rfiles;
+//                                        }
+//                                    }
+//                                }
+//                                $files = array_values($files);
+//                                $app = new TblPurchaseRateApplicability();
+//                                foreach ($files as $key => $value) {
+//                                    $cp_code = key($value);
+//                                    $cp_path = Yii::$app->params['biplDirPath'] . 'EKOMILK/' . $cp_code . '/' . 'MASFILES';
+//                                    if (Yii::$app->general->checkDirectory($cp_path))
+//                                        $app->generateEncFile($value[$cp_code], $cp_path);
+//                                }
+//                            }
+//                            $this->selectedMccCode = [];
+//                            $this->selectedBmcCode = [];
+//                            return $this->{$transaction}();
+//                        }
                 } else {
                     $hasError = true;
                 }
-                if ($hasError) {
+                if (false && $hasError) {
                     $pData = array_values($postData);
                     $mccCode = array_map(function($a) {
                         return !empty($a['f_mcc_code']) ? $a['f_mcc_code'] : [];
@@ -648,6 +678,8 @@ class Applicability extends \yii\base\Module {
         $this->searchModel = new $searchName();
         $this->historyModel = new $historyName();
         if (Yii::$app->request->post()) {
+            $saveModel = [];
+            $errorArr = [];
             $this->selectedCodes = [];
             $fieldName = $this->field_name;
             if ($this->model->load(Yii::$app->request->post())) {
@@ -665,11 +697,34 @@ class Applicability extends \yii\base\Module {
                         if ($this->assignMultiData) {
                             $array = $this->model->{$this->assignMultiDataKey};
                             foreach ($array as $a) {
+                                try {
+                                    $new_model = new ReflectionClass($this->model->className());
+                                    $model = $new_model->newInstanceArgs();
+                                    $model->$fieldName = $this->field_value;
+                                    $model->$setField = $val;
+                                    $model->{$this->assignMultiDataKey} = $a;
+                                    if ($model->hasAttribute('wef_date')) {
+                                        $model->wef_date = $this->model->wef_date;
+                                    }
+                                    if ($model->hasAttribute('union_code')) {
+                                        $model->union_code = $this->union_code;
+                                    }
+                                    $model->setAttributes($this->assignStaticData);
+                                    $saveModel[] = $model->save();
+                                } catch (UserException $e) {
+                                    $saveModel[] = false;
+                                    $errorArr[] = $e->getMessage();
+                                } catch (\yii\db\Exception $e) {
+                                    $saveModel[] = false;
+                                    $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
+                                }
+                            }
+                        } else {
+                            try {
                                 $new_model = new ReflectionClass($this->model->className());
                                 $model = $new_model->newInstanceArgs();
                                 $model->$fieldName = $this->field_value;
                                 $model->$setField = $val;
-                                $model->{$this->assignMultiDataKey} = $a;
                                 if ($model->hasAttribute('wef_date')) {
                                     $model->wef_date = $this->model->wef_date;
                                 }
@@ -678,26 +733,30 @@ class Applicability extends \yii\base\Module {
                                 }
                                 $model->setAttributes($this->assignStaticData);
                                 $save_model[] = $model;
+                            } catch (UserException $e) {
+                                $saveModel[] = false;
+                                $errorArr[] = $e->getMessage();
+                            } catch (\yii\db\Exception $e) {
+                                $saveModel[] = false;
+                                $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
                             }
-                        } else {
-                            $new_model = new ReflectionClass($this->model->className());
-                            $model = $new_model->newInstanceArgs();
-                            $model->$fieldName = $this->field_value;
-                            $model->$setField = $val;
-                            if ($model->hasAttribute('wef_date')) {
-                                $model->wef_date = $this->model->wef_date;
-                            }
-                            if ($model->hasAttribute('union_code')) {
-                                $model->union_code = $this->union_code;
-                            }
-                            $model->setAttributes($this->assignStaticData);
-                            $save_model[] = $model;
                         }
                     }
-                    $transaction = $this->generalModel->appTransaction($save_model, [$this->trans_label, 'create']);
-                    if ($transaction !== FALSE) {
-                        return $this->{$transaction}();
+                    if (!in_array(FALSE, $saveModel)) {
+                        Yii::$app->display->message(true, $this->trans_label, 'create');
+                        return $this->customRedirect();
+                    } else {
+                        $this->selectedCodes = $saveDataArray;
+                        if ($this->assignMultiData) {
+                            $this->selectedTypes = $this->model->{$this->assignMultiDataKey};
+                        }
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => implode('<br/>', $errorArr)]);
                     }
+//                    $transaction = $this->generalModel->appTransaction($save_model, [$this->trans_label, 'create']);
+//                    if ($transaction !== FALSE) {
+//                        return $this->{$transaction}();
+//                    }
                 } else {
                     $this->selectedCodes = $saveDataArray;
                     if ($this->assignMultiData) {

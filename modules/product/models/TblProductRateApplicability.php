@@ -53,7 +53,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
             [['product_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
             [['rate', 'rate_two'], 'safe'],
-            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
+//            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
         ];
     }
 

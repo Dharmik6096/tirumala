@@ -72,7 +72,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
                 ['is_active', 'default', 'value' => 1],
                 ['is_download', 'default', 'value' => 0],
                 [['wef_date', 'shift_code', 'applicable_code'], 'required'],
-                [['applicable_code'], 'checkDuplicate'],
+//                [['applicable_code'], 'checkDuplicate'], //Comment as Set Validation from DB Side: Hardik
 //            [['route_code'], 'required', 'except' => 'applicability'],
             [['purchase_rate_code', 'dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date', 'applicable_code', 'applicable_for'], 'safe'],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -129,7 +129,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
     /**
