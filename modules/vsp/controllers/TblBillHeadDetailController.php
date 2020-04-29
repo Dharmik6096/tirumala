@@ -20,7 +20,7 @@ use app\modules\dcsoperation\models\TblMember;
  */
 class TblBillHeadDetailController extends ChildController {
 
-    public $freeAccessActions = ['validate-member', 'validate-rtpl'];
+    public $freeAccessActions = ['validate-member', 'validate-dcs'];
 
     /**
      * Lists all TblBillHeadDetail models.
@@ -430,20 +430,23 @@ class TblBillHeadDetailController extends ChildController {
         $dcs = Yii::$app->request->post('dcs_code');
         $union = Yii::$app->request->post('union_code');
         $type = Yii::$app->request->post('customer_type');
-        $bmcModel = new TblBillHeadDetail();
+        $headModel = new TblBillHeadDetail();
+        $headModel->union_code = $union;
+        $headModel->customer_type = $type;
         if (!empty($type) && strtolower($type) != 'dcs') {
-            $data = $bmcModel->validateCustomer($union, $dcs, $type);
-            $bmcModel->customer_code = $data;
+            $headModel->customer_code = $dcs;
+            $data = Yii::$app->general->validateCustomerCode($headModel);
+            $headModel->customer_code = $data;
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($dcs, $bmc);
-            $bmcModel->customer_code = $data;
+            $headModel->customer_code = $data;
         }
         if (!empty($data)) {
-            $name = Yii::$app->general->getCustomer($bmcModel, $type);
+            $name = Yii::$app->general->getCustomer($headModel, $type);
             $response['status'] = 'success';
             $response['data'] = $name;
-            $response['code'] = $bmcModel->customer_code;
+            $response['code'] = $headModel->customer_code;
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);

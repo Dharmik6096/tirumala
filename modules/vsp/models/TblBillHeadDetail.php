@@ -231,16 +231,4 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
-    public function validateCustomer($union, $code, $type) {
-        if (!empty($code) && strtolower($type) != 'dcs') {
-            $this->union_code = $union;
-            $this->customer_type = $type;
-            $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
-            $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
-            $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
-            return $data = empty($Code) ? '' : $Code;
-        }
-    }
-
 }

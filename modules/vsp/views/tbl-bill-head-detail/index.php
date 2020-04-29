@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Bill Head Detail'));
-$this->params['menu'][] = Yii::$app->controls->add('Vendor Bill Head Transection');
-$this->params['menu'][] = Yii::$app->controls->add('Member Bill Head Transection', 'create-member-bill-detail');
+$this->params['menu'][] = Yii::$app->controls->add('Vendor Bill Head Transaction');
+$this->params['menu'][] = Yii::$app->controls->add('Member Bill Head Transaction', 'create-member-bill-detail');
 //$this->params['menu'][] = Yii::$app->controls->custombutton('Head Wise Transaction', '/vsp/tbl-bill-head-detail/create', true);
 //$this->params['menu'][]=Yii::$app->controls->custombutton('Society Wise Transaction','/vsp/tbl-bill-head-detail/society-wise-transaction',true);
 //$this->params['menu'][]=Yii::$app->controls->custombutton('Head Wise Bulk Entry','/vsp/tbl-bill-head-detail/society-bulk-insert',true);
