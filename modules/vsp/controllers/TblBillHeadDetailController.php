@@ -20,7 +20,7 @@ use app\modules\dcsoperation\models\TblMember;
  */
 class TblBillHeadDetailController extends ChildController {
 
-    public $freeAccessActions = ['validate-member'];
+    public $freeAccessActions = ['validate-member', 'validate-dcs'];
 
     /**
      * Lists all TblBillHeadDetail models.
@@ -420,6 +420,36 @@ class TblBillHeadDetailController extends ChildController {
         $searchModel->setAttributes(Yii::$app->request->get('TblBillHeadDetail'));
         $dataProvider = $searchModel->membergridsearch([]);
         return $this->renderAjax('_member_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+    }
+
+    public function actionValidateDcs() {
+        $response = [];
+        $response['status'] = 'error';
+        $response['data'] = '';
+        $bmc = Yii::$app->request->post('bmc_code');
+        $dcs = Yii::$app->request->post('dcs_code');
+        $union = Yii::$app->request->post('union_code');
+        $type = Yii::$app->request->post('customer_type');
+        $headModel = new TblBillHeadDetail();
+        $headModel->union_code = $union;
+        $headModel->customer_type = $type;
+        if (!empty($type) && strtolower($type) != 'dcs') {
+            $headModel->customer_code = $dcs;
+            $data = Yii::$app->general->validateCustomerCode($headModel);
+            $headModel->customer_code = $data;
+        } else {
+            $model = new TblDcs();
+            $data = $model->validDcs($dcs, $bmc);
+            $headModel->customer_code = $data;
+        }
+        if (!empty($data)) {
+            $name = Yii::$app->general->getCustomer($headModel, $type);
+            $response['status'] = 'success';
+            $response['data'] = $name;
+            $response['code'] = $headModel->customer_code;
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }
