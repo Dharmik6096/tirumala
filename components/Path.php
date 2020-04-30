@@ -12,19 +12,19 @@ class Path extends Component {
 
     private $config = [
         '\\app\models\\' =>
-        ['TblDpuCalibration', 'TblDpuCalibrationSearch', 'TblUserAndroid', 'TblUserProfile'],
+            ['TblDpuCalibration', 'TblDpuCalibrationSearch', 'TblUserAndroid', 'TblUserProfile'],
         '\\app\modules\collection\models\\' =>
-        ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale', 'TblDpuShiftEndSummary', 'TblMASerialNo', 'TblQualityCollection', 'TblWeightCollection', 'TblShiftSummary',
+            ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale', 'TblDpuShiftEndSummary', 'TblMASerialNo', 'TblQualityCollection', 'TblWeightCollection', 'TblShiftSummary',
             'TblDcsMilkDispatch', 'TblDcsMilkDispatchTxn', 'TblMilkCollectionSummary', 'TblMilkCollectionSummaryHistory', 'TblDcsMilkDispatchHistory', 'TblDcsMilkDispatchTxnHistory', 'TblMilkReject', 'TblMilkRejectHistory', 'TblMilkRejectHistory'],
         '\\app\modules\geo\models\\' =>
-        ['TblStates', 'TblStatesHistory',
+            ['TblStates', 'TblStatesHistory',
             'TblVillagesHistory', 'TblVillages', 'TblVillageMiscellaneous', 'TblVillagesSearch',
             'TblBlocksHistory', 'TblBlocks', 'TblBlocksSearch',
             'TblSubDistrictsHistory', 'TblSubDistricts', 'TblSubDistrictsSearch',
             'TblHamletsHistory', 'TblHamlets', 'TblHamletsSearch',
             'TblDistrictsHistory', 'TblDistricts', 'TblDistrictsSearch', 'HamletImport'],
         '\\app\modules\globalmaster\models\\' =>
-        ['TblDcsTypes', 'TblDcsTypesHistory',
+            ['TblDcsTypes', 'TblDcsTypesHistory',
             'TblCasteCategory', 'TblCasteCategoryHistory', 'TblCapacity',
             'TblUnits', 'TblMilkType',
             'TblLandUnit', 'TblLandUnitHistory',
@@ -38,7 +38,7 @@ class Path extends Component {
             'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason'
         ],
         '\\app\modules\organisation\models\\' =>
-        ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
+            ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
             'TblBranch', 'TblBranchHistory', 'TblBranchSearch',
             'TblCollectionPoint', 'TblCollectionPointHistory', 'TblCollectionPointSearch',
             'TblDcs', 'TblDcsBmc', 'TblDcsBmcHistory', 'TblDcsBmcSearch', 'TblDcsChillingCenter', 'TblDcsHistory', 'TblDcsMiscellaneous', 'TblDcsSearch', 'TblDcsVillageMapping', 'TblDcsVillageMappingHistory',
@@ -52,33 +52,33 @@ class Path extends Component {
             'TblCustomerMaster'
         ],
         '\\app\modules\details\models\\' =>
-        ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],
+            ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],
         '\\app\modules\dcsaccounting\models\\' =>
-        ['TblLedgerGroup', 'TblLedger',
+            ['TblLedgerGroup', 'TblLedger',
             'TblFinancialYear',
             'TblAssetGroup', 'TblLedgerSubledgerMapping', 'TblLedgerSubledgerMappingHistory', 'TblAssetHistory', 'TblAssetSubGroup',
             'TblUnionBillHead', 'TblUnionBillHeadHistory',
             'TblTax', 'TblTaxStateMapping', 'TblTaxStateMappingHistory', 'TblTaxDepends', 'TblTaxDependsHistory',
-            'TblTaxGroup', 'TblTaxGroupHistory', 'TblBasicTax', 'TblSubLedger'],
+            'TblTaxGroup', 'TblTaxGroupHistory', 'TblBasicTax', 'TblSubLedger', 'TblTaxHistory', 'TblBasicTaxHistory', 'TblTaxDetail', 'TblTaxDetailHistory'],
         '\\app\modules\dcsoperation\models\\' =>
-        ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
+            ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
             'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
             'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending'],
         '\\app\modules\product\models\\' =>
-        ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory',
+            ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory',
         ],
         '\\app\modules\hardwareconfigutation\models\\' =>
-        ['TblDeviceManufacturer', 'TblInterfacingDevice', 'TblInterfacingDeviceHistory',],
+            ['TblDeviceManufacturer', 'TblInterfacingDevice', 'TblInterfacingDeviceHistory',],
         '\\app\components\\' =>
-        ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy', 'DispatchImportStrategy', 'DpuIncentiveImportStrategy', 'DcsImportUpdateStrategy', 'DpuPasswordImportStrategy', 'BillHeadDetailImportStrategy'],
+            ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy', 'DispatchImportStrategy', 'DpuIncentiveImportStrategy', 'DcsImportUpdateStrategy', 'DpuPasswordImportStrategy', 'BillHeadDetailImportStrategy'],
         '\\app\modules\general\models\\' => ['TblBloodgroup', 'TblGender', 'TblQualification', 'TblBmcType', 'TblReligion', 'TblSchemeType', 'TblOrganisationType', 'TblRelationship', 'TblSocietyVendor', 'TblDpuIncentiveMaster', 'TblDpuIncentiveMasterHistory', 'TblDepartment', 'TblCollectionIncentiveDeductionHistory'],
         '\\app\modules\email\models\\' => ['TblEmailRuleMaster', 'TblEmailProcessMaster'],
         '\\app\modules\transporter\models\\' => ['TblTransporter', 'TblFuelTypeMaster', 'TblVehicleMaster', 'TblBillingType', 'TblTransporterPaymentHead'],
         '\\app\modules\creamy\models\\' =>
-        ['TblDpuProductDemandCreamy', 'TblMACAlibrationCreamy', 'TblMACAlibrationChangeCreamy', 'TblMACleaningCreamy', 'CollectionFarmerLocalSaleCreamy', 'MasterfarmerCreamy', 'TblDcsPortalCreamy', 'MastervillageCreamy', 'CollectionvillageCreamy', 'TblDpuShiftEndSummaryCreamy', 'TblMASerialNoCreamy'],
+            ['TblDpuProductDemandCreamy', 'TblMACAlibrationCreamy', 'TblMACAlibrationChangeCreamy', 'TblMACleaningCreamy', 'CollectionFarmerLocalSaleCreamy', 'MasterfarmerCreamy', 'TblDcsPortalCreamy', 'MastervillageCreamy', 'CollectionvillageCreamy', 'TblDpuShiftEndSummaryCreamy', 'TblMASerialNoCreamy'],
         '\\app\modules\syncutility\models\\' => ['TblSentbox', 'TblInbox', 'TblSyncLog', 'TblSentboxClone'],
         '\\app\modules\configuration\models\\' =>
-        ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult', 'TblUnionConfigResultHistory'],
+            ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult', 'TblUnionConfigResultHistory'],
         '\\app\modules\installation\models\\' => ['TblAndroidInstallation', 'TblAndroidInstallationDetails', 'TblAndroidInstallationDetailsHistory'],
         '\\app\modules\setting\models\\' => ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
         '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification', 'TblBulkNotificationHistory'],

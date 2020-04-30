@@ -556,7 +556,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -922,6 +922,8 @@ class DropDown extends Component {
             'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
             'reject_reason' => ['name' => 'rejection_reason_code', 'fields' => 'rejection_reason_code,rejection_reason', 'prompt' => Yii::t('app', 'Select Reject Reason'), 'model' => 'TblRejectionReason'],
+            'tax_group_code' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup'],
+            'tax' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax Setting Name'), 'model' => 'TblTax'],
         ];
         return $label[$l];
     }
@@ -1002,7 +1004,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
