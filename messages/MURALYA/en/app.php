@@ -146,4 +146,5 @@ return [
     'DCS Wise' => 'Collection Center Wise',
     'Dcs Count' => 'Collection Center Count',
     '208 - Society-Shift Collection Completed' => '208 - Collection Center-Shift Collection Completed',
+    'Dcs Code Ex' => 'Collection Center Code Ex',
 ];
