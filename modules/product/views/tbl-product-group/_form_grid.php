@@ -9,9 +9,16 @@ use yii\helpers\Html;
 
 $attribute = [
     //'product_group_code',
+        ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'visible' => false,],
     'product_group_name',
 //    'local_name',
+    ['attribute' => 'ref_code', 'visible' => false],
     ['attribute' => 'local_name', 'filter' => false],
+        ['attribute' => 'unit_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unitCode, 'unit_name');
+        }],
 ];
 
 $grid_option = [

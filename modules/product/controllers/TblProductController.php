@@ -11,23 +11,23 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
+
 /**
  * TblProductController implements the CRUD actions for TblProduct model.
  */
-class TblProductController extends \app\controllers\ChildController
-{
+class TblProductController extends \app\controllers\ChildController {
+
     /**
      * Lists all TblProduct models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -36,10 +36,9 @@ class TblProductController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -48,13 +47,12 @@ class TblProductController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblProduct();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->product_name = ucwords($this->model->product_name);
-            $this->model->product_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $this->model->product_code = Yii::$app->general->getPrimaryCode($this->model);
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Product', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -69,8 +67,7 @@ class TblProductController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
@@ -92,9 +89,8 @@ class TblProductController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete()
-    {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_product',Yii::$app->request->post('id'), 'product_code']);
+    public function actionDelete() {
+        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_product', Yii::$app->request->post('id'), 'product_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
             $historyModel = new TblProductHistory();
@@ -115,12 +111,12 @@ class TblProductController extends \app\controllers\ChildController
      * @return TblProduct the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblProduct::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

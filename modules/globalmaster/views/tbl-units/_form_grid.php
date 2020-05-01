@@ -1,11 +1,14 @@
 <?php
 
 $attribute = [
-    ['attribute' => 'unit_code', 'value' => 'unit_code'],
-    ['attribute' => 'unit_name', 'value' => 'unit_name'],
-    ['attribute' => 'local_name',],
-    ['attribute' => 'short_name', 'value' => 'short_name'],
-    ['attribute' => 'local_short_name'],
+        ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'visible' => false,],
+        ['attribute' => 'unit_code', 'value' => 'unit_code'],
+        ['attribute' => 'unit_name', 'value' => 'unit_name'],
+        ['attribute' => 'local_name',],
+        ['attribute' => 'short_name', 'value' => 'short_name'],
+        ['attribute' => 'local_short_name'],
 ];
 $grid_option = [
     'id' => 'units-list',

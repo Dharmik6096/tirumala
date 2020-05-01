@@ -924,6 +924,7 @@ class DropDown extends Component {
             'reject_reason' => ['name' => 'rejection_reason_code', 'fields' => 'rejection_reason_code,rejection_reason', 'prompt' => Yii::t('app', 'Select Reject Reason'), 'model' => 'TblRejectionReason'],
             'tax_group_code' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup'],
             'tax' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax Setting Name'), 'model' => 'TblTax'],
+            'tax_code' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax'), 'model' => 'TblTax'],
         ];
         return $label[$l];
     }

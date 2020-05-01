@@ -194,6 +194,18 @@ class SearchFilter {
             'TblTaxSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblUnitsSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductGroupSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductPurchaseRateSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

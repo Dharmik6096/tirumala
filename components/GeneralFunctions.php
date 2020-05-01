@@ -1341,14 +1341,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -1425,6 +1425,56 @@ class GeneralFunctions extends Component {
             $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             return $data = empty($Code) ? '' : $Code;
         }
+    }
+
+    public function getPrimaryCode($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $tableName = $model->tableName();
+        $val = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
+                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
+                ->from($tableName)
+                ->one();
+        $number = (int) $val[$primaryKey] + $autoInc;
+
+        return $number;
+
+        $orgCode = Yii::$app->session->get('organizations_type') . '-' . Yii::$app->session->get('organizations_code') . '-';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select("MAX(CAST(trim(SUBSTRING(`" . $primaryKey . "` FROM " . $len . " +1)) AS UNSIGNED)) as " . $primaryKey)
+                ->where('(CAST(trim(SUBSTRING(' . $primaryKey . ', 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+
+        $value = $orgCode . $code1;
+
+        return $value;
+    }
+
+    public function getTransactionCode($model, $primaryCode, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $tableName = $model->tableName();
+        $val = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
+                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
+                ->from($tableName)
+                ->one();
+        $number = (int) $val[$primaryKey] + $autoInc;
+
+        return $number;
+
+        $orgCode = $primaryCode . 'T';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select("MAX(CAST(trim(SUBSTRING(`" . $primaryKey . "` FROM " . $len . " +1)) AS UNSIGNED)) as " . $primaryKey)
+                ->where('(CAST(trim(SUBSTRING(' . $primaryKey . ', 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+
+        $value = $orgCode . $code1;
+
+        return $value;
     }
 
 }

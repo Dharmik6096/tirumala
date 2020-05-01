@@ -6,20 +6,67 @@
  */
 
 use yii\helpers\Html;
-
 ?>
 
 <?php
+
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
-    ['attribute' => 'product_group_code',
-     'value' => 'productGroupCode.product_group_name'],
-    ['attribute' => 'unit_code',
-     'value' => 'unitCode.unit_name'],
-    'product_name',
-    'description',
-//    'local_name',
-    ['attribute' => 'local_name', 'filter' => false],
+        ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'visible' => true,],
+        ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'visible' => false,],
+        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'visible' => false,],
+        ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }, 'visible' => false,],
+        ['attribute' => 'dcs_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+        }, 'visible' => false,],
+        ['attribute' => 'product_group_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->productGroupCode, 'product_group_name');
+        }],
+        ['attribute' => 'unit_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unitCode, 'unit_name');
+        }],
+        ['attribute' => 'ref_code', 'visible' => false],
+        ['attribute' => 'product_name'],
+        ['attribute' => 'tax_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->taxCode, 'tax_name');
+        }, 'visible' => true,],
+        [
+        'attribute' => 'is_inhouse', 'visible' => false,
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_inhouse'),
+        'value' => function($model) {
+            return isset($model->is_inhouse) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inhouse] : '';
+        }
+    ],
+        [
+        'attribute' => 'is_inclusive_tax', 'visible' => false,
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_inclusive_tax'),
+        'value' => function($model) {
+            return isset($model->is_inhouse) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inclusive_tax] : '';
+        }
+    ],
+        [
+        'attribute' => 'is_saleable', 'visible' => false,
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_saleable'),
+        'value' => function($model) {
+            return isset($model->is_inhouse) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_saleable] : '';
+        }
+    ],
+        [
+        'attribute' => 'is_indent', 'visible' => false,
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_indent'),
+        'value' => function($model) {
+            return isset($model->is_inhouse) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_indent] : '';
+        }
+    ],
+        ['attribute' => 'product_desc'],
+        ['attribute' => 'local_name', 'filter' => false],
 ];
 
 $grid_option = [

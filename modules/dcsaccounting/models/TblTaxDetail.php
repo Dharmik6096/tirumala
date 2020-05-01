@@ -4,6 +4,7 @@ namespace app\modules\dcsaccounting\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_tax_detail".
@@ -43,7 +44,7 @@ class TblTaxDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['basic_tax_code', 'tax_code', 'type', 'percentage'], 'required'],
+                [['basic_tax_code', 'tax_code', 'type', 'percentage', 'union_code'], 'required'],
                 [['percentage'], 'number', 'max' => 100],
                 [['tax_detail_code', 'tax_group_code', 'type', 'basic_tax_code', 'tax_code', 'is_active', 'originating_type'], 'safe'],
                 [['percentage'], 'number'],
@@ -94,6 +95,41 @@ class TblTaxDetail extends \app\models\ChildModel {
 
     public function getDetail($tax_code) {
         return $this->find()->select(['tax_detail_code', 'percentage', 'type', 'basic_tax_code', 'tax_code'])->where(['is_active' => 1, 'tax_code' => $tax_code])->all();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
