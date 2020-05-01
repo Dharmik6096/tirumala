@@ -51,26 +51,26 @@ class TblPlant extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['name', 'hamlet_code', 'union_code', 'plant_code'], 'required'],
-            [['plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
-            [['email'], 'email'],
-            [['plant_code'], 'unique'],
-            [['name'], function ($attribute, $params) {
+                [['name', 'hamlet_code', 'union_code', 'plant_code'], 'required'],
+                [['plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+                [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
+                [['email'], 'email'],
+                [['plant_code'], 'unique'],
+                [['name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['local_name', 'local_cantact_person_name'], function ($attribute, $params) {
+                [['local_name', 'local_cantact_person_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['mobile_no'], function ($attribute, $params) {
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['mobile_no'], 'string', 'max' => 10],
-            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
-            [['capacity'], 'integer'],
-            [['plant_code'], 'integer', 'min' => 1],
-            [['plant_code'], 'string', 'max' => 6],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['mobile_no'], 'string', 'max' => 10],
+                [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
+                [['capacity'], 'integer'],
+                [['plant_code'], 'integer', 'min' => 1],
+                [['plant_code'], 'string', 'max' => 6],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -173,9 +173,11 @@ class TblPlant extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['plant_code' => 'plant_code'])->where(['is_plant' => 1]);
     }
 
-    public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = []) {
+    public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
         $value = $this->getPlant($unionCode, $RLS, $notIn);
-        $value = ArrayHelper::map($value, 'plant_code', 'name');
+        $value = ArrayHelper::map($value, 'plant_code', function($value) use ($concatCode) {
+                    return $value->name . ($concatCode ? ' - ' . $value->plant_code : '');
+                });
         return $value;
     }
 

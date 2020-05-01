@@ -60,34 +60,34 @@ class TblMccPlant extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['plant_code', 'name', 'hamlet_code', 'union_code'], 'required'],
-            [['mcc_plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
-            [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code'], 'safe'],
-            [['capacity'], 'integer'],
+                [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
+                [['plant_code', 'name', 'hamlet_code', 'union_code'], 'required'],
+                [['mcc_plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
+                [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code'], 'safe'],
+                [['capacity'], 'integer'],
 //            [['is_active'], 'boolean'],
             [['mcc_plant_code'], 'unique'],
-            [['village_code'], 'string', 'max' => 6],
-            [['contact_person'], 'string', 'max' => 100],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['description'], 'string', 'max' => 250],
-            [['email'], 'string', 'max' => 50],
-            [['email'], 'email'],
-            [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
-            [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
-            [['mobile_no'], 'string', 'max' => 10],
-            [['name',], 'string', 'max' => 255],
-            [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
-            [['mcc_plant_code'], 'integer', 'min' => 1],
-            [['mcc_plant_code'], 'string', 'max' => 6],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual'], 'safe'],
-            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+                [['village_code'], 'string', 'max' => 6],
+                [['contact_person'], 'string', 'max' => 100],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['description'], 'string', 'max' => 250],
+                [['email'], 'string', 'max' => 50],
+                [['email'], 'email'],
+                [['name'], function ($attribute, $params) {
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['mobile_no'], 'string', 'max' => 10],
+                [['name',], 'string', 'max' => 255],
+                [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['mcc_plant_code'], 'integer', 'min' => 1],
+                [['mcc_plant_code'], 'string', 'max' => 6],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
         ];
     }
 
@@ -262,7 +262,7 @@ class TblMccPlant extends \app\models\ChildModel {
         return $query->all();
     }
 
-    public function getMccs($unionCode, $notIn = []) {
+    public function getMccs($unionCode, $notIn = [], $concatCode = false) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('MCC') !== '') {
             $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
@@ -271,7 +271,13 @@ class TblMccPlant extends \app\models\ChildModel {
             $query->andWhere(['not in', 'mcc_plant_code', $notIn]);
         }
         $mcc = $query->all();
-        $mcc = ArrayHelper::map($mcc, 'mcc_plant_code', 'name');
+        if ($concatCode) {
+            $mcc = ArrayHelper::map($mcc, 'mcc_plant_code', function($mcc) {
+                        return $mcc->name . '-' . $mcc->mcc_plant_code;
+                    });
+        } else {
+            $mcc = ArrayHelper::map($mcc, 'mcc_plant_code', 'name');
+        }
         asort($mcc, SORT_NATURAL | SORT_FLAG_CASE);
         return $mcc;
     }

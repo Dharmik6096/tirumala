@@ -6,6 +6,10 @@ use yii\web\View;
 use app\components\GeneralFunctions;
 
 $selectedDataCode = !empty($selectedData) ? $selectedData : [];
+$checkboxWidthClass = !empty($checkboxWidthClass) ? $checkboxWidthClass : 'col-sm-4';
+$idPrefix = !empty($idPrefix) ? $idPrefix : 'nd';
+$checkboxClass = !empty($checkboxClass) ? $checkboxClass : ' ';
+$setCheckboxClass = !empty($setCheckboxClass) ? $setCheckboxClass : ' route-checkbox ';
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,19 +21,19 @@ if (!empty($model)) {
         'id' => $field_name . '-list',
         'class' => 'row',
         'item' =>
-        function ($index, $label, $name, $checked, $value) use ($selected, $selectedDataCode) {
+        function ($index, $label, $name, $checked, $value) use ($selected, $selectedDataCode, $checkboxWidthClass, $idPrefix, $checkboxClass, $setCheckboxClass) {
             $checked = in_array($value, $selected);
             $disabled = '';
             if (!$checked) {
                 $checkData = in_array(strval($value), $selectedDataCode, true);
-                return "<div class='col-sm-4 dcs-checklist checklist' id='nd-" . $value . "'><div class='checkbox'>" . Html::checkbox($name, $checkData, [
+                return "<div class='" . $checkboxWidthClass . " dcs-checklist checklist' id='" . $idPrefix . "-" . $value . "'><div class='checkbox'>" . Html::checkbox($name, $checkData, [
                             'value' => $value,
-                            'label' => '<label for="' . $value . '">' . $label . '</label>',
+                            'label' => '<label for="' . $idPrefix . '-input-' . $value . '">' . $label . '</label>',
                             'labelOptions' => [
                                 'class' => 'route-text' . $disabled,
                             ],
-                            'class' => 'route-checkbox',
-                            'id' => $value
+                            'class' => $setCheckboxClass . ' ' . $checkboxClass,
+                            'id' => $idPrefix . '-input-' . $value
                         ]) . "</div></div>";
             }
         }, /* ,'template'=>'<div class="item">{input}{label}</div>' */])->label(false);

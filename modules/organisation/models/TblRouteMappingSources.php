@@ -27,7 +27,7 @@ use app\modules\syncutility\models\TblSentbox;
  */
 class TblRouteMappingSources extends \app\models\ChildModel {
 
-    public $dcs_code, $dcs_name;
+    public $dcs_code, $dcs_name, $dcs_code_ex;
     public $is_sentbox;
 
     /**
@@ -131,7 +131,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
 
     public function getRouteDCS($id, $values) {
         $query = $this->find()
-                ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])
+                ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.dcs_code_ex'])
                 ->where(['tbl_route_mapping_sources.route_code' => $id, 'tbl_route_mapping_sources.is_active' => 1])
                 ->andWhere(['not in', 'tbl_route_mapping_sources.from_dest', $values])
                 ->joinWith(['dcsCode']);

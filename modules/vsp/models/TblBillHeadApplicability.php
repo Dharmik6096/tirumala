@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * This is the model class for table "tbl_bill_head_applicability".
@@ -38,12 +39,12 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['created_at', 'updated_at', 'wef_date'], 'safe'],
-            [['wef_date', 'applicable_code'], 'required'],
-            [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['applicable_code', 'applicable_for', 'bmc_code', 'bill_head_for'], 'safe'],
-            [['applicable_code'], 'setBMCCode']
+                [['created_at', 'updated_at', 'wef_date'], 'safe'],
+                [['wef_date', 'applicable_code'], 'required'],
+                [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['applicable_code', 'applicable_for', 'bmc_code', 'bill_head_for'], 'safe'],
+                [['applicable_code'], 'setBMCCode']
         ];
     }
 
@@ -101,6 +102,10 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
 
     public function setBMCCode($attribute, $params) {
         $this->bmc_code = Yii::$app->general->getCustomer($this, $this->applicable_for, FALSE, TRUE);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
     }
 
 }

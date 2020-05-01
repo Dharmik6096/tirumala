@@ -12,14 +12,17 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
  */
 class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabitity {
 
+    public $mcc_name, $code_ex, $shift_code;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                //   [['rate_app_code', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code'], 'safe'],
-                //   [['is_active'], 'boolean'],
-                //   [['shift_code'], 'integer'],
+            //   [['rate_app_code', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code'], 'safe'],
+            //   [['is_active'], 'boolean'],
+            //   [['shift_code'], 'integer'],
+                [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code'], 'safe'],
         ];
     }
 
@@ -40,10 +43,10 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
      */
     public function search($params) {
         $query = TblDcsPurchaseRateApplicabitity::find();
-        $query->where(['purchase_rate_code' => $this->purchase_rate_code]);
+        $query->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
         $query->orderBy(['wef_date' => SORT_DESC]);
         // add conditions that should always apply here
-
+        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType', 'shiftCode']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -57,20 +60,28 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'created_at' => $this->created_at,
-            'is_active' => $this->is_active,
-            'updated_at' => $this->updated_at,
-            'wef_date' => $this->wef_date,
-            'shift_code' => $this->shift_code,
+
+        if (!empty($this->wef_date))
+            $query->andFilterWhere(['cast(tbl_dcs_purchase_rate_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
+        // grid filtering conditions
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_name', $this->mcc_name],
+                ['like', 'tbl_customer_master.customer_name', $this->mcc_name],
+                ['like', 'tbl_plant.name', $this->mcc_name],
+                ['like', 'tbl_mcc_plant.name', $this->mcc_name],
+                ['like', 'tbl_bmc.bmc_name', $this->mcc_name]
+        ]);
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
         ]);
 
-        $query->andFilterWhere(['like', 'rate_app_code', $this->rate_app_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
-                ->andFilterWhere(['like', 'union_code', $this->union_code]);
+        $query->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_code', $this->applicable_code])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
+//                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_for', $this->applicable_for])
+                ->andFilterWhere(['like', 'union_code', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code]);
 
         return $dataProvider;
     }

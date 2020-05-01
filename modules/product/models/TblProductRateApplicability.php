@@ -53,7 +53,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
             [['product_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
             [['rate', 'rate_two'], 'safe'],
-            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
+//            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
         ];
     }
 
@@ -81,11 +81,14 @@ class TblProductRateApplicability extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'applicable_for' => Yii::t('app', 'Applicable For'),
+            'applicable_code' => Yii::t('app', 'Applicable Code'),
+            'name' => Yii::t('app', 'Applicable Name'),
         ];
     }
 
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
     public function getProductRateCode() {

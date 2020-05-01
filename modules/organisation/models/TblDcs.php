@@ -752,7 +752,7 @@ class TblDcs extends ChildModel {
     }
 
     public function getMccDCS($mccCode = [], $RLS = 'TRUE', $values = []) {
-        $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
+        $query = $this->find()->select(['dcs_code', 'dcs_name', 'dcs_code_ex'])->where(['is_active' => 1]);
         if (!empty($mccCode))
             $query->andWhere(['mcc_plant_code' => $mccCode]);
         if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
@@ -828,7 +828,7 @@ class TblDcs extends ChildModel {
                         ->andwhere("'$date' BETWEEN [from_date] AND [to_date]")->orderBy('from_time ASC');
     }
 
-    public function getUnionDcs($unionCode, $notIn = []) {
+    public function getUnionDcs($unionCode, $notIn = [], $compareBmc = false, $mcc = [], $bmc = [], $concatField = 'dcs_code') {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('Dcs') !== '') {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
@@ -836,9 +836,12 @@ class TblDcs extends ChildModel {
         if (!empty($notIn)) {
             $query->andWhere(['not in', 'dcs_code', $notIn]);
         }
+        if($compareBmc) {
+            $query->andWhere(['bmc_code' => $bmc, 'mcc_plant_code' => $mcc]);
+        }
         $dcs = $query->all();
-        $dcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
-                    return $dcs->dcs_name . '-' . $dcs->dcs_code;
+        $dcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) use ($concatField) {
+                    return $dcs->dcs_name . '-' . $dcs->{$concatField};
                 });
         asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
         return $dcs;

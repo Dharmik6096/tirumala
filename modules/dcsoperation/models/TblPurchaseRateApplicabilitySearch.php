@@ -13,13 +13,15 @@ use yii\db\Query;
  */
 class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
 
+    public $code_ex;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name', 'reference_code'], 'safe'],
-            [['is_active'], 'boolean'],
+                [['rate_app_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code', 'shift_code', 'is_download', 'download_date_time', 'dcs_name', 'reference_code', 'code_ex'], 'safe'],
+                [['is_active'], 'boolean'],
 //            [['shift_code'], 'integer'],
         ];
     }
@@ -85,7 +87,8 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
                 ->andFilterWhere(['like', 'tbl_purchase_rate_applicability.dcs_code', $this->dcs_code])->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_code])
-                ->andFilterWhere(['like', 'is_download', $this->is_download]);
+                ->andFilterWhere(['like', 'is_download', $this->is_download])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->code_ex]);
         //->andFilterWhere(['like', 'purchase_rate_code', $this->purchase_rate_code])
         //->andFilterWhere(['like', 'union_code', $this->union_code]);
         //echo $query->createCommand()->rawSql;exit;
