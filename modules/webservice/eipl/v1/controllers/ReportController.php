@@ -49,4 +49,84 @@ class ReportController extends MasterController {
         return $this->response;
     }
 
+    public function actionMemberCollectionShift() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberCollectionDateShiftSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberCollectionDateWiseSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberCollectionConsolidated() {
+        return $this->prepareResposne();
+    }
+
+    public function actionSocietyCollectionDateShiftSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionSocietyCollectionDateWiseSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionSocietyCollectionConsolidated() {
+        return $this->prepareResposne();
+    }
+
+    public function actionManualMilkEntrySocietyDateShiftWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionManualMilkEntryMemberDateShiftWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionManualMilkEntrySocietyDateWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionManualMilkEntryMemberDateWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionManualMilkEntrySocietyConsolidated() {
+        return $this->prepareResposne();
+    }
+
+    public function actionManualMilkEntryMemberConsolidated() {
+        return $this->prepareResposne();
+    }
+
+    public function actionBmcCollectionShiftReport() {
+        return $this->prepareResposne();
+    }
+
+    public function actionBmcCollectionDateShiftSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionBmcCollectionDateWiseSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionBmcCollectionConsolidated() {
+        return $this->prepareResposne();
+    }
+
+    public function actionUnionCollectionDateShiftSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionUnionCollectionDateSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionUnionCollectionConsolidated() {
+        return $this->prepareResposne();
+    }
+
 }
