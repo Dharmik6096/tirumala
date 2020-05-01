@@ -233,6 +233,10 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'MemberBankPayment';
         return $this->actionIndex();
     }
+    public function actionMemberOutstandingDetail() {
+        $this->report = 'MemberOutstandingDetail';
+        return $this->actionIndex();
+    }
 
     /* Jasper Call */
 
@@ -607,6 +611,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_bank_payment',
                 'scenario' => 'MemberBankPayment',
                 'title' => '607 - Member Bank Payment',
+            ],
+            'MemberOutstandingDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_member_outstanding_detail',
+                'scenario' => 'MemberOutstandingDetail',
+                'title' => '608 - Member Outstanding Detail',
             ],
         ];
         return $label[$l];
