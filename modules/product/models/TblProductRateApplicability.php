@@ -187,4 +187,8 @@ class TblProductRateApplicability extends \app\models\ChildModel {
         $this->product_sale_rate_applicability_code = Yii::$app->general->getTransactionCode($this, $this->product_sale_rate_code);
     }
 
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
 }

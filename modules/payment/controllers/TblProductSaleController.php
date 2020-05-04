@@ -27,11 +27,18 @@ use app\modules\product\models\TblProductRate;
 use yii\widgets\ActiveForm;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use app\modules\payment\models\TblPaymentCycle;
+use app\modules\dcsaccounting\models\TblTaxDetail;
+use app\modules\dcsaccounting\models\TblTaxDepends;
+use app\modules\configuration\models\TblDcsGeneralConfig;
+use app\modules\payment\models\TblProductSaleTaxCalculated;
+use app\modules\payment\models\TblProductSaleTaxCalculatedHistory;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
  */
 class TblProductSaleController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['get-calculation'];
 
     /**
      * Lists all TblProductSale models.
@@ -371,6 +378,68 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         }
                     }
                 }
+
+                $discount_val = !empty($detailModel->discount) ? $detailModel->discount : 0;
+                $totalAmount = 0;
+                $totalAmount = $totalAmount + $detailModel->amount - $discount_val;
+                $credit = $model->amount_due;
+                $configModel = new TblDcsGeneralConfig();
+                $configModel->union_code = $model->union_code;
+                $configModelData = $configModel->getData();
+                $rateWithTax = !empty($configModelData->sale_rate_with_tax) ? $configModelData->sale_rate_with_tax : 0;
+                $taxCode = $detailModel->tax_code;
+                $totalAmt = !empty($model->amount_due) ? $model->amount_due : 0;
+                $discount = !empty($detailModel->discount) ? $detailModel->discount : 0;
+                $quantity = !empty($detailModel->quantity) ? $detailModel->quantity : 1;
+                $amount = !empty($detailModel->x_col1) ? $detailModel->x_col1 : $detailModel->rate;
+                $taxModel = new TblTaxDetail();
+                $taxdata = $taxModel->getDetail($taxCode);
+                $j = 1;
+                if (!empty($taxdata) && $detailModel->tax_amount > 0) {
+                    foreach ($taxdata as $key => $d) {
+                        if ($d->percentage != 100) {
+                            $disc = 0;
+                            $percent = 0;
+                            $count = 0;
+                            foreach ($taxdata as $keys => $per) {
+                                if ($per->percentage != 100) {
+                                    $percent += $per->percentage;
+                                    $count++;
+                                }
+                            }
+                            if ($rateWithTax == 1 || $rateWithTax == true) {
+                                $val = ($amount * 100) / ($percent + 100);
+                                $val = $amount - $val;
+                                $disc = $discount * $percent / 100;
+                            } else {
+                                $val = $amount * $percent / 100;
+                                $disc = $discount * $percent / 100;
+                            }
+                            $val = $val / $count;
+                            $disc = $disc / $count;
+                            $val = $val * $detailModel->quantity;
+                            $val = $val - $disc;
+                            $val = round($val, 2);
+                            $totalAmount = $totalAmount + $val;
+                            $taxModel = new TblProductSaleTaxCalculated();
+                            $taxModel->product_sale_code = $detailModel->product_sale_code;
+                            $taxModel->product_sale_transaction_code = $detailModel->product_sale_transaction_code;
+                            $taxModel->tax_detail_code = $d->tax_detail_code;
+                            $taxModelData = $taxModel->getRecords();
+                            if (!empty($taxModelData)) {
+                                $taxModel = $taxModelData;
+                                $historyModel = new TblProductSaleTaxCalculatedHistory();
+                                Yii::$app->operation->history($taxModel, $historyModel, UPDATE);
+                                $child[] = $historyModel;
+                            } else {
+                                $taxModel->product_sale_tax_calculated_code = Yii::$app->general->getTransactionCode($detailModel, $detailModel->product_sale_code, $j);
+                                $j++;
+                            }
+                            $taxModel->value = $val;
+                            $child[] = $taxModel;
+                        }
+                    }
+                }
                 if ($model->validate()) {
                     $transaction = $this->generalModel->saveTransaction($master, $child, ['Product Sale', 'create']);
                     if ($transaction == 'customRedirect') {
@@ -400,17 +469,17 @@ class TblProductSaleController extends \app\controllers\ChildController {
     }
 
     public function actionLoadRate() {
-        $app = ['rate' => ''];
+        $app = ['rate' => '', 'sale_rate' => '', 'product_sale_rate_applicability_code' => '', 'unit_code' => ''];
         if (!empty($_POST['product_code']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
             $date = !empty($_POST['invoice_date']) ? date('Y-m-d', strtotime($_POST['invoice_date'])) : date('Y-m-d');
 
-            $appQuery = TblProductRateApplicability::find()->innerJoinWith('productRateCode')
-                    ->select(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date'])
+            $appQuery = TblProductRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
+                    ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                     ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
                     ->where(['tbl_product_sale_rate.product_code' => $_POST['product_code'], 'tbl_product_sale_rate_applicability.applicable_for' => $_POST['customer_type'], 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $_POST['is_member_rate'], 'tbl_product_sale_rate_applicability.applicable_code' => $_POST['customer_code']]);
             $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
             if (!empty($app)) {
-                $app = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate']];
+                $app = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
             }
         }
         echo json_encode($app);
@@ -426,6 +495,65 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionGetCalculation() {
+        $tax = $_POST['tax'];
+        $value = $_POST['amount'];
+        $flag = isset($_POST['flag']) ? true : false;
+        $incTax = (isset($_POST['incTax']) && (!empty($_POST['incTax']) || $_POST['incTax'] == 0)) ? $_POST['incTax'] : '';
+        $incTax = ($incTax == true || $incTax == 1) ? 1 : (($incTax == false || $incTax == 0) ? 0 : $incTax);
+        $model = new TblTaxDetail();
+        $data = $model->getDetail($tax);
+        $dependModel = new TblTaxDepends();
+        $records = [];
+        $calculation = null;
+        $configModel = new TblDcsGeneralConfig();
+        $configModel->union_code = $_POST['unionCode'];
+        $configModelData = $configModel->getData();
+
+        $total = 0;
+        $rateWithTax = 0;
+        $per = 0;
+        foreach ($data as $key => $d) {
+            if ($incTax != '') {
+                $rateWithTax = $incTax;
+            } else {
+                $rateWithTax = !empty($configModelData->sale_rate_with_tax) ? $configModelData->sale_rate_with_tax : 0;
+            }
+            $records[$key]['tax_code'] = $d->basic_tax_code;
+            $records[$key]['tax_name'] = Yii::$app->general->getforeignkey($d->basicTaxCode, 'basic_tax_name');
+            $records[$key]['tax_val'] = $d->percentage;
+            $records[$key]['operation'] = ($d->type == 0) ? 'Addition' : 'Substraction';
+
+            if ($key == 0) {
+                $calculation = $value * $d->percentage / 100;
+            } else {
+                $sum = 0;
+                $depend_data = $dependModel->getDepends($d->tax_detail_code);
+                foreach ($depend_data as $depend) {
+                    $sum += $value;
+                }
+                $calculation = $sum * $d->percentage / 100;
+            }
+            $records[$key]['amount'] = $calculation;
+            if ($d->type == 0) {
+                if ($d->percentage != 100) {
+                    $per += $d->percentage;
+                }
+                $total += $records[$key]['amount'];
+            } else {
+                if ($d->percentage != 100) {
+                    $per -= $d->percentage;
+                }
+                $total -= $records[$key]['amount'];
+            }
+        }
+        if ($rateWithTax == 1 && !$flag) {
+            $total = ($value * 100) / ($per + 100);
+            $value = $total;
+        }
+        echo Json::encode(['status' => 'success', 'rateWithTax' => $rateWithTax, 'changedAmount' => (float) $value, 'total' => $total, 'data' => $records]);
     }
 
 }

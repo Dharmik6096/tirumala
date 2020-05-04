@@ -41,11 +41,11 @@ class TblProductSaleDetails extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct']],
-                [['product_sale_code', 'product_code', 'quantity', 'rate'], 'required', 'on' => ['saleProduct']],
+                [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct']],
                 [['product_code', 'quantity'], 'integer'],
                 [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string'],
                 [['rate', 'quantity', 'amount'], 'number', 'min' => 0],
-                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount'], 'safe'],
+                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
 //                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
         ];
@@ -68,6 +68,9 @@ class TblProductSaleDetails extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'amount_due' => Yii::t('app', 'Total Amount'),
+            'unit_code' => Yii::t('app', 'Unit'),
+            'tax_code' => Yii::t('app', 'Tax'),
+            'tax_amount' => Yii::t('app', 'Tax Amount'),
         ];
     }
 

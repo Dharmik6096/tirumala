@@ -37,9 +37,6 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
                 <div class="col-sm-2">
                     <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblproductsale-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
                 </div>
-                <!--<div class="col-sm-3">-->                                             
-                <?php // Yii::$app->dropdown->bmc_society($model, $form, 'tblproductsale-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, '', FALSE, TRUE); ?>         
-                <!--</div>--> 
 
                 <div class="col-sm-2">
                     <?= Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE); ?>
@@ -57,6 +54,10 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
                 <div class="col-sm-2 reset_field">
                     <?php Yii::$app->dropdown->depend_dropdown('product', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                 </div>
+
+                <div class=" col-sm-2 reset_field unit disabledDiv">
+                    <?= Yii::$app->dropdown->dropdown('unit_code', $detailModel, $form, 'form-group col-sm-2', $detailModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
+                </div>
                 <div class="col-sm-2 reset_field">
                     <?= $form->field($detailModel, 'rate')->textInput(['readOnly' => true]) ?>
                 </div>
@@ -67,7 +68,14 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
                     <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
                 </div>
                 <div class="col-sm-2 reset_field">
+                    <?= Yii::$app->dropdown->dropdown('tax_code', $detailModel, $form, 'form-group col-sm-3', $detailModel->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
+                </div>
+                <div class="col-sm-2 reset_field">
                     <?= $form->field($model, 'discount')->textInput() ?>
+                </div>
+                <div class="col-sm-2 reset_field">
+                    <?= Html::activeHiddenInput($detailModel, 'x_col1'); ?>   
+                    <?= $form->field($detailModel, 'tax_amount')->textInput(['readonly' => true]) ?>
                 </div>
                 <div class="col-sm-2 reset_field">
                     <?= $form->field($model, 'amount_due')->textInput(['readOnly' => true]) ?>
@@ -103,8 +111,8 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
 //                                                                  $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $(".panel-body").scrollTop(0);
-                                                                    $(". reset_field input").val("");
-                                                                    $(". reset_field select").val("");
+                                                                    $(".reset_field input").val("");
+                                                                    $(".reset_field select").val("");
 //                                                                    $("#tblproductsale-payment_mode").val("");
 //                                                                    $("#tblproductsaledetails-product_code").val("");
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
@@ -171,10 +179,141 @@ $script = "
     });
     $(document).on('change','#tblproductsaledetails-quantity',function(){
         setAmount();
+        setAmtFields();
+        setTaxAmount();
     });
+    
+    $('#tblproductsaledetails-rate').on('change', function(){
+        var rate = parseFloat($('#tblproductsaledetails-rate').val());
+        if(rate==0){
+            $('#tblproductsaledetails-amount').val(rate.toFixed(2));
+            $('#tblproductsaledetails-tax_amount').val(rate.toFixed(2));
+            $('#tblproductsaledetails-total_amount').val(rate.toFixed(2));
+        }else{
+            $(this).attr('data-val', $(this).val());
+//            $('#tblproductsaledetails-x_col1').val($(this).val());
+            setAmtFields();
+            setTaxAmount();
+        }
+    });
+    
     $(document).on('change','#tblproductsale-discount',function(){
         setAmount();
+        setTaxAmount();
     });
+    
+
+    $('#tblproductsaledetails-tax_code').on('change', function(){
+        $('#tblproductsale-discount').val('');
+//        $('#tblproductsale-discount').trigger('change');
+        setAmtFields();
+        setTaxAmount();
+    });
+
+    function setAmtFields(){
+        var Qty = parseFloat($('#tblproductsaledetails-quantity').val());
+        var rate = parseFloat($('#tblproductsaledetails-rate').attr('data-val'));
+        if(isNaN(Qty)){
+            Qty = 0;
+        }
+        if(isNaN(rate)){
+            rate = 0;
+        }
+        var amount = Qty * rate;
+        $('#tblproductsaledetails-amount').val(amount.toFixed(2));
+    }
+    function setTaxAmount(){
+        var unionCode = $('#tblproductsale-union_code').val();
+        var taxCode = $('#tblproductsaledetails-tax_code').val();
+        var amountValue = $('#tblproductsale-amount').val();
+        var rateValue = $('#tblproductsaledetails-rate').attr('data-val');
+        var discountValue = $('#tblproductsale-discount').val();
+        var recQty = $('#tblproductsaledetails-quantity').val();
+        if(isNaN(amountValue)){
+            amountValue = 0;
+        }
+        if(isNaN(recQty)){
+            recQty = 0;
+        }
+        if(isNaN(discountValue)){
+            discountValue = 0;
+        }
+        
+        if(amountValue != 0 && taxCode != ''){
+            $.ajax({
+                type: 'POST',
+                url: '" . Url::to(['get-calculation']) . "',     
+                data: 'amount='+rateValue+'&tax='+taxCode+'&unionCode='+unionCode,
+                success: function(data)
+                {
+                    var obj1 = $.parseJSON(data);
+                    if (obj1.status == 'success')
+                    {
+                        var totalAmt = obj1.total;
+                        var changed_amount = obj1.changedAmount;
+                        var taxAmt = (rateValue - totalAmt) * recQty;
+                        var disc = obj1.totalDiscount;
+                        var chagnedRate = obj1.changedAmount;
+                        var changeamount = (obj1.changedAmount * recQty).toFixed(2);
+                        var taxAmount = Math.abs(taxAmt.toFixed(2));
+                        $('#tblproductsaledetails-rate').val(chagnedRate.toFixed(2));
+                        $('#tblproductsale-amount').val(changeamount);
+                        $('#tblproductsaledetails-tax_amount').val(taxAmount);
+                        var totalAmount = parseFloat(changeamount) + parseFloat(taxAmount);
+                        $('#tblproductsale-amount_due').val(totalAmount.toFixed(0));
+                        setTaxAmountDisc();
+                    }
+                }
+            });
+        }
+    }
+
+    function setTaxAmountDisc() {
+        var unionCode = $('#tblproductsale-union_code').val();
+        var taxCode = $('#tblproductsaledetails-tax_code').val();
+        var amountValue = $('#tblproductsale-amount').val();
+        var rateValue = $('#tblproductsaledetails-rate').attr('data-val');
+        var discountValue = $('#tblproductsale-discount').val();
+        var recQty = $('#tblproductsaledetails-quantity').val();
+        var taxAmt = $('#tblproductsaledetails-tax_amount').val();
+
+        if(isNaN(amountValue)){
+            amountValue = 0;
+        }
+        if(isNaN(taxAmt)){
+            taxAmt = 0;
+        }
+        if(isNaN(recQty)){
+            recQty = 0;
+        }
+        if(isNaN(discountValue) || discountValue == '' || discountValue == undefined){
+            discountValue = 0;
+        }
+        var existtotalAmt = $('#tblproductsaledetails-rate').attr('data-val');
+        var totalAmount = existtotalAmt - discountValue;
+        if(taxCode != ''){
+            $.ajax({
+                type: 'POST',
+                url: '" . Url::to(['get-calculation']) . "',     
+                data: 'amount='+discountValue+'&tax='+taxCode+'&flag=check&&unionCode='+unionCode,
+                success: function(data)
+                {
+                    var obj1 = $.parseJSON(data);
+                    if (obj1.status == 'success')
+                    {
+                        var totalAmt = obj1.total;
+                        var diffAmt = totalAmt - discountValue;
+                        taxAmt = taxAmt - diffAmt;
+                        var existToralAmt = $('#tblproductsale-amount_due').val();
+                        var chagneAmt = existToralAmt - diffAmt - discountValue;
+                        $('#tblproductsale-amount_due').val(chagneAmt.toFixed(0));
+                        $('#tblproductsaledetails-tax_amount').val(Math.abs(taxAmt.toFixed(2)));
+                    }
+                }
+            });
+        }
+    }
+    
     setNoOfInstallment();
     $(document).on('change','#tblproductsale-payment_mode',function(){
         setNoOfInstallment();
@@ -200,6 +339,9 @@ $script = "
             success: function(data) {
                 var d=JSON.parse(data);
                 $('#tblproductsaledetails-rate').val(d.sale_rate);
+                $('#tblproductsaledetails-rate').attr('data-val', d.sale_rate);
+                $('#tblproductsaledetails-x_col1').val(d.sale_rate);
+                $('#tblproductsaledetails-unit_code').val(d.unit_code);
                 $('#tblproductsaledetails-product_sale_rate_applicability_code').val(d.product_sale_rate_applicability_code);
                 setAmount();
             },
