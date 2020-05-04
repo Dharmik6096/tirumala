@@ -12,13 +12,16 @@ use app\modules\vsp\models\TblHeadLoadApplicability;
  */
 class TblHeadLoadApplicabilitySearch extends TblHeadLoadApplicability {
 
+    public $name, $code_ex;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                //  [['code', 'created_at', 'created_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'head_load_code', 'sub_center_code'], 'safe'],
-                // [['is_delete'], 'boolean'],
+            //  [['code', 'created_at', 'created_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'head_load_code', 'sub_center_code'], 'safe'],
+            // [['is_delete'], 'boolean'],
+                [['wef_date', 'applicable_for', 'applicable_code', 'name', 'code_ex'], 'safe'],
         ];
     }
 
@@ -42,6 +45,7 @@ class TblHeadLoadApplicabilitySearch extends TblHeadLoadApplicability {
         $query->where(['head_load_code' => $this->head_load_code]);
         $query->orderBy(['wef_date' => SORT_DESC]);
         // add conditions that should always apply here
+        $query->joinWith(['customerMasterCode', 'dcsName', 'bmcCode', 'mccPlantCode', 'plantCode', 'customerType']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -55,18 +59,28 @@ class TblHeadLoadApplicabilitySearch extends TblHeadLoadApplicability {
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'wef_date' => $this->wef_date,
+        if (!empty($this->wef_date))
+            $query->andFilterWhere(['cast(tbl_head_load_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_name', $this->name],
+                ['like', 'tbl_customer_master.customer_name', $this->name],
+                ['like', 'tbl_plant.name', $this->name],
+                ['like', 'tbl_mcc_plant.name', $this->name],
+                ['like', 'tbl_bmc.bmc_name', $this->name]
         ]);
 
-        $query->andFilterWhere(['like', 'code', $this->code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'head_load_code', $this->head_load_code]);
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
+        ]);
+
+        // grid filtering conditions
+
+        $query->andFilterWhere(['like', 'tbl_head_load_applicability.applicable_code', $this->applicable_code])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
+//                ->andFilterWhere(['like', 'tbl_dcs_purchase_rate_applicability.applicable_for', $this->applicable_for])
+                ->andFilterWhere(['like', 'union_code', $this->union_code]);
 
         return $dataProvider;
     }

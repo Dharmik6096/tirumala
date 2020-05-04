@@ -62,29 +62,29 @@ class TblDcsBmc extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
-            [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
-            [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
+                [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
+                [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
+                [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
+                [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+                [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
+                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
+                [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['local_name'], function ($attribute, $params) {
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['bmc_code'], 'integer', 'min' => 1],
-            [['bmc_code'], 'string', 'max' => 5],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
-            [['mcc_plant_code'], 'setField'],
-            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
-            [['bmc_code'], 'unique']
+                [['bmc_code'], 'integer', 'min' => 1],
+                [['bmc_code'], 'string', 'max' => 5],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+                [['mcc_plant_code'], 'setField'],
+                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+                [['bmc_code'], 'unique']
         ];
     }
 
@@ -387,7 +387,7 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasMany(TblBmcGroupMapping::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getBmcs($unionCode, $notIn = []) {
+    public function getBmcs($unionCode, $notIn = [], $concatCode = false) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('BMC') !== '') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
@@ -396,13 +396,28 @@ class TblDcsBmc extends \app\models\ChildModel {
             $query->andWhere(['not in', 'bmc_code', $notIn]);
         }
         $bmc = $query->all();
-        $bmc = ArrayHelper::map($bmc, 'bmc_code', 'bmc_name');
+        $bmc = ArrayHelper::map($bmc, 'bmc_code', function($bmc) use ($concatCode) {
+                    return $bmc->bmc_name . ($concatCode ? ' - ' . $bmc->bmc_code : '');
+                });
         asort($bmc, SORT_NATURAL | SORT_FLAG_CASE);
         return $bmc;
     }
 
     public function getTblBmcMain() {
         return $this->hasMany(TblBmcGroupMapping::className(), ['p_bmc_code' => 'bmc_code']);
+    }
+
+    public function getMccBmcList($unionCode, $mccCodes) {
+        $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1, 'mcc_plant_code' => $mccCodes]);
+        if (Yii::$app->session->get('BMC') !== '') {
+            $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        $bmc = $query->all();
+        $bmc = ArrayHelper::map($bmc, 'bmc_code', function($bmc) {
+                    return $bmc->bmc_name . ' - ' . $bmc->bmc_code;
+                });
+        asort($bmc, SORT_NATURAL | SORT_FLAG_CASE);
+        return $bmc;
     }
 
 }

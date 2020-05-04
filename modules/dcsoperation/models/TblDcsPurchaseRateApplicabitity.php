@@ -69,13 +69,13 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            ['is_active', 'default', 'value' => 1],
-            ['is_download', 'default', 'value' => 0],
-            [['wef_date', 'shift_code', 'applicable_code'], 'required'],
-            [['applicable_code'], 'checkDuplicate'],
+                ['is_active', 'default', 'value' => 1],
+                ['is_download', 'default', 'value' => 0],
+                [['wef_date', 'shift_code', 'applicable_code'], 'required'],
+//                [['applicable_code'], 'checkDuplicate'], //Comment as Set Validation from DB Side: Hardik
 //            [['route_code'], 'required', 'except' => 'applicability'],
             [['purchase_rate_code', 'dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date', 'applicable_code', 'applicable_for'], 'safe'],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
 //[['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPurchaseRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
@@ -105,9 +105,9 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
             'deleted_by' => Yii::t('app', 'Deleted By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'route_name' => Yii::t('app', 'Route Name'),
-            'applicable_code' => Yii::t('app', 'Code'),
-            'applicable_for' => Yii::t('app', 'For'),
-            'mcc_name' => Yii::t('app', 'Name'),
+            'applicable_for' => Yii::t('app', 'Applicable For'),
+            'applicable_code' => Yii::t('app', 'Applicable Code'),
+            'mcc_name' => Yii::t('app', 'Applicable Name'),
         ];
     }
 
@@ -129,7 +129,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
     /**
@@ -223,9 +223,9 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
             }
             $check = $this->find()->select(['tbl_dcs_purchase_rate_applicability.applicable_code', 'tbl_dcs_purchase_rate.shift_applicability', 'tbl_dcs_purchase_rate.purchase_rate_code', 'tbl_dcs_purchase_rate_applicability.applicable_for'])->joinWith(['purchaseRateCode.shiftApplicability'])
                     ->where(['or',
-                        ['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code,
+                            ['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code,
                             'tbl_dcs_purchase_rate_applicability.applicable_code' => $this->applicable_code, 'tbl_dcs_purchase_rate_applicability.wef_date' => $wef_date],
-                        ['tbl_dcs_purchase_rate_applicability.applicable_code' => $this->applicable_code,
+                            ['tbl_dcs_purchase_rate_applicability.applicable_code' => $this->applicable_code,
                             'convert(date, tbl_dcs_purchase_rate.wef_date, 103)' => $wef_date,
                             'tbl_dcs_purchase_rate.originating_org_type' => 'UNION',
                             'tbl_dcs_purchase_rate.originating_org_code' => Yii::$app->session->get('organizations_code'),
@@ -335,11 +335,11 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
                         ->leftJoin('tbl_rate_download_ack', "tbl_rate_download_ack.rate_app_code=tbl_dcs_purchase_rate_applicability.rate_app_code  AND tbl_rate_download_ack.device_id='$device_id' AND tbl_rate_download_ack.hash_key='$hash_key' AND tbl_rate_download_ack.applicable_for!='MEMBER'")
                         ->where(['tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code])
                         ->andWhere(['or',
-                            ['tbl_dcs_purchase_rate_applicability.applicable_code' => $dcs_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'DCS'],
-                            ['tbl_dcs_purchase_rate_applicability.applicable_code' => $plant_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'PLANT'],
-                            ['tbl_dcs_purchase_rate_applicability.applicable_code' => $bmc_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'BMC'],
-                            ['tbl_dcs_purchase_rate_applicability.applicable_code' => $mcc_plant_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'MCC'],
-                            ['tbl_dcs_purchase_rate_applicability.applicable_code' => $customer_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => $customer_type]
+                                ['tbl_dcs_purchase_rate_applicability.applicable_code' => $dcs_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'DCS'],
+                                ['tbl_dcs_purchase_rate_applicability.applicable_code' => $plant_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'PLANT'],
+                                ['tbl_dcs_purchase_rate_applicability.applicable_code' => $bmc_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'BMC'],
+                                ['tbl_dcs_purchase_rate_applicability.applicable_code' => $mcc_plant_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => 'MCC'],
+                                ['tbl_dcs_purchase_rate_applicability.applicable_code' => $customer_code, 'tbl_dcs_purchase_rate_applicability.applicable_for' => $customer_type]
                         ])
                         ->andWhere(['tbl_rate_download_ack.ack_id' => NULL])
                         ->all();
@@ -381,6 +381,14 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
 
     public function getCustomerTypeFor() {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
     }
 
 }

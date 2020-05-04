@@ -58,18 +58,20 @@ class DefaultController extends Controller {
             //$list=  ArrayHelper::getColumn($list, 'dcs_code');
             //$values=  array_values($list);
             //$values=[];
-            $dcsalertarray = $module->getDcsAlert($union_code, $id);
-            $dcsalert = $dcsalertarray[0];
-            $removedcs = $dcsalertarray[1];
+            //Comment as Set Validation from DB Side: Hardik
+//            $dcsalertarray = $module->getDcsAlert($union_code, $id);
+//            $dcsalert = $dcsalertarray[0];
+//            $removedcs = $dcsalertarray[1];
             //var_dump($values);exit;
         } else if ($ratechart) {
             //$list=$module->model->getPaymentCycleDcs($module->field_value);
             //$list=  ArrayHelper::getColumn($list, 'dcs_code');
             //$values=  array_values($list);
             //$values=[];
-            $dcsalertarray = $module->getDcsAlertRateChart($union_code, $id, $wef_date, $module->shift_type);
-            $dcsalert = $dcsalertarray[0];
-            $removedcs = $dcsalertarray[1];
+            //Comment as Set Validation from DB Side: Hardik
+//            $dcsalertarray = $module->getDcsAlertRateChart($union_code, $id, $wef_date, $module->shift_type);
+//            $dcsalert = $dcsalertarray[0];
+//            $removedcs = $dcsalertarray[1];
             //var_dump($values);exit;
         }
         switch ($flag) {
@@ -94,7 +96,7 @@ class DefaultController extends Controller {
         }
         //echo 'here';exit;
         $dcs_list = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
-                    return $dcs->dcs_name . '-' . $dcs->dcs_code;
+                    return $dcs->dcs_name . '-' . $dcs->dcs_code_ex;
                 });
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $dcs_list, 'dcsalert' => $dcsalert, 'dcsarray' => $removedcs]);
@@ -118,6 +120,8 @@ class DefaultController extends Controller {
             $where = ['wef_date' => $wef_date];
         }
         $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where);
+        $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
+        $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? json_decode(Yii::$app->request->post('selected_bmc')) : [];
         switch (1) {
             case key_exists('routes', $filters):
                 $routs = new TblRouteMapping();
@@ -129,19 +133,19 @@ class DefaultController extends Controller {
                 break;
             case in_array($filter, ['PLANT']):
                 $plantModel = new TblPlant();
-                $filter_data['applicable_code'] = $plantModel->getPlantList($union_code, TRUE, $modelQuery);
+                $filter_data['applicable_code'] = $plantModel->getPlantList($union_code, TRUE, $modelQuery, true);
                 break;
             case in_array($filter, ['MCC']):
                 $mccModel = new TblMccPlant();
-                $filter_data['applicable_code'] = $mccModel->getMccs($union_code, $modelQuery);
+                $filter_data['applicable_code'] = $mccModel->getMccs($union_code, $modelQuery, true);
                 break;
             case in_array($filter, ['BMC']):
                 $bmcModel = new TblDcsBmc();
-                $filter_data['applicable_code'] = $bmcModel->getBmcs($union_code, $modelQuery);
+                $filter_data['applicable_code'] = $bmcModel->getBmcs($union_code, $modelQuery, true);
                 break;
             case in_array($filter, ['DCS']):
                 $bmcModel = new TblDcs();
-                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery);
+                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'dcs_code_ex');
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();
@@ -149,13 +153,21 @@ class DefaultController extends Controller {
 //                break;
             default :
                 $vendorModel = new TblCustomerMaster();
-                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, $filter, $modelQuery);
+                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, $filter, $modelQuery, true, true, $mccCodes, $bmcCodes);
         }
         if (key_exists('mcc', $filters)) {
             $mcc = new TblMccPlant();
             $filter_data['mcc'] = $mcc->getMccs($union_code);
         }
         return Json::encode(['status' => 'success', 'data' => $filter_data]);
+    }
+
+    public function actionLoadBmcData() {
+        $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? Yii::$app->request->post('selected_mcc') : [];
+        $unionCode = !empty(Yii::$app->request->post('union_code')) ? Yii::$app->request->post('union_code') : '';
+        $bmcModel = new TblDcsBmc();
+        $bmcList = $bmcModel->getMccBmcList($unionCode, json_decode($mccCodes));
+        return Json::encode(['status' => 'success', 'data' => $bmcList]);
     }
 
 }

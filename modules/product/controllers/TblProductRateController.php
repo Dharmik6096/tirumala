@@ -171,6 +171,9 @@ class TblProductRateController extends \app\controllers\ChildController {
                     return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
                 }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
             'name' => ['view' => ['grid'], 'value' => function($model) {
                     return $model->getName($model->applicable_for);
                 }],

@@ -7,6 +7,7 @@ use yii\helpers\Url;
 
 $url = Url::to(['/applicability/default/load-society']);
 $furl = Url::to(['/applicability/default/load-filter-data']);
+$bmcUrl = Url::to(['/applicability/default/load-bmc-data']);
 $model_name = str_replace('\\', '_', $model_name);
 $cname = explode('_', $model_name);
 $cname = end($cname);
@@ -14,6 +15,12 @@ $nameforid = strtolower($cname);
 $filter_json = json_encode($filters);
 $model->union_code = $union_code;
 Url::remember();
+$selectedMccCode = !empty($selectedMccCode) ? $selectedMccCode : [];
+$selectedMccCode = json_encode($selectedMccCode);
+$selectedBmcCode = !empty($selectedBmcCode) ? $selectedBmcCode : [];
+$selectedBmcCode = json_encode($selectedBmcCode);
+$selectedAppCode = !empty($model->$main_field_name) ? $model->$main_field_name : [];
+$selectedAppCode = json_encode($selectedAppCode);
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -53,7 +60,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 if (isset($f['class'])) {
                     $divPrefix = '<div class="col-sm-3 ' . $f['class'] . '">';
                 }
-                echo $divPrefix . Yii::$app->dropdown->dropdown($f['flag'], $model, $form, '', 'Shift', false, $key) . $divPostfix;
+                echo $divPrefix . Yii::$app->dropdown->dropdown($f['flag'], $model, $form, '', $model->getAttributeLabel($key), false, $key) . $divPostfix;
             }
         }
     }
@@ -90,6 +97,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         </div>
         <?php
     } else if (in_array('tanker_rate', $options)) {
+        // change here for BMC MCC Filter
         $modelName = \yii\helpers\StringHelper::basename(get_class($model));
         $class = 'col-sm-12';
         $checkboxClass = 'col-sm-3';
@@ -122,24 +130,75 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         </div>
     <?php } ?>
     <div class="<?= $class ?>">
-        <div class="app-check-list">
-            <h4><?= $title ?> List</h4>
-            <div class="form-group">
-                <div class="checkbox app-check-all">
-                    <label class="route-text">
-                        <?= Html::checkbox('checkall', false, ['id' => 'checkAll', 'class' => 'route-checkbox']) ?>
-                        <label for="checkAll">Check All <?= $title ?></label>
-                    </label>
+        <div class="col-sm-3 padding-left-0 selectMccArea disp_none">
+            <div class="app-check-list-mcc">
+                <h4><?= Yii::t('app', 'MCC List') ?></h4>
+                <div class="form-group">
+                    <div class="checkbox app-check-all-mcc">
+                        <label class="route-text">
+                            <?= Html::checkbox('checkall', false, ['id' => 'checkAllMccList', 'class' => 'mcc-list-checkbox']) ?>
+                            <label for="checkAllMccList"><?= Yii::t('app', 'Check ALL MCC') ?></label>
+                        </label>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div id="mcc-wrap checkAllMcc" class="<?= $customerClass ?>">
+                    <?=
+                    $this->render('_checkbox_list', [
+                        'model' => $model, 'form' => $form, 'field_name' => 'f_mcc_code',
+                        'list' => $mccList, 'selected' => [], 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
+                        'checkboxWidthClass' => 'col-sm-12', 'idPrefix' => 'mcc',
+                        'checkboxClass' => ' flt-checkbox mccCheckboxes', 'setCheckboxClass' => 'mccCheck'
+                    ])
+                    ?>
                 </div>
             </div>
-            <div class="clearfix"></div>
-            <div id="dcs-wrap" class="<?= $customerClass ?>">
-                <?=
-                $this->render('_checkbox_list', [
-                    'model' => $model, 'form' => $form, 'field_name' => $main_field_name,
-                    'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
-                ])
-                ?>
+        </div>
+        <div class="col-sm-3 padding-left-0 selectBmcArea disp_none">
+            <div class="app-check-list-bmc">
+                <h4><?= Yii::t('app', 'BMC List') ?></h4>
+                <div class="form-group">
+                    <div class="checkbox app-check-all-bmc">
+                        <label class="route-text">
+                            <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
+                            <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL BMC') ?></label>
+                        </label>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div id="bmc-wrap checkAllBmc" class="<?= $customerClass ?>">
+                    <?=
+                    $this->render('_checkbox_list', [
+                        'model' => $model, 'form' => $form, 'field_name' => 'f_bmc_code',
+                        'list' => [], 'selected' => $selectedBmcCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
+                        'checkboxWidthClass' => 'col-sm-12', 'idPrefix' => 'bmc',
+                        'checkboxClass' => ' flt-checkbox bmcCheckboxes', 'setCheckboxClass' => 'bmcCheck'
+                    ])
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 padding-left-0 padding-right-0 applicableCodeArea">
+            <div class="app-check-list">
+                <h4><?= $title ?> List</h4>
+                <div class="form-group">
+                    <div class="checkbox app-check-all">
+                        <label class="route-text">
+                            <?= Html::checkbox('checkall', false, ['id' => 'checkAll', 'class' => 'route-checkbox']) ?>
+                            <label for="checkAll">Check All <?= $title ?></label>
+                        </label>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div id="dcs-wrap" class="<?= $customerClass ?>">
+                    <?=
+                    $this->render('_checkbox_list', [
+                        'model' => $model, 'form' => $form, 'field_name' => $main_field_name,
+                        'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
+                        'checkboxClass' => ' flt-checkbox dcsCheckboxes'
+                    ])
+                    ?>
+                </div>
             </div>
         </div>
     </div>
@@ -155,6 +214,9 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+    var selectedMcc = [];
+    var selectedBmc = [];
+    var selectedSociety = [];
     $('#w0').submit(function() {
             //$('#loadercontent').show();
             //$('#pageloader').show();
@@ -213,8 +275,10 @@ $script = "
 //            addSociety('society',0,'');
         }
 //        $('#dcs-filter input[type=\'radio\']:first').attr('checked', true);
+        // use for select default first radio button
         $('#dcs-filter input[type=\'radio\']:first').trigger('click');
 //        addFilterData($('#{$nameforid}-union_code').val(), $('#dcs-filter input[type=\'radio\']:first').val(), 'applicable_code');
+        setMccBmcData();
     });
     $('#{$nameforid}-union_code').on('change',function(){
         addFilterData($(this).val());
@@ -246,14 +310,39 @@ $script = "
         addSociety(flag,id,chkbx);  
     })
     $(document).on('click', '.applicable_for',function(event){
+        selectedSociety = [];
         $('.getTitleForThis').removeClass('getTitleForThis');
         $(this).closest('label').addClass('getTitleForThis');
         $('.app-check-list h4').text($('.getTitleForThis').text() + ' List');
         $('.app-check-all label label').text('Check All '+$('.getTitleForThis').text());
         addFilterData($('#{$nameforid}-union_code').val(), $(this).val(), 'applicable_code');
     });
-    function addFilterData(ucode, filter_type = '', applicable_for = '')
+    function addFilterData(ucode, filter_type = '', applicable_for = '', selectAppCode = [])
     {
+        var checkFilter = filter_type.toLowerCase();
+        var setClass = 'col-sm-3';
+        if(checkFilter == 'bulkven' || checkFilter == 'vlccven' || checkFilter == 'dcs') {
+            $('.selectMccArea').show();
+            $('.selectBmcArea').show();
+            $('.applicableCodeArea').removeClass('col-sm-12');
+            $('.applicableCodeArea').addClass('col-sm-6');
+            setClass = 'col-sm-4';
+//            $('.applicableCodeArea .dcs-checklist').addClass('col-sm-3');
+//            $('.applicableCodeArea .dcs-checklist').removeClass('col-sm-4');
+        } else {
+            $('#f_bmc_code-list').empty();
+            $('.mccCheckboxes').prop('checked',false);
+            $('#checkAllMccList').prop('checked',false);
+            $('#checkAllBmcList').prop('checked',false);
+            setClass = 'col-sm-3';
+            $('.selectMccArea').hide();
+            $('.selectBmcArea').hide();
+            $('.applicableCodeArea').addClass('col-sm-12');
+            $('.applicableCodeArea').removeClass('col-sm-6');
+//            $('.applicableCodeArea .dcs-checklist').removeClass('col-sm-3');
+//            $('.applicableCodeArea .dcs-checklist').addClass('col-sm-4');
+        }
+        if(filter_type)
         var appendId='nd';
         var flts=JSON.stringify({$filter_json});
         var fld='{$field_name}';
@@ -261,33 +350,66 @@ $script = "
         var mname='{$model_name}';
         var wef_date=$('#{$nameforid}-wef_date').val(); 
         var checkdate='{$check_wef_date}';
-
+            
+        selectedBmc = [];
+        $('.bmcCheckboxes').each(function () {
+            if ($(this).is(':checked')) {
+                selectedBmc.push($(this).val());
+            }   
+        });
+        selectedMcc = [];
+        $('.mccCheckboxes').each(function () {
+            if ($(this).is(':checked')) {
+                selectedMcc.push($(this).val());
+            } 
+        });
+        selectedSociety = [];
+        $('.dcsCheckboxes').each(function () {
+            if ($(this).is(':checked')) {
+                selectedSociety.push($(this).val());
+            } 
+        });
         $.ajax({
-                        type: 'post',
-                        url: '{$furl}',
-                        data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate},
-                        success: function(data) {
-                            var obj1 = $.parseJSON(data);
-                            if (obj1.status == 'success')
-                            {
-                                $.each(obj1.data, function(index, value) {
-                                        $('#'+index+'-list').empty();
-                                        appendId = index;
-                                        $.each(value, function(ind, vl) {
-                                            if(applicable_for == ''){
-                                               $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+appendId+'-'+ind+'\"><label class=\"route-text\" for=\"'+appendId+'-'+ind+'\">'+vl+'</label></div></div>');
-                                            } else {
-                                                var modelName = '" . $modelName . "';
-                                                $('#'+index+'-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><label class=\"route-text\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"'+modelName+'[applicable_code][]\" value=\"'+ind+'\" id=\"'+ind+'\"><label for=\"'+ind+'\">'+vl+'</label></label></div></div>');
-                                            }
-                                        });
+            type: 'post',
+            url: '{$furl}',
+            data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc)},
+            success: function(data) {
+                var obj1 = $.parseJSON(data);
+                if (obj1.status == 'success')
+                {
+                    $.each(obj1.data, function(index, value) {
+                        $('#'+index+'-list').empty();
+                        appendId = index;
+                        $.each(value, function(ind, vl) {
+                            if(applicable_for == ''){
+                               $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+appendId+'-'+ind+'\"><label class=\"route-text\" for=\"'+appendId+'-'+ind+'\">'+vl+'</label></div></div>');
+                            } else {
+                                var modelName = '" . $modelName . "';
+                                $('#'+index+'-list').append('<div class=\"'+setClass+' dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><label class=\"route-text\"><input type=\"checkbox\" class=\"route-checkbox dcsCheckboxes\" name=\"'+modelName+'[applicable_code][]\" value=\"'+ind+'\" id=\"'+ind+'\"><label for=\"'+ind+'\">'+vl+'</label></label></div></div>');
+                                
+                                $('.dcsCheckboxes').each(function () {
+                                    var checkVal = $(this).val();
+                                    if (selectedSociety.indexOf(checkVal) >= 0) {
+                                        $(this).prop('checked', true);
+                                    }
+                                });
+                                if(selectAppCode.length > 0) {  
+                                    $('.dcsCheckboxes').each(function () {
+                                        var checkVal = $(this).val();
+                                        if (selectAppCode.indexOf(checkVal) >= 0) {
+                                            $(this).prop('checked', true);
+                                        }
                                     });
-                            }
-                        },
-                        error:function(data){
-                                    //alert('Your data has not been submitted..Please try again');
                                 }
-            });  
+                            }
+                        });
+                    });
+                }
+            },
+            error:function(data){
+                    //alert('Your data has not been submitted..Please try again');
+            }
+        });  
     }
     function addSociety(flag,id,chkbx)
     {
@@ -335,7 +457,86 @@ $script = "
                                 }
             });  
     }
-
+    $('#checkAllMccList').click(function (event) {
+        $('.mccCheckboxes').prop('checked', $(this).is(':checked'));
+        setBmcList();
+    });
+    
+    $('.mccCheckboxes').click(function (event) {
+        setBmcList();
+    });
+    function setBmcList(selectBmc = [],selectAppCode = []){
+        selectedBmc = [];
+        $('.bmcCheckboxes').each(function () {
+            if ($(this).is(':checked')) {
+                selectedBmc.push($(this).val());
+            }   
+        });
+        selectedMcc = [];
+        $('.mccCheckboxes').each(function () {
+            if ($(this).is(':checked')) {
+                selectedMcc.push($(this).val());
+            } 
+        });
+        var unionCode = $('#{$nameforid}-union_code').val();
+        $('#f_bmc_code-list').empty();
+//        console.log(selectedMcc);
+//        return false;
+        $.ajax({
+            type: 'post',
+            url: '{$bmcUrl}',
+            data: {'selected_mcc':JSON.stringify(selectedMcc),'union_code':unionCode},
+            success: function(data) {
+                var obj1 = $.parseJSON(data);
+                if (obj1.status == 'success') {
+                    $.each(obj1.data, function(index, value) {
+                        $('#f_bmc_code-list').append('<div class=\"col-sm-12 bmc-checklist checklist\" id=\"bmc-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"bmcCheck flt-checkboxa bmcCheckboxes\" name=\"{$cname}[f_bmc_code][]\" value=\"'+index+'\" id=\"bmc-input-'+index+'\"><label class=\"route-text\" for=\"bmc-input-'+index+'\">'+value+'</label></div></div>');
+                    });
+                    $('.bmcCheckboxes').each(function () {
+                        var checkVal = $(this).val();
+                        if (selectedBmc.indexOf(checkVal) >= 0) {
+                            $(this).prop('checked', true);
+                        }
+                    });
+                    if(selectBmc.length > 0) {
+                        $('.bmcCheckboxes').each(function () {
+                        var checkVal = $(this).val();
+                        if (selectBmc.indexOf(checkVal) >= 0) {
+                            $(this).prop('checked', true);
+                        }
+                    });
+                    }
+                    addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code', selectAppCode);
+                }
+            },
+            error:function(data) {
+                    //alert('Your data has not been submitted..Please try again');
+                }
+        }); 
+    }
+    $('#checkAllBmcList').click(function (event) {
+        $('.bmcCheckboxes').prop('checked', $(this).is(':checked'));
+        addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code');
+    });
+    
+    $(document).on('click', '.bmcCheckboxes', function(){
+        addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code');
+    })
+    function setMccBmcData(){
+        var selectMcc = '" . $selectedMccCode . "';
+        var selectBmc = '" . $selectedBmcCode . "';
+        selectMcc = JSON.parse(selectMcc);
+        $('.mccCheckboxes').each(function () {
+            var checkVal = $(this).val();
+            if (selectMcc.indexOf(checkVal) >= 0) {
+                $(this).prop('checked', true);
+            }
+        });
+        var selectAppCode = '" . $selectedAppCode . "';
+        selectAppCode = JSON.parse(selectAppCode);
+        selectBmc = JSON.parse(selectBmc);
+        setBmcList(selectBmc, selectAppCode);
+    }
 ";
 //if ($customer_type_wise_entry) {
 //    $script .= "
