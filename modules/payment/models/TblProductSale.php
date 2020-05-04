@@ -20,8 +20,7 @@ use app\modules\collection\models\TblBmcCollection;
  * @property string $product_sale_code
  * @property string $dcs_code
  * @property string $union_code
- * @property string $member_code
- * @property string $sale_date_time
+ * @property string $invoice_date
  * @property string $amount
  * @property string $other_amount
  * @property string $discount
@@ -55,30 +54,30 @@ class TblProductSale extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code'], 'required', 'except' => ['saleProduct']],
-                [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'sale_date_time', 'sale_mode'], 'required', 'on' => ['saleProduct']],
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by'], 'string'],
-                [['sale_date_time', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'sale_date_time', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'sale_type', 'customer_type', 'customer_code', 'sale_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
+                [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct']],
+                [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct']],
+                [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
+                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'number', 'min' => 0],
                 [['discount'], 'validateDisccount'],
                 [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
                 [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct']],
-                [['sale_date_time'], 'validatePaymentCycle', 'on' => ['saleProduct']],
+                [['invoice_date'], 'validatePaymentCycle', 'on' => ['saleProduct']],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'default', 'value' => 0],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
 //                return ($this->amount_due>0);
 //            },'tooSmall'=>'You must check pay in installment to pay the due'],
             [['no_of_installment'], 'required', 'on' => 'saleProduct', 'when' => function() {
-                    return ($this->sale_mode == 1);
+                    return ($this->payment_mode == 1);
                 }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblproductsale-sale_mode').val() == 1; 
+              return $('#tblproductsale-payment_mode').val() == 1; 
           }"],
                 [['no_of_installment'], 'integer', 'min' => 1, 'on' => 'saleProduct', 'when' => function() {
-                    return ($this->sale_mode == 1);
+                    return ($this->payment_mode == 1);
                 }, 'whenClient' => "function (attribute, value) {
-              return $('#tblproductsale-sale_mode').val() == 1; 
+              return $('#tblproductsale-payment_mode').val() == 1; 
           }", 'tooSmall' => 'You must have atleast 1 installment to pay the due'],
 //            [['no_of_installment'], 'required','on'=>'payment','when'=>function(){
 //                return ($this->is_installment==1);
@@ -108,8 +107,7 @@ class TblProductSale extends \app\models\ChildModel {
             'product_sale_code' => Yii::t('app', 'Product Sale Code'),
             'dcs_code' => Yii::t('app', 'Society Name'),
             'union_code' => Yii::t('app', 'Union'),
-            'member_code' => Yii::t('app', 'Member'),
-            'sale_date_time' => Yii::t('app', 'Sale Date'),
+            'invoice_date' => Yii::t('app', 'Sale Date'),
             'amount' => Yii::t('app', 'Amount'),
             'other_amount' => Yii::t('app', 'Other Amount'),
             'discount' => Yii::t('app', 'Discount'),
@@ -127,7 +125,7 @@ class TblProductSale extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'customer_code' => Yii::t('app', 'Name'),
             'customer_type' => Yii::t('app', 'Type'),
-            'sale_mode' => Yii::t('app', 'Sale Type'),
+            'payment_mode' => Yii::t('app', 'Payment Type'),
             'customer_code' => Yii::t('app', 'Name'),
         ];
     }
@@ -146,13 +144,12 @@ class TblProductSale extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getMemberCredit() {
-        return $this->hasOne(TblMemberCreditLimit::className(), ['member_code' => 'member_code']);
-    }
-
-    public function getMemberCode() {
-        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
-    }
+//    public function getMemberCredit() {
+//        return $this->hasOne(TblMemberCreditLimit::className(), ['member_code' => 'member_code']);
+//    }
+//    public function getMemberCode() {
+//        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+//    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -186,8 +183,8 @@ class TblProductSale extends \app\models\ChildModel {
         $this->attributes = $jsonData;
         $this->product_sale_code = (string) Yii::$app->general->getCodeAutoIncrement($this);
         $this->dcs_code = $jsonData['dcs_code'];
-        $this->member_code = $jsonData['member_code'];
-        $this->sale_date_time = date('Y-m-d H:i:s');
+//        $this->member_code = $jsonData['member_code'];
+        $this->invoice_date = date('Y-m-d H:i:s');
         $this->other_amount = 0;
         $this->discount = 0;
         $this->paid_amount = 0;
@@ -210,10 +207,11 @@ class TblProductSale extends \app\models\ChildModel {
     public function getData($data) {
         $from_date = $data['from_date'];
         $to_date = $data['to_date'];
-        return $this->find()->select(['product_sale_code', 'amount', 'amount_due', 'sale_date_time',
+        return $this->find()->select(['product_sale_code', 'amount', 'amount_due', 'invoice_date',
                             'no_of_installment', 'is_installment',
-                            'dcs_code', 'union_code', 'member_code'])
-                        ->where(['member_code' => $this->member_code])->andWhere("sale_date_time between '$from_date' and '$to_date' ")->asArray()->all();
+                            'dcs_code', 'union_code'])
+//                        ->where(['member_code' => $this->member_code])
+                        ->andWhere("invoice_date between '$from_date' and '$to_date' ")->asArray()->all();
     }
 
     public function getDcsBmcCode() {
@@ -237,12 +235,12 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function validatePaymentCycle($attribute, $params) {
-        if (!empty($this->sale_date_time) && $this->sale_mode == 1) {
+        if (!empty($this->invoice_date) && $this->payment_mode == 1) {
             $model = new TblPaymentCycleApplicability();
             $model->applicable_type = $this->customer_type;
             $model->applicable_code = $this->bmc_code;
             $model->applicable_for = 'BMC';
-            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->sale_date_time)));
+            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
             if (!empty($modelData)) {
                 if ($modelData->data_lock_bmc == 1) {
                     $this->addError($attribute, "Payment Cycle is locked for Sale Date.");
@@ -251,13 +249,13 @@ class TblProductSale extends \app\models\ChildModel {
                 $toDate = date('Y-m-d', strtotime($modelData->to_date));
                 $saledAmount = 0;
                 $where = [];
-                $where = ['sale_type' => $this->sale_type, 'sale_mode' => $this->sale_mode, 'customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
-                if (strtolower($this->sale_type) == 'member') {
-                    $where['member_code'] = $this->member_code;
-                }
+                $where = ['payment_mode' => $this->payment_mode, 'customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
+//                if (strtolower($this->sale_type) == 'member') {
+//                    $where['member_code'] = $this->member_code;
+//                }
                 $data = $this->find()
                         ->select(['amount_due' => 'ISNULL(SUM(ISNULL(amount_due, 0)),0)'])
-                        ->where(['between', 'cast(sale_date_time as date)', $fromDate, $toDate])
+                        ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
                         ->andWhere($where)
                         ->one();
                 if (!empty($data->amount_due)) {
@@ -266,10 +264,10 @@ class TblProductSale extends \app\models\ChildModel {
                 $model = new TblBmcCollection();
                 $collWhere = [];
                 $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
-                if (strtolower($this->sale_type) == 'member') {
-                    $model = new TblMilkCollection();
-                    $collWhere = ['member_code' => $this->member_code];
-                }
+//                if (strtolower($this->sale_type) == 'member') {
+//                    $model = new TblMilkCollection();
+//                    $collWhere = ['member_code' => $this->member_code];
+//                }
                 $modelData = $model->find()
                         ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
                         ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])

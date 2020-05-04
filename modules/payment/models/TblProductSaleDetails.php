@@ -9,12 +9,12 @@ use app\modules\payment\models\TblSaleInstallments;
 /**
  * This is the model class for table "tbl_product_sale_details".
  *
- * @property integer $sale_detail_code
+ * @property integer $product_sale_transaction_code
  * @property string $product_sale_code
  * @property integer $product_code
- * @property string $rate_app_code
+ * @property string $product_sale_rate_applicability_code
  * @property double $rate
- * @property string $qty
+ * @property string $quantity
  * @property string $amount
  * @property string $created_at
  * @property string $created_by
@@ -31,7 +31,8 @@ class TblProductSaleDetails extends \app\models\ChildModel {
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_product_sale_details';
+//        return 'tbl_product_sale_details';
+        return 'tbl_product_sale_transaction';
     }
 
     /**
@@ -39,12 +40,12 @@ class TblProductSaleDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['sale_detail_code', 'product_sale_code', 'product_code', 'qty'], 'required', 'except' => ['saleProduct']],
-                [['product_sale_code', 'product_code', 'qty', 'rate'], 'required', 'on' => ['saleProduct']],
-                [['sale_detail_code', 'product_code', 'qty'], 'integer'],
-                [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by'], 'string'],
-                [['rate', 'qty', 'amount'], 'number', 'min' => 0],
-                [['created_at', 'updated_at', 'rate_app_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct']],
+                [['product_sale_code', 'product_code', 'quantity', 'rate'], 'required', 'on' => ['saleProduct']],
+                [['product_code', 'quantity'], 'integer'],
+                [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string'],
+                [['rate', 'quantity', 'amount'], 'number', 'min' => 0],
+                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount'], 'safe'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
 //                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
         ];
@@ -55,12 +56,12 @@ class TblProductSaleDetails extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'sale_detail_code' => Yii::t('app', 'Sale Detail Code'),
+            'product_sale_transaction_code' => Yii::t('app', 'Sale Detail Code'),
             'product_sale_code' => Yii::t('app', 'Product Sale Code'),
             'product_code' => Yii::t('app', 'Product'),
-            'rate_app_code' => Yii::t('app', 'Rate App Code'),
+            'product_sale_rate_applicability_code' => Yii::t('app', 'Rate App Code'),
             'rate' => Yii::t('app', 'Rate'),
-            'qty' => Yii::t('app', 'Qty'),
+            'quantity' => Yii::t('app', 'Quantity'),
             'amount' => Yii::t('app', 'Amount'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -100,8 +101,8 @@ class TblProductSaleDetails extends \app\models\ChildModel {
     }
 
     public function getTransData($invoice_no) {
-        return $this->find()->select(['sale_detail_code', 'amount',
-                    'qty', 'rate', 'product_sale_code', 'product_code',
+        return $this->find()->select(['product_sale_transaction_code', 'amount',
+                    'quantity', 'rate', 'product_sale_code', 'product_code',
                 ])->where(['product_sale_code' => $invoice_no])->all();
     }
 
@@ -133,7 +134,7 @@ class TblProductSaleDetails extends \app\models\ChildModel {
                 }
                 $sale_product['product_name'] = $product_name;
                 $sale_product['rate'] = $product_detail->rate;
-                $sale_product['quantity'] = $product_detail->qty;
+                $sale_product['quantity'] = $product_detail->quantity;
                 $sale_product['amount'] = $product_detail->amount;
                 $sale_product['sale_date_time'] = $product_detail['productSaleCode']->sale_date_time;
                 $sale_details[] = $sale_product;
@@ -143,7 +144,7 @@ class TblProductSaleDetails extends \app\models\ChildModel {
     }
 
     public function getSaleInstallments() {
-        return $this->hasMany(TblSaleInstallments::className(), ['sale_code' => 'product_sale_code']);
+        return $this->hasMany(TblSaleInstallments::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
 }
