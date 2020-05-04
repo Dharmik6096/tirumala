@@ -1429,24 +1429,13 @@ class GeneralFunctions extends Component {
 
     public function getPrimaryCode($model, $autoInc = 1) {
         $primaryKey = $model->tableSchema->primaryKey[0];
-        $tableName = $model->tableName();
-        $val = (new \yii\db\Query)
-                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
-                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
-                ->from($tableName)
-                ->one();
-        $number = (int) $val[$primaryKey] + $autoInc;
-
-        return $number;
-
         $orgCode = Yii::$app->session->get('organizations_type') . '-' . Yii::$app->session->get('organizations_code') . '-';
         $len = strlen($orgCode);
         $val = $model->find()
-                ->select("MAX(CAST(trim(SUBSTRING(`" . $primaryKey . "` FROM " . $len . " +1)) AS UNSIGNED)) as " . $primaryKey)
-                ->where('(CAST(trim(SUBSTRING(' . $primaryKey . ', 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
-
         $value = $orgCode . $code1;
 
         return $value;
@@ -1454,26 +1443,14 @@ class GeneralFunctions extends Component {
 
     public function getTransactionCode($model, $primaryCode, $autoInc = 1) {
         $primaryKey = $model->tableSchema->primaryKey[0];
-        $tableName = $model->tableName();
-        $val = (new \yii\db\Query)
-                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
-                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
-                ->from($tableName)
-                ->one();
-        $number = (int) $val[$primaryKey] + $autoInc;
-
-        return $number;
-
         $orgCode = $primaryCode . 'T';
         $len = strlen($orgCode);
         $val = $model->find()
-                ->select("MAX(CAST(trim(SUBSTRING(`" . $primaryKey . "` FROM " . $len . " +1)) AS UNSIGNED)) as " . $primaryKey)
-                ->where('(CAST(trim(SUBSTRING(' . $primaryKey . ', 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
-
         $value = $orgCode . $code1;
-
         return $value;
     }
 

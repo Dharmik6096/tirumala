@@ -57,8 +57,8 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
                 [['purchase_rate'], 'safe'],
                 [['originating_type'], 'safe'],
 //                [['applicable_code', 'applicable_for', 'product_code', 'wef_date'], 'unique', 'targetAttribute' => ['applicable_code', 'applicable_for', 'product_code', 'wef_date'], 'message' => 'The combination of Wef Date, Product Code, Applicable Code and Applicable For has already been taken.'],
-            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
-                [['product_purchase_rate_code'], 'validateProductPurchaseRate', 'skipOnEmpty' => false],
+//            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
+            [['product_purchase_rate_code'], 'validateProductPurchaseRate', 'skipOnEmpty' => false],
         ];
     }
 
@@ -68,7 +68,7 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'product_purchase_rate_applicability_code' => Yii::t('app', 'Product Purchase Rate Applicability Code'),
-            'wef_date' => Yii::t('app', 'Wef Date'),
+            'wef_date' => Yii::t('app', 'WEF Date'),
             'product_purchase_rate_code' => Yii::t('app', 'Product Purchase Rate Code'),
             'product_code' => Yii::t('app', 'Product Code'),
             'purchase_rate' => Yii::t('app', 'Purchase Rate'),
@@ -94,7 +94,7 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
     }
 
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
     public function getProductRateCode() {
@@ -148,7 +148,7 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
     }
 
     public function validateProductPurchaseRate($attribute, $params) {
-        $this->product_purchase_rate_applicability_code = Yii::$app->general->getTransactionCode($this);
+        $this->product_purchase_rate_applicability_code = Yii::$app->general->getTransactionCode($this, $this->product_purchase_rate_code);
     }
 
     public function validateProductRate($attribute, $params) {

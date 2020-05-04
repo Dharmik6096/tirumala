@@ -140,7 +140,7 @@ class TblProductPurchaseRate extends \app\models\ChildModel {
         foreach ($rate_data as $rate_code) {
             $product[$i]['product_code'] = $rate_code['product_code'];
             $product[$i]['product_name'] = Yii::$app->general->getforeignkey($rate_code->productCode, 'product_name');
-            $product[$i]['product_rate'] = $rate_code['rate'];
+            $product[$i]['product_rate'] = $rate_code['purchase_rate'];
             $i++;
         }
         return $product;

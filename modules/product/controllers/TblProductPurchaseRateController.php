@@ -140,7 +140,6 @@ class TblProductPurchaseRateController extends \app\controllers\ChildController 
         $customerType = new TblCustomerType();
         $customerType->union_code = $model->union_code;
         $value = $customerType->getCustomerType();
-//        $appModel->model->shift_code = $model->shift_id;
         $appModel->model->wef_date = $model->wef_date;
         $appModel->is_union = false;
         $appModel->union_code = $model->union_code;
@@ -151,6 +150,7 @@ class TblProductPurchaseRateController extends \app\controllers\ChildController 
         $appModel->options = ['tanker_rate'];
         $appModel->assignStaticData = [
             'product_code' => $model->product_code,
+            'purchase_rate' => $model->purchase_rate
         ];
         $appModel->header_title = ' [Product: ' . Yii::$app->general->getforeignkey($model->productCode, 'product_name') . ', Purchase Rate: ' . $model->purchase_rate . '] ';
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
@@ -160,6 +160,9 @@ class TblProductPurchaseRateController extends \app\controllers\ChildController 
                     return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
                 }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
             'name' => ['view' => ['grid'], 'value' => function($model) {
                     return $model->getName($model->applicable_for);
                 }],

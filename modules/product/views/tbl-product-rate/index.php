@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Product Rate'));
-$this->params['menu'][]=Yii::$app->controls->add('Product Rate');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Product Sale Rate'));
+$this->params['menu'][] = Yii::$app->controls->add('Product Sale Rate');
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

@@ -12,6 +12,8 @@ use app\modules\product\models\TblProductPurchaseRateApplicability;
  */
 class TblProductPurchaseRateApplicabilitySearch extends TblProductPurchaseRateApplicability {
 
+    public $name, $code_ex;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +21,7 @@ class TblProductPurchaseRateApplicabilitySearch extends TblProductPurchaseRateAp
         return [
                 [['product_purchase_rate_applicability_code', 'wef_date', 'product_purchase_rate_code', 'product_code', 'applicable_code', 'applicable_for', 'applicable_type', 'union_code', 'mcc_plant_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['purchase_rate'], 'safe'],
-                [['originating_type'], 'safe'],
+                [['originating_type', 'name', 'code_ex'], 'safe'],
         ];
     }
 
@@ -48,7 +50,7 @@ class TblProductPurchaseRateApplicabilitySearch extends TblProductPurchaseRateAp
             'query' => $query,
         ]);
 
-        $query->joinWith(['customerTypeFor']);
+        $query->joinWith(['customerTypeFor', 'plantCode', 'mccPlantCode', 'bmcCode', 'dispDcsCode', 'mainCustomerCode']);
         $this->load($params);
 
         if (!$this->validate()) {
@@ -59,6 +61,19 @@ class TblProductPurchaseRateApplicabilitySearch extends TblProductPurchaseRateAp
         $query->andFilterWhere(['tbl_product_purchase_rate_applicability.product_purchase_rate_code' => $this->product_purchase_rate_code]);
         if (!empty($this->wef_date))
             $query->andFilterWhere(['like', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_name', $this->name],
+                ['like', 'tbl_customer_master.customer_name', $this->name],
+                ['like', 'tbl_plant.name', $this->name],
+                ['like', 'tbl_mcc_plant.name', $this->name],
+                ['like', 'tbl_bmc.bmc_name', $this->name]
+        ]);
+
+        $query->andFilterWhere(['or',
+                ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+                ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
+        ]);
 
         $query->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
                 ->andFilterWhere(['like', 'tbl_product_purchase_rate_applicability.applicable_code', $this->applicable_code]);

@@ -68,7 +68,7 @@ class TblProductPurchaseRateSearch extends TblProductPurchaseRate {
 
         $this->load($params);
 
-        $query->joinWith(['productCode', 'unionCode']);
+        $query->joinWith(['productCode']);
         Yii::$app->general->filterByOrg($query, $this);
 
 
@@ -88,7 +88,7 @@ class TblProductPurchaseRateSearch extends TblProductPurchaseRate {
                     ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code]);
         } else {
             $query->andFilterWhere(['like', 'product_rate_code', $this->product_rate_code_val])
-                    ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
+//                    ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
                     ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_name]);
         }
 

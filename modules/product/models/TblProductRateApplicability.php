@@ -16,7 +16,7 @@ use app\modules\payment\models\TblProductSaleDetails;
  *
  * @property integer $product_rate_applicability_code
  * @property string $wef_date
- * @property string $product_rate_code
+ * @property string $product_sale_rate_code
  * @property string $dcs_code
  * @property string $union_code
  * @property string $created_at
@@ -24,8 +24,7 @@ use app\modules\payment\models\TblProductSaleDetails;
  * @property string $updated_at
  * @property string $updated_by
  * @property integer $product_code
- * @property double $rate
- * @property double $rate_two
+ * @property double $sale_rate
  * @property string $mcc_plant_code
  * @property string $applicable_code
  * @property string $applicable_for
@@ -40,7 +39,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_product_rate_applicability';
+        return 'tbl_product_sale_rate_applicability';
     }
 
     /**
@@ -48,12 +47,13 @@ class TblProductRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['applicable_code', 'wef_date'], 'required'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['product_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
-            [['rate', 'rate_two'], 'safe'],
+                [['applicable_code', 'wef_date'], 'required'],
+                [['wef_date', 'created_at', 'updated_at'], 'safe'],
+                [['product_sale_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['sale_rate', 'product_rate_applicability_code', 'commission'], 'safe'],
 //            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
+            [['product_sale_rate_code'], 'validateProductSaleRate', 'skipOnEmpty' => false],
         ];
     }
 
@@ -64,7 +64,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
         return [
             'product_rate_applicability_code' => Yii::t('app', 'Product Rate Applicability Code'),
             'wef_date' => Yii::t('app', 'Wef Date'),
-            'product_rate_code' => Yii::t('app', 'Product Rate Code'),
+            'product_sale_rate_code' => Yii::t('app', 'Product Rate Code'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
             'union_code' => Yii::t('app', 'Union Code'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -72,8 +72,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'product_code' => Yii::t('app', 'Product Code'),
-            'rate' => Yii::t('app', 'Rate'),
-            'rate_two' => Yii::t('app', 'Rate Two'),
+            'sale_rate' => Yii::t('app', 'Rate'),
             'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
             'applicable_code' => Yii::t('app', 'Applicable Code'),
             'applicable_for' => Yii::t('app', 'Applicable For'),
@@ -92,7 +91,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
     }
 
     public function getProductRateCode() {
-        return $this->hasOne(TblProductRate::className(), ['product_rate_code' => 'product_rate_code']);
+        return $this->hasOne(TblProductRate::className(), ['product_sale_rate_code' => 'product_sale_rate_code']);
     }
 
     public function getProductRate() {
@@ -173,7 +172,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
     }
 
     public function getProductSaleDetails() {
-        return $this->hasOne(TblProductSaleDetails::className(), ['rate_app_code' => 'product_rate_applicability_code']);
+        return $this->hasOne(TblProductSaleDetails::className(), ['rate_app_code' => 'product_sale_rate_applicability_code']);
     }
 
     public function allowDelete() {
@@ -182,6 +181,10 @@ class TblProductRateApplicability extends \app\models\ChildModel {
         } else {
             return true;
         }
+    }
+
+    public function validateProductSaleRate($attribute, $params) {
+        $this->product_sale_rate_applicability_code = Yii::$app->general->getTransactionCode($this, $this->product_sale_rate_code);
     }
 
 }

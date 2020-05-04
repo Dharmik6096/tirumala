@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
             <div class="table-responsive">
                 <?php
                 $attribute = [
-                        ['attribute' => 'product_rate_code_val', 'label' => Yii::t('app', 'Rate Code'), 'value' => 'product_rate_code'],
+                        ['attribute' => 'product_sale_rate_code_val', 'label' => Yii::t('app', 'Rate Code'), 'value' => 'product_sale_rate_code'],
                         [
                         'attribute' => 'union_code', 'filter' => false,
                         'value' => function($model) {
@@ -31,9 +31,7 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
                         'value' => 'productCode.product_name',
                         'label' => Yii::t('app', 'Product'),
                     ],
-//                    ['attribute' => 'product_rate_code'],
-//                    ['attribute' => 'product_code'],
-                    ['attribute' => 'rate'],
+                        ['attribute' => 'sale_rate'],
                         [
                         'attribute' => 'wef_date', 'width' => '200px',
                         'filterType' => GridView::FILTER_DATE,
@@ -47,17 +45,17 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
                         ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
                             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
                         }],
-                        ['attribute' => 'vsp_commission', 'value' => 'vsp_commission'],
+                        ['attribute' => 'commission', 'value' => 'commission'],
                 ];
 
                 $grid_option = [
-                    'id' => 'rate-history-grid',
+                    'id' => 'sale-rate-history-grid',
                     'attributes' => $attribute,
-                    'active_column' => TRUE,
+                    'active_column' => false,
                     'actions' => [
                         'applicabilty' => function ($url, $model) {
                             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
-                            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_rate_code], $options);
+                            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_sale_rate_code], $options);
                         }
                     ]
                 ];
