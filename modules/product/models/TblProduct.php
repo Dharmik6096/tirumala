@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\dcsaccounting\models\TblTax;
+use app\modules\product\models\TblProductPurchaseRate;
 
 /**
  * This is the model class for table "tbl_product".
@@ -166,6 +167,32 @@ class TblProduct extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getProduct($code, $date) {
+
+        $records = $this->getRecord($code);
+        $array = ['status' => 'error'];
+        if (!empty($records)) {
+            $date = date('Y-m-d', strtotime($date));
+            $purchaseRate = TblProductPurchaseRate::find()->select('purchase_rate')
+                            ->where(['product_code' => $code, 'cast(wef_date as date)' => $date])
+//                    ->where('product_code="' . $code . '" and cast(wef_date as date)<= "' . $date . '" and is_active=1')
+                            ->orderBy(['cast(wef_date as date)' => SORT_DESC])->one();
+            if ($purchaseRate)
+                $array = ['status' => 'success', 'name' => $records->product_name, 'rate' => ($purchaseRate) ? $purchaseRate->purchase_rate : 0, 'unit' => Yii::$app->general->getforeignkey($records->primaryUom, 'unit_name'), 'tax_code' => $records->tax_code];
+        }
+        return $array;
+    }
+
+    public function getPrimaryUom() {
+        return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
+    }
+
+    public function getRecord($productCode) {
+
+        $records = $this->find()->select('product_name,unit_code,tax_code')->where(['product_code' => $productCode])->one();
+        return $records;
     }
 
 }
