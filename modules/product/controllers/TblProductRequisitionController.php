@@ -58,6 +58,10 @@ class TblProductRequisitionController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
 
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->vendor_code = $this->model->bmc_code;
+            if($this->model->vendor_type == 'DCS') {
+                $this->model->vendor_code = $this->model->dcs_code;
+            }
             $this->model->product_requisition_code = Yii::$app->general->getPrimaryCode($this->model);
             if (!empty($this->model->date)) {
                 $this->model->date = Yii::$app->formatter->asDate($this->model->date, DATE_FORMAT);

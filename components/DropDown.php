@@ -857,6 +857,11 @@ class DropDown extends Component {
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Draft'), 6 => Yii::t('app', 'Sent'), 11 => Yii::t('app', 'Rejected'), 16 => Yii::t('app', 'Partially Processed'), 21 => Yii::t('app', 'InProcess'), 26 => Yii::t('app', 'Partially Dispatched'), 31 => Yii::t('app', 'Partially Delivered'), 36 => Yii::t('app', 'Dispatched'), 41 => Yii::t('app', 'Delivered'), 46 => Yii::t('app', 'Accepted'), 51 => Yii::t('app', 'Partially Accepted'), 56 => Yii::t('app', 'Closed'), 61 => Yii::t('app', 'Pending')],
+            ],
+            'requisition_type' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
             ]
         ];
         return $records[$l];

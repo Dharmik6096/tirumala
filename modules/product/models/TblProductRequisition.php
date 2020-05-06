@@ -8,6 +8,8 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_product_requisition".
@@ -39,6 +41,7 @@ use app\modules\organisation\models\TblDcs;
 class TblProductRequisition extends \app\models\ChildModel {
 
     public $operation = TRUE;
+    public $plant_name, $mcc_name;
 
     /**
      * @inheritdoc
@@ -52,8 +55,13 @@ class TblProductRequisition extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vendor_type', 'vendor_code', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
+                [['vendor_type', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
                 [['product_requisition_code'], 'safe'],
+                [['dcs_code'], 'required', 'when' => function ($model) {
+                    return $model->vendor_type == 'DCS';
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblproductrequisition-vendor_type').val() == 'DCS'; 
+          }"],
                 [['product_requisition_code', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['req_date', 'created_at', 'updated_at'], 'safe'],
                 [['originating_type'], 'safe'],
@@ -71,7 +79,7 @@ class TblProductRequisition extends \app\models\ChildModel {
             'description' => Yii::t('app', 'Description'),
             'status' => Yii::t('app', 'Status'),
             'vendor_type' => Yii::t('app', 'Type'),
-            'vendor_code' => Yii::t('app', 'Code'),
+            'vendor_code' => Yii::t('app', 'Name'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
@@ -89,6 +97,8 @@ class TblProductRequisition extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'plant_name' => Yii::t('app', 'Plant'),
+            'mcc_name' => Yii::t('app', 'MCC'),
         ];
     }
 
@@ -109,7 +119,7 @@ class TblProductRequisition extends \app\models\ChildModel {
     }
 
     public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'vendor_code']);
     }
 
     public function getCustomerType() {
@@ -122,6 +132,10 @@ class TblProductRequisition extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'vendor_code']);
+    }
+
+    public function getMainDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
     public function reqStatus() {
@@ -175,6 +189,25 @@ class TblProductRequisition extends \app\models\ChildModel {
 
     public function getTblProductRequisitionTransactions() {
         return $this->hasMany(TblProductRequisitionTransaction::className(), ['product_requisition_code' => 'product_requisition_code'])/* ->andWhere('is_approved is null') */;
+    }
+
+    public function getEntityName() {
+        $type = $this->vendor_type;
+        $name = '';
+        if ($type == 'BMC') {
+            $name = Yii::$app->general->getforeignkey($this->bmcCode, 'bmc_name');
+        } else if ($type == 'DCS') {
+            $name = Yii::$app->general->getforeignkey($this->dcsCode, 'dcs_name');
+        }
+        return $name;
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
 }

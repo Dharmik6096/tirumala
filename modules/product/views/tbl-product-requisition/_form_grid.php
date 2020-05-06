@@ -11,15 +11,25 @@ $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'filter' => false],
-        ['attribute' => 'bmc_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'vAlign' => 'middle'],
-        ['attribute' => 'vendor_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
-        }, 'vAlign' => 'middle'],
-        ['attribute' => 'vendor_code', 'label' => Yii::t('app', 'Code')],
+        ['attribute' => 'plant_name', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'visible' => false],
+        ['attribute' => 'mcc_name', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mccCode, 'name');
+        }, 'visible' => false],
+//        ['attribute' => 'bmc_code', 'value' => function($model) {
+//            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+//        }, 'vAlign' => 'middle'],
+    ['attribute' => 'vendor_type', 'value' => function($model) {
+            return isset($model->vendor_type) ? Yii::$app->dropdown->getRecords('requisition_type')['data'][$model->vendor_type] : '';
+        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('requisition_type', $searchModel, 'vendor_type'),],
+//        ['attribute' => 'vendor_type', 'value' => function($model) {
+//            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+//        }, 'vAlign' => 'middle'],
+    ['attribute' => 'vendor_code', 'label' => Yii::t('app', 'Code')],
         ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-            return isset($model->vendor_type) ? Yii::$app->general->getCustomer($model, $model->vendor_type) : '';
+            return $model->getEntityName();
+//            return isset($model->vendor_type) ? Yii::$app->general->getCustomer($model, $model->vendor_type) : '';
         }, 'vAlign' => 'middle'],
         ['attribute' => 'status', 'value' => function($model) {
             return isset($model->status) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status] : '';

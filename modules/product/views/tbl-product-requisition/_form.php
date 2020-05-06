@@ -30,17 +30,19 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblproductrequisition-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
     </div>      
     <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('requisition_type', $model, $form, 'form-group', $model->getAttributeLabel('vendor_type'), false, 'vendor_type', false); ?>
+        <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductrequisition-bmc_code', 'vendor_type', TRUE, FALSE); ?>
+    </div>
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblproductrequisition-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_type($model, $form, 'tblproductrequisition-bmc_code', 'vendor_type', TRUE, FALSE); ?>
-    </div>
-    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'req_date', '', true); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblproductrequisition-bmc_code,tblproductrequisition-vendor_type', 'vendor_code', TRUE, FALSE); ?>
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblproductrequisition-bmc_code', 'dcs_code', Yii::t('app', 'DCS')); ?>
+        <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductrequisition-bmc_code,tblproductrequisition-vendor_type', 'vendor_code', TRUE, FALSE); ?>
     </div>
 
     <div class="clearfix"></div>

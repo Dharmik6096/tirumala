@@ -44,51 +44,61 @@ $this->title = Yii::$app->label->title('view', 'Product Requisition');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
-                                'attribute' => 'bmc_code',
-                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'attribute' => 'plant_name',
+                                'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
                         [
                         'columns' => [
+                                [
+                                'attribute' => 'mcc_name',
+                                'value' => Yii::$app->general->getforeignkey($model->mccCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                                 [
                                 'attribute' => 'vendor_type',
                                 'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
-                                'attribute' => 'vendor_code',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
                         ],
                     ],
                         [
                         'columns' => [
                                 [
                                 'attribute' => 'vendor_code',
-                                'label' => Yii::t('app', 'Name'),
-                                'value' => isset($model->vendor_type) ? Yii::$app->general->getCustomer($model, $model->vendor_type) : '',
+                                'label' => Yii::t('app', 'Code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                                [
+                                'attribute' => 'vendor_code',
+                                'label' => Yii::t('app', 'Name'),
+                                'value' => $model->getEntityName(), //isset($model->vendor_type) ? Yii::$app->general->getCustomer($model, $model->vendor_type) : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'status',
                                 'value' => isset($model->status) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'req_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->req_date)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'description',
-                                'valueColOptions' => ['style' => 'width:30%'],
+                                'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
                     ],
