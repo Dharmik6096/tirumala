@@ -65,8 +65,7 @@ class Path extends Component {
             'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
             'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending'],
         '\\app\modules\product\models\\' =>
-            ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory',
-        ],
+            ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory', 'TblProductRequisition', 'TblProductRequisitionHistory', 'TblProductRequisitionTransaction', 'TblProductRequisitionTransactionHistory', 'TblProductReceipt', 'TblProductReceiptHistory', 'TblProductReceiptTransaction', 'TblProductReceiptTransactionHistory', 'TblProductReceiptTaxCalculated', ''],
         '\\app\modules\hardwareconfigutation\models\\' =>
             ['TblDeviceManufacturer', 'TblInterfacingDevice', 'TblInterfacingDeviceHistory',],
         '\\app\components\\' =>
@@ -83,7 +82,7 @@ class Path extends Component {
         '\\app\modules\setting\models\\' => ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
         '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification', 'TblBulkNotificationHistory'],
         '\\app\modules\vsp\models\\' => ['TblGeneralFormula', 'TblGeneralFormulaHistory', 'TblCriteriaKeywordMapping', 'TblBillHead', 'TblBillHeadHistory', 'TblBillHeadDefault', 'TblBillHeadDetail'],
-        '\\app\modules\payment\models\\' => ['TblProductSaleDetails', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding', 'TblProductSaleTaxCalculated', 'TblProductSaleTaxCalculatedHistory', 'TblProductRequisition', 'TblProductRequisitionHistory', 'TblProductRequisitionTransaction', 'TblProductRequisitionTransactionHistory'],
+        '\\app\modules\payment\models\\' => ['TblProductSaleDetails', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding', 'TblProductSaleTaxCalculated', 'TblProductSaleTaxCalculatedHistory'],
     ];
 
     public function get($model) {
