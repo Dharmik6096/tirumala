@@ -60,6 +60,7 @@ class Applicability extends \yii\base\Module {
     public $check_wef_date = false;
     public $selectedMccCode = [];
     public $selectedBmcCode = [];
+    public $selectedRouteCode = [];
 
     /**
      * @inheritdoc
@@ -168,7 +169,8 @@ class Applicability extends \yii\base\Module {
                     'check_wef_date' => $this->check_wef_date,
                     'mccList' => $mccList,
                     'selectedMccCode' => $this->selectedMccCode,
-                    'selectedBmcCode' => $this->selectedBmcCode
+                    'selectedBmcCode' => $this->selectedBmcCode,
+                    'selectedRouteCode' => $this->selectedRouteCode
         ]);
     }
 
@@ -284,6 +286,7 @@ class Applicability extends \yii\base\Module {
                     }
                     $this->selectedMccCode = [];
                     $this->selectedBmcCode = [];
+                    $this->selectedRouteCode = [];
                     if (!in_array(FALSE, $saveModel)) {
                         Yii::$app->display->message(true, $this->trans_label, 'create');
                         return $this->customRedirect();
@@ -340,6 +343,14 @@ class Applicability extends \yii\base\Module {
                     foreach ($bmcCode as $m) {
                         if (!empty($m)) {
                             $this->selectedBmcCode = $m;
+                        }
+                    }
+                    $routeCode = array_map(function($a) {
+                        return !empty($a['f_route_code']) ? $a['f_route_code'] : [];
+                    }, $pData);
+                    foreach ($routeCode as $m) {
+                        if (!empty($m)) {
+                            $this->selectedRouteCode = $m;
                         }
                     }
                 }

@@ -169,7 +169,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $code_prefix . str_pad((int) $data['customer_code_ex'] + 1, $code_length, '0', STR_PAD_LEFT);
     }
 
-    public function getCustomerWithType($unionCode, $customer_type = '', $notIn = [], $concatCode = false, $compareBmc = false, $mcc = [], $bmc = []) {
+    public function getCustomerWithType($unionCode, $customer_type = '', $notIn = [], $concatCode = false, $compareBmc = false, $mcc = [], $bmc = [], $routes = []) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (!empty($customer_type)) {
             $query->andWhere(['customer_type' => $customer_type]);
@@ -179,6 +179,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
         }
         if ($compareBmc) {
             $query->andWhere(['bmc_code' => $bmc, 'mcc_plant_code' => $mcc]);
+        }
+
+        if (!empty($routes)) {
+            $query->andWhere(['route_code' => $routes]);
         }
         $data = $query->all();
         if ($concatCode) {

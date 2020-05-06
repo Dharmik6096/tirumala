@@ -122,6 +122,7 @@ class DefaultController extends Controller {
         $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where);
         $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
         $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? json_decode(Yii::$app->request->post('selected_bmc')) : [];
+        $routeCodes = !empty(Yii::$app->request->post('selected_route')) ? json_decode(Yii::$app->request->post('selected_route')) : [];
         switch (1) {
             case key_exists('routes', $filters):
                 $routs = new TblRouteMapping();
@@ -145,7 +146,7 @@ class DefaultController extends Controller {
                 break;
             case in_array($filter, ['DCS']):
                 $bmcModel = new TblDcs();
-                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'dcs_code_ex');
+                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'dcs_code_ex', $routeCodes);
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();
@@ -153,7 +154,7 @@ class DefaultController extends Controller {
 //                break;
             default :
                 $vendorModel = new TblCustomerMaster();
-                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, $filter, $modelQuery, true, true, $mccCodes, $bmcCodes);
+                $filter_data['applicable_code'] = $vendorModel->getCustomerWithType($union_code, $filter, $modelQuery, true, true, $mccCodes, $bmcCodes, $routeCodes);
         }
         if (key_exists('mcc', $filters)) {
             $mcc = new TblMccPlant();
@@ -168,6 +169,15 @@ class DefaultController extends Controller {
         $bmcModel = new TblDcsBmc();
         $bmcList = $bmcModel->getMccBmcList($unionCode, json_decode($mccCodes));
         return Json::encode(['status' => 'success', 'data' => $bmcList]);
+    }
+
+    public function actionLoadRouteData() {
+        $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? Yii::$app->request->post('selected_mcc') : [];
+        $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? Yii::$app->request->post('selected_bmc') : [];
+        $unionCode = !empty(Yii::$app->request->post('union_code')) ? Yii::$app->request->post('union_code') : '';
+        $routeModel = new TblRouteMapping();
+        $routeList = $routeModel->routeFromDestination([], json_decode($mccCodes), json_decode($bmcCodes));
+        return Json::encode(['status' => 'success', 'data' => $routeList]);
     }
 
 }

@@ -828,7 +828,7 @@ class TblDcs extends ChildModel {
                         ->andwhere("'$date' BETWEEN [from_date] AND [to_date]")->orderBy('from_time ASC');
     }
 
-    public function getUnionDcs($unionCode, $notIn = [], $compareBmc = false, $mcc = [], $bmc = [], $concatField = 'dcs_code') {
+    public function getUnionDcs($unionCode, $notIn = [], $compareBmc = false, $mcc = [], $bmc = [], $concatField = 'dcs_code', $routes = []) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('Dcs') !== '') {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
@@ -836,8 +836,12 @@ class TblDcs extends ChildModel {
         if (!empty($notIn)) {
             $query->andWhere(['not in', 'dcs_code', $notIn]);
         }
-        if($compareBmc) {
+        if ($compareBmc) {
             $query->andWhere(['bmc_code' => $bmc, 'mcc_plant_code' => $mcc]);
+        }
+
+        if (!empty($routes)) {
+            $query->andWhere(['route_code' => $routes]);
         }
         $dcs = $query->all();
         $dcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) use ($concatField) {
@@ -973,9 +977,9 @@ class TblDcs extends ChildModel {
 
     public function getRecords($notInDcs = []) {
         return $this->find()
-                ->andWhere(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'is_active' => 1])
-                ->andWhere(['not in', 'dcs_code', $notInDcs])
-                ->all();
+                        ->andWhere(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'is_active' => 1])
+                        ->andWhere(['not in', 'dcs_code', $notInDcs])
+                        ->all();
     }
 
 }
