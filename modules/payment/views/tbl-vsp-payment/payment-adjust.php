@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$this->title = 'Vendor Payment Process : Step 2';
+$this->title = $title;
 ?>
 <?php
 $array = $dataProvider->getModels();
@@ -14,11 +14,12 @@ $tot_amt = array_sum(array_map(function($array) {
             return $array['net_payable'];
         }, $array));
 $final_amt = array_sum(array_map(function($array) {
-            return $array['net_payable']+$array['adjust_amount']-$array['hold_amount'];
+            return $array['net_payable'] + $array['adjust_amount'] - $array['hold_amount'];
         }, $array));
 
 $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
         Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
+        ($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :
         Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
 ?>
 <div class="panel panel-default panel-grid panel-main">

@@ -103,7 +103,7 @@ $this->title = Yii::$app->label->title('view', 'Vendor Payment');
                         'columns' => [
                             [
                                 'attribute' => 'payment_cycle_code',
-                                'value' => Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')),
+                                'value' => $model->billing_type == 'remuneration' ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) : Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
@@ -215,25 +215,25 @@ $this->title = Yii::$app->label->title('view', 'Vendor Payment');
         </div>
         <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Bill Head Detail') ?></h5></div>
         <div class="form-grid">
-                <?php
-                $attribute = [
-                    ['attribute' => 'bill_head_code', 'value' => function($model) {
-                            return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
-                        }
-                    ],
-                    ['attribute' => 'bill_head_type',
-                        'value' => function($model) {
-                            return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
-                        },],
-                    ['attribute' => 'amount'],
-                ];
-                $grid_option = [
-                    'id' => 'bill-head-detail-list',
-                    'attributes' => $attribute,
-                    'active_column' => FALSE,
-                ];
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], FALSE);
-                ?>
+            <?php
+            $attribute = [
+                ['attribute' => 'bill_head_code', 'value' => function($model) {
+                        return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
+                    }
+                ],
+                ['attribute' => 'bill_head_type',
+                    'value' => function($model) {
+                        return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
+                    },],
+                ['attribute' => 'amount'],
+            ];
+            $grid_option = [
+                'id' => 'bill-head-detail-list',
+                'attributes' => $attribute,
+                'active_column' => FALSE,
+            ];
+            Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], FALSE);
+            ?>
         </div> 
     </div>
 </div>

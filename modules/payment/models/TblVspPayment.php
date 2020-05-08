@@ -38,7 +38,7 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblVspPayment extends \app\models\ChildModel {
 
-    public $otp_code,$customer_name,$customer_ex_code;
+    public $otp_code, $customer_name, $customer_ex_code;
 
     /**
      * @inheritdoc
@@ -52,11 +52,12 @@ class TblVspPayment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status'], 'safe'],
+            [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type'], 'safe'],
             [['payment_cycle_code', 'payment_cycle_applicabilty_code'], 'safe'],
             [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount'], 'safe'],
             [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
-            [['payment_cycle_code', 'customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
+            [['customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
+            [['payment_cycle_code'], 'required', 'except' => ['remuneration']],
         ];
     }
 
@@ -144,6 +145,14 @@ class TblVspPayment extends \app\models\ChildModel {
                     'payment_cycle_code' => $this->payment_cycle_code,
                     'bmc_code' => $this->bmc_code,
                     'customer_type' => $this->customer_type, 'status' => 'processed']);
+    }
+
+    public function getRemunerationRecords() {
+        return $this->find()->where(['union_code' => $this->union_code,
+                    'from_datetime' => $this->from_datetime,
+                    'to_datetime' => $this->to_datetime,
+                    'bmc_code' => $this->bmc_code,
+                    'billing_type' => 'remuneration', 'status' => 'processed']);
     }
 
 }

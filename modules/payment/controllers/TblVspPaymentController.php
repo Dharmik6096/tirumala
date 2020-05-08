@@ -75,6 +75,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
+
         if (Yii::$app->request->post('TblVspPayment')) {
             $adjust_id = Yii::$app->request->post('TblVspPayment')['vsp_payment_code'];
             $adjust_amt = Yii::$app->request->post('TblVspPayment')['adjust_amount'];
@@ -91,6 +92,9 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $data->adjust_remark = $adjust_remark[$key];
                     $data->hold_amount = $hold_amt[$key];
                     $data->final_pay = (float) $data->net_payable + (float) $adjust_amt[$key] - (float) $hold_amt[$key];
+                    if ($model->billing_type == 'remuneration') {
+                        $data->scenario = 'remuneration';
+                    }
                     $save_model[] = $historyModel;
                     $save_model[] = $data;
                     $cnt++;
@@ -101,14 +105,24 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 return $this->redirect(['index']);
             }
         }
-        $query = $model->getRecords();
+
+        if ($model->billing_type == 'remuneration') {
+            $query = $model->getRecords();
+            $title = 'Remuneration Payment Process : Step 2';
+        } else {
+            $query = $model->getRemunerationRecords();
+            $title = 'Vendor Payment Process : Step 2';
+        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,
         ]);
+
         return $this->render('payment-adjust', [
                     'model' => $model,
                     'dataProvider' => $dataProvider,
+                    'title' => $title,
         ]);
     }
 
