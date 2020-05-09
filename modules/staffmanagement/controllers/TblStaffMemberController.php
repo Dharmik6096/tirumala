@@ -8,26 +8,34 @@ use app\modules\staffmanagement\models\TblStaffMemberSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblBranch;
+use app\modules\staffmanagement\models\TblStaffMemberDesignation;
+use app\modules\staffmanagement\models\TblStaffMemberHistory;
+use app\modules\staffmanagement\models\TblStaffMemberDesignationHistory;
+use yii\web\Response;
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\helpers\Json;
 
 /**
  * TblStaffMemberController implements the CRUD actions for TblStaffMember model.
  */
-class TblStaffMemberController extends \app\controllers\ChildController
-{
-   
+class TblStaffMemberController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['get-ifsc-code'];
 
     /**
      * Lists all TblStaffMember models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblStaffMemberSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -36,10 +44,9 @@ class TblStaffMemberController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -48,17 +55,34 @@ class TblStaffMemberController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
-        $model = new TblStaffMember();
+    public function actionCreate() {
+        $this->model = new TblStaffMember();
+        $desigModel = new TblStaffMemberDesignation;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->staff_member_code]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        if (Yii::$app->request->post()) {
+            $this->model->load(Yii::$app->request->post());
+            $this->setStaffFields($this->model);
+            $this->model->staff_member_code = (string) Yii::$app->general->getCodeAutoIncrement($this->model);
+            $master[] = $this->model;
+            $desigModel->staff_member_designation_code = (string) Yii::$app->general->getCodeAutoIncrement($desigModel);
+            $desigModel->attributes = $this->model->attributes;
+            $master[] = $desigModel;
+            $transaction = $this->generalModel->saveTransaction($master, ['Staff Member', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+        return $this->render('create', [
+                    'model' => $this->model,
+        ]);
+    }
+
+    private function setStaffFields($model) {
+        $model->birth_date = !empty($this->model->birth_date) ? date('Y-m-d', strtotime($this->model->birth_date)) : NULL;
+        $model->tenure_from_date = !empty($this->model->tenure_from_date) ? date('Y-m-d', strtotime($this->model->tenure_from_date)) : NULL;
+        $model->tenure_to_date = !empty($this->model->tenure_to_date) ? date('Y-m-d', strtotime($this->model->tenure_to_date)) : NULL;
+        $model->bank_code = !empty($this->model->bank_code) ? $this->model->bank_code : NULL;
+        $model->branch_code = !empty($this->model->branch_code) ? $this->model->branch_code : NULL;
     }
 
     /**
@@ -67,17 +91,24 @@ class TblStaffMemberController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->staff_member_code]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        if (Yii::$app->request->post()) {
+            $master = [];
+            $historyModel = new TblStaffMemberHistory();
+            Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+            $master[] = $historyModel;
+            $model->load(Yii::$app->request->post());
+            $model->birth_date = !empty($model->birth_date) ? date('Y-m-d', strtotime($model->birth_date)) : NULL;
+            $master[] = $model;
+            $transaction = $this->generalModel->saveTransaction($master, ['Staff Member', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+        return $this->render('update', [
+                    'model' => $model,
+        ]);
     }
 
     /**
@@ -86,8 +117,7 @@ class TblStaffMemberController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -100,12 +130,83 @@ class TblStaffMemberController extends \app\controllers\ChildController
      * @return TblStaffMember the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblStaffMember::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionGetIfscCode() {
+
+        $ifsc = '';
+        if (!empty($_POST['id']) && $_POST['id'] != 'null') {
+            $model = new TblBranch();
+            $ifsc = $model->getIfcs($_POST['id']);
+        }
+        echo Json::encode(['code' => $ifsc]);
+    }
+
+    public function actionStaffMemberDesignation($id) {
+        $this->model = new TblStaffMemberDesignation();
+        $this->model->staff_member_code = $id;
+        $existData = $this->model->getExistData($id);
+        $master = [];
+        if ($this->model->load(Yii::$app->request->post())) {
+            $update = FALSE;
+            if (!empty($this->model->staff_member_designation_code)) {
+                $this->model = $this->model->findOne($this->model->staff_member_designation_code);
+                $historyModel = new TblStaffMemberDesignationHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $master[] = $historyModel;
+                $this->model->load(Yii::$app->request->post());
+                $master[] = $this->model;
+                $update = TRUE;
+            } else {
+                $this->model->staff_member_designation_code = (string) Yii::$app->general->getCodeAutoIncrement($this->model);
+                $prevData = $this->model->getPreviousData($this->model->staff_member_code);
+                if (!empty($prevData && empty($prevData->tenure_to_date))) {
+                    $oldData = TblStaffMemberDesignation::findOne($prevData->staff_member_designation_code);
+                    $historyModel = new TblStaffMemberDesignationHistory();
+                    Yii::$app->operation->history($oldData, $historyModel, UPDATE);
+                    $master[] = $historyModel;
+                    $date = $this->model->tenure_from_date;
+                    $oldData->tenure_to_date = date('Y-m-d', strtotime($date . (-1) . 'days'));
+                    $master[] = $oldData;
+                }
+            }
+            $this->model->tenure_from_date = !empty($this->model->tenure_from_date) ? date('Y-m-d', strtotime($this->model->tenure_from_date)) : NULL;
+            $this->model->tenure_to_date = !empty($this->model->tenure_to_date) ? date('Y-m-d', strtotime($this->model->tenure_to_date)) : NULL;
+            $this->model->staff_member_code = $this->model->staff_member_code;
+            $this->model->designation_code = $this->model->designation_code;
+            $master[] = $this->model;
+
+            $model = new TblStaffMember();
+            $model = $model->findOne($id);
+            $historyModel = new TblStaffMemberHistory();
+            Yii::$app->operation->history($model, $historyModel, UPDATE);
+            $master[] = $historyModel;
+            $model->tenure_from_date = !empty($this->model->tenure_from_date) ? date('Y-m-d', strtotime($this->model->tenure_from_date)) : NULL;
+            $model->tenure_to_date = !empty($this->model->tenure_to_date) ? date('Y-m-d', strtotime($this->model->tenure_to_date)) : NULL;
+            $model->designation_code = $this->model->designation_code;
+            $master[] = $model;
+            $transaction = $this->generalModel->saveTransaction($master, ['Staff Member Designation', ($update) ? 'edit' : 'create']);
+            $result = 'error';
+            if ($transaction == 'customRedirect') {
+                $result = 'success';
+                Yii::$app->response->format = trim(Response::FORMAT_JSON);
+                $url = Url::to(['staff-member-designation', 'id' => $this->model->staff_member_code]);
+                return ['status' => $result, 'url' => $url];
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($this->model);
+            }
+        }
+        return $this->render('staff_design_create', [
+                    'model' => $this->model,
+                    'existData' => $existData,
+        ]);
+    }
+
 }

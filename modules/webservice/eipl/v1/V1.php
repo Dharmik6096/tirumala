@@ -430,7 +430,7 @@ class V1 extends \yii\base\Module {
             ],
             'report/member-collection-shift' => [
                 'param' => 'union#plant#mcc#bmc#dcs#collection_date',
-                'sp' => 'sp_app_eipl_v1_milk_collection_shift_report',
+                'sp' => 'sp_app_eipl_v1_milk_collection_shift_reportt',
                 'call_action' => TRUE
             ],
             'report/member-collection-date-shift-summary' => [

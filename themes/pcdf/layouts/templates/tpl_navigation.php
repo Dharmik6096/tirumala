@@ -123,6 +123,18 @@ echo GhostMenu::widget([
 //        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
         [
             'options' => ['class' => 'dropdown'],
+            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Staff Management<b class="caret"></b></a>',
+            'items' => [
+                ['label' => Yii::t('app', 'Designation'), 'url' => ['/globalmaster/tbl-designation/index'], 'active' => ($cntrl == 'tbl-designation')],
+                ['label' => Yii::t('app', 'Staff Salary Heads'), 'url' => ['/globalmaster/tbl-salary-heads/index'], 'active' => ($cntrl == 'tbl-salary-heads')],
+                ['label' => Yii::t('app', 'Staff Member'), 'url' => ['/staffmanagement/tbl-staff-member/index'], 'active' => ($cntrl == 'tbl-staff-member'),],
+                ['label' => Yii::t('app', 'Staff Attendance'), 'url' => ['/staffmanagement/tbl-staff-attendance/index'], 'active' => ($cntrl == 'tbl-staff-attendance'),],
+                ['label' => Yii::t('app', 'Staff Salary'), 'url' => ['/staffmanagement/tbl-staff-salary/index'], 'active' => ($cntrl == 'tbl-staff-salary'),],
+                ['label' => Yii::t('app', 'Staff Add/Deduct.'), 'url' => ['/staffmanagement/tbl-staff-addition-deduction/index'], 'active' => ($cntrl == 'tbl-staff-addition-deduction'),],
+            ]
+        ],
+        [
+            'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Billing<b class="caret"></b></a>',
             'items' => [
                 ['label' => Yii::t('app', 'Formula Master'), 'url' => ['/vsp/tbl-general-formula/index'], 'active' => ($cntrl == 'tbl-general-formula')],

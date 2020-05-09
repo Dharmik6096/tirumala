@@ -1,97 +1,173 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
+use yii\web\View;
+use kartik\helpers\Html;
+use demogorgorn\ajax\AjaxSubmitButton;
+use yii\web\JsExpression;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\staffmanagement\models\TblStaffMember */
-/* @var $form yii\widgets\ActiveForm */
+$class = $type == 'edit' ? 'disableDiv' : '';
+$readonly = $type == 'edit' ? true : false;
+
+$form = ActiveForm::begin([
+            'options' => ['id' => 'staff-member-form'],
+            'validateOnBlur' => false,
+            'validateOnEnter' => TRUE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 ?>
-
-<div class="tbl-staff-member-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'staff_member_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'aadhar_card_no')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'bank_account_no')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'birth_date')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'deleted_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'email_id')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'flg_sentbox_entry')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true]) ?>
-
-    <?= Yii::$app->controls->active($model, $form); ?>
-
-    <?= $form->field($model, 'is_delete')->textInput() ?>
-
-    <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'payment_mode')->textInput() ?>
-
-    <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'staff_member_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'sync_status')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'sync_timestamp')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'tenure_from_date')->textInput() ?>
-
-    <?= $form->field($model, 'tenure_to_date')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'bank_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'blood_group_id')->textInput() ?>
-
-    <?= $form->field($model, 'branch_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'caste_category_code')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'deleted_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'designation_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'district_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'gender_id')->textInput() ?>
-
-    <?= $form->field($model, 'hamlet_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'member_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'state_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'sub_center_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'sub_district_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'village_code')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+<?php echo $form->errorSummary($model); ?>
+<div class="row">
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
+    </div>
+    <div class="col-sm-3 number-validate">
+        <?= $form->field($model, 'ex_staff_member_code')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'staff_member_name', ['options' => ['class' => 'form-group disable_enab']])->textInput()->label(Yii::t('app', 'Name')) ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'birth_date'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('blood-group', $model, $form, '', 'Blood Group', FALSE, 'blood_group_code'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', 'Gender'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('qualification', $model, $form, '', 'Qualification'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', 'Caste/Category'); ?>
+    </div>
+    <?= $form->field($model, 'address', ['options' => ['class' => 'form-group col-sm-3 disable_enab']])->textarea() ?>
+    <div class="col-sm-3">
+        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+    </div>
+    <div class="disable_enab">    
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblstaffmember-union_code,tblstaffmember-state_code', 'district_code', 'District'); ?>
+        </div>
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblstaffmember-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District'); ?>
+        </div>
+    </div>  
+    <div class="col-sm-3">
+        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblstaffmember-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village'); ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <div class="col-sm-3">
+        <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblstaffmember-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'mobile_no')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'email_id')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('designation_code', $model, $form, 'col-sm-3 form-group ' . $class, $model->getAttributeLabel('designation_code'), $readonly); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'tenure_from_date', 'form-group col-sm-3 ' . $class, FALSE, FALSE, $readonly); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'tenure_to_date', 'form-group col-sm-3', '', '', true); ?>
 
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('payment_mode_member', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false); ?>
+
+    </div>
+
+    <?= $form->field($model, 'aadhar_card_no', ['options' => ['class' => 'form-group col-sm-3 disable_enab']])->textInput(['maxlength' => 12]) ?>
+    <?= $form->field($model, 'pan_no', ['options' => ['class' => 'form-group col-sm-3 disable_enab']])->textInput(['maxlength' => true]) ?>
+    <div id="bank-detail">  
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->bankdepended($model, $form, 'tblstaffmember-district_code', 'bank_code', 'Bank'); ?>
+        </div>
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tblstaffmember-bank_code', '', 'Branch', 'branch_code'); ?>
+        </div>
+        <div class="col-sm-3">
+            <?= $form->field($model, 'bank_account_no')->textInput() ?>
+        </div>
+        <div class="col-sm-3">
+            <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
 </div>
+<?php ActiveForm::end(); ?>
+
+<?php
+$script = "
+    $( document ).ready(function() {
+       $('#tblstaffmember-bank_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+          bankdiv();
+          calculateIFSC();
+        });
+    });
+    
+    $('#tblstaffmember-branch_code').on('change',function(){
+      calculateIFSC();
+    });
+
+    function calculateIFSC(){
+        var id = $('#tblstaffmember-branch_code').val();
+            if(id != null && id != ''){  
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['get-ifsc-code']) . "',    
+                    data: 'id='+id,
+                    success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            $('#tblstaffmember-ifsc').val(obj1.code);
+                            if(obj1.code!='')
+                                $('#tblstaffmember-ifsc').prop('readonly', true);
+                            else
+                                $('#tblstaffmember-ifsc').prop('readonly', false);
+                    },
+                    error:function(data){
+                                //alert('Your data has not been submitted..Please try again');
+                            }
+                });
+            }    
+    }  
+    $('#tblstaffmember-payment_mode').on('change',function(){
+      bankdiv();
+    });
+    function bankdiv(){
+        var pay_type = $('#tblstaffmember-payment_mode').val();
+        if(pay_type==0 && pay_type != null && pay_type != ''){
+            $('#bank-detail').find('input:text').val('');
+            $('#bank-detail').find('select').val('');
+            $('#tblstaffmember-bank_code').val('');
+            $('#tblstaffmember-bank_code').trigger('change');
+            $('#tblstaffmember-bank_code').trigger('select2:select');
+            $('#bank-detail *').attr('disabled', true);
+        }else{
+            $('#bank-detail *').removeAttr('disabled');
+        }
+    } 
+";
+$this->registerJs($script, View::POS_END, 'panel-before-hide');
+?>

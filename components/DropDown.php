@@ -853,6 +853,26 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['IOB' => Yii::t('app', 'IOB'), 'Federal' => Yii::t('app', 'Federal')],
             ],
+            'payment_mode_member' => [
+                'name' => 'payment_mode_member',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Cash'), 1 => Yii::t('app', 'Bank')],
+            ],
+            'lwp_type' => [
+                'name' => 'lwp_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Full'), 0 => Yii::t('app', 'Half')],
+            ],
+            'type' => [
+                'name' => 'type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Addition'), 0 => Yii::t('app', 'Deduction')],
+            ],
+            'designation_type' => [
+                'name' => 'designation_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Staff'), 1 => Yii::t('app', 'Committee')],
+            ],
         ];
         return $records[$l];
     }
@@ -927,6 +947,8 @@ class DropDown extends Component {
             'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
             'reject_reason' => ['name' => 'rejection_reason_code', 'fields' => 'rejection_reason_code,rejection_reason', 'prompt' => Yii::t('app', 'Select Reject Reason'), 'model' => 'TblRejectionReason'],
+            'staff_member_code' => ['name' => 'staff_member_code', 'fields' => 'staff_member_code,staff_member_name,', 'prompt' => Yii::t('app', 'Select Staff Member'), 'model' => 'TblStaffMember', 'depend' => 'union_code'],
+            'designation_code' => ['name' => 'designation_code', 'fields' => 'designation_code,designation_name', 'prompt' => Yii::t('app', 'Select Designation'), 'model' => 'TblDesignation'],
         ];
         return $label[$l];
     }

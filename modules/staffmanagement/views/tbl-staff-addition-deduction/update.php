@@ -1,17 +1,28 @@
 <?php
-
-use yii\helpers\Html;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\staffmanagement\models\TblStaffAdditionDeduction */
-
+$this->title = Yii::$app->label->title('edit', 'Staff Addition Deduction');
 ?>
-<div class="tbl-staff-addition-deduction-update">
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <div class="MainForm">
+            <?=
+            $this->render('salary_install_form', [
+                'model' => $model,
+                'type' => 'edit',
+                'staffModel' => $staffModel
+            ])
+            ?>
+        </div>
+        <div class="InstallationDetail">
+            <?=
+            $this->render('salary_install_detail_grid', [
+                'model' => $model,
+                'type' => 'edit',
+                'staffModelData' => $staffModelData,
+            ])
+            ?>
+        </div>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+    </div>
 </div>
+

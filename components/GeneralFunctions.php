@@ -432,7 +432,7 @@ class GeneralFunctions extends Component {
         return $value;
     }
 
-    public function getCodeAutoIncrement($model) {
+    public function getCodeAutoIncrement($model, $auto_inc = 1) {
 
         $primaryKey = $model->tableSchema->primaryKey[0];
         $tableName = $model->tableName();
@@ -441,7 +441,7 @@ class GeneralFunctions extends Component {
                 //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
                 ->from($tableName)
                 ->one();
-        $number = (int) $val[$primaryKey] + 1;
+        $number = (int) $val[$primaryKey] + $auto_inc;
 
         return $number;
     }
@@ -982,7 +982,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1429,6 +1429,34 @@ class GeneralFunctions extends Component {
             $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             return $data = empty($Code) ? '' : $Code;
         }
+    }
+
+    public function validateNameWithDash($model, $attribute) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[a-zA-Z-\\s]+$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', 'Invalid ' . $model->getAttributeLabel($attribute) . '.'));
+                return false;
+            }
+    }
+
+    public function validateDescription($model, $attribute) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[a-zA-Z0-9,\\/@!#$%^&*()_+=\\.\\s-]*$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', 'Invalid ' . $model->getAttributeLabel($attribute) . '.'));
+                return false;
+            }
+    }
+
+    public function validateNameGlobal($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[a-zA-Z0-9-(), ]+$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' should contain Alphabetic Character Only'));
+                return false;
+            }
+    }
+
+    public function decimalformat($value) {
+        return sprintf('%0.2f', $value);
     }
 
 }
