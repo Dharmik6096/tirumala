@@ -19,8 +19,8 @@ $final_amt = array_sum(array_map(function($array) {
 
 $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
         Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
-        ($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :
-        Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
+        (($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :
+        Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')));
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">      
@@ -124,7 +124,7 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
                     echo Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust']);
                 }
                 ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'create'); ?> 
+                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
             </div>
         </div>
         <?php ActiveForm::end(); ?>

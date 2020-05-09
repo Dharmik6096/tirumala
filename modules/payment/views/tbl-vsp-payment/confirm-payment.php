@@ -7,18 +7,20 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 
 $this->title = 'Process for Payment Disburse';
+
 $bmc_info = '';
 if (!empty($searchModel)) {
     $bmc_info = Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_name') . ' > ' .
             Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
-            Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date'))
-    ;
+            (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
+                    Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date')));
 }
+$title = ($searchModel->billing_type == 'remuneration' ? Yii::t('app', 'Remuneration Payment Disburse : Step 2') : Yii::t('app', 'Vendor Payment Disburse : Step 2') ) . ' ' . ' (' . $bmc_info . ')';
 ?>
 <div class="tbl-member-payment-index">
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">
-            <?= 'Vednor Payment Disburse : Step 2' . ' (' . $bmc_info . ')' ?> 
+            <?= $title ?> 
             <div id="total-payment">
                 Total Payable :: <?= $pay_amount ?>
             </div>

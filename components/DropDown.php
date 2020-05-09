@@ -362,6 +362,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/union-mcc-list', Yii::t('app', 'Select MCC'), $multiple, $model->$name, $readonly);
     }
 
+    public function RemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

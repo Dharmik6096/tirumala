@@ -107,10 +107,10 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         }
 
         if ($model->billing_type == 'remuneration') {
-            $query = $model->getRecords();
+            $query = $model->getRemunerationRecords();
             $title = 'Remuneration Payment Process : Step 2';
         } else {
-            $query = $model->getRemunerationRecords();
+            $query = $model->getRecords();
             $title = 'Vendor Payment Process : Step 2';
         }
 

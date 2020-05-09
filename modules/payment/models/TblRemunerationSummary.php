@@ -3,6 +3,7 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_remuneration_summary".
@@ -27,45 +28,47 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblRemunerationSummary extends \yii\db\ActiveRecord
-{
+class TblRemunerationSummary extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_remuneration_summary';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'integer'],
+            [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
+            [['union_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
+            [['from_datetime'], function ($attribute, $params) {
+            return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
+        }, 'skipOnError' => true, 'on' => 'processpayment'],
+            [['from_datetime'], 'ValidateDate', 'skipOnError' => true, 'on' => 'processpayment'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'remuneration_summary_code' => Yii::t('app', 'Remuneration Summary Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'from_datetime' => Yii::t('app', 'From Datetime'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'from_datetime' => Yii::t('app', 'From Date'),
             'from_shift' => Yii::t('app', 'From Shift'),
-            'to_datetime' => Yii::t('app', 'To Datetime'),
+            'to_datetime' => Yii::t('app', 'To Date'),
             'to_shift' => Yii::t('app', 'To Shift'),
-            'calculate_milk_recovey' => Yii::t('app', 'Calculate Milk Recovey'),
-            'calculate_other_head' => Yii::t('app', 'Calculate Other Head'),
+            'calculate_milk_recovey' => Yii::t('app', 'Calculate Milk Recovey ?'),
+            'calculate_other_head' => Yii::t('app', 'Calculate Other Head ?'),
             'status' => Yii::t('app', 'Status'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -76,4 +79,66 @@ class TblRemunerationSummary extends \yii\db\ActiveRecord
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
+    public function ValidateDate($attribute, $params, $process_alert = FALSE) {
+        $from_date = date('Y-m-d', strtotime($this->from_datetime));
+        $to_date = date('Y-m-d', strtotime($this->to_datetime));
+
+        $query = TblRemunerationSummary::find()
+                ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
+        if ($process_alert) {
+            $query->andWhere(['in', 'status', ['processed']]);
+        } else {
+            $query->andWhere(['not in', 'status', ['processed']]);
+        }
+        $count = $query->andWhere(['or',
+                    ['or',
+                        ['between', 'CAST(from_datetime as date)', $from_date, $to_date],
+                        ['between', 'CAST(to_datetime as date)', $from_date, $to_date]
+                    ],
+                    ['or',
+                        "'$from_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
+                        "'$to_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
+            ]])->count();
+        if ($process_alert) {
+            return $count > 0 ? FALSE : TRUE;
+        } else {
+            if ($count > 0) {
+                $this->addError($attribute, "Payment already done.");
+            } else {
+                $unlock_cnt = TblPaymentCycleApplicability::find()->select(['status'])
+                        ->where(['union_code' => $this->union_code,
+                            'applicable_code' => $this->bmc_code,
+                            'applicable_for' => 'BMC',
+                            'applicable_type' => 'DCS'])
+                        ->andWhere(['or',
+                            ['or',
+                                ['between', 'CAST(from_date as date)', $from_date, $to_date],
+                                ['between', 'CAST(to_date as date)', $from_date, $to_date]
+                            ],
+                            ['or',
+                                "'$from_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)",
+                                "'$to_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)"
+                    ]])
+                        ->andWhere(['or', ['data_lock_member' => 0], ['data_lock_bmc' => 0]])
+                        ->count();
+                if ($unlock_cnt > 0) {
+                    $this->addError($attribute, "Please Lock Data of all payment cycle included.");
+                }
+            }
+        }
+    }
+
+    public function RemunerationPaymentCycle($union_code, $bmc_code) {
+        $data = $this->find()->select(['from_datetime', 'to_datetime'])
+                        ->where(['union_code' => $union_code, 'bmc_code' => $bmc_code])
+                        ->andWhere(['in', 'status', ['processed']])->asArray()->all();
+
+        return ArrayHelper::map($data, function($data) {
+                    return $data['from_datetime'] . '#' . $data['to_datetime'];
+                }, function($data) {
+                    return date('d-m-Y', strtotime($data['from_datetime'])) . ' To ' . date('d-m-Y', strtotime($data['to_datetime']));
+                });
+    }
+
 }

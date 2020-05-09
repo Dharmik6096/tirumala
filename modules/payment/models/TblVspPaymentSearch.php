@@ -64,12 +64,14 @@ class TblVspPaymentSearch extends TblVspPayment {
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['>=', 'tbl_payment_cycle.from_date', $from_date]);
+            $query->andFilterWhere(['or', ['>=', 'CAST(tbl_payment_cycle.from_date as date)', $from_date], ['>=', 'CAST(tbl_vsp_payment.from_datetime as date)', $from_date]]);
         }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['<=', 'tbl_payment_cycle.from_date', $to_date]);
+            $query->andFilterWhere(['or', ['<=', 'CAST(tbl_payment_cycle.to_date as date)', $to_date], ['<=', 'CAST(tbl_vsp_payment.to_datetime as date)', $to_date]]);
         }
+
+
         $query->andFilterWhere(['=', 'CAST(tbl_vsp_payment.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
         // grid filtering conditions
 

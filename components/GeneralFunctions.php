@@ -982,7 +982,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1121,7 +1121,7 @@ class GeneralFunctions extends Component {
         return $post_data;
     }
 
-    public function dateRangeValidate($model, $attribute, $params, $fromDateField, $toDateField, $count = 366) {
+    public function dateRangeValidate($model, $attribute, $params, $fromDateField, $toDateField, $count = 366, $operator = '>', $message = '') {
         if (!empty($model->$fromDateField) && !empty($model->$toDateField)) {
             $fDate = date('Y-m-d', strtotime($model->$fromDateField));
             $tDate = date('Y-m-d', strtotime($model->$toDateField));
@@ -1134,8 +1134,12 @@ class GeneralFunctions extends Component {
                 $diff = date_diff($fDate, $tDate);
                 $DayCount = $diff->format("%a");
                 $DayCount = $DayCount + 1;
-                if ($DayCount > $count) {
-                    $model->addError($attribute, Yii::t('app/validation', 'Day diff can not be greater than 1 year.'));
+                if (($operator == '>' && $DayCount > $count) || ($operator == '!=' && $DayCount != $count)) {
+                    if (empty($message)) {
+                        $model->addError($attribute, Yii::t('app/validation', 'Day diff can not be greater than 1 year.'));
+                    } else {
+                        $model->addError($attribute, Yii::t('app/validation', $message));
+                    }
                     return false;
                 }
             }

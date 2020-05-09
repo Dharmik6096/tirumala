@@ -6,6 +6,12 @@ use yii\web\View;
 use yii\helpers\Html;
 
 $this->title = 'Remuneration Payment Process : Step 1';
+$nameWarning = 0;
+$codeWarning = 0;
+if (!empty($_POST)) {
+    $nameWarning = $_POST['warning'];
+    $codeWarning = $_POST['code_warning'];
+}
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -20,6 +26,8 @@ $this->title = 'Remuneration Payment Process : Step 1';
         ]);
         echo $form->errorSummary($model);
         ?>
+        <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
+
         <div class="row">
             <div class="col-sm-2" id="union">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
@@ -39,6 +47,7 @@ $this->title = 'Remuneration Payment Process : Step 1';
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'to_datetime', '', '', false, false); ?>
             </div>
+            <div class="clearfix"></div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'calculate_milk_recovey', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
             </div>
