@@ -32,14 +32,10 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->RemunerationPaymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-bmc_code', 'payment_cycle_code'); ?>
     </div>
-    
+
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
     <?php ActiveForm::end(); ?>
-    <?php
-    $where = json_encode(['data_lock_bmc' => 1, 'billing_lock_bmc' => 0]);
-    echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
-    echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
-    ?>
+
 </div>
