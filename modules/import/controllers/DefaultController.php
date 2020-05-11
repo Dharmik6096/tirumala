@@ -137,6 +137,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'isIncrement' => isset($data['increment']) ? $data['increment'] : 0,
                 'scenario' => $scenario,
                 'updateField' => !empty($data['update_field']) ? $data['update_field'] : '',
+                'saveChild' => !empty($data['save_child']) ? $data['save_child'] : 0,
             ]));
 
             return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg']];
@@ -241,8 +242,8 @@ class DefaultController extends \app\controllers\ChildController {
         }
         try {
             $file = \yii\web\UploadedFile::getInstanceByName('file');
-            $name = 'excel_'. time() . '.' . $file->extension;
-            if ($file->saveAs($path . $name)) { 
+            $name = 'excel_' . time() . '.' . $file->extension;
+            if ($file->saveAs($path . $name)) {
                 $record = ['status' => 'success', 'msg' => $name];
             } else {
                 $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
@@ -276,7 +277,7 @@ class DefaultController extends \app\controllers\ChildController {
         $fields = array_map(function($str) {
             return ucwords(str_replace('_', ' ', $str));
         }, $fields);
-        
+
         foreach ($fields as $col) {
             $objPHPExcel->getActiveSheet()->setCellValue($column . $rowCount, $col);
             $column++;

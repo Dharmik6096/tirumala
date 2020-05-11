@@ -13,6 +13,7 @@ $this->title = Yii::$app->label->title('edit', 'Staff Addition Deduction');
             ])
             ?>
         </div>
+        <div class="clearfix"></div>
         <div class="InstallationDetail">
             <?=
             $this->render('salary_install_detail_grid', [
@@ -25,4 +26,3 @@ $this->title = Yii::$app->label->title('edit', 'Staff Addition Deduction');
 
     </div>
 </div>
-

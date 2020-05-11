@@ -13,11 +13,12 @@ use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblSubDistricts;
 use app\modules\organisation\models\TblBanks;
 use app\modules\globalmaster\models\TblCasteCategory;
-use app\modules\staffmanagement\models\TblBloodgroup;
-use app\modules\staffmanagement\models\TblGender;
+use app\modules\general\models\TblBloodgroup;
+use app\modules\general\models\TblGender;
 use app\modules\staffmanagement\models\TblMember;
 use app\modules\organisation\models\TblUnions;
 use app\modules\general\models\TblQualification;
+use app\modules\general\models\TblDepartment;
 
 /**
  * This is the model class for table "tbl_staff_member".
@@ -98,10 +99,29 @@ class TblStaffMember extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['staff_member_code', 'staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'district_code', 'sub_district_code', 'hamlet_code', 'state_code', 'village_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required'],
-            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no'], 'safe'],
+            [['department'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'department');
+                }, 'on' => 'importCsv'],
+            [['blood_group_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'blood-group');
+                }, 'on' => 'importCsv'],
+            [['gender_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'gender');
+                }, 'on' => 'importCsv'],
+            [['caste_category_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'caste-category');
+                }, 'on' => 'importCsv'],
+            [['designation_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'designation_code');
+                }, 'on' => 'importCsv'],
+            [['payment_mode'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'payment_mode');
+                }, 'on' => 'importCsv'],
+            [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'district_code', 'sub_district_code', 'hamlet_code', 'state_code', 'village_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'except' => ['importCsv']],
+            [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'hamlet_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'on' => ['importCsv']],
+            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no'], 'safe'],
             [['is_active', 'payment_mode', 'blood_group_code', 'caste_category_code', 'designation_code', 'gender_code'], 'integer'],
-            [['staff_member_code', 'bank_account_no'], 'string', 'max' => 20],
+            [['bank_account_no'], 'string', 'max' => 20],
             [['aadhar_card_no'], 'string', 'max' => 16],
             [['address'], 'string', 'max' => 500],
             [['email_id', 'mobile_no'], 'string', 'max' => 255],
@@ -114,9 +134,15 @@ class TblStaffMember extends \app\models\ChildModel {
             [['sub_district_code'], 'string', 'max' => 5],
             [['is_active'], 'default', 'value' => 1],
             [['email_id'], 'email'],
+            [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
             [['staff_member_name'], function ($attribute, $params) {
                     Yii::$app->general->validateNameWithDash($this, $attribute);
                 }, 'skipOnEmpty' => TRUE],
+            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+                    return $this->is_active;
+                }, 'except' => ['saveCreamyData', 'androidsync']],
             [['bank_account_no'], function ($attribute, $params) {
                     $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
                     if ($error !== TRUE)
@@ -132,9 +158,30 @@ class TblStaffMember extends \app\models\ChildModel {
                     return $model->payment_mode == '1';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#payment_mode').val() == '1'; 
-          }"],
+          }", 'except' => ['importCsv']],
+            [['branch_code', 'bank_account_no'], 'required', 'when' => function ($model) {
+                    return $model->payment_mode == '1';
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#payment_mode').val() == '1'; 
+          }", 'on' => ['importCsv']],
             [['ex_staff_member_code'], 'unique'],
+            [['birth_date', 'tenure_from_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['birth_date', 'tenure_from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2020'), 'on' => ['importCsv']],
+            [['birth_date', 'tenure_from_date'], 'convertDate', 'on' => ['importCsv']],
             [['tenure_from_date'], 'birthDatevalidate'],
+            [['branch_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBranch($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
+            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
+            [['blood_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBloodgroup::className(), 'targetAttribute' => ['blood_group_code' => 'blood_group_code'], 'on' => ['importCsv']],
+            [['gender_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblGender::className(), 'targetAttribute' => ['gender_code' => 'gender_code'], 'on' => ['importCsv']],
+            [['qualification_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblQualification::className(), 'targetAttribute' => ['qualification_code' => 'qualification_code'], 'on' => ['importCsv']],
+            [['caste_category_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblCasteCategory::className(), 'targetAttribute' => ['caste_category_code' => 'caste_category_code'], 'on' => ['importCsv']],
+            [['designation_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDesignation::className(), 'targetAttribute' => ['designation_code' => 'designation_code'], 'on' => ['importCsv']],
+            [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code'], 'on' => ['importCsv']],
+            [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
+            [['union_code'], 'setImport', 'on' => ['importCsv']]
         ];
     }
 
@@ -369,8 +416,9 @@ class TblStaffMember extends \app\models\ChildModel {
     }
 
     public function birthDatevalidate($attribute, $params) {
-
-        if (!empty($this->birth_date) && !empty($this->tenure_from_date) && ($this->birth_date > $this->tenure_from_date)) {
+        $birth_date = !empty($this->birth_date) ? Yii::$app->controls->view_date($this->birth_date, 'php:Y-m-d') : NULL;
+        $tenure_from_date = !empty($this->tenure_from_date) ? Yii::$app->controls->view_date($this->tenure_from_date, 'php:Y-m-d') : NULL;
+        if (!empty($birth_date) && !empty($tenure_from_date) && ($birth_date > $tenure_from_date)) {
             $this->addError($attribute, Yii::t('app/validation', 'Tenure From Must be Greater than Birth Date'));
             return false;
         }
@@ -383,6 +431,44 @@ class TblStaffMember extends \app\models\ChildModel {
     public function getQualificationCode() {
         return $this->hasOne(TblQualification::className(), ['qualification_code' => 'qualification_code']);
     }
- 
+
+    public function setImport($attribute, $params) {
+        $this->village_code = Yii::$app->general->getforeignkey($this->hamletCode, 'village_code');
+        $this->sub_district_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode'], 'sub_district_code');
+        $this->district_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode', 'subDistrictCode'], 'district_code');
+        $this->state_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode', 'subDistrictCode', 'districtCode'], 'state_code');
+        $model = new TblBranch();
+        $this->ifsc = !empty($this->branch_code) ? $model->getIfcs($this->branch_code) : '';
+        $this->bank_code = Yii::$app->general->getforeignkey($this->branchCode, 'bank_code');
+    }
+
+    public function getDepartmentCode() {
+        return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->birth_date = Yii::$app->controls->view_date($this->birth_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->birth_date = '-';
+        }
+        try {
+            $this->tenure_from_date = Yii::$app->controls->view_date($this->tenure_from_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->tenure_from_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        $this->birth_date = !empty($this->birth_date) ? Yii::$app->controls->view_date($this->birth_date, 'php:Y-m-d') : NULL;
+        $this->tenure_from_date = !empty($this->tenure_from_date) ? Yii::$app->controls->view_date($this->tenure_from_date, 'php:Y-m-d') : NULL;
+    }
+
+    public function setChildTable($model, &$modelSave) {
+        $desigModel = new TblStaffMemberDesignation;
+        $desigModel->staff_member_designation_code = (string) Yii::$app->general->getCodeAutoIncrement($desigModel);
+        $desigModel->attributes = $model->attributes;
+        array_push($modelSave, $desigModel);
+    }
 
 }

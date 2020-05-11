@@ -44,10 +44,10 @@ class TblStaffMemberDesignation extends \app\models\ChildModel {
     public function rules() {
         return [
             [['staff_member_designation_code', 'staff_member_code', 'designation_code', 'tenure_from_date'], 'required'],
-            [['staff_member_designation_code', 'created_by', 'remark', 'updated_by', 'staff_member_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'string'],
+            [['staff_member_designation_code', 'created_by', 'remark', 'updated_by', 'staff_member_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'safe'],
             [['created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'union_code'], 'safe'],
             [['is_active', 'designation_code', 'originating_type'], 'integer'],
-            [['staff_member_designation_code', 'staff_member_code'], 'string', 'max' => 20],
+            [['staff_member_designation_code'], 'string', 'max' => 20],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['remark'], 'string', 'max' => 100],
             [['is_active'], 'default', 'value' => 1],

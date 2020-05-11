@@ -72,7 +72,7 @@ $form = ActiveForm::begin(['options' => [
     </div>
     <div class="clearfix"></div>
 
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="panel-footer col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <?php
         $url = ($type == 'create') ? ['salary-installment'] : ['salary-installment'];
         AjaxSubmitButton::begin([
@@ -81,13 +81,6 @@ $form = ActiveForm::begin(['options' => [
                 'type' => 'POST',
                 'url' => Url::to($url),
                 'beforeSend' => new JsExpression("function(data){ 
-                                   var int = $('#tblstaffadditiondeduction-installment_no').val();
-                                   var inst_code = $('#tblstaffinstallment-staff_installment_code').val();
-                                   if(inst_code=='' && int==''){
-                                    var count = $('table tr').length;
-                                    count = count + 1;
-                                   $('#tblstaffadditiondeduction-installment_no').val(count);
-                                   }
                         $('#loadercontent').show();
                         $('#pageloader').show();
                     }"),
@@ -116,6 +109,8 @@ $form = ActiveForm::begin(['options' => [
                                  
                                     $("tr.RemoveOnEdit").remove();
                                     $(".panel-footer").removeClass("disbledAndroid");
+                                    $("#tblstaffadditiondeduction-installment_no").val(""); 
+                                    setInstallmentNo();
                                 }
                      }'),
             ],
@@ -132,9 +127,20 @@ $form = ActiveForm::begin(['options' => [
 <?php
 $script = " 
 
-//    $(document).on('ready', function(){
-//        $('#tblstaffadditiondeduction-installment_no').val('');  
-//    });
+    $(document).on('ready', function(){
+        $('#tblstaffadditiondeduction-installment_no').val('');  
+        setInstallmentNo();
+    });
+    
+    function setInstallmentNo(){
+        var int = $('#tblstaffadditiondeduction-installment_no').val();
+        var inst_code = $('#tblstaffinstallment-staff_installment_code').val();
+        if(inst_code=='' && int==''){
+            var count = $('table tbody tr').length;
+            count = count + 1;
+            $('#tblstaffadditiondeduction-installment_no').val(count);
+        }
+    }
 
 // for Selected Data Of Installation On click Update
 function editSalaryInstall(installmentNo) {

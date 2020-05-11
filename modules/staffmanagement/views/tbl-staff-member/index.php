@@ -1,6 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Staff Member'));
 $this->params['menu'][] = Yii::$app->controls->add('Staff Member');
+$this->params['menu'][] = Yii::$app->controls->import('staff-member', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

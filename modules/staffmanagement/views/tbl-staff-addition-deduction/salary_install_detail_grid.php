@@ -39,7 +39,7 @@ $form = ActiveForm::begin(['options' => [
                 </thead>
                 <tbody class="appendRaw">
                     <?php
-                    $i = 0;
+                    $i = 1;
                     if (!empty($staffModelData)) {
                         foreach ($staffModelData as $detailData) {
                             ?>  
@@ -51,7 +51,7 @@ $form = ActiveForm::begin(['options' => [
                                 <?= Html::activeHiddenInput($detailData, '[' . $i . ']amount'); ?> 
                                 <?= Html::activeHiddenInput($detailData, '[' . $i . ']deduction_date', ['value' => date('m-Y', strtotime($detailData->deduction_date))]) ?> 
 
-                                <td class="installment_no"><?= $detailData->installment_no ?></td>
+                                <td class="installment_no"><?= $i ?></td>
                                 <td class="amount"><?= $detailData->amount ?></td>
                                 <td class="deduction_date"><?= date('m-Y', strtotime($detailData->deduction_date)) ?></td>
                                 <td class="salary_processed"><?= ($detailData->salary_processed) == 0 ? 'Unprocessed' : '' ?></td>
@@ -68,7 +68,7 @@ $form = ActiveForm::begin(['options' => [
         </div>
     </div>
 </div>
-<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+<div class="panel-footer col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <?php
     $btn = ($type == 'create') ? 'web-create-salary-installment' : 'web-update-salary-installment';
     $url = ($type == 'create') ? ['create-salary-installment'] : ['update-salary-installment', 'id' => $model->staff_addition_deduction_no];
@@ -88,7 +88,8 @@ $form = ActiveForm::begin(['options' => [
                         var netAmt = $('#tblstaffadditiondeduction-amount').val();
                         netAmt = parseFloat(netAmt);
                         if(netAmt < amount) {
-                           bootbox.alert('<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle text-info\'></i></div><div class=\'col-sm-10 padding-left-0\'>Total amount is not matched.</div></div>');
+                           bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Total amount is not matched') . "</span>');
+//                           bootbox.alert('<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle text-info\'></i></div><div class=\'col-sm-10 padding-left-0\'>Total amount is not matched.</div></div>');
                            return false;                        
                         }
                         $('#loadercontent').show();

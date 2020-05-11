@@ -29,7 +29,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffmemberdesignation-union_code', 'form-group  ' . $class, $model->getAttributeLabel('staff_member_code'), 'staff_member_code', $readonly); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffmemberdesignation-union_code', 'form-group  ' . $class, $model->getAttributeLabel('staff_member_code'), 'staff_member_code', TRUE); ?>
     </div>
 
     <?= Html::activeHiddenInput($model, 'staff_member_designation_code', ['value' => $model->staff_member_designation_code]); ?>  
@@ -40,7 +40,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'tenure_from_date', 'form-group col-sm-3', FALSE); ?>
     </div> 
     <div class="col-sm-3 create_fields">
-        <?= Yii::$app->controls->date($model, $form, 'tenure_to_date', 'form-group col-sm-3'); ?>
+        <?= Yii::$app->controls->date($model, $form, 'tenure_to_date', 'form-group col-sm-3', FALSE); ?>
     </div>
     <?= $form->field($model, 'remark', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
     <div class="clearfix"></div>
