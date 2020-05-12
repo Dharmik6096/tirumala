@@ -35,7 +35,7 @@ $attribute = [
             return Yii::$app->general->getCustomer($model, $model->customer_type);
         }],
     ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-            return $model->billing_type == 'remuneration' ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) : Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
+            return  Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
         }, 'filter' => false, 'format' => 'raw'],
     [
         'attribute' => 'payment_date',
