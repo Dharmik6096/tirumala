@@ -50,7 +50,7 @@ class TblVspPaymentSearch extends TblVspPayment {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'paymentCycleCode']);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_vsp_payment', 'tbl_vsp_payment', 'tbl_vsp_payment');
 
         if (!$this->validate()) {
@@ -64,11 +64,11 @@ class TblVspPaymentSearch extends TblVspPayment {
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['or', ['>=', 'CAST(tbl_payment_cycle.from_date as date)', $from_date], ['>=', 'CAST(tbl_vsp_payment.from_datetime as date)', $from_date]]);
+            $query->andFilterWhere(['>=', 'CAST(tbl_vsp_payment.from_datetime as date)', $from_date]);
         }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['or', ['<=', 'CAST(tbl_payment_cycle.to_date as date)', $to_date], ['<=', 'CAST(tbl_vsp_payment.to_datetime as date)', $to_date]]);
+            $query->andFilterWhere(['<=', 'CAST(tbl_vsp_payment.to_datetime as date)', $to_date]);
         }
 
 
@@ -92,7 +92,7 @@ class TblVspPaymentSearch extends TblVspPayment {
                 ->andFilterWhere(['like', 'tbl_vsp_payment.customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
                 ->andFilterWhere(['like', 'status', $this->status]);
-        $query->orderBy(['tbl_payment_cycle.from_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_vsp_payment.customer_code' => SORT_ASC]);
+        $query->orderBy(['tbl_vsp_payment.from_datetime' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_vsp_payment.customer_code' => SORT_ASC]);
 
         return $dataProvider;
     }

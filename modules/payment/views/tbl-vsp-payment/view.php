@@ -103,7 +103,7 @@ $this->title = Yii::$app->label->title('view', 'Vendor Payment');
                         'columns' => [
                             [
                                 'attribute' => 'payment_cycle_code',
-                                'value' => $model->billing_type == 'remuneration' ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) : Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')),
+                                'value' => Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
