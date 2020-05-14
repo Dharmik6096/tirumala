@@ -927,6 +927,7 @@ class DropDown extends Component {
             'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
             'reject_reason' => ['name' => 'rejection_reason_code', 'fields' => 'rejection_reason_code,rejection_reason', 'prompt' => Yii::t('app', 'Select Reject Reason'), 'model' => 'TblRejectionReason'],
+            'transport_vehicle' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'depend' => 'transporter_code'],
         ];
         return $label[$l];
     }

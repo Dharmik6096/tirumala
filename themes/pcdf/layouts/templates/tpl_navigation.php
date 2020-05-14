@@ -85,6 +85,13 @@ echo GhostMenu::widget([
         ],
         [
             'options' => ['class' => 'dropdown'],
+            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Tanker <b class="caret"></b></a>',
+            'items' => [
+                ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
+            ],
+        ],
+        [
+            'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Rate <b class="caret"></b></a>',
             'items' => [
                 ['label' => 'Rate Formula', 'url' => ['/dcsoperation/formula-master/index'], 'active' => ($cntrl == 'formula-master')],

@@ -1174,14 +1174,26 @@ class GeneralFunctions extends Component {
 
     public function getDestRelation($type = '') {
         switch (strtolower($type)) {
-            case '2':
+            case '2' :
                 $rel = 'plantCode';
                 break;
-            case '1':
+            case 'plant':
+                $rel = 'plantCode';
+                break;
+            case '1' :
                 $rel = 'mccPlantCode';
                 break;
-            case '0':
+            case 'mcc' :
+                $rel = 'mccPlantCode';
+                break;
+            case '0' :
                 $rel = 'bmcCode';
+                break;
+            case 'bmc':
+                $rel = 'bmcCode';
+                break;
+            case 'vendor':
+                $rel = 'customerCode';
                 break;
             default :
                 $rel = '';
@@ -1429,6 +1441,34 @@ class GeneralFunctions extends Component {
             $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             return $data = empty($Code) ? '' : $Code;
         }
+    }
+
+    public function getPrimaryCode($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
+        $orgCode = 'PORTAL-' . $organizations_code . '-';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+
+        return $value;
+    }
+
+    public function getTransactionCode($model, $primaryCode, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $orgCode = $primaryCode . 'T';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+        return $value;
     }
 
 }

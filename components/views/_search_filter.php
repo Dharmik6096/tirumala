@@ -163,7 +163,7 @@ if (!empty($filter_data)) {
                                         if (isset($value_array[1]) && $value_array[1] == 'transporter_code') {
                                             ?>
                                             <div class="col-sm-6">
-                                                <?= Yii::$app->dropdown->vehicletransporter($model, $form, $field_class . '-transporter_code', 'vehicle_code'); ?>
+                                                <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, $field_class . '-transporter_code', 'form-group col-sm-4'); ?>
                                             </div>
                                         <?php } else { ?>
                                             <div class="col-sm-6">

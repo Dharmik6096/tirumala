@@ -13,6 +13,7 @@ use app\modules\syncutility\models\TblRealtimeSyncError;
 use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
+use app\modules\tankermovement\models\TblVehicleTrip;
 
 class RealtimeServicesController extends RestController {
 
@@ -225,6 +226,31 @@ class RealtimeServicesController extends RestController {
         if ($transaction == 'customRedirect') {
             $saveErrorLog = true;
         }
+    }
+
+    public function actionGenerateTrip() {
+        $data = $this->post_data;
+        if ($data['organization_type'] == 'BMC') {
+            $model = new TblVehicleTrip();
+            $model->attributes = $data['content'];
+            $model->bmc_code = $data['organization_code'];
+            $bmcDetail = $model->bmcCode;
+            if (!empty($bmcDetail)) {
+                $model->union_code = $bmcDetail->union_code;
+                $model->plant_code = $bmcDetail->plant_code;
+                $model->mcc_plant_code = $bmcDetail->mcc_plant_code;
+                if ($model->validate()) {
+                    $result = $model->setModel();
+                    if ($result[0]) {
+                        $transaction = $this->generalModel->saveTransaction($result[1], ['Vehicle Trip', 'create']);
+                        if ($transaction == 'customRedirect') {
+                            $this->response['data'] = $result[2];
+                        }
+                    }
+                }
+            }
+        }
+        return $this->response;
     }
 
 }
