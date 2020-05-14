@@ -20,9 +20,7 @@ use app\models\TblUsers;
  * @property string $updated_at
  * @property string $wef_date
  * @property string $created_by
- * @property string $dcs_code
  * @property string $staff_member_code
- * @property string $sub_center_code
  * @property string $updated_by
  *
  * @property TblUsers $createdBy
@@ -77,8 +75,7 @@ class TblStaffSalary extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'wef_date' => Yii::t('app', 'WEF Date'),
             'created_by' => Yii::t('app', 'Created By'),
-            'staff_member_code' => Yii::t('app', 'Staff Member Code'),
-            'sub_center_code' => Yii::t('app', 'Sub Center Name'),
+            'staff_member_code' => Yii::t('app', 'Staff Member'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'total_value' => Yii::t('app', 'Value'),
         ];
@@ -103,13 +100,6 @@ class TblStaffSalary extends \app\models\ChildModel {
      */
     public function getStaffMemberCode() {
         return $this->hasOne(TblStaffMember::className(), ['staff_member_code' => 'staff_member_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSubCenterCode() {
-        return $this->hasOne(TblSubCenter::className(), ['sub_center_code' => 'sub_center_code']);
     }
 
     /**

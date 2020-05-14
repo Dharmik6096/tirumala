@@ -52,7 +52,7 @@ class TblStaffAdditionDeduction extends \app\models\ChildModel {
     public function rules() {
         return [
             [['amount'], 'number'],
-            [['app_from_date', 'tr_date', 'staff_member_code', 'amount', 'installment_no'], 'required'],
+            [['app_from_date', 'tr_date', 'staff_member_code', 'amount', 'installment_no', 'type'], 'required'],
             [['created_at', 'deleted_at', 'staff_addition_deduction_no', 'tr_date', 'updated_at', 'staff_member_name', 'installment_no'], 'safe'],
             [['type'], 'integer'],
             [['app_from_date'], 'string', 'max' => 255],
@@ -136,7 +136,7 @@ class TblStaffAdditionDeduction extends \app\models\ChildModel {
 
     public function memberJoinDate($attribute, $params) {
         $member = $this->staffMemberCode->tenure_from_date;
-      
+
         if (!empty($member) && !empty($this->app_from_date) && ($this->app_from_date < $member)) {
             $this->addError('app_from_date', Yii::t('app/validation', 'Month App From not in Tenure Date'));
             return false;

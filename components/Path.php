@@ -84,7 +84,7 @@ class Path extends Component {
         '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification', 'TblBulkNotificationHistory'],
         '\\app\modules\vsp\models\\' => ['TblGeneralFormula', 'TblGeneralFormulaHistory', 'TblCriteriaKeywordMapping', 'TblBillHead', 'TblBillHeadHistory', 'TblBillHeadDefault', 'TblBillHeadDetail'],
         '\\app\modules\payment\models\\' => ['TblProductSaleDetails', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding'],
-        '\\app\modules\staffmanagement\models\\' => ['TblStaffMember', 'TblStaffMemberHistory', 'TblStaffAttendance', 'TblStaffAttendanceHistory', 'TblStaffSalaryTransaction', 'TblStaffSalaryTransactionHistory', 'TblStaffSalaryHistory', 'TblStaffInstallment', 'TblStaffInstallmentHistory', 'TblStaffMemberDesignationHistory'],
+        '\\app\modules\staffmanagement\models\\' => ['TblStaffMember', 'TblStaffMemberHistory', 'TblStaffAttendance', 'TblStaffAttendanceHistory', 'TblStaffSalaryTransaction', 'TblStaffSalaryTransactionHistory', 'TblStaffSalaryHistory', 'TblStaffInstallment', 'TblStaffInstallmentHistory', 'TblStaffMemberDesignationHistory', 'TblStaffSalaryProcess', 'TblStaffSalaryProcessTransaction', 'TblStaffSalaryProcessHistory', 'TblStaffSalaryProcessTransactionHistory'],
     ];
 
     public function get($model) {
