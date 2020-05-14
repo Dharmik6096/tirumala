@@ -272,6 +272,8 @@ echo GhostMenu::widget([
                         ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/default/vendor-bank-payment']],
                         ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/default/member-bank-payment']],
                         ['label' => '608-' . Yii::t('app', 'Member Outstanding Detail'), 'url' => ['/misreports/default/member-outstanding-detail']],
+                        ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill']],
+                        ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
