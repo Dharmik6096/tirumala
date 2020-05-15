@@ -45,7 +45,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'p_date'], 'required', 'on' => ['ShiftReportNameWise']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'p_date', 'from_shift'], 'required', 'on' => ['ShiftReportNameWise']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type', 'report_status'], 'required', 'on' => ['MemberMilkCollection', 'ConsolidatedUnionMilkCollection', 'DcsWiseMilkCollection']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MemberMilkCollectionRegister']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'route_code', 'report_status'], 'required', 'on' => ['CollectionVsDispatchGraph']],

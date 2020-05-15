@@ -709,7 +709,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '608 - Member Outstanding Detail',
             ],
             'ShiftReportNameWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string:from_shift',
                 'sp_name' => 'rpt_mis_shift_report_name_wise',
                 'scenario' => 'ShiftReportNameWise',
                 'title' => '103 - Shift Report (Name Wise)',
@@ -757,21 +757,21 @@ class DefaultController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'DcsWiseMilkCollection' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'rpt_mis_society_wise_milk_collection_date_shift_wise',
                 'scenario' => 'DcsWiseMilkCollection',
                 'title' => '102 - Society Wise Milk Collection',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'DcsWiseMilkCollectionDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'rpt_mis_society_wise_milk_collection_date_wise',
                 'scenario' => 'DcsWiseMilkCollection',
                 'title' => '102 - Society Wise Milk Collection',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'DcsWiseMilkCollectionConsolidate' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'rpt_mis_society_wise_milk_collection_consolidated',
                 'scenario' => 'DcsWiseMilkCollection',
                 'title' => '102 - Society Wise Milk Collection',
