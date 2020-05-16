@@ -183,7 +183,8 @@ if (isset($data['url1'])) {
                                                 <?php
                                             }
                                         }
-                                        if (in_array($value, array('rate_type', 'bank_type'))) {
+
+                                        if (in_array($value, array('rate_type', 'bank_type','report_status'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -202,6 +203,20 @@ if (isset($data['url1'])) {
                                                 </div>
                                                 <?php
                                             }
+                                        }
+                                        if (in_array($value, array('member_type'))) {
+                                            ?>
+                                            <div class="col-sm-6 val_dcs_code">
+                                                <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel($value), false, 'member_type'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('route_code'))) {
+                                            ?>
+                                            <div class="col-sm-6 val_dcs_code">
+                                                <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
+                                            </div>
+                                            <?php
                                         }
                                     }
 
