@@ -9,7 +9,7 @@ use yii\base\Model;
 class ReportsModel extends Model {
 
     public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift;
-    public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code, $bank_type;
+    public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code, $bank_type, $report_status, $member_type, $route_code;
 
     function __construct() {
         
@@ -20,8 +20,8 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type'], 'default', 'value' => 0],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code'], 'safe'],
+            [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type', 'route_code'], 'default', 'value' => 0],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code'], 'safe'],
             [['report_type'], 'required', 'on' => 'BmcCollection'],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
             [['to_date'], function ($attribute, $params) {
@@ -45,6 +45,13 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'p_date', 'from_shift'], 'required', 'on' => ['ShiftReportNameWise']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type', 'report_status'], 'required', 'on' => ['MemberMilkCollection', 'ConsolidatedUnionMilkCollection', 'DcsWiseMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['MemberMilkCollectionRegister']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'route_code', 'report_status'], 'required', 'on' => ['CollectionVsDispatchGraph']],
+            [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'route_code', 'report_status'], 'required', 'on' => ['UnionWiseCollectionVsDispatch']],
+            [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status'], 'required', 'on' => ['CdaDateAndShiftWise', 'CdaConsolidated', 'BmcCollectionConsolidated', 'CdaDateWise']],
+            [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['VariationPercentageWise', 'VariationVillageWise']],
         ];
     }
 

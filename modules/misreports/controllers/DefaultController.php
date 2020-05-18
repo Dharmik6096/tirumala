@@ -224,6 +224,50 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionShiftReportNameWise() {
+        $this->report = 'ShiftReportNameWise';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMilkCollection() {
+        $this->report = 'MemberMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberMilkCollectionDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'MemberMilkCollectionConsolidate';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionConsolidatedUnionMilkCollection() {
+        $this->report = 'ConsolidatedUnionMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'ConsolidatedUnionMilkCollectionDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'ConsolidatedUnionMilkCollectionConsolidate';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionDcsWiseMilkCollection() {
+        $this->report = 'DcsWiseMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'DcsWiseMilkCollectionDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'DcsWiseMilkCollectionConsolidate';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     public function actionVendorBankPayment() {
         $this->report = 'VendorBankPayment';
         return $this->actionIndex();
@@ -233,8 +277,54 @@ class DefaultController extends \app\controllers\ChildController {
         $this->report = 'MemberBankPayment';
         return $this->actionIndex();
     }
+
     public function actionMemberOutstandingDetail() {
         $this->report = 'MemberOutstandingDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMilkCollectionRegister() {
+        $this->report = 'MemberMilkCollectionRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsCollectionVsDispatchGraph() {
+        $this->report = 'DcsCollectionVsDispatchGraph';
+        return $this->actionIndex();
+    }
+
+    public function actionUnionWiseCollectionVsDispatch() {
+        $this->report = 'UnionWiseCollectionVsDispatch';
+        return $this->actionIndex();
+    }
+
+    public function actionCdaDateAndShiftWise() {
+        $this->report = 'CdaDateAndShiftWise';
+        return $this->actionIndex();
+    }
+
+    public function actionCdaDateWise() {
+        $this->report = 'CdaDateWise';
+        return $this->actionIndex();
+    }
+
+    public function actionCdaConsolidated() {
+        $this->report = 'CdaConsolidated';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcCollectionConsolidated() {
+        $this->report = 'BmcCollectionConsolidated';
+        return $this->actionIndex();
+    }
+
+    public function actionVariationVillageWise() {
+        $this->report = 'VariationVillageWise';
+        return $this->actionIndex();
+    }
+
+    public function actionVariationPercentageWise() {
+        $this->report = 'VariationPercentageWise';
         return $this->actionIndex();
     }
 
@@ -617,6 +707,129 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_outstanding_detail',
                 'scenario' => 'MemberOutstandingDetail',
                 'title' => '608 - Member Outstanding Detail',
+            ],
+            'ShiftReportNameWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string:from_shift',
+                'sp_name' => 'rpt_mis_shift_report_name_wise',
+                'scenario' => 'ShiftReportNameWise',
+                'title' => '103 - Shift Report (Name Wise)',
+            ],
+            'MemberMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_member_milk_colleciton_summary_date_shift_wise',
+                'scenario' => 'MemberMilkCollection',
+                'title' => '101 -Member Milk Collection',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberMilkCollectionDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_member_milk_colleciton_summary_date_wise',
+                'scenario' => 'MemberMilkCollection',
+                'title' => '101 -Member Milk Collection',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberMilkCollectionConsolidate' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_member_milk_colleciton_summary_consolidated',
+                'scenario' => 'MemberMilkCollection',
+                'title' => '101 -Member Milk Collection',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'ConsolidatedUnionMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_company_wise_collection_date_shift_wise',
+                'scenario' => 'ConsolidatedUnionMilkCollection',
+                'title' => '105 - Consolited Milk Collection Union Wise – Table',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'ConsolidatedUnionMilkCollectionDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_company_wise_collection_date_wise',
+                'scenario' => 'ConsolidatedUnionMilkCollection',
+                'title' => '105 - Consolited Milk Collection Union Wise – Table',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'ConsolidatedUnionMilkCollectionConsolidate' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_company_wise_collection_consolidated',
+                'scenario' => 'ConsolidatedUnionMilkCollection',
+                'title' => '105 - Consolited Milk Collection Union Wise – Table',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'DcsWiseMilkCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_society_wise_milk_collection_date_shift_wise',
+                'scenario' => 'DcsWiseMilkCollection',
+                'title' => '102 - Society Wise Milk Collection',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'DcsWiseMilkCollectionDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_society_wise_milk_collection_date_wise',
+                'scenario' => 'DcsWiseMilkCollection',
+                'title' => '102 - Society Wise Milk Collection',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'DcsWiseMilkCollectionConsolidate' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_society_wise_milk_collection_consolidated',
+                'scenario' => 'DcsWiseMilkCollection',
+                'title' => '102 - Society Wise Milk Collection',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberMilkCollectionRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,member_type',
+                'sp_name' => 'rpt_mis_member_collection_register',
+                'scenario' => 'MemberMilkCollectionRegister',
+                'title' => '104 - Member Milk Collection Register',
+            ],
+            'DcsCollectionVsDispatchGraph' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_milk_collection_vs_dispatch',
+                'scenario' => 'CollectionVsDispatchGraph',
+                'title' => '116 - Society Wise Collection vs Dispatch - Graph',
+            ],
+            'UnionWiseCollectionVsDispatch' => [
+                'param' => 'union_code,route_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_company_wise_collection_vs_dispatch',
+                'scenario' => 'UnionWiseCollectionVsDispatch',
+                'title' => '108 - Company Wise Collection vs Dispatch',
+            ],
+            'CdaDateAndShiftWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_cda_date_shift',
+                'scenario' => 'CdaDateAndShiftWise',
+                'title' => '121 - CDA Date And Shift Wise',
+            ],
+            'CdaDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_cda_date_shift',
+                'scenario' => 'CdaDateWise',
+                'title' => '122 - CDA Date Wise',
+            ],
+            'CdaConsolidated' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_cda_consolidated',
+                'scenario' => 'CdaConsolidated',
+                'title' => '123 - CDA Consolidated',
+            ],
+            'VariationVillageWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_variation_date_wise_without_milktype',
+                'scenario' => 'VariationVillageWise',
+                'title' => '307 - Village Wise Variation',
+            ],
+            'VariationPercentageWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_rpt_variation_date_wise_without_milktype_qtype',
+                'scenario' => 'VariationPercentageWise',
+                'title' => '308 - Percentage Wise Variation',
+            ],
+            'BmcCollectionConsolidated' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'rpt_mis_bmc_collection_consolidated',
+                'scenario' => 'BmcCollectionConsolidated',
+                'title' => '124 - BMC Collection Consolidated',
             ],
         ];
         return $label[$l];

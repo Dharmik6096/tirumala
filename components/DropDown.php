@@ -873,6 +873,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Staff'), 1 => Yii::t('app', 'Committee')],
             ],
+            'report_status' => [
+                'name' => 'report_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'With Milk Type'), '0' => Yii::t('app', 'Without Milk Type')],
+            ],
         ];
         return $records[$l];
     }
