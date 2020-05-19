@@ -40,21 +40,14 @@ class TblProductRateController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id, $is_member_rate) {
-//        return $this->render('view', [
-//                    'model' => $this->findModel($id),
-//        ]);
-
         $searchModel = new TblProductRateSearch();
-        $query = TblProductRate::find()->select(['product_code', 'union_code'])->where(['product_rate_code' => $id])->one();
+        $query = TblProductRate::find()->select(['product_code', 'union_code'])->where(['product_sale_rate_code' => $id])->one();
         $product_code = $query['product_code'];
-        //$query_rate = TblProductRate::find()->select('*')->where(['product_code'=>$product_code])->andWhere(['<>', 'product_rate_code', $id])->orderBy(['wef_date' => SORT_DESC]);
         $searchModel->product_code = $product_code;
-        $searchModel->product_rate_code = $id;
+        $searchModel->product_sale_rate_code = $id;
         $searchModel->is_member_rate = $is_member_rate;
         $searchModel->union_code = $query['union_code'];
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        //$dataProvider = $searchModel->getHistoryRate($id);
-
         return $this->render('view', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
@@ -71,9 +64,9 @@ class TblProductRateController extends \app\controllers\ChildController {
         $this->model = new TblProductRate();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->product_rate_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $this->model->product_sale_rate_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Product Rate', 'create']);
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Product Sale Rate', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -95,7 +88,7 @@ class TblProductRateController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Product Rate', 'edit']);
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Product Sale Rate', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -154,16 +147,18 @@ class TblProductRateController extends \app\controllers\ChildController {
         $appModel->model->wef_date = $model->wef_date;
         $appModel->is_union = false;
         $appModel->union_code = $model->union_code;
-        $appModel->field_name = 'product_rate_code';
+        $appModel->field_name = 'product_sale_rate_code';
         $appModel->field_value = $id;
         $appModel->trans_label = 'product rate applicability';
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
         $appModel->assignStaticData = [
             'product_code' => $model->product_code,
-            'is_member_rate' => $model->is_member_rate
+            'is_member_rate' => $model->is_member_rate,
+            'sale_rate' => $model->sale_rate,
+            'commission' => $model->commission
         ];
-        $appModel->header_title = ' [Product: ' . Yii::$app->general->getforeignkey($model->productCode, 'product_name') . ', Rate: ' . $model->rate . '] ';
+        $appModel->header_title = ' [Product: ' . Yii::$app->general->getforeignkey($model->productCode, 'product_name') . ', Sale Rate: ' . $model->sale_rate . '] ';
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
@@ -179,7 +174,7 @@ class TblProductRateController extends \app\controllers\ChildController {
                 }],
         ];
         $appModel->dcs_filters = $value;
-        $appModel->actions = ['delete' => ['option' => 'product_rate_applicability_code,product_rate_applicability_code,tbl-product-rate/delete-applicability,allowDelete()']];
+        $appModel->actions = ['delete' => ['option' => 'product_sale_rate_applicability_code,product_sale_rate_applicability_code,tbl-product-rate/delete-applicability,allowDelete()']];
 
         return $appModel->createApp();
     }

@@ -1459,4 +1459,31 @@ class GeneralFunctions extends Component {
         return sprintf('%0.2f', $value);
     }
 
+    public function getPrimaryCode($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $orgCode = Yii::$app->session->get('organizations_type') . '-' . Yii::$app->session->get('organizations_code') . '-';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+
+        return $value;
+    }
+
+    public function getTransactionCode($model, $primaryCode, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $orgCode = $primaryCode . 'T';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+        return $value;
+    }
+
 }

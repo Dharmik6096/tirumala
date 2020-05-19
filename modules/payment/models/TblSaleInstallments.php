@@ -11,10 +11,8 @@ use app\modules\payment\models\TblPaymentCycle;
 /**
  * This is the model class for table "tbl_sale_installments".
  *
- * @property integer $installment_code
- * @property string $member_code
- * @property string $sale_type
- * @property string $sale_code
+ * @property integer $product_sale_installment_code
+ * @property string $product_sale_code
  * @property string $dcs_code
  * @property string $union_code
  * @property string $main_amount
@@ -41,7 +39,7 @@ class TblSaleInstallments extends \app\models\ChildModel {
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_sale_installments';
+        return 'tbl_product_sale_installment';
     }
 
     /**
@@ -49,14 +47,14 @@ class TblSaleInstallments extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['payment_cycle_applicabilty_code', 'installment_status', 'is_active'], 'integer'],
-                [['member_code', 'sale_type', 'sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
+                [['payment_cycle_applicability_code', 'installment_status'], 'integer'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
                 [['main_amount', 'installment_amount'], 'number'],
-                [['created_at', 'updated_at', 'dcs_payment_cycle_code', 'payment_cycle_code', 'installment_date'], 'safe'],
+                [['created_at', 'updated_at', 'dcs_payment_cycle_code', 'payment_cycle_code', 'installment_date', 'product_sale_installment_code'], 'safe'],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
                 //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-                //[['payment_cycle_applicabilty_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPaymentCycleApplicability::className(), 'targetAttribute' => ['payment_cycle_applicabilty_code' => 'payment_cycle_applicabilty_code']],
-                //[['sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['sale_code' => 'product_sale_code']],
+                //[['payment_cycle_applicability_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPaymentCycleApplicability::className(), 'targetAttribute' => ['payment_cycle_applicability_code' => 'payment_cycle_applicability_code']],
+                //[['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_product_sale_code']],
         ];
     }
 
@@ -65,19 +63,16 @@ class TblSaleInstallments extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'installment_code' => Yii::t('app', 'Installment Code'),
-            'member_code' => Yii::t('app', 'Member'),
-            'sale_type' => Yii::t('app', 'Sale Type'),
-            'sale_code' => Yii::t('app', 'Sale Code'),
+            'product_sale_installment_code' => Yii::t('app', 'Installment Code'),
+            'product_sale_code' => Yii::t('app', 'Sale Code'),
             'dcs_code' => Yii::t('app', 'Society'),
             'union_code' => Yii::t('app', 'Union'),
             'main_amount' => Yii::t('app', 'Main Amount'),
             'installment_amount' => Yii::t('app', 'Installment Amount'),
-            'payment_cycle_applicabilty_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
+            'payment_cycle_applicability_code' => Yii::t('app', 'Payment Cycle Applicabilty Code'),
             'dcs_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'installment_status' => Yii::t('app', 'Installment Paid?'),
-            'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -115,12 +110,12 @@ class TblSaleInstallments extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getSaleCode() {
-        return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'sale_code']);
+        return $this->hasOne(TblProductSale::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
-    public function getMemberCode() {
-        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
-    }
+//    public function getMemberCode() {
+//        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+//    }
 
     /**
      * @inheritdoc
@@ -132,8 +127,8 @@ class TblSaleInstallments extends \app\models\ChildModel {
 
     public function getInstData($invoice_no) {
         return $this->find()->select(['installment_code',
-                            'installment_amount', 'dcs_payment_cycle_code', 'sale_code', 'sale_type'])
-                        ->where(['sale_code' => $invoice_no])->all();
+                            'installment_amount', 'dcs_payment_cycle_code', 'product_sale_code'])
+                        ->where(['product_sale_code' => $invoice_no])->all();
     }
 
     public function getTblPaymentCycleCode() {

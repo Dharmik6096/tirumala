@@ -29,29 +29,25 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblproductrate-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
     </div>
     <div class="col-sm-3">
-        <?= $form->field($model, 'rate')->textInput() ?>
+        <?= $form->field($model, 'sale_rate')->textInput() ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>
-    <!--<div class="clearfix"></div>-->
-
     <div class="col-sm-3 mt25">
         <?= $form->field($model, 'is_member_rate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
     </div>
-    <!--<div class="col-sm-3 mt25">-->
-        <?php // Yii::$app->controls->active($model, $form); ?>
-    <!--</div>-->
     <div class="col-sm-3">
-        <?= $form->field($model, 'vsp_commission')->textInput() ?>
+        <?= $form->field($model, 'commission')->textInput() ?>
     </div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-            <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
-        </div>
+</div>
+<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="form-group">
+        <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+        <?= Yii::$app->controls->reset(); ?>
+        <?= Yii::$app->controls->cancel($model); ?>
     </div>
+</div>
 </div>
 <?php ActiveForm::end(); ?>
 <?php
@@ -64,15 +60,15 @@ $script = "
     });
     function dispVsp(){
         if($('#tblproductrate-is_member_rate').is(':checked')){
-            $('.field-tblproductrate-vsp_commission').show();
+            $('.field-tblproductrate-commission').show();
         } else {
-            $('.field-tblproductrate-vsp_commission').hide();
-            $('#tblproductrate-vsp_commission').val(0);
+            $('.field-tblproductrate-commission').hide();
+            $('#tblproductrate-commission').val(0);
         }
     }
     function setMinDate() {
         var id = $('#tblproductrate-product_code').val();
-        var code='{$model->product_rate_code}';
+        var code='{$model->product_sale_rate_code}';
         var union='{$model->union_code}';
         var odt='{$model->wef_date}';
         if(id!=='' && id!==null){

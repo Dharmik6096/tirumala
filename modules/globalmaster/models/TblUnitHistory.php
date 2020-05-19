@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\globalmaster\models;
+
 use Yii;
 
 /**
@@ -24,32 +25,30 @@ use Yii;
  * @property TblUsers $updatedBy
  * @property TblUsers $createdBy
  */
-class TblUnitHistory extends \yii\db\ActiveRecord
-{
+class TblUnitHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_units_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['created_at','created_by', 'history_created_at','updated_at','short_name'], 'safe'],
-            [['is_active','unit_code','local_name','local_short_name'], 'safe'],
+                [['created_at', 'created_by', 'history_created_at', 'updated_at', 'short_name'], 'safe'],
+                [['is_active', 'unit_code', 'local_name', 'local_short_name'], 'safe'],
+                [['union_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
 //            'id' => Yii::t('app', 'ID'),
 //            'created_at' => Yii::t('app', 'Created At'),
@@ -68,33 +67,34 @@ class TblUnitHistory extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
- /*   public function getDeletedBy()
-    {
-        return $this->hasOne(TblUsers::className());
-    }
- */
+    /*   public function getDeletedBy()
+      {
+      return $this->hasOne(TblUsers::className());
+      }
+     */
     /**
      * @return \yii\db\ActiveQuery
      */
- /*   public function getUpdatedBy()
-    {
-        return $this->hasOne(TblUsers::className(), ['user_id' => 'updated_by']);
-    }
-*/
+    /*   public function getUpdatedBy()
+      {
+      return $this->hasOne(TblUsers::className(), ['user_id' => 'updated_by']);
+      }
+     */
     /**
      * @return \yii\db\ActiveQuery
      */
-/*    public function getCreatedBy()
-    {
-        return $this->hasOne(TblUsers::className(), ['user_id' => 'created_by']);
-    }
-*/
+    /*    public function getCreatedBy()
+      {
+      return $this->hasOne(TblUsers::className(), ['user_id' => 'created_by']);
+      }
+     */
+
     /**
      * @inheritdoc
      * @return TblUnitHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblUnitHistoryQuery(get_called_class());
     }
+
 }

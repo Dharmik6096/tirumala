@@ -20,7 +20,7 @@ class TblProductSaleSearch extends TblProductSale {
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'sale_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
                 [['is_installment', 'no_of_installment'], 'integer'],
         ];
@@ -58,23 +58,23 @@ class TblProductSaleSearch extends TblProductSale {
             // $query->where('0=1');
             return $dataProvider;
         }
-        if ($this->member_code) {
-            $query->joinWith(['memberCode']);
-            $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);
-        }
-        if (!empty($this->sale_date_time))
-            $query->andFilterWhere(['like', 'tbl_product_sale.sale_date_time', date('Y-m-d', strtotime($this->sale_date_time))]);
+//        if ($this->member_code) {
+//            $query->joinWith(['memberCode']);
+//            $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);
+//        }
+        if (!empty($this->invoice_date))
+            $query->andFilterWhere(['like', 'tbl_product_sale.invoice_date', date('Y-m-d', strtotime($this->invoice_date))]);
         // grid filtering conditions
 
 
         if (!empty($this->from_date)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $query->andFilterWhere(['>=', 'cast(tbl_product_sale.sale_date_time as date)', $from_date]);
+            $query->andFilterWhere(['>=', 'cast(tbl_product_sale.invoice_date as date)', $from_date]);
         }
 
         if (!empty($this->to_date)) {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $query->andFilterWhere(['<=', 'cast(tbl_product_sale.sale_date_time as date)', $to_date]);
+            $query->andFilterWhere(['<=', 'cast(tbl_product_sale.invoice_date as date)', $to_date]);
         }
         $query->andFilterWhere([
             'tbl_product_sale.amount' => $this->amount,
@@ -85,8 +85,8 @@ class TblProductSaleSearch extends TblProductSale {
             'tbl_product_sale.is_installment' => $this->is_installment,
             'tbl_product_sale.no_of_installment' => $this->no_of_installment,
         ]);
-        if (!empty($this->sale_mode) || $this->sale_mode == '0') {
-            $query->andFilterWhere(['tbl_product_sale.sale_mode' => (int) $this->sale_mode]);
+        if (!empty($this->payment_mode) || $this->payment_mode == '0') {
+            $query->andFilterWhere(['tbl_product_sale.payment_mode' => (int) $this->payment_mode]);
         }
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
 
@@ -116,16 +116,16 @@ class TblProductSaleSearch extends TblProductSale {
             // $query->where('0=1');
             return $dataProvider;
         }
-        if (!empty($this->sale_date_time)) {
+        if (!empty($this->invoice_date)) {
             $model = new TblPaymentCycleApplicability();
             $model->applicable_type = $this->customer_type;
             $model->applicable_code = $this->bmc_code;
             $model->applicable_for = 'BMC';
-            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->sale_date_time)));
+            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
             if (!empty($modelData)) {
-                $query->andFilterWhere(['or', ['between', 'cast(tbl_product_sale.sale_date_time as date)', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))], ['between', 'tbl_sale_installments.installment_date', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))]]);
+                $query->andFilterWhere(['or', ['between', 'cast(tbl_product_sale.invoice_date as date)', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))], ['between', 'tbl_product_sale_installment.installment_date', date('Y-m-d', strtotime($modelData->from_date)), date('Y-m-d', strtotime($modelData->to_date))]]);
             } else {
-                $query->andFilterWhere(['or', ['cast(tbl_product_sale.sale_date_time as date)' => date('Y-m-d', strtotime($this->sale_date_time))], ['tbl_sale_installments.installment_date' => date('Y-m-d', strtotime($this->sale_date_time))]]);
+                $query->andFilterWhere(['or', ['cast(tbl_product_sale.invoice_date as date)' => date('Y-m-d', strtotime($this->invoice_date))], ['tbl_product_sale_installment.installment_date' => date('Y-m-d', strtotime($this->invoice_date))]]);
             }
         }
         $query->andFilterWhere([
