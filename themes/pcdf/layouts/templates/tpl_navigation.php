@@ -88,6 +88,7 @@ echo GhostMenu::widget([
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Tanker <b class="caret"></b></a>',
             'items' => [
                 ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
+                ['label' => 'BMC Milk Dispatch', 'url' => ['/tankermovement/tbl-bmc-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-milk-dispatch')],
             ],
         ],
         [
