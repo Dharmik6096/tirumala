@@ -10,24 +10,22 @@ use app\modules\product\models\TblProductGroup;
 /**
  * TblProductGroupSearch represents the model behind the search form about `app\modules\product\models\TblProductGroup`.
  */
-class TblProductGroupSearch extends TblProductGroup
-{
+class TblProductGroupSearch extends TblProductGroup {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['product_group_code', 'is_active'], 'integer'],
-            [['product_group_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name'], 'safe'],
+                [['product_group_code', 'is_active'], 'integer'],
+                [['product_group_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'union_code', 'unit_code', 'ref_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblProductGroupSearch extends TblProductGroup
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblProductGroup::find();
 
         // add conditions that should always apply here
@@ -50,6 +47,8 @@ class TblProductGroupSearch extends TblProductGroup
         ]);
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['unionCode', 'unitCode']);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -59,17 +58,17 @@ class TblProductGroupSearch extends TblProductGroup
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'product_group_code' => $this->product_group_code,
-            'created_at' => $this->created_at,
-            'is_active' => $this->is_active,
-            'updated_at' => $this->updated_at,
+            'tbl_product_group.product_group_code' => $this->product_group_code,
+            'tbl_product_group.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'product_group_name', $this->product_group_name])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'local_name', $this->local_name]);
+        $query->andFilterWhere(['like', 'tbl_product_group.product_group_name', $this->product_group_name])
+                ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_units.unit_name', $this->unit_code])
+                ->andFilterWhere(['like', 'tbl_product_group.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'tbl_product_group.local_name', $this->local_name]);
 
         return $dataProvider;
     }
+
 }

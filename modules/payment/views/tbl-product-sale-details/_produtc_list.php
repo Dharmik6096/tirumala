@@ -11,7 +11,7 @@ $attribute = [
 //    ['attribute' => 'product_sale_code'],
     ['attribute' => 'product_code', 'value' =>'productCode.product_name'],
     ['attribute' => 'rate','format' => Yii::$app->general->CurrencyFormat(),],
-    ['attribute' => 'qty'],
+    ['attribute' => 'quantity'],
     ['attribute' => 'amount','format' => Yii::$app->general->CurrencyFormat(),],
 ];
 

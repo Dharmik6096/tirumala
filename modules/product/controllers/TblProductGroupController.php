@@ -15,20 +15,19 @@ use yii\helpers\Json;
 /**
  * TblProductGroupController implements the CRUD actions for TblProductGroup model.
  */
-class TblProductGroupController extends \app\controllers\ChildController
-{
+class TblProductGroupController extends \app\controllers\ChildController {
+
     /**
      * Lists all TblProductGroup models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblProductGroupSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -37,10 +36,9 @@ class TblProductGroupController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -49,8 +47,7 @@ class TblProductGroupController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblProductGroup();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
@@ -70,8 +67,7 @@ class TblProductGroupController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
@@ -93,9 +89,8 @@ class TblProductGroupController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete()
-    {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_product_group',Yii::$app->request->post('id'), 'product_group_code']);
+    public function actionDelete() {
+        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_product_group', Yii::$app->request->post('id'), 'product_group_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
             $historyModel = new TblProductGroupHistory();
@@ -116,12 +111,12 @@ class TblProductGroupController extends \app\controllers\ChildController
      * @return TblProductGroup the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblProductGroup::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

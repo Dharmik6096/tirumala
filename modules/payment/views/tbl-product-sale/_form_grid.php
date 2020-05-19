@@ -20,24 +20,24 @@ $attribute = [
         ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '';
         }, 'vAlign' => 'middle'],
-        ['attribute' => 'member_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }],
+//        ['attribute' => 'member_code', 'value' => function($model) {
+//            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+//        }],
     //'member_code',
-    //'sale_date_time',
+    //'invoice_date',
     [
-        'attribute' => 'sale_date_time',
+        'attribute' => 'invoice_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->sale_date_time);
+            return Yii::$app->controls->view_date($model->invoice_date);
         }],
-        ['attribute' => 'sale_mode', 'value' => function($model) {
-            return isset($model->sale_mode) ? Yii::$app->dropdown->getRecords('payment_mode')['data'][$model->sale_mode] : '';
-        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('payment_mode', $searchModel, 'sale_mode'),],
+        ['attribute' => 'payment_mode', 'value' => function($model) {
+            return isset($model->payment_mode) ? Yii::$app->dropdown->getRecords('payment_mode')['data'][$model->payment_mode] : '';
+        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('payment_mode', $searchModel, 'payment_mode'),],
         ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(),],
         ['attribute' => 'other_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
         ['attribute' => 'discount', 'format' => Yii::$app->general->CurrencyFormat(),],

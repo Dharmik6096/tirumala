@@ -858,6 +858,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => Yii::t('app', 'With Milk Type'), '0' => Yii::t('app', 'Without Milk Type')],
             ],
+            'is_type' => [
+                'name' => 'is_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')],
+            ],
+            'requisition_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Draft'), 6 => Yii::t('app', 'Sent'), 11 => Yii::t('app', 'Rejected'), 16 => Yii::t('app', 'Partially Processed'), 21 => Yii::t('app', 'InProcess'), 26 => Yii::t('app', 'Partially Dispatched'), 31 => Yii::t('app', 'Partially Delivered'), 36 => Yii::t('app', 'Dispatched'), 41 => Yii::t('app', 'Delivered'), 46 => Yii::t('app', 'Accepted'), 51 => Yii::t('app', 'Partially Accepted'), 56 => Yii::t('app', 'Closed'), 61 => Yii::t('app', 'Pending')],
+            ],
+            'requisition_type' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+            ]
         ];
         return $records[$l];
     }
@@ -932,6 +947,9 @@ class DropDown extends Component {
             'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
             'reject_reason' => ['name' => 'rejection_reason_code', 'fields' => 'rejection_reason_code,rejection_reason', 'prompt' => Yii::t('app', 'Select Reject Reason'), 'model' => 'TblRejectionReason'],
+            'tax_group_code' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup'],
+            'tax' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax Setting Name'), 'model' => 'TblTax'],
+            'tax_code' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax'), 'model' => 'TblTax'],
         ];
         return $label[$l];
     }

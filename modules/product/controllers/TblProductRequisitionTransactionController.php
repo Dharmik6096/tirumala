@@ -1,0 +1,362 @@
+<?php
+
+namespace app\modules\product\controllers;
+
+use Yii;
+use app\modules\product\models\TblProductRequisitionTransaction;
+use app\modules\product\models\TblProductRequisitionTransactionHistory;
+use app\modules\product\models\TblProductRequisitionTransactionSearch;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
+use app\modules\product\models\TblProductRequisition;
+use app\modules\product\models\TblProductRequisitionHistory;
+use app\modules\product\models\TblProductRequisitionSearch;
+use yii\widgets\ActiveForm;
+use app\components\Model;
+use yii\helpers\Json;
+
+/**
+ * TblProductRequisitionTransactionController implements the CRUD actions for TblProductRequisitionTransaction model.
+ */
+class TblProductRequisitionTransactionController extends \app\controllers\ChildController {
+
+    public $searchModel;
+    public $dataProvider;
+    public $jsonEncoded;
+    public $scheme;
+
+    /**
+     * Lists all TblProductRequisitionTransaction models.
+     * @return mixed
+     */
+    public function actionIndex() {
+        $searchModel = new TblProductRequisitionTransactionSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single TblProductRequisitionTransaction model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id) {
+        $requisition = new TblProductRequisition();
+        return $this->render('view', [
+                    'model' => $this->findModel($id), 'requisition' => $requisition
+        ]);
+    }
+
+    /**
+     * Creates a new TblProductRequisitionTransaction model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate() {
+
+        $this->model = new TblProductRequisitionTransaction();
+        $this->viewFile = 'create';
+        $this->searchModel = new TblProductRequisitionTransactionSearch();
+        $this->searchModel->product_requisition_code = Yii::$app->getRequest()->getQueryParam('id');
+        $this->dataProvider = $this->searchModel->search(Yii::$app->request->queryParams);
+        $reqModel = new TblProductRequisition();
+        if (Yii::$app->request->get('id') != -1) {
+            $reqModel = $reqModel->getRecord(Yii::$app->request->get('id'));
+            $this->jsonEncoded = Json::encode($reqModel->attributes);
+        }
+        if (Yii::$app->request->post()) {
+            if (Yii::$app->getRequest()->getQueryParam('id') == -1) {
+                $jsonData = Json::decode($_POST['product_req']);
+                $list = [];
+                $reqModel->addProductRequisition($jsonData);
+//                $reqModel->entry_type = Yii::$app->general->getEntryType();
+
+                $reqCode = $reqModel->product_requisition_code;
+            } else {
+                $reqCode = Yii::$app->getRequest()->getQueryParam('id');
+            }
+
+            $transaction = FALSE;
+            if ($this->model->load(Yii::$app->request->post()) && Yii::$app->request->post('submit') === 'save') {
+                $reqModel->status = 1;
+                $this->model->status = 1;
+//                $reqModel->is_sentbox = FALSE;
+//                $this->model->is_sentbox = FALSE;
+                $this->model->scenario = 'addProduct';
+//                $scheme = $this->model->getProductScheme($reqModel->req_date, '', $reqModel->dcs_code);
+                $this->model->product_requisition_code = $reqCode;
+//                $code = $this->model->getCode();
+                $this->model->requisition_transaction_code = Yii::$app->general->getTransactionCode($this->model, $this->model->product_requisition_code);
+                $this->model->requisition_on_date = !empty($this->model->requisition_on_date) ? Yii::$app->formatter->asDate($this->model->requisition_on_date, DATE_FORMAT) : NULL;
+
+                if (Yii::$app->request->get('id') == -1) {
+                    $transaction = $this->generalModel->saveTransaction([$reqModel], [$this->model], ['Product Requisition transaction', 'create']);
+                } else {
+                    $transaction = $this->generalModel->saveTransaction([$this->model], ['Product Requisition transaction', 'create']);
+                }
+            } else if (Yii::$app->request->post('submit') === 'submit') {
+                $reqlist = [];
+                $historyModel = new TblProductRequisitionHistory();
+                Yii::$app->operation->history($reqModel, $historyModel, UPDATE);
+
+                $this->model->scenario = 'submit';
+                $reqModel->status = 6;
+                $reqModel->operation = 'INSERT';
+                $allreq = TblProductRequisitionTransaction::find()
+                        ->where(['product_requisition_code' => $reqModel->product_requisition_code])
+                        ->all();
+                for ($i = 0; $i < count($allreq); $i++) {
+
+                    $TransactionhistoryModel = new TblProductRequisitionTransactionHistory();
+                    Yii::$app->operation->history($allreq[$i], $TransactionhistoryModel, UPDATE);
+                    $reqlist[] = $TransactionhistoryModel;
+                    $allreq[$i]->operation = 'INSERT';
+                    $allreq[$i]->status = 6;
+                    $allreq[$i]->scenario = 'addProduct';
+                    $reqlist[] = $allreq[$i];
+                }
+                $transaction = $this->generalModel->saveTransaction([$reqModel, $historyModel], $reqlist, ['Product Requisition', 'create']);
+            }
+
+            if ($transaction == 'customRedirect') {
+                if (Yii::$app->request->post('submit') == 'submit') {
+                    return $this->redirect(['tbl-product-requisition/index']);
+                }
+//                $sdata = $this->model->getProductScheme($this->model->productRequisitionCode->date);
+//                if (!empty($sdata->scheme_type))
+//                    $_SESSION['success']['message'] = $_SESSION['success']['message'] . '<br/><br/>' . $this->model->getSchemeMsg($sdata->scheme_type, $sdata->msg);
+                $this->model->requisition_on_date = date('d-m-Y', strtotime($this->model->requisition_on_date));
+                return $this->{$transaction}();
+            } else {
+                $this->model->uom = $this->model->getUom($this->model->product_code);
+            }
+        }
+
+        return $this->customRender();
+    }
+
+    protected function customRender() {
+        return $this->render($this->viewFile, [
+                    'model' => $this->model, 'searchModel' => $this->searchModel,
+                    'dataProvider' => $this->dataProvider, 'jsonEncoded' => $this->jsonEncoded,
+                    'scheme' => !empty($this->scheme) ? $this->scheme->discription : '',
+        ]);
+    }
+
+    /**
+     * Updates an existing TblProductRequisitionTransaction model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        $this->searchModel = new TblProductRequisitionTransactionSearch();
+        $this->searchModel->product_requisition_code = $this->model->product_requisition_code;
+        $this->dataProvider = $this->searchModel->search(Yii::$app->request->queryParams);
+        $this->model->product_name = $this->model->productCode->product_name;
+
+        $reqModel = new TblProductRequisition();
+        $reqModel = $reqModel->getRecord($this->model->product_requisition_code);
+
+        $this->model->uom = $this->model->getUom($this->model->product_code);
+        $this->jsonEncoded = Json::encode($reqModel->attributes);
+        if (Yii::$app->request->post()) {
+
+            $historyModel = new TblProductRequisitionTransactionHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+
+            $reqModel = new TblProductRequisition();
+            $reqModel = $reqModel->getRecord($this->model->product_requisition_code);
+//            $scheme = $this->model->getProductScheme($reqModel->date);
+            $this->model->requisition_on_date = Yii::$app->formatter->asDate($this->model->requisition_on_date, DATE_FORMAT);
+//            $this->model->is_sentbox = FALSE;
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Product Requisition transaction', 'edit']);
+            if ($transaction == 'customRedirect') {
+//                $sdata = $this->model->getProductScheme($this->model->productRequisitionCode->date);
+//                if (!empty($sdata->scheme_type))
+//                    $_SESSION['success']['message'] = $_SESSION['success']['message'] . '<br/><br/>' . $this->model->getSchemeMsg($sdata->scheme_type, $sdata->msg);
+                $this->model->requisition_on_date = date('d-m-Y', strtotime($this->model->requisition_on_date));
+                return $this->{$transaction}();
+            } else {
+                $this->model->uom = $this->model->getUom($this->model->product_code);
+            }
+        }
+        return $this->customRender();
+    }
+
+    /**
+     * Deletes an existing TblProductRequisitionTransaction model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($id) {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    protected function customRedirect() {
+        return $this->redirect(['create', 'id' => $this->model->product_requisition_code]);
+    }
+
+    public function actionValidateProduct() {
+
+        $array = ['status' => 'error'];
+        if (!empty(Yii::$app->request->post('id'))) {
+            $model = new TblProductRequisitionTransaction();
+            $array = $model->checkProductAvailabel(Yii::$app->request->post('id'), Yii::$app->request->post('rid'), Yii::$app->request->post('date'));
+        }
+        echo Json::encode($array);
+        return;
+    }
+
+    /**
+     * Finds the TblProductRequisitionTransaction model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return TblProductRequisitionTransaction the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id) {
+        if (($model = TblProductRequisitionTransaction::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionAcceptRequisition($id) {
+//        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+        $this->model = new TblProductRequisition();
+        $this->model = $this->model->getRecord($id);
+        $this->viewFile = 'accept_requisition';
+        $this->searchModel = new TblProductRequisitionSearch();
+//        $this->dataProvider = $this->searchModel->searchRequisition(Yii::$app->request->queryParams);
+        $schememodal = new TblProductRequisitionTransaction();
+        if ((Yii::$app->request->post())) {
+            $approvedByUser = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+            $modelAttributes = Model::createMultiple(TblProductRequisitionTransaction::classname(), [], '');
+            Model::loadMultiple($modelAttributes, Yii::$app->request->post());
+            $validate = ActiveForm::validateMultiple($modelAttributes);
+            $app = 1;
+            if (!$validate && $modelAttributes) {
+                $checked = Yii::$app->request->post()['TblProductRequisitionTransaction'];
+                $totalItems = count($this->model->tblProductRequisitionTransactions);
+
+                $modelAttributes = $_POST['TblProductRequisitionTransaction'];
+                $list = [];
+                $rcnt = 0;
+                $cnt = 0;
+                foreach ($checked as $key => $row) {
+                    $modelNew = TblProductRequisitionTransaction::findOne($modelAttributes[$key]['requisition_transaction_code']);
+                    if (isset($modelAttributes[$key]['req_action']) && $modelAttributes[$key]['req_action'] != '' && empty($modelNew->parent_product_code)) {
+                        if ($modelNew->status == 6 || $modelAttributes[$key]['req_action'] == 2 || $modelNew->approved_quantity != $modelAttributes[$key]['approved_quantity'] || $modelNew->discount_amount != $modelAttributes[$key]['discount_amount']) {
+                            if (!empty($modelNew->approved_date)) {
+                                $old_scheme = ''; //$modelNew->getProductScheme($modelNew->approved_date, $modelNew->approved_quantity);
+                            } else {
+                                $old_scheme = '';
+                            }
+                            $historyModel = new TblProductRequisitionTransactionHistory();
+                            Yii::$app->operation->history($modelNew, $historyModel, UPDATE);
+                            array_push($list, $historyModel);
+                            $modelNew->approved_quantity = $modelAttributes[$key]['approved_quantity'];
+                            $modelNew->discount_amount = $modelAttributes[$key]['discount_amount'];
+                            $modelNew->approved_date = date('Y-m-d');
+                            $modelNew->is_approved = $app;
+                            $modelNew->approved_by = $approvedByUser;
+                            $modelNew->provisional_amount = round($modelNew->provisional_rate * $modelNew->approved_quantity, 2);
+                            if ($modelAttributes[$key]['req_action'] == '2') {
+                                $modelNew->status = 11;
+//                                $child = $modelNew->getChildProducts();
+//                                if (!empty($child->requisition_transaction_no)) {
+//                                    $oldModel = $this->findModel($child->requisition_transaction_no);
+//                                    $historyModel = new TblProductRequisitionTransactionHistory();
+//                                    Yii::$app->operation->history($oldModel, $historyModel, UPDATE);
+//                                    $oldModel->operation = FALSE;
+//                                    $oldModel->status = 11;
+//                                    $rcnt++;
+//                                    array_push($list, $oldModel);
+//                                    array_push($list, $historyModel);
+//                                }
+                                $rcnt++;
+                            } else {
+//                                $scheme = $modelNew->getProductScheme($modelNew->approved_date, $modelNew->approved_quantity);
+//                                if ($modelNew->quantity != $modelNew->approved_quantity) {
+//                                    $modelNew->status = 51;
+//                                } else {
+                                $modelNew->status = 46;
+//                                }
+                            }
+                            $modelNew->operation = FALSE;
+                            array_push($list, $modelNew);
+                        }
+                    } else {
+                        if (isset($modelAttributes[$key]['approved_quantity']) && $modelNew->approved_quantity != $modelAttributes[$key]['approved_quantity'] && $modelAttributes[$key]['req_action'] == '1') {
+                            $historyModel = new TblProductRequisitionTransactionHistory();
+                            Yii::$app->operation->history($modelNew, $historyModel, UPDATE);
+                            array_push($list, $historyModel);
+                            $modelNew->approved_quantity = $modelAttributes[$key]['approved_quantity'];
+                            $modelNew->provisional_amount = round($modelNew->provisional_rate * $modelNew->approved_quantity, 2);
+
+                            if ($modelNew->approved_quantity == 0) {
+                                $modelNew->status = 11;
+                            }
+                            $modelNew->approved_date = date('Y-m-d');
+                            $modelNew->is_approved = $app;
+                            $modelNew->approved_by = $approvedByUser;
+                            $modelNew->operation = FALSE;
+                            array_push($list, $modelNew);
+                        }
+
+                        if ($modelNew->status == 11) {
+                            $rcnt++;
+                        }
+                    }
+                }
+
+                if ($rcnt == $totalItems) {
+                    $status = 11;
+                } else {
+                    $status = 21;
+                }
+
+                
+                if (!empty($list)) {
+                    if ($this->model->status != $status) {
+                        $historyModel = new TblProductRequisitionHistory();
+                        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+
+                        $this->model->operation = FALSE;
+                        $this->model->status = $status;
+
+                        $master = [$this->model, $historyModel];
+                    } else {
+                        $master = [];
+                    }
+
+                    $transaction = $this->generalModel->saveTransaction($list, $master, ['product requisition', 'create']);
+                    if ($transaction !== FALSE) {
+                        if ($transaction == 'customRedirect') {
+                            return $this->redirect(['tbl-product-requisition/index']);
+                        }
+                    }
+                } else {
+                    return $this->redirect(['tbl-product-requisition/index']);
+                }
+            }
+        }
+        return $this->render($this->viewFile, [
+                    'model' => $this->model, 'schememodal' => $schememodal
+        ]);
+    }
+
+}

@@ -2448,3 +2448,8 @@ div.crystalstyle{
 .padding_right_0 {
     padding-right: 0px !important
 }
+
+.disabledDiv{
+    pointer-events: none;
+    opacity: 0.8;
+}

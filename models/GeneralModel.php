@@ -286,9 +286,11 @@ class GeneralModel {
     public function delete1($model) {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
-            $master[] = $model[1]->save();
-            $master[] = $model[0]->delete();
-
+            $master = [];
+            for ($i = 0; $i < count($model); $i += 2) {
+                $master[] = $model[$i + 1]->save();
+                $master[] = $model[$i]->delete();
+            }
             if (in_array(FALSE, $master)) {
                 $transaction->rollback();
                 $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];

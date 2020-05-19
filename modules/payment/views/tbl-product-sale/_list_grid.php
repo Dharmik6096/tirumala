@@ -16,11 +16,11 @@ $attribute = [
             return !empty($model->productSaleCode) ? Yii::$app->general->getCustomer($model->productSaleCode, $model->productSaleCode->customer_type) : 'N/A';
         }, 'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
         ['attribute' => 'sale_date_time', 'label' => Yii::t('app', 'Sale Date'), 'value' => function($model) {
-            return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->productSaleCode, 'sale_date_time'));
+            return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->productSaleCode, 'invoice_date'));
         }, 'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
         ['attribute' => 'sale_type', 'value' => function($model) {
             if (!empty($model->productSaleCode)) {
-                return isset($model->productSaleCode->sale_mode) ? Yii::$app->dropdown->getRecords('payment_mode')['data'][$model->productSaleCode->sale_mode] : '';
+                return isset($model->productSaleCode->payment_mode) ? Yii::$app->dropdown->getRecords('payment_mode')['data'][$model->productSaleCode->payment_mode] : '';
             }
             return '';
         }, 'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
@@ -28,7 +28,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
         ['attribute' => 'rate', 'filter' => false, 'enableSorting' => false],
-        ['attribute' => 'qty', 'filter' => false, 'enableSorting' => false],
+        ['attribute' => 'quantity', 'filter' => false, 'enableSorting' => false],
         ['attribute' => 'amount', 'filter' => false, 'enableSorting' => false],
         ['attribute' => 'discount', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->productSaleCode, 'discount');
