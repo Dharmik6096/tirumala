@@ -11,9 +11,9 @@ use Yii;
  * @property integer $sale_detail_code
  * @property string $product_sale_code
  * @property integer $product_code
- * @property string $rate_app_code
+ * @property string $product_sale_rate_applicability_code
  * @property string $rate
- * @property string $qty
+ * @property string $quantity
  * @property string $amount
  * @property string $created_at
  * @property string $created_by
@@ -28,7 +28,7 @@ class TblProductSaleDetailsHistory extends \yii\db\ActiveRecord {
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_product_sale_details_history';
+        return 'tbl_product_sale_transaction_history';
     }
 
     /**
@@ -37,8 +37,8 @@ class TblProductSaleDetailsHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
                 [['sale_detail_code', 'product_code'], 'integer'],
-                [['product_sale_code', 'rate_app_code', 'created_by', 'updated_by', 'operation_type'], 'string'],
-                [['rate', 'qty', 'amount'], 'number'],
+                [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by', 'operation_type'], 'string'],
+                [['rate', 'quantity', 'amount'], 'number'],
                 [['created_at', 'updated_at', 'history_created_at', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
@@ -52,9 +52,9 @@ class TblProductSaleDetailsHistory extends \yii\db\ActiveRecord {
             'sale_detail_code' => Yii::t('app', 'Sale Detail Code'),
             'product_sale_code' => Yii::t('app', 'Product Sale Code'),
             'product_code' => Yii::t('app', 'Product Code'),
-            'rate_app_code' => Yii::t('app', 'Rate App Code'),
+            'product_sale_rate_applicability_code' => Yii::t('app', 'Rate App Code'),
             'rate' => Yii::t('app', 'Rate'),
-            'qty' => Yii::t('app', 'Qty'),
+            'quantity' => Yii::t('app', 'Quantity'),
             'amount' => Yii::t('app', 'Amount'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),

@@ -26,8 +26,8 @@ class TransactionDataController extends \app\modules\soap\controllers\DefaultCon
             ],
             'CFSalesData' => [
                 'sp_name' => 'sp_vendor_prabhat_product_sale_data',
-                'model_name' => 'TblProductSaleDetails',
-                'update_key' => 'sale_detail_code',
+                'model_name' => 'TblProductSaleTransaction',
+                'update_key' => 'product_sale_transaction_code',
                 'result_key' => 'CFSalesDataResult',
             ],
             'AdvanceFromPM' => [
@@ -77,7 +77,7 @@ class TransactionDataController extends \app\modules\soap\controllers\DefaultCon
                         }
                         $model->updateAll(['send_status' => $send_status, 'resp_desc' => $result->{$value['result_key']}, 'response_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
                     } catch (\Throwable $ex) {
-                        $this->createCpLogFile('', $ex->xdebug_message, $key);
+                        $this->createCpLogFile('', $ex->getMessage(), $key);
                         $model->updateAll(['send_status' => 0, 'resp_desc' => 'exception', 'response_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
                     }
                 }

@@ -30,7 +30,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('product_group_code', $model, $form, '', 'Product Group', false, 'product_group_code'); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', 'Unit', false, 'unit_code'); ?>
+        <?= Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', $model->getAttributeLabel('unit_code'), false, 'unit_code'); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'product_name')->textInput() ?>
@@ -38,9 +38,28 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'ref_code')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdown('tax_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
+    </div>  
     <div class="clearfix"></div>
     <div class="col-sm-3">
-        <?= $form->field($model, 'description')->textarea() ?>
+        <?= $form->field($model, 'is_inhouse', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'is_inclusive_tax', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'is_saleable', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'is_indent', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'product_desc')->textarea() ?>
     </div>
     <div class="col-sm-3 mt35">
         <?= Yii::$app->controls->active($model, $form); ?>

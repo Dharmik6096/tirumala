@@ -1,17 +1,17 @@
 <?php
+$this->title = Yii::$app->label->title('edit', 'Staff Salary');
 
-use yii\helpers\Html;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\staffmanagement\models\TblStaffSalary */
-
+use yii\web\View;
 ?>
-<div class="tbl-staff-salary-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'edit'
+        ])
+        ?>
+    </div>
 </div>
+

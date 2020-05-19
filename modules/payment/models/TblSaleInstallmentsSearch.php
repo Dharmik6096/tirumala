@@ -17,9 +17,9 @@ class TblSaleInstallmentsSearch extends TblSaleInstallments {
      */
     public function rules() {
         return [
-                [['sale_code', 'dcs_code', 'union_code', 'member_code',], 'safe'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code',], 'safe'],
                 [['main_amount', 'installment_amount'], 'number'],
-                [['is_active', 'installment_status'], 'integer'],
+                [['installment_status'], 'integer'],
         ];
     }
 
@@ -60,10 +60,10 @@ class TblSaleInstallmentsSearch extends TblSaleInstallments {
             // $query->where('0=1');
             return $dataProvider;
         }
-        if ($this->member_code) {
-            $query->joinWith(['memberCode']);
-            $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);
-        }
+//        if ($this->member_code) {
+//            $query->joinWith(['memberCode']);
+//            $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code]);
+//        }
         // grid filtering conditions
         $query->andFilterWhere([
             //'sale_date_time' => $this->sale_date_time,
@@ -73,7 +73,7 @@ class TblSaleInstallmentsSearch extends TblSaleInstallments {
                 //'installment_status' => $this->installment_status,
         ]);
 
-        $query->andFilterWhere(['like', 'sale_code', $this->sale_code]);
+        $query->andFilterWhere(['like', 'product_sale_code', $this->product_sale_code]);
 
         return $dataProvider;
     }

@@ -191,6 +191,36 @@ class SearchFilter {
             'TblBmcMilkDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
+            'TblBasicTaxSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblTaxGroupSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblTaxSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblUnitsSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductGroupSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductPurchaseRateSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductRequisitionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'to_date'],
+            ],
+            'TblProductReceiptSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblProductDispatchSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

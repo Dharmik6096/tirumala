@@ -1,63 +1,71 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
+use yii\web\View;
+use kartik\helpers\Html;
+use demogorgorn\ajax\AjaxSubmitButton;
+use yii\web\JsExpression;
+use app\modules\dcsaccounting\models\TblFinancialYear;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\staffmanagement\models\TblStaffAdditionDeduction */
-/* @var $form yii\widgets\ActiveForm */
+$class = $type == 'edit' ? 'disabled' : '';
+$readonly = $type == 'edit' ? false : true;
+
+$form = ActiveForm::begin([
+            'options' => ['id' => 'staff-add-ded-form'],
+            'validateOnBlur' => false,
+            'validateOnEnter' => TRUE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 ?>
-
-<div class="tbl-staff-addition-deduction-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'amount')->textInput() ?>
-
-    <?= $form->field($model, 'app_from_date')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'created_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'deleted_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'flg_sentbox_entry')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'installment_no')->textInput() ?>
-
-    <?= Yii::$app->controls->active($model, $form); ?>
-
-    <?= $form->field($model, 'is_delete')->textInput() ?>
-
-    <?= $form->field($model, 'remark')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'sync_status')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'sync_timestamp')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'tr_date')->textInput() ?>
-
-    <?= $form->field($model, 'type')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'dcs_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'deleted_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'staff_member_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'sub_center_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'union_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+<?php echo $form->errorSummary($model); ?>
+<div class="row">
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffadditiondeduction-union_code', 'form-group col-sm-3 ' . $class, Yii::t('app', 'Name')); ?>
+    </div>
+    <?php if ($type == 'create') { ?>
+        <?php $model->tr_date = empty($model->tr_date) ? date('Y-m-d') : NULL; ?>
+    <?php } ?>
+    <?php
+    $fyear = new TblFinancialYear();
+    $fyear->code = Yii::$app->session->get('financialYear');
+    $currentfy = $fyear->getFinancialYear();
+    $min = !empty($currentfy->starting_date) ? $currentfy->starting_date : '';
+    $max = !empty($currentfy->ending_date) ? $currentfy->ending_date : '';
+    ?>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'tr_date', 'form-group col-sm-3 ' . $class, true, $min, false, TRUE, FALSE, $max); ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('type', $model, $form, 'form-group ' . $class, $model->getAttributeLabel('type')); ?>
+    </div>
+    <div class="col-sm-3">
+        <?php
+        $model->app_from_date = !empty($model->app_from_date) ? date('m-Y', strtotime($model->app_from_date)) : NULL;
+        ?>
+        <?=
+        $form->field($model, 'app_from_date')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+            'mask' => '99-9999',])
+        ?> 
+    </div>           
+    <?= $form->field($model, 'amount', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+    <?= $form->field($model, 'installment_no', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+    <?= $form->field($model, 'remark', ['options' => ['class' => 'form-group col-sm-3']])->textarea() ?>
 
+    <div class="clearfix"></div>
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
 </div>
+<?php ActiveForm::end(); ?>
+

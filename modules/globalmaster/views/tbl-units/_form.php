@@ -1,7 +1,6 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
-
 ?>
 <!--form starts-->
 <?php
@@ -16,6 +15,9 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-3">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>    
+    </div>
+    <div class="col-sm-3">
         <?= $form->field($model, 'unit_name')->textInput(['maxlength' => true, 'class' => 'form-control']) ?>
     </div>
     <div class="col-sm-3">
@@ -25,7 +27,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'short_name')->textInput(['maxlength' => true, 'class' => 'form-control']) ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->controls->local($model, $form,'local_short_name'); ?>
+        <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->controls->active($model, $form); ?>

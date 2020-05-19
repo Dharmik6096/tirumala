@@ -10,24 +10,22 @@ use app\modules\product\models\TblProduct;
 /**
  * TblProductSearch represents the model behind the search form about `app\modules\product\models\TblProduct`.
  */
-class TblProductSearch extends TblProduct
-{
+class TblProductSearch extends TblProduct {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['product_code', 'is_active'], 'integer'],
-            [['product_group_code','product_name', 'description', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'union_code'], 'safe'],
+                [['product_code', 'is_active'], 'integer'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'unit_code', 'product_group_code', 'product_name', 'product_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'union_code', 'ref_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'tax_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblProductSearch extends TblProduct
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblProduct::find();
 
         // add conditions that should always apply here
@@ -50,32 +47,38 @@ class TblProductSearch extends TblProduct
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query,$this);
+        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'unitCode', 'productGroupCode', 'taxCode']);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-        
-        if(!empty($this->product_group_code))
-        {
-            $query->joinWith(['productGroupCode']);
-        }
-        
-        Yii::$app->general->filterByOrg($query,$this);
-        
+
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_product.product_code' => $this->product_code,
             'tbl_product.is_active' => $this->is_active,
+            'tbl_product.is_inhouse' => $this->is_inhouse,
+            'tbl_product.is_inclusive_tax' => $this->is_inclusive_tax,
+            'tbl_product.is_saleable' => $this->is_saleable,
+            'tbl_product.is_indent' => $this->is_indent,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_product.product_name', $this->product_name])
-            ->andFilterWhere(['like', 'tbl_product.description', $this->description])
-            ->andFilterWhere(['like', 'tbl_product_group.product_group_name', $this->product_group_code])
-            ->andFilterWhere(['like', 'tbl_product.union_code', $this->union_code])
-            ->andFilterWhere(['like', 'tbl_product.local_name', $this->local_name]);
+                ->andFilterWhere(['like', 'tbl_product.product_desc', $this->product_desc])
+                ->andFilterWhere(['like', 'tbl_product_group.product_group_name', $this->product_group_code])
+                ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_units.unit_name', $this->unit_code])
+                ->andFilterWhere(['like', 'tbl_plant.name', $this->plant_code])
+                ->andFilterWhere(['like', 'tbl_mcc_plant.name', $this->mcc_plant_code])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_product.local_name', $this->local_name])
+                ->andFilterWhere(['like', 'tbl_tax.tax_name', $this->tax_code])
+                ->andFilterWhere(['like', 'tbl_product.ref_code', $this->ref_code]);
 
         return $dataProvider;
     }
+
 }

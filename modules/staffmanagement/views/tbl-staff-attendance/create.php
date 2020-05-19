@@ -1,18 +1,14 @@
 <?php
-
-use yii\helpers\Html;
-
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\staffmanagement\models\TblStaffAttendance */
-
+$this->title = Yii::$app->label->title('create', 'Staff Attendance');
 ?>
-<div class="tbl-staff-attendance-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'create',
+        ])
+        ?>        
+    </div>
 </div>

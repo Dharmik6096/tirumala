@@ -10,23 +10,25 @@ use yii\helpers\Html;
 ?>
 <div class="grid-search">
     <?php
-    if (Yii::$app->session->get('organizations_type') !== 'UNION' || count(explode(',', Yii::$app->session->get('Unions'))) > 1)
-        echo $this->render('_search', ['model' => $searchModel]);
+//    if (Yii::$app->session->get('organizations_type') !== 'UNION' || count(explode(',', Yii::$app->session->get('Unions'))) > 1)
+//        echo $this->render('_search', ['model' => $searchModel]);
     ?>
 </div>
 
 <?php
 $attribute = [
     //'rate_code',
-        ['attribute' => 'product_rate_code', 'value' => 'product_rate_code'],
+        ['attribute' => 'product_sale_rate_code', 'value' => 'product_sale_rate_code', 'visible' => false],
         [
         'attribute' => 'union_code', 'filter' => false,
         'value' => function($model) {
             return (!empty($model->union_code) || isset($model->unionCode)) ? $model->unionCode->union_name : '-';
         }],
         ['attribute' => 'product_code',
-        'value' => 'productCode.product_name'],
-    'rate',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
+        }],
+    'sale_rate',
         [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
@@ -40,22 +42,22 @@ $attribute = [
         ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
         }],
-        ['attribute' => 'vsp_commission', 'value' => 'vsp_commission'],
+        ['attribute' => 'commission', 'value' => 'commission'],
 ];
 
 $grid_option = [
     'id' => 'product-rate-list',
     'attributes' => $attribute,
-    'active_column' => true,
+    'active_column' => false,
     'actions' => [
         'view_details' => function ($url, $model) {
             $class = '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => $class];
-            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/product/tbl-product-rate/view', 'id' => $model->product_rate_code, 'is_member_rate' => $model->is_member_rate], $options);
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/product/tbl-product-rate/view', 'id' => $model->product_sale_rate_code, 'is_member_rate' => $model->is_member_rate], $options);
         },
         'applicabilty' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
-            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_rate_code], $options);
+            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_sale_rate_code], $options);
         }
     ]
 ];

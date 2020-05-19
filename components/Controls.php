@@ -121,7 +121,7 @@ class Controls extends Component {
         echo $form->field($model, $field)->textArea(['maxlength' => true, 'class' => 'form-control local-control']);
     }
 
-    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label = true, $id = false) {
+    public function date($model, $form, $name = 'date', $class = 'form-group col-sm-2', $maxdate = true, $mindate = false, $disabled = false, $label = true, $id = false, $max_val = '') {
         $maxdate_value = '';
         $mindate_value = '';
         $options = ['class' => 'form-control'];
@@ -129,7 +129,7 @@ class Controls extends Component {
             $options['id'] = $id;
         }
         if ($maxdate)
-            $maxdate_value = date('d-m-Y');
+            $maxdate_value = !empty($max_val) ? Yii::$app->controls->view_date($max_val) : date('d-m-Y');
 
         if ($mindate)
             $mindate_value = Yii::$app->controls->view_date($mindate);
@@ -336,6 +336,10 @@ class Controls extends Component {
 
     public function save_datetime($value) {
         return ($value == NULL || $value == '') ? NULL : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), 'php:Y-m-d H:i:s');
+    }
+
+    public function view_month($value) {
+        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), 'php:m-Y');
     }
 
 }

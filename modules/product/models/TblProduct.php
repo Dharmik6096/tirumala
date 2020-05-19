@@ -5,6 +5,13 @@ namespace app\modules\product\models;
 use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\globalmaster\models\TblUnits;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\syncutility\models\TblSentbox;
+use app\modules\dcsaccounting\models\TblTax;
+use app\modules\product\models\TblProductPurchaseRate;
 
 /**
  * This is the model class for table "tbl_product".
@@ -12,7 +19,7 @@ use app\modules\globalmaster\models\TblUnits;
  * @property integer $product_code
  * @property integer $product_group_code
  * @property string $product_name
- * @property string $description
+ * @property string $product_desc
  * @property string $created_at
  * @property string $created_by
  * @property integer $is_active
@@ -36,66 +43,156 @@ class TblProduct extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_group_code', 'product_name', 'union_code', 'unit_code'], 'required'],
-            [['product_group_code', 'is_active'], 'integer'],
-            [['product_name', 'description', 'created_by', 'updated_by', 'local_name'], 'string'],
-            ['product_name', 'unique', 'when' => function($model) {
+                [['product_group_code', 'product_name', 'union_code', 'unit_code', 'tax_code'], 'required'],
+                [['product_group_code', 'is_active'], 'integer'],
+                [['product_name', 'product_desc', 'created_by', 'updated_by', 'local_name'], 'string'],
+                ['product_name', 'unique', 'when' => function($model) {
                     $data = $this->find()->where(['union_code' => $model->union_code, 'product_name' => $model->product_name])->andWhere(['<>', 'product_code', $model->product_code])->one();
                     return ($data) ? true : false;
                 }],
-                    [['product_name'], function ($attribute, $params) {
+                [['product_name'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                    [['local_name'], function ($attribute, $params) {
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                    [['created_at', 'updated_at'], 'safe'],
-                    [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code']],
-                ];
-            }
+                [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code']],
+        ];
+    }
 
-            /**
-             * @inheritdoc
-             */
-            public function attributeLabels() {
-                return [
-                    'product_code' => Yii::t('app', 'Product Code'),
-                    'product_group_code' => Yii::t('app', 'Product Group'),
-                    'product_name' => Yii::t('app', 'Product Name'),
-                    'description' => Yii::t('app', 'Description'),
-                    'created_at' => Yii::t('app', 'Created At'),
-                    'created_by' => Yii::t('app', 'Created By'),
-                    'is_active' => Yii::t('app', 'Is Active'),
-                    'updated_at' => Yii::t('app', 'Updated At'),
-                    'updated_by' => Yii::t('app', 'Updated By'),
-                    'local_name' => Yii::t('app', 'Local Name'),
-                    'union_code' => Yii::t('app', 'Union'),
-                    'unit_code' => Yii::t('app', 'Unit'),
-                ];
-            }
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'product_code' => Yii::t('app', 'Product Code'),
+            'product_group_code' => Yii::t('app', 'Product Group'),
+            'product_name' => Yii::t('app', 'Product Name'),
+            'product_desc' => Yii::t('app', 'Description'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'is_active' => Yii::t('app', 'Is Active'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'local_name' => Yii::t('app', 'Local Name'),
+            'union_code' => Yii::t('app', 'Union'),
+            'unit_code' => Yii::t('app', 'Unit'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'ref_code' => Yii::t('app', 'Reference Code'),
+            'tax_code' => Yii::t('app', 'Tax'),
+            'is_inhouse' => Yii::t('app', 'Is Inhouse'),
+            'is_inclusive_tax' => Yii::t('app', 'Is Inclusive Tax'),
+            'is_saleable' => Yii::t('app', 'Is Saleable'),
+            'is_indent' => Yii::t('app', 'Is Indent'),
+        ];
+    }
 
-            /**
-             * @return \yii\db\ActiveQuery
-             */
-            public function getProductGroupCode() {
-                return $this->hasOne(TblProductGroup::className(), ['product_group_code' => 'product_group_code']);
-            }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductGroupCode() {
+        return $this->hasOne(TblProductGroup::className(), ['product_group_code' => 'product_group_code']);
+    }
 
-            public function getUnionCode() {
-                return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
-            }
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
 
-            public function getUnitCode() {
-                return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
-            }
+    public function getUnitCode() {
+        return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
+    }
 
-            /**
-             * @inheritdoc
-             * @return TblProductQuery the active query used by this AR class.
-             */
-            public static function find() {
-                return new TblProductQuery(get_called_class());
-            }
+    /**
+     * @inheritdoc
+     * @return TblProductQuery the active query used by this AR class.
+     */
+    public static function find() {
+        return new TblProductQuery(get_called_class());
+    }
 
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getTaxCode() {
+        return $this->hasOne(TblTax::className(), ['tax_code' => 'tax_code']);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
         }
-        
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->union_code);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function getProduct($code, $date) {
+
+        $records = $this->getRecord($code);
+        $array = ['status' => 'error'];
+        if (!empty($records)) {
+            $date = date('Y-m-d', strtotime($date));
+            $purchaseRate = TblProductPurchaseRate::find()->select('purchase_rate')
+                            ->where(['product_code' => $code, 'cast(wef_date as date)' => $date])
+//                    ->where('product_code="' . $code . '" and cast(wef_date as date)<= "' . $date . '" and is_active=1')
+                            ->orderBy(['cast(wef_date as date)' => SORT_DESC])->one();
+            if ($purchaseRate)
+                $array = ['status' => 'success', 'name' => $records->product_name, 'rate' => ($purchaseRate) ? $purchaseRate->purchase_rate : 0, 'unit' => Yii::$app->general->getforeignkey($records->primaryUom, 'unit_name'), 'tax_code' => $records->tax_code];
+        }
+        return $array;
+    }
+
+    public function getPrimaryUom() {
+        return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
+    }
+
+    public function getRecord($productCode) {
+
+        $records = $this->find()->select('product_name,unit_code,tax_code')->where(['product_code' => $productCode])->one();
+        return $records;
+    }
+
+}

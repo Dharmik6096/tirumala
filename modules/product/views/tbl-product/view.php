@@ -16,48 +16,117 @@ $this->params['menu'][] = Yii::$app->controls->update($model->product_group_code
         <div class="table-responsive">
             <?php
             $attributes = [
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'union_code',
-                            'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
+                            'attribute' => 'plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'dcs_code',
+                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
                             'attribute' => 'product_group_code',
                             'value' => !empty($model->productGroupCode) ? $model->productGroupCode->product_group_name : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
+                            'attribute' => 'unit_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unitCode, 'unit_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
                             'attribute' => 'product_name',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                        [
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'tax_code',
+                            'value' => Yii::$app->general->getforeignkey($model->taxCode, 'tax_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'ref_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'is_inhouse',
+                            'value' => isset($model->is_inhouse) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inhouse] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'is_inclusive_tax',
+                            'value' => isset($model->is_inclusive_tax) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inclusive_tax] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'is_saleable',
+                            'value' => isset($model->is_saleable) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_saleable] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'is_indent',
+                            'value' => isset($model->is_indent) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_indent] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
                             'attribute' => 'local_name',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'unit_code',
-                            'value' => isset($model->unitCode) ? $model->unitCode->unit_name : '',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                        [
-                            'attribute' => 'description',
+                            [
+                            'attribute' => 'product_desc',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',
@@ -78,7 +147,7 @@ $this->params['menu'][] = Yii::$app->controls->update($model->product_group_code
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],
