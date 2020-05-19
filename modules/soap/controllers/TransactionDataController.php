@@ -77,7 +77,7 @@ class TransactionDataController extends \app\modules\soap\controllers\DefaultCon
                         }
                         $model->updateAll(['send_status' => $send_status, 'resp_desc' => $result->{$value['result_key']}, 'response_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
                     } catch (\Throwable $ex) {
-                        $this->createCpLogFile('', $ex->xdebug_message, $key);
+                        $this->createCpLogFile('', $ex->getMessage(), $key);
                         $model->updateAll(['send_status' => 0, 'resp_desc' => 'exception', 'response_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
                     }
                 }
