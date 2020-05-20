@@ -8,6 +8,9 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
+use app\modules\configuration\models\TblConfigMapping;
+use app\modules\tankermovement\models\TblConfigTxnResult;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
@@ -46,14 +49,14 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $model = new TblBmcMilkDispatch();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->bmc_milk_dispatch_code]);
-        } else {
-            return $this->render('create', [
-                        'model' => $model,
-            ]);
+        $transaction = new TblBmcMilkDispatchTxn();
+        if ($model->load(Yii::$app->request->post()) && $this->model->validate()) {
+            $transaction = $this->generalModel->saveTransaction([], ['BMC Milk Dispatch', 'create']);
         }
+        return $this->render('create', [
+                    'model' => $model,
+                    'transaction' => $transaction,
+        ]);
     }
 
     /**

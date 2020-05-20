@@ -1,95 +1,188 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\tankermovement\models\TblBmcMilkDispatch */
-/* @var $form yii\widgets\ActiveForm */
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
+use yii\helpers\Url;
 ?>
+<?php
+$form = ActiveForm::begin([
+            'validateOnBlur' => FALSE,
+            'validateOnEnter' => TRUE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
+?>
+<?php echo $form->errorSummary($model); ?>
 
-<div class="tbl-bmc-milk-dispatch-form">
+<div class="row">
+    <div class="col-lg-8">
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE); ?>
+        </div>
+        <div class="col-sm-2"> 
+            <?= $form->field($model, 'trip_code')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'from_date')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'from_shift_code')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'to_date')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'to_shift_code')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'destination_type')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'destination_code')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
+        </div>
+        <div class="col-sm-2"> 
+            <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblbmcmilkdispatch-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
+        </div>
 
-    <?php $form = ActiveForm::begin(); ?>
+        <div class="clearfix"></div>
 
-    <?= $form->field($model, 'bmc_milk_dispatch_code')->textInput() ?>
+        <div class="col-sm-2"> 
+            <?= $form->field($model, 'gross_weight')->textInput() ?>
+        </div>
+        <div class="col-sm-2"> 
+            <?= $form->field($model, 'tare_weight')->textInput() ?>
+        </div>
+        <div class="col-sm-2"> 
+            <?= $form->field($model, 'vehicle_in_time')->textInput() ?>
+        </div>
+        <div class="col-sm-2"> 
+            <?= $form->field($model, 'vehicle_out_time')->textInput() ?>
+        </div>
+        <div class="col-sm-4"> 
+            <?= $form->field($model, 'remarks')->textInput() ?>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <h5 class="panel-heading mb15"><?= Yii::t('app', 'Purchase Information') ?></h5>
+        <table class="table tab-bordered">
+            <thead>
+                <tr>
+                    <th>Milk Type</th>
+                    <th>Silo No.</th>
+                    <th>Avg.FAT</th>
+                    <th>Avg.SNF</th>
+                    <th>Qty</th>
+                    <th>RTPL</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="clearfix"></div>
+    <h5 class="panel-heading mb15"><?= Yii::t('app', 'Dispatch Transactions') ?></h5>
 
-    <?= $form->field($model, 'challan_no')->textInput() ?>
-
-    <?= $form->field($model, 'transaction_date')->textInput() ?>
-
-    <?= $form->field($model, 'from_date')->textInput() ?>
-
-    <?= $form->field($model, 'from_shift_code')->textInput() ?>
-
-    <?= $form->field($model, 'to_date')->textInput() ?>
-
-    <?= $form->field($model, 'to_shift_code')->textInput() ?>
-
-    <?= $form->field($model, 'destination_type')->textInput() ?>
-
-    <?= $form->field($model, 'destination_code')->textInput() ?>
-
-    <?= $form->field($model, 'vehicle_code')->textInput() ?>
-
-    <?= $form->field($model, 'trip_code')->textInput() ?>
-
-    <?= $form->field($model, 'driver_name')->textInput() ?>
-
-    <?= $form->field($model, 'driver_contact_no')->textInput() ?>
-
-    <?= $form->field($model, 'authorizer_name')->textInput() ?>
-
-    <?= $form->field($model, 'vehicle_in_time')->textInput() ?>
-
-    <?= $form->field($model, 'vehicle_out_time')->textInput() ?>
-
-    <?= $form->field($model, 'remarks')->textInput() ?>
-
-    <?= $form->field($model, 'gross_weight')->textInput() ?>
-
-    <?= $form->field($model, 'tare_weight')->textInput() ?>
-
-    <?= $form->field($model, 'is_last_destination')->textInput() ?>
-
-    <?= $form->field($model, 'purchase_rate_code')->textInput() ?>
-
-    <?= $form->field($model, 'union_code')->textInput() ?>
-
-    <?= $form->field($model, 'plant_code')->textInput() ?>
-
-    <?= $form->field($model, 'mcc_plant_code')->textInput() ?>
-
-    <?= $form->field($model, 'bmc_code')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput() ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput() ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput() ?>
-
-    <?= $form->field($model, 'x_col1')->textInput() ?>
-
-    <?= $form->field($model, 'x_col2')->textInput() ?>
-
-    <?= $form->field($model, 'x_col3')->textInput() ?>
-
-    <?= $form->field($model, 'x_col4')->textInput() ?>
-
-    <?= $form->field($model, 'x_col5')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'milk_type_code')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'milk_quality_type_code')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'bmc_silos_info_code')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'chamber_no')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'dispatch_qty')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'qty_diff')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'qty_diff_type_code')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'balance_qty')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'fat')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'snf')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'clr')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'water')->textInput() ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'protein')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'density')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'lactose')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'freezing_point')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'temperature')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'hsn_code')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'seal_no_top')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'seal_no_bottom')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'seal_no_broken')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'dip_open')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'dip_close')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'dip_diff')->textInput() ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'rtpl')->textInput() ?>
+    </div>
+    <div class="col-sm-1"> 
+        <?= $form->field($transaction, 'amount')->textInput() ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
-
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
 </div>
+<?php ActiveForm::end(); ?>
