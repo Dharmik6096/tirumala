@@ -71,7 +71,7 @@ $form = ActiveForm::begin(['options' => [
                         <tr><?= Html::activeHiddenInput($transModel, '[' . $headData->salary_head_code . ']staff_salary_transaction_code'); ?> 
                             <td><?= $headData->salary_head_name ?></td>
                             <td><?= $oldVal ?></td>
-                            <td> <?= $form->field($transModel, '[' . $headData->salary_head_code . ']value', ['options' => ['class' => 'form-group']])->textInput(['value' => $newVal])->label(FALSE); ?></td>
+                            <td class='number-validate'> <?= $form->field($transModel, '[' . $headData->salary_head_code . ']value', ['options' => ['class' => 'form-group number-validate addition']])->textInput(['value' => $newVal])->label(FALSE); ?></td>
                             <td class='hide_help_block member-checkbox-list'>
                                 <?php
                                 echo $form->field($transModel, '[' . $headData->salary_head_code . ']lwp_effect')->checkbox(['data-val' => $headData->salary_head_code], false)->label(false);
@@ -133,7 +133,7 @@ $form = ActiveForm::begin(['options' => [
                         <tr> <?= Html::activeHiddenInput($transModel, '[' . $headData->salary_head_code . ']staff_salary_transaction_code'); ?>
                             <td><?= $headData->salary_head_name ?></td>
                             <td><?= $oldVal ?></td>
-                            <td> <?= $form->field($transModel, '[' . $headData->salary_head_code . ']value', ['options' => ['class' => 'form-group']])->textInput([])->label(FALSE); ?></td>
+                            <td class='number-validate'> <?= $form->field($transModel, '[' . $headData->salary_head_code . ']value', ['options' => ['class' => 'form-group number-validate deduction']])->textInput(['class'=>'number-validate form-control'])->label(FALSE); ?></td>
                         </tr>
                         <?php
                     }

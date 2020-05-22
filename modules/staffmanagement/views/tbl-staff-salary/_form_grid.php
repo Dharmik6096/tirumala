@@ -8,6 +8,10 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        },
+        'filter' => false, 'visible' => FALSE],
     ['attribute' => 'staff_member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->staffMemberCode, 'staff_member_name');
         }],

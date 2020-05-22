@@ -143,6 +143,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Staff Salary'), 'url' => ['/staffmanagement/tbl-staff-salary/index'], 'active' => ($cntrl == 'tbl-staff-salary'),],
                 ['label' => Yii::t('app', 'Staff Attendance'), 'url' => ['/staffmanagement/tbl-staff-attendance/index'], 'active' => ($cntrl == 'tbl-staff-attendance'),],
                 ['label' => Yii::t('app', 'Staff Add/Deduct.'), 'url' => ['/staffmanagement/tbl-staff-addition-deduction/index'], 'active' => ($cntrl == 'tbl-staff-addition-deduction'),],
+                ['label' => Yii::t('app', 'Salary Processing'), 'url' => ['/staffmanagement/tbl-staff-salary-process/index'], 'active' => ($cntrl == 'tbl-staff-salary-process'),],
             ]
         ],
         [

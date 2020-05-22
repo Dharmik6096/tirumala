@@ -18,7 +18,7 @@ class TblStaffMemberSearch extends TblStaffMember {
      */
     public function rules() {
         return [
-            [['staff_member_code', 'aadhar_card_no', 'address', 'bank_account_no', 'birth_date', 'designation_code', 'created_at', 'email_id', 'ifsc', 'mobile_no', 'pan_no', 'pincode', 'staff_member_name', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'state_code', 'dcs_code', 'sub_district_code', 'updated_by', 'village_code', 'dcs_code'], 'safe'],
+            [['staff_member_code', 'aadhar_card_no', 'address', 'bank_account_no', 'birth_date', 'designation_code', 'created_at', 'email_id', 'ifsc', 'mobile_no', 'pan_no', 'pincode', 'staff_member_name', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'updated_by', 'village_code', 'union_code'], 'safe'],
             [['is_active', 'payment_mode', 'blood_group_code', 'caste_category_code', 'gender_code'], 'integer'],
         ];
     }
@@ -50,7 +50,7 @@ class TblStaffMemberSearch extends TblStaffMember {
         $query->joinWith(['designationCode']);
 
         $this->load($params);
-
+        Yii::$app->general->filterByOrg($query, $this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -111,8 +111,6 @@ class TblStaffMemberSearch extends TblStaffMember {
             return $dataProvider;
         }
         $query->andWhere(['staff_member_code' => $this->staff_member_code]);
-
-//        Yii::$app->general->filterByOrg($query, $this);
 
         return $dataProvider;
     }

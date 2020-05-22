@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffattendance-union_code', 'form-group col-sm-3 ' . $class, $model->getAttributeLabel('staff_member_code'), 'staff_member_code', $readonly); ?>

@@ -17,7 +17,7 @@ class TblSalaryHeadsSearch extends TblSalaryHeads {
      */
     public function rules() {
         return [
-            [['salary_head_code', 'salary_head_type', 'created_at', 'deleted_at', 'flg_sentbox_entry', 'salary_head_name', 'sync_status', 'sync_timestamp', 'updated_at', 'created_by', 'deleted_by', 'updated_by', 'local_name'], 'safe'],
+            [['salary_head_code', 'salary_head_type', 'created_at', 'salary_head_name', 'updated_at', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -67,8 +67,7 @@ class TblSalaryHeadsSearch extends TblSalaryHeads {
         ]);
 
         $query->andFilterWhere(['like', 'tbl_salary_heads.salary_head_code', $this->salary_head_code])
-                ->andFilterWhere(['like', 'salary_head_name', $this->salary_head_name])
-                ->andFilterWhere(['like', 'local_name', $this->local_name]);
+                ->andFilterWhere(['like', 'salary_head_name', $this->salary_head_name]);
 
         return $dataProvider;
     }

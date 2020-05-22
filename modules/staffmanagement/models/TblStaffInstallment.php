@@ -100,4 +100,15 @@ class TblStaffInstallment extends \app\models\ChildModel {
         }
     }
 
+    public function getStaffInstallment($no, $month) {
+        $adddedData = $this->find()->where(['staff_addition_deduction_no' => $no, 'deduction_date' => $month])->all();
+        $amount = 0;
+        if (!empty($adddedData)) {
+            foreach ($adddedData as $att) {
+                $amount = $amount + $att->amount;
+            }
+        }
+        return $amount;
+    }
+
 }

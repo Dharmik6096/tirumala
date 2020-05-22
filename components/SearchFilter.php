@@ -215,6 +215,21 @@ class SearchFilter {
             'TblProductDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'to_date'],
             ],
+            'TblStaffMemberSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblStaffSalarySearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblStaffAttendanceSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblStaffAdditionDeductionSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblStaffSalaryProcessSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

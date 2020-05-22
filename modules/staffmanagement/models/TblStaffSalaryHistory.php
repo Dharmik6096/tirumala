@@ -44,10 +44,10 @@ class TblStaffSalaryHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['staff_salary_code', 'created_by', 'updated_by', 'staff_member_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'operation_type', 'history_created_by'], 'string'],
-            [['addition', 'deduction'], 'number'],
+            [['staff_salary_code', 'created_by', 'updated_by', 'staff_member_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code', 'operation_type', 'history_created_by'], 'safe'],
+            [['addition', 'deduction'], 'safe'],
             [['created_at', 'updated_at', 'wef_date', 'history_created_at'], 'safe'],
-            [['originating_type'], 'integer'],
+            [['originating_type'], 'safe'],
         ];
     }
 

@@ -38,7 +38,7 @@ class TblSalaryHeadsHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['created_at', 'deleted_at', 'history_created_at', 'salary_head_code', 'updated_at'], 'safe'],
+            [['created_at', 'deleted_at', 'history_created_at', 'salary_head_code', 'updated_at', 'is_default'], 'safe'],
             [['is_active', 'salary_head_type'], 'safe'],
             [['operation_type', 'created_by', 'deleted_by', 'updated_by'], 'safe'],
             [['salary_head_name'], 'safe'],

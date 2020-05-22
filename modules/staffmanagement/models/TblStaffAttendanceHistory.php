@@ -47,9 +47,9 @@ class TblStaffAttendanceHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['staff_attendance_code', 'created_by', 'remark', 'updated_by', 'staff_member_code', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'string'],
+            [['staff_attendance_code', 'created_by', 'remark', 'updated_by', 'staff_member_code', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
             [['created_at', 'lwp_date', 'updated_at', 'history_created_at'], 'safe'],
-            [['lwp_type', 'salary_processed', 'originating_type'], 'integer'],
+            [['lwp_type', 'salary_processed', 'originating_type'], 'safe'],
         ];
     }
 

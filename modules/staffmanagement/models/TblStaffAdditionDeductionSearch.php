@@ -19,7 +19,7 @@ class TblStaffAdditionDeductionSearch extends TblStaffAdditionDeduction {
         return [
             [['installment_no', 'is_active', 'type'], 'integer'],
             [['amount'], 'number'],
-            [['app_from_date', 'staff_member_name', 'created_at', 'remark', 'tr_date', 'updated_at', 'created_by', 'deleted_by', 'staff_member_code', 'union_code', 'updated_by'], 'safe'],
+            [['app_from_date', 'staff_member_name', 'created_at', 'remark', 'tr_date', 'updated_at', 'created_by', 'staff_member_code', 'union_code', 'updated_by'], 'safe'],
         ];
     }
 
@@ -50,7 +50,7 @@ class TblStaffAdditionDeductionSearch extends TblStaffAdditionDeduction {
         $query->joinWith(['staffMemberCode']);
 
         $this->load($params);
-
+        Yii::$app->general->filterByOrg($query, $this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -59,20 +59,19 @@ class TblStaffAdditionDeductionSearch extends TblStaffAdditionDeduction {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'amount' => $this->amount,
-            'created_at' => $this->created_at,
-            'installment_no' => $this->installment_no,
             'tbl_staff_addition_deduction.is_active' => $this->is_active,
-            'tr_date' => $this->tr_date,
             'type' => $this->type,
             'updated_at' => $this->updated_at,
         ]);
+        if (!empty($this->tr_date))
+            $query->andFilterWhere(['and', ['>=', 'tr_date', date('Y-m-d', strtotime($this->tr_date))], ['<=', 'tr_date', date('Y-m-d', strtotime($this->tr_date))]]);
 
-        $query->andFilterWhere(['like', 'app_from_date', $this->app_from_date])
+        $query->andFilterWhere(['like', 'amount', $this->amount])
+                ->andFilterWhere(['like', 'installment_no', $this->installment_no])
                 ->andFilterWhere(['like', 'remark', $this->remark])
-                ->andFilterWhere(['like', 'tbl_staff_addition_deduction.staff_member_code', $this->staff_member_code])
-                ->andFilterWhere(['like', 'tbl_staff_member.staff_member_name', $this->staff_member_name])
-                ->andFilterWhere(['like', 'union_code', $this->union_code]);
+                ->andFilterWhere(['=', 'MONTH(app_from_date)', (!empty($this->app_from_date)) ? substr($this->app_from_date, 0, 2) : ''])
+                ->andFilterWhere(['=', 'YEAR(app_from_date)', (!empty($this->app_from_date)) ? substr($this->app_from_date, 3, 4) : ''])
+                ->andFilterWhere(['like', 'tbl_staff_member.staff_member_name', $this->staff_member_code]);
 
         return $dataProvider;
     }

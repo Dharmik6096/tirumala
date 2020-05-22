@@ -51,7 +51,6 @@ use app\modules\general\models\TblDepartment;
  * @property string $hamlet_code
  * @property string $member_code
  * @property string $state_code
- * @property string $sub_center_code
  * @property string $sub_district_code
  * @property string $updated_by
  * @property string $village_code
@@ -300,13 +299,6 @@ class TblStaffMember extends \app\models\ChildModel {
      */
     public function getDistrictCode() {
         return $this->hasOne(TblDistricts::className(), ['district_code' => 'district_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSubCenterCode() {
-        return $this->hasOne(TblSubCenter::className(), ['sub_center_code' => 'sub_center_code']);
     }
 
     /**
