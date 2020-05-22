@@ -367,6 +367,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
+    public function destination_code_list($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-bmc-milk-dispatch/destination-code-list', Yii::t('app', 'Select Code'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -892,6 +897,11 @@ class DropDown extends Component {
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+            ],
+            'chamber_no' => [
+                'name' => 'chamber_no',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4'],
             ]
         ];
         return $records[$l];
@@ -973,6 +983,10 @@ class DropDown extends Component {
             'tax_group_code' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup'],
             'tax' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax Setting Name'), 'model' => 'TblTax'],
             'tax_code' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax'), 'model' => 'TblTax'],
+            'union_vehicle' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'depend' => 'union_code'],
+            'dispatch_destination' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_bmc_dispatch' => 1, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
+            'bmc_silos' => ['name' => 'bmc_silos_info_code', 'fields' => 'bmc_silos_info_code,silo_no,', 'prompt' => Yii::t('app', 'Select Silo'), 'model' => 'TblBmcSilosInfo', 'depend' => 'module_code'],
+            'qty_diff_type' => ['name' => 'qty_diff_type_code', 'fields' => 'qty_diff_type_code,qty_diff_type_name', 'prompt' => Yii::t('app', 'Select'), 'model' => 'TblQtyDiffType'],
         ];
         return $label[$l];
     }

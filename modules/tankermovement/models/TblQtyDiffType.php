@@ -1,18 +1,17 @@
 <?php
 
-namespace app\modules\configuration\models;
+namespace app\modules\tankermovement\models;
 
 use Yii;
 
 /**
- * This is the model class for table "tbl_config_mapping".
+ * This is the model class for table "tbl_qty_diff_type".
  *
- * @property integer $config_mapping_code
- * @property integer $config_code
- * @property string $config_result
- * @property string $org_type
- * @property string $org_code
- * @property string $union_code
+ * @property integer $qty_diff_type_code
+ * @property integer $qty_diff_type_name
+ * @property string $criteria_value
+ * @property string $formula
+ * @property integer $is_active
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -26,24 +25,22 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblConfigMapping extends \app\models\ChildModel
-{
+class TblQtyDiffType extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
-        return 'tbl_config_mapping';
+    public static function tableName() {
+        return 'tbl_qty_diff_type';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['config_code', 'originating_type'], 'integer'],
-            [['config_result', 'org_type', 'org_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
+            [['qty_diff_type_name', 'is_active', 'originating_type'], 'safe'],
+            [['criteria_value', 'formula', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -51,15 +48,13 @@ class TblConfigMapping extends \app\models\ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
-            'config_mapping_code' => Yii::t('app', 'Config Mapping Code'),
-            'config_code' => Yii::t('app', 'Config Code'),
-            'config_result' => Yii::t('app', 'Config Result'),
-            'org_type' => Yii::t('app', 'Org Type'),
-            'org_code' => Yii::t('app', 'Org Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'qty_diff_type_code' => Yii::t('app', 'Qty Diff Type Code'),
+            'qty_diff_type_name' => Yii::t('app', 'Qty Diff Type Name'),
+            'criteria_value' => Yii::t('app', 'Criteria Value'),
+            'formula' => Yii::t('app', 'Formula'),
+            'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -74,5 +69,5 @@ class TblConfigMapping extends \app\models\ChildModel
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
-    
+
 }

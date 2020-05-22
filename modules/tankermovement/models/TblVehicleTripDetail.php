@@ -125,4 +125,24 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'destination_code']);
     }
 
+    public function getTripDetailEntry() {
+        $model = TblVehicleTrip::findOne(['trip_code' => $this->trip_code]);
+        $last_trip = TblVehicleTripDetail::find()
+                ->where(['trip_code' => $this->trip_code])
+                ->orderBy(['transaction_datetime' => SORT_DESC])
+                ->one();
+        $this->source_org_code = $last_trip->destination_code;
+        $this->source_org_type = $last_trip->destination_type;
+        $this->vehicle_trip_code = $model->vehicle_trip_code;
+        $this->vehicle_code = $model->vehicle_code;
+        $this->transaction_datetime = date('Y-m-d H:i:s');
+        $this->trip_code = $model->trip_code;
+        $vehicle_trip_detail_code = $model->vehicle_trip_code . 'T' . (((int) substr($last_trip->vehicle_trip_detail_code, strlen($model->vehicle_trip_code) + 1)) + 1);
+        $this->vehicle_trip_detail_code = $vehicle_trip_detail_code;
+        if ($this->validate()) {
+            return $this;
+        }
+        return FALSE;
+    }
+
 }

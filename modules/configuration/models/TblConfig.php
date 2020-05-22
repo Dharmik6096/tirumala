@@ -3,6 +3,7 @@
 namespace app\modules\configuration\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_config".
@@ -57,8 +58,40 @@ class TblConfig extends \app\models\ChildModel {
     public function getConfigData($code) {
         $data = $this->find()
                 ->where(['config_for' => $code])
+                ->andWhere(['IS', 'config_type', NULL])
                 ->all();
         return $data;
+    }
+
+    public function getConfigResult() {
+        return $this->hasMany(TblConfigResult::className(), ['config_code' => 'config_code']);
+    }
+
+    public function getConfigMapping() {
+        return $this->hasMany(TblConfigMapping::className(), ['config_code' => 'config_code']);
+    }
+
+    public function getOrgConfigList($org_type, $org_code) {
+        return $this->find()->distinct()
+                        ->joinWith(['configResult', 'configMapping'])
+                        ->where(['tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name, 'tbl_config.config_type' => $this->config_type])
+                        ->andWhere(['tbl_config_mapping.org_type' => $org_type, 'tbl_config_mapping.org_code' => $org_code, 'tbl_config_result.is_active' => 1])
+                        ->orderby(['tbl_config.config_code' => SORT_ASC])
+                        ->all();
+    }
+
+    public function prepareControl($form, $config, $index) {
+        $config_data = ArrayHelper::map($this->configResult, 'config_result_key', 'config_result');
+        $config->config_result = '0';
+        if ($this->control_type == 'RADIO') {
+            return $form->field($config, '[' . $index . ']config_result')->inline()->radioList($config_data)->label(Yii::t('app', $this->config_name));
+        } else if ($this->control_type == 'DROPDOWN') {
+            return $form->field($config, '[' . $index . ']config_result')->dropDownList($config_data)->label(Yii::t('app', $this->config_name));
+        } else if ($this->control_type == 'CHECKBOX') {
+            return $form->field($config, '[' . $index . ']config_result', ['checkboxTemplate' => '<div class="checkbox mt25 height_65">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox()->label(Yii::t('app', $this->config_name));
+        } else {
+            return $form->field($config, '[' . $index . ']config_result')->textInput()->label(Yii::t('app', $this->config_name));
+        }
     }
 
 }

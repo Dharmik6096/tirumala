@@ -43,35 +43,34 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblBmcDispatchStock extends \yii\db\ActiveRecord
-{
+class TblBmcDispatchStock extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_dispatch_stock';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['bmc_dispatch_stock_code'], 'required'],
             [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['transaction_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
             [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
             [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
+            [['type'], 'default', 'value' => 'dispatch'],
+            [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')]
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bmc_dispatch_stock_code' => Yii::t('app', 'Bmc Dispatch Stock Code'),
             'transaction_date' => Yii::t('app', 'Transaction Date'),
@@ -110,4 +109,12 @@ class TblBmcDispatchStock extends \yii\db\ActiveRecord
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
+    public function getStockEntry() {
+        return $this->find()
+                        ->where(['bmc_code' => $this->bmc_code, 'to_date' => $this->to_date, 'milk_type_code' => $this->milk_type_code,
+                            'bmc_silos_info_code' => $this->bmc_silos_info_code, 'milk_quality_type_code' => $this->milk_quality_type_code])
+                        ->one();
+    }
+
 }

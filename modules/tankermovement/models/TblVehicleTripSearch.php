@@ -52,11 +52,11 @@ class TblVehicleTripSearch extends TblVehicleTrip {
         Yii::$app->general->filterByOrg($query, $this, 'tbl_vehicle_trip', 'tbl_vehicle_trip', 'tbl_vehicle_trip');
 
         if (!empty($this->from_date)) {
-            $from_date = date('Y-m-d', strtotime($this->transaction_date));
+            $from_date = date('Y-m-d', strtotime($this->from_date));
             $query->andFilterWhere(['>=', 'tbl_vehicle_trip.transaction_date', $from_date]);
         }
         if (!empty($this->to_date)) {
-            $to_date = date('Y-m-d', strtotime($this->transaction_date));
+            $to_date = date('Y-m-d', strtotime($this->to_date));
             $query->andFilterWhere(['<=', 'tbl_vehicle_trip.transaction_date', $to_date]);
         }
         $query->andFilterWhere(['=', 'tbl_vehicle_trip.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);

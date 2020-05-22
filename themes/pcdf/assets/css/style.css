@@ -2457,3 +2457,11 @@ div.crystalstyle{
 .navbar-right .dropdown-submenu.toggle_right .dropdown-menu {
     left: 100% !important;
 }
+
+.micro_form  .control-label  {
+    font-size: 10px !important;
+}
+
+.micro_form .help-block {
+    display: none;
+}
