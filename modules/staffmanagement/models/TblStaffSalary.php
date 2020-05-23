@@ -3,10 +3,9 @@
 namespace app\modules\staffmanagement\models;
 
 use Yii;
-use app\modules\organisation\models\TblDcs;
-use app\modules\organisation\models\TblSubCenter;
 use app\modules\staffmanagement\models\TblStaffMember;
 use app\models\TblUsers;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_staff_salary".
@@ -15,7 +14,6 @@ use app\models\TblUsers;
  * @property string $addition
  * @property string $deduction
  * @property string $created_at
- * @property integer $is_active
  * @property integer $net_pay
  * @property string $updated_at
  * @property string $wef_date
@@ -26,9 +24,6 @@ use app\models\TblUsers;
  * @property TblUsers $createdBy
  * @property TblUsers $updatedBy
  * @property TblStaffMember $staffMemberCode
- * @property TblSubCenter $subCenterCode
- * @property TblDcs $dcsCode
- * @property TblUsers $deletedBy
  * @property TblStaffSalaryTransaction[] $tblStaffSalaryTransactions
  * @property TblStaffSalaryTransactionHistory[] $tblStaffSalaryTransactionHistories
  */
@@ -48,7 +43,7 @@ class TblStaffSalary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['staff_salary_code', 'wef_date', 'staff_member_code'], 'required'],
+            [['staff_salary_code', 'wef_date', 'staff_member_code', 'union_code'], 'required'],
             [['created_at', 'updated_at', 'deduction', 'wef_date', 'addition', 'total_value', 'union_code'], 'safe'],
             [['staff_salary_code'], 'string', 'max' => 17],
             [['staff_member_code'], 'string', 'max' => 20],
@@ -70,7 +65,6 @@ class TblStaffSalary extends \app\models\ChildModel {
             'staff_salary_code' => Yii::t('app', 'Staff Salary Code'),
             'addition' => Yii::t('app', 'Earning'),
             'created_at' => Yii::t('app', 'Created At'),
-            'is_active' => Yii::t('app', 'Is Active'),
             'net_pay' => Yii::t('app', 'Net Pay'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'wef_date' => Yii::t('app', 'WEF Date'),
@@ -78,6 +72,7 @@ class TblStaffSalary extends \app\models\ChildModel {
             'staff_member_code' => Yii::t('app', 'Staff Member'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'total_value' => Yii::t('app', 'Value'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
 
@@ -133,19 +128,6 @@ class TblStaffSalary extends \app\models\ChildModel {
         return $data;
     }
 
-    public function getCodeWeb($staff) {
-        $len = strlen($staff);
-        $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`staff_salary_code` FROM " . $len . " +1)) AS UNSIGNED)) as staff_salary_code")
-                ->from('tbl_staff_salary')
-                ->where('(CAST(trim(SUBSTRING(staff_salary_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($staff) . '"')
-                ->one();
-        $code = (int) $val['staff_salary_code'] + 1;
-
-        $value = $staff . str_pad($code, 4, '0', STR_PAD_LEFT);
-        return $value;
-    }
-
     public function disableEdit() {
         $count = $this->find()
                 ->where(['union_code' => $this->union_code, 'staff_member_code' => $this->staff_member_code])
@@ -172,6 +154,16 @@ class TblStaffSalary extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'WTF Date must be greater than last Date'));
             return false;
         }
+    }
+
+    public function getStaffMember($month, $union) {
+        if (!empty($month)) {
+            return $member = $this->find()->where(['wef_date' => $month, 'union_code' => $union])->all();
+        }
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }

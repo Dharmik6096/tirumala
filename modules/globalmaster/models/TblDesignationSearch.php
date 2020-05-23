@@ -18,7 +18,7 @@ class TblDesignationSearch extends TblDesignation {
     public function rules() {
         return [
             [['is_active'], 'integer'],
-            [['designation_code', 'designation_type', 'created_at', 'deleted_at', 'designation_name', 'updated_at', 'created_by', 'deleted_by', 'updated_by', 'local_name'], 'safe'],
+            [['designation_code', 'designation_type', 'created_at', 'designation_name', 'updated_at', 'created_by', 'updated_by'], 'safe'],
         ];
     }
 

@@ -47,6 +47,7 @@ class TblStaffSalarySearch extends TblStaffSalary {
 
         $query->joinWith(['staffMemberCode']);
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

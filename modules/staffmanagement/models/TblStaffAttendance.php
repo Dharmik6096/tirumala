@@ -3,16 +3,14 @@
 namespace app\modules\staffmanagement\models;
 
 use Yii;
-use app\modules\organisation\models\TblDcs;
-use app\modules\organisation\models\TblSubCenter;
 use app\modules\organisation\models\TblUnions;
+use app\modules\staffmanagement\models\TblStaffSalaryProcess;
 
 /**
  * This is the model class for table "tbl_staff_attendance".
  *
  * @property integer $staff_attendance_code
  * @property string $created_at
- * @property string $deleted_at
  * @property integer $is_active
  * @property string $lwp_date
  * @property integer $lwp_type
@@ -29,7 +27,6 @@ use app\modules\organisation\models\TblUnions;
  * @property TblUsers $updatedBy
  * @property TblDcs $dcsCode
  * @property TblUsers $createdBy
- * @property TblSubCenter $subCenterCode
  * @property TblStaffMember $staffMemberCode
  */
 class TblStaffAttendance extends \app\models\ChildModel {
@@ -48,9 +45,9 @@ class TblStaffAttendance extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['created_at', 'deleted_at', 'lwp_date', 'updated_at', 'staff_member_name'], 'safe'],
+            [['created_at', 'lwp_date', 'updated_at', 'staff_member_name'], 'safe'],
             [['lwp_type'], 'integer'],
-            [['lwp_date', 'staff_member_code', 'lwp_type'], 'required'],
+            [['lwp_date', 'staff_member_code', 'lwp_type', 'union_code'], 'required'],
             [['remark'], 'string', 'max' => 100],
             [['staff_member_code'], 'string', 'max' => 20],
             [['union_code'], 'string', 'max' => 3],
@@ -67,7 +64,6 @@ class TblStaffAttendance extends \app\models\ChildModel {
         return [
             'staff_attendance_code' => Yii::t('app', 'Staff Attendance Code'),
             'created_at' => Yii::t('app', 'Created At'),
-            'deleted_at' => Yii::t('app', 'Deleted At'),
             'lwp_date' => Yii::t('app', 'Date of LWP'),
             'lwp_type' => Yii::t('app', 'Type'),
             'remark' => Yii::t('app', 'Remark'),
@@ -102,12 +98,15 @@ class TblStaffAttendance extends \app\models\ChildModel {
         return $this->hasOne(TblUsers::className(), ['user_id' => 'created_by']);
     }
 
-
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getStaffMemberCode() {
         return $this->hasOne(TblStaffMember::className(), ['staff_member_code' => 'staff_member_code']);
+    }
+
+    public function getSalaryProcessCode() {
+        return $this->hasOne(TblStaffSalaryProcess::className(), ['staff_member_code' => 'staff_member_code']);
     }
 
     /**
@@ -119,23 +118,30 @@ class TblStaffAttendance extends \app\models\ChildModel {
     }
 
     public function datevalidate($attribute, $params) {
+        $date = date('Y-m', strtotime($this->lwp_date));
+        $ddate = !empty($this->salaryProcessCode->month) ? date('Y-m', strtotime($this->salaryProcessCode->month)) : NULL;
+        if (!empty($date) && !empty($this->salaryProcessCode->disbursement_date) && ($date <= $ddate)) {
+            $this->addError($attribute, Yii::t('app/validation', 'Salary Disbursed'));
+            return false;
+        }
 
-        if (!empty($this->lwp_date) && !empty($this->staffMemberCode->tenure_from_date) && ($this->lwp_date < $this->staffMemberCode->tenure_from_date)) {
+        if (!empty($date) && !empty($this->staffMemberCode->tenure_from_date) && ($this->lwp_date < $this->staffMemberCode->tenure_from_date)) {
             $this->addError($attribute, Yii::t('app/validation', 'Date of LWP Must be Greater than Tenure From'));
             return false;
         }
     }
 
-    public function getCodeWeb($dcs) {
-        $len = strlen($dcs);
-        $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`staff_attendance_code` FROM " . $len . " +1)) AS UNSIGNED)) as staff_attendance_code")
-                ->from('tbl_staff_attendance')
-                ->where('(CAST(trim(SUBSTRING(staff_attendance_code, 1,7)) AS UNSIGNED))="' . trim($dcs) . '"')
-                ->one();
-        $code = (int) $val['staff_attendance_code'] + 1;
-        $value = $dcs . str_pad($code, 3, '0', STR_PAD_LEFT);
-        return $value;
+    public function getMemberAttendance($member) {
+        if (!empty($member)) {
+            $attendance = $this->find()->where(['staff_member_code' => $member])->all();
+            $leave = 0;
+            if (!empty($attendance)) {
+                foreach ($attendance as $att) {
+                    $leave = $leave + ($att->lwp_type == 1 ? 1 : 0.5);
+                }
+            }
+            return $leave;
+        }
     }
 
 }

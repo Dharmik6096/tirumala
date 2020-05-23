@@ -46,6 +46,14 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
+        var specialDecimalKeys = new Array();
+        specialDecimalKeys.push(8);
+        $(document).on('keypress', '.number-validate', function (e) {
+            var keyCode = e.which ? e.which : e.keyCode
+            var ret = ((keyCode >= 48 && keyCode <= 57) || (specialDecimalKeys.indexOf(keyCode) != -1) || keyCode == 9 || keyCode == 46);
+            return ret;
+        });
+
         $(document).on('change', '#tblstaffsalary-staff_member_code', function() { 
             getData();
         });
@@ -70,57 +78,32 @@ $script = "
                     $('.staffMemberArea').empty();
                 }
         }
-        $(document).on('change','#tblstaffsalarytransaction-1-value', function() {
-        $('#tblstaffsalary-addition').val('');
-        $('#tblstaffsalary-total_value').val('');
-            addAmount();
-            totalAmount();
-        });
-        $(document).on('change','#tblstaffsalarytransaction-2-value', function() {
-        $('#tblstaffsalary-addition').val('');
-        $('#tblstaffsalary-total_value').val('');
-           addAmount();
-           totalAmount();
-        });
         
-        function addAmount(){
-            var val_1 = parseFloat($('#tblstaffsalarytransaction-1-value').val());
-            if(isNaN(val_1)){
-               val_1 = 0;
+        $(document).on('change','.addition', function() { 
+        var add = 0;
+        $('.addition input').each(function(){
+            var val = $(this).val();
+            if(isNaN(val) || val == null || val == undefined || val == ''){
+                    val = 0;
             }
-            var val_2 = parseFloat($('#tblstaffsalarytransaction-2-value').val());
-            if(isNaN(val_2)){
-                val_2 = 0;
-            }
-            var addition = 0;          
-            if(val_1 != '' && val_2 ==''){
-                addition = val_1;
-               $('#tblstaffsalary-addition').val(addition);
-            }else if(val_2 != '' && val_1 ==''){
-                addition = val_2;
-                $('#tblstaffsalary-addition').val(addition);
-            }else if(val_1 != '' && val_2 !=''){
-                 addition = val_1 + val_2;
-                 $('#tblstaffsalary-addition').val(addition);
-            }
-
-        }
-        $(document).on('change','#tblstaffsalarytransaction-3-value', function() {
-            $('#tblstaffsalary-deduction').val('');
-            $('#tblstaffsalary-total_value').val('');
-            addDeduct();
+            add = add + parseFloat(val);
+        });
+          $('#tblstaffsalary-addition').val(add);
             totalAmount();
         });
         
-        function addDeduct(){
-            var val_3 = parseFloat($('#tblstaffsalarytransaction-3-value').val());
-            var deduction=0;          
-            if(val_3 != ''){
-                deduction = val_3;
-               $('#tblstaffsalary-deduction').val(deduction);
+        $(document).on('change','.deduction', function() { 
+        var ded = 0;
+        $('.deduction input').each(function(){
+            var val = $(this).val();
+            if(isNaN(val) || val == null || val == undefined || val == ''){
+                    val = 0;
             }
-
-        }
+            ded = ded + parseFloat(val);
+        });
+            $('#tblstaffsalary-deduction').val(ded);
+              totalAmount();
+        });
         
         function totalAmount(){
             var add = parseFloat($('#tblstaffsalary-addition').val());

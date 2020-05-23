@@ -19,7 +19,7 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         },
-        'filter' => false,],
+        'filter' => false, 'visible' => FALSE],
     ['attribute' => 'staff_member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->staffMemberCode, 'staff_member_name');
         }],
@@ -50,7 +50,7 @@ $attribute = [
     ['attribute' => 'type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('type', $searchModel, 'type'),
         'value' => function($model) {
-            return ($model->type == 1) ? Yii::t('app', 'Deduction') : Yii::t('app', 'Addition');
+            return ($model->type == 1) ? Yii::t('app', 'Addition') : Yii::t('app', 'Deduction');
         }
     ],
     ['attribute' => 'amount',
@@ -59,7 +59,6 @@ $attribute = [
         },
     ],
     ['attribute' => 'installment_no',],
-  
     ['attribute' => 'remark', 'visible' => FALSE],
 ];
 $grid_option = [

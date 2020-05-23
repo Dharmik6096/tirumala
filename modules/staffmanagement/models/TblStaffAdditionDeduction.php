@@ -3,9 +3,8 @@
 namespace app\modules\staffmanagement\models;
 
 use Yii;
-use app\modules\organisation\models\TblDcs;
-use app\modules\organisation\models\TblSubCenter;
 use app\modules\organisation\models\TblUnions;
+use app\modules\staffmanagement\models\TblStaffSalaryProcess;
 
 /**
  * This is the model class for table "tbl_staff_addition_deduction".
@@ -14,7 +13,6 @@ use app\modules\organisation\models\TblUnions;
  * @property double $amount
  * @property string $app_from_date
  * @property string $created_at
- * @property string $deleted_at
  * @property integer $installment_no
  * @property integer $is_active
  * @property string $remark
@@ -52,8 +50,8 @@ class TblStaffAdditionDeduction extends \app\models\ChildModel {
     public function rules() {
         return [
             [['amount'], 'number'],
-            [['app_from_date', 'tr_date', 'staff_member_code', 'amount', 'installment_no', 'type'], 'required'],
-            [['created_at', 'deleted_at', 'staff_addition_deduction_no', 'tr_date', 'updated_at', 'staff_member_name', 'installment_no'], 'safe'],
+            [['app_from_date', 'tr_date', 'staff_member_code', 'amount', 'installment_no', 'type', 'union_code'], 'required'],
+            [['created_at', 'staff_addition_deduction_no', 'tr_date', 'updated_at', 'staff_member_name', 'installment_no'], 'safe'],
             [['type'], 'integer'],
             [['app_from_date'], 'string', 'max' => 255],
             [['remark'], 'string', 'max' => 200],
@@ -75,7 +73,6 @@ class TblStaffAdditionDeduction extends \app\models\ChildModel {
             'amount' => Yii::t('app', 'Amount'),
             'app_from_date' => Yii::t('app', 'Month App From'),
             'created_at' => Yii::t('app', 'Created At'),
-            'deleted_at' => Yii::t('app', 'Deleted At'),
             'installment_no' => Yii::t('app', 'Nos.of Installment'),
             'is_active' => Yii::t('app', 'Is Active'),
             'remark' => Yii::t('app', 'Remark'),
@@ -135,12 +132,28 @@ class TblStaffAdditionDeduction extends \app\models\ChildModel {
     }
 
     public function memberJoinDate($attribute, $params) {
+        $date = date('Y-m', strtotime($this->app_from_date));
+        $ddate = !empty($this->salaryProcessCode->month) ? date('Y-m', strtotime($this->salaryProcessCode->month)) : NULL;
+        if (!empty($date) && !empty($this->salaryProcessCode->disbursement_date) && ($date <= $ddate)) {
+            $this->addError($attribute, Yii::t('app/validation', 'Salary Disbursed'));
+            return false;
+        }
+
+
         $member = $this->staffMemberCode->tenure_from_date;
 
         if (!empty($member) && !empty($this->app_from_date) && ($this->app_from_date < $member)) {
             $this->addError('app_from_date', Yii::t('app/validation', 'Month App From not in Tenure Date'));
             return false;
         }
+    }
+
+    public function getStaffAddDed($member) {
+        return $this->find()->where(['staff_member_code' => $member, 'is_active' => 1])->all();
+    }
+
+    public function getSalaryProcessCode() {
+        return $this->hasOne(TblStaffSalaryProcess::className(), ['staff_member_code' => 'staff_member_code']);
     }
 
 }

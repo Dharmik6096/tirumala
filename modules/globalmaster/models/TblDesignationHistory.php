@@ -17,7 +17,6 @@ use Yii;
  * @property string $operation_type
  * @property string $updated_at
  * @property string $created_by
- * @property string $deleted_by
  * @property string $updated_by
  *
  * @property TblUsers $createdBy
@@ -42,7 +41,7 @@ class TblDesignationHistory extends \yii\db\ActiveRecord {
             [['designation_code'], 'safe'],
             [['designation_name'], 'safe'],
             [['designation_name'], 'safe'],
-            [['operation_type', 'created_by', 'deleted_by', 'updated_by'], 'safe'],
+            [['operation_type', 'created_by', 'updated_by'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
         ];
     }
@@ -62,7 +61,6 @@ class TblDesignationHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'created_by' => Yii::t('app', 'Created By'),
-            'deleted_by' => Yii::t('app', 'Deleted By'),
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }

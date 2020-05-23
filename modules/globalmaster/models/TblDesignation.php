@@ -67,11 +67,6 @@ class TblDesignation extends ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
-
-    public function getTblDesignationLocals() {
-        return $this->hasMany(TblDesignationLocal::className(), ['designation_code' => 'designation_code']);
-    }
-
     /**
      * @return \yii\db\ActiveQuery
      */
