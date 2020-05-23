@@ -148,7 +148,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $config_model->ref_code = $transaction->bmc_milk_dispatch_txn_code;
                     $config_detail = $config_model->configCode;
                     $auto_reject = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['bmc_dispatch_auto_reject']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['bmc_dispatch_auto_reject'] : '0';
-                    if ($auto_reject == '1' && $config_detail->is_adultration == 1 && $config_detail->check_value != '') {
+                    if ($auto_reject == '1' && $config_detail->is_adulteration == 1 && $config_detail->check_value != '') {
                         if (in_array($config_detail->control_type, ['RADIO', 'DROPDOWN']) && $config_detail->check_value != $config_model->config_result) {
                             $transaction->is_rejected = 1;
                         } else if ($config_detail->control_type == 'text' && $config_detail->config_result > $config_detail->check_value) {

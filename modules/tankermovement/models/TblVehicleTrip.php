@@ -119,6 +119,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $save_model = [];
         $validate = TRUE;
         $inspection = FALSE;
+        $vehicle_trip_detail_code = '';
         $this->transaction_date = date('Y-m-d', strtotime($this->transaction_date));
         $this->originating_org_code = $this->union_code;
         $model = $this->find()->where(['vehicle_code' => $this->vehicle_code])
@@ -126,6 +127,9 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 ->orderBy(['transaction_date' => SORT_ASC])
                 ->one();
         if (!empty($model)) {
+            if ($model->trip_status == 'generated') {
+                $inspection = TRUE;
+            }
             $last_trip_date = $model->transaction_date;
             if ($last_trip_date != $this->transaction_date) {
                 $validate = FALSE;
@@ -149,8 +153,8 @@ class TblVehicleTrip extends \app\models\ChildModel {
         if ($validate) {
             $trip_detai = new TblVehicleTripDetail();
             $last_trip = TblVehicleTripDetail::find()
-                    ->where(['vehicle_code' => $this->vehicle_code])
-                    ->andWhere(['<=', 'CAST(transaction_datetime as date)', $this->transaction_date])
+                    ->where(['vehicle_code' => $this->vehicle_code, 'trip_code' => $model->trip_code])
+                    //->andWhere(['<=', 'CAST(transaction_datetime as date)', $this->transaction_date])
                     ->orderBy(['transaction_datetime' => SORT_DESC])
                     ->one();
             if (!empty($last_trip)) {
@@ -182,11 +186,12 @@ class TblVehicleTrip extends \app\models\ChildModel {
             $save_model[] = $trip_detai;
         }
         $api_response = [];
-        if ($model->trip_mode == 'online') {
-            $api_response['inspection_require'] = $inspection;
-            $api_response['trip_code'] = $model->trip_code;
-            $api_response['trip_status'] = $model->trip_status;
-        }
+        //if ($model->trip_mode == 'online') {
+        $api_response['inspection_require'] = $inspection;
+        $api_response['trip_code'] = $model->trip_code;
+        $api_response['trip_status'] = $model->trip_status;
+        $api_response['vehicle_trip_detail_code'] = $vehicle_trip_detail_code;
+        //}
         return [$validate, $save_model, $api_response];
     }
 

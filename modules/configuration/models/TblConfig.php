@@ -71,18 +71,25 @@ class TblConfig extends \app\models\ChildModel {
         return $this->hasMany(TblConfigMapping::className(), ['config_code' => 'config_code']);
     }
 
+    public function getControlConfigList() {
+        return $this->find()
+                        ->where(['tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name, 'tbl_config.config_type' => $this->config_type])
+                        ->orderby(['tbl_config.seq_no' => SORT_ASC])
+                        ->all();
+    }
+
     public function getOrgConfigList($org_type, $org_code) {
         return $this->find()->distinct()
                         ->joinWith(['configResult', 'configMapping'])
                         ->where(['tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name, 'tbl_config.config_type' => $this->config_type])
                         ->andWhere(['tbl_config_mapping.org_type' => $org_type, 'tbl_config_mapping.org_code' => $org_code, 'tbl_config_result.is_active' => 1])
-                        ->orderby(['tbl_config.config_code' => SORT_ASC])
+                        ->orderby(['tbl_config.seq_no' => SORT_ASC])
                         ->all();
     }
 
     public function prepareControl($form, $config, $index) {
         $config_data = ArrayHelper::map($this->configResult, 'config_result_key', 'config_result');
-        $config->config_result = '0';
+        $config->config_result = empty($config->config_result) ? '0' : $config->config_result;
         if ($this->control_type == 'RADIO') {
             return $form->field($config, '[' . $index . ']config_result')->inline()->radioList($config_data)->label(Yii::t('app', $this->config_name));
         } else if ($this->control_type == 'DROPDOWN') {

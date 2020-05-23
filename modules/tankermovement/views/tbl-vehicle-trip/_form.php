@@ -18,7 +18,7 @@ $form = ActiveForm::begin([
 
 <div class="row">
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, date('Y-m-d')); ?>
+        <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, FALSE); ?>
     </div>
 
 

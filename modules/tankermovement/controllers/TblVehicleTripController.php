@@ -57,9 +57,16 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $this->model->trip_mode = 'offline';
             $result = $this->model->setModel();
             if ($result[0]) {
-                $transaction = $this->generalModel->saveTransaction($result[1], ['Vehicle Trip', 'create']);
-                if ($transaction !== FALSE) {
-                    return $this->{$transaction}();
+                $transaction = $this->generalModel->saveTransaction($result[1], ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
+                if ($transaction == 'customRedirect') {
+                    if ($result[2]['inspection_require']) {
+                        return $this->redirect(['/tankermovement/tbl-bmc-dispatch-inspection/create',
+                                    'trip_code' => $result[2]['trip_code'],
+                                    'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
+                        ]);
+                    } else {
+                        return $this->{$transaction}();
+                    }
                 }
             }
         }
