@@ -56,8 +56,17 @@ class TblProduct extends \app\models\ChildModel {
                 [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code'], 'safe'],
                 [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code']],
+                [['dpu_product_code'], 'integer', 'min' => 0],
+                [['dpu_product_code'], 'required', 'when' => function ($model) {
+                    return $model->is_dpu_product == 1;
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblproduct-is_dpu_product').is(':checked'); 
+          }"],
+                [['ref_code'], 'unique', 'targetAttribute' => ['union_code', 'ref_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['dpu_product_code'], 'unique', 'targetAttribute' => ['union_code', 'dpu_product_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['dpu_product_code'], 'validateDpuProduct'],
         ];
     }
 
@@ -88,6 +97,8 @@ class TblProduct extends \app\models\ChildModel {
             'is_inclusive_tax' => Yii::t('app', 'Is Inclusive Tax'),
             'is_saleable' => Yii::t('app', 'Is Saleable'),
             'is_indent' => Yii::t('app', 'Is Indent'),
+            'is_dpu_product' => Yii::t('app', 'Is DPU Product'),
+            'dpu_product_code' => Yii::t('app', 'DPU Product Code'),
         ];
     }
 
@@ -193,6 +204,18 @@ class TblProduct extends \app\models\ChildModel {
 
         $records = $this->find()->select('product_name,unit_code,tax_code')->where(['product_code' => $productCode])->one();
         return $records;
+    }
+
+    public function validateDpuProduct($attribute, $params) {
+        if (!empty($this->is_dpu_product)) {
+            (int) $minVal = Yii::$app->general->getUnionConfiguration($this->union_code, 'dpu_product_code_min_value', 'PORTAL');
+            (int) $maxVal = Yii::$app->general->getUnionConfiguration($this->union_code, 'dpu_product_code_max_value', 'PORTAL');
+            if (!empty($minVal) && $this->dpu_product_code < $minVal) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " must be greater then or equal to " . $minVal));
+            } else if (!empty($maxVal) && $this->dpu_product_code > $maxVal) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " must be less than or equal to " . $maxVal));
+            }
+        }
     }
 
 }
