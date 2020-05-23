@@ -40,7 +40,7 @@ use app\modules\collection\models\TblBmcCollection;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code, $customer_name;
+    public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code, $customer_name, $ex_code;
 
     /**
      * @inheritdoc
@@ -55,7 +55,7 @@ class TblProductSale extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct']],
-                [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct']],
+                [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
                 [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
@@ -127,6 +127,8 @@ class TblProductSale extends \app\models\ChildModel {
             'customer_type' => Yii::t('app', 'Type'),
             'payment_mode' => Yii::t('app', 'Payment Type'),
             'customer_code' => Yii::t('app', 'Name'),
+            'ex_code' => Yii::t('app', 'Code'),
+            'customer_name' => Yii::t('app', 'Name'),
         ];
     }
 
@@ -287,6 +289,10 @@ class TblProductSale extends \app\models\ChildModel {
                 return false;
             }
         }
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
     }
 
 }

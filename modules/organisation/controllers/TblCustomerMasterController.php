@@ -10,13 +10,14 @@ use yii\filters\VerbFilter;
 use app\modules\organisation\models\TblCustomerMasterHistory;
 use yii\helpers\Json;
 use app\modules\organisation\models\TblDcs;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * TblCustomerMasterController implements the CRUD actions for TblCustomerMaster model.
  */
 class TblCustomerMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['customer-type', 'customer-code-list'];
+    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type'];
 
     /**
      * Lists all TblCustomerMaster models.
@@ -157,6 +158,26 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetCustomerType() {
+        $out = null;
+
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            $unionCode = $value[0];
+            $where = !empty($value[1]) ? (array) json_decode($value[1]) : [];
+            $notInType = !empty($value[2]) ? (array) json_decode($value[2]) : [];
+            $paymentcycleModel = new TblCustomerType();
+            $list = $paymentcycleModel->getCustomerTypes($unionCode, $where, $notInType);
+            foreach ($list as $key => $r) {
+                $out[] = array('id' => $key,
+                    'name' => $r);
+            }
+            echo Json::encode(['output' => $out]);
+            return;
+        }
+        echo Json::encode(['output' => '', 'selected' => $selected]);
     }
 
 }

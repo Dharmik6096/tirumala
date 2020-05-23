@@ -58,6 +58,7 @@ class TblProduct extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
                 [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code'], 'safe'],
                 [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code']],
+                [['dpu_product_code'], 'string', 'min' => 4, 'max' => 4],
                 [['dpu_product_code'], 'integer', 'min' => 0],
                 [['dpu_product_code'], 'required', 'when' => function ($model) {
                     return $model->is_dpu_product == 1;
@@ -208,14 +209,21 @@ class TblProduct extends \app\models\ChildModel {
 
     public function validateDpuProduct($attribute, $params) {
         if (!empty($this->is_dpu_product)) {
-            (int) $minVal = Yii::$app->general->getUnionConfiguration($this->union_code, 'dpu_product_code_min_value', 'PORTAL');
-            (int) $maxVal = Yii::$app->general->getUnionConfiguration($this->union_code, 'dpu_product_code_max_value', 'PORTAL');
-            if (!empty($minVal) && $this->dpu_product_code < $minVal) {
-                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " must be greater then or equal to " . $minVal));
-            } else if (!empty($maxVal) && $this->dpu_product_code > $maxVal) {
-                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " must be less than or equal to " . $maxVal));
+            $validateDpuCode = Yii::$app->general->getUnionConfiguration($this->union_code, 'validate_dpu_product_code', 'PORTAL');
+            if (!empty($validateDpuCode)) {
+                (int) $minVal = Yii::$app->general->getUnionConfiguration($this->union_code, 'dpu_product_code_min_value', 'PORTAL');
+                (int) $maxVal = Yii::$app->general->getUnionConfiguration($this->union_code, 'dpu_product_code_max_value', 'PORTAL');
+                if (!empty($minVal) && is_numeric($minVal) && $this->dpu_product_code < $minVal) {
+                    $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " must be greater then or equal to " . $minVal));
+                } else if (!empty($maxVal) && is_numeric($maxVal) && $this->dpu_product_code > $maxVal) {
+                    $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " must be less than or equal to " . $maxVal));
+                }
             }
         }
+    }
+
+    public function checkAllowDelete() {
+        return Yii::$app->general->allowUpdateDelete($this);
     }
 
 }

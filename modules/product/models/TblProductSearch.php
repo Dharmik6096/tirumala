@@ -18,7 +18,7 @@ class TblProductSearch extends TblProduct {
     public function rules() {
         return [
                 [['product_code', 'is_active'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'unit_code', 'product_group_code', 'product_name', 'product_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'union_code', 'ref_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'tax_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'unit_code', 'product_group_code', 'product_name', 'product_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'union_code', 'ref_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'tax_code', 'dpu_product_code', 'is_dpu_product'], 'safe'],
         ];
     }
 
@@ -63,6 +63,7 @@ class TblProductSearch extends TblProduct {
             'tbl_product.is_inclusive_tax' => $this->is_inclusive_tax,
             'tbl_product.is_saleable' => $this->is_saleable,
             'tbl_product.is_indent' => $this->is_indent,
+            'tbl_product.is_dpu_product' => $this->is_dpu_product,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_product.product_name', $this->product_name])
@@ -76,7 +77,8 @@ class TblProductSearch extends TblProduct {
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_product.local_name', $this->local_name])
                 ->andFilterWhere(['like', 'tbl_tax.tax_name', $this->tax_code])
-                ->andFilterWhere(['like', 'tbl_product.ref_code', $this->ref_code]);
+                ->andFilterWhere(['like', 'tbl_product.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'tbl_product.dpu_product_code', $this->dpu_product_code]);
 
         return $dataProvider;
     }

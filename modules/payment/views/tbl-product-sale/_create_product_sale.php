@@ -39,15 +39,28 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
                 </div>
 
                 <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE); ?>
+                    <?php
+                    $where = json_encode(['is_product_sale' => 1]);
+                    $notInArr = json_encode(['Member']);
+                    echo Html::hiddenInput('customer_type_depends', $where, ['id' => 'customer_type_depends']);
+                    echo Html::hiddenInput('customer_type_depends_not_in', $notInArr, ['id' => 'customer_type_depends_not_in']);
+                    ?>    
+                    <?= Yii::$app->dropdown->customerType($model, $form, 'tblproductsale-union_code,customer_type_depends,customer_type_depends_not_in', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE, FALSE); ?>
+                    <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE);  ?>
                 </div>
                 <div class="col-sm-2">
                     <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', true); ?>
                 </div>
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE); ?>
-                </div>
                 <div class="clearfix"></div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'ex_code')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Html::activeHiddenInput($model, 'customer_code') ?>
+                    <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true]) ?>
+                    <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE); ?>
+                </div>
+                <!--<div class="clearfix"></div>-->
                 <div class="col-sm-2 reset_field">
                     <?= Yii::$app->dropdown->dropdownStatic('payment_mode', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false); ?>
                 </div>
@@ -163,10 +176,14 @@ $script = "
         reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-bmc_code',function(){
+        $('#tblproductsale-ex_code').val('');
+        $('#tblproductsale-ex_code').trigger('change');
         setRate();
         reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-customer_type',function(){
+        $('#tblproductsale-ex_code').val('');
+        $('#tblproductsale-ex_code').trigger('change');
         setRate();
         reloadGrid();
     });
@@ -396,6 +413,49 @@ $script = "
             });
         } else {
             $('#gridcontentSet').html('');
+        }
+    }
+    
+
+    $(document).on('change', '#tblproductsale-ex_code', function() {  
+        setVendorCode();
+    });
+
+    function setVendorCode(){
+        $('#tblproductsale-customer_code').val('');
+        $('#tblproductsale-customer_name').val('');
+        var code = $('#tblproductsale-ex_code').val();
+        var type= $('#tblproductsale-customer_type').val(); 
+        var union= $('#tblproductsale-union_code').val(); 
+        var bmc= $('#tblproductsale-bmc_code').val(); 
+        if(code != '' && code != null && code != undefined) {
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['validate-customer']) . "',
+                data: {'dcs_code':code,'customer_type':type,'union_code':union,'bmc_code':bmc},
+                success: function(data) {                                        
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success') {
+                        $('#tblproductsale-customer_name').val(obj.data); 
+                        $('#tblproductsale-customer_code').val(obj.code); 
+                        $('#tblproductsale-customer_code').trigger('change');
+                    }else{
+                        //Please enter valid Code(Last 4 digit)
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Please enter valid Code.') . "</span></div></div>', function(result){
+                            setTimeout(function(){
+                                $('#tblproductsale-ex_code').focus();
+                            },100);
+                        });           
+                        $('#tblproductsale-customer_code').val('');                    
+                        $('#tblproductsale-customer_name').val('');                    
+                        $('#tblproductsale-customer_code').focus();
+
+                    }
+                },
+                error:function(data){
+
+                }
+            });
         }
     }
     

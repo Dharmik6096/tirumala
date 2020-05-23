@@ -6,6 +6,7 @@
  */
 
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 
 <?php
@@ -67,6 +68,14 @@ $attribute = [
     ],
         ['attribute' => 'product_desc'],
         ['attribute' => 'local_name', 'filter' => false],
+        [
+        'attribute' => 'is_dpu_product', 'visible' => false,
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_dpu_product'),
+        'value' => function($model) {
+            return isset($model->is_dpu_product) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_dpu_product] : '';
+        }
+    ],
+        ['attribute' => 'dpu_product_code', 'visible' => false],
 ];
 
 $grid_option = [
@@ -75,8 +84,13 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'view' => true,
-        'update' => true,
-        'delete' => ['option' => 'product_name,product_code,tbl-product/delete'],
+        'edit' => function ($url, $model) {
+            $disable = Yii::$app->general->allowUpdateDelete($model) ? '' : 'disabled';
+            $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/product/tbl-product/update', 'id' => $model->product_code], $options);
+        },
+//        'update' => true,
+        'delete' => ['option' => 'product_name,product_code,tbl-product/delete,checkAllowDelete()'],
     ]
 ];
 

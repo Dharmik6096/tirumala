@@ -36,7 +36,7 @@ class TblProductRate extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['product_code', 'sale_rate', 'wef_date', 'union_code'], 'required'],
-                [['product_code'], 'integer'],
+//                [['product_code'], 'integer'],
                 [['sale_rate'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
                 [['wef_date', 'created_at', 'updated_at', 'product_sale_rate_code', 'union_code', 'is_member_rate', 'commission'], 'safe'],
                 [['created_by', 'updated_by'], 'string'],
@@ -58,7 +58,7 @@ class TblProductRate extends \app\models\ChildModel {
                }"],
                 [['is_member_rate', 'commission'], 'default', 'value' => 0],
                 [['commission'], 'validateCommission', 'skipOnEmpty' => false],
-                [['plant_code', 'mcc_plant_code', 'bmc_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code'], 'safe'],
         ];
     }
 

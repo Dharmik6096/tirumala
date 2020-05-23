@@ -5,7 +5,9 @@ use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Product');
-$this->params['menu'][] = Yii::$app->controls->update($model->product_group_code);
+if (Yii::$app->general->allowUpdateDelete($model)) {
+    $this->params['menu'][] = Yii::$app->controls->update($model->product_group_code);
+}
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -80,6 +82,19 @@ $this->params['menu'][] = Yii::$app->controls->update($model->product_group_code
                         ],
                             [
                             'attribute' => 'ref_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'is_dpu_product',
+                            'value' => isset($model->is_dpu_product) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_dpu_product] : '',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'dpu_product_code',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],

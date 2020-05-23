@@ -31,8 +31,8 @@ class TblCustomerType extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['customer_type', 'customer_desc', 'code_prefix', 'union_code'], 'string'],
-            [['code_length', 'is_organisation', 'is_active'], 'integer'],
+                [['customer_type', 'customer_desc', 'code_prefix', 'union_code'], 'string'],
+                [['code_length', 'is_organisation', 'is_active'], 'integer'],
         ];
     }
 
@@ -58,6 +58,17 @@ class TblCustomerType extends \yii\db\ActiveRecord {
         $vendor = $query->orderBy(['is_organisation' => SORT_ASC, 'customer_desc' => SORT_ASC])->all();
         $customerType = ArrayHelper::map($vendor, 'customer_type', 'customer_desc');
 //        asort($customerType, SORT_NATURAL | SORT_FLAG_CASE);
+        return $customerType;
+    }
+
+    public function getCustomerTypes($unionCode, $where = [], $notInType = []) {
+        $query = $this->find()->where(['is_active' => 1, 'union_code' => $unionCode])
+                ->andWhere($where);
+        if (!empty($notInType)) {
+            $query->andWhere(['NOT IN', 'customer_type', $notInType]);
+        }
+        $vendor = $query->orderBy(['is_organisation' => SORT_ASC, 'customer_desc' => SORT_ASC])->all();
+        $customerType = ArrayHelper::map($vendor, 'customer_type', 'customer_desc');
         return $customerType;
     }
 
