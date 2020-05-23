@@ -45,7 +45,7 @@ class TblTaxDependsHistory extends \yii\db\ActiveRecord {
         return [
                 [['tax_depends_code', 'tax_detail_code', 'steps', 'is_active', 'originating_type'], 'safe'],
                 [['union_code', 'created_by', 'updated_by', 'history_created_by', 'operation_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['created_at', 'updated_at', 'history_created_at', 'tax_details_code'], 'safe'],
         ];
     }
 

@@ -44,6 +44,12 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('tax_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
     </div>  
+    <div class="col-sm-3 mt15">
+        <?= $form->field($model, 'is_dpu_product', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'dpu_product_code')->textInput(['readonly' => empty($model->is_dpu_product), 'class' => 'form-control number-validate']) ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-3">
         <?= $form->field($model, 'is_inhouse', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
@@ -74,3 +80,18 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php ActiveForm::end(); ?>
+
+
+<?php
+$script = "
+    $('#tblproduct-is_dpu_product').on('click', function(){
+        $('#tblproduct-dpu_product_code').val('');
+        if($(this).is(':checked')) {
+            $('#tblproduct-dpu_product_code').prop('readonly', false);
+        } else {
+            $('#tblproduct-dpu_product_code').prop('readonly', true);
+        }
+    });
+";
+$this->registerJs($script, View::POS_END, 'product-form');
+?>
