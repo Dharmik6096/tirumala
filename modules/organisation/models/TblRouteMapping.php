@@ -79,6 +79,9 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['route_code'], 'string', 'max' => 8],
             [['route_code'], 'safe'],
             [['route_code'], 'unique'],
+            [['route_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 

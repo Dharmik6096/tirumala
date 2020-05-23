@@ -2469,3 +2469,62 @@ div.crystalstyle{
 .mt20 {
     margin-top: 20px;
 }
+
+.micro_form div[class^="col-"] {
+    padding-right: 6px !important;
+    padding-left: 6px !important;
+}
+
+.micro_form div[class^="col-"] input, .micro_form div[class^="col-"] select {
+    padding: 3px !important;
+    height: 26px !important;
+    font-size: 12px !important
+}
+
+.micro_form .kv-date-remove, .micro_form .kv-date-calendar{
+    padding: 3px !important;
+    height: 26px !important
+}
+
+.micro_form label.control-label {
+    margin-bottom: 2px;
+    margin-top: 5px;
+}
+
+.micro_form .kv-date-remove i{
+    font-size: 10px
+}
+
+.micro_form .kv-date-calendar i{
+    font-size: 12px;
+    top: 2px;
+}
+
+.micro_form .btn {
+    padding: 5px 23px !important
+}
+.micro_form h5 {
+    font-size: 15px !important;
+    padding-left: 3px !important;
+    padding-bottom: 5px !important;
+    margin-bottom: 7px;
+}
+
+.dynamic-controls {
+    min-width: 8.33333333%;
+    float: left;
+    padding-left: 10px;
+    height: 50px;
+}
+
+.micro_form  input[type="radio"], .dynamic-controls input[type="radio"]{
+    max-height: 14px !important;
+    margin-left: -17px !important;
+    float: left;
+    padding-right: 10px;
+}
+
+.micro_form .radio-inline + .radio-inline, .micro_form .checkbox-inline + .checkbox-inline,
+.dynamic-controls .radio-inline + .radio-inline, .dynamic-controls .checkbox-inline + .checkbox-inline{
+    margin-left: 5px !important
+}
