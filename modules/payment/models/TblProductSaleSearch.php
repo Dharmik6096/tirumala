@@ -42,7 +42,7 @@ class TblProductSaleSearch extends TblProductSale {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblProductSale::find()->select('tset');
+        $query = TblProductSale::find();
 //        $query->select('test');
         // add conditions that should always apply here
 
