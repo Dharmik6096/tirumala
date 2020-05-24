@@ -42,7 +42,7 @@ class TblProductSaleSearch extends TblProductSale {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblProductSale::find();
+        $query = TblProductSale::find()->select('tset');
 //        $query->select('test');
         // add conditions that should always apply here
 
@@ -51,7 +51,7 @@ class TblProductSaleSearch extends TblProductSale {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'bmcCode', 'bmcCode.tblMccPlant']);
+        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'memberCode', 'bmcCode', 'bmcCode.tblMccPlant']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_mcc_plant', 'tbl_product_sale');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -88,7 +88,7 @@ class TblProductSaleSearch extends TblProductSale {
         if (!empty($this->payment_mode) || $this->payment_mode == '0') {
             $query->andFilterWhere(['tbl_product_sale.payment_mode' => (int) $this->payment_mode]);
         }
-        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name], ['like', 'tbl_member.member_name', $this->customer_name]]);
 
         $query->andFilterWhere(['like', 'tbl_product_sale.product_sale_code', $this->product_sale_code])
                 ->andFilterWhere(['like', 'tbl_product_sale.customer_type', $this->customer_type])

@@ -79,6 +79,11 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblproductsale-payment_mode').val() == 1; 
           }", 'tooSmall' => 'You must have atleast 1 installment to pay the due'],
+                [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function() {
+                    return ($this->customer_type == 'Member');
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblproductsale-customer_type').val() == 'Member'; 
+          }"],
 //            [['no_of_installment'], 'required','on'=>'payment','when'=>function(){
 //                return ($this->is_installment==1);
 //            },'message'=>'You must have atleast 1 installment to pay the due'],
@@ -105,7 +110,7 @@ class TblProductSale extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'product_sale_code' => Yii::t('app', 'Product Sale Code'),
-            'dcs_code' => Yii::t('app', 'Society Name'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'union_code' => Yii::t('app', 'Union'),
             'invoice_date' => Yii::t('app', 'Sale Date'),
             'amount' => Yii::t('app', 'Amount'),
@@ -293,6 +298,10 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function getCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
 }

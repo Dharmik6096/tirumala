@@ -7,7 +7,10 @@ use kartik\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
-$this->title = Yii::$app->label->title('create', 'Product Sale');
+$message = !empty($message) ? $message : 'Product Sale';
+$this->title = Yii::$app->label->title('create', $message);
+$type = !empty($type) ? $type : '';
+//memberWiseSale
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -40,13 +43,18 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
 
                 <div class="col-sm-2">
                     <?php
-                    $where = json_encode(['is_product_sale' => 1]);
-                    $notInArr = json_encode(['Member']);
-                    echo Html::hiddenInput('customer_type_depends', $where, ['id' => 'customer_type_depends']);
-                    echo Html::hiddenInput('customer_type_depends_not_in', $notInArr, ['id' => 'customer_type_depends_not_in']);
-                    ?>    
-                    <?= Yii::$app->dropdown->customerType($model, $form, 'tblproductsale-union_code,customer_type_depends,customer_type_depends_not_in', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE, FALSE); ?>
-                    <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE);  ?>
+                    if ($type == 'memberWiseSale') {
+                        echo Html::activeHiddenInput($model, 'customer_type');
+                        echo Yii::$app->dropdown->bmc_society($model, $form, 'tblproductsale-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'));
+                    } else {
+                        $where = json_encode(['is_product_sale' => 1]);
+                        $notInArr = json_encode(['Member']);
+                        echo Html::hiddenInput('customer_type_depends', $where, ['id' => 'customer_type_depends']);
+                        echo Html::hiddenInput('customer_type_depends_not_in', $notInArr, ['id' => 'customer_type_depends_not_in']);
+                        echo Yii::$app->dropdown->customerType($model, $form, 'tblproductsale-union_code,customer_type_depends,customer_type_depends_not_in', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE, FALSE);
+                    }
+                    ?>
+                    <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductsale-bmc_code', 'customer_type', TRUE, FALSE);   ?>
                 </div>
                 <div class="col-sm-2">
                     <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', true); ?>
@@ -58,7 +66,7 @@ $this->title = Yii::$app->label->title('create', 'Product Sale');
                 <div class="col-sm-2">
                     <?= Html::activeHiddenInput($model, 'customer_code') ?>
                     <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true]) ?>
-                    <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE); ?>
+                    <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE);  ?>
                 </div>
                 <!--<div class="clearfix"></div>-->
                 <div class="col-sm-2 reset_field">
@@ -176,6 +184,12 @@ $script = "
         reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-bmc_code',function(){
+        $('#tblproductsale-ex_code').val('');
+        $('#tblproductsale-ex_code').trigger('change');
+        setRate();
+        reloadGrid('show_loader');
+    });
+    $(document).on('change','#tblproductsale-dcs_code',function(){
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
         setRate();
@@ -349,10 +363,18 @@ $script = "
         var bmc_code=$('#tblproductsale-bmc_code').val();
         var union_code=$('#tblproductsale-union_code').val();
         var invoice_date=$('#tblproductsale-invoice_date').val();
+        var is_member_rate = 0;
+        var dcs_code = '';
+        var formType = '" . $type . "';
+        if(formType == 'memberWiseSale') {
+            is_member_rate = 1;
+            customer_code=$('#tblproductsale-dcs_code').val();
+            customer_type='DCS';
+        }
         $.ajax({
             type: 'post',
             url: '" . Url::to(['/payment/tbl-product-sale/load-rate']) . "',
-            data: {product_code: product_code, is_member_rate: 0, invoice_date: invoice_date, _csrf : csrfToken, customer_type: customer_type, customer_code: customer_code, bmc_code: bmc_code, union_code: union_code},
+            data: {product_code: product_code, is_member_rate: is_member_rate, invoice_date: invoice_date, _csrf : csrfToken, customer_type: customer_type, customer_code: customer_code, bmc_code: bmc_code, union_code: union_code},
             success: function(data) {
                 var d=JSON.parse(data);
                 $('#tblproductsaledetails-rate').val(d.sale_rate);
@@ -428,11 +450,16 @@ $script = "
         var type= $('#tblproductsale-customer_type').val(); 
         var union= $('#tblproductsale-union_code').val(); 
         var bmc= $('#tblproductsale-bmc_code').val(); 
+        var dcsCode = '';
+        var formType = '" . $type . "';
+        if(formType == 'memberWiseSale') {
+            dcsCode = $('#tblproductsale-dcs_code').val(); 
+        }
         if(code != '' && code != null && code != undefined) {
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-customer']) . "',
-                data: {'dcs_code':code,'customer_type':type,'union_code':union,'bmc_code':bmc},
+                data: {'customer_code':code, 'dcsCode': dcsCode,'customer_type':type,'union_code':union,'bmc_code':bmc},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {
