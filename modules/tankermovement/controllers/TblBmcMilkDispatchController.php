@@ -27,7 +27,7 @@ use app\modules\tankermovement\models\TblConfigTxnResultSearch;
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list'];
+    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list','check-trip','view-config'];
 
     /**
      * Lists all TblBmcMilkDispatch models.
