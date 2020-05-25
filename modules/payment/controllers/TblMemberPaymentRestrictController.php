@@ -67,10 +67,6 @@ class TblMemberPaymentRestrictController extends \app\controllers\ChildControlle
             $saveModel[] = $m;
         }
         if ($this->model->load(Yii::$app->request->post()) && Model::loadMultiple($saveModel, Yii::$app->request->post()) && Model::validateMultiple($saveModel)) {
-            echo "<pre>";
-            print_r($saveModel);
-            echo "</pre>";
-            die;
             $master = [];
             foreach ($saveModel as $m) {
                 if (!empty($m->dcs_code)) {
