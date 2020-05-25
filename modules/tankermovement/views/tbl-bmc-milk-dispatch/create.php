@@ -7,7 +7,7 @@ $this->title = Yii::$app->label->title('create', 'BMC Milk Dispatch');
         <?=
         $this->render('_form', [
             'model' => $model,
-            'transaction'=>$transaction,
+            'txn_model' => $txn_model,
             'type' => 'create',
         ])
         ?>

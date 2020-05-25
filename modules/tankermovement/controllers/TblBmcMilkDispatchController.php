@@ -77,17 +77,21 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $model = new TblBmcMilkDispatch();
         if ($id != '') {
             $model = $this->findModel($id);
+        } else {
+            $model->scenario = 'create';
         }
-        $transaction = new TblBmcMilkDispatchTxn();
-        if ($model->load(Yii::$app->request->post()) && $transaction->load(Yii::$app->request->post()) && $model->validate()) {
+        $txn_model = new TblBmcMilkDispatchTxn();
+        if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
             $model->to_date = date('Y-m-d', strtotime($model->to_date)) . ' ' . \Yii::$app->general->getshift($model->to_shift_code);
             $model->transaction_date = date('Y-m-d', strtotime($model->transaction_date));
-            $transaction->from_datetime = $model->from_date;
-            $transaction->to_datetime = $model->to_date;
-            $transaction->bmc_code = $model->bmc_code;
-            $transaction->union_code = $model->union_code;
-            if ($transaction->validate()) {
+            $txn_model->from_datetime = $model->from_date;
+            $txn_model->to_datetime = $model->to_date;
+            $txn_model->bmc_code = $model->bmc_code;
+            $txn_model->union_code = $model->union_code;
+            $txn_model->bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
+            $txn_model->scenario = 'create';
+            if ($txn_model->validate()) {
                 $saveModel = [];
                 $new_rec = FALSE;
 
@@ -111,64 +115,64 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     }
                     $saveModel[] = $model;
                 }
-                $transaction->attributes = $model->attributes;
-                $transaction->bmc_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($transaction, $model->bmc_milk_dispatch_code);
-                $transaction->qty_mode = Yii::$app->general->getUnionConfiguration($transaction->union_code, 'dispatch_qty_mode', 'BMC');
-                $conversion_const = Yii::$app->general->getUnionConfiguration($transaction->union_code, 'ltr_to_kg_constant', 'BMC');
-                $transaction->converted_qty_mode = $transaction->qty_mode == 1 ? 0 : 1;
-                $transaction->converted_qty = $transaction->qty_mode == 1 ? $transaction->dispatch_qty / $conversion_const : $transaction->dispatch_qty * $conversion_const;
+                $txn_model->attributes = $model->attributes;
+                $txn_model->bmc_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($txn_model, $model->bmc_milk_dispatch_code);
+                $txn_model->qty_mode = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'dispatch_qty_mode', 'BMC');
+                $conversion_const = Yii::$app->general->getUnionConfiguration($txn_model->union_code, 'ltr_to_kg_constant', 'BMC');
+                $txn_model->converted_qty_mode = $txn_model->qty_mode == 1 ? 0 : 1;
+                $txn_model->converted_qty = $txn_model->qty_mode == 1 ? $txn_model->dispatch_qty / $conversion_const : $txn_model->dispatch_qty * $conversion_const;
                 $stock_model = new TblBmcDispatchStock();
-                $stock_model->attributes = $transaction->attributes;
-                $stock_model->to_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($model->to_date)));
+                $stock_model->attributes = $txn_model->attributes;
+                $stock_model->to_date = $model->to_date;
                 $stock_model->to_shift_code = ($model->to_shift_code == 1) ? 2 : 1;
                 $stock_model->transaction_date = $model->transaction_date;
-                $stock_model->closing_bal = $transaction->dispatch_qty;
+                $stock_model->closing_bal = $txn_model->dispatch_qty;
                 $stock_data = $stock_model->getStockEntry();
                 if (!empty($stock_data)) {
                     $stock_model = $stock_data;
-                    $stock_model->qty_diff = $transaction->qty_diff;
-                    $stock_model->qty_diff_type_code = $transaction->qty_diff_type_code;
-                    $stock_model->balance_qty = $transaction->balance_qty;
-                    $stock_model->closing_bal = $stock_data->closing_bal + $transaction->dispatch_qty;
+                    $stock_model->qty_diff = $txn_model->qty_diff;
+                    $stock_model->qty_diff_type_code = $txn_model->qty_diff_type_code;
+                    $stock_model->balance_qty = $txn_model->balance_qty;
+                    $stock_model->closing_bal = $stock_data->closing_bal + $txn_model->dispatch_qty;
                 } else {
                     $stock_model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($stock_model);
-                    $stock_model->purchase_qty = $transaction->purchase_qty;
-                    $stock_model->opening_bal = $transaction->opening_bal;
+                    $stock_model->purchase_qty = $txn_model->purchase_qty;
+                    $stock_model->opening_bal = $txn_model->opening_bal;
                 }
-                $saveModel[] = $transaction;
+                $saveModel[] = $txn_model;
                 $saveModel[] = $stock_model;
                 $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
                 $cnt = 1;
                 foreach ($config_data as $data) {
                     $config_model = new TblConfigTxnResult();
-                    $config_model->attributes = $transaction->attributes;
+                    $config_model->attributes = $txn_model->attributes;
                     $config_model->attributes = $data;
                     $config_model->config_for = 'BMC_DISPATCH';
                     $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
-                    $config_model->ref_code = $transaction->bmc_milk_dispatch_txn_code;
+                    $config_model->ref_code = $txn_model->bmc_milk_dispatch_txn_code;
                     $config_detail = $config_model->configCode;
                     $auto_reject = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['bmc_dispatch_auto_reject']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['bmc_dispatch_auto_reject'] : '0';
                     if ($auto_reject == '1' && $config_detail->is_adulteration == 1 && $config_detail->check_value != '') {
-                        if (in_array($config_detail->control_type, ['RADIO', 'DROPDOWN']) && $config_detail->check_value != $config_model->config_result) {
-                            $transaction->is_rejected = 1;
-                        } else if ($config_detail->control_type == 'text' && $config_detail->config_result > $config_detail->check_value) {
-                            $transaction->is_rejected = 1;
+                        if (in_array($config_detail->control_type, ['RADIO', 'DROPDOWN']) && (int) $config_detail->check_value != (int) $config_model->config_result) {
+                            $txn_model->is_rejected = 1;
+                        } else if ($config_detail->control_type == 'TEXT' && (int) $config_model->config_result > (int) $config_detail->check_value) {
+                            $txn_model->is_rejected = 1;
                         }
                     }
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $result = $this->generalModel->saveTransaction($saveModel, ['BMC Milk Dispatch', 'create']);
-                if ($result != 'customRedirect' && $new_rec) {
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['BMC Milk Dispatch', 'create']);
+                if ($transaction != 'customRedirect' && $new_rec) {
                     $model->bmc_milk_dispatch_code = '';
-                } else if ($result == 'customRedirect') {
-                    $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
+                } else if ($transaction == 'customRedirect') {
+                    return $this->redirect(['create', 'id' => $model->bmc_milk_dispatch_code]);
                 }
             }
         }
         return $this->render('create', [
                     'model' => $model,
-                    'transaction' => $transaction,
+                    'txn_model' => $txn_model,
         ]);
     }
 
@@ -228,9 +232,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $config_mapping = new TblConfigTxnResult();
         $config_list = $config->getOrgConfigList($config->config_for, Yii::$app->request->get('bmc_code'));
         $auto_reject = isset(Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_auto_reject']) ? Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_auto_reject'] : '0';
-        $transaction = new TblBmcMilkDispatchTxn();
+        $txn_model = new TblBmcMilkDispatchTxn();
         return $this->renderAjax('_from_transaction', [
-                    'transaction' => $transaction,
+                    'txn_model' => $txn_model,
                     'config' => $config_mapping,
                     'config_list' => $config_list,
                     'auto_reject' => $auto_reject
@@ -241,7 +245,6 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $searchModel = new TblBmcMilkDispatchTxnSearch();
         $searchModel->bmc_milk_dispatch_code = Yii::$app->request->get('bmc_milk_dispatch_code');
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->renderAjax('_transaction_detail', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

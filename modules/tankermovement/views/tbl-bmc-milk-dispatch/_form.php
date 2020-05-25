@@ -18,7 +18,7 @@ $form = ActiveForm::begin([
             'validateOnSubmit' => true,
         ]);
 ?>
-<?php echo $form->errorSummary([$model, $transaction]); ?>
+<?php echo $form->errorSummary([$model, $txn_model]); ?>
 
 <?= Html::activeHiddenInput($model, 'bmc_milk_dispatch_code'); ?>
 <div class="micro_form">
@@ -62,17 +62,18 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_in_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
             </div>
-            <div class="col-sm-2 number-validate"> 
-                <?= $form->field($model, 'tare_weight')->textInput() ?>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'vehicle_out_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
             </div>
+
             <div class="clearfix"></div>
             <div class="col-sm-2 number-validate"> 
                 <?= $form->field($model, 'gross_weight')->textInput() ?>
             </div>
-
-            <div class="col-sm-2">
-                <?= $form->field($model, 'vehicle_out_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
+            <div class="col-sm-2 number-validate"> 
+                <?= $form->field($model, 'tare_weight')->textInput() ?>
             </div>
+
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, false, 'destination_type'); ?>
             </div>
@@ -108,88 +109,88 @@ $form = ActiveForm::begin([
             <h5 class="panel-heading mb15"><?= Yii::t('app', 'Dispatch Transactions') ?></h5>
 
             <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdown('milk_type_code', $transaction, $form, '', true, FALSE, 'milk_type_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
             </div>
             <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $transaction, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
             </div>
             <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $transaction, $form, 'tblbmcmilkdispatch-bmc_code', 'form-group col-sm-4', $transaction->getAttributeLabel('bmc_silos_info_code'), ''); ?>
-                <?php //Yii::$app->dropdown->dropdown('bmc_silos', $transaction, $form, '', TRUE, false, 'bmc_silos_info_code'); ?>
+                <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
+                <?php //Yii::$app->dropdown->dropdown('bmc_silos', $txn_model, $form, '', TRUE, false, 'bmc_silos_info_code'); ?>
 
             </div>
             <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $transaction, $form, 'form-group', $transaction->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
+                <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'dispatch_qty')->textInput() ?>
+                <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
             </div>
             <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdown('qty_diff_type', $transaction, $form, '', true, false, 'qty_diff_type_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('qty_diff_type', $txn_model, $form, '', true, false, 'qty_diff_type_code'); ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'qty_diff')->textInput() ?>
+                <?= $form->field($txn_model, 'qty_diff')->textInput() ?>
             </div>
 
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'balance_qty')->textInput() ?>
+                <?= $form->field($txn_model, 'balance_qty')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'fat')->textInput() ?>
+                <?= $form->field($txn_model, 'fat')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'snf')->textInput() ?>
+                <?= $form->field($txn_model, 'snf')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'water')->textInput() ?>
+                <?= $form->field($txn_model, 'water')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'temperature')->textInput() ?>
+                <?= $form->field($txn_model, 'temperature')->textInput() ?>
             </div>
             <div class="clearfix"></div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'clr')->textInput() ?>
+                <?= $form->field($txn_model, 'clr')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'protein')->textInput() ?>
+                <?= $form->field($txn_model, 'protein')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'density')->textInput() ?>
+                <?= $form->field($txn_model, 'density')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'lactose')->textInput() ?>
+                <?= $form->field($txn_model, 'lactose')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'freezing_point')->textInput() ?>
+                <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
             </div>
 
             <div class="col-sm-1"> 
-                <?= $form->field($transaction, 'hsn_code')->textInput() ?>
+                <?= $form->field($txn_model, 'hsn_code')->textInput() ?>
             </div>
             <div class="col-sm-1"> 
-                <?= $form->field($transaction, 'seal_no_top')->textInput() ?>
+                <?= $form->field($txn_model, 'seal_no_top')->textInput() ?>
             </div>
             <div class="col-sm-1"> 
-                <?= $form->field($transaction, 'seal_no_bottom')->textInput() ?>
+                <?= $form->field($txn_model, 'seal_no_bottom')->textInput() ?>
             </div>
             <div class="col-sm-1"> 
-                <?= $form->field($transaction, 'seal_no_broken')->textInput() ?>
+                <?= $form->field($txn_model, 'seal_no_broken')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'dip_open')->textInput() ?>
+                <?= $form->field($txn_model, 'dip_open')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'dip_close')->textInput() ?>
+                <?= $form->field($txn_model, 'dip_close')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'dip_diff')->textInput() ?>
+                <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
             </div>
             <div class="clearfix"></div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'rtpl')->textInput() ?>
+                <?= $form->field($txn_model, 'rtpl')->textInput() ?>
             </div>
             <div class="col-sm-1 number-validate"> 
-                <?= $form->field($transaction, 'amount')->textInput(['readonly' => 'readonly']) ?>
+                <?= $form->field($txn_model, 'amount')->textInput(['readonly' => 'readonly']) ?>
             </div>
             <div id="transactions-from">
 

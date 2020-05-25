@@ -26,5 +26,5 @@ foreach ($config_list as $c) {
 }
 ?>
 
-<?= ($auto_reject == '1') ? '<div class="clearfix"></div> <div class="col-sm-5"> <p style="color:red">' . Yii::t('app', 'Note :: Milk Will be auto rejected if any positive adultartion found.') . '</p></div>' : ''
+<?= ($auto_reject == '1') ? '<div class="clearfix"></div><br/> <div class="col-sm-5"> <p style="color:red">' . Yii::t('app', 'Note :: Milk Will be auto rejected if any positive adulteration found.') . '</p></div>' : ''
 ?>

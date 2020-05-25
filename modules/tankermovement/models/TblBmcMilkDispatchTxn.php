@@ -88,13 +88,13 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'integer'],
             [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'rtpl', 'amount', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
             [['qty_time', 'qlty_time', 'created_at', 'updated_at'], 'safe'],
+            [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'milk_quality_type_code', 'bmc_silos_info_code', 'chamber_no', 'bmc_milk_dispatch_code'], 'message' => Yii::t('app/validation', 'Chamber Entry for selected milk and silo has been already taken.'), 'on' => 'create'],
             [['milk_type_code'], function ($attribute, $params) {
-            return Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_dispatch_rate_required', 1);
-        }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
-            [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'milk_quality_type_code', 'bmc_silos_info_code', 'chamber_no', 'bmc_milk_dispatch_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'on' => ['create', 'update']],
+            Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_dispatch_rate_required', 1);
+        }, 'on' => 'create'],
             [['qty_time', 'qlty_time'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['qty_auto', 'qlty_auto', 'is_rejected', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff', 'rtpl', 'amount',], 'default', 'value' => '0'],
-            [['milk_type_code'], 'ValidateData', 'skipOnError' => true],
+            [['milk_type_code'], 'ValidateData', 'on' => 'create'],
         ];
     }
 
@@ -184,7 +184,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             $this->addError('milk_type_code', Yii::t('app/validation', 'Milk Type must be Mix.'));
             return;
         }
-        $current_stock_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($this->to_datetime)));
+        // $current_stock_date = date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($this->to_datetime)));
         $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmcsilomilk_stock_detail (:bmc_code,:silo_code,:milk_type,:quality_type,:with_milk_type,:from_datetime,:to_datetime,:current_stock_date)}")
                 ->bindValue(':from_datetime', $this->from_datetime)
                 ->bindValue(':to_datetime', $this->to_datetime)
@@ -193,7 +193,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
                 ->bindValue(':silo_code', $this->bmc_silos_info_code)
                 ->bindValue(':milk_type', $this->milk_type_code)
                 ->bindValue(':with_milk_type', $dispatch_with_milk_type)
-                ->bindValue(':current_stock_date', $current_stock_date);
+                ->bindValue(':current_stock_date', $this->to_datetime);
         $result = $query->queryAll();
         if (empty($result)) {
             $this->addError('bmc_silos_info_code', Yii::t('app/validation', 'Silo is empty.'));
@@ -201,12 +201,15 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             $this->opening_bal = $result[0]['opening_bal'];
             $this->purchase_qty = $result[0]['purchase_qty'];
             $this->current_dispatch_qty = $result[0]['current_dispatch_qty'];
-            $balance = abs(($this->opening_bal + $this->purchase_qty) - ($this->current_dispatch_qty + $this->dispatch_qty));
+            $bal = ($this->opening_bal + $this->purchase_qty) - ($this->current_dispatch_qty + $this->dispatch_qty);
+            $balance = abs($bal);
             if ($this->qty_diff_type_code == 1) {
-                if ($this->balance_qty != $balance) {
+                if ($bal < 0) {
+                    $this->addError('qty_diff_type_code', Yii::t('app/validation', 'Diff Type is must be Flush.'));
+                } else if ($this->balance_qty != $balance) {
                     $this->addError('balance_qty', Yii::t('app/validation', 'Balance qty must be ' . $balance . '.'));
                 } else if ($this->qty_diff != 0) {
-                    $this->addError('balance_qty', Yii::t('app/validation', 'Diff. Qty must be 0.'));
+                    $this->addError('qty_diff', Yii::t('app/validation', 'Diff. Qty must be 0.'));
                 }
             } else if ($this->qty_diff_type_code == 4) {
                 if ($this->qty_diff != $balance) {

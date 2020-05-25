@@ -25,7 +25,7 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $config = new TblConfig();
         $config->config_for = 'BMC';
-        $config->process_name = 'BMC_DISPATCH';
+        $config->process_name = 'BMC_DISPATCH_INSPECTION';
         $config->config_type = 'CONTROL';
         $config_list = $config->getControlConfigList();
         return $this->render('index', [
@@ -58,7 +58,7 @@ class TblBmcDispatchInspectionController extends \app\controllers\ChildControlle
             $model->mcc_plant_code = $org_detail->mcc_plant_code;
             $config = new TblConfig();
             $config->config_for = 'BMC';
-            $config->process_name = 'BMC_DISPATCH';
+            $config->process_name = 'BMC_DISPATCH_INSPECTION';
             $config->config_type = 'CONTROL';
             $config_mapping = new TblConfigTxnResult();
             $config_list = $config->getOrgConfigList($config->config_for, $model->bmc_code);
