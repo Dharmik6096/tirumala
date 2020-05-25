@@ -995,7 +995,7 @@ class GeneralFunctions extends Component {
         Yii::$app->{$db}->password = $connection->db_password;
     }
 
-    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '') {
+    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true) {
         $sentboxArray = [];
         $mcc = [];
         $bmc = [];
@@ -1041,14 +1041,16 @@ class GeneralFunctions extends Component {
             }
         }
 
-        if (!empty($bmc)) {
+        if (!empty($bmc) && $appendVlc) {
             $model = new TblDcs();
             $model->bmc_code = $bmc;
             $modelData = $model->getBmcDcsData();
             $vlc = array_values($modelData);
         }
         if (!empty($vlc_code)) {
-            $vlc[] = $vlc_code;
+            if ($appendVlc) {
+                $vlc[] = $vlc_code;
+            }
             $model = new TblDcs();
             $model->dcs_code = $vlc_code;
             $modelData = $model->getData();

@@ -359,7 +359,7 @@ class TblHeadLoadController extends \app\controllers\ChildController {
         $appModel->header_title = ' [Head Load: ' . $model->criteria_description . '] ';
         $customerType = new TblCustomerType();
         $customerType->union_code = $model->union_code;
-        $value = $customerType->getCustomerType();
+        $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
         $appModel->dcs_filters = $value;
         return $appModel->createApp();
     }

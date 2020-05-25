@@ -181,7 +181,7 @@ class TblBillHeadController extends \app\controllers\ChildController {
         } else {
             $customerType = new TblCustomerType();
             $customerType->union_code = $model->union_code;
-            $value = $customerType->getCustomerType();
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
         }
         $appModel->actions = ['delete' => ['option' => 'bill_head_applicabilty_code,bill_head_applicabilty_code,tbl-bill-head/delete-applicability']];
 //        $appModel->dcs_filters = ['society' => 'Society', 'routes' => 'Routes', 'mcc' => 'MCC'];
