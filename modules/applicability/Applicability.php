@@ -123,7 +123,7 @@ class Applicability extends \yii\base\Module {
         if ($this->customer_type_wise_entry) {
             $customerModel = new TblCustomerType();
             $customerModel->union_code = $this->union_code;
-            $this->customer_type_list = $customerModel->getCustomerType();
+            $this->customer_type_list = $customerModel->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
             $this->customer_type_list['DCS'] = Yii::t('app', 'DCS');
             if (count($this->customer_type_list) == 1) {
                 $hideCustomerType = true;

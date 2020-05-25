@@ -141,7 +141,7 @@ class TblProductRateController extends \app\controllers\ChildController {
             $value = ['DCS' => Yii::t('app', 'DCS')];
         } else {
             $customerType->union_code = $model->union_code;
-            $value = $customerType->getCustomerType();
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
         }
 //        $appModel->model->shift_code = $model->shift_id;
         $appModel->model->wef_date = $model->wef_date;

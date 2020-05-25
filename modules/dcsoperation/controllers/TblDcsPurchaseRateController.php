@@ -479,7 +479,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->model = new TblDcsPurchaseRateApplicabitity();
         $customerType = new TblCustomerType();
         $customerType->union_code = $model->union_code;
-        $value = $customerType->getCustomerType();
+        $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
         $appModel->model->shift_code = $model->shift_id;
         $appModel->model->wef_date = $model->wef_date;
         $appModel->is_union = false;
