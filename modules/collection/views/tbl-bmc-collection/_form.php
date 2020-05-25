@@ -208,6 +208,10 @@ $script = "
                         });
                         $('#tblbmccollection-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                             $('#tblbmccollection-bmc_code').val(data.modelData.bmc_code);
+                             $('#tblbmccollection-bmc_code').trigger('change');
+                        });
+                        $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                            $('#tblbmccollection-bmc_silos_info_code').val(data.modelData.bmc_silos_info_code);
                         });
                         $('#tblbmccollection-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                             $('#tblbmccollection-customer_type').val(data.modelData.customer_type);

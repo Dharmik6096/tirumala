@@ -279,10 +279,10 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/installation/tbl-android-installation/device-list', 'Select Device', $multiple, $model->$name, $readonly);
     }
 
-    public function configFor($model, $form, $name = 'config_for', $islable = false, $disable = false) {
+    public function configFor($model, $form, $name = 'config_for', $islable = false, $disable = false, $notin = []) {
         $this->setClass($form, $name);
         $config = new \app\modules\configuration\models\TblConfig();
-        echo $form->field($model, $name)->dropDownList($config->configForList(), ['prompt' => 'Select App', 'disabled' => $disable])->label($islable);
+        echo $form->field($model, $name)->dropDownList($config->configForList($notin), ['prompt' => 'Select App', 'disabled' => $disable])->label($islable);
     }
 
     public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false) {
@@ -370,6 +370,12 @@ class DropDown extends Component {
     public function destination_code_list($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-bmc-milk-dispatch/destination-code-list', Yii::t('app', 'Select Code'), $multiple, '', $readonly);
+    }
+
+    public function processName($model, $form, $name = 'process_name', $islable = false, $disable = false) {
+        $this->setClass($form, $name);
+        $config = new \app\modules\configuration\models\TblConfig();
+        echo $form->field($model, $name)->dropDownList($config->configProcessList(), ['prompt' => 'Select Process Name', 'disabled' => $disable])->label($islable);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
@@ -566,7 +572,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -902,7 +908,12 @@ class DropDown extends Component {
                 'name' => 'chamber_no',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4'],
-            ]
+            ],
+            'owning_type' => [
+                'name' => 'owning_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Own'), '1' => Yii::t('app', 'Rent')],
+            ],
         ];
         return $records[$l];
     }
@@ -1067,7 +1078,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

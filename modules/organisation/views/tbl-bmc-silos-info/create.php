@@ -1,0 +1,88 @@
+<?php
+
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
+use yii\helpers\Url;
+
+//Url::remember();
+$url = Url::to(['/organisation/tbl-bmc-silos-info/create', 'module' => $module, 'id' => $id]);
+$this->title = Yii::$app->label->title('create', 'Silos Info');
+?>
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+
+        <?php
+        $form = ActiveForm::begin([
+                    'action' => $url,
+                    'validateOnBlur' => false,
+                    'validateOnEnter' => TRUE,
+                    'validateOnChange' => FALSE,
+                    'enableClientValidation' => true,
+                    'validateOnSubmit' => true,
+        ]);
+        ?>
+        <?php echo $form->errorSummary($model); ?>
+        <div class="row">
+            <?=
+            $this->render('_form', [
+                'model' => $model,
+                'form' => $form,
+            ])
+            ?>
+            <div class="clearfix"></div>
+            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                <div class="form-group">
+                    <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
+                    <?= Yii::$app->controls->reset(); ?>
+                    <?= Yii::$app->controls->cancel($model); ?>
+                </div>
+            </div>
+        </div>
+        <?php ActiveForm::end(); ?>
+        <div class="row">
+            <div class="form-grid">
+                <?=
+                $this->render('_form_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'isaction' => $isaction
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+$script = "
+     $('.edit-record').on('click',function(event){       
+        var id= $(this).attr('data-val');
+        editSilosInfo(id);
+    });
+    
+    function editSilosInfo(bmc_silos_info_code){
+            if(bmc_silos_info_code != ''){         
+            $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/organisation/tbl-bmc-silos-info/update-silos']) . "',
+                    data: {'bmc_silos_info_code' : bmc_silos_info_code},
+                    beforeSend:function(data) {
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        $.each(data.modelData, function(index, value) {
+                            $('#tblbmcsilosinfo-'+index).val(value);
+                        });
+                         $('#loadercontent').hide();
+                         $('#pageloader').hide();
+                         $(window).scrollTop(0);
+
+                    },
+                });
+            }
+    };
+";
+$this->registerJs($script, View::POS_END, 'panel-before-hide');
+?>

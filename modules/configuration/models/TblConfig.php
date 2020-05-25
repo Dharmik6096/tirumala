@@ -47,8 +47,9 @@ class TblConfig extends \app\models\ChildModel {
         ];
     }
 
-    public function configForList() {
+    public function configForList($notin) {
         $data = $this->find()
+                ->andWhere(['NOT IN', 'config_for', $notin])
                 ->distinct()
                 ->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'config_for', 'config_for');
@@ -99,6 +100,15 @@ class TblConfig extends \app\models\ChildModel {
         } else {
             return $form->field($config, '[' . $index . ']config_result')->textInput()->label(Yii::t('app', $this->config_name));
         }
+    }
+
+    public function configProcessList() {
+        $data = $this->find()
+                ->andWhere(['IS NOT', 'process_name', NULL])
+                ->distinct()
+                ->all();
+        $array = \yii\helpers\ArrayHelper::map($data, 'process_name', 'process_name');
+        return $array;
     }
 
 }

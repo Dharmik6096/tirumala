@@ -10,24 +10,22 @@ use app\modules\configuration\models\TblConfig;
 /**
  * TblConfigSearch represents the model behind the search form about `app\modules\configuration\models\TblConfig`.
  */
-class TblConfigSearch extends TblConfig
-{
+class TblConfigSearch extends TblConfig {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['config_code'], 'integer'],
-            [['config_name', 'config_key', 'config_for'], 'safe'],
+            [['config_name', 'config_key', 'config_for', 'config_type', 'process_name'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblConfigSearch extends TblConfig
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblConfig::find();
 
         // add conditions that should always apply here
@@ -63,9 +60,35 @@ class TblConfigSearch extends TblConfig
         ]);
 
         $query->andFilterWhere(['like', 'config_name', $this->config_name])
-            ->andFilterWhere(['like', 'config_key', $this->config_key])
-            ->andFilterWhere(['like', 'config_for', $this->config_for]);
+                ->andFilterWhere(['like', 'config_key', $this->config_key])
+                ->andFilterWhere(['like', 'config_for', $this->config_for]);
 
         return $dataProvider;
     }
+
+    public function mappingsearch($params) {
+        $query = TblConfig::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andWhere([
+            'config_for' => $this->config_for,
+            'process_name' => $this->process_name,
+            'config_type' => $this->config_type,
+        ]);
+
+        return $dataProvider;
+    }
+
 }

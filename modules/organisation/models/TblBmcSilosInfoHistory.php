@@ -3,12 +3,11 @@
 namespace app\modules\organisation\models;
 
 use Yii;
-use app\modules\organisation\models\TblManufacturer;
-use app\modules\globalmaster\models\TblAnimalType;
 
 /**
- * This is the model class for table "tbl_bmc_silos_info".
+ * This is the model class for table "tbl_bmc_silos_info_history".
  *
+ * @property integer $id
  * @property integer $bmc_silos_info_code
  * @property string $silo_no
  * @property string $description
@@ -19,6 +18,7 @@ use app\modules\globalmaster\models\TblAnimalType;
  * @property integer $chilling_capacity
  * @property string $owning_type
  * @property integer $milk_type_code
+ * @property integer $is_active
  * @property string $module_name
  * @property string $module_code
  * @property string $created_at
@@ -33,14 +33,17 @@ use app\modules\globalmaster\models\TblAnimalType;
  * @property string $x_col3
  * @property string $x_col4
  * @property string $x_col5
+ * @property string $history_created_at
+ * @property string $operation_type
+ * @property string $history_created_by
  */
-class TblBmcSilosInfo extends \app\models\ChildModel {
+class TblBmcSilosInfoHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_bmc_silos_info';
+        return 'tbl_bmc_silos_info_history';
     }
 
     /**
@@ -48,10 +51,9 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['silo_no', 'description', 'model', 'owning_type', 'module_name', 'module_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['manufacturer_code', 'storage_capacity', 'chilling_capacity', 'milk_type_code', 'originating_type'], 'integer'],
-            [['wef_date', 'created_at', 'updated_at', 'is_active'], 'safe'],
-            [['silo_no', 'storage_capacity', 'chilling_capacity', 'owning_type'], 'required']
+            [['bmc_silos_info_code', 'manufacturer_code', 'storage_capacity', 'chilling_capacity', 'milk_type_code', 'is_active', 'originating_type'], 'safe'],
+            [['silo_no', 'description', 'model', 'owning_type', 'module_name', 'module_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
         ];
     }
 
@@ -60,16 +62,18 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
+            'id' => Yii::t('app', 'ID'),
             'bmc_silos_info_code' => Yii::t('app', 'Bmc Silos Info Code'),
             'silo_no' => Yii::t('app', 'Silo No'),
             'description' => Yii::t('app', 'Description'),
-            'manufacturer_code' => Yii::t('app', 'Manufacturer'),
+            'manufacturer_code' => Yii::t('app', 'Manufacturer Code'),
             'model' => Yii::t('app', 'Model'),
             'wef_date' => Yii::t('app', 'Wef Date'),
             'storage_capacity' => Yii::t('app', 'Storage Capacity'),
             'chilling_capacity' => Yii::t('app', 'Chilling Capacity'),
             'owning_type' => Yii::t('app', 'Owning Type'),
-            'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
+            'is_active' => Yii::t('app', 'Is Active'),
             'module_name' => Yii::t('app', 'Module Name'),
             'module_code' => Yii::t('app', 'Module Code'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -84,21 +88,10 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'history_created_at' => Yii::t('app', 'History Created At'),
+            'operation_type' => Yii::t('app', 'Operation Type'),
+            'history_created_by' => Yii::t('app', 'History Created By'),
         ];
-    }
-
-    public function setModel($module, $module_code) {
-        $this->module_name = $module;
-        $this->module_code = $module_code;
-        $this->is_active = 1;
-    }
-
-    public function getManufacturerCode() {
-        return $this->hasOne(TblManufacturer::className(), ['id' => 'manufacturer_code']);
-    }
-
-    public function getMilkType() {
-        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
 }

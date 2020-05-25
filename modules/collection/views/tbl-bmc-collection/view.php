@@ -51,8 +51,8 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'customer_type',
-                            'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
+                            'attribute' => 'bmc_silos_info_code',
+                            'value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -60,28 +60,28 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                 [
                     'columns' => [
                         [
+                            'attribute' => 'customer_type',
+                            'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'customer_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'customer_name',
                             'label' => Yii::t('app', 'Name'),
                             'value' => Yii::$app->general->getCustomer($model, $model->customer_type),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
                         [
                             'attribute' => 'route_name',
                             'value' => Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name'),
                             'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'dcs_incharge_name',
-                            'value' => !empty(Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')) ? Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->firstname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->lastname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->surname : 'N/A',
-                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
@@ -264,6 +264,15 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         ['attribute' => 'originating_type',
                             'value' => Yii::$app->general->getStaticDropdownVal('originating_type', $model, 'originating_type'),
                             'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'dcs_incharge_name',
+                            'value' => !empty(Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')) ? Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->firstname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->lastname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->surname : 'N/A',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],

@@ -20,6 +20,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblBmcGroupMappingHistory;
 use app\modules\organisation\models\TblMccPlantGroupMapping;
 use app\modules\organisation\models\TblMccPlantGroupMappingSearch;
+use app\modules\organisation\models\TblBmcSilosInfo;
+use app\modules\organisation\models\TblBmcSilosInfoSearch;
 
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
@@ -62,10 +64,16 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $ssearchModel->to_dest = $id;
         $sdataProvider = $ssearchModel->search(Yii::$app->request->queryParams);
 
+        $snsearchModel = new TblBmcSilosInfoSearch();
+        $snsearchModel->module_name = 'bmc';
+        $snsearchModel->module_code = $id;
+        $sndataProvider = $snsearchModel->search(Yii::$app->request->queryParams);
+        $isaction = FALSE;
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
                     'sdataProvider' => $sdataProvider, 'ssearchModel' => $ssearchModel,
+                    'sndataProvider' => $sndataProvider, 'snsearchModel' => $snsearchModel, 'isaction' => $isaction
         ]);
     }
 
@@ -349,6 +357,23 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $record = $this->generalModel->deleteTransaction([$model, $historyModel]);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionSilosInfo($id) {
+        $contactDetails = new TblBmcSilosInfo();
+        $searchModel = new TblBmcSilosInfoSearch();
+        $searchModel->module_name = 'bmc';
+        $searchModel->module_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $isaction = TRUE;
+        return $this->render('@app/modules/organisation/views/tbl-bmc-silos-info/create', [
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'bmc',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'isaction' => $isaction
+        ]);
     }
 
 }
