@@ -1,54 +1,54 @@
 <?php
-
-use yii\widgets\ActiveForm;
-use yii\web\View;
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
 ?>
-
-<div class="tbl-milk-collection-search">
-
-    <?php
-    $form = ActiveForm::begin([
-                'options' => [
-                    'field-class' => 'form-group col-sm-2 padding-right-5',
-                    'id' => 'config-mapping-search',
-                ],
-                'method' => 'get',
-    ]);
-    ?>
-
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->configFor($model, $form, 'config_for', $model->getAttributeLabel('config_for'), false, ['VLC', 'PORTAL']); ?>  
+<div class="modal modal-default fade" id="mis_report_search_filter" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?php echo Yii::t('app', 'Search Control Mapping'); ?></h4>
+            </div>
+            <div class="">
+                <?php
+                $form = ActiveForm::begin(['options' => [
+                                'id' => 'report-form',
+                                'field-class' => 'form-group col-sm-6'
+                            ],
+                            'method' => 'get',
+                            'validateOnBlur' => FALSE,
+                            'validateOnEnter' => TRUE,
+                            'validateOnChange' => FALSE,
+                            'enableClientValidation' => true,
+                            'validateOnSubmit' => true,
+                ]);
+                ?>
+                <div class="row margin_0">
+                    <div class="modal-body">
+                        <div class="col-sm-6">
+                            <?= Yii::$app->dropdown->configFor($searchModel, $form, 'config_for', $searchModel->getAttributeLabel('config_for'), false, ['VLC', 'PORTAL']); ?>
+                        </div>
+                        <div class="col-sm-6">
+                            <?= Yii::$app->dropdown->processName($searchModel, $form, 'process_name', $searchModel->getAttributeLabel('process_name'), false); ?>
+                        </div>
+                        <div class="col-sm-6">
+                            <?php echo Html::activeHiddenInput($model, 'union_code') ?>
+                            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblconfigmapping-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
+                        </div>
+                        <div class="col-sm-6">
+                            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblconfigmapping-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
+                        </div>
+                        <div class="col-sm-6">
+                            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblconfigmapping-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt10 col-sm-12">
+                        <?= Yii::$app->controls->search(); ?>
+                        <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                    </div>
+                </div>
+                <?php ActiveForm::end(); ?>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->processName($model, $form, 'process_name', $model->getAttributeLabel('process_name'), false); ?>  
-    </div>  
-   
-    <?php ActiveForm::end(); ?>
-
 </div>
-<?php
-$script = "
-    $('#tblconfigsearch-config_for').change(function() {
-        submitForm();
-    });
-    $('#tblconfigsearch-process_name').change(function() {
-        submitForm();
-    });
-
-    function submitForm(){
-        var config = $('#tblconfigsearch-config_for').val();
-        var process = $('#tblconfigsearch-process_name').val();
-        if(config !='' && process !='') {
-             $('form#config-mapping-search').submit();
-             setTimeout(function() {
-             $('.showHideData').show();
-              },2000);
-        }  else {
-            $('.showHideData').hide();
-        }
-    } 
-
-   
-    
-     ";
-$this->registerJs($script, View::POS_END, 'config-mapping-search');

@@ -46,8 +46,12 @@ class TblConfigMapping extends \app\models\ChildModel {
             [['config_code', 'originating_type'], 'integer'],
             [['config_result', 'org_type', 'org_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'config_for'], 'safe'],
-//            [['plant_code', 'mcc_plant_code', 'union_code'], 'required'],
-//            [['bmc_code'], 'required', 'on' => ['bmc']],
+            [['plant_code', 'mcc_plant_code', 'union_code'], 'required'],
+            [['bmc_code'], 'required', 'when' => function ($model) {
+                    return $model->config_for == 'BMC';
+                }, 'whenClient' => "function (attribute, value) {
+              return $('#tblconfigsearch-config_for').val() == 'BMC';
+          }"],
         ];
     }
 
@@ -86,14 +90,15 @@ class TblConfigMapping extends \app\models\ChildModel {
                 ->select('config_code')
                 ->where(['config_for' => $this->config_for, 'process_name' => $this->process_name])
                 ->all();
-
         if (!empty($config)) {
             $codes = [];
             foreach ($config as $code) {
                 $codes[] = $code->config_code;
             }
+            $code = $this->org_type == 'BMC' ? $this->bmc_code : $this->mcc_plant_code;
             $query = $this->find()
                     ->where(['IN', 'config_code', $codes])
+                    ->andWhere(['org_type' => $this->org_type, 'org_code' => $code])
                     ->all();
             return ArrayHelper::map($query, 'config_code', 'config_code');
         } else {

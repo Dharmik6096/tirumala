@@ -5,6 +5,7 @@ namespace app\modules\organisation\models;
 use Yii;
 use app\modules\organisation\models\TblManufacturer;
 use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_bmc_silos_info".
@@ -50,8 +51,9 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
         return [
             [['silo_no', 'description', 'model', 'owning_type', 'module_name', 'module_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['manufacturer_code', 'storage_capacity', 'chilling_capacity', 'milk_type_code', 'originating_type'], 'integer'],
-            [['wef_date', 'created_at', 'updated_at', 'is_active'], 'safe'],
-            [['silo_no', 'storage_capacity', 'chilling_capacity', 'owning_type'], 'required']
+            [['wef_date', 'created_at', 'updated_at', 'is_active', 'union_code'], 'safe'],
+            [['silo_no', 'storage_capacity', 'chilling_capacity', 'owning_type'], 'required'],
+            ['silo_no', 'unique', 'targetAttribute' => ['silo_no', 'module_code', 'module_name'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')]
         ];
     }
 
@@ -91,6 +93,7 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
         $this->module_name = $module;
         $this->module_code = $module_code;
         $this->is_active = 1;
+        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
     }
 
     public function getManufacturerCode() {
@@ -99,6 +102,10 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
 
     public function getMilkType() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'module_code']);
     }
 
 }
