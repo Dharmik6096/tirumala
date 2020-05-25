@@ -56,6 +56,12 @@ $attribute = [
                 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->vehicleCode, 'driver_contact_no');
                 }],
+            ['attribute' => 'challan_no'],
+            ['attribute' => 'bmc_detail'],
+            ['attribute' => 'kg_fat'],
+            ['attribute' => 'kg_snf'],
+            ['attribute' => 'total_qty'],
+            ['attribute' => 'rejected_count'],
             ['attribute' => 'grn_no'],
             ['attribute' => 'trip_mode'],
             ['attribute' => 'trip_status'],
@@ -67,8 +73,31 @@ $attribute = [
             'active_column' => FALSE,
             'actions' => [
                 'view' => TRUE,
-            ]
-        ];
+                'generate-challan' => function ($url, $model) {
+                    $disable = ($model->trip_status == 'open') ? FALSE : TRUE;
+                    if ($disable) {
+                        return GhostHtml::a('<i class="fa fa-cog"></i>', ['/tankermovement/tbl-vehicle-trip/generate-challan'], ['class' => 'disabled']);
+                    } else {
+                        $options = [ 'title' => Yii::t('app', 'Generate Challan'), 'data-toggle' => 'tooltip', 'data-placement' => 'top',
+                            'data-original-title' => Yii::t('app', 'Generate Challan')
+                        ];
+                        return GhostHtml::a('<i class="fa fa-cog"></i>', ['/tankermovement/tbl-vehicle-trip/generate-challan',
+                                    'id' => $model->vehicle_trip_code]
+                                        , $options);
+                    }
+                },
+                        'print-challan' => function ($url, $model) {
+                    $disable = (in_array($model->trip_status, ['tankerfull', 'closed'])) ? FALSE : TRUE;
+                    if ($disable) {
+                        return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan'], ['class' => 'disabled']);
+                    } else {
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-        ?>
+                        $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Challan'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Print Challan')];
+                        return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan', 'id' => $model->trip_code], $options);
+                    }
+                },
+                    ]
+                ];
+
+                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+                ?>

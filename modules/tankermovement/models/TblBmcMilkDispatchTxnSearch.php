@@ -12,6 +12,8 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
  */
 class TblBmcMilkDispatchTxnSearch extends TblBmcMilkDispatchTxn {
 
+    public $trip_code;
+
     /**
      * @inheritdoc
      */
@@ -42,6 +44,19 @@ class TblBmcMilkDispatchTxnSearch extends TblBmcMilkDispatchTxn {
         $query = TblBmcMilkDispatchTxn::find()->where(['bmc_milk_dispatch_code' => $this->bmc_milk_dispatch_code]);
 
         // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+
+        return $dataProvider;
+    }
+
+    public function searchTripDetail() {
+        $query = TblBmcMilkDispatchTxn::find()->where(['bmc_milk_dispatch_code' => $this->bmc_milk_dispatch_code]);
+        $query->joinWith(['bmcMilkDispatchCode']);
+        $query->where(['tbl_bmc_milk_dispatch.trip_code' => $this->trip_code]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

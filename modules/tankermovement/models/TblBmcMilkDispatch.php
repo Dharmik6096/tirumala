@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch".
@@ -184,6 +185,10 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
 
     public function getToShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'to_shift_code']);
+    }
+
+    public function getBmcMilkDispatchTxnCode() {
+        return $this->hasMany(TblBmcMilkDispatchTxn::className(), ['bmc_milk_dispatch_code' => 'bmc_milk_dispatch_code']);
     }
 
     public function ValidateData() {

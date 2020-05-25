@@ -27,26 +27,23 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblBmcDispatchConsolidated extends \yii\db\ActiveRecord
-{
+class TblBmcDispatchConsolidated extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_dispatch_consolidated';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bmc_dispatch_consolidated_code'], 'required'],
-            [['bmc_dispatch_consolidated_code', 'trip_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['total_qty', 'kg_fat', 'kf_snf'], 'number'],
-            [['rejection_count', 'originating_type'], 'integer'],
+            [['bmc_dispatch_consolidated_code', 'trip_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['total_qty', 'kg_fat', 'kf_snf'], 'safe'],
+            [['rejection_count', 'originating_type'], 'safe'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -54,8 +51,7 @@ class TblBmcDispatchConsolidated extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bmc_dispatch_consolidated_code' => Yii::t('app', 'Bmc Dispatch Consolidated Code'),
             'trip_code' => Yii::t('app', 'Trip Code'),
@@ -78,4 +74,5 @@ class TblBmcDispatchConsolidated extends \yii\db\ActiveRecord
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }

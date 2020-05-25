@@ -6,6 +6,8 @@ use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\organisation\models\TblBmcSilosInfo;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\tankermovement\models\TblQtyDiffType;
 
 /**
  * This is the model class for table "tbl_bmc_milk_dispatch_txn".
@@ -172,6 +174,23 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
 
     public function getMilkQualityType() {
         return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
+    }
+
+    public function getQtyDiffType() {
+        return $this->hasOne(TblQtyDiffType::className(), ['qty_diff_type_code' => 'qty_diff_type_code']);
+    }
+
+    public function getBmcMilkDispatchCode() {
+        return $this->hasOne(TblBmcMilkDispatch::className(), ['bmc_milk_dispatch_code' => 'bmc_milk_dispatch_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getSampleBottleNo() {
+        return $this->hasOne(TblConfigTxnResult::className(), ['ref_code' => 'bmc_milk_dispatch_txn_code'])
+                        ->join('inner join', 'tbl_config c', "c.config_code=tbl_config_txn_result.config_code and c.config_key='sample_bottle_no' and c.config_for='BMC' and c.process_name='BMC_DISPATCH'");
     }
 
     public function ValidateData() {

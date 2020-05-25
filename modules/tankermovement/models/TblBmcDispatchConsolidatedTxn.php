@@ -36,26 +36,23 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblBmcDispatchConsolidatedTxn extends \yii\db\ActiveRecord
-{
+class TblBmcDispatchConsolidatedTxn extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_dispatch_consolidated_txn';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bmc_dispatch_consolidated_txn_code'], 'required'],
-            [['bmc_dispatch_consolidated_txn_code', 'challan_no', 'bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['milk_quality_type_code', 'milk_type_code', 'is_rejected', 'originating_type'], 'integer'],
-            [['dispatch_qty', 'fat', 'snf', 'rtpl', 'amount'], 'number'],
+            [['bmc_dispatch_consolidated_txn_code', 'challan_no', 'bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['milk_quality_type_code', 'milk_type_code', 'is_rejected', 'originating_type'], 'safe'],
+            [['dispatch_qty', 'fat', 'snf', 'rtpl', 'amount'], 'safe'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -63,8 +60,7 @@ class TblBmcDispatchConsolidatedTxn extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bmc_dispatch_consolidated_txn_code' => Yii::t('app', 'Bmc Dispatch Consolidated Txn Code'),
             'challan_no' => Yii::t('app', 'Challan No'),
@@ -96,4 +92,5 @@ class TblBmcDispatchConsolidatedTxn extends \yii\db\ActiveRecord
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }

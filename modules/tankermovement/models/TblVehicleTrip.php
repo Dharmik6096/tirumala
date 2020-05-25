@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\tankermovement\models\TblBmcMilkDispatch;
 
 /**
  * This is the model class for table "tbl_vehicle_trip".
@@ -38,7 +39,7 @@ use app\modules\organisation\models\TblMccPlant;
  */
 class TblVehicleTrip extends \app\models\ChildModel {
 
-    public $transporter_code, $is_last_destination;
+    public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf;
 
     /**
      * @inheritdoc
@@ -92,6 +93,12 @@ class TblVehicleTrip extends \app\models\ChildModel {
             'transporter_code' => Yii::t('app', 'Transporter'),
             'is_last_destination' => Yii::t('app', 'Is Last Destination ?'),
             'trip_mode' => Yii::t('app', 'Mode'),
+            'challan_no' => Yii::t('app', 'Challan No.'),
+            'bmc_detail' => Yii::t('app', 'BMC Detail'),
+            'kg_fat' => Yii::t('app', 'FATKg'),
+            'kg_snf' => Yii::t('app', 'SNFKg'),
+            'total_qty' => Yii::t('app', 'Total Qty'),
+            'rejected_count' => Yii::t('app', 'Rejected Sample'),
         ];
     }
 
@@ -113,6 +120,10 @@ class TblVehicleTrip extends \app\models\ChildModel {
 
     public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getBmcMilkDispatchCode() {
+        return $this->hasMany(TblBmcMilkDispatch::className(), ['trip_code' => 'trip_code']);
     }
 
     public function setModel() {
@@ -205,6 +216,29 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 ->one();
         $code1 = (int) $val[$primaryKey] + 1;
         return $prefix . $code1;
+    }
+
+    public function dispatchConsolidatedSummary() {
+        return $this->find()->alias('t')->select(['t.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
+                            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code',
+                            'challan_no' => "STUFF((
+          SELECT ',' + d.challan_no
+          FROM tbl_bmc_milk_dispatch d WHERE d.trip_code=t.trip_code
+          FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')",
+                            'bmc_detail' => "STUFF((
+          SELECT ',' + d.bmc_code
+          FROM tbl_bmc_milk_dispatch d WHERE d.trip_code=t.trip_code
+          FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')",
+                            'total_qty' => "SUM(tbl_bmc_milk_dispatch_txn.dispatch_qty)",
+                            'rejected_count' => "SUM(CASE WHEN tbl_bmc_milk_dispatch_txn.is_rejected=1 THEN 1 ELSE 0 END)",
+                            'kg_fat' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.fat/100,2)})",
+                            'kg_snf' => "sum({fn truncate (tbl_bmc_milk_dispatch_txn.dispatch_qty*tbl_bmc_milk_dispatch_txn.snf/100,2)})",
+                        ])
+                        ->where(['t.vehicle_trip_code' => $this->vehicle_trip_code])
+                        ->joinWith(['vehicleCode', 'vehicleCode.transporter', 'bmcMilkDispatchCode', 'bmcMilkDispatchCode.bmcMilkDispatchTxnCode'])
+                        ->groupBy(['t.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
+                            't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code'])
+                        ->one();
     }
 
 }
