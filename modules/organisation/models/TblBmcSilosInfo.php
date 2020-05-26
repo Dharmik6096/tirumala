@@ -95,7 +95,11 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
         $this->module_name = $module;
         $this->module_code = $module_code;
         $this->is_active = 1;
-        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        if ($this->module_name == 'BMC') {
+            $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        } else {
+            $this->union_code = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
+        }
     }
 
     public function getManufacturerCode() {
