@@ -58,20 +58,20 @@ $attribute = [
         }, 'filter' => false, 'visible' => FALSE],
     ['attribute' => 'total_amount', 'filter' => false],
     ['attribute' => 'nos_of_can', 'filter' => false],
-    ['attribute' => 'challan_no', 'value' => function($model) {
-        return $model->dcsMilkDispatch->challan_no;
-    }, 'filter' => false],
-    ['label' => Yii::t('app','Dest. Type'), 'attribute' => 'destination_type', 'value' => function ($model) {
-        return isset($model->dcsMilkDispatch->destination_type) ? Yii::$app->dropdown->getRecords('destination_type')['data'][$model->dcsMilkDispatch->destination_type] : '';
-    }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('destination_type', $searchModel, 'destination_type'),
-    ],
-    ['label' => Yii::t('app','Destination'),  'attribute' => 'destination_code', 'value' => function($model) {
-            $rel = Yii::$app->general->getDestRelation($model->dcsMilkDispatch->destination_type);
-            $att = $model->dcsMilkDispatch->destination_type == '0' ? 'bmc_name' : 'name';
-            if (!empty($rel))
-                return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch,[$rel . 'Dest'], $att);
-        }, 'filter' => false],
-
+//    ['attribute' => 'challan_no', 'value' => function($model) {
+//        return $model->dcsMilkDispatch->challan_no;
+//    }, 'filter' => false],
+//    ['label' => Yii::t('app','Dest. Type'), 'attribute' => 'destination_type', 'value' => function ($model) {
+//        return isset($model->dcsMilkDispatch->destination_type) ? Yii::$app->dropdown->getRecords('destination_type')['data'][$model->dcsMilkDispatch->destination_type] : '';
+//    }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('destination_type', $searchModel, 'destination_type'),
+//    ],
+//    ['label' => Yii::t('app','Destination'),  'attribute' => 'destination_code', 'value' => function($model) {
+//            $rel = Yii::$app->general->getDestRelation($model->dcsMilkDispatch->destination_type);
+//            $att = $model->dcsMilkDispatch->destination_type == '0' ? 'bmc_name' : 'name';
+//            if (!empty($rel))
+//                return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch,[$rel . 'Dest'], $att);
+//        }, 'filter' => false],
+                                            
     ['attribute' => 'dispatch_type', 'value' => function ($model) {
             return isset($model->dcsMilkDispatch->dispatch_type) ? Yii::$app->dropdown->getRecords('disp_in')['data'][$model->dcsMilkDispatch->dispatch_type] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('disp_in', $searchModel, 'dispatch_type'),
