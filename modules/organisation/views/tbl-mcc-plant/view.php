@@ -221,5 +221,16 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
             ])
             ?>
         </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Silos Information</h5></div>
+        <div class="form-grid">
+            <?=
+            $this->render('@app/modules/organisation/views/tbl-bmc-silos-info/_form_grid', [
+                'model' => $model,
+                'dataProvider' => $sndataProvider,
+                'searchModel' => $snsearchModel,
+                'isaction' => $isaction
+            ])
+            ?>
+        </div>
     </div>
 </div>

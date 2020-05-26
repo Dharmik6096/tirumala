@@ -65,7 +65,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $sdataProvider = $ssearchModel->search(Yii::$app->request->queryParams);
 
         $snsearchModel = new TblBmcSilosInfoSearch();
-        $snsearchModel->module_name = 'bmc';
+        $snsearchModel->module_name = 'BMC';
         $snsearchModel->module_code = $id;
         $sndataProvider = $snsearchModel->search(Yii::$app->request->queryParams);
         $isaction = FALSE;
@@ -362,14 +362,14 @@ class TblDcsBmcController extends \app\controllers\ChildController {
     public function actionSilosInfo($id) {
         $contactDetails = new TblBmcSilosInfo();
         $searchModel = new TblBmcSilosInfoSearch();
-        $searchModel->module_name = 'bmc';
+        $searchModel->module_name = 'BMC';
         $searchModel->module_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $isaction = TRUE;
         return $this->render('@app/modules/organisation/views/tbl-bmc-silos-info/create', [
                     'model' => $contactDetails,
                     'id' => $id,
-                    'module' => 'bmc',
+                    'module' => 'BMC',
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'isaction' => $isaction

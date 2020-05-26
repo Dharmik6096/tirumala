@@ -4,6 +4,9 @@ namespace app\modules\configuration\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_config_mapping".
@@ -111,6 +114,67 @@ class TblConfigMapping extends \app\models\ChildModel {
         return $this->find()
                         ->where(['org_type' => $this->org_type, 'org_code' => $this->org_code, 'config_code' => $this->config_code])
                         ->one();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $bmc_code = $mcc_code = $plant_code = '';
+        if (strtolower($this->org_type) == 'bmc') {
+            $bmc_code = $this->org_code;
+            $mcc_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            $plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        } else {
+            $mcc_code = $this->org_code;
+            $plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+        }
+        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $bmc_code = $mcc_code = $plant_code = '';
+        if (strtoupper($this->org_type) == 'BMC') {
+            $bmc_code = $this->org_code;
+            $mcc_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            $plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        } else {
+            $mcc_code = $this->org_code;
+            $plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+        }
+        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'org_code']);
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'org_code']);
     }
 
 }

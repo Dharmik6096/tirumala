@@ -19,6 +19,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblMccPlantGroupMapping;
 use app\modules\organisation\models\TblMccPlantGroupMappingSearch;
 use app\modules\organisation\models\TblMccPlantGroupMappingHistory;
+use app\modules\organisation\models\TblBmcSilosInfo;
+use app\modules\organisation\models\TblBmcSilosInfoSearch;
 
 /**
  * TblMccPlantController implements the CRUD actions for TblMccPlant model.
@@ -65,10 +67,16 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $bmcsearchModel->mcc_plant_code = $id;
         $bmcdataProvider = $bmcsearchModel->bccSearch(Yii::$app->request->queryParams);
 
+        $snsearchModel = new TblBmcSilosInfoSearch();
+        $snsearchModel->module_name = 'MCC';
+        $snsearchModel->module_code = $id;
+        $sndataProvider = $snsearchModel->search(Yii::$app->request->queryParams);
+        $isaction = FALSE;
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
                     'bmcdataProvider' => $bmcdataProvider, 'bmcsearchModel' => $bmcsearchModel,
+                    'sndataProvider' => $sndataProvider, 'snsearchModel' => $snsearchModel, 'isaction' => $isaction
         ]);
     }
 
@@ -346,6 +354,23 @@ class TblMccPlantController extends \app\controllers\ChildController {
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionSilosInfo($id) {
+        $contactDetails = new TblBmcSilosInfo();
+        $searchModel = new TblBmcSilosInfoSearch();
+        $searchModel->module_name = 'MCC';
+        $searchModel->module_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $isaction = TRUE;
+        return $this->render('@app/modules/organisation/views/tbl-bmc-silos-info/create', [
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'MCC',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'isaction' => $isaction
+        ]);
     }
 
 }
