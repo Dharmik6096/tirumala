@@ -5,6 +5,12 @@ namespace app\modules\collection\models;
 use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\globalmaster\models\TblMilkQualityType;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_dcs_milk_dispatch_txn".
@@ -40,6 +46,7 @@ use app\modules\globalmaster\models\TblMilkQualityType;
  */
 class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
+    public $from_date, $to_date, $from_shift, $to_shift;
     /**
      * @inheritdoc
      */
@@ -67,7 +74,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
         return [
             'dcs_milk_dispatch_txn_code' => Yii::t('app', 'Dcs Milk Dispatch Txn Code'),
             'dcs_milk_dispatch_code' => Yii::t('app', 'Dcs Milk Dispatch Code'),
-            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
+            'milk_quality_type_code' => Yii::t('app', 'Quality Type'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'nos_of_can' => Yii::t('app', 'Nos Of Can'),
             'dispatch_qty' => Yii::t('app', 'Dispatch Qty'),
@@ -102,6 +109,14 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
     public function getMilkQualityType() {
         return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getDcsMilkDispatch() {
+        return $this->hasOne(TblDcsMilkDispatch::className(), ['dcs_milk_dispatch_code' => 'dcs_milk_dispatch_code']);
     }
 
 }
