@@ -102,12 +102,14 @@ class TblConfig extends \app\models\ChildModel {
         }
     }
 
-    public function configProcessList() {
-        $data = $this->find()
-                ->andWhere(['IS NOT', 'process_name', NULL])
+    public function getProcessList($configFor) {
+        $data = $this->find()->select(['process_name'])
                 ->distinct()
-                ->all();
+                ->where(['config_for' => $configFor])
+                ->andWhere(['IS NOT', 'process_name', NULL]);
+        $data = $data->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'process_name', 'process_name');
+
         return $array;
     }
 

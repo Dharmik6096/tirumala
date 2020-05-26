@@ -372,10 +372,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-bmc-milk-dispatch/destination-code-list', Yii::t('app', 'Select Code'), $multiple, '', $readonly);
     }
 
-    public function processName($model, $form, $name = 'process_name', $islable = false, $disable = false) {
+    public function processName($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $config = new \app\modules\configuration\models\TblConfig();
-        echo $form->field($model, $name)->dropDownList($config->configProcessList(), ['prompt' => 'Select Process Name', 'disabled' => $disable])->label($islable);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/configuration/tbl-config/config-process-list', Yii::t('app', 'Select Process Name'), $multiple, '', $readonly);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {

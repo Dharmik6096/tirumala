@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\configuration\models\TblConfigSearch;
+use app\modules\configuration\models\TblConfigMappingHistory;
 
 /**
  * TblConfigMappingController implements the CRUD actions for TblConfigMapping model.
@@ -35,7 +36,61 @@ class TblConfigMappingController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $data = Yii::$app->request->post();
             $postArray = !empty($data['configCodes']) ? $data['configCodes'] : [];
-         
+            $master = [];
+            $auto_inc = 1;
+            $newAssignments = [];
+            if (!empty($postArray)) {
+                $newAssignments = $postArray;
+            }
+            $oldAssignments = [];
+            if (!empty($selectedArray)) {
+                $oldAssignments = array_keys($selectedArray);
+            }
+
+            $toAssign = array_diff($newAssignments, $oldAssignments);
+            $toRevoke = array_values(array_diff($oldAssignments, $newAssignments));
+            $delete = [];
+            $code = $this->model->org_type == 'MCC' ? $this->model->mcc_plant_code : $this->model->bmc_code;
+            if (!empty($toRevoke)) {
+                foreach ($toRevoke as $revoke_widget) {
+                    $model = new TblConfigMapping();
+                    $model->config_code = $revoke_widget;
+                    $model->union_code = $id;
+                    $model->org_type = $this->model->org_type;
+                    $model->org_code = $code;
+                    $record = $model->getExistMappedControl();
+                    $historyModel = new TblConfigMappingHistory();
+                    Yii::$app->operation->history($record, $historyModel, 'DELETE');
+                    $master[] = $historyModel;
+                    if (!empty($record)) {
+                        $delete[] = $record;
+                    }
+                }
+            }
+
+            if (!empty($toAssign)) {
+                foreach ($toAssign as $Assign_widget) {
+                    $model = new TblConfigMapping();
+                    $model->config_code = $Assign_widget;
+                    $model->union_code = $id;
+                    $model->org_type = $this->model->org_type;
+                    $model->org_code = $code;
+                    $model->scenario = 'savemapping';
+                    $master[] = $model;
+                    $auto_inc++;
+                }
+            }
+
+            $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Control Mapping', 'edit']);
+            $selectedArray = !empty($postArray) ? $postArray : [];
+            if ($transaction == 'customRedirect') {
+                return $this->render('create', [
+                            'model' => $this->model,
+                            'searchModel' => $searchModel,
+                            'dataProvider' => $dataProvider,
+                            'selectedArray' => $selectedArray
+                ]);
+            }
         }
         return $this->render('create', [
                     'model' => $this->model,

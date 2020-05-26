@@ -1,9 +1,11 @@
 <?php
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
+
 $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', 'Control Mapping');
 $defaultToggle = true;
@@ -39,6 +41,7 @@ $defaultToggle = true;
                             $count = count($data);
                             $disp_table = $count / 3;
                             $first_table = ceil($disp_table);
+//                            $first_table = round($disp_table, 0, PHP_ROUND_HALF_DOWN);
                             $second_table = $first_table * 2;
                             ?>
                             <div class="col-sm-4 ">
@@ -75,7 +78,7 @@ $defaultToggle = true;
                                     </thead>
                                     <tbody>
                                         <?php
-                                        for ($i = $first_table; $i < $second_table; $i++) {
+                                        for ($i = $first_table; $i < $second_table && $i < $count; $i++) {
                                             ?>
                                             <tr>
                                                 <td class='center-align center_text'>

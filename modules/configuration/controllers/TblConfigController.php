@@ -21,6 +21,8 @@ use app\modules\configuration\models\TblUnionConfigResultHistory;
  */
 class TblConfigController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['config-process-list'];
+
     /**
      * Lists all TblConfig models.
      * @return mixed
@@ -149,6 +151,23 @@ class TblConfigController extends \app\controllers\ChildController {
                     'saveModel' => $saveModel,
                     'model' => $model,
         ]);
+    }
+
+    public function actionConfigProcessList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $config = new TblConfig();
+                $data = $config->getProcessList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

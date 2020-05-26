@@ -19,6 +19,7 @@ class TblConfigSearch extends TblConfig {
         return [
             [['config_code'], 'integer'],
             [['config_name', 'config_key', 'config_for', 'config_type', 'process_name'], 'safe'],
+            [['config_for', 'process_name'], 'required']
         ];
     }
 
@@ -77,7 +78,7 @@ class TblConfigSearch extends TblConfig {
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+             $query->where('0=1');
             return $dataProvider;
         }
 

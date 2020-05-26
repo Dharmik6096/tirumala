@@ -46,7 +46,7 @@ class TblConfigMapping extends \app\models\ChildModel {
             [['config_code', 'originating_type'], 'integer'],
             [['config_result', 'org_type', 'org_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'config_for'], 'safe'],
-            [['plant_code', 'mcc_plant_code', 'union_code'], 'required'],
+            [['plant_code', 'mcc_plant_code', 'union_code'], 'required', 'except' => ['savemapping']],
             [['bmc_code'], 'required', 'when' => function ($model) {
                     return $model->config_for == 'BMC';
                 }, 'whenClient' => "function (attribute, value) {
@@ -65,7 +65,7 @@ class TblConfigMapping extends \app\models\ChildModel {
             'config_result' => Yii::t('app', 'Config Result'),
             'org_type' => Yii::t('app', 'Org Type'),
             'org_code' => Yii::t('app', 'Org Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -88,13 +88,14 @@ class TblConfigMapping extends \app\models\ChildModel {
         $model = new TblConfig();
         $config = $model->find()
                 ->select('config_code')
-                ->where(['config_for' => $this->config_for, 'process_name' => $this->process_name])
+                ->where(['config_for' => $this->org_type, 'process_name' => $this->process_name])
                 ->all();
         if (!empty($config)) {
             $codes = [];
             foreach ($config as $code) {
                 $codes[] = $code->config_code;
             }
+
             $code = $this->org_type == 'BMC' ? $this->bmc_code : $this->mcc_plant_code;
             $query = $this->find()
                     ->where(['IN', 'config_code', $codes])
@@ -104,6 +105,12 @@ class TblConfigMapping extends \app\models\ChildModel {
         } else {
             return [];
         }
+    }
+
+    public function getExistMappedControl() {
+        return $this->find()
+                        ->where(['org_type' => $this->org_type, 'org_code' => $this->org_code, 'config_code' => $this->config_code])
+                        ->one();
     }
 
 }
