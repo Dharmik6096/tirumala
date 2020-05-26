@@ -21,13 +21,18 @@ $attribute = [
     ['label' => Yii::t('app','BMC'), 'attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch,['bmcCode'], 'bmc_name');
         }, 'filter' => false],
-    ['label' => Yii::t('app', 'Old Society Code'), 'attribute' => 'dcs_code',
+    ['label' => Yii::t('app', 'Dcs Code Ex'), 'attribute' => 'dcs_code',
         'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
+            return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch,['dcsCode'], 'dcs_code_ex');
         }, 'filter' => false],
-    ['label' => Yii::t('app', 'Soc. Code'), 'attribute' => 'dcs_code', 'filter' => true],
-    ['label' => Yii::t('app','Society'),  'attribute' => 'dcs_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+    ['label' => Yii::t('app', 'DCS Code'), 
+        'attribute' => 'dcs_code',
+         'value' => function($model) {
+             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch,['dcsCode'], 'dcs_code');
+        },
+        'filter' => FALSE],
+    ['label' => Yii::t('app','DCS Name'),  'attribute' => 'dcs_code', 'value' => function($model) {
+             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch,['dcsCode'], 'dcs_name');
         }, 'filter' => false],
     ['label' => Yii::t('app','Dispatch Date'), 'attribute' => 'date_time_of_dispatch',
         'filterType' => GridView::FILTER_DATE,
