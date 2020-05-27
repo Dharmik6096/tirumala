@@ -35,7 +35,7 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblRateRecalculation extends \app\models\ChildModel {
 
-    public $purchase_rate_code, $customer_name, $rate_desc;
+    public $purchase_rate_code, $customer_name, $rate_desc, $sp_param;
 
     /**
      * @inheritdoc
@@ -49,6 +49,7 @@ class TblRateRecalculation extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['module_type'], 'default', 'value' => 'collection'],
             [['rate_code'], 'required', 'message' => 'Please select at least one rate to update'],
             [['recalc_for'], 'required', 'on' => ['recalculation_search', 'recalculation_search_custom']],
             [['rate_code'], 'integer', 'except' => 'recalculation_search_custom'],
@@ -56,7 +57,7 @@ class TblRateRecalculation extends \app\models\ChildModel {
             [['rate_type', 'union_code', 'created_by', 'updated_by', 'recalc_for', 'recalc_type'], 'string'],
             [['from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
             [['customer_type', 'customer_code', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['purchase_rate_code', 'bmc_code', 'recalc_for', 'plant_code', 'mcc_plant_code'], 'safe']
+            [['purchase_rate_code', 'bmc_code', 'recalc_for', 'plant_code', 'mcc_plant_code', 'dcs_code', 'module_type'], 'safe']
         ];
     }
 
