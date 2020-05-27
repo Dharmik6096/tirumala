@@ -79,7 +79,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                     }
                 }
 
-               return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', [], $customeCode);
+                return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', [], $customeCode);
             }
         } else {
             $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams);
@@ -115,7 +115,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             $this->model->recalc_for = $searchModel->recalc_for;
             if ($this->model->validate()) {
 
-               return $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, 'custom', $codes);
+                return $this->saveAndRedirect($dcs_codes, $searchModel, $rateCodes, 'custom', $codes);
             }
         }
         $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams, 'sp_Portal_Data_Recalculation_Custom');
@@ -156,20 +156,20 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                     $customerType = $searchModel->customer_type;
                 } else {
                     $customerType = [];
-					/*
-                    foreach ($dcs_codes as $detail) {
-                        $customerType[] = $detail->customer_type;
-                    }
-                    $setVal = [];
-                    foreach ($customeCode as $a) {
-                        $code = [];
-                        $code['customer_type'] = 'DCS';
-                        $code['customer_code'] = $a;
-                        $setVal[] = $code;
-                    }
-                    $dcs_codes = array_merge($dcs_codes, $setVal);
-					*/
-					$dcsCodes = !empty($dcs_codes[0]) ? $dcs_codes : [];
+                    /*
+                      foreach ($dcs_codes as $detail) {
+                      $customerType[] = $detail->customer_type;
+                      }
+                      $setVal = [];
+                      foreach ($customeCode as $a) {
+                      $code = [];
+                      $code['customer_type'] = 'DCS';
+                      $code['customer_code'] = $a;
+                      $setVal[] = $code;
+                      }
+                      $dcs_codes = array_merge($dcs_codes, $setVal);
+                     */
+                    $dcsCodes = !empty($dcs_codes[0]) ? $dcs_codes : [];
                     foreach ($dcsCodes as $detail) {
                         $customerType[] = $detail->customer_type;
                     }
@@ -242,7 +242,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             }
         }
 
-       return $this->redirect(['index']);
+        return $this->redirect(['index']);
     }
 
     /**
@@ -288,6 +288,105 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionDcsDispatch() {
+        $searchModel = new TblRateRecalculationSearch();
+        $searchModel->recalc_for = 'member';
+        $searchModel->scenario = 'recalculation_dispatch';
+        $this->model = new TblRateRecalculation();
+        $dataProvider = null;
+        if (Yii::$app->request->post()) {
+            $searchModel->load(Yii::$app->request->queryParams);
+            $this->model->attributes = $searchModel->attributes;
+            $this->model->load(Yii::$app->request->post());
+            if ($searchModel->recalc_type == 'custom') {
+                $this->model->rate_code = '0';
+            }
+            if ($this->model->validate()) {
+                $this->model->rate_type = 'Member';
+                $this->model->recalc_for = 'member';
+                $this->model->customer_type = 'DCS';
+                $this->model->module_type = 'dispatch';
+                $this->model->from_date = date('Y-m-d', strtotime($searchModel->from_date));
+                $this->model->to_date = date('Y-m-d', strtotime($searchModel->to_date));
+
+                return $this->saveDispatchData($this->model);
+            }
+        } else {
+            $dataProvider = $searchModel->searchDataDispatch(Yii::$app->request->queryParams);
+        }
+
+        return $this->render('create_dispatch', [
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function saveDispatchData($model) {
+        $saveModel = [];
+        if ($model->recalc_type == 'all') {
+            if (empty($model->dcs_code)) {
+                $dcs = new TblDcs();
+                $dcs_codes = array_keys($dcs->getBMCDCSList($model->bmc_code));
+            } else {
+                $dcs_codes [] = $model->dcs_code;
+            }
+            foreach ($dcs_codes as $key => $dcs_code) {
+                $model->dcs_code = $model->customer_code = $dcs_code;
+                $rate_model = new TblRateRecalculation();
+                $rate_model->attributes = $model->attributes;
+                $fdate = $rate_model->from_date . ' ' . Yii::$app->general->getshift($rate_model->from_shift);
+                $tdate = $rate_model->to_date . ' ' . Yii::$app->general->getshift($rate_model->to_shift);
+                $rate_model->sp_param = [(string) $rate_model->bmc_code, (string) $rate_model->dcs_code, $fdate, $tdate, $rate_model->rate_code];
+                $saveModel[] = $rate_model;
+            }
+        } else {
+            $data = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+            foreach ($data as $code) {
+                $c = explode('###', $code);
+                $model->dcs_code = $model->customer_code = $c[0];
+                $model->rate_code = $c[1];
+                $rate_model = new TblRateRecalculation();
+                $rate_model->attributes = $model->attributes;
+                $rate_model->sp_param = [(string) $rate_model->bmc_code, (string) $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $c[1]];
+                $saveModel[] = $rate_model;
+            }
+        }
+
+        if (!empty($saveModel)) {
+            $trans = \Yii::$app->db->beginTransaction();
+            try {
+                $master = [];
+                foreach ($saveModel as $m) {
+                    $res = $m->save();
+                    $master[] = $res;
+                    if ($res) {
+                        Yii::$app->general->getSpData('sp_Portal_Process_Recalculation_Dispatch', $m->sp_param);
+                    } else {
+                        break;
+                    }
+                }
+                if (!in_array(FALSE, $master)) {
+                    $trans->commit();
+                    Yii::$app->display->message(true, 'Rate Recalculation for Dispatch', 'create');
+                } else {
+                    $trans->rollback();
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Your transaction is not saved successfully']);
+                }
+            } catch (UserException $e) {
+                $trans->rollback();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => $e->getMessage()]);
+            } catch (\yii\db\Exception $e) {
+                $trans->rollback();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            }
+        }
+        return $this->redirect(['index']);
     }
 
 }

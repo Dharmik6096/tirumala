@@ -125,7 +125,7 @@ class SearchFilter {
             'TblQualityCollectionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
-            'TblDcsMilkDispatchSearch' => [
+            'TblDcsMilkDispatchTxnSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
             'TblDpuIncentiveMasterSearch' => [

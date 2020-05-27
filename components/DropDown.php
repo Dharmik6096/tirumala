@@ -913,6 +913,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'Own'), '1' => Yii::t('app', 'Rent')],
             ],
+            'rate_recalc_type' => [
+                'name' => 'recalc_type',
+                'prompt' => Yii::t('app', 'Select Method'),
+                'data' => ['all' => Yii::t('app', 'Rate ID Wise'), 'custom' => Yii::t('app', 'WEF Date Wise')],
+            ],
         ];
         return $records[$l];
     }

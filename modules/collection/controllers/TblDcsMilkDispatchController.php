@@ -19,9 +19,8 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblDcsMilkDispatchSearch();
+        $searchModel = new TblDcsMilkDispatchTxnSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

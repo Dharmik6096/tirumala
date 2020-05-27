@@ -10,25 +10,27 @@ use app\modules\collection\models\TblDcsMilkDispatchTxn;
 /**
  * TblDcsMilkDispatchTxnSearch represents the model behind the search form about `app\modules\collection\models\TblDcsMilkDispatchTxn`.
  */
-class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn
-{
+class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
+
+    public $shift_code, $dispatch_type, $destination_type, $challan_no, $destination_code;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
+            [['shift_code', 'dispatch_type', 'destination_type', 'challan_no', 'destination_code'], 'safe'],
             [['dcs_milk_dispatch_txn_code', 'dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'integer'],
             [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount'], 'number'],
             [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +42,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblDcsMilkDispatchTxn::find();
 
         // add conditions that should always apply here
@@ -51,17 +52,34 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn
         ]);
 
         $this->load($params);
+        $query->joinWith(['dcsMilkDispatch']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_milk_dispatch', 'tbl_dcs_milk_dispatch', 'tbl_dcs_milk_dispatch');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
+        if (!empty($this->from_date) || !empty($this->from_shift)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+            $from_date .= ' ' . $from_shift;
+            $query->andFilterWhere(['>=', 'date_time_of_dispatch', $from_date]);
+        }
 
-        // grid filtering conditions
+        if (!empty($this->to_date) || !empty($this->to_shift)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+            $to_date .= ' ' . $to_shift;
+            $query->andFilterWhere(['<=', 'date_time_of_dispatch', $to_date]);
+        }
+        if (!empty($this->date_time_of_dispatch))
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), date_time_of_dispatch, 126)', date('Y-m-d', strtotime($this->date_time_of_dispatch))]);
+
         $query->andFilterWhere([
-            'dcs_milk_dispatch_txn_code' => $this->dcs_milk_dispatch_txn_code,
-            'dcs_milk_dispatch_code' => $this->dcs_milk_dispatch_code,
+            'tbl_dcs_milk_dispatch.shift_code' => $this->shift_code,
+            'tbl_dcs_milk_dispatch.dispatch_type' => $this->dispatch_type,
+            'tbl_dcs_milk_dispatch.destination_type' => $this->destination_type,
             'milk_quality_type_code' => $this->milk_quality_type_code,
             'milk_type_code' => $this->milk_type_code,
             'nos_of_can' => $this->nos_of_can,
@@ -73,24 +91,17 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn
             'avg_snf' => $this->avg_snf,
             'avg_clr' => $this->avg_clr,
             'water' => $this->water,
-            'temperature' => $this->temperature,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'total_amount' => $this->total_amount,
         ]);
 
-        $query->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-            ->andFilterWhere(['like', 'originating_type', $this->originating_type])
-            ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-            ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-            ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-            ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-            ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+        $query->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.challan_no', $this->challan_no])
+                ->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.destination_code', $this->destination_code]);
+        
+        $query->orderBy(['tbl_dcs_milk_dispatch.date_time_of_dispatch' => SORT_DESC, 
+        'tbl_dcs_milk_dispatch.bmc_code' => SORT_ASC, 
+        'tbl_dcs_milk_dispatch.dcs_code' => SORT_ASC]);
 
         return $dataProvider;
     }
+
 }
