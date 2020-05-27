@@ -329,7 +329,15 @@ class SiteController extends Controller {
                 }
                 $data = explode(',', $key);
             }
-
+            $where = [];
+            $i = 8;
+            $j = 1;
+            for ($i = 8; $i < count($data); $i++) {
+                if (!empty($data[$i + 1]) && !empty($_POST['depdrop_parents'][$j])) {
+                    $where[$data[$i + 1]] = $_POST['depdrop_parents'][$j];
+                    $j++;
+                }
+            }
             $fields[] = $data[3];
             $fields[] = $data[4];
             if (!empty($data[5])) {
@@ -347,9 +355,10 @@ class SiteController extends Controller {
             if ($data[2] != '') {
                 $unionQuery = $model->find()->select($fields)
                                 ->where([$data[3] => $data[2], $data[1] => $_POST['depdrop_parents'][0]])
+                                ->andWhere($where)
                                 ->createCommand()->rawSql;
                 $tmp_query = $model->find()->select($fields)
-                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->union($unionQuery);
+                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->andWhere($where)->union($unionQuery);
                 if ($data[8] != 'false') {
                     $tmp_query->andWhere(['<=', 'valid_from', date('Y-m-d')]);
                 }
@@ -357,7 +366,7 @@ class SiteController extends Controller {
                 $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
             } else {
                 $records = $model->find()->select($fields)
-                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->orderBy($fields[1])->all();
+                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->andWhere($where)->orderBy($fields[1])->all();
             }
 
             foreach ($records as $key => $r) {

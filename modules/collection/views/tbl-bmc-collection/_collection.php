@@ -38,7 +38,8 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmccollection-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
     </div>
     <div class="col-sm-2  create_fields">
-        <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmccollection-bmc_code', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
+        <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmccollection-module_name']); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmccollection-bmc_code,tblbmccollection-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
     </div>
     <div class="col-sm-2 rtpl_validate create_fields">
         <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'), false, $readonly, true); ?>

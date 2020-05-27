@@ -446,15 +446,17 @@ class DropDown extends Component {
         $checkValid = in_array('checkValid', $data);
         $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         $control_name = ($name == '') ? $data['name'] : $name;
+        $depends = explode(',', $depends);
+        $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
                     'data' => [$model->{$control_name} => $model->{$control_name}],
                     'name' => $control_name,
                     'pluginOptions' => [
-                        'depends' => [$depends],
+                        'depends' => $depends,
                         'placeholder' => $data['prompt'],
                         'url' => Url::to(['/site/get-data']),
-                        'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid],
+                        'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray],
                         'initialize' => true,
                     ],
                     'options' => [
@@ -995,7 +997,7 @@ class DropDown extends Component {
             'tax_code' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name', 'prompt' => Yii::t('app', 'Select Tax'), 'model' => 'TblTax'],
             'union_vehicle' => ['name' => 'vehicle_code', 'fields' => 'vehicle_code,parsing_no,', 'prompt' => Yii::t('app', 'Select Vehicle'), 'model' => 'TblVehicleMaster', 'depend' => 'union_code'],
             'dispatch_destination' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_bmc_dispatch' => 1, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
-            'bmc_silos' => ['name' => 'bmc_silos_info_code', 'fields' => 'bmc_silos_info_code,silo_no,', 'prompt' => Yii::t('app', 'Select Silo'), 'model' => 'TblBmcSilosInfo', 'depend' => 'module_code'],
+            'bmc_silos' => ['name' => 'bmc_silos_info_code', 'fields' => 'bmc_silos_info_code,silo_no,', 'prompt' => Yii::t('app', 'Select Silo'), 'model' => 'TblBmcSilosInfo', 'depend' => 'module_code', 'dependArray' => ['module_name']],
             'qty_diff_type' => ['name' => 'qty_diff_type_code', 'fields' => 'qty_diff_type_code,qty_diff_type_name', 'prompt' => Yii::t('app', 'Select'), 'model' => 'TblQtyDiffType'],
         ];
         return $label[$l];
