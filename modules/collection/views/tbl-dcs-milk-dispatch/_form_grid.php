@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\globalmaster\models\TblAnimalType;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 ?>
 
@@ -106,7 +107,8 @@ $attribute = [
 $grid_option = [
     'id' => 'dcs-milk-dispatch-list',
     'attributes' => $attribute,
-    'active_column' => false,
+    'active_column' => FALSE,
+    'default_sorting' => FALSE,
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

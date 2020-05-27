@@ -77,11 +77,9 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), date_time_of_dispatch, 126)', date('Y-m-d', strtotime($this->date_time_of_dispatch))]);
 
         $query->andFilterWhere([
-            'tbl_dcs_milk_dispatch_txn.dcs_milk_dispatch_code' => $this->dcs_milk_dispatch_code,
             'tbl_dcs_milk_dispatch.shift_code' => $this->shift_code,
             'tbl_dcs_milk_dispatch.dispatch_type' => $this->dispatch_type,
             'tbl_dcs_milk_dispatch.destination_type' => $this->destination_type,
-            'dcs_milk_dispatch_txn_code' => $this->dcs_milk_dispatch_txn_code,
             'milk_quality_type_code' => $this->milk_quality_type_code,
             'milk_type_code' => $this->milk_type_code,
             'nos_of_can' => $this->nos_of_can,
@@ -93,25 +91,15 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
             'avg_snf' => $this->avg_snf,
             'avg_clr' => $this->avg_clr,
             'water' => $this->water,
-            'temperature' => $this->temperature,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'total_amount' => $this->total_amount,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.challan_no', $this->challan_no])
-                ->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.destination_code', $this->destination_code])
-                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-                ->andFilterWhere(['like', 'originating_type', $this->originating_type])
-                ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-                ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-                ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-                ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-                ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+                ->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.destination_code', $this->destination_code]);
+        
+        $query->orderBy(['tbl_dcs_milk_dispatch.date_time_of_dispatch' => SORT_DESC, 
+        'tbl_dcs_milk_dispatch.bmc_code' => SORT_ASC, 
+        'tbl_dcs_milk_dispatch.dcs_code' => SORT_ASC]);
 
         return $dataProvider;
     }
