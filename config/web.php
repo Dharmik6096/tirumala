@@ -121,7 +121,7 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
-                    [
+                [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning', 'trace', 'info'],
                 ],
@@ -147,9 +147,9 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-      //  'db_rmrd' => require(__DIR__ . '/db_rmrd.php'),
-       // 'db_reil' => require(__DIR__ . '/db_reil.php'),
-       // 'db_creamy' => require(__DIR__ . '/db_creamy.php'),
+        'db_rmrd' => require(__DIR__ . '/db_rmrd.php'),
+        // 'db_reil' => require(__DIR__ . '/db_reil.php'),
+        // 'db_creamy' => require(__DIR__ . '/db_creamy.php'),
         /*
           'urlManager' => [
           'enablePrettyUrl' => true,
