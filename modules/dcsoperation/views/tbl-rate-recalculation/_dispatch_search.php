@@ -52,32 +52,4 @@ $form = ActiveForm::begin([
     </div>
 <?php } ?>
 <?php ActiveForm::end(); ?>
-<?php
-$script = "
-    $('#tblraterecalculationsearch-dcs_code').on('change', function(){
-        var length = $('#tblraterecalculationsearch-dcs_code > option').length;
-        var vl=$('#tblraterecalculationsearch-dcs_code').val();
-        if(vl!=null && length>vl.length && $.inArray('multiselect-all',vl)>=0)
-        {
-            $('.multiselect-all').find('input').attr('checked',false);
-        }        
-    });
-    
-    $('.recalc_search').on('click', function(){
-    var v=$('#tblraterecalculationsearch-dcs_code').val();
-    if(v.length>50 && ($.inArray('multiselect-all',v)<0))
-    {
-        alert('You can only select 50 invidual DCS or all DCS');
-        return false;
-    }
-    else if($.inArray('multiselect-all',v)>=0)
-    {
-        var newval='multiselect-all';
-        $('#tblraterecalculationsearch-dcs_code').val(newval);
-        return true;
-    }
-    return true;
-    });
-";
-$this->registerJs($script, View::POS_END, 'rate-recalculation-dispatch-search-script');
-?>
+
