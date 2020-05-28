@@ -131,9 +131,13 @@ class TblStaffAttendance extends \app\models\ChildModel {
         }
     }
 
-    public function getMemberAttendance($member) {
-        if (!empty($member)) {
-            $attendance = $this->find()->where(['staff_member_code' => $member])->all();
+    public function getMemberAttendance($member, $month) {
+        if (!empty($member) && !empty($month)) {
+            $from_date = date('Y-m-d', strtotime($month));
+            $to_date = date('Y-m-d', strtotime("+1 month", strtotime($from_date)));
+            $attendance = $this->find()->where(['staff_member_code' => $member])
+                    ->andWhere(['and', ['>=', 'lwp_date', $month], ['<', 'lwp_date', $to_date]])
+                    ->all();
             $leave = 0;
             if (!empty($attendance)) {
                 foreach ($attendance as $att) {
@@ -142,6 +146,19 @@ class TblStaffAttendance extends \app\models\ChildModel {
             }
             return $leave;
         }
+    }
+
+    public function salaryDisburse() {
+        $modelSalary = new TblStaffSalaryProcess();
+        $count = $modelSalary->find()
+                ->where(['union_code' => $this->union_code, 'staff_member_code' => $this->staff_member_code])
+                ->andWhere(['>=', 'month', $this->lwp_date])
+                ->andWhere(['IS NOT', 'disbursement_date', NULL])
+                ->count();
+        if ($count > 0) {
+            return true;
+        }
+        return false;
     }
 
 }

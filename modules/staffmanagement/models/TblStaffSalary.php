@@ -50,7 +50,7 @@ class TblStaffSalary extends \app\models\ChildModel {
             [['staff_member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStaffMember::className(), 'targetAttribute' => ['staff_member_code' => 'staff_member_code']],
             ['staff_member_code', 'unique', 'targetAttribute' => ['staff_member_code', 'wef_date'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['wef_date'], 'memberJoinDate'],
-            [['wef_date'], 'validatePreDate'],
+            [['wef_date'], 'validatePreDate', 'except' => ['update']],
             [['addition', 'deduction'], 'default', 'value' => 0],
             [['total_value'], 'number'],
             [['total_value'], 'double', 'min' => 0],
@@ -158,12 +158,34 @@ class TblStaffSalary extends \app\models\ChildModel {
 
     public function getStaffMember($month, $union) {
         if (!empty($month)) {
-            return $member = $this->find()->where(['wef_date' => $month, 'union_code' => $union])->all();
+            $data = $this->find()
+                    ->where(['union_code' => $union])
+                    ->andWhere(['<=', 'wef_date', $month])
+                    ->orderBy('wef_date desc')
+                    ->one();
+            if (!empty($data)) {
+                return $member = $this->find()->where(['wef_date' => $data->wef_date, 'union_code' => $union])->all();
+            } else {
+                return $data;
+            }
         }
     }
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function salaryDisburse() {
+        $modelSalary = new TblStaffSalaryProcess();
+        $count = $modelSalary->find()
+                ->where(['union_code' => $this->union_code, 'staff_member_code' => $this->staff_member_code])
+                ->andWhere(['>=', 'month', $this->wef_date])
+                ->andWhere(['IS NOT', 'disbursement_date', NULL])
+                ->count();
+        if ($count > 0) {
+            return true;
+        }
+        return false;
     }
 
 }

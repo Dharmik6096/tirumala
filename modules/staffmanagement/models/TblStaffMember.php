@@ -116,9 +116,12 @@ class TblStaffMember extends \app\models\ChildModel {
             [['payment_mode'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'payment_mode');
                 }, 'on' => 'importCsv'],
+            [['is_on_role'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_on_role');
+                }, 'on' => 'importCsv'],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'district_code', 'sub_district_code', 'hamlet_code', 'state_code', 'village_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'except' => ['importCsv']],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'hamlet_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'on' => ['importCsv']],
-            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no'], 'safe'],
+            [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no', 'is_on_role', 'uan_no', 'esic_no', 'pf_no'], 'safe'],
             [['is_active', 'payment_mode', 'blood_group_code', 'caste_category_code', 'designation_code', 'gender_code'], 'integer'],
             [['bank_account_no'], 'string', 'max' => 20],
             [['aadhar_card_no'], 'string', 'max' => 16],
@@ -180,7 +183,13 @@ class TblStaffMember extends \app\models\ChildModel {
             [['designation_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDesignation::className(), 'targetAttribute' => ['designation_code' => 'designation_code'], 'on' => ['importCsv']],
             [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code'], 'on' => ['importCsv']],
             [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
-            [['union_code'], 'setImport', 'on' => ['importCsv']]
+            [['union_code'], 'setImport', 'on' => ['importCsv']],
+            [['uan_no'], 'string', 'min' => 12, 'max' => 12],
+            [['esic_no'], 'string', 'min' => 10, 'max' => 10],
+            [['esic_no', 'uan_no'], 'number'],
+            [['pf_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
         ];
     }
 
@@ -221,6 +230,10 @@ class TblStaffMember extends \app\models\ChildModel {
             'village_code' => Yii::t('app', 'Village'),
             'union_code' => Yii::t('app', 'Union'),
             'qualification_code' => Yii::t('app', 'Qualification'),
+            'uan_no' => Yii::t('app', 'UAN'),
+            'esic_no' => Yii::t('app', 'ESIC'),
+            'pf_no' => Yii::t('app', 'PF No.'),
+            'is_on_role' => Yii::t('app', 'On Role'),
         ];
     }
 

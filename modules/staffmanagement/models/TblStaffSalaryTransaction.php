@@ -3,6 +3,7 @@
 namespace app\modules\staffmanagement\models;
 
 use Yii;
+use app\modules\globalmaster\models\TblSalaryHeads;
 
 /**
  * This is the model class for table "tbl_staff_salary_transaction".
@@ -77,6 +78,10 @@ class TblStaffSalaryTransaction extends \app\models\ChildModel {
     public function getSalaryTrans($salaryCode, $salary_head_code) {
         return $this->find()->select(['salary_head_code', 'value', 'lwp_effect', 'staff_salary_transaction_code'])
                         ->where(['staff_salary_code' => $salaryCode, 'salary_head_code' => $salary_head_code])->one();
+    }
+
+    public function getSalaryHeadCode() {
+        return $this->hasOne(TblSalaryHeads::className(), ['salary_head_code' => 'salary_head_code']);
     }
 
 }

@@ -126,8 +126,33 @@ $this->title = Yii::$app->label->title('view', 'Staff Member');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'is_on_role',
+                                'value' => Yii::$app->general->getStaticValue($model->is_on_role, 'is_on_role'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'uan_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'esic_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'pf_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'payment_mode',
-                                'value' => isset($model->payment_mode) ? Yii::$app->dropdown->getRecords('payment_mode_member')['data'][$model->payment_mode] : 'N/A',
+                                'value' => Yii::$app->general->getStaticValue($model->payment_mode, 'payment_mode_member'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [

@@ -142,14 +142,13 @@ class TblStaffSalaryProcess extends \app\models\ChildModel {
         if (empty($memberData)) {
             $this->addError($attribute, "Missing salary for staff member.");
         }
-        $Exist = $this->find()->where(['union_code' => $this->union_code])->andWhere(['<', 'month', $this->month])->one();
+        $Exist = $this->find()->where(['union_code' => $this->union_code])->andWhere(['<', 'month', $this->month]) ->orderBy('month desc')->one();
 
         if (!empty($Exist->month)) {
             $fDate = date_create($month);
             $tDate = date_create($Exist->month);
             $diff = date_diff($fDate, $tDate);
             $count = $diff->format("%a");
-
             if ($count > 31) {
                 $this->addError($attribute, Yii::t('app/validation', 'You cannot jump the month to process salary.'));
             }

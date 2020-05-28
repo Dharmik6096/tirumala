@@ -1,8 +1,8 @@
 <?php
 
-use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\Html;
 
 ?>
 <?php
@@ -32,7 +32,13 @@ $attribute = [
         'attribute' => 'payment_mode',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('payment_mode_member', $searchModel, 'payment_mode'),
         'value' => function($model) {
-            return isset($model->payment_mode) ? Yii::$app->dropdown->getRecords('payment_mode_member')['data'][$model->payment_mode] : '';
+            return Yii::$app->general->getStaticValue($model->payment_mode, 'payment_mode_member');
+        }],
+    [
+        'attribute' => 'is_on_role',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('is_on_role', $searchModel, 'is_on_role'),
+        'value' => function($model) {
+            return Yii::$app->general->getStaticValue($model->is_on_role, 'is_on_role');
         }],
 ];
 $grid_option = [

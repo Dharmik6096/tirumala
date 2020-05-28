@@ -50,7 +50,13 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'update' => TRUE]
+        'view' => TRUE,
+        'edit' => function ($url, $model) {
+            $disable = $model->salaryDisburse() ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $disable, 'data-original-title' => 'Edit'];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/staffmanagement/tbl-staff-salary/update', 'id' => $model->staff_salary_code], $options);
+        },
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

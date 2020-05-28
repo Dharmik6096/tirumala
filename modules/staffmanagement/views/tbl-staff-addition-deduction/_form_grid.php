@@ -50,7 +50,7 @@ $attribute = [
     ['attribute' => 'type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('type', $searchModel, 'type'),
         'value' => function($model) {
-            return ($model->type == 1) ? Yii::t('app', 'Addition') : Yii::t('app', 'Deduction');
+            return Yii::$app->general->getStaticValue($model->type, 'type');
         }
     ],
     ['attribute' => 'amount',
@@ -66,7 +66,12 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'update' => TRUE,
+        'view' => TRUE,
+        'edit' => function ($url, $model) {
+            $disable = $model->salaryDisburse() ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $disable, 'data-original-title' => 'Edit'];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/staffmanagement/tbl-staff-addition-deduction/update', 'id' => $model->staff_addition_deduction_no], $options);
+        },
     ]
 ];
 

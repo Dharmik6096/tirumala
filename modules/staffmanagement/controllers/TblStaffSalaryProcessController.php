@@ -93,7 +93,7 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                     $existData = $this->model->getExistData($member->staff_member_code);
                     $TotalDays = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($month)), date('Y', strtotime($month)));
                     $attendanceModel = new TblStaffAttendance();
-                    $leave = $attendanceModel->getMemberAttendance($member->staff_member_code);
+                    $leave = $attendanceModel->getMemberAttendance($member->staff_member_code, $searchModel->month);
                     $masterModel = new TblStaffSalaryProcess();
                     if (!empty($existData->salary_code)) {
                         $mainModel = $masterModel->findOne($existData->salary_code);

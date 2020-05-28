@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Json;
+use app\modules\staffmanagement\models\TblStaffInstallmentSearch;
 
 /**
  * TblStaffAdditionDeductionController implements the CRUD actions for TblStaffAdditionDeduction model.
@@ -40,8 +41,11 @@ class TblStaffAdditionDeductionController extends \app\controllers\ChildControll
      * @return mixed
      */
     public function actionView($id) {
+        $searchModel = new TblStaffInstallmentSearch();
+        $searchModel->staff_addition_deduction_no = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $this->findModel($id), 'searchModel' => $searchModel, 'dataProvider' => $dataProvider
         ]);
     }
 
@@ -128,7 +132,7 @@ class TblStaffAdditionDeductionController extends \app\controllers\ChildControll
         if (Yii::$app->request->post()) {
             $master = [];
             $instalData = Yii::$app->request->post('TblStaffInstallment');
-           
+
             $i = 1;
             foreach ($instalData as $key => $value) {
                 $salaryInstal = new TblStaffInstallment();

@@ -16,6 +16,7 @@ use yii\helpers\Url;
 use yii\helpers\Json;
 use app\modules\staffmanagement\models\TblStaffSalaryTransactionHistory;
 use app\modules\staffmanagement\models\TblStaffSalaryHistory;
+use app\modules\staffmanagement\models\TblStaffSalaryTransactionSearch;
 
 /**
  * TblStaffSalaryController implements the CRUD actions for TblStaffSalary model.
@@ -42,8 +43,13 @@ class TblStaffSalaryController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $searchModel = new TblStaffSalaryTransactionSearch();
+        $searchModel->staff_salary_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $this->findModel($id), 'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -106,6 +112,7 @@ class TblStaffSalaryController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $date = date('01-') . $this->model->wef_date;
             $this->model->wef_date = !empty($date) ? date('Y-m-d', strtotime($date)) : NULL;
+            $this->model->scenario = 'update';
             $master[] = $this->model;
 
             $Transaction = Yii::$app->request->post('TblStaffSalaryTransaction');
@@ -132,7 +139,7 @@ class TblStaffSalaryController extends \app\controllers\ChildController {
                 $master[] = $salaryTrns;
             }
             $transaction = $this->generalModel->saveTransaction($master, ['Staff Salary', 'edit']);
-           
+
             if ($transaction == 'customRedirect') {
                 $url = Url::to(['index']);
                 Yii::$app->response->format = Response::FORMAT_JSON;

@@ -87,8 +87,19 @@ $form = ActiveForm::begin([
 
     </div>
     <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('is_on_role', $model, $form, 'form-group', $model->getAttributeLabel('is_on_role'), false, 'is_on_role', false); ?>
+    </div>
+    <div class="col-sm-3 number-validate">
+        <?= $form->field($model, 'uan_no')->textInput() ?>
+    </div>
+    <div class="col-sm-3 number-validate">
+        <?= $form->field($model, 'esic_no')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'pf_no')->textInput() ?>
+    </div>
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdownStatic('payment_mode_member', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false); ?>
-
     </div>
 
     <?= $form->field($model, 'aadhar_card_no', ['options' => ['class' => 'form-group col-sm-3 disable_enab']])->textInput(['maxlength' => 12]) ?>

@@ -920,6 +920,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Method'),
                 'data' => ['all' => Yii::t('app', 'Rate ID Wise'), 'custom' => Yii::t('app', 'WEF Date Wise')],
             ],
+            'is_on_role' => [
+                'name' => 'is_on_role',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'On Role'), '0' => Yii::t('app', 'Off Role')],
+            ],
         ];
         return $records[$l];
     }

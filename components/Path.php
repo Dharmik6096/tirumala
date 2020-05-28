@@ -82,7 +82,7 @@ class Path extends Component {
         '\\app\modules\setting\models\\' => ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
         '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification', 'TblBulkNotificationHistory'],
         '\\app\modules\vsp\models\\' => ['TblGeneralFormula', 'TblGeneralFormulaHistory', 'TblCriteriaKeywordMapping', 'TblBillHead', 'TblBillHeadHistory', 'TblBillHeadDefault', 'TblBillHeadDetail'],
-        '\\app\modules\staffmanagement\models\\' => ['TblStaffMember', 'TblStaffMemberHistory', 'TblStaffAttendance', 'TblStaffAttendanceHistory', 'TblStaffSalaryTransaction', 'TblStaffSalaryTransactionHistory', 'TblStaffSalaryHistory', 'TblStaffInstallment', 'TblStaffInstallmentHistory', 'TblStaffMemberDesignationHistory', 'TblStaffSalaryProcess', 'TblStaffSalaryProcessTransaction', 'TblStaffSalaryProcessHistory', 'TblStaffSalaryProcessTransactionHistory'],
+        '\\app\modules\staffmanagement\models\\' => ['TblStaffMember', 'TblStaffMemberHistory', 'TblStaffAttendance', 'TblStaffAttendanceHistory', 'TblStaffSalaryTransaction', 'TblStaffSalaryTransactionHistory', 'TblStaffSalaryHistory', 'TblStaffInstallment', 'TblStaffInstallmentHistory', 'TblStaffMemberDesignationHistory', 'TblStaffSalaryProcess', 'TblStaffSalaryProcessTransaction', 'TblStaffSalaryProcessHistory', 'TblStaffSalaryProcessTransactionHistory','TblStaffAdditionDeduction'],
         '\\app\modules\payment\models\\' => ['TblProductSaleDetails', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding', 'TblProductSaleTaxCalculated', 'TblProductSaleTaxCalculatedHistory'],
         '\\app\modules\tankermovement\models\\' => ['TblQtyDiffType'],
     ];

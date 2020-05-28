@@ -18,7 +18,7 @@ class TblStaffMemberSearch extends TblStaffMember {
      */
     public function rules() {
         return [
-            [['staff_member_code', 'aadhar_card_no', 'address', 'bank_account_no', 'birth_date', 'designation_code', 'created_at', 'email_id', 'ifsc', 'mobile_no', 'pan_no', 'pincode', 'staff_member_name', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'updated_by', 'village_code', 'union_code'], 'safe'],
+            [['staff_member_code', 'aadhar_card_no', 'address', 'bank_account_no', 'birth_date', 'designation_code', 'created_at', 'email_id', 'ifsc', 'mobile_no', 'pan_no', 'pincode', 'staff_member_name', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'updated_by', 'village_code', 'union_code', 'is_on_role'], 'safe'],
             [['is_active', 'payment_mode', 'blood_group_code', 'caste_category_code', 'gender_code'], 'integer'],
         ];
     }
@@ -67,6 +67,7 @@ class TblStaffMemberSearch extends TblStaffMember {
             'blood_group_code' => $this->blood_group_code,
             'caste_category_code' => $this->caste_category_code,
             'gender_code' => $this->gender_code,
+            'is_on_role' => $this->is_on_role,
         ]);
         if (!empty($this->tenure_from_date))
             $query->andFilterWhere(['and', ['>=', 'tbl_staff_member.tenure_from_date', date('Y-m-d', strtotime($this->tenure_from_date))], ['<=', 'tbl_staff_member.tenure_from_date', date('Y-m-d', strtotime($this->tenure_from_date))]]);

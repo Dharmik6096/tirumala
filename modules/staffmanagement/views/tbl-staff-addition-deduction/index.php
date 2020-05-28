@@ -1,6 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Staff Additoin/Deduction'));
 $this->params['menu'][] = Yii::$app->controls->add('Staff Additoin/Deduction');
+$this->params['menu'][] = Yii::$app->controls->import('staff-add-deduction', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
