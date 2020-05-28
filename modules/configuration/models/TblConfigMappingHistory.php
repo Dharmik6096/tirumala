@@ -46,7 +46,7 @@ class TblConfigMappingHistory extends \yii\db\ActiveRecord {
         return [
             [['config_mapping_code', 'config_code', 'originating_type'], 'safe'],
             [['config_result', 'org_type', 'org_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
         ];
     }
 
