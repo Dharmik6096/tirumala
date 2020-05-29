@@ -52,6 +52,7 @@ use app\modules\syncutility\models\TblSyncLog;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\modules\organisation\models\TblMasterTransfer;
+use app\modules\syncutility\models\TblInboxConstraint;
 
 class SiteController extends Controller {
 
@@ -1609,7 +1610,14 @@ class SiteController extends Controller {
                             if ($transaction != 'customRedirect') {
                                 $transaction_data->error_log = (string) $transaction;
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                                $transaction_data->save();
+                                if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
+                                    $inbox_constraint = new TblInboxConstraint();
+                                    $inbox_constraint->attributes = $transaction_data->attributes;
+                                    $inbox_constraint->processed_timestamp = date('Y-m-d H:i:s');
+                                    $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
+                                } else {
+                                    $transaction_data->save();
+                                }
                             }
                         } else {
                             $transaction_data->error_log = Json::encode($model->getErrors());
@@ -1620,7 +1628,6 @@ class SiteController extends Controller {
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                         $transaction_data->save();
-                        var_dump($ex->xdebug_message);
                     }
                 }
             }
