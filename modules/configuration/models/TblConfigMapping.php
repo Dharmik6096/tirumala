@@ -32,7 +32,7 @@ use app\modules\syncutility\models\TblSentbox;
  */
 class TblConfigMapping extends \app\models\ChildModel {
 
-    public $plant_code, $mcc_plant_code, $bmc_code, $config_for, $process_name;
+    public $config_for, $process_name;
 
     /**
      * @inheritdoc
@@ -120,13 +120,10 @@ class TblConfigMapping extends \app\models\ChildModel {
         $sentboxArray = [];
         $bmc_code = $mcc_code = $plant_code = '';
         if (strtolower($this->org_type) == 'bmc') {
-            $bmc_code = $this->org_code;
-            $mcc_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
-            $plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
-        } else {
-            $mcc_code = $this->org_code;
-            $plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+            $bmc_code = $this->bmc_code;
         }
+        $mcc_code = $this->mcc_plant_code;
+        $plant_code = $this->plant_code;
         $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
         foreach ($sentboxArray as $sent) {
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';

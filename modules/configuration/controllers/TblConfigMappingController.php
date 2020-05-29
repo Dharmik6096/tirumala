@@ -54,6 +54,7 @@ class TblConfigMappingController extends \app\controllers\ChildController {
             if (!empty($toRevoke)) {
                 foreach ($toRevoke as $revoke_widget) {
                     $model = new TblConfigMapping();
+                    $model->attributes = $this->model->attributes;
                     $model->config_code = $revoke_widget;
                     $model->union_code = $id;
                     $model->org_type = $this->model->org_type;
@@ -71,6 +72,7 @@ class TblConfigMappingController extends \app\controllers\ChildController {
             if (!empty($toAssign)) {
                 foreach ($toAssign as $Assign_widget) {
                     $model = new TblConfigMapping();
+                    $model->attributes = $this->model->attributes;
                     $model->config_code = $Assign_widget;
                     $model->union_code = $id;
                     $model->org_type = $this->model->org_type;

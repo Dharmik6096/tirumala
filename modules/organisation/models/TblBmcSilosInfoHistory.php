@@ -53,7 +53,7 @@ class TblBmcSilosInfoHistory extends \yii\db\ActiveRecord {
         return [
             [['bmc_silos_info_code', 'manufacturer_code', 'storage_capacity', 'chilling_capacity', 'milk_type_code', 'is_active', 'originating_type'], 'safe'],
             [['silo_no', 'description', 'model', 'owning_type', 'module_name', 'module_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
-            [['wef_date', 'created_at', 'updated_at', 'history_created_at', 'union_code'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at', 'history_created_at', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
         ];
     }
 

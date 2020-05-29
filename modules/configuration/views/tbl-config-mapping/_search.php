@@ -41,7 +41,7 @@ use yii\bootstrap\ActiveForm;
                         <div class="col-sm-6">
                             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblconfigmapping-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 bmc_class">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblconfigmapping-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
                         </div>
                     </div>

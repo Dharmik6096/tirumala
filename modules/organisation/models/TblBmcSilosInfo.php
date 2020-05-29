@@ -53,7 +53,7 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
         return [
             [['silo_no', 'description', 'model', 'owning_type', 'module_name', 'module_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['manufacturer_code', 'storage_capacity', 'chilling_capacity', 'milk_type_code', 'originating_type'], 'integer'],
-            [['wef_date', 'created_at', 'updated_at', 'is_active', 'union_code'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at', 'is_active', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
             [['silo_no', 'storage_capacity', 'chilling_capacity', 'owning_type'], 'required'],
             ['silo_no', 'unique', 'targetAttribute' => ['silo_no', 'module_code', 'module_name'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')]
         ];
@@ -96,9 +96,14 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
         $this->module_code = $module_code;
         $this->is_active = 1;
         if ($this->module_name == 'BMC') {
+            $this->bmc_code = $this->module_code;
             $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
         } else {
+            $this->mcc_plant_code = $this->module_code;
             $this->union_code = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
         }
     }
 
@@ -118,13 +123,10 @@ class TblBmcSilosInfo extends \app\models\ChildModel {
         $sentboxArray = [];
         $bmc_code = $mcc_code = $plant_code = '';
         if (strtoupper($this->module_name) == 'BMC') {
-            $bmc_code = $this->module_code;
-            $mcc_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
-            $plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
-        } else {
-            $mcc_code = $this->module_code;
-            $plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+            $bmc_code = $this->bmc_code;
         }
+        $mcc_code = $this->mcc_plant_code;
+        $plant_code = $this->plant_code;
         $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
         foreach ($sentboxArray as $sent) {
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';

@@ -141,6 +141,7 @@ $defaultToggle = true;
 </div>
 <?php
 $script = "
+    hideDiv();
     $('#allowCashCheckAll').click(function () {
         var check =this.checked;
         $('.allow-cash-checkbox').each(function () {
@@ -156,6 +157,19 @@ $script = "
     $('.mis_report_modal_toggle').on('click', function(){
         $('#mis_report_search_filter').modal('toggle');
     });
+    $(document).on('change','#tblconfigsearch-config_for', function() {
+       hideDiv();
+    });
+    function hideDiv(){
+        var type =$('#tblconfigsearch-config_for').val();
+        if(type=='MCC'){
+        $('#tblconfigmapping-bmc_code').val('');
+        $('.bmc_class').hide();
+        }else{
+         $('.bmc_class').show();
+        }
+    }
+
 ";
 if ($defaultToggle) {
     $script .= "
