@@ -130,6 +130,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $save_model = [];
         $validate = TRUE;
         $inspection = FALSE;
+        $api_res = FALSE;
         $vehicle_trip_detail_code = '';
         $this->transaction_date = date('Y-m-d', strtotime($this->transaction_date));
         $this->originating_org_code = $this->union_code;
@@ -138,6 +139,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 ->orderBy(['transaction_date' => SORT_ASC])
                 ->one();
         if (!empty($model)) {
+            $api_res = TRUE;
             if ($model->trip_status == 'generated') {
                 $inspection = TRUE;
             }
@@ -203,7 +205,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $api_response['trip_status'] = $model->trip_status;
         $api_response['vehicle_trip_detail_code'] = $vehicle_trip_detail_code;
         //}
-        return [$validate, $save_model, $api_response];
+        return [$validate, $save_model, $api_response, $api_res];
     }
 
     public function generateTripCode() {

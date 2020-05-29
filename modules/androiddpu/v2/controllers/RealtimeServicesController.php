@@ -246,6 +246,8 @@ class RealtimeServicesController extends RestController {
                         if ($transaction == 'customRedirect') {
                             $this->response['data'] = $result[2];
                         }
+                    } else if ($result[3]) {
+                        $this->response['data'] = $result[2];
                     }
                 }
             }
