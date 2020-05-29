@@ -19,9 +19,10 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
      */
     public function rules() {
         return [
-            [['rate_recalculation_code', 'rate_code', 'from_shift', 'to_shift'], 'integer'],
-            [['rate_type', 'from_date', 'to_date', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mcc_plant_code', 'bmc_code', 'plant_code', 'recalc_for', 'customer_code', 'customer_type'], 'safe'],
+            [['rate_recalculation_code', 'rate_code', 'from_shift', 'to_shift'], 'safe'],
+            [['rate_type', 'from_date', 'to_date', 'dcs_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mcc_plant_code', 'bmc_code', 'plant_code', 'recalc_for', 'customer_code', 'customer_type', 'module_type', 'recalc_type'], 'safe'],
             [['recalc_for', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required', 'on' => 'recalculation_search'],
+            [['recalc_type', 'plant_code', 'union_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'from_shift', 'to_shift', 'from_date', 'to_date'], 'required', 'on' => 'recalculation_dispatch'],
         ];
     }
 
@@ -59,7 +60,7 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime('-1 years'));
         $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
         $query->andWhere('((\'' . $from_date . '\'  between from_date and to_date) OR (\'' . $to_date . '\' between from_date  and to_date) OR (from_date between \'' . $from_date . '\' and  \'' . $to_date . '\') OR (to_date between \'' . $from_date . '\' and \'' . $to_date . '\'))');
 
@@ -75,16 +76,19 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
 //            FOR XML PATH(''), TYPE
 //            ).value('.', 'NVARCHAR(MAX)')
 //        ,1,1,'')";
-        $query->select(['from_date', 'to_date', 'recalc_for', 'recalc_type', 'rate_code', 'from_shift', 'to_shift', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type']);
+        $query->select(['from_date', 'to_date', 'recalc_for', 'recalc_type', 'rate_code', 'from_shift', 'to_shift', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type', 'module_type']);
         $query->andFilterWhere([
             'from_shift' => $this->from_shift,
             'to_shift' => $this->to_shift,
+            'recalc_type' => $this->recalc_type,
+            'rate_code' => $this->rate_code
         ]);
         $query->andFilterWhere(['like', 'rate_type', $this->rate_type])
-                ->andFilterWhere(['rate_code' => $this->rate_code])
+                ->andFilterWhere(['like', 'recalc_for', $this->recalc_for])
+                ->andFilterWhere(['like', 'module_type', $this->module_type])
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'customer_code', $this->customer_code]);
-        $query->groupBy(['from_date', 'to_date', 'recalc_for', 'rate_code', 'from_shift', 'to_shift', 'recalc_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type']);
+        $query->groupBy(['from_date', 'to_date', 'recalc_for', 'rate_code', 'from_shift', 'to_shift', 'recalc_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_type', 'module_type']);
         //echo $query->createCommand()->rawSql; exit;
         return $dataProvider;
     }
@@ -176,8 +180,57 @@ class TblRateRecalculationSearch extends TblRateRecalculation {
             'rate_code' => $this->rate_code,
             'from_shift' => $this->from_shift,
             'to_shift' => $this->to_shift,
+            'module_type' => $this->module_type,
         ]);
 
+        return $dataProvider;
+    }
+
+    public function searchDataDispatch($params) {
+        $this->load($params);
+        $output = [];
+        if (!empty($params) && $this->validate()) {
+            $sp_params = [
+                'union_code' => '',
+                'plant_code' => '',
+                'mcc_plant_code' => '',
+                'bmc_code' => '',
+                'dcs_code' => '',
+                'from_date' => '',
+                'from_shift' => '',
+                'to_date' => '',
+                'to_shift' => '',
+                'recalc_type' => ''];
+            $sp_params = array_merge($sp_params, $params['TblRateRecalculationSearch']);
+            $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
+            $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
+            unset($sp_params['from_shift']);
+            unset($sp_params['to_shift']);
+            $output = \Yii::$app->general->getSpData('sp_Portal_Data_Recalculation_Dispatch', $sp_params);
+            if (empty($output)) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Dispatch Data not available.']);
+            }
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
         return $dataProvider;
     }
 

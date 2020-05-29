@@ -58,7 +58,7 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                                 'attribute' => 'rate_code',
                                 'label' => Yii::t('app', 'Rate Desc.'),
                                 'value' => !empty(strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) ?
-                                (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '') . '(' . (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) . ')' : (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : ''),
+                                        (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : '') . '(' . (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'description') : Yii::$app->general->getforeignkey($model->dcsRateDescCode, 'description')) . ')' : (strtolower($model->rate_type) == 'member' ? Yii::$app->general->getforeignkey($model->rateDescCode, 'reference_code') : ''),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ]
@@ -107,7 +107,12 @@ $this->title = Yii::$app->label->title('view', 'Rate Recalculation');
                         'columns' => [
                             [
                                 'attribute' => 'recalc_type',
-                                'valueColOptions' => ['style' => 'width:100%']
+                                'value' => isset($model->recalc_type) ? Yii::$app->dropdown->getRecords('rate_recalc_type')['data'][$model->recalc_type] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'module_type',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
