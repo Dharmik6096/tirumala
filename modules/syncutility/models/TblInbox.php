@@ -3,6 +3,7 @@
 namespace app\modules\syncutility\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "tbl_inbox".
@@ -79,12 +80,28 @@ class TblInbox extends \yii\db\ActiveRecord {
     }
 
     public function getData() {
-        return $this->find()
-                        ->joinWith(['syncPriority'])
-                        ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
-                        ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
-                        ->limit(50)
-                        ->all();
+        /* return $this->find()
+          ->joinWith(['syncPriority'])
+          ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
+          ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+          ->limit(50)
+          ->all(); */
+        $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
+        $query = $this->find()
+                ->joinWith(['syncPriority'])
+                ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
+                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+                ->limit(50);
+
+        $pendingDataQuery = $this->find()
+                ->joinWith(['syncPriority'])
+                ->where(['and', ['IS NOT', 'tbl_inbox.error_log', NULL], ['<', 'tbl_inbox.error_timestamp', $datetime]])
+                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+                ->limit(10);
+
+        return $unionQuery = (new ActiveQuery(TblInbox::className()))->from([
+                    'pending_data' => $query->union($pendingDataQuery, TRUE)
+                ])->all();
     }
 
 }
