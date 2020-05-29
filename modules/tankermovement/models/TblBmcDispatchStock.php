@@ -63,7 +63,8 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
             [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
             [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
             [['type'], 'default', 'value' => 'dispatch'],
-            [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')]
+            [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
+            [['union_code'], 'required', 'except' => ['androidsync']],
         ];
     }
 
