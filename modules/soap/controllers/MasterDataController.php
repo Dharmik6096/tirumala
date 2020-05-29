@@ -47,7 +47,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                         $this->soapCall($config, $key, [], $union_code);
                     }
                 } catch (\Throwable $ex) {
-                    $this->createCpLogFile('', $ex->xdebug_message, $key);
+                    $this->createCpLogFile('', $ex->getMessage(), $key);
                 }
             }
         }
@@ -68,7 +68,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                 }
             }
         } catch (\Throwable $ex) {
-            $this->createCpLogFile('', $ex->xdebug_message, $key);
+            $this->createCpLogFile('', $ex->getMessage(), $key);
         }
     }
 
@@ -124,7 +124,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                 $this->createCpLogFile('', $text, $api_name);
             }
         } catch (\Throwable $ex) {
-            $this->createCpLogFile('', $ex->xdebug_message, $api_name);
+            $this->createCpLogFile('', $ex->getMessage(), $api_name);
         }
     }
 
@@ -152,7 +152,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                 $rate_type_code = 2;
                 $model_name = Yii::$app->path->define($request_param['model'] . 'Details');
                 $purchaseDetailModel = new $model_name();
-                // $detailmaxID = $purchaseDetailModel->getCode();
+                $detailmaxID = ($request_param['model'] == 'TblDcsPurchaseRate') ? $purchaseDetailModel->getCode() : 0;
                 $master = [];
                 $based = [];
                 $data = [];
@@ -172,16 +172,28 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                     unset($rate_array['EffectiveDate']);
                     unset($rate_array['EffectiveDateTo']);
                     foreach ($rate_array as $snf => $rtpl) {
-                        $data [$i] [] = [
-                            // $detailmaxID + $cnt,
-                            $model_data->purchase_rate_code,
-                            $rate_type_code,
-                            $milk_qlty_code,
-                            $milk_type_code,
-                            number_format((float) $fat, 2),
-                            number_format((float) $snf, 2),
-                            number_format((float) $rtpl, 2)
-                        ];
+                        if ($request_param['model'] == 'TblDcsPurchaseRate') {
+                            $data [$i] [] = [
+                                $detailmaxID + $cnt,
+                                $model_data->purchase_rate_code,
+                                $rate_type_code,
+                                $milk_qlty_code,
+                                $milk_type_code,
+                                number_format((float) $fat, 2),
+                                number_format((float) $snf, 2),
+                                number_format((float) $rtpl, 2)
+                            ];
+                        } else {
+                            $data [$i] [] = [
+                                $model_data->purchase_rate_code,
+                                $rate_type_code,
+                                $milk_qlty_code,
+                                $milk_type_code,
+                                number_format((float) $fat, 2),
+                                number_format((float) $snf, 2),
+                                number_format((float) $rtpl, 2)
+                            ];
+                        }
                         $cnt ++;
                         if (count($data [$i]) == 1000) {
                             $i ++;
@@ -231,9 +243,15 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                         $error = $b->save();
                         $master[] = $error;
                     }
-                    foreach ($data as $d) {
-                        \Yii::$app->db->createCommand()->batchInsert(strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $request_param['model'])) . '_details', ['purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl'], $d)->execute();
+                    if ($request_param['model'] == 'TblDcsPurchaseRate') {
+                        $clm_seq = ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl'];
+                    } else {
+                        $clm_seq = ['purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl'];
                     }
+                    foreach ($data as $d) {
+                        \Yii::$app->db->createCommand()->batchInsert(strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $request_param['model'])) . '_details', $clm_seq, $d)->execute();
+                    }
+
                     if ($save_applicability) {
                         $model_name = Yii::$app->path->define($request_param['model'] . 'Applicability');
                         $rateAppModel = new $model_name();
@@ -270,7 +288,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                     }
                 } catch (\Throwable $ex) {
                     $transaction->rollback();
-                    $this->createCpLogFile('', $ex->xdebug_message, $api_name);
+                    $this->createCpLogFile('', $ex->getMessage(), $api_name);
                 }
             }
         }
