@@ -97,6 +97,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['qty_time', 'qlty_time'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['qty_auto', 'qlty_auto', 'is_rejected', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff', 'rtpl', 'amount',], 'default', 'value' => '0'],
             [['milk_type_code'], 'ValidateData', 'on' => 'create'],
+            [['union_code'], 'required', 'except' => ['androidsync']],
         ];
     }
 

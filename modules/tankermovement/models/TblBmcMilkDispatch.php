@@ -79,6 +79,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
             //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
+            [['union_code'], 'required', 'except' => ['androidsync']],
         ];
     }
 
