@@ -16,10 +16,10 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Member Provisional
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-            <?php echo $this->render('_search', ['model' => $model]); ?>
+            <?php //echo $this->render('_search', ['model' => $model]); ?>
             <div id="provisional-member">
             <?php
-            $action = Url::to(['bulk-approval']);
+            $action = Url::to(['provisional-members-approval']);
             $form = ActiveForm::begin([
                         'id' => 'summary-form',
                         'action' => $action,
@@ -103,7 +103,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Member Provisional
                     'view' => true,
                         ],
                     ];
-                    Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['bulk-approval'], true);
+                    Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['provisional-members-approval'], true);
                     ?>
                 <?= Html::submitButton(Yii::t('app', 'Approve'), ['class' => 'btn btn-default provisional-member-submit', 'name' => 'approve']); ?>
                 <?php //Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default provisional-member-submit', 'name' => 'reject']); ?>

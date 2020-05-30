@@ -191,41 +191,63 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionBulkApproval() {
+    public function actionProvisionalMembersApproval() {
         $searchModel = new TblMemberProvisionalSearch();
         $dataProvider = $searchModel->searchApprovalData(Yii::$app->request->queryParams);
-
+        $backUrl[] = '/dcsoperation/tbl-member-provisional/provisional-members-approval';
         if (Yii::$app->request->post() && !empty(Yii::$app->request->post('selection'))) {
-            $tblMember = new TblMember;
             $data = Yii::$app->request->post();
             $selection = $data['selection'];
             $master = [];
             $child = [];
+            $errors = '';
+            $success = '';
             $flag = $data['flag'];
             foreach ($selection as $key => $value) {
                 $this->model = $this->findModel($value);
-                $this->model->is_approved = 1;
-                $this->model->approved_at = date('Y-m-d H:i:s');
-                $this->model->approved_by = Yii::$app->session['UserCode'];
-                if(Yii::$app->session['eiplCode'] == 'NIFPL'){
-                    $this->model->scenario = 'approveMember';
-                }
-                if ($this->model->validate()){
-                    $tblMember->setAttributes($this->model);
-                    $tblMember->setAttributes($this->model->getAttributes());
-                    $master[] = $tblMember;
+                if($this->model->is_approved != 1){
+                    $this->model->is_approved = 1;
+                    $this->model->approved_at = date('Y-m-d H:i:s');
+                    $this->model->approved_by = Yii::$app->session['UserCode'];
+                    if(Yii::$app->session['eiplCode'] == 'NIFPL'){
+                        $this->model->scenario = 'approveMember';
+                    }
+                    if ($this->model->validate()){
+                        $tblMember = new TblMember;
+                        $tblMember->setAttributes($this->model);
+                        $tblMember->setAttributes($this->model->getAttributes());
+                        $historyModel = new TblMemberProvisionalHistory();
+                        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                        $historyModel->provisional_member_code = $this->model->provisional_member_code;
+                        $master[] = $tblMember;
+                        $master[] = $this->model;
+                        $master[] = $historyModel;
+
+                        $success .= $this->model->member_code.' has approved.<\br>'; 
+                    }
+                    else{
+                        $errors .= $this->model->member_code.' has some data missing.<\br>';
+                    }
                 }
                 else{
-                    $record = ['status' => 'error', 'msg' => '"'.$this->model->member_code.'" has some data missing.'];
+                    $errors .= 'Something went wrong.<\br>';
                 }
             }
-            // $backUrl[] = '/misreports/default/expense-summary';
-            // Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-            //     'message' => Yii::t('app', 'User levels are not added')]);
-            // return $this->redirect($backUrl);
-            // Yii::$app->response->format = trim(Response::FORMAT_JSON);
-            // return Json::encode($record);
-            // die;
+            if($errors == ''){
+                $transaction = $this->generalModel->saveTransaction($master, ['member provisional approval', 'edit']);
+                if ($transaction !== FALSE) {
+                    if ($transaction == 'customRedirect') {
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => $success]);
+                        return $this->redirect($backUrl);
+                    }
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => $success]);
+                    return $this->redirect($backUrl);
+                }
+            }
+            else{
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $errors]);
+                return $this->redirect($backUrl);
+            }
         }
 
         return $this->render('_bulk_approval_grid', [
