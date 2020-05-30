@@ -15,18 +15,18 @@ $attribute = [
     ['attribute' => 'reference_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code;
-        }
+        },'visible' => false
     ],
     ['attribute' => 'ex_member_code', 'value' => 'ex_member_code'],
     ['attribute' => 'member_type_code', 'value' => 'memberTypeCode.member_type_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'member_name', 'value' => 'member_name'],
-    ['attribute' => 'local_name', 'value' => 'local_name', 'filter' => false],
-    ['attribute' => 'father_name', 'value' => 'father_name'],
-    ['attribute' => 'local_father_name', 'value' => 'local_father_name', 'filter' => false],
-    ['attribute' => 'surname', 'value' => 'surname'],
-    ['attribute' => 'local_surname', 'value' => 'local_surname', 'filter' => false],
-    ['attribute' => 'nominee_name', 'value' => 'nominee_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'local_nominee_name', 'value' => 'local_nominee_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'local_name', 'value' => 'local_name', 'filter' => false,'visible' => false],
+    ['attribute' => 'father_name', 'value' => 'father_name','visible' => false],
+    ['attribute' => 'local_father_name', 'value' => 'local_father_name', 'filter' => false,'visible' => false],
+    ['attribute' => 'surname', 'value' => 'surname','visible' => false],
+    ['attribute' => 'local_surname', 'value' => 'local_surname', 'filter' => false,'visible' => false],
+    ['attribute' => 'nominee_name', 'value' => 'nominee_name', 'visible' => false, 'filter' => false,],
+    ['attribute' => 'local_nominee_name', 'value' => 'local_nominee_name', 'visible' => false, 'filter' => false,],
     ['attribute' => 'dob', 'visible' => false, 'filter' => false],
     ['attribute' => 'bloodgroup_code', 'value' => 'bloodGroupCode.blood_group', 'visible' => false, 'filter' => false],
     ['attribute' => 'gender_code', 'value' => 'genderCode.gender', 'visible' => false, 'filter' => false],
@@ -44,11 +44,11 @@ $attribute = [
     ['attribute' => 'total_land', 'visible' => false, 'filter' => false],
     ['attribute' => 'address', 'value' => 'address', 'visible' => false, 'filter' => false],
     ['attribute' => 'local_address', 'visible' => false, 'filter' => false],
-    ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'filter' => false],
+    ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'filter' => false],
+    ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'filter' => false],
+    ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'filter' => false],
+    ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'filter' => false],
     ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
     ['attribute' => 'mobile_no', 'visible' => TRUE, 'filter' => true],
     ['attribute' => 'email', 'visible' => false, 'filter' => false],
@@ -77,7 +77,7 @@ $grid_option = [
     'actions' => [
         'update' => function ($url, $model) {
             $name = $model->member_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = ($model->is_approved == 1) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },

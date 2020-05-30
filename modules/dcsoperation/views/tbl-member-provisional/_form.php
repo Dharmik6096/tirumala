@@ -201,7 +201,8 @@ if ($model->isNewRecord) {
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'save']) ?>
+            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'approve']) ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
             <?php //Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

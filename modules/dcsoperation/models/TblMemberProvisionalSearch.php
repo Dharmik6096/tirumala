@@ -38,6 +38,78 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
      *
      * @return ActiveDataProvider
      */
+    
+    public function searchApprovalData($params) {
+        $query = TblMemberProvisional::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        
+        $this->load($params);
+
+        $query->joinWith(['memberTypeCode', 'dcsCode']);        
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        Yii::$app->general->filterByOrg($query, $this);
+        
+         $query->andFilterWhere(['tbl_member_provisional.is_approved' => 0]);
+        // var_dump($query->all());
+        // die;
+
+        $query->andFilterWhere([
+            'tbl_member_provisional.is_active' => $this->is_active,
+            'tbl_member_provisional.payment_mode' => $this->payment_mode,
+            'tbl_member_provisional.caste_category_code' => $this->caste_category_code,
+//            'milk_quality_type_code' => $this->milk_quality_type_code,
+        ]);
+
+
+
+        $query->andFilterWhere(['like', 'tbl_member_provisional.member_code', $this->member_code])
+                //->andFilterWhere(['like', 'tbl_member_provisional.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.ex_member_code', $this->ex_member_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.member_name', $this->member_name])
+                ->andFilterWhere(['like', 'tbl_member_provisional.father_name', $this->father_name])
+                ->andFilterWhere(['like', 'tbl_member_provisional.surname', $this->surname])
+                ->andFilterWhere(['like', 'tbl_member_provisional.nominee_name', $this->nominee_name])
+                ->andFilterWhere(['like', 'tbl_member_provisional.dob', $this->dob])
+                //->andFilterWhere(['like', 'land_class', $this->land_class])
+                ->andFilterWhere(['like', 'tbl_member_provisional.total_land', $this->total_land])
+                ->andFilterWhere(['like', 'tbl_member_provisional.bank_code', $this->bank_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.branch_code', $this->branch_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'tbl_member_provisional.ifsc', $this->ifsc])
+                ->andFilterWhere(['like', 'tbl_member_provisional.mobile_no', $this->mobile_no])
+                ->andFilterWhere(['like', 'tbl_member_provisional.address', $this->address])
+                ->andFilterWhere(['like', 'tbl_member_provisional.pincode', $this->pincode])
+                ->andFilterWhere(['like', 'tbl_member_provisional.pan_no', $this->pan_no])
+                ->andFilterWhere(['like', 'tbl_member_provisional.adhar_no', $this->adhar_no])
+                ->andFilterWhere(['like', 'tbl_member_provisional.village_code', $this->village_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.created_by', $this->created_by])
+                ->andFilterWhere(['like', 'tbl_member_provisional.updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'tbl_member_provisional.hamlet_code', $this->hamlet_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.sub_district_code', $this->sub_district_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.district_code', $this->district_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.state_code', $this->state_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.union_code', $this->union_code])
+                ->andFilterWhere(['like', 'tbl_member_provisional.local_name', $this->local_name])
+                ->andFilterWhere(['like', 'tbl_member_provisional.local_father_name', $this->local_father_name])
+                ->andFilterWhere(['like', 'tbl_member_provisional.local_surname', $this->local_surname])
+                ->andFilterWhere(['like', 'tbl_member_provisional.local_nominee_name', $this->local_nominee_name])
+                ->andFilterWhere(['like', 'tbl_member_provisional.is_download', $this->is_download])
+                ->andFilterWhere(['like', 'tbl_member_provisional.local_address', $this->local_address])
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', substr($this->reference_code,0,3)])
+                ->andFilterWhere(['like', 'RIGHT(tbl_member_provisional.member_code,4)', substr($this->reference_code,3,4)]);
+
+        return $dataProvider;
+
+    }
+
+
     public function search($params) {
         $query = TblMemberProvisional::find();
 

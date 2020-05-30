@@ -6,8 +6,8 @@ use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'provisional member');
 $this->params['menu'][] = Yii::$app->controls->add('provisional member');
-if ($model->is_active == 1) {
-    $this->params['menu'][] = Yii::$app->controls->update($model->member_code);
+if ($model->is_approved != 1) {
+    $this->params['menu'][] = Yii::$app->controls->update($model->provisional_member_code);
 }
 ?>
 <div class="panel panel-default panel-grid panel-main">

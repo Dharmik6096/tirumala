@@ -2,6 +2,7 @@
 
 namespace app\modules\dcsoperation\controllers;
 
+use app\modules\dcsoperation\models\TblMember;
 use Yii;
 use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\dcsoperation\models\TblMemberProvisionalSearch;
@@ -64,10 +65,22 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $validate = 1;
 
         if ($this->model->load(Yii::$app->request->post())) {
+            if(Yii::$app->request->post('submitBtn')==='approve'){
+                $this->model->is_approved = 1;
+                $this->model->approved_at = date('Y-m-d H:i:s');
+                $this->model->approved_by = Yii::$app->session['UserCode'];
+                if(Yii::$app->session['eiplCode'] == 'NIFPL'){
+                    $this->model->scenario = 'approveMember';
+                }
+            }
+            else{
+                $this->model->is_approved = 0;
+            }
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
             //var_dump($this->model->unionCode->federationCode);exit();
             $this->model->provisional_member_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->member_code = $this->model->getCode();
+            $this->model->pro_ex_member_code = $this->model->ex_member_code;
             $this->setModel();
             // $dcs = TblDcs::findOne($this->model->dcs_code);
             // $this->model->state_code = $dcs->state_code;
@@ -84,7 +97,14 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 // var_dump($this->model);
                 // die;
-                $transaction = $this->generalModel->saveTransaction([$this->model], ['member', 'create']);
+                $master_model = [];
+                $master_model[] = $this->model;
+                if($this->model->is_approved == 1){
+                    $tblMember = new TblMember();
+                    $tblMember->setAttributes($this->model);
+                    $master_model[] = $tblMember;
+                }
+                $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
                         if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
@@ -112,6 +132,17 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
         if (Yii::$app->request->post()) {
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
+            if(Yii::$app->request->post('submitBtn')==='approve'){
+                $this->model->is_approved = 1;
+                $this->model->approved_at = date('Y-m-d H:i:s');
+                $this->model->approved_by = Yii::$app->session['UserCode'];
+                if(Yii::$app->session['eiplCode'] == 'NIFPL'){
+                    $this->model->scenario = 'approveMember';
+                }
+            }
+            else{
+                $this->model->is_approved = 0;
+            }
             //var_dump($this->model);exit();
             //$dcs = TblDcs::findOne($this->model->dcs_code);
             // $this->model->state_code = $dcs->state_code;
@@ -127,7 +158,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
             if ($validate == 1) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['member', 'edit']);
+                $master_model = [];
+                $master_model[] = $this->model;
+                if($this->model->is_approved == 1){
+                    $tblMember = new TblMember();
+                    $tblMember->setAttributes($this->model);
+                    $tblMember->setAttributes($this->model->getAttributes());
+                    $master_model[] = $tblMember;
+                }
+                $master_model[] = $historyModel;
+                $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
                         if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
@@ -148,6 +188,49 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
                     'bankDetails' => $this->bankDetails,
+        ]);
+    }
+
+    public function actionBulkApproval() {
+        $searchModel = new TblMemberProvisionalSearch();
+        $dataProvider = $searchModel->searchApprovalData(Yii::$app->request->queryParams);
+
+        if (Yii::$app->request->post() && !empty(Yii::$app->request->post('selection'))) {
+            $tblMember = new TblMember;
+            $data = Yii::$app->request->post();
+            $selection = $data['selection'];
+            $master = [];
+            $child = [];
+            $flag = $data['flag'];
+            foreach ($selection as $key => $value) {
+                $this->model = $this->findModel($value);
+                $this->model->is_approved = 1;
+                $this->model->approved_at = date('Y-m-d H:i:s');
+                $this->model->approved_by = Yii::$app->session['UserCode'];
+                if(Yii::$app->session['eiplCode'] == 'NIFPL'){
+                    $this->model->scenario = 'approveMember';
+                }
+                if ($this->model->validate()){
+                    $tblMember->setAttributes($this->model);
+                    $tblMember->setAttributes($this->model->getAttributes());
+                    $master[] = $tblMember;
+                }
+                else{
+                    $record = ['status' => 'error', 'msg' => '"'.$this->model->member_code.'" has some data missing.'];
+                }
+            }
+            // $backUrl[] = '/misreports/default/expense-summary';
+            // Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+            //     'message' => Yii::t('app', 'User levels are not added')]);
+            // return $this->redirect($backUrl);
+            // Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            // return Json::encode($record);
+            // die;
+        }
+
+        return $this->render('_bulk_approval_grid', [
+                    'model' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
