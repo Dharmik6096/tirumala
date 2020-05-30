@@ -8,7 +8,6 @@ $this->title = Yii::$app->label->title('create', 'Provisional Members');
         $this->render('_form', [
             'model' => $model,
             'type' => 'create',
-            'bankDetails'=>$bankDetails,
         ])
         ?>
     </div>

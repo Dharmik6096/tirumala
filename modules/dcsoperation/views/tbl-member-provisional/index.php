@@ -3,12 +3,9 @@
 use yii\helpers\Url;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'provisional member'));
-if (Yii::$app->general->checkAccess('/dcsoperation//tbl-member-provisional/update')) {
     $this->params['menu'][] = Yii::$app->controls->add('provisional member');
     $this->params['menu'][] = Yii::$app->controls->import('member-provisional', $this);
     $this->params['menu'][] = Yii::$app->controls->custombutton('Provisional Member Approval', '/dcsoperation/tbl-member-provisional/provisional-members-approval');
-//    $this->params['menu'][] = Yii::$app->controls->import('member_limited', $this,'Import Limited Data');
-}
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
