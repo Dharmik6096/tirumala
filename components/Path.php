@@ -63,7 +63,7 @@ class Path extends Component {
         '\\app\modules\dcsoperation\models\\' =>
         ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
             'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
-            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending'],
+            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending','TblMemberProvisional'],
         '\\app\modules\product\models\\' =>
         ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory', 'TblProductRequisition', 'TblProductRequisitionHistory', 'TblProductRequisitionTransaction', 'TblProductRequisitionTransactionHistory', 'TblProductReceipt', 'TblProductReceiptHistory', 'TblProductReceiptTransaction', 'TblProductReceiptTransactionHistory', 'TblProductReceiptTaxCalculated', 'TblProductReceiptTaxCalculatedHistory', 'TblProductDispatch', 'TblProductDispatchHistory', 'TblProductDispatchTransaction', 'TblProductDispatchTransactionHistory'],
         '\\app\modules\hardwareconfigutation\models\\' =>
