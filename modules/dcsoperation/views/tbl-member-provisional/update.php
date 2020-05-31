@@ -9,18 +9,8 @@ use yii\web\View;
         <?=
         $this->render('_form', [
             'model' => $model,
-            'type' => 'edit', 
-//            'disable' => $disable
+            'type' => 'edit',
         ])
         ?>
     </div>
 </div>
-<?php
-$script = "
-        $(document).ajaxStop(function() {
-            $('.depend-control').each(function(){
-                $(this).attr('disabled', 'disabled');
-            })
-        });";
-Yii::$app->view->registerJs($script, View::POS_READY,'disable-dep');
-?>
