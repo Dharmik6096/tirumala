@@ -54,8 +54,14 @@ $grid_option = [
         'staff-member-design' => function ($url, $model) {
             $disable = '';
             $options = ['data-name' => $model->staff_member_code, 'class' => $disable, 'data-val' => $model->staff_member_code, 'title' => Yii::t('app', 'Designation')];
-            return Html::a('<span><i class="fa fa-group"></i></span>', ['/staffmanagement/tbl-staff-member/staff-member-designation', 'id' => $model->staff_member_code], $options);
-        },]
+            return Html::a('<span><i class="fa fa-user-circle-o"></i></span>', ['/staffmanagement/tbl-staff-member/staff-member-designation', 'id' => $model->staff_member_code], $options);
+        },
+        'staff-family' => function ($url, $model) {
+            $disable = '';
+            $options = ['data-name' => $model->staff_member_code, 'class' => $disable, 'data-val' => $model->staff_member_code, 'title' => Yii::t('app', 'Family Detail')];
+            return Html::a('<span><i class="fa fa-group"></i></span>', ['family-detail', 'id' => $model->staff_member_code], $options);
+        },
+    ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

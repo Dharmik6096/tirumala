@@ -61,7 +61,7 @@ class TblStaffAdditionDeductionSearch extends TblStaffAdditionDeduction {
         $query->andFilterWhere([
             'tbl_staff_addition_deduction.is_active' => $this->is_active,
             'type' => $this->type,
-            'updated_at' => $this->updated_at,
+            'tbl_staff_addition_deduction.staff_member_code' => $this->staff_member_code,
         ]);
         if (!empty($this->tr_date))
             $query->andFilterWhere(['and', ['>=', 'tr_date', date('Y-m-d', strtotime($this->tr_date))], ['<=', 'tr_date', date('Y-m-d', strtotime($this->tr_date))]]);
@@ -70,8 +70,8 @@ class TblStaffAdditionDeductionSearch extends TblStaffAdditionDeduction {
                 ->andFilterWhere(['like', 'installment_no', $this->installment_no])
                 ->andFilterWhere(['like', 'remark', $this->remark])
                 ->andFilterWhere(['=', 'MONTH(app_from_date)', (!empty($this->app_from_date)) ? substr($this->app_from_date, 0, 2) : ''])
-                ->andFilterWhere(['=', 'YEAR(app_from_date)', (!empty($this->app_from_date)) ? substr($this->app_from_date, 3, 4) : ''])
-                ->andFilterWhere(['like', 'tbl_staff_member.staff_member_name', $this->staff_member_code]);
+                ->andFilterWhere(['=', 'YEAR(app_from_date)', (!empty($this->app_from_date)) ? substr($this->app_from_date, 3, 4) : '']);
+//                ->andFilterWhere(['like', 'tbl_staff_member.staff_member_name', $this->staff_member_code]);
 
         return $dataProvider;
     }

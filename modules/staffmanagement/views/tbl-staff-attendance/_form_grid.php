@@ -14,7 +14,7 @@ $attribute = [
         'filter' => false, 'visible' => FALSE],
     ['attribute' => 'staff_member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->staffMemberCode, 'staff_member_name');
-        },],
+        }, 'filter' => false],
     [
         'attribute' => 'lwp_date',
         'filterType' => GridView::FILTER_DATE,

@@ -256,5 +256,26 @@ $this->title = Yii::$app->label->title('view', 'Staff Member');
                 ?>
             </div>
         </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Designation Details') ?></h5></div>
+        <div class="form-grid">
+            <?=
+            $this->render('_form_grid_designation', [
+                'model' => $model,
+                'dataProvider' => $ddataProvider,
+                'searchModel' => $dsearchModel,
+            ])
+            ?>
+        </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Family Details') ?></h5></div>
+        <div class="form-grid">
+            <?=
+            $this->render('../../../staffmanagement/views/tbl-staff-member-family-details/_form_grid', [
+                'model' => $model,
+                'dataProvider' => $fdataProvider,
+                'searchModel' => $fsearchModel,
+                'isaction' => FALSE
+            ])
+            ?>
+        </div>
     </div>
 </div>

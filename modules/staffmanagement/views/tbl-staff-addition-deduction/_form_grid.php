@@ -22,7 +22,7 @@ $attribute = [
         'filter' => false, 'visible' => FALSE],
     ['attribute' => 'staff_member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->staffMemberCode, 'staff_member_name');
-        }],
+        }, 'filter' => false],
     [
         'attribute' => 'app_from_date',
         'width' => '200px',

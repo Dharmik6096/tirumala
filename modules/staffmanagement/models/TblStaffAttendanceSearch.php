@@ -18,7 +18,7 @@ class TblStaffAttendanceSearch extends TblStaffAttendance {
     public function rules() {
         return [
             [['lwp_type', 'salary_processed'], 'integer'],
-            [['created_at', 'staff_member_name', 'lwp_date', 'remark', 'updated_at', 'created_by', 'staff_member_code', 'updated_by', 'union_code'], 'safe'],
+            [['created_at', 'lwp_date', 'remark', 'updated_at', 'created_by', 'staff_member_code', 'updated_by', 'union_code'], 'safe'],
         ];
     }
 
@@ -60,13 +60,14 @@ class TblStaffAttendanceSearch extends TblStaffAttendance {
         $query->andFilterWhere([
             'lwp_type' => $this->lwp_type,
             'salary_processed' => $this->salary_processed,
+            'tbl_staff_attendance.staff_member_code' => $this->staff_member_code,
         ]);
         if (!empty($this->lwp_date))
             $query->andFilterWhere(['and', ['>=', 'lwp_date', date('Y-m-d', strtotime($this->lwp_date))], ['<=', 'lwp_date', date('Y-m-d', strtotime($this->lwp_date))]]);
 
         $query->andFilterWhere(['like', 'remark', $this->remark])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'tbl_staff_member.staff_member_name', $this->staff_member_code])
+//                ->andFilterWhere(['like', 'tbl_staff_member.staff_member_name', $this->staff_member_code])
                 ->andFilterWhere(['like', 'union_code', $this->union_code]);
 
         return $dataProvider;

@@ -228,10 +228,10 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblStaffAttendanceSearch' => [
-                'filter' => ['f_union_code'],
+                'filter' => ['f_union_code', 'staff_member_code'],
             ],
             'TblStaffAdditionDeductionSearch' => [
-                'filter' => ['f_union_code'],
+                'filter' => ['f_union_code', 'staff_member_code'],
             ],
             'TblStaffSalaryProcessSearch' => [
                 'filter' => ['f_union_code'],

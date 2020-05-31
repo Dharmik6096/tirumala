@@ -17,6 +17,9 @@ use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Json;
+use app\modules\staffmanagement\models\TblStaffMemberFamilyDetails;
+use app\modules\staffmanagement\models\TblStaffMemberFamilyDetailsSearch;
+use app\modules\staffmanagement\models\TblStaffMemberDesignationSearch;
 
 /**
  * TblStaffMemberController implements the CRUD actions for TblStaffMember model.
@@ -45,8 +48,19 @@ class TblStaffMemberController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $dsearchModel = new TblStaffMemberDesignationSearch();
+        $dsearchModel->staff_member_code = $id;
+        $ddataProvider = $dsearchModel->search(Yii::$app->request->queryParams);
+
+        $fsearchModel = new TblStaffMemberFamilyDetailsSearch();
+        $fsearchModel->staff_member_code = $id;
+        $fdataProvider = $fsearchModel->search(Yii::$app->request->queryParams);
+        $isaction = FALSE;
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'dsearchModel' => $dsearchModel, 'ddataProvider' => $ddataProvider,
+                    'fsearchModel' => $fsearchModel, 'fdataProvider' => $fdataProvider,
         ]);
     }
 
@@ -187,8 +201,8 @@ class TblStaffMemberController extends \app\controllers\ChildController {
             $historyModel = new TblStaffMemberHistory();
             Yii::$app->operation->history($model, $historyModel, UPDATE);
             $master[] = $historyModel;
-            $model->tenure_from_date = !empty($this->model->tenure_from_date) ? date('Y-m-d', strtotime($this->model->tenure_from_date)) : NULL;
-            $model->tenure_to_date = !empty($this->model->tenure_to_date) ? date('Y-m-d', strtotime($this->model->tenure_to_date)) : NULL;
+//            $model->tenure_from_date = !empty($this->model->tenure_from_date) ? date('Y-m-d', strtotime($this->model->tenure_from_date)) : NULL;
+//            $model->tenure_to_date = !empty($this->model->tenure_to_date) ? date('Y-m-d', strtotime($this->model->tenure_to_date)) : NULL;
             $model->designation_code = $this->model->designation_code;
             $master[] = $model;
             $transaction = $this->generalModel->saveTransaction($master, ['Staff Member Designation', ($update) ? 'edit' : 'create']);
@@ -206,6 +220,21 @@ class TblStaffMemberController extends \app\controllers\ChildController {
         return $this->render('staff_design_create', [
                     'model' => $this->model,
                     'existData' => $existData,
+        ]);
+    }
+
+    public function actionFamilyDetail($id) {
+        $mainModel = new TblStaffMemberFamilyDetails();
+        $searchModel = new TblStaffMemberFamilyDetailsSearch();
+        $searchModel->staff_member_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $isaction = TRUE;
+        return $this->render('@app/modules/staffmanagement/views/tbl-staff-member-family-details/create', [
+                    'model' => $mainModel,
+                    'id' => $id,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'isaction' => $isaction
         ]);
     }
 

@@ -200,7 +200,15 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->all_routes($model, $form, $depend_str, 'route_code', FALSE); ?>
                                         </div>
                                     <?php } ?>
-
+                                    <?php
+                                    if (in_array($value, array('staff_member_code'))) {
+                                        $depend_str = $field_class . '-f_union_code';
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-6">
+                                            <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, $depend_str, 'form-group', Yii::t('app', 'Staff Member')); ?>
+                                        </div>
+                                    <?php } ?>
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
