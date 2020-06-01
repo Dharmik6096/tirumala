@@ -117,8 +117,8 @@ class TblMemberProvisional extends ChildModel {
             [['member_type_code'], 'default', 'value' => '1'],
             [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'on' => ['approveMember']],
             [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'on' => ['approveMember']],
-
-            [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'hamlet_code', 'ex_member_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+            [['bmc_code','mcc_plant_code','plant_code'],'required', 'except' => ['importCsv']],
+            [['dcs_code', 'hamlet_code', 'ex_member_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
             [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code'], 'required', 'except' => ['importCsv','importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
 
             [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
@@ -580,6 +580,9 @@ class TblMemberProvisional extends ChildModel {
             $this->district_code = $this->dcsCode->district_code;
             $this->sub_district_code = $this->dcsCode->sub_district_code;
             $this->village_code = $this->dcsCode->village_code;
+            $this->bmc_code = $this->dcsCode->bmc_code;
+            $this->mcc_plant_code = $this->dcsCode->mcc_plant_code;
+            $this->plant_code = $this->dcsCode->plant_code;
         }
     }
 
