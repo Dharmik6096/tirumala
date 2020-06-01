@@ -179,6 +179,10 @@ class GeneralFunctions extends Component {
         return $status == 1 ? 'Active' : 'In Active';
     }
 
+    public static function getApprovalStatus($status) {
+        return $status == 1 ? 'Approved' : 'Not Approved';
+    }
+
     /**
      * validate bank detail if bank code is not empty
      * @param type $bank

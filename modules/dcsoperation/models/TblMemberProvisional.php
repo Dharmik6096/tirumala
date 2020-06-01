@@ -20,6 +20,7 @@ use app\modules\general\models\TblGender;
 use app\modules\general\models\TblReligion;
 use app\modules\dcsoperation\models\TblMemberDownload;
 use app\modules\general\models\TblRelationship;
+use app\modules\organisation\models\TblDcsBmc;
 use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
 
@@ -29,6 +30,9 @@ use app\modules\syncutility\models\TblSentbox;
  * @property string $provisional_member_code
  * @property string $member_code
  * @property string $dcs_code
+ * @property string $bmc_code
+ * @property string $mcc_plant_code
+ * @property string $plant_code
  * @property string $ex_member_code
  * @property string $member_name
  * @property string $father_name
@@ -93,7 +97,7 @@ use app\modules\syncutility\models\TblSentbox;
  */
 class TblMemberProvisional extends ChildModel {
 
-    public $cnt, $reference_code;
+    public $cnt, $reference_code, $society_code,$bmc_name;
 
     /**
      * @inheritdoc
@@ -111,11 +115,11 @@ class TblMemberProvisional extends ChildModel {
             [['is_active'], 'default', 'value' => '1'],
             [['is_approved'], 'default', 'value' => '0','on'=>'importCsv'],
             [['member_type_code'], 'default', 'value' => '1'],
-            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'on' => ['approveMember']],
+            [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'on' => ['approveMember']],
             [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'on' => ['approveMember']],
 
-            [['dcs_code', 'hamlet_code', 'ex_member_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+            [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'hamlet_code', 'ex_member_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code'], 'required', 'except' => ['importCsv','importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
 
             [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
             [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
@@ -126,7 +130,7 @@ class TblMemberProvisional extends ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'gender', false);
                 }, 'on' => 'saveCreamyData'],
             [['email'], 'email', 'except' => ['androidsync']],
-            [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id', 'approved_by',], 'string', 'except' => ['androidsync']],
+            [['member_code', 'dcs_code','bmc_code','mcc_plant_code','plant_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id', 'approved_by',], 'string', 'except' => ['androidsync']],
             [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync']],
             [['approved_at','created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved','approved_at'], 'safe'],
             [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync']],
@@ -183,7 +187,7 @@ class TblMemberProvisional extends ChildModel {
             [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync']],
             [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync']],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['member_code', 'federation_code', 'dcs_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5','is_approved', 'approved_at', 'approved_by',], 'safe'],
+            [['member_code', 'federation_code', 'dcs_code','bmc_code','mcc_plant_code','plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5','is_approved', 'approved_at', 'approved_by',], 'safe'],
             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected']],
@@ -191,6 +195,7 @@ class TblMemberProvisional extends ChildModel {
             [['ex_member_code'], 'setExMember'],
             [['provisional_member_code'], 'setProvisionalMemberCode', 'on' => 'importCsv'],
             [['dcs_code'], 'setAddressDetail', 'on' => ['importCsv']],
+            [['ex_member_code'], 'setProExMemberCode', 'on' => ['importCsv']],
         ];
     }
 
@@ -258,7 +263,13 @@ class TblMemberProvisional extends ChildModel {
             'download_date_time' => Yii::t('app', 'Download Date Time'),
             'registration_date' => Yii::t('app', 'Registration Date'),
             'member_class' => Yii::t('app', 'Member Class'),
-            'reference_code' => Yii::t('app', 'Reference Code')
+            'reference_code' => Yii::t('app', 'Reference Code'),
+            'society_code' => Yii::t('app', 'Society Code'),
+            'bmc_code' => Yii::t('app','BMC'),
+            'mcc_plant_code' => Yii::t('app','MCC'),
+            'bmc_name' => Yii::t('app','Plant'),
+            'bmc_name' => Yii::t('app','BMC Name'),
+            'is_approved' => Yii::t('app','Approve status'),
         ];
     }
 
@@ -380,6 +391,10 @@ class TblMemberProvisional extends ChildModel {
 
     public function getRelationship() {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'nominee_relation']);
+    }
+    
+    public function getTblDcsBmc() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
     public function getMembers($dcs_code, $as_array = false) {
@@ -565,6 +580,12 @@ class TblMemberProvisional extends ChildModel {
             $this->district_code = $this->dcsCode->district_code;
             $this->sub_district_code = $this->dcsCode->sub_district_code;
             $this->village_code = $this->dcsCode->village_code;
+        }
+    }
+
+    public function setProExMemberCode($attribute, $params) {
+        if (isset($this->dcsCode)) {
+            $this->pro_ex_member_code = $this->ex_member_code;
         }
     }
 }

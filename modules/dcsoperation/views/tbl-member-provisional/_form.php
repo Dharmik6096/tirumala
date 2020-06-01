@@ -39,11 +39,23 @@ if ($model->isNewRecord) {
 <div class="row">
 
     <div class="col-sm-3" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', true, $readonly); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmemberprovisional-union_code', 'plant_code',true,false, '', $readonly); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmemberprovisional-plant_code', 'mcc_plant_code',true,false, '', $readonly); ?>
+    </div>  
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberprovisional-mcc_plant_code', 'bmc_code',true,false, '','', $readonly); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmemberprovisional-union_code', '', 'Society', '', $readonly); ?>
-    </div>
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmemberprovisional-bmc_code', 'dcs_code',true,false, '', $readonly); ?>         
+    </div>  
+    <!-- <div class="col-sm-3">
+        <?php //Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmemberprovisional-union_code', '', 'Society', '', $readonly); ?>
+    </div> -->
     <?php //Html::activeHiddenInput($model, 'district_code'); ?>
     <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'ex_member_code')->textInput() ?>

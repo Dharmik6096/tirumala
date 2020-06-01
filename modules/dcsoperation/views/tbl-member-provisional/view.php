@@ -31,9 +31,28 @@ if ($model->is_approved != 1) {
                 [
                     'columns' => [
                         [
+                            'attribute' => 'bmc_code',
+                            'value' => (string)$model->bmc_code,
+                            'valueColOptions' => ['style' => 'width:30%']                        ],
+                        [
+                            'attribute' => 'bmc_name',
+                            'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->bmc_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'society_code',
+                            'value' => (string)$model->dcs_code,
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'dcs_code',
                             'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
@@ -47,6 +66,14 @@ if ($model->is_approved != 1) {
                             'attribute' => 'reference_code',
                             'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code,
                             'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'pro_ex_member_code',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
@@ -354,51 +381,51 @@ if ($model->is_approved != 1) {
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
                         [
-                            'attribute' => 'is_active',
-                            'label' => 'Status',
+                            'attribute' => 'is_approved',
+                            'label' => 'Approved',
                             'format' => 'html',
-                            'value' => GeneralFunctions::getRecordStatus($model->is_active),
+                            'value' => GeneralFunctions::getApprovalStatus($model->is_approved),
                             'valueColOptions' => ['style' => 'width:80%'],
                         ],
                     ],
                 ],
-                [
-                    'group' => true,
-                    'label' => 'KYC Details',
-                    'rowOptions' => ['class' => 'bg-default']
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'member_code',
-                            'label' => 'Address Proof',
-                            'value' => !empty($model->kycCode) ? Yii::$app->general->getforeignkey($model->kycCode->addressDoc, 'doc_name') : '',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'member_code',
-                            'label' => 'Bank Proof',
-                            'value' => !empty($model->kycCode) ? Yii::$app->general->getforeignkey($model->kycCode->bankDoc, 'doc_name') : '',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'member_code',
-                            'label' => 'Remarks',
-                            'value' => Yii::$app->general->getforeignkey($model->kycCode, 'kyc_remark'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'member_code',
-                            'label' => 'KYC Done',
-                            'value' => (Yii::$app->general->getforeignkey($model->kycCode, 'is_kyc') == '1') ? 'Yes' : 'No',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
+                // [
+                //     'group' => true,
+                //     'label' => 'KYC Details',
+                //     'rowOptions' => ['class' => 'bg-default']
+                // ],
+                // [
+                //     'columns' => [
+                //         [
+                //             'attribute' => 'member_code',
+                //             'label' => 'Address Proof',
+                //             'value' => !empty($model->kycCode) ? Yii::$app->general->getforeignkey($model->kycCode->addressDoc, 'doc_name') : '',
+                //             'valueColOptions' => ['style' => 'width:30%']
+                //         ],
+                //         [
+                //             'attribute' => 'member_code',
+                //             'label' => 'Bank Proof',
+                //             'value' => !empty($model->kycCode) ? Yii::$app->general->getforeignkey($model->kycCode->bankDoc, 'doc_name') : '',
+                //             'valueColOptions' => ['style' => 'width:30%']
+                //         ],
+                //     ],
+                // ],
+                // [
+                //     'columns' => [
+                //         [
+                //             'attribute' => 'member_code',
+                //             'label' => 'Remarks',
+                //             'value' => Yii::$app->general->getforeignkey($model->kycCode, 'kyc_remark'),
+                //             'valueColOptions' => ['style' => 'width:30%']
+                //         ],
+                //         [
+                //             'attribute' => 'member_code',
+                //             'label' => 'KYC Done',
+                //             'value' => (Yii::$app->general->getforeignkey($model->kycCode, 'is_kyc') == '1') ? 'Yes' : 'No',
+                //             'valueColOptions' => ['style' => 'width:30%']
+                //         ],
+                //     ],
+                // ],
             ];
 
             // View file rendering the widget
