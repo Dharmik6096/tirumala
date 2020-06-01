@@ -67,6 +67,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 if(Yii::$app->session['eiplCode'] == 'NIFPL'){
                     $this->model->scenario = 'approveMember';
                 }
+                if(Yii::$app->session['eiplCode'] == '' || Yii::$app->session['eiplCode'] != 'NIFPL'){
+                    $this->model->scenario = 'provisionalApproveMember';
+                }
             }
             else{
                 $this->model->is_approved = 0;
@@ -89,6 +92,19 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $tblMember->setAttributes($this->model);
                     $master_model[] = $tblMember;
                 }
+                // $modelError = '';
+                // foreach ($master_model as $m) {
+                //     if(!$m->validate()) {
+                //         // var_dump($m);
+                //         foreach ($m->getErrors() as $key => $value) {
+                //             $modelError .= $value[0];
+                //         }
+                //     }
+                // }
+                // if($modelError != ''){
+                //     Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $modelError]);
+                //     return $this->redirect('create');
+                // }
                 $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -124,10 +140,15 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 if(Yii::$app->session['eiplCode'] == 'NIFPL'){
                     $this->model->scenario = 'approveMember';
                 }
+                if(Yii::$app->session['eiplCode'] == '' || Yii::$app->session['eiplCode'] != 'NIFPL'){
+                    $this->model->scenario = 'provisionalApproveMember';
+                }
+                // var_dump($this->model->scenario);
             }
             else{
                 $this->model->is_approved = 0;
             }
+            $this->model->member_code = $this->model->getCode();
             $historyModel = new TblMemberProvisionalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $historyModel->provisional_member_code = $this->model->provisional_member_code;
@@ -146,6 +167,19 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $master_model[] = $tblMember;
                 }
                 $master_model[] = $historyModel;
+                // $modelError = '';
+                // foreach ($master_model as $m) {
+                //     if(!$m->validate()) {
+                //         // var_dump($m);
+                //         foreach ($m->getErrors() as $key => $value) {
+                //             $modelError .= $value[0];
+                //         }
+                //     }
+                // }
+                // if($modelError != ''){
+                //     Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $modelError]);
+                //     return $this->redirect('update?id='.$id);
+                // }
                 $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -180,6 +214,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $errors = '';
             $success = '';
             $flag = $data['flag'];
+            $i=0;
             foreach ($selection as $key => $value) {
                 $this->model = $this->findModel($value);
                 if($this->model->is_approved != 1){
@@ -188,6 +223,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $this->model->approved_by = Yii::$app->session['UserCode'];
                     if(Yii::$app->session['eiplCode'] == 'NIFPL'){
                         $this->model->scenario = 'approveMember';
+                    }
+                    if(Yii::$app->session['eiplCode'] == '' || Yii::$app->session['eiplCode'] != 'NIFPL'){
+                        $this->model->scenario = 'provisionalApproveMember';
                     }
                     if ($this->model->validate()){
                         $tblMember = new TblMember;
@@ -199,30 +237,42 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $master[] = $tblMember;
                         $master[] = $this->model;
                         $master[] = $historyModel;
-
-                        $success .= $this->model->member_code.' has approved.<\br>'; 
+                        $i++;
                     }
                     else{
-                        $errors .= $this->model->member_code.' has some data missing.<\br>';
+                        $errors .= $this->model->member_code.',';
                     }
                 }
                 else{
                     $errors .= 'Something went wrong.<\br>';
                 }
             }
+            $modelError = '';
+            foreach ($master as $m) {
+                if(!$m->validate()) {
+                    // var_dump($m);
+                    foreach ($m->getErrors() as $key => $value) {
+                        $modelError .= $value[0];
+                    }
+                }
+            }
+            if($modelError != ''){
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $modelError]);
+                return $this->redirect($backUrl);
+            }
             if($errors == ''){
                 $transaction = $this->generalModel->saveTransaction($master, ['member provisional approval', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
-                        Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => $success]);
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => $i.' records approved successfully.']);
                         return $this->redirect($backUrl);
                     }
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => $success]);
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success','message' => $i.' records approved successfully.']);
                     return $this->redirect($backUrl);
                 }
             }
             else{
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $errors]);
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => 'Incomplete data in following members '.$errors]);
                 return $this->redirect($backUrl);
             }
         }

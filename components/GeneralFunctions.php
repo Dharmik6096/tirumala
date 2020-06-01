@@ -180,7 +180,7 @@ class GeneralFunctions extends Component {
     }
 
     public static function getApprovalStatus($status) {
-        return $status == 1 ? 'Approved' : 'Not Approved';
+        return $status == 1 ? 'Approved' : 'Pending';
     }
 
     /**

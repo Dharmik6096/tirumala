@@ -382,7 +382,6 @@ if ($model->is_approved != 1) {
 //                        ],
                         [
                             'attribute' => 'is_approved',
-                            'label' => 'Approved',
                             'format' => 'html',
                             'value' => GeneralFunctions::getApprovalStatus($model->is_approved),
                             'valueColOptions' => ['style' => 'width:80%'],

@@ -57,6 +57,7 @@ class TblMemberController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblMember();
+        $this->model->scenario = 'member_create';
         $this->viewFile = 'create';
         $this->bankDetails = new TblBankDetails();
         $this->bankDetails->scenario = 'member_create';
@@ -105,6 +106,9 @@ class TblMemberController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         $validate = 1;
+        if(!empty($this->model->gender_code)){
+            $this->model->scenario = 'member_create';
+        }
         $this->setModel();
 
         if (Yii::$app->request->post()) {
