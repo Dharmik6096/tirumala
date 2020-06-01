@@ -335,14 +335,17 @@ class SiteController extends Controller {
             $j = 1;
             for ($i = 8; $i < count($data); $i++) {
                 if (!empty($data[$i + 1]) && !empty($_POST['depdrop_parents'][$j])) {
-                    $where[$data[$i + 1]] = $_POST['depdrop_parents'][$j];
+                    $depend_value = explode('###', $_POST['depdrop_parents'][$j]);
+                    $where[$data[$i + 1]] = $depend_value;
                     $j++;
                 }
             }
-            $fields[] = $data[3];
-            $fields[] = $data[4];
+            $fields[] = 'id';
+            $fields[] = 'value';
+            $select_fields['id'] = $data[3];
+            $select_fields['value'] = $data[4];
             if (!empty($data[5])) {
-                array_push($fields, $data[5]);
+                array_push($select_fields, $data[5]);
             }
             $check_list = [];
             if (!empty($data[7]) && $data[6] == 1) {
@@ -353,30 +356,32 @@ class SiteController extends Controller {
             $model = new $model_name();
             $table_name = $model->tableName();
             $out = NULL;
+            if ($model->hasAttribute('is_active')) {
+                $where['is_active'] = 1;
+            }
             if ($data[2] != '') {
-                $unionQuery = $model->find()->select($fields)
+                $unionQuery = $model->find()->select($select_fields)
                                 ->where([$data[3] => $data[2], $data[1] => $_POST['depdrop_parents'][0]])
-                                ->andWhere($where)
+                                // ->andWhere($where)
                                 ->createCommand()->rawSql;
-                $tmp_query = $model->find()->select($fields)
-                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->andWhere($where)->union($unionQuery);
+                $tmp_query = $model->find()->select($select_fields)
+                                ->where([$data[1] => $_POST['depdrop_parents'][0]])->andWhere($where)->union($unionQuery);
                 if ($data[8] != 'false') {
                     $tmp_query->andWhere(['<=', 'valid_from', date('Y-m-d')]);
                 }
                 $query = new Query();
                 $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
             } else {
-                $records = $model->find()->select($fields)
-                                ->where(['is_active' => 1, $data[1] => $_POST['depdrop_parents'][0]])->andWhere($where)->orderBy($fields[1])->all();
+                $records = $model->find()->select($select_fields)
+                                ->where([$data[1] => $_POST['depdrop_parents'][0]])->andWhere($where)->orderBy($fields[1])->all();
             }
-
             foreach ($records as $key => $r) {
                 if (!empty($data[5]) && !empty($r[$data[5]]))
-                    $value = $r[$data[4]] . '(' . $r[$data[5]] . ')';
+                    $value = $r['value'] . '(' . $r[$data[5]] . ')';
                 else
-                    $value = $r[$data[4]];
-                if ($data[6] == 0 || empty($check_list) || in_array($r[$data[3]], $check_list))
-                    $out[] = array('id' => $r[$data[3]],
+                    $value = $r['value'];
+                if ($data[6] == 0 || empty($check_list) || in_array($r['id'], $check_list))
+                    $out[] = array('id' => $r['id'],
                         'name' => $value);
             }
             echo Json::encode(['output' => $out, 'selected' => '']);
