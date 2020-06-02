@@ -58,14 +58,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->setDefaultModel();
         $validate = 1;
-        if(Yii::$app->session['eiplCode'] == 'NIFPL'){
-            $this->model->scenario = 'approveMember';
-        }
-        else if(Yii::$app->session['eiplCode'] == 'EIPLAMCS_TEST'){
-            $this->model->scenario = 'EIPLAMCS_TEST';
-        }
-        else{
-            $this->model->scenario = 'provisionalApproveMember';
+        if(isset($this->model->scenarios()[Yii::$app->session['eiplCode']])){
+            $this->model->scenario = Yii::$app->session['eiplCode'];
         }
         if ($this->model->load(Yii::$app->request->post())) {
             if(Yii::$app->request->post('submitBtn')==='approve'){
@@ -91,7 +85,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $master_model[] = $this->model;
                 if($this->model->is_approved == 1){
                     $tblMember = new TblMember();
+                    $tblMember->scenario = 'ApprovalMember';
                     $tblMember->setAttributes($this->model);
+                    $tblMember->setAttributes($this->model->getAttributes());
                     $master_model[] = $tblMember;
                 }
                 // $modelError = '';
@@ -107,6 +103,13 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 //     Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $modelError]);
                 //     return $this->redirect('create');
                 // }
+                // foreach ($master_model as $m) {
+                //     if(!$m->validate()) {
+                //         // var_dump($m);
+                //         var_dump($m->getErrors());
+                //     }
+                // }
+                // die;
                 $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -132,14 +135,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->viewFile = 'update';
         $validate = 1;
         $this->setModel();
-        if(Yii::$app->session['eiplCode'] == 'NIFPL'){
-            $this->model->scenario = 'approveMember';
-        }
-        else if(Yii::$app->session['eiplCode'] == 'EIPLAMCS_TEST'){
-            $this->model->scenario = 'EIPLAMCS_TEST';
-        }
-        else{
-            $this->model->scenario = 'provisionalApproveMember';
+        if(isset($this->model->scenarios()[Yii::$app->session['eiplCode']])){
+            $this->model->scenario = Yii::$app->session['eiplCode'];
         }
         if (Yii::$app->request->post()) {
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
@@ -166,24 +163,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $master_model[] = $this->model;
                 if($this->model->is_approved == 1){
                     $tblMember = new TblMember();
+                    $tblMember->scenario = 'ApprovalMember';
                     $tblMember->setAttributes($this->model);
                     $tblMember->setAttributes($this->model->getAttributes());
                     $master_model[] = $tblMember;
                 }
                 $master_model[] = $historyModel;
-                // $modelError = '';
-                // foreach ($master_model as $m) {
-                //     if(!$m->validate()) {
-                //         // var_dump($m);
-                //         foreach ($m->getErrors() as $key => $value) {
-                //             $modelError .= $value[0];
-                //         }
-                //     }
-                // }
-                // if($modelError != ''){
-                //     Yii::$app->getSession()->setFlash('success', ['type' => 'error','message' => $modelError]);
-                //     return $this->redirect('update?id='.$id);
-                // }
                 $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -225,17 +210,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $this->model->is_approved = 1;
                     $this->model->approved_at = date('Y-m-d H:i:s');
                     $this->model->approved_by = Yii::$app->session['UserCode'];
-                    if(Yii::$app->session['eiplCode'] == 'NIFPL'){
-                        $this->model->scenario = 'approveMember';
-                    }
-                    else if(Yii::$app->session['eiplCode'] == 'EIPLAMCS_TEST'){
-                        $this->model->scenario = 'EIPLAMCS_TEST';
-                    }
-                    else{
-                        $this->model->scenario = 'provisionalApproveMember';
-                    }
                     if ($this->model->validate()){
                         $tblMember = new TblMember;
+                        $tblMember->scenario = 'ApprovalMember';
                         $tblMember->setAttributes($this->model);
                         $tblMember->setAttributes($this->model->getAttributes());
                         $historyModel = new TblMemberProvisionalHistory();

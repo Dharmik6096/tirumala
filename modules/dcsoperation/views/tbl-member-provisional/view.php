@@ -383,7 +383,7 @@ if ($model->is_approved != 1) {
                         [
                             'attribute' => 'is_approved',
                             'format' => 'html',
-                            'value' => GeneralFunctions::getApprovalStatus($model->is_approved),
+                            'value' => $model->is_approved == 1 ? 'Approved' : 'Pending' ,
                             'valueColOptions' => ['style' => 'width:80%'],
                         ],
                     ],

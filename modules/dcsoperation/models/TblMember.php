@@ -106,14 +106,9 @@ class TblMember extends ChildModel {
             [['is_download'], 'default', 'value' => '0'],
             [['is_active'], 'default', 'value' => '1'],
             [['member_type_code'], 'default', 'value' => '1'],
-            // [['gender_code','animal_type_code','caste_category_code','address','no_of_buffalo','no_of_cow_cross','no_of_cow_ind','total_animals'],'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync','provisionalApproveMember']],
-            // [['dcs_code', 'member_type_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-            // [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-            [['dcs_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'ex_member_code','member_name','mobile_no'], 'required', 'on' => ['approveMember','provisionalApproveMember','member_create']],
-            [['member_code', 'state_code', 'address', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code',], 'required', 'on' => ['approveMember','member_create']],
-            [['dcs_code', 'hamlet_code', 'ex_member_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code'], 'required', 'except' => ['importCsv','importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
-
+            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code', 'address', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync','ApprovalMember']],
+            [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync','ApprovalMember']],
+            [['dcs_code','district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'ex_member_code','member_name','mobile_no'], 'required', 'on' => ['ApprovalMember']],
             [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
             [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
             /* [['member_name'],'unique', 'when' => function($model) {

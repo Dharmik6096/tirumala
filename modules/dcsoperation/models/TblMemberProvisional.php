@@ -115,9 +115,8 @@ class TblMemberProvisional extends ChildModel {
             [['is_active'], 'default', 'value' => '1'],
             [['is_approved'], 'default', 'value' => '0','on'=>'importCsv'],
             [['member_type_code'], 'default', 'value' => '1'],
-            [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'ex_member_code','member_name','mobile_no'], 'required', 'on' => ['approveMember','provisionalApproveMember']],
-            [['gender_code','caste_category_code'], 'required', 'on' => ['EIPLAMCS_TEST','approveMember']],
-            [['member_code', 'state_code', 'address', 'union_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'animal_type_code', 'member_type_code',], 'required', 'on' => ['approveMember']],
+            [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'ex_member_code','member_name','mobile_no'], 'required'],
+            [['gender_code','caste_category_code'], 'required', 'on' => ['EIPLAMCS_TEST']],
             [['bmc_code','mcc_plant_code','plant_code'],'required', 'except' => ['importCsv']],
             [['dcs_code', 'hamlet_code', 'ex_member_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
             [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code'], 'required', 'except' => ['importCsv','importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
@@ -270,7 +269,7 @@ class TblMemberProvisional extends ChildModel {
             'mcc_plant_code' => Yii::t('app','MCC'),
             'bmc_name' => Yii::t('app','Plant'),
             'bmc_name' => Yii::t('app','BMC Name'),
-            'is_approved' => Yii::t('app','Approve status'),
+            'is_approved' => Yii::t('app','Approval status'),
         ];
     }
 

@@ -74,7 +74,7 @@ $attribute = [
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
     ['attribute' => 'is_approved', 'value' => function($model) {
-            return GeneralFunctions::getApprovalStatus($model->is_approved);
+            return $model->is_approved == 1 ? 'Approved' : 'Pending';
         }, 'visible' => true, 'filter' => false],
 ];
 

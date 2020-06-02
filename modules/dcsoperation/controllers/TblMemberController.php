@@ -57,7 +57,6 @@ class TblMemberController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblMember();
-        $this->model->scenario = 'member_create';
         $this->viewFile = 'create';
         $this->bankDetails = new TblBankDetails();
         $this->bankDetails->scenario = 'member_create';
@@ -105,9 +104,6 @@ class TblMemberController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        if(Yii::$app->session['eiplCode'] == 'NIFPL'){
-            $this->model->scenario = 'member_create';
-        }
         $validate = 1;
         $this->setModel();
 
