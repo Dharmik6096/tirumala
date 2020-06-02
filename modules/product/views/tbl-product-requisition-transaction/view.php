@@ -27,7 +27,6 @@ $this->title = Yii::$app->label->title('view', 'Product Requisition Transaction'
                         'columns' => [
                                 [
                                 'attribute' => 'requisition_transaction_code',
-                                'value' => Yii::$app->general->getforeignkey($model->productCode, 'product_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [

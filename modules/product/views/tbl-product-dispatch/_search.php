@@ -1,77 +1,47 @@
+
 <?php
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\product\models\TblProductDispatchSearch */
-/* @var $form yii\widgets\ActiveForm */
+$form = ActiveForm::begin([
+            'options' => [
+                'field-class' => 'form-group col-sm-2 padding-right-5 padding-left-5',
+                'federation_code' => 'form-group col-sm-2 padding-right-5'
+            ],
+            'action' => ['create'],
+            'method' => 'get',
+        ]);
 ?>
-
-<div class="tbl-product-dispatch-search">
-
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
-
-    <?= $form->field($model, 'challan_no') ?>
-
-    <?= $form->field($model, 'challan_date') ?>
-
-    <?= $form->field($model, 'challan_verified') ?>
-
-    <?= $form->field($model, 'reference_no') ?>
-
-    <?= $form->field($model, 'dispatch_date') ?>
-
-    <?php // echo $form->field($model, 'vendor_type') ?>
-
-    <?php // echo $form->field($model, 'vendor_code') ?>
-
-    <?php // echo $form->field($model, 'union_code') ?>
-
-    <?php // echo $form->field($model, 'plant_code') ?>
-
-    <?php // echo $form->field($model, 'mcc_plant_code') ?>
-
-    <?php // echo $form->field($model, 'bmc_code') ?>
-
-    <?php // echo $form->field($model, 'dcs_code') ?>
-
-    <?php // echo $form->field($model, 'route_code') ?>
-
-    <?php // echo $form->field($model, 'vehicle_no') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
-
-    <?php // echo $form->field($model, 'created_by') ?>
-
-    <?php // echo $form->field($model, 'updated_at') ?>
-
-    <?php // echo $form->field($model, 'updated_by') ?>
-
-    <?php // echo $form->field($model, 'originating_org_code') ?>
-
-    <?php // echo $form->field($model, 'originating_org_type') ?>
-
-    <?php // echo $form->field($model, 'originating_type') ?>
-
-    <?php // echo $form->field($model, 'x_col1') ?>
-
-    <?php // echo $form->field($model, 'x_col2') ?>
-
-    <?php // echo $form->field($model, 'x_col3') ?>
-
-    <?php // echo $form->field($model, 'x_col4') ?>
-
-    <?php // echo $form->field($model, 'x_col5') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
+<div class="row">
+    <div class="col-sm-2 height_65" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+    </div>
+    <div class="col-sm-2 height_65">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblproductrequisitionsearch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
+    </div> 
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblproductrequisitionsearch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
+    </div>      
+    <div class="col-sm-2 height_65">
+        <?= Yii::$app->dropdown->dropdownStatic('requisition_type', $model, $form, 'form-group', $model->getAttributeLabel('vendor_type'), false, 'vendor_type', false); ?>
+        <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblproductrequisitionsearch-bmc_code', 'vendor_type', TRUE, FALSE); ?>
+    </div>
+    <div class="col-sm-2 height_65">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblproductrequisitionsearch-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
-
+    <div class="col-sm-2 height_65">
+        <?= Yii::$app->dropdown->all_routes($model, $form, 'tblproductrequisitionsearch-plant_code,tblproductrequisitionsearch-mcc_plant_code,tblproductrequisitionsearch-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+    </div>
+    <div class="col-sm-2 height_65">
+        <?php echo Yii::$app->dropdown->route_dcs($model, $form, 'tblproductrequisitionsearch-route_code', 'dcs_code', Yii::t('app', 'DCS'), false, false); ?>
+        <?php // Yii::$app->dropdown->bmc_society($model, $form, 'tblproductrequisitionsearch-bmc_code', 'dcs_code', Yii::t('app', 'DCS')); ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="form-group col-sm-2 mt0 padding-left-5">
+        <?= Yii::$app->controls->search(); ?>
+    </div>
 </div>
+
+<?php ActiveForm::end(); ?>

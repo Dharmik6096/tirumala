@@ -39,7 +39,8 @@ class TblProductDispatchSearch extends TblProductDispatch {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $flag = 1) {
+//        $flag[0 => without requisition, 1 => With Requisition]
         $query = TblProductDispatch::find();
 
         // add conditions that should always apply here
@@ -49,7 +50,7 @@ class TblProductDispatchSearch extends TblProductDispatch {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'bmcCode', 'mccCode', 'plantCode', 'routeCode']);
+        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'bmcCode', 'mccCode', 'plantCode', 'routeCode', 'tblProductDispatchTransaction', 'vehicleCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_product_dispatch', 'tbl_mcc_plant', 'tbl_product_dispatch');
 
         if (!$this->validate()) {
@@ -83,10 +84,15 @@ class TblProductDispatchSearch extends TblProductDispatch {
             'challan_verified' => $this->challan_verified,
         ]);
 
+        if ($flag == 0) {
+            $query->andWhere(['is', 'tbl_product_dispatch_transaction.product_requisition_code', null]);
+        } else {
+            $query->andWhere(['is not', 'tbl_product_dispatch_transaction.product_requisition_code', null]);
+        }
         $query->andFilterWhere(['like', 'tbl_product_dispatch.challan_no', $this->challan_no])
                 ->andFilterWhere(['like', 'tbl_product_dispatch.reference_no', $this->reference_no])
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code])
-                ->andFilterWhere(['like', 'tbl_product_dispatch.vehicle_no', $this->vehicle_no])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->vehicle_no])
                 ->andFilterWhere(['like', 'tbl_product_dispatch.vendor_code', $this->vendor_code])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->vendor_type])
                 ->andFilterWhere(['like', 'tbl_plant.name', $this->plant_name])
