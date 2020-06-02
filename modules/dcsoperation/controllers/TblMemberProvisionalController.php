@@ -58,18 +58,20 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->setDefaultModel();
         $validate = 1;
-
+        if(Yii::$app->session['eiplCode'] == 'NIFPL'){
+            $this->model->scenario = 'approveMember';
+        }
+        else if(Yii::$app->session['eiplCode'] == 'EIPLAMCS_TEST'){
+            $this->model->scenario = 'EIPLAMCS_TEST';
+        }
+        else{
+            $this->model->scenario = 'provisionalApproveMember';
+        }
         if ($this->model->load(Yii::$app->request->post())) {
             if(Yii::$app->request->post('submitBtn')==='approve'){
                 $this->model->is_approved = 1;
                 $this->model->approved_at = date('Y-m-d H:i:s');
                 $this->model->approved_by = Yii::$app->session['UserCode'];
-                if(Yii::$app->session['eiplCode'] == 'NIFPL'){
-                    $this->model->scenario = 'approveMember';
-                }
-                if(Yii::$app->session['eiplCode'] == '' || Yii::$app->session['eiplCode'] != 'NIFPL'){
-                    $this->model->scenario = 'provisionalApproveMember';
-                }
             }
             else{
                 $this->model->is_approved = 0;
@@ -130,19 +132,21 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->viewFile = 'update';
         $validate = 1;
         $this->setModel();
-
+        if(Yii::$app->session['eiplCode'] == 'NIFPL'){
+            $this->model->scenario = 'approveMember';
+        }
+        else if(Yii::$app->session['eiplCode'] == 'EIPLAMCS_TEST'){
+            $this->model->scenario = 'EIPLAMCS_TEST';
+        }
+        else{
+            $this->model->scenario = 'provisionalApproveMember';
+        }
         if (Yii::$app->request->post()) {
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
             if(Yii::$app->request->post('submitBtn')==='approve'){
                 $this->model->is_approved = 1;
                 $this->model->approved_at = date('Y-m-d H:i:s');
                 $this->model->approved_by = Yii::$app->session['UserCode'];
-                if(Yii::$app->session['eiplCode'] == 'NIFPL'){
-                    $this->model->scenario = 'approveMember';
-                }
-                if(Yii::$app->session['eiplCode'] == '' || Yii::$app->session['eiplCode'] != 'NIFPL'){
-                    $this->model->scenario = 'provisionalApproveMember';
-                }
                 // var_dump($this->model->scenario);
             }
             else{
@@ -224,7 +228,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     if(Yii::$app->session['eiplCode'] == 'NIFPL'){
                         $this->model->scenario = 'approveMember';
                     }
-                    if(Yii::$app->session['eiplCode'] == '' || Yii::$app->session['eiplCode'] != 'NIFPL'){
+                    else if(Yii::$app->session['eiplCode'] == 'EIPLAMCS_TEST'){
+                        $this->model->scenario = 'EIPLAMCS_TEST';
+                    }
+                    else{
                         $this->model->scenario = 'provisionalApproveMember';
                     }
                     if ($this->model->validate()){

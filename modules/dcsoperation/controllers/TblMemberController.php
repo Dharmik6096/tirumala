@@ -105,10 +105,10 @@ class TblMemberController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        $validate = 1;
-        if(!empty($this->model->gender_code)){
+        if(Yii::$app->session['eiplCode'] == 'NIFPL'){
             $this->model->scenario = 'member_create';
         }
+        $validate = 1;
         $this->setModel();
 
         if (Yii::$app->request->post()) {
