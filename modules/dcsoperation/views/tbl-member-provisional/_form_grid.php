@@ -1,5 +1,6 @@
 <?php
 
+use app\components\GeneralFunctions;
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
@@ -10,13 +11,17 @@ use yii\web\View;
 <?php
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
+    ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'filter' => false],
+    ['attribute' => 'bmc_name', 'value' => 'tblDcsBmc.bmc_name', 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
+    ['attribute' => 'society_code', 'value' => 'dcs_code', 'filter' => false],
     ['attribute' => 'member_code', 'value' => 'member_code'],
     ['attribute' => 'reference_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code;
         },'visible' => false
     ],
+    ['attribute' => 'pro_ex_member_code', 'value' => 'pro_ex_member_code'],
     ['attribute' => 'ex_member_code', 'value' => 'ex_member_code'],
     ['attribute' => 'member_type_code', 'value' => 'memberTypeCode.member_type_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'member_name', 'value' => 'member_name'],
@@ -44,11 +49,11 @@ $attribute = [
     ['attribute' => 'total_land', 'visible' => false, 'filter' => false],
     ['attribute' => 'address', 'value' => 'address', 'visible' => false, 'filter' => false],
     ['attribute' => 'local_address', 'visible' => false, 'filter' => false],
-    ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'filter' => false],
-    ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'filter' => false],
-    ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'filter' => false],
-    ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'filter' => false],
-    ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'filter' => false],
+    ['attribute' => 'state_code', 'value' => 'stateCode.state_name','visible' => false, 'filter' => false],
+    ['attribute' => 'district_code', 'value' => 'districtCode.district_name','visible' => false, 'filter' => false],
+    ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name','visible' => false, 'filter' => false],
+    ['attribute' => 'village_code', 'value' => 'villageCode.village_name','visible' => false, 'filter' => false],
+    ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name','visible' => false, 'filter' => false],
     ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
     ['attribute' => 'mobile_no', 'visible' => TRUE, 'filter' => true],
     ['attribute' => 'email', 'visible' => false, 'filter' => false],
@@ -68,6 +73,9 @@ $attribute = [
     ['attribute' => 'member_class', 'value' => function($model) {
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
+    ['attribute' => 'is_approved', 'value' => function($model) {
+            return $model->is_approved == 1 ? 'Approved' : 'Pending';
+        }, 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [

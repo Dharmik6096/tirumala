@@ -57,6 +57,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         Yii::$app->general->filterByOrg($query, $this);
         
          $query->andWhere(['tbl_member_provisional.is_approved' => 0]);
+         $query->andWhere(['tbl_member_provisional.bmc_code' => $this->bmc_code]);
         // var_dump($query->all());
         // die;
         $query->andFilterWhere(['like', 'tbl_member_provisional.dcs_code', $this->dcs_code]);
