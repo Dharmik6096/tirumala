@@ -186,4 +186,12 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
         return true;
     }
 
+    public function getProductPurchaseRateCode() {
+        return $this->hasOne(TblProductPurchaseRate::className(), ['product_purchase_rate_code' => 'product_purchase_rate_code']);
+    }
+
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
 }

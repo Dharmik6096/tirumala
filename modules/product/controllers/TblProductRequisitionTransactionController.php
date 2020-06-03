@@ -15,6 +15,7 @@ use app\modules\product\models\TblProductRequisitionSearch;
 use yii\widgets\ActiveForm;
 use app\components\Model;
 use yii\helpers\Json;
+use app\modules\product\models\TblProductPurchaseRateApplicability;
 
 /**
  * TblProductRequisitionTransactionController implements the CRUD actions for TblProductRequisitionTransaction model.
@@ -25,6 +26,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
     public $dataProvider;
     public $jsonEncoded;
     public $scheme;
+    public $freeAccessActions = ['validate-vehicle', 'validate-product'];
 
     /**
      * Lists all TblProductRequisitionTransaction models.
@@ -74,8 +76,6 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 $jsonData = Json::decode($_POST['product_req']);
                 $list = [];
                 $reqModel->addProductRequisition($jsonData);
-//                $reqModel->entry_type = Yii::$app->general->getEntryType();
-
                 $reqCode = $reqModel->product_requisition_code;
             } else {
                 $reqCode = Yii::$app->getRequest()->getQueryParam('id');
@@ -83,14 +83,12 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
 
             $transaction = FALSE;
             if ($this->model->load(Yii::$app->request->post()) && Yii::$app->request->post('submit') === 'save') {
-                $reqModel->status = 1;
-                $this->model->status = 1;
-//                $reqModel->is_sentbox = FALSE;
-//                $this->model->is_sentbox = FALSE;
+                $reqModel->status = 'Draft'; //1
+                $this->model->status = 'Draft'; //1
+                $reqModel->is_sentbox = FALSE;
                 $this->model->scenario = 'addProduct';
-//                $scheme = $this->model->getProductScheme($reqModel->req_date, '', $reqModel->dcs_code);
+                $this->model->is_sentbox = FALSE;
                 $this->model->product_requisition_code = $reqCode;
-//                $code = $this->model->getCode();
                 $this->model->requisition_transaction_code = Yii::$app->general->getTransactionCode($this->model, $this->model->product_requisition_code);
                 $this->model->requisition_on_date = !empty($this->model->requisition_on_date) ? Yii::$app->formatter->asDate($this->model->requisition_on_date, DATE_FORMAT) : NULL;
 
@@ -105,7 +103,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 Yii::$app->operation->history($reqModel, $historyModel, UPDATE);
 
                 $this->model->scenario = 'submit';
-                $reqModel->status = 6;
+                $reqModel->status = 'Sent'; //6
                 $reqModel->operation = 'INSERT';
                 $allreq = TblProductRequisitionTransaction::find()
                         ->where(['product_requisition_code' => $reqModel->product_requisition_code])
@@ -116,7 +114,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                     Yii::$app->operation->history($allreq[$i], $TransactionhistoryModel, UPDATE);
                     $reqlist[] = $TransactionhistoryModel;
                     $allreq[$i]->operation = 'INSERT';
-                    $allreq[$i]->status = 6;
+                    $allreq[$i]->status = 'Sent'; //6
                     $allreq[$i]->scenario = 'addProduct';
                     $reqlist[] = $allreq[$i];
                 }
@@ -127,9 +125,6 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 if (Yii::$app->request->post('submit') == 'submit') {
                     return $this->redirect(['tbl-product-requisition/index']);
                 }
-//                $sdata = $this->model->getProductScheme($this->model->productRequisitionCode->date);
-//                if (!empty($sdata->scheme_type))
-//                    $_SESSION['success']['message'] = $_SESSION['success']['message'] . '<br/><br/>' . $this->model->getSchemeMsg($sdata->scheme_type, $sdata->msg);
                 $this->model->requisition_on_date = date('d-m-Y', strtotime($this->model->requisition_on_date));
                 return $this->{$transaction}();
             } else {
@@ -175,14 +170,9 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
 
             $reqModel = new TblProductRequisition();
             $reqModel = $reqModel->getRecord($this->model->product_requisition_code);
-//            $scheme = $this->model->getProductScheme($reqModel->date);
             $this->model->requisition_on_date = Yii::$app->formatter->asDate($this->model->requisition_on_date, DATE_FORMAT);
-//            $this->model->is_sentbox = FALSE;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Product Requisition transaction', 'edit']);
             if ($transaction == 'customRedirect') {
-//                $sdata = $this->model->getProductScheme($this->model->productRequisitionCode->date);
-//                if (!empty($sdata->scheme_type))
-//                    $_SESSION['success']['message'] = $_SESSION['success']['message'] . '<br/><br/>' . $this->model->getSchemeMsg($sdata->scheme_type, $sdata->msg);
                 $this->model->requisition_on_date = date('d-m-Y', strtotime($this->model->requisition_on_date));
                 return $this->{$transaction}();
             } else {
@@ -208,7 +198,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
         return $this->redirect(['create', 'id' => $this->model->product_requisition_code]);
     }
 
-    public function actionValidateProduct() {
+    public function actionValidateProductOld() {
 
         $array = ['status' => 'error'];
         if (!empty(Yii::$app->request->post('id'))) {
@@ -259,7 +249,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 foreach ($checked as $key => $row) {
                     $modelNew = TblProductRequisitionTransaction::findOne($modelAttributes[$key]['requisition_transaction_code']);
                     if (isset($modelAttributes[$key]['req_action']) && $modelAttributes[$key]['req_action'] != '' && empty($modelNew->parent_product_code)) {
-                        if ($modelNew->status == 6 || $modelAttributes[$key]['req_action'] == 2 || $modelNew->approved_quantity != $modelAttributes[$key]['approved_quantity'] || $modelNew->discount_amount != $modelAttributes[$key]['discount_amount']) {
+                        if ($modelNew->status == 'Sent' || $modelAttributes[$key]['req_action'] == 2 || $modelNew->approved_quantity != $modelAttributes[$key]['approved_quantity'] || $modelNew->discount_amount != $modelAttributes[$key]['discount_amount']) {
                             if (!empty($modelNew->approved_date)) {
                                 $old_scheme = ''; //$modelNew->getProductScheme($modelNew->approved_date, $modelNew->approved_quantity);
                             } else {
@@ -275,26 +265,14 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                             $modelNew->approved_by = $approvedByUser;
                             $modelNew->provisional_amount = round($modelNew->provisional_rate * $modelNew->approved_quantity, 2);
                             if ($modelAttributes[$key]['req_action'] == '2') {
-                                $modelNew->status = 11;
-//                                $child = $modelNew->getChildProducts();
-//                                if (!empty($child->requisition_transaction_no)) {
-//                                    $oldModel = $this->findModel($child->requisition_transaction_no);
-//                                    $historyModel = new TblProductRequisitionTransactionHistory();
-//                                    Yii::$app->operation->history($oldModel, $historyModel, UPDATE);
-//                                    $oldModel->operation = FALSE;
-//                                    $oldModel->status = 11;
-//                                    $rcnt++;
-//                                    array_push($list, $oldModel);
-//                                    array_push($list, $historyModel);
-//                                }
+                                $modelNew->status = 'Rejected'; //11
                                 $rcnt++;
                             } else {
-//                                $scheme = $modelNew->getProductScheme($modelNew->approved_date, $modelNew->approved_quantity);
-//                                if ($modelNew->quantity != $modelNew->approved_quantity) {
-//                                    $modelNew->status = 51;
-//                                } else {
-                                $modelNew->status = 46;
-//                                }
+                                $modelNew->status = 'Under Dispatch'; //46
+                                if ($modelNew->approved_quantity == 0) {
+                                    $modelNew->status = 'Rejected'; //11
+                                    $rcnt++;
+                                }
                             }
                             $modelNew->operation = FALSE;
                             array_push($list, $modelNew);
@@ -308,7 +286,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                             $modelNew->provisional_amount = round($modelNew->provisional_rate * $modelNew->approved_quantity, 2);
 
                             if ($modelNew->approved_quantity == 0) {
-                                $modelNew->status = 11;
+                                $modelNew->status = 'Rejected'; //11
                             }
                             $modelNew->approved_date = date('Y-m-d');
                             $modelNew->is_approved = $app;
@@ -317,19 +295,19 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                             array_push($list, $modelNew);
                         }
 
-                        if ($modelNew->status == 11) {
+                        if ($modelNew->status == 'Rejected') {
                             $rcnt++;
                         }
                     }
                 }
 
                 if ($rcnt == $totalItems) {
-                    $status = 11;
+                    $status = 'Rejected'; //11;
                 } else {
-                    $status = 21;
+                    $status = 'Under Dispatch'; //21;
                 }
 
-                
+
                 if (!empty($list)) {
                     if ($this->model->status != $status) {
                         $historyModel = new TblProductRequisitionHistory();
@@ -357,6 +335,34 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
         return $this->render($this->viewFile, [
                     'model' => $this->model, 'schememodal' => $schememodal
         ]);
+    }
+
+    public function actionValidateProduct() {
+
+//        $array = ['status' => 'error'];
+//        if (!empty(Yii::$app->request->post('id'))) {
+//            $model = new TblProductRequisitionTransaction();
+//            $array = $model->checkProductAvailabel(Yii::$app->request->post('id'), Yii::$app->request->post('rid'), Yii::$app->request->post('date'));
+//        }
+//        echo Json::encode($array);
+//        return;
+
+
+        $app = ['status' => 'error'];
+        if (!empty($_POST['id']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
+            $date = !empty($_POST['date']) ? date('Y-m-d', strtotime($_POST['date'])) : date('Y-m-d');
+
+            $appQuery = TblProductPurchaseRateApplicability::find()->joinWith(['productPurchaseRateCode', 'productCode', 'productCode.primaryUom'])
+                    ->select(['tbl_product_purchase_rate.purchase_rate', 'tbl_product.product_name', 'tbl_units.unit_name', 'tbl_product.tax_code', 'tbl_product_purchase_rate_applicability.wef_date as dt'])
+//                    ->groupBy(['product_purchase_rate_applicability_code', 'tbl_product_purchase_rate.purchase_rate', 'tbl_product_purchase_rate_applicability.wef_date', 'tbl_product.unit_code'])
+                    ->where(['<=', '[tbl_product_purchase_rate_applicability].[wef_date]', $date])
+                    ->andWhere(['tbl_product_purchase_rate.product_code' => $_POST['id'], 'tbl_product_purchase_rate_applicability.applicable_for' => $_POST['customer_type'], 'tbl_product_purchase_rate_applicability.applicable_code' => $_POST['customer_code']]);
+            $appData = $appQuery->orderBy(['tbl_product_purchase_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
+            if (!empty($appData)) {
+                $app = ['status' => 'success', 'name' => $appData['product_name'], 'rate' => $appData['purchase_rate'], 'unit' => $appData['unit_name'], 'tax_code' => $appData['tax_code']];
+            }
+        }
+        echo json_encode($app);
     }
 
 }

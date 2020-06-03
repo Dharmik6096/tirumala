@@ -22,11 +22,11 @@ class TblProductRequisitionSearch extends TblProductRequisition {
                 [['product_requisition_code', 'from_date', 'to_date', 'customer_name', 'req_date', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_name', 'mcc_name', 'route_code'], 'safe'],
                 [['originating_type'], 'integer'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'vendor_type'], 'required', 'on' => 'searchdispatch'],
-                [['dcs_code'], 'required', 'when' => function ($model) {
-                    return $model->vendor_type == 'DCS';
-                }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblproductrequisitionsearch-vendor_type').val() == 'DCS'; 
-          }", 'on' => 'searchdispatch'],
+//                [['dcs_code'], 'required', 'when' => function ($model) {
+//                    return $model->vendor_type == 'DCS';
+//                }, 'whenClient' => "function (attribute, value) { 
+//              return $('#tblproductrequisitionsearch-vendor_type').val() == 'DCS'; 
+//          }", 'on' => 'searchdispatch'],
         ];
     }
 
@@ -106,17 +106,17 @@ class TblProductRequisitionSearch extends TblProductRequisition {
         $query->joinWith(['dcsCode']);
 
         $this->load($params);
-        $query->andwhere([
+        $query->andWhere([
             'tbl_product_requisition.union_code' => $this->union_code,
             'tbl_product_requisition.plant_code' => $this->plant_code,
             'tbl_product_requisition.mcc_plant_code' => $this->mcc_plant_code,
             'tbl_product_requisition.bmc_code' => $this->bmc_code,
             'tbl_product_requisition.vendor_type' => $this->vendor_type,
         ]);
-        $query->andWhere(['tbl_product_requisition.status' => '21']);
+        $query->andWhere(['tbl_product_requisition.status' => ['Under Dispatch']]);
 
         if (strtolower($this->vendor_type) == 'dcs') {
-            $query->andwhere([
+            $query->andFilterWhere([
                 'tbl_product_requisition.dcs_code' => $this->dcs_code,
                 'tbl_dcs.route_code' => $this->route_code
             ]);

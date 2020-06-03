@@ -40,7 +40,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'edit' => function ($url, $model) {
-            if (true || in_array($model->status, [26, 36])) {
+            if (in_array($model->status, ['Under Dispatch', 'Dispatched'])) {
                 $options = ['title' => Yii::t('app', 'Edit Dispatch Transaction'), 'target' => '_blank'];
                 return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/product/tbl-product-dispatch-transaction/update', 'id' => $model->dispatch_transaction_code], $options);
             }

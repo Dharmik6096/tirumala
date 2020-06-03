@@ -39,7 +39,7 @@ class TblProductDispatchSearch extends TblProductDispatch {
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $flag = 1) {
+    public function search($params) {
 //        $flag[0 => without requisition, 1 => With Requisition]
         $query = TblProductDispatch::find();
 
@@ -84,7 +84,7 @@ class TblProductDispatchSearch extends TblProductDispatch {
             'challan_verified' => $this->challan_verified,
         ]);
 
-        if ($flag == 0) {
+        if (Yii::$app->request->get('flag') == 0) {
             $query->andWhere(['is', 'tbl_product_dispatch_transaction.product_requisition_code', null]);
         } else {
             $query->andWhere(['is not', 'tbl_product_dispatch_transaction.product_requisition_code', null]);

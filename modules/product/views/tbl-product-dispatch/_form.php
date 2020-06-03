@@ -167,7 +167,7 @@ $script = "
         var value = $(this).val();
         var id = $(this).attr('id');
         if(parseInt(value) > parseInt(remain)){
-            bootbox.alert('<div class=\"row\"><div class=\"col-sm-2\"><i class=\"fa fa-3x fa-times-circle aria-hidden=true\"></i></div><div class=\"col-sm-10 padding-left-0\">" . Yii::t('app', 'Dispatch Qty can not be more then Remain Qty.') . "</div></div>',function(){
+            bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\'bg-info\'><i class=\"fa fa-3x fa-times-circle aria-hidden=true\"></i></div><span>" . Yii::t('app', 'Dispatch Qty can not be more then Remain Qty.') . "</span></div></div>',function(){
                 bootbox.hideAll();
                 $('#'+id).focus().select();
             });

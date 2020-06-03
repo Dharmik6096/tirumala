@@ -62,6 +62,12 @@ class TblProductDispatch extends \app\models\ChildModel {
         return [
                 [['challan_no'], 'required'],
                 [['challan_date', 'vehicle_no', 'reference_no'], 'required'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'without'],
+                [['dcs_code'], 'required', 'when' => function ($model) {
+                    return $model->vendor_type == 'DCS';
+                }, 'whenClient' => "function (attribute, value) { 
+                  return $('#tblproductdispatch-vendor_type').val() == 'DCS'; 
+              }", 'on' => 'without'],
                 [['challan_verified'], 'default', 'value' => '0'],
                 [['challan_no', 'reference_no', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'vehicle_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
                 [['challan_date', 'dispatch_date', 'created_at', 'updated_at'], 'safe'],

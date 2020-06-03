@@ -43,6 +43,7 @@ class TblProductRequisition extends \app\models\ChildModel {
 
     public $operation = TRUE;
     public $plant_name, $mcc_name;
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc
@@ -252,7 +253,7 @@ class TblProductRequisition extends \app\models\ChildModel {
                 ->from('tbl_product_requisition_transaction AS prt')
                 ->innerJoin('tbl_product', 'tbl_product.product_code=prt.product_code')
                 ->leftJoin(['x' => $subQuery], 'x.requisition_transaction_code=prt.requisition_transaction_code')
-                ->where("is_approved=1 and (dispatch_qty < prt.approved_quantity OR dispatch_qty is null) and prt.product_requisition_code='" . $reqCode . "' and prt.status in (26,46,51,31)")
+                ->where("is_approved=1 and (dispatch_qty < prt.approved_quantity OR dispatch_qty is null) and prt.product_requisition_code='" . $reqCode . "' and prt.status in ('Under Dispatch')")
                 ->all();
     }
 

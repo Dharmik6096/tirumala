@@ -201,4 +201,12 @@ class TblProductDispatchTransaction extends \app\models\ChildModel {
         }
     }
 
+    public function checkProductAvailabel($productCode, $date) {
+
+        $model = new TblProduct();
+        $array = $model->getProduct(trim($productCode), $date);
+
+        return $array;
+    }
+
 }

@@ -85,13 +85,15 @@ $script = "
     $('#tblproductrequisitiontransaction-product_code').on('change',function(){   
         var id = $('#tblproductrequisitiontransaction-product_code').val();
         var jsn = $('#product_req').val();
-
+        
         var local =  $.parseJSON(jsn);
+        customer_type = local.vendor_type;
+        customer_code = local.vendor_code;
         if(id!=''){
             $.ajax({
                 type: 'post',
                 url: '" . Url::to(['/product/tbl-product-requisition-transaction/validate-product']) . "',    
-                data: 'date='+local.req_date+'&id='+id+'&rid=" . Yii::$app->getRequest()->getQueryParam('id') . "',
+                data: 'date='+local.req_date+'&customer_type='+customer_type+'&customer_code='+customer_code+'&id='+id+'&rid=" . Yii::$app->getRequest()->getQueryParam('id') . "',
                 success: function(data) {
                     var obj1 = $.parseJSON(data);
                     if (obj1.status == 'success')

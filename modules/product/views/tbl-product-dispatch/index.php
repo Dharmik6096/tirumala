@@ -1,6 +1,13 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', $title));
-$this->params['menu'][]=Yii::$app->controls->add($title);
+if (Yii::$app->getRequest()->getQueryParam('flag') == 0) {
+    $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
+    $this->params['menu'][] = Yii::$app->controls->add($title, ['dispatch-without-requisition']);
+} else {
+    $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
+    $this->params['menu'][] = Yii::$app->controls->add($title);
+}
+//$this->title = Yii::t('app', Yii::$app->label->title('list', $title));
+//$this->params['menu'][] = Yii::$app->controls->add($title);
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
