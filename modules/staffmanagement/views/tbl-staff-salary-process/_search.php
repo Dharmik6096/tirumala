@@ -11,7 +11,7 @@ use yii\web\JsExpression;
 
 <?php
 $form = ActiveForm::begin([
-            'options' => ['id' => 'staff-member-form'],
+            'options' => ['id' => 'staff-member-form', 'class' => 'pull-left'],
             'validateOnBlur' => false,
             'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
@@ -22,16 +22,16 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <?= Html::activeHiddenInput($model, 'salary'); ?> 
-    <div class="col-sm-2">
+    <div class="col-sm-4 padding_right_0">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-5 padding_right_0">
         <?=
         $form->field($model, 'month')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control '],
             'mask' => '99-9999',])
         ?>    
     </div>
-    <div class="col-sm-2 mt20">
+    <div class="col-sm-3 mt20 pull-left">
         <?php
         AjaxSubmitButton::begin([
             'label' => Yii::t('app', 'Process'),
@@ -71,66 +71,15 @@ $form = ActiveForm::begin([
                                                                     $(".form-group").removeClass("has-error");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
+                                                                    var message = "";
                                                                     $.each(data, function(key, val) {
-                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+//                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        message = message + val + "\r\n";
                                                                     });
-                                                                    $(".error-summary").show();
-                                                                }
-                                                 }'),
-            ],
-            'options' => ['class' => 'btn btn-default btn-raised',
-                'type' => 'submit'],
-        ]);
-        AjaxSubmitButton::end();
-        ?>
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->controls->date($model, $form, 'disbursement_date', 'form-group col-sm-3', true, '', false); ?>
-    </div>
-    <div class="col-sm-2 mt20">
-        <?php
-        AjaxSubmitButton::begin([
-            'label' => Yii::t('app', 'Disburse'),
-            'id' => 'disburse',
-            'ajaxOptions' => [
-                'type' => 'POST',
-                'url' => Url::to(['create', 'type' => 'disburse']),
-                'beforeSend' => new JsExpression("function(data){
-                                var month = $('#tblstaffsalaryprocess-month').val();
-                                var date = $('#tblstaffsalaryprocess-disbursement_date').val();
-                                var process = $('#tblstaffsalaryprocess-salary').val(); 
-                                if(month == '' || process == '') {
-                                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Disburse Not Allow before Process.</span></div></div>');
-                                    return false;                        
-                                }
-                                if(date == '') {
-                                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Enter Disburse Date.</span></div></div>');
-                                    return false;                        
-                                }
-                                                $('#loadercontent').show();
-                                                $('#pageloader').show();
-                                                }"),
-                'success' => new JsExpression('function(data){
-                                                                var data=$.parseJSON(data);
-                                                                $("#loadercontent").hide();
-                                                                $("#pageloader").hide();
-                                                                if (data.status == "success"){ 
-                                                                    $(".error-summary").hide();
-                                                                    $("#loadercontent").hide();
-                                                                    $("#pageloader").hide();
-                                                                    reloadGrid();
-                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
-                                                                }else{
-                                                                    $("#loadercontent").hide();
-                                                                    $("#pageloader").hide();
-                                                                    $(".help-block").text("");
-                                                                    $(".form-group").removeClass("has-error");
-                                                                    $(".error-summary").hide();
-                                                                    $(".error-summary li").remove();
-                                                                    $.each(data, function(key, val) {
-                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
-                                                                    });
-                                                                    $(".error-summary").show();
+//                                                                    $(".error-summary").show();
+                                                                    
+                                                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+message+"</span></div></div>");
+
                                                                 }
                                                  }'),
             ],

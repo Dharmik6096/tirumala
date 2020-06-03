@@ -37,25 +37,23 @@ use Yii;
  * @property string $operation_type
  * @property string $history_created_by
  */
-class TblStaffSalaryProcessHistory extends \yii\db\ActiveRecord
-{
+class TblStaffSalaryProcessHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_staff_salary_process_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['salary_code', 'staff_member_code', 'account_no', 'bank_code', 'branch_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'string'],
             [['actual_value', 'lwp', 'value'], 'number'],
-            [['disbursement_date', 'month', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['disbursement_date', 'month', 'created_at', 'updated_at', 'history_created_at', 'previous_hold', 'previous_due', 'hold_amount', 'additional_pay'], 'safe'],
             [['effective_working_days', 'designation_code', 'originating_type'], 'integer'],
         ];
     }
@@ -63,8 +61,7 @@ class TblStaffSalaryProcessHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'salary_code' => Yii::t('app', 'Salary Code'),
@@ -97,4 +94,5 @@ class TblStaffSalaryProcessHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }

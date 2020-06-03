@@ -74,6 +74,34 @@ $this->title = Yii::$app->label->title('view', 'Staff Salary Process');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'previous_hold',
+                                'value' => Yii::$app->general->decimalformat($model->previous_hold),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'previous_due',
+                                'value' => Yii::$app->general->decimalformat($model->previous_due),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'hold_amount',
+                                'value' => Yii::$app->general->decimalformat($model->hold_amount),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'additional_pay',
+                                'value' => Yii::$app->general->decimalformat($model->additional_pay),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'lwp',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],

@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblBranch;
 use app\modules\globalmaster\models\TblDesignation;
 use app\modules\staffmanagement\models\TblStaffSalary;
 use app\modules\organisation\models\TblUnions;
+use app\modules\staffmanagement\models\TblStaffSalaryHoldDue;
 
 /**
  * This is the model class for table "tbl_staff_salary_process".
@@ -41,7 +42,7 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblStaffSalaryProcess extends \app\models\ChildModel {
 
-    public $salary, $Status;
+    public $salary, $Status, $net_payable;
 
     /**
      * @inheritdoc
@@ -59,10 +60,11 @@ class TblStaffSalaryProcess extends \app\models\ChildModel {
             [['month', 'disbursement_date', 'union_code'], 'required', 'on' => ['disburse']],
             [['salary_code', 'staff_member_code', 'account_no', 'bank_code', 'branch_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['actual_value', 'value', 'lwp'], 'number'],
-            [['disbursement_date', 'month', 'created_at', 'updated_at', 'salary', 'Status'], 'safe'],
+            [['disbursement_date', 'month', 'created_at', 'updated_at', 'salary', 'Status', 'previous_hold', 'previous_due', 'hold_amount', 'additional_pay'], 'safe'],
             [['effective_working_days', 'designation_code', 'originating_type'], 'integer'],
             [['month'], 'validateProcess', 'on' => ['process']],
-            [['month'], 'validateDisburseDate', 'on' => ['disburse']]
+            [['month'], 'validateDisburseDate', 'on' => ['disburse']],
+            [['previous_hold', 'previous_due', 'hold_amount', 'additional_pay'], 'default', 'value' => 0]
         ];
     }
 
@@ -142,7 +144,7 @@ class TblStaffSalaryProcess extends \app\models\ChildModel {
         if (empty($memberData)) {
             $this->addError($attribute, "Missing salary for staff member.");
         }
-        $Exist = $this->find()->where(['union_code' => $this->union_code])->andWhere(['<', 'month', $this->month]) ->orderBy('month desc')->one();
+        $Exist = $this->find()->where(['union_code' => $this->union_code])->andWhere(['<', 'month', $this->month])->orderBy('month desc')->one();
 
         if (!empty($Exist->month)) {
             $fDate = date_create($month);
@@ -182,6 +184,10 @@ class TblStaffSalaryProcess extends \app\models\ChildModel {
         if ($this->month > $this->disbursement_date) {
             $this->addError($attribute, Yii::t('app/validation', 'Disbursement Date greater than month.'));
         }
+    }
+
+    public function getHoldDue() {
+        return $this->hasOne(TblStaffSalaryHoldDue::className(), ['staff_member_code' => 'staff_member_code']);
     }
 
 }

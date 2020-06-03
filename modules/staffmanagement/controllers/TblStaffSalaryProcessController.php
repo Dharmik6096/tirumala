@@ -21,6 +21,8 @@ use app\modules\staffmanagement\models\TblStaffSalaryProcessTransaction;
 use app\modules\staffmanagement\models\TblStaffSalaryProcessHistory;
 use app\modules\staffmanagement\models\TblStaffSalaryProcessTransactionHistory;
 use app\modules\staffmanagement\models\TblStaffSalaryProcessTransactionSearch;
+use app\modules\staffmanagement\models\TblStaffSalaryHoldDue;
+use app\modules\staffmanagement\models\TblStaffSalaryHoldDueHistory;
 
 /**
  * TblStaffSalaryProcessController implements the CRUD actions for TblStaffSalaryProcess model.
@@ -105,6 +107,32 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                             $update = FALSE;
                             $msg = 'Staff Salary Disbursed';
                             $mainModel->disbursement_date = $date;
+                            if (!empty($processData['staff_member_code'])) {
+                                foreach ($processData['staff_member_code'] as $key => $value) {
+                                    if ($value == $member->staff_member_code) {
+                                        $mainModel->previous_hold = Yii::$app->general->getforeignkey($mainModel->holdDue, 'hold_amount');
+                                        $mainModel->previous_due = Yii::$app->general->getforeignkey($mainModel->holdDue, 'due_amount');
+                                        $mainModel->hold_amount = $processData['hold_amount'][$key];
+                                        $mainModel->additional_pay = $processData['additional_pay'][$key];
+
+                                        $dueholdModel = new TblStaffSalaryHoldDue();
+                                        $existHoldDue = $dueholdModel->find()->where(['staff_member_code' => $member->staff_member_code])->one();
+                                        if (!empty($existHoldDue)) {
+                                            $HistoryModel = new TblStaffSalaryHoldDueHistory();
+                                            Yii::$app->operation->history($existHoldDue, $HistoryModel, 'UPDATE');
+                                            $modelSave[] = $HistoryModel;
+                                            $existHoldDue->hold_amount = $mainModel->hold_amount;
+                                            $existHoldDue->due_amount = $mainModel->additional_pay;
+                                            $dueholdModel = $existHoldDue;
+                                        } else {
+                                            $dueholdModel->staff_member_code = $mainModel->staff_member_code;
+                                            $dueholdModel->hold_amount = $mainModel->hold_amount;
+                                            $dueholdModel->due_amount = $mainModel->additional_pay;
+                                        }
+                                        $modelSave[] = $dueholdModel;
+                                    }
+                                }
+                            }
                         }
                         $masterModel = $mainModel;
                     } else {
@@ -211,7 +239,13 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                                 $inc++;
                             }
                             if ($dhead->salary_head_code == 91) {
-                                $defaModel->value = $masterModel->actual_value;
+                                $pDue = empty($mainModel->previous_due) ? 0 : $mainModel->previous_due;
+                                $pHold = empty($mainModel->previous_hold) ? 0 : $mainModel->previous_hold;
+                                $cDue = empty($mainModel->additional_pay) ? 0 : $mainModel->additional_pay;
+                                $cHold = empty($mainModel->hold_amount) ? 0 : $mainModel->hold_amount;
+                                $netAmount = $netpayble - $pDue + $pHold;
+                                $totalAmount = $netAmount + $cDue - $cHold;
+                                $defaModel->value = $totalAmount;
                                 $defaModel->actual_value = $masterModel->actual_value;
                             } elseif ($dhead->salary_head_code == 92) {
                                 $defaModel->value = $leavededuction;
@@ -229,7 +263,14 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                             $modelSave[] = $defaModel;
                         }
                     }
-                    $masterModel->value = $netpayble;
+                    $pDue = empty($mainModel->previous_due) ? 0 : $mainModel->previous_due;
+                    $pHold = empty($mainModel->previous_hold) ? 0 : $mainModel->previous_hold;
+                    $cDue = empty($mainModel->additional_pay) ? 0 : $mainModel->additional_pay;
+                    $cHold = empty($mainModel->hold_amount) ? 0 : $mainModel->hold_amount;
+
+                    $netAmount = $netpayble - $pDue + $pHold;
+                    $totalAmount = $netAmount + $cDue - $cHold;
+                    $masterModel->value = $totalAmount;
                     $modelSave[] = $masterModel;
                 }
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$msg, ($update) ? 'edit' : 'create']);
@@ -310,7 +351,10 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
         $month = !empty(Yii::$app->request->get('TblStaffSalaryProcess')['month']) ? date('01-') . Yii::$app->request->get('TblStaffSalaryProcess')['month'] : '';
         $searchModel->month = !empty($month) ? date('Y-m-d', strtotime($month)) : NULL;
         $dataProvider = $searchModel->search([]);
-        return $this->renderAjax('_form', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+        $this->model = new TblStaffSalaryProcess();
+        $this->model->union_code = !empty(Yii::$app->request->get('TblStaffSalaryProcess')['union_code']) ? Yii::$app->request->get('TblStaffSalaryProcess')['union_code'] : NULL;
+        $this->model->month = !empty(Yii::$app->request->get('TblStaffSalaryProcess')['month']) ? Yii::$app->request->get('TblStaffSalaryProcess')['month'] : '';
+        return $this->renderAjax('_form', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'model' => $this->model,]);
     }
 
 }

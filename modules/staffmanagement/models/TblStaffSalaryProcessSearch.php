@@ -17,7 +17,7 @@ class TblStaffSalaryProcessSearch extends TblStaffSalaryProcess {
      */
     public function rules() {
         return [
-            [['salary_code', 'staff_member_code', 'disbursement_date', 'month', 'account_no', 'bank_code', 'branch_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['salary_code', 'staff_member_code', 'disbursement_date', 'month', 'account_no', 'bank_code', 'branch_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'previous_hold', 'previous_due', 'hold_amount', 'additional_pay'], 'safe'],
             [['actual_value', 'value', 'lwp'], 'number'],
             [['effective_working_days', 'designation_code', 'originating_type'], 'integer'],
         ];
