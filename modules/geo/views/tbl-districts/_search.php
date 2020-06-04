@@ -15,6 +15,6 @@ $form = ActiveForm::begin([
     <?php Yii::$app->dropdown->state($model, $form, 'state_code', false); ?>
 </div>
 <div class="col-sm-2">
-<?= Yii::$app->controls->search(); ?>
+    <?= Yii::$app->controls->search(); ?>
 </div>
 <?php ActiveForm::end(); ?>
