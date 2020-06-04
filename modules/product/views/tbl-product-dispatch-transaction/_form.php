@@ -1,79 +1,68 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\product\models\TblProductDispatchTransaction */
+/* @var $model app\modules\product\models\TblProduct */
 /* @var $form yii\widgets\ActiveForm */
+
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
-<div class="tbl-product-dispatch-transaction-form">
+<?php
+$form = ActiveForm::begin([
+            'validateOnBlur' => false,
+            'validateOnEnter' => TRUE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
+?>
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'dispatch_transaction_code')->textInput() ?>
-
-    <?= $form->field($model, 'vendor_type')->textInput() ?>
-
-    <?= $form->field($model, 'vendor_code')->textInput() ?>
-
-    <?= $form->field($model, 'union_code')->textInput() ?>
-
-    <?= $form->field($model, 'plant_code')->textInput() ?>
-
-    <?= $form->field($model, 'mcc_plant_code')->textInput() ?>
-
-    <?= $form->field($model, 'bmc_code')->textInput() ?>
-
-    <?= $form->field($model, 'challan_no')->textInput() ?>
-
-    <?= $form->field($model, 'dispatch_date')->textInput() ?>
-
-    <?= $form->field($model, 'product_requisition_code')->textInput() ?>
-
-    <?= $form->field($model, 'requisition_transaction_code')->textInput() ?>
-
-    <?= $form->field($model, 'product_code')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'rate')->textInput() ?>
-
-    <?= $form->field($model, 'amount')->textInput() ?>
-
-    <?= $form->field($model, 'discount_amount')->textInput() ?>
-
-    <?= $form->field($model, 'dispatch_qty')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput() ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput() ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput() ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <?= $form->field($model, 'x_col1')->textInput() ?>
-
-    <?= $form->field($model, 'x_col2')->textInput() ?>
-
-    <?= $form->field($model, 'x_col3')->textInput() ?>
-
-    <?= $form->field($model, 'x_col4')->textInput() ?>
-
-    <?= $form->field($model, 'x_col5')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+<?= $form->errorSummary($model); ?>
+<div class="row">
+    <div class="col-sm-3" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <div class="col-sm-3 reset_field">
+        <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblproductdispatchtransaction-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('product_code'), '', true); ?>
+    </div>
+    <?= $form->field($model, 'dispatch_qty', ['options' => ['class' => 'form-group col-sm-3 number-validate']])->textInput() ?>
+    <?= $form->field($model, 'rate', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['readonly' => true]) ?>
+    <?= $form->field($model, 'amount', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['readonly' => true]) ?>
+    <?= $form->field($model, 'discount_amount', ['options' => ['class' => 'form-group col-sm-3 number-validate']])->textInput([]) ?>
 
+    <div class="clearfix"></div>
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
 </div>
+<?php ActiveForm::end(); ?>
+
+<?php
+$script = "
+    $('#tblproductdispatchtransaction-dispatch_qty').on('blur',function(){   
+        calc();
+    });
+       
+    function calc(){
+    
+        var qty = $('#tblproductdispatchtransaction-dispatch_qty').val();
+        var rate = $('#tblproductdispatchtransaction-rate').val();        
+        var amt = parseFloat(qty)*parseFloat(rate);
+        
+        if(!isNaN(amt)){
+           amt=amt.toFixed(2);
+            $('#tblproductdispatchtransaction-amount').val(amt);
+        }
+    }
+";
+$this->registerJs($script, View::POS_END, 'product-disp=txn-update-form');
+?>

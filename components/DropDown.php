@@ -573,7 +573,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -898,7 +898,7 @@ class DropDown extends Component {
             'requisition_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'Draft'), 6 => Yii::t('app', 'Sent'), 11 => Yii::t('app', 'Rejected'), 16 => Yii::t('app', 'Partially Processed'), 21 => Yii::t('app', 'InProcess'), 26 => Yii::t('app', 'Partially Dispatched'), 31 => Yii::t('app', 'Partially Delivered'), 36 => Yii::t('app', 'Dispatched'), 41 => Yii::t('app', 'Delivered'), 46 => Yii::t('app', 'Accepted'), 51 => Yii::t('app', 'Partially Accepted'), 56 => Yii::t('app', 'Closed'), 61 => Yii::t('app', 'Pending')],
+                'data' => ['Draft' => Yii::t('app', 'Draft'), 'Sent' => Yii::t('app', 'Sent'), 'Rejected' => Yii::t('app', 'Rejected'), 'Under Dispatch' => Yii::t('app', 'Under Dispatch'), 'Dispatched' => Yii::t('app', 'Dispatched'), 'Delivered' => Yii::t('app', 'Delivered')],
             ],
             'requisition_type' => [
                 'name' => 'status',
@@ -1090,7 +1090,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

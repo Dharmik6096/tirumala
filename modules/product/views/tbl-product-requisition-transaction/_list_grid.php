@@ -11,8 +11,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
         }, 'vAlign' => 'middle'],
         ['attribute' => 'quantity', 'vAlign' => 'middle'],
-        ['attribute' => 'provisional_amount', 'vAlign' => 'middle'],
+        ['attribute' => 'approved_quantity', 'vAlign' => 'middle'],
         ['attribute' => 'provisional_rate', 'vAlign' => 'middle'],
+        ['attribute' => 'provisional_amount', 'vAlign' => 'middle'],
         [
         'attribute' => 'uom',
         'value' => function($model) {
@@ -39,6 +40,9 @@ $attribute = [
             return ($model->is_approved == 1) ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
         }
     ],
+        ['attribute' => 'status', 'value' => function($model) {
+            return isset($model->status) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status] : '';
+        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('requisition_status', $searchModel, 'status'),],
 ];
 
 $grid_option = [

@@ -59,7 +59,7 @@ class TblProductRequisitionController extends \app\controllers\ChildController {
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->vendor_code = $this->model->bmc_code;
-            if($this->model->vendor_type == 'DCS') {
+            if ($this->model->vendor_type == 'DCS') {
                 $this->model->vendor_code = $this->model->dcs_code;
             }
             $this->model->product_requisition_code = Yii::$app->general->getPrimaryCode($this->model);

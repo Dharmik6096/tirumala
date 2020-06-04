@@ -67,12 +67,12 @@ $is_submit = FALSE;
                     <th><?= Yii::t('app', 'Discount Amount (Rs.)') ?></th>
                     <th><?= Yii::t('app', 'Status') ?></th>
                     <th><?= Yii::t('app', 'Action') ?></th>
-                    <!--<th><?php // Yii::t('app', 'Add')     ?></th>-->
+                    <!--<th><?php // Yii::t('app', 'Add')              ?></th>-->
                 </tr>     
                 <?php
                 foreach ($model->tblProductRequisitionTransactions as $key => $transaction) {
                     $row_id = '';
-                    if ($transaction->status == 11) {
+                    if ($transaction->status == 'Rejected') {
                         $class = 'hidden';
                     } else {
                         $class = '';
@@ -84,7 +84,7 @@ $is_submit = FALSE;
 //                            } else {
                         $class = 'success';
 //                            }
-                        $row_id = 'db-' . $addid;
+//                        $row_id = 'db-' . $addid;
 //                            } else
 //                                $row_id = '';
                     }
@@ -102,7 +102,8 @@ $is_submit = FALSE;
                             } else {
                                 $value = $transaction->quantity;
                             }
-                            if (in_array($transaction->status, array(1, 6, 46, 51))) {
+//                            if (in_array($transaction->status, array(1, 6, 46, 51))) {
+                            if (in_array($transaction->status, ['Sent'])) {
                                 $is_submit = TRUE;
                                 $disabled = FALSE;
                             } else {
@@ -116,16 +117,16 @@ $is_submit = FALSE;
                             echo $form->field($transaction, '[' . $key . ']discount_amount', ['options' => ['class' => '']])->textInput(['maxlength' => true, 'value' => $transaction->discount_amount, 'class' => 'form-control discount number-validate', "disabled" => $disabled])->label(false);
                             ?>
                         </td>
-                        <td><?= $model->getRequisitionStatus($transaction->status) ?></td>
+                        <td><?= isset($transaction->status) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$transaction->status] : ''; ?></td>
                         <td><?php
-                            if (in_array($transaction->status, array(11))) {
+                            if (in_array($transaction->status, ['Rejected'])) {
                                 $transaction->req_action = 2;
-                            } else if (in_array($transaction->status, array(46, 51))) {
+                            } else if (in_array($transaction->status, ['Under Dispatch'])) {
                                 $transaction->req_action = 1;
                             } else {
                                 $transaction->req_action = '';
                             }
-                            if (in_array($transaction->status, array(11, 6, 46, 51))) {
+                            if (in_array($transaction->status, ['Sent'])) {
 //                                    if (empty($transaction->parent_product_code))
                                 echo $form->field($transaction, '[' . $key . ']req_action')->dropdownList(['1' => 'Accept', '2' => 'Reject'], ['data-incr' => $key, "disabled" => $disabled, 'class' => 'action-req form-control', 'prompt' => 'Select'])->label(false);
 //                                    else {
@@ -163,6 +164,7 @@ $is_submit = FALSE;
                 if ($is_submit) {
                     echo Html::submitButton(Yii::t('app', 'Submit'), ['class' => 'btn btn-default apply-shortcut', 'value' => '1', 'name' => 'accept', 'id' => 'accept']);
                 }
+                echo Yii::$app->controls->cancel($model);
                 ?>
             </div>
         </div>

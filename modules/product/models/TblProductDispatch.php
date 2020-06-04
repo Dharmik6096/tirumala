@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\transporter\models\TblVehicleMaster;
+use app\modules\product\models\TblProductDispatchTransaction;
 
 /**
  * This is the model class for table "tbl_product_dispatch".
@@ -60,6 +61,14 @@ class TblProductDispatch extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['challan_no'], 'required'],
+                [['challan_date', 'vehicle_no', 'reference_no'], 'required'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'without'],
+                [['dcs_code'], 'required', 'when' => function ($model) {
+                    return $model->vendor_type == 'DCS';
+                }, 'whenClient' => "function (attribute, value) { 
+                  return $('#tblproductdispatch-vendor_type').val() == 'DCS'; 
+              }", 'on' => 'without'],
+                [['challan_verified'], 'default', 'value' => '0'],
                 [['challan_no', 'reference_no', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'vehicle_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
                 [['challan_date', 'dispatch_date', 'created_at', 'updated_at'], 'safe'],
                 [['challan_verified', 'originating_type'], 'integer'],
@@ -97,6 +106,8 @@ class TblProductDispatch extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'mcc_name' => Yii::t('app', 'MCC'),
+            'plant_name' => Yii::t('app', 'Plant'),
         ];
     }
 
@@ -148,6 +159,15 @@ class TblProductDispatch extends \app\models\ChildModel {
 
     public function getVehicleCode() {
         return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_no']);
+    }
+
+    public function getTblProductDispatchTransaction() {
+        return $this->hasMany(TblProductDispatchTransaction::className(), ['challan_no' => 'challan_no']);
+    }
+
+    public function addProductDispatch($records) {
+        $this->attributes = $records;
+        $this->challan_no = Yii::$app->general->getPrimaryCode($this); //$this->getChallanNo($this->sub_center_code);
     }
 
 }

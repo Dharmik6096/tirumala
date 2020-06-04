@@ -46,6 +46,7 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
     public $req_action;
     public $operation = TRUE;
     public $uom;
+    public $is_sentbox = TRUE;
 
 //    public $scheme_type;
 
@@ -209,6 +210,11 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getRecord($reqCode) {
+        $records = $this->find()->where(['requisition_transaction_code' => $reqCode])->one();
+        return $records;
     }
 
 }

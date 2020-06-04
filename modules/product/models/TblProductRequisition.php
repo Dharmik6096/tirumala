@@ -43,6 +43,7 @@ class TblProductRequisition extends \app\models\ChildModel {
 
     public $operation = TRUE;
     public $plant_name, $mcc_name;
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc
@@ -100,6 +101,7 @@ class TblProductRequisition extends \app\models\ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'plant_name' => Yii::t('app', 'Plant'),
             'mcc_name' => Yii::t('app', 'MCC'),
+            'route_code' => Yii::t('app', 'Route'),
         ];
     }
 
@@ -238,6 +240,21 @@ class TblProductRequisition extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getApprovedRequisitionTransactions($reqCode) {
+        $subQuery = (new \yii\db\Query())
+                ->select('sum(dispatch_qty) as dispatch_qty,product_code,product_requisition_code,requisition_transaction_code')
+                ->from('tbl_product_dispatch_transaction AS t')
+                ->groupBy(['product_requisition_code', 'product_code', 'requisition_transaction_code']);
+
+        return $rows = (new \yii\db\Query())
+                ->select('prt.*,product_name')
+                ->from('tbl_product_requisition_transaction AS prt')
+                ->innerJoin('tbl_product', 'tbl_product.product_code=prt.product_code')
+                ->leftJoin(['x' => $subQuery], 'x.requisition_transaction_code=prt.requisition_transaction_code')
+                ->where("is_approved=1 and (dispatch_qty < prt.approved_quantity OR dispatch_qty is null) and prt.product_requisition_code='" . $reqCode . "' and prt.status in ('Under Dispatch')")
+                ->all();
     }
 
 }
