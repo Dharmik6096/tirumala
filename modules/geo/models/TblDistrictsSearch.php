@@ -17,7 +17,7 @@ class TblDistrictsSearch extends TblDistricts {
      */
     public function rules() {
         return [
-            [['district_code','created_at', 'district_name','updated_at', 'created_by', 'state_code', 'updated_by'], 'safe'],
+            [['district_code', 'created_at', 'district_name', 'updated_at', 'created_by', 'state_code', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -47,8 +47,8 @@ class TblDistrictsSearch extends TblDistricts {
             'sort' => ['defaultOrder' => ['district_name' => SORT_ASC]],
         ]);
         $this->load($params);
-        $query->andwhere(['state_code' => Yii::$app->session->get('States')]);
-
+        //$query->andwhere(['state_code' => explode(',', Yii::$app->session->get('States'))]);
+        $query->andwhere(['tbl_districts.state_code' => $this->state_code]);
         if (Yii::$app->session->get('Districts') != '') {
             $array = explode(',', Yii::$app->session->get('Districts'));
             $query->andwhere(['tbl_districts.district_code' => $array]);
@@ -60,7 +60,6 @@ class TblDistrictsSearch extends TblDistricts {
 
         $query->andFilterWhere([
             'tbl_districts.is_active' => $this->is_active,
-//            'state_code' => $this->state_code,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_districts.district_code', $this->district_code])

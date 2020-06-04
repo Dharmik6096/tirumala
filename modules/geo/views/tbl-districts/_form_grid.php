@@ -1,11 +1,11 @@
 
 
-<!--<div class="grid-search">
-<?php
+<div class="grid-search">
+    <?php
 //hide state dropdown
-//echo $this->render('_search', ['model' => $searchModel]); 
-?>
-</div>-->
+    echo $this->render('_search', ['model' => $searchModel]);
+    ?>
+</div>
 
 <?php
 $attribute = [
