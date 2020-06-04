@@ -10,11 +10,11 @@ use yii\web\View;
 
 <?php
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name','visible' => false, 'filter' => false],
     ['attribute' => 'bmc_code', 'value' => 'bmc_code', 'filter' => false],
     ['attribute' => 'bmc_name', 'value' => 'tblDcsBmc.bmc_name', 'filter' => false],
-    ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
     ['attribute' => 'society_code', 'value' => 'dcs_code', 'filter' => false],
+    ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
     ['attribute' => 'member_code', 'value' => 'member_code'],
     ['attribute' => 'reference_code',
         'value' => function ($model) {
@@ -81,7 +81,7 @@ $attribute = [
 $grid_option = [
     'id' => 'member-grid',
     'attributes' => $attribute,
-    'active_column' => true,
+    'active_column' => false,
     'actions' => [
         'update' => function ($url, $model) {
             $name = $model->member_name;
