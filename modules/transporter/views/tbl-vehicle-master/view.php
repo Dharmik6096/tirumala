@@ -60,7 +60,7 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
                             ],
                             [
                                 'attribute' => 'capacity_code',
-                                'value' => isset($model->capacity) ? $model->capacity->value : '',
+                                'value' => Yii::$app->general->getforeignkey($model->capacityCode, 'value'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -86,7 +86,7 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
                             ],
                             [
                                 'attribute' => 'mapped_route',
-                                'value' => isset($model->vehicleKmInfo) ? $model->vehicleKmInfo->routeCode->route_name:'',
+                                'value' => isset($model->vehicleKmInfo) ? $model->vehicleKmInfo->routeCode->route_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -180,12 +180,12 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
                         'columns' => [
                             [
                                 'attribute' => 'billing_type',
-                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->billingType->billing_type:'',
+                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->billingType->billing_type : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
                                 'attribute' => 'remarks',
-                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->remarks:'',
+                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->remarks : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],

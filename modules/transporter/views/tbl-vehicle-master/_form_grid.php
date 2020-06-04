@@ -1,21 +1,29 @@
 <?php
+
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 ?>
 
 <?php
+
 $attribute = [
     //'vehicle_code',
-            ['attribute' => 'union_code', 'value' => 'unionCode.union_name','visible'=>true,'filter'=>false],
-            ['attribute' => 'parsing_no','visible'=>true,'filter'=>false],
-            ['attribute' => 'transporter_code', 'value' => 'transporter.transporter_name','visible'=>true,'filter'=>false],
-            ['attribute' => 'capacity_code', 'value' => 'capacity.value','visible'=>true,'filter'=>false],
-            ['attribute' => 'registration_no','visible'=>false,'filter'=>false],
-            ['attribute' => 'applicable_rto','visible'=>false,'filter'=>false],
-            ['attribute' => 'driver_name','visible'=>true,'filter'=>false],
-            ['attribute' => 'driver_contact_no','visible'=>false,'filter'=>false],
-            ['attribute' => 'wef_date','value' => function($model){ return Yii::$app->controls->view_date($model->wef_date); },'visible'=>false,'filter'=>false],
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'parsing_no', 'visible' => true, 'filter' => false],
+    ['attribute' => 'transporter_code', 'value' => 'transporter.transporter_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'capacity_code',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->capacityCode, 'value');
+        },
+        'visible' => true, 'filter' => false],
+    ['attribute' => 'registration_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'applicable_rto', 'visible' => false, 'filter' => false],
+    ['attribute' => 'driver_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'driver_contact_no', 'visible' => false, 'filter' => false],
+    ['attribute' => 'wef_date', 'value' => function($model) {
+            return Yii::$app->controls->view_date($model->wef_date);
+        }, 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [
@@ -29,21 +37,21 @@ $grid_option = [
             $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Km Wise Rate', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-road"></i>', ['/transporter/tbl-km-wise-rate/create', 'vehicle_code' => $model->vehicle_code], $options);
         },
-        'mobile-oil-rate' => function ($url, $model) {
+                'mobile-oil-rate' => function ($url, $model) {
             $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Mobile Oil Rate', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-mobile"></i>', ['/transporter/tbl-mobile-oil-rate-master/create', 'vehicle_code' => $model->vehicle_code], $options);
         },
-        'vehicle-billing-type' => function ($url, $model) {
+                'vehicle-billing-type' => function ($url, $model) {
             $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Billing Type', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-money"></i>', ['/transporter/tbl-vehicle-billing-type/create', 'vehicle_code' => $model->vehicle_code], $options);
         },
-        'transporter-payment-head' => function ($url, $model) {
+                'transporter-payment-head' => function ($url, $model) {
             $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Transporter Payment Head', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-truck"></i>', ['/transporter/tbl-vehicle-transporter-head-mapping/create', 'vehicle_code' => $model->vehicle_code], $options);
         },
 //        'delete' => ['option' => 'vehicle_code,vehicle_code,tbl-vehicle-master/delete'],
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        ?>

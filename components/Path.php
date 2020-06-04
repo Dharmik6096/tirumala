@@ -84,7 +84,7 @@ class Path extends Component {
         '\\app\modules\vsp\models\\' => ['TblGeneralFormula', 'TblGeneralFormulaHistory', 'TblCriteriaKeywordMapping', 'TblBillHead', 'TblBillHeadHistory', 'TblBillHeadDefault', 'TblBillHeadDetail'],
         '\\app\modules\staffmanagement\models\\' => ['TblStaffMember', 'TblStaffMemberHistory', 'TblStaffAttendance', 'TblStaffAttendanceHistory', 'TblStaffSalaryTransaction', 'TblStaffSalaryTransactionHistory', 'TblStaffSalaryHistory', 'TblStaffInstallment', 'TblStaffInstallmentHistory', 'TblStaffMemberDesignationHistory', 'TblStaffSalaryProcess', 'TblStaffSalaryProcessTransaction', 'TblStaffSalaryProcessHistory', 'TblStaffSalaryProcessTransactionHistory', 'TblStaffAdditionDeduction', 'TblStaffMemberFamilyDetails', 'TblStaffMemberFamilyDetailsHistory', 'TblStaffSalaryHoldDue', 'TblStaffSalaryHoldDueHistory'],
         '\\app\modules\payment\models\\' => ['TblProductSaleDetails', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding', 'TblProductSaleTaxCalculated', 'TblProductSaleTaxCalculatedHistory'],
-        '\\app\modules\tankermovement\models\\' => ['TblQtyDiffType', 'TblConfigTxnResult', 'TblBmcDispatchInspection', 'TblBmcMilkDispatch', 'TblBmcMilkDispatchTxn', 'TblBmcDispatchStock', 'TblVehicleTrip'],
+        '\\app\modules\tankermovement\models\\' => ['TblQtyDiffType', 'TblConfigTxnResult', 'TblBmcDispatchInspection', 'TblBmcMilkDispatch', 'TblBmcMilkDispatchTxn', 'TblBmcDispatchStock', 'TblVehicleTrip', 'TblPreCollectionCheck'],
     ];
 
     public function get($model) {

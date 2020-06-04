@@ -121,7 +121,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCapacity() {
+    public function getCapacityCode() {
         return $this->hasOne(TblCapacity::className(), ['capacity_code' => 'capacity_code']);
     }
 
