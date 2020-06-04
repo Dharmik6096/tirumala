@@ -48,15 +48,15 @@ $script = "
         var net = total + adjust - hold; 
        
         parent.find('.net-amount').val(net.toFixed(2));
-        if(net != '' && net < 0){
-        bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than 0.</span>',function(){
-                bootbox.hideAll();
-                    $('#'+id).focus().select();
-                    $('#'+id).val('');
-                    parent.find('.net-amount').val(total);
-            });
-            return false;
-        } 
+//        if(net != '' && net < 0){
+//        bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than 0.</span>',function(){
+//                bootbox.hideAll();
+//                    $('#'+id).focus().select();
+//                    $('#'+id).val('');
+//                    parent.find('.net-amount').val(total);
+//            });
+//            return false;
+//        } 
     }
 
     $(document).on('change','.cal-amount' ,function(){  

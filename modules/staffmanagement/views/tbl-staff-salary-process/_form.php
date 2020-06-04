@@ -40,13 +40,17 @@ $form = ActiveForm::begin([
                                     bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Enter Disburse Date.</span></div></div>');
                                     return false;                        
                                 }
+                                var data_ok=0;
                                  $('.net-amount').each(function() {
                                     var netamount =  parseFloat($(this).val());
                                     if(netamount<0){
-                                       bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Net Payable should not be less than 0.</span></div></div>');
-                                       return false;   
+                                      data_ok=1; 
                                     }
-                                });
+                                 });
+                                if(data_ok==1){
+                                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Net Payable should not be less than 0.</span></div></div>');
+                                    return false;   
+                                }
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
                                                 }"),

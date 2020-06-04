@@ -158,16 +158,18 @@ class TblStaffSalary extends \app\models\ChildModel {
 
     public function getStaffMember($month, $union) {
         if (!empty($month)) {
-            $data = $this->find()
-                    ->where(['union_code' => $union])
-                    ->andWhere(['<=', 'wef_date', $month])
-                    ->orderBy('wef_date desc')
-                    ->one();
-            if (!empty($data)) {
-                return $member = $this->find()->where(['wef_date' => $data->wef_date, 'union_code' => $union])->all();
-            } else {
-                return $data;
-            }
+            $subQuery = (new \yii\db\Query())
+                    ->select('staff_member_code,MAX(wef_date) as wef_date')
+                    ->from('tbl_staff_salary AS t')
+                    ->where("t.wef_date<='" . $month . "'  and t.union_code='" . $union . "' ")
+                    ->groupBy(['staff_member_code']);
+
+            return $rows = (new \yii\db\Query())
+                    ->select('st.*')
+                    ->from('tbl_staff_salary AS st')
+                    ->leftJoin(['x' => $subQuery], 'x.staff_member_code=st.staff_member_code')
+                    ->where("st.wef_date=x.wef_date and st.union_code='" . $union . "' ")
+                    ->all();
         }
     }
 

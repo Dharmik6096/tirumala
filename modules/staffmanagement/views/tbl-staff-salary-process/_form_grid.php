@@ -43,6 +43,26 @@ $attribute = [
             return Yii::$app->general->decimalformat($model->value);
         },
     ],
+    ['attribute' => 'previous_hold',
+        'value' => function($model) {
+            return Yii::$app->general->decimalformat($model->previous_hold);
+        },
+    ],
+    ['attribute' => 'previous_due',
+        'value' => function($model) {
+            return Yii::$app->general->decimalformat($model->previous_due);
+        },
+    ],
+    ['attribute' => 'hold_amount',
+        'value' => function($model) {
+            return Yii::$app->general->decimalformat($model->hold_amount);
+        },
+    ],
+    ['attribute' => 'additional_pay',
+        'value' => function($model) {
+            return Yii::$app->general->decimalformat($model->additional_pay);
+        },
+    ],
     ['attribute' => 'effective_working_days',],
     ['attribute' => 'lwp',],
     ['attribute' => 'bank_code', 'value' => function($model) {

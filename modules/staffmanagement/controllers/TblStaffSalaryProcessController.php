@@ -92,10 +92,10 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                 $i = 1;
                 $inc = 1;
                 foreach ($memberData as $member) {
-                    $existData = $this->model->getExistData($member->staff_member_code);
+                    $existData = $this->model->getExistData($member['staff_member_code']);
                     $TotalDays = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($month)), date('Y', strtotime($month)));
                     $attendanceModel = new TblStaffAttendance();
-                    $leave = $attendanceModel->getMemberAttendance($member->staff_member_code, $searchModel->month);
+                    $leave = $attendanceModel->getMemberAttendance($member['staff_member_code'], $searchModel->month);
                     $masterModel = new TblStaffSalaryProcess();
                     if (!empty($existData->salary_code)) {
                         $mainModel = $masterModel->findOne($existData->salary_code);
@@ -109,14 +109,14 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                             $mainModel->disbursement_date = $date;
                             if (!empty($processData['staff_member_code'])) {
                                 foreach ($processData['staff_member_code'] as $key => $value) {
-                                    if ($value == $member->staff_member_code) {
+                                    if ($value == $member['staff_member_code']) {
                                         $mainModel->previous_hold = Yii::$app->general->getforeignkey($mainModel->holdDue, 'hold_amount');
                                         $mainModel->previous_due = Yii::$app->general->getforeignkey($mainModel->holdDue, 'due_amount');
                                         $mainModel->hold_amount = $processData['hold_amount'][$key];
                                         $mainModel->additional_pay = $processData['additional_pay'][$key];
 
                                         $dueholdModel = new TblStaffSalaryHoldDue();
-                                        $existHoldDue = $dueholdModel->find()->where(['staff_member_code' => $member->staff_member_code])->one();
+                                        $existHoldDue = $dueholdModel->find()->where(['staff_member_code' => $member['staff_member_code']])->one();
                                         if (!empty($existHoldDue)) {
                                             $HistoryModel = new TblStaffSalaryHoldDueHistory();
                                             Yii::$app->operation->history($existHoldDue, $HistoryModel, 'UPDATE');
@@ -139,16 +139,18 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                         $masterModel->salary_code = (string) Yii::$app->general->getCodeAutoIncrement($masterModel, $i);
                         $i++;
                     }
-                    $masterModel->staff_member_code = $member->staff_member_code;
+                    $TempModel = new TblStaffSalary();
+                    $TempModel->staff_member_code = $member['staff_member_code'];
+                    $masterModel->staff_member_code = $member['staff_member_code'];
                     $masterModel->effective_working_days = $TotalDays;
                     $masterModel->lwp = $leave;
                     $masterModel->month = $searchModel->month;
-                    $masterModel->designation_code = Yii::$app->general->getforeignkey($member->staffMemberCode, 'designation_code');
-                    $masterModel->account_no = Yii::$app->general->getforeignkey($member->staffMemberCode, 'bank_account_no');
-                    $masterModel->bank_code = Yii::$app->general->getforeignkey($member->staffMemberCode, 'bank_code');
-                    $masterModel->branch_code = Yii::$app->general->getforeignkey($member->staffMemberCode, 'branch_code');
-                    $masterModel->union_code = $member->union_code;
-                    $masterModel->actual_value = $member->addition - $member->deduction;
+                    $masterModel->designation_code = Yii::$app->general->getforeignkey($TempModel->staffMemberCode, 'designation_code');
+                    $masterModel->account_no = Yii::$app->general->getforeignkey($TempModel->staffMemberCode, 'bank_account_no');
+                    $masterModel->bank_code = Yii::$app->general->getforeignkey($TempModel->staffMemberCode, 'bank_code');
+                    $masterModel->branch_code = Yii::$app->general->getforeignkey($TempModel->staffMemberCode, 'branch_code');
+                    $masterModel->union_code = $member['union_code']; //member->union_code;
+                    $masterModel->actual_value = $member['addition'] - $member['deduction']; //$member->deduction;
 
                     $netpayble = 0;
                     $addition = 0;
@@ -156,7 +158,7 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                     $leavededuction = 0;
                     //staff addition deduction salary calculation
                     $addDeductModel = new TblStaffAdditionDeduction();
-                    $addDeductData = $addDeductModel->getStaffAddDed($member->staff_member_code);
+                    $addDeductData = $addDeductModel->getStaffAddDed($member['staff_member_code']);
                     if (!empty($addDeductData)) {
                         foreach ($addDeductData as $addded) {
                             $installModel = new TblStaffInstallment();
@@ -196,7 +198,7 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
 
                             $headtype = $heads->salary_head_type;
                             $transModel = new TblStaffSalaryTransaction();
-                            $transData = $transModel->getSalaryTrans($member->staff_salary_code, $heads->salary_head_code);
+                            $transData = $transModel->getSalaryTrans($member['staff_salary_code'], $heads->salary_head_code);
                             if (!empty($transData)) {
                                 $head = $transData->value;
                                 $lwp = $transData->lwp_effect;
@@ -275,6 +277,9 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                 }
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$msg, ($update) ? 'edit' : 'create']);
                 if ($transaction == 'customRedirect') {
+                    if (!empty($type)) {
+                        return $this->redirect(['index']);
+                    }
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'msg' => $msg];
                 } else {
