@@ -17,13 +17,13 @@ use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\payment\models\TblSaleInstallmentsSearch;
 use app\modules\payment\models\TblDcsPaymentCycle;
-use app\modules\payment\models\TblProductSaleDetailsSearch;
-use app\modules\payment\models\TblProductSaleDetails;
+use app\modules\payment\models\TblProductSaleTransactionSearch;
+use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\payment\models\TblMemberCreditLimit;
 use app\modules\payment\models\TblMemberCreditLimitHistory;
 use app\modules\payment\models\TblMemberCreditLimitTransaction;
-use app\modules\product\models\TblProductRateApplicability;
-use app\modules\product\models\TblProductRate;
+use app\modules\product\models\TblProductSaleRateApplicability;
+use app\modules\product\models\TblProductSaleRate;
 use yii\widgets\ActiveForm;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use app\modules\payment\models\TblPaymentCycle;
@@ -61,7 +61,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
-        $searchModel = new TblProductSaleDetailsSearch();
+        $searchModel = new TblProductSaleTransactionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
@@ -309,21 +309,24 @@ class TblProductSaleController extends \app\controllers\ChildController {
     public function actionCreateProductSale() {
         $model = new TblProductSale();
         $model->scenario = 'saleProduct';
-        $detailModel = new TblProductSaleDetails();
+        $detailModel = new TblProductSaleTransaction();
         $detailModel->scenario = 'saleProduct';
         $searchModel = new TblProductSaleSearch();
         $searchModel->grid_filter = false;
         $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
         $message = 'Product Sale';
-        $this->createProductSaleData($model, $detailModel, $message);
-        return $this->render('_create_product_sale', [
-                    'model' => $model,
-                    'detailModel' => $detailModel,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'type' => 'vendorWiseSale',
-                    'message' => $message
-        ]);
+        if (Yii::$app->request->post()) {
+            $this->createProductSaleData($model, $detailModel, $message);
+        } else {
+            return $this->render('_create_product_sale', [
+                        'model' => $model,
+                        'detailModel' => $detailModel,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => 'vendorWiseSale',
+                        'message' => $message
+            ]);
+        }
     }
 
     public function actionLoadRate() {
@@ -331,7 +334,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         if (!empty($_POST['product_code']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
             $date = !empty($_POST['invoice_date']) ? date('Y-m-d', strtotime($_POST['invoice_date'])) : date('Y-m-d');
 
-            $appQuery = TblProductRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
+            $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                     ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                     ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
                     ->where(['tbl_product_sale_rate.product_code' => $_POST['product_code'], 'tbl_product_sale_rate_applicability.applicable_for' => $_POST['customer_type'], 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $_POST['is_member_rate'], 'tbl_product_sale_rate_applicability.applicable_code' => $_POST['customer_code']]);
@@ -454,21 +457,24 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $model = new TblProductSale();
         $model->scenario = 'saleProduct';
         $model->customer_type = 'Member';
-        $detailModel = new TblProductSaleDetails();
+        $detailModel = new TblProductSaleTransaction();
         $detailModel->scenario = 'saleProduct';
         $searchModel = new TblProductSaleSearch();
         $searchModel->grid_filter = false;
         $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
         $message = 'Product Sale to Member';
-        $this->createProductSaleData($model, $detailModel, $message);
-        return $this->render('_create_product_sale', [
-                    'model' => $model,
-                    'detailModel' => $detailModel,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'type' => 'memberWiseSale',
-                    'message' => $message
-        ]);
+        if (Yii::$app->request->post()) {
+            $this->createProductSaleData($model, $detailModel, $message);
+        } else {
+            return $this->render('_create_product_sale', [
+                        'model' => $model,
+                        'detailModel' => $detailModel,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => 'memberWiseSale',
+                        'message' => $message
+            ]);
+        }
     }
 
     public function createProductSaleData($model, $detailModel, $message = 'Product Sale') {
@@ -609,14 +615,17 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $record = ['status' => 'error', 'msg' => $msg];
                     }
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    return Json::encode($record);
+                    echo Json::encode($record);
+                    return;
                 } else {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+                    echo Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+                    return;
                 }
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+                echo Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+                return;
             }
         }
     }

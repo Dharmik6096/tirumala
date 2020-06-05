@@ -19,7 +19,7 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblProductRateHistory extends \yii\db\ActiveRecord {
+class TblProductSaleRateHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc

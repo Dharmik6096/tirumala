@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\payment\models\TblProductSaleDetails */
+/* @var $model app\modules\payment\models\TblProductSaleTransaction */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
     'modelClass' => 'Tbl Product Sale Details',

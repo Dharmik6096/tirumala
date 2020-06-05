@@ -5,12 +5,12 @@ namespace app\modules\product\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\product\models\TblProductRate;
+use app\modules\product\models\TblProductSaleRate;
 
 /**
- * TblProductRateSearch represents the model behind the search form about `app\modules\product\models\TblProductRate`.
+ * TblProductSaleRateSearch represents the model behind the search form about `app\modules\product\models\TblProductSaleRate`.
  */
-class TblProductRateSearch extends TblProductRate {
+class TblProductSaleRateSearch extends TblProductSaleRate {
 
     public $product_sale_rate_code_val;
     public $union_name;
@@ -46,11 +46,11 @@ class TblProductRateSearch extends TblProductRate {
     public function search($params) {
         if (empty($this->product_code)) {
             // $query = TblProductPurchaseRate::find()->select(['tbl_product_purchase_rate.product_code','tbl_product_purchase_rate.union_code','tbl_product_purchase_rate.dcs_code']);
-            $subquery = TblProductRate::find()->select(['max(product_sale_rate_code) As product_sale_rate_code'])->groupBy(['product_code', 'union_code', 'is_member_rate'])->all();
+            $subquery = TblProductSaleRate::find()->select(['max(product_sale_rate_code) As product_sale_rate_code'])->groupBy(['product_code', 'union_code', 'is_member_rate'])->all();
 
-            $query = TblProductRate::find()->where(['product_sale_rate_code' => $subquery])->orderBy('wef_date DESC');
+            $query = TblProductSaleRate::find()->where(['product_sale_rate_code' => $subquery])->orderBy('wef_date DESC');
         } else {
-            $query = TblProductRate::find();
+            $query = TblProductSaleRate::find();
         }
 
         // add conditions that should always apply here

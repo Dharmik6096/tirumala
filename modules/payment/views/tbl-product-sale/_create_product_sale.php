@@ -120,7 +120,7 @@ $type = !empty($type) ? $type : '';
                                                 $('#pageloader').show();
                                                 }"),
                                 'success' => new JsExpression('function(data){
-                                                                var data=$.parseJSON(data);
+//                                                                var data=$.parseJSON(data);
                                                                 $("#loadercontent").hide();
                                                                 $("#pageloader").hide();
                                                                 if (data.status == "success"){ 
@@ -135,7 +135,7 @@ $type = !empty($type) ? $type : '';
                                                                     $(".reset_field input").val("");
                                                                     $(".reset_field select").val("");
 //                                                                    $("#tblproductsale-payment_mode").val("");
-//                                                                    $("#tblproductsaledetails-product_code").val("");
+//                                                                    $("#tblproductsaletransaction-product_code").val("");
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                         setTimeout(function(){
                                                                             $("#tblbillheaddetail-customer_type").focus();
@@ -205,24 +205,24 @@ $script = "
         setRate();
         reloadGrid();
     });
-    $(document).on('change','#tblproductsaledetails-product_code',function(){
+    $(document).on('change','#tblproductsaletransaction-product_code',function(){
         setRate();
     });
-    $(document).on('change','#tblproductsaledetails-quantity',function(){
+    $(document).on('change','#tblproductsaletransaction-quantity',function(){
         setAmount();
         setAmtFields();
         setTaxAmount();
     });
     
-    $('#tblproductsaledetails-rate').on('change', function(){
-        var rate = parseFloat($('#tblproductsaledetails-rate').val());
+    $('#tblproductsaletransaction-rate').on('change', function(){
+        var rate = parseFloat($('#tblproductsaletransaction-rate').val());
         if(rate==0){
-            $('#tblproductsaledetails-amount').val(rate.toFixed(2));
-            $('#tblproductsaledetails-tax_amount').val(rate.toFixed(2));
-            $('#tblproductsaledetails-total_amount').val(rate.toFixed(2));
+            $('#tblproductsaletransaction-amount').val(rate.toFixed(2));
+            $('#tblproductsaletransaction-tax_amount').val(rate.toFixed(2));
+            $('#tblproductsaletransaction-total_amount').val(rate.toFixed(2));
         }else{
             $(this).attr('data-val', $(this).val());
-//            $('#tblproductsaledetails-x_col1').val($(this).val());
+//            $('#tblproductsaletransaction-x_col1').val($(this).val());
             setAmtFields();
             setTaxAmount();
         }
@@ -234,7 +234,7 @@ $script = "
     });
     
 
-    $('#tblproductsaledetails-tax_code').on('change', function(){
+    $('#tblproductsaletransaction-tax_code').on('change', function(){
         $('#tblproductsale-discount').val('');
 //        $('#tblproductsale-discount').trigger('change');
         setAmtFields();
@@ -242,8 +242,8 @@ $script = "
     });
 
     function setAmtFields(){
-        var Qty = parseFloat($('#tblproductsaledetails-quantity').val());
-        var rate = parseFloat($('#tblproductsaledetails-rate').attr('data-val'));
+        var Qty = parseFloat($('#tblproductsaletransaction-quantity').val());
+        var rate = parseFloat($('#tblproductsaletransaction-rate').attr('data-val'));
         if(isNaN(Qty)){
             Qty = 0;
         }
@@ -251,15 +251,15 @@ $script = "
             rate = 0;
         }
         var amount = Qty * rate;
-        $('#tblproductsaledetails-amount').val(amount.toFixed(2));
+        $('#tblproductsaletransaction-amount').val(amount.toFixed(2));
     }
     function setTaxAmount(){
         var unionCode = $('#tblproductsale-union_code').val();
-        var taxCode = $('#tblproductsaledetails-tax_code').val();
+        var taxCode = $('#tblproductsaletransaction-tax_code').val();
         var amountValue = $('#tblproductsale-amount').val();
-        var rateValue = $('#tblproductsaledetails-rate').attr('data-val');
+        var rateValue = $('#tblproductsaletransaction-rate').attr('data-val');
         var discountValue = $('#tblproductsale-discount').val();
-        var recQty = $('#tblproductsaledetails-quantity').val();
+        var recQty = $('#tblproductsaletransaction-quantity').val();
         if(isNaN(amountValue)){
             amountValue = 0;
         }
@@ -287,9 +287,9 @@ $script = "
                         var chagnedRate = obj1.changedAmount;
                         var changeamount = (obj1.changedAmount * recQty).toFixed(2);
                         var taxAmount = Math.abs(taxAmt.toFixed(2));
-                        $('#tblproductsaledetails-rate').val(chagnedRate.toFixed(2));
+                        $('#tblproductsaletransaction-rate').val(chagnedRate.toFixed(2));
                         $('#tblproductsale-amount').val(changeamount);
-                        $('#tblproductsaledetails-tax_amount').val(taxAmount);
+                        $('#tblproductsaletransaction-tax_amount').val(taxAmount);
                         var totalAmount = parseFloat(changeamount) + parseFloat(taxAmount);
                         $('#tblproductsale-amount_due').val(totalAmount.toFixed(0));
                         setTaxAmountDisc();
@@ -301,12 +301,12 @@ $script = "
 
     function setTaxAmountDisc() {
         var unionCode = $('#tblproductsale-union_code').val();
-        var taxCode = $('#tblproductsaledetails-tax_code').val();
+        var taxCode = $('#tblproductsaletransaction-tax_code').val();
         var amountValue = $('#tblproductsale-amount').val();
-        var rateValue = $('#tblproductsaledetails-rate').attr('data-val');
+        var rateValue = $('#tblproductsaletransaction-rate').attr('data-val');
         var discountValue = $('#tblproductsale-discount').val();
-        var recQty = $('#tblproductsaledetails-quantity').val();
-        var taxAmt = $('#tblproductsaledetails-tax_amount').val();
+        var recQty = $('#tblproductsaletransaction-quantity').val();
+        var taxAmt = $('#tblproductsaletransaction-tax_amount').val();
 
         if(isNaN(amountValue)){
             amountValue = 0;
@@ -320,7 +320,7 @@ $script = "
         if(isNaN(discountValue) || discountValue == '' || discountValue == undefined){
             discountValue = 0;
         }
-        var existtotalAmt = $('#tblproductsaledetails-rate').attr('data-val');
+        var existtotalAmt = $('#tblproductsaletransaction-rate').attr('data-val');
         var totalAmount = existtotalAmt - discountValue;
         if(taxCode != ''){
             $.ajax({
@@ -338,7 +338,7 @@ $script = "
                         var existToralAmt = $('#tblproductsale-amount_due').val();
                         var chagneAmt = existToralAmt - diffAmt - discountValue;
                         $('#tblproductsale-amount_due').val(chagneAmt.toFixed(0));
-                        $('#tblproductsaledetails-tax_amount').val(Math.abs(taxAmt.toFixed(2)));
+                        $('#tblproductsaletransaction-tax_amount').val(Math.abs(taxAmt.toFixed(2)));
                     }
                 }
             });
@@ -356,7 +356,7 @@ $script = "
         }
     }
     function setRate(){
-        var product_code=$('#tblproductsaledetails-product_code').val();
+        var product_code=$('#tblproductsaletransaction-product_code').val();
         var csrfToken = $('meta[name=\"csrf-token\"]').attr('content');
         var customer_type=$('#tblproductsale-customer_type').val();
         var customer_code=$('#tblproductsale-customer_code').val();
@@ -377,25 +377,25 @@ $script = "
             data: {product_code: product_code, is_member_rate: is_member_rate, invoice_date: invoice_date, _csrf : csrfToken, customer_type: customer_type, customer_code: customer_code, bmc_code: bmc_code, union_code: union_code},
             success: function(data) {
                 var d=JSON.parse(data);
-                $('#tblproductsaledetails-rate').val(d.sale_rate);
-                $('#tblproductsaledetails-rate').attr('data-val', d.sale_rate);
-                $('#tblproductsaledetails-x_col1').val(d.sale_rate);
-                $('#tblproductsaledetails-unit_code').val(d.unit_code);
-                $('#tblproductsaledetails-product_sale_rate_applicability_code').val(d.product_sale_rate_applicability_code);
+                $('#tblproductsaletransaction-rate').val(d.sale_rate);
+                $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
+                $('#tblproductsaletransaction-x_col1').val(d.sale_rate);
+                $('#tblproductsaletransaction-unit_code').val(d.unit_code);
+                $('#tblproductsaletransaction-product_sale_rate_applicability_code').val(d.product_sale_rate_applicability_code);
                 setAmount();
             },
             error:function(data){
                     }
         });
-//        $('#tblproductsaledetails-rate').val('10');
+//        $('#tblproductsaletransaction-rate').val('10');
     }
     
     function setAmount(){
-        var quantity = $('#tblproductsaledetails-quantity').val();
+        var quantity = $('#tblproductsaletransaction-quantity').val();
         if(quantity == '' || isNaN(quantity)) {
             quantity = 0;
         }
-        var rate = $('#tblproductsaledetails-rate').val();
+        var rate = $('#tblproductsaletransaction-rate').val();
         if(rate == '' || isNaN(rate)) {
             rate = 0;
         }

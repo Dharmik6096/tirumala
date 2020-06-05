@@ -22,7 +22,7 @@ use Yii;
  * @property string $history_created_at
  * @property string $operation_type
  */
-class TblProductSaleDetailsHistory extends \yii\db\ActiveRecord {
+class TblProductSaleTransactionHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc

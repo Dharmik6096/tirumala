@@ -9,7 +9,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
-use app\modules\payment\models\TblProductSaleDetails;
+use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\syncutility\models\TblSentbox;
 
 /**
@@ -34,7 +34,9 @@ use app\modules\syncutility\models\TblSentbox;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblProductRateApplicability extends \app\models\ChildModel {
+class TblProductSaleRateApplicability extends \app\models\ChildModel {
+
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc
@@ -48,13 +50,13 @@ class TblProductRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'wef_date'], 'required'],
+                [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['product_sale_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['sale_rate', 'product_rate_applicability_code', 'commission'], 'safe'],
 //            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
-            [['product_sale_rate_code'], 'validateProductSaleRate', 'skipOnEmpty' => false],
+            [['product_sale_rate_code'], 'validateProductSaleRate', 'skipOnEmpty' => false, 'except' => ['androidsync']],
         ];
     }
 
@@ -92,7 +94,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
     }
 
     public function getProductRateCode() {
-        return $this->hasOne(TblProductRate::className(), ['product_sale_rate_code' => 'product_sale_rate_code']);
+        return $this->hasOne(TblProductSaleRate::className(), ['product_sale_rate_code' => 'product_sale_rate_code']);
     }
 
     public function getProductRate() {
@@ -173,7 +175,7 @@ class TblProductRateApplicability extends \app\models\ChildModel {
     }
 
     public function getProductSaleDetails() {
-        return $this->hasOne(TblProductSaleDetails::className(), ['rate_app_code' => 'product_sale_rate_applicability_code']);
+        return $this->hasOne(TblProductSaleTransaction::className(), ['rate_app_code' => 'product_sale_rate_applicability_code']);
     }
 
     public function allowDelete() {

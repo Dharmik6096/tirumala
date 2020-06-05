@@ -35,12 +35,13 @@ use app\modules\collection\models\TblBmcCollection;
  *
  * @property TblDcs $dcsCode
  * @property TblUnions $unionCode
- * @property TblProductSaleDetails[] $tblProductSaleDetails
+ * @property TblProductSaleTransaction[] $tblProductSaleTransactionails
  * @property TblSaleInstallments[] $tblSaleInstallments
  */
 class TblProductSale extends \app\models\ChildModel {
 
     public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code, $customer_name, $ex_code;
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc
@@ -54,15 +55,15 @@ class TblProductSale extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct']],
+                [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync']],
                 [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
-                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code'], 'safe'],
+                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'number', 'min' => 0],
                 [['discount'], 'validateDisccount'],
                 [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
-                [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct']],
+                [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync']],
                 [['invoice_date'], 'validatePaymentCycle', 'on' => ['saleProduct']],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'default', 'value' => 0],
 //            [['is_installment'], 'integer'],
@@ -162,7 +163,7 @@ class TblProductSale extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getTblProductSaleDetails() {
-        return $this->hasMany(TblProductSaleDetails::className(), ['product_sale_code' => 'product_sale_code']);
+        return $this->hasMany(TblProductSaleTransaction::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
     /**

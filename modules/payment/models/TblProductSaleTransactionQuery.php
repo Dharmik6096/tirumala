@@ -1,13 +1,13 @@
 <?php
 
-namespace app\modules\product\models;
+namespace app\modules\payment\models;
 
 /**
- * This is the ActiveQuery class for [[TblProductRate]].
+ * This is the ActiveQuery class for [[TblProductSaleTransaction]].
  *
- * @see TblProductRate
+ * @see TblProductSaleTransaction
  */
-class TblProductRateQuery extends \yii\db\ActiveQuery
+class TblProductSaleTransactionQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class TblProductRateQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return TblProductRate[]|array
+     * @return TblProductSaleTransaction[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class TblProductRateQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return TblProductRate|array|null
+     * @return TblProductSaleTransaction|array|null
      */
     public function one($db = null)
     {

@@ -25,7 +25,9 @@ use app\modules\payment\models\TblSaleInstallments;
  * @property TblProduct $productCode0
  * @property TblProductSale $productSaleCode
  */
-class TblProductSaleDetails extends \app\models\ChildModel {
+class TblProductSaleTransaction extends \app\models\ChildModel {
+
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc
@@ -40,13 +42,13 @@ class TblProductSaleDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct']],
+                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync']],
                 [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct']],
-                [['product_code', 'quantity'], 'integer'],
-                [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string'],
-                [['rate', 'quantity', 'amount'], 'number', 'min' => 0],
+                [['product_code', 'quantity'], 'integer', 'except' => ['androidsync']],
+                [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync']],
+                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync']],
                 [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
 //                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
         ];
     }
@@ -97,10 +99,10 @@ class TblProductSaleDetails extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
-     * @return TblProductSaleDetailsQuery the active query used by this AR class.
+     * @return TblProductSaleTransactionQuery the active query used by this AR class.
      */
     public static function find() {
-        return new TblProductSaleDetailsQuery(get_called_class());
+        return new TblProductSaleTransactionQuery(get_called_class());
     }
 
     public function getTransData($invoice_no) {

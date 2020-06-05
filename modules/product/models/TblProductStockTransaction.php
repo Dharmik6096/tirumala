@@ -5,13 +5,16 @@ namespace app\modules\product\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_product_receipt_tax_calculated".
+ * This is the model class for table "tbl_product_stock_transaction".
  *
- * @property string $product_receipt_tax_calculated_code
- * @property string $product_receipt_code
- * @property string $product_receipt_transaction_code
- * @property integer $tax_detail_code
- * @property string $value
+ * @property string $product_stock_transaction_code
+ * @property string $old_value
+ * @property string $new_value
+ * @property string $final_value
+ * @property string $transaction_type
+ * @property string $transaction_date
+ * @property string $reference_code
+ * @property string $product_code
  * @property string $union_code
  * @property string $plant_code
  * @property string $mcc_plant_code
@@ -30,7 +33,7 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblProductReceiptTaxCalculated extends \app\models\ChildModel {
+class TblProductStockTransaction extends \app\models\ChildModel {
 
     public $is_sentbox = TRUE;
 
@@ -38,7 +41,7 @@ class TblProductReceiptTaxCalculated extends \app\models\ChildModel {
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_product_receipt_tax_calculated';
+        return 'tbl_product_stock_transaction';
     }
 
     /**
@@ -46,11 +49,11 @@ class TblProductReceiptTaxCalculated extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_receipt_tax_calculated_code'], 'required', 'on' => ['androidsync']],
-                [['product_receipt_tax_calculated_code', 'product_receipt_code', 'product_receipt_transaction_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['tax_detail_code', 'originating_type'], 'safe'],
-                [['value'], 'safe'],
-                [['created_at', 'updated_at'], 'safe'],
+                [['product_stock_transaction_code'], 'required', 'on' => ['androidsync']],
+                [['product_stock_transaction_code', 'transaction_type', 'reference_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['old_value', 'new_value', 'final_value'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
         ];
     }
 
@@ -59,11 +62,14 @@ class TblProductReceiptTaxCalculated extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'product_receipt_tax_calculated_code' => Yii::t('app', 'Product Receipt Tax Calculated Code'),
-            'product_receipt_code' => Yii::t('app', 'Product Receipt Code'),
-            'product_receipt_transaction_code' => Yii::t('app', 'Product Receipt Transaction Code'),
-            'tax_detail_code' => Yii::t('app', 'Tax Detail Code'),
-            'value' => Yii::t('app', 'Value'),
+            'product_stock_transaction_code' => Yii::t('app', 'Product Stock Transaction Code'),
+            'old_value' => Yii::t('app', 'Old Value'),
+            'new_value' => Yii::t('app', 'New Value'),
+            'final_value' => Yii::t('app', 'Final Value'),
+            'transaction_type' => Yii::t('app', 'Transaction Type'),
+            'transaction_date' => Yii::t('app', 'Transaction Date'),
+            'reference_code' => Yii::t('app', 'Reference Code'),
+            'product_code' => Yii::t('app', 'Product Code'),
             'union_code' => Yii::t('app', 'Union Code'),
             'plant_code' => Yii::t('app', 'Plant Code'),
             'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),

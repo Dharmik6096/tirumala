@@ -98,7 +98,7 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
     }
 
     public function getProductRateCode() {
-        return $this->hasOne(TblProductRate::className(), ['product_rate_code' => 'product_rate_code']);
+        return $this->hasOne(TblProductSaleRate::className(), ['product_rate_code' => 'product_rate_code']);
     }
 
     public function getProductRate() {

@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\payment\models\TblProductSaleDetails */
+/* @var $model app\modules\payment\models\TblProductSaleTransaction */
 /* @var $form yii\widgets\ActiveForm */
 $model->rate_app_code;
 ?>
@@ -82,15 +82,15 @@ $script = "
              }
         });
         $('#add-sale').on('click',function(){
-        $('#tblproductsaledetails-product_code,#tblproductsaledetails-qty').blur();
-//        if($('#tblproductsaledetails-product_code').val()=='' || $('#tblproductsaledetails-qty').val()=='')
+        $('#tblproductsaletransaction-product_code,#tblproductsaletransaction-qty').blur();
+//        if($('#tblproductsaletransaction-product_code').val()=='' || $('#tblproductsaletransaction-qty').val()=='')
 //        {
 //            return false;
 //        }
         $('#w0').yiiActiveForm('validate');
         var length = $('#w0').find('.has-error').length;
         if(length > 0){   return false;  }
-        if($('#tblproductsaledetails-rate').val()==0)
+        if($('#tblproductsaletransaction-rate').val()==0)
         {
             bootbox.confirm({
                             message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want add product with total 0?</span></div></div>',
@@ -123,7 +123,7 @@ $script = "
         }
         });
         
-        $('#tblproductsaledetails-product_code').on('change',function(){
+        $('#tblproductsaletransaction-product_code').on('change',function(){
             var code=$(this).val();
             var csrfToken = $('meta[name=\"csrf-token\"]').attr('content');
             var dcs=JSON.parse(localStorage.getItem('sale_data')).dcs_code;
@@ -134,35 +134,35 @@ $script = "
                     data: {product_code: code, _csrf : csrfToken, dcs_code: dcs, union_code: union},
                     success: function(data) {
                             var d=JSON.parse(data);
-                            $('#tblproductsaledetails-rate_app_code').val(d.product_rate_applicability_code);
-                            $('#tblproductsaledetails-rate').val(d.rate);
+                            $('#tblproductsaletransaction-rate_app_code').val(d.product_rate_applicability_code);
+                            $('#tblproductsaletransaction-rate').val(d.rate);
                     },
                     error:function(data){
                                 //alert('Your data has not been submitted..Please try again');
                             }
                 });
         });
-        $('#tblproductsaledetails-qty').on('change',function(){
+        $('#tblproductsaletransaction-qty').on('change',function(){
             calcAmount();
         });
     });
     
     function calcAmount()
     {
-     var qty=$('#tblproductsaledetails-qty').val();
-     var rt=  $('#tblproductsaledetails-rate').val();
+     var qty=$('#tblproductsaletransaction-qty').val();
+     var rt=  $('#tblproductsaletransaction-rate').val();
      var amt=qty*rt;
-     $('#tblproductsaledetails-amount').val(amt);
+     $('#tblproductsaletransaction-amount').val(amt);
     }
     
     function addToCart()
     {
       var obj=new Object();
-      obj.product_code=$('#tblproductsaledetails-product_code').val();
-      obj.rate_app_code=$('#tblproductsaledetails-rate_app_code').val();
-      obj.rate=$('#tblproductsaledetails-rate').val();
-      obj.qty=$('#tblproductsaledetails-qty').val();
-      obj.amount=$('#tblproductsaledetails-amount').val();
+      obj.product_code=$('#tblproductsaletransaction-product_code').val();
+      obj.rate_app_code=$('#tblproductsaletransaction-rate_app_code').val();
+      obj.rate=$('#tblproductsaletransaction-rate').val();
+      obj.qty=$('#tblproductsaletransaction-qty').val();
+      obj.amount=$('#tblproductsaletransaction-amount').val();
       if (localStorage.getItem('sale_item') !== null) {
             var items = [];
             items=JSON.parse(localStorage.getItem('sale_item'));
@@ -174,10 +174,10 @@ $script = "
             item[i]=obj;
             localStorage.setItem('sale_item', JSON.stringify(item));
         }
-        var product= $('#tblproductsaledetails-product_code option:selected').text(); 
+        var product= $('#tblproductsaletransaction-product_code option:selected').text(); 
         $('#sales-items').append('<tr id=\"item-'+i+'\"><td>'+product+'</td><td>'+obj['rate']+'</td><td>'+obj['qty']+'</td><td>'+obj['amount']+'</td><td><a href=\"javascript:void(0)\" data-index=\"'+i+'\" class=\"rem-item\" onclick=\"removeCartItems(this)\"><i class=\"fa fa-trash\"></i></a></td></tr>');
         $('#w0').trigger('reset');
-        $('#tblproductsaledetails-product_code').focus();
+        $('#tblproductsaletransaction-product_code').focus();
         i++;
     }
     

@@ -29,7 +29,7 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblProductRateApplicabilityHistory extends \yii\db\ActiveRecord {
+class TblProductSaleRateApplicabilityHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc

@@ -3,29 +3,29 @@
 namespace app\modules\product\controllers;
 
 use Yii;
-use app\modules\product\models\TblProductRate;
-use app\modules\product\models\TblProductRateSearch;
-use app\modules\product\models\TblProductRateHistory;
-use app\modules\product\models\TblProductRateApplicability;
+use app\modules\product\models\TblProductSaleRate;
+use app\modules\product\models\TblProductSaleRateSearch;
+use app\modules\product\models\TblProductSaleRateHistory;
+use app\modules\product\models\TblProductSaleRateApplicability;
 use app\modules\organisation\models\TblDcs;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\helpers\Json;
-use app\modules\product\models\TblProductRateApplicabilitySearch;
+use app\modules\product\models\TblProductSaleRateApplicabilitySearch;
 use app\modules\globalmaster\models\TblCustomerType;
-use app\modules\product\models\TblProductRateApplicabilityHistory;
+use app\modules\product\models\TblProductSaleRateApplicabilityHistory;
 
 /**
- * TblProductRateController implements the CRUD actions for TblProductRate model.
+ * TblProductRateController implements the CRUD actions for TblProductSaleRate model.
  */
 class TblProductRateController extends \app\controllers\ChildController {
 
     /**
-     * Lists all TblProductRate models.
+     * Lists all TblProductSaleRate models.
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblProductRateSearch();
+        $searchModel = new TblProductSaleRateSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -35,13 +35,13 @@ class TblProductRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Displays a single TblProductRate model.
+     * Displays a single TblProductSaleRate model.
      * @param integer $id
      * @return mixed
      */
     public function actionView($id, $is_member_rate) {
-        $searchModel = new TblProductRateSearch();
-        $query = TblProductRate::find()->select(['product_code', 'union_code'])->where(['product_sale_rate_code' => $id])->one();
+        $searchModel = new TblProductSaleRateSearch();
+        $query = TblProductSaleRate::find()->select(['product_code', 'union_code'])->where(['product_sale_rate_code' => $id])->one();
         $product_code = $query['product_code'];
         $searchModel->product_code = $product_code;
         $searchModel->product_sale_rate_code = $id;
@@ -56,12 +56,12 @@ class TblProductRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Creates a new TblProductRate model.
+     * Creates a new TblProductSaleRate model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate() {
-        $this->model = new TblProductRate();
+        $this->model = new TblProductSaleRate();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->product_sale_rate_code = Yii::$app->general->getPrimaryCode($this->model);
@@ -75,7 +75,7 @@ class TblProductRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Updates an existing TblProductRate model.
+     * Updates an existing TblProductSaleRate model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -84,7 +84,7 @@ class TblProductRateController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
-            $historyModel = new TblProductRateHistory();
+            $historyModel = new TblProductSaleRateHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
@@ -97,7 +97,7 @@ class TblProductRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Deletes an existing TblProductRate model.
+     * Deletes an existing TblProductSaleRate model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -106,7 +106,7 @@ class TblProductRateController extends \app\controllers\ChildController {
         $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_product_rate', Yii::$app->request->post('id'), 'product_rate_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
-            $historyModel = new TblProductRateHistory();
+            $historyModel = new TblProductSaleRateHistory();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
             $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
         } else {
@@ -118,14 +118,14 @@ class TblProductRateController extends \app\controllers\ChildController {
     }
 
     /**
-     * Finds the TblProductRate model based on its primary key value.
+     * Finds the TblProductSaleRate model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblProductRate the loaded model
+     * @return TblProductSaleRate the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
-        if (($model = TblProductRate::findOne($id)) !== null) {
+        if (($model = TblProductSaleRate::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -135,7 +135,7 @@ class TblProductRateController extends \app\controllers\ChildController {
     public function actionProductRateApplicability($id) {
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
-        $appModel->model = new TblProductRateApplicability();
+        $appModel->model = new TblProductSaleRateApplicability();
         $customerType = new TblCustomerType();
         if ($model->is_member_rate == 1) {
             $value = ['DCS' => Yii::t('app', 'DCS')];
@@ -183,10 +183,10 @@ class TblProductRateController extends \app\controllers\ChildController {
 //    public function actionProductRateApplicability($id) {
 //        $cmodel = $this->findModel($id);
 //        $appModel = Yii::$app->getModule('applicability');
-//        $appModel->model = new TblProductRateApplicability();
+//        $appModel->model = new TblProductSaleRateApplicability();
 //        $appModel->model->product_rate_code = $id;
 //        $appModel->model->wef_date = Yii::$app->controls->view_date($cmodel->wef_date);
-//        $appModel->searchModel = new TblProductRateApplicabilitySearch();
+//        $appModel->searchModel = new TblProductSaleRateApplicabilitySearch();
 //        $appModel->field_name = 'product_rate_code';
 //        $appModel->field_value = $id;
 //        $appModel->trans_label = 'product rate applicability';
@@ -230,7 +230,7 @@ class TblProductRateController extends \app\controllers\ChildController {
 
     public function actionGetMinDate() {
 
-        $model = new TblProductRate();
+        $model = new TblProductSaleRate();
         if (!empty(Yii::$app->request->post('code'))) {
             $model->product_rate_code = Yii::$app->request->post('code');
             $model->union_code = Yii::$app->request->post('union');
@@ -255,9 +255,9 @@ class TblProductRateController extends \app\controllers\ChildController {
     }
 
     public function actionDeleteApplicability() {
-        $model = new TblProductRateApplicability();
+        $model = new TblProductSaleRateApplicability();
         $model = $model->findOne(Yii::$app->request->post('id'));
-        $historyModel = new TblProductRateApplicabilityHistory();
+        $historyModel = new TblProductSaleRateApplicabilityHistory();
         Yii::$app->operation->history($model, $historyModel, DELETE);
         $record = $this->generalModel->deleteTransaction([$model, $historyModel]);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

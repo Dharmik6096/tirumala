@@ -9,7 +9,7 @@ use app\modules\payment\models\TblMemberCreditLimit;
 use app\modules\payment\models\TblMemberCreditLimitHistory;
 use app\modules\payment\models\TblMemberCreditLimitTransaction;
 use app\modules\payment\models\TblProductSale;
-use app\modules\payment\models\TblProductSaleDetails;
+use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 
@@ -54,7 +54,7 @@ class ProductController extends ChildController {
         $i = 0;
         $credit_limit = [];
         foreach ($product_list as $product) {
-            $product_sale_detail = new TblProductSaleDetails();
+            $product_sale_detail = new TblProductSaleTransaction();
             $product_sale_detail_code = (int) Yii::$app->general->getCodeAutoIncrement($product_sale_detail) + $i;
             $product_sale_detail_code = (string) $product_sale_detail_code;
             $i++;

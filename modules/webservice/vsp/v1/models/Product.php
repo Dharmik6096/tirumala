@@ -6,8 +6,8 @@ use Yii;
 use app\modules\payment\models\TblProductSale;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\product\models\TblProduct;
-use app\modules\product\models\TblProductRate;
-use app\modules\payment\models\TblProductSaleDetails;
+use app\modules\product\models\TblProductSaleRate;
+use app\modules\payment\models\TblProductSaleTransaction;
 
 class Product extends TblProductSale {
 
@@ -17,7 +17,7 @@ class Product extends TblProductSale {
         
     public function productList(){
         $product_model = new TblProduct();
-        $rate_model = new TblProductRate();
+        $rate_model = new TblProductSaleRate();
         $rate_data = $rate_model->find()->select(['*'])->where(['<=','wef_date',date('Y-m-d')])
                 ->andFilterWhere(['=','is_active','1'])
                 ->all();
@@ -33,7 +33,7 @@ class Product extends TblProductSale {
     }
     
     public function productSaleDetail($product_info){
-        $sale_detail_model =  new TblProductSaleDetails();
+        $sale_detail_model =  new TblProductSaleTransaction();
         $sale_detail = $sale_detail_model->find()
                 ->joinWith('productSaleCode')
                 ->select(['tbl_product_sale_details.*','tbl_product_sale.*'])

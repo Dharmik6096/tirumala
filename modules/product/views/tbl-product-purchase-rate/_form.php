@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\product\models\TblProductRate */
+/* @var $model app\modules\product\models\TblProductSaleRate */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

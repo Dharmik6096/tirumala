@@ -4,7 +4,7 @@ namespace app\modules\webservice\member\v1\controllers;
 
 use app\modules\webservice\controllers\ChildController;
 use app\modules\payment\models\TblProductSale;
-use app\modules\payment\models\TblProductSaleDetails;
+use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\payment\models\TblSaleInstallments;
 use Yii;
 
@@ -50,7 +50,7 @@ class ProductSaleToMemberController extends ChildController {
     public function actionMemberSaleData() {
         $model = new TblProductSale();
         $instModel = new TblSaleInstallments();
-        $tranModel = new TblProductSaleDetails();
+        $tranModel = new TblProductSaleTransaction();
         $model->setAttributes($this->post_data);
         $result_master = $model->getData($this->post_data['content']);
         $data = [];

@@ -99,7 +99,7 @@ class TblProductSaleSearch extends TblProductSale {
     }
 
     public function searchSaleDetails($params) {
-        $query = TblProductSaleDetails::find();
+        $query = TblProductSaleTransaction::find();
 
         // add conditions that should always apply here
 

@@ -5,12 +5,12 @@ namespace app\modules\product\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\product\models\TblProductRateApplicability;
+use app\modules\product\models\TblProductSaleRateApplicability;
 
 /**
- * TblProductRateApplicabilitySearch represents the model behind the search form about `app\modules\product\models\TblProductRateApplicability`.
+ * TblProductSaleRateApplicabilitySearch represents the model behind the search form about `app\modules\product\models\TblProductSaleRateApplicability`.
  */
-class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
+class TblProductSaleRateApplicabilitySearch extends TblProductSaleRateApplicability {
 
     public $name, $code_ex;
     /**
@@ -40,7 +40,7 @@ class TblProductRateApplicabilitySearch extends TblProductRateApplicability {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblProductRateApplicability::find();
+        $query = TblProductSaleRateApplicability::find();
         $request = Yii::$app->request->queryParams;
         // add conditions that should always apply here
 

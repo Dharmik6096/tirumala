@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\product\models\TblProductRate */
+/* @var $model app\modules\product\models\TblProductSaleRate */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -26,7 +26,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblproductrate-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblproductsalerate-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'sale_rate')->textInput() ?>
@@ -55,19 +55,19 @@ $script = "
     $(document).ready(function(){
         setMinDate();
     dispVsp();
-    $('#tblproductrate-is_member_rate').on('change',function(){
+    $('#tblproductsalerate-is_member_rate').on('change',function(){
         dispVsp();
     });
     function dispVsp(){
-        if($('#tblproductrate-is_member_rate').is(':checked')){
-            $('.field-tblproductrate-commission').show();
+        if($('#tblproductsalerate-is_member_rate').is(':checked')){
+            $('.field-tblproductsalerate-commission').show();
         } else {
-            $('.field-tblproductrate-commission').hide();
-            $('#tblproductrate-commission').val(0);
+            $('.field-tblproductsalerate-commission').hide();
+            $('#tblproductsalerate-commission').val(0);
         }
     }
     function setMinDate() {
-        var id = $('#tblproductrate-product_code').val();
+        var id = $('#tblproductsalerate-product_code').val();
         var code='{$model->product_sale_rate_code}';
         var union='{$model->union_code}';
         var odt='{$model->wef_date}';
@@ -91,13 +91,13 @@ $script = "
                                 }
                                if (!(obj1.date===curdt)){
                                     $.fn.kvDatepicker.defaults.format = 'dd-mm-yyyy';
-                                    $('#tblproductrate-wef_date').parent().kvDatepicker('setStartDate',formatDate(dt));
-                                //$('#tblproductrate-wef_date').kvDatepicker({startDate:formatDate(dt)});
+                                    $('#tblproductsalerate-wef_date').parent().kvDatepicker('setStartDate',formatDate(dt));
+                                //$('#tblproductsalerate-wef_date').kvDatepicker({startDate:formatDate(dt)});
                                  }else{
-                                  $('#tblproductrate-wef_date').parent().kvDatepicker('setStartDate','');
-                                 //$('#tblproductrate-wef_date').kvDatepicker({startDate:''});
+                                  $('#tblproductsalerate-wef_date').parent().kvDatepicker('setStartDate','');
+                                 //$('#tblproductsalerate-wef_date').kvDatepicker({startDate:''});
                                 }
-                                $('#tblproductrate-wef_date').val(odt);
+                                $('#tblproductsalerate-wef_date').val(odt);
                             }
                         },
                         error:function(data){

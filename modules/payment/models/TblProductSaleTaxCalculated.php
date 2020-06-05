@@ -27,6 +27,8 @@ use Yii;
  */
 class TblProductSaleTaxCalculated extends \app\models\ChildModel {
 
+    public $is_sentbox = TRUE;
+
     /**
      * @inheritdoc
      */
@@ -39,6 +41,7 @@ class TblProductSaleTaxCalculated extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+                [['product_sale_tax_calculated_code'], 'required', 'except' => ['androidsync']],
                 [['product_sale_tax_calculated_code'], 'safe'],
                 [['product_sale_tax_calculated_code', 'product_sale_code', 'product_sale_transaction_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['tax_detail_code', 'originating_type'], 'safe'],

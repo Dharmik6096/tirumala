@@ -3,10 +3,10 @@
 namespace app\modules\payment\controllers;
 
 use Yii;
-use app\modules\payment\models\TblProductSaleDetails;
-use app\modules\payment\models\TblProductSaleDetailsSearch;
-use app\modules\product\models\TblProductRateApplicability;
-use app\modules\product\models\TblProductRate;
+use app\modules\payment\models\TblProductSaleTransaction;
+use app\modules\payment\models\TblProductSaleTransactionSearch;
+use app\modules\product\models\TblProductSaleRateApplicability;
+use app\modules\product\models\TblProductSaleRate;
 use app\modules\product\models\TblProduct;
 use app\modules\payment\models\TblProductSale;
 use yii\web\Controller;
@@ -15,7 +15,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Json;
 
 /**
- * TblProductSaleDetailsController implements the CRUD actions for TblProductSaleDetails model.
+ * TblProductSaleTransactionController implements the CRUD actions TblProductSaleTransactionails model.
  */
 class TblProductSaleDetailsController extends \app\controllers\ChildController {
 
@@ -24,7 +24,7 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblProductSaleDetailsSearch();
+        $searchModel = new TblProductSaleTransactionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -34,7 +34,7 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
     }
 
     /**
-     * Displays a single TblProductSaleDetails model.
+     * Displays a single TblProductSaleTransaction model.
      * @param integer $id
      * @return mixed
      */
@@ -45,12 +45,12 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
     }
 
     /**
-     * Creates a new TblProductSaleDetails model.
+     * Creates a new TblProductSaleTransaction model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate() {
-        $model = new TblProductSaleDetails();
+        $model = new TblProductSaleTransaction();
         if (Yii::$app->request->post()) {
             $jsonData = Json::decode(Yii::$app->request->post('sales_date'));
             $data = Json::decode(Yii::$app->request->post('sales_details'));
@@ -74,7 +74,7 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
     }
 
     /**
-     * Updates an existing TblProductSaleDetails model.
+     * Updates an existing TblProductSaleTransaction model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -92,7 +92,7 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
     }
 
     /**
-     * Deletes an existing TblProductSaleDetails model.
+     * Deletes an existing TblProductSaleTransaction model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -104,14 +104,14 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
     }
 
     /**
-     * Finds the TblProductSaleDetails model based on its primary key value.
+     * Finds the TblProductSaleTransaction model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblProductSaleDetails the loaded model
+     * @return TblProductSaleTransaction the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
-        if (($model = TblProductSaleDetails::findOne($id)) !== null) {
+        if (($model = TblProductSaleTransaction::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -121,11 +121,11 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
     public function actionLoadRate() {
         if (!empty($_POST['product_code']) && !empty($_POST['dcs_code'])) {
             $date = date('Y-m-d');
-//            $app=  TblProductRateApplicability::find()->innerJoinWith('productRateCode')->select(['product_rate_applicability_code','tbl_product_rate.rate','max(tbl_product_rate_applicability.wef_date) as dt'])->groupBy(['product_rate_applicability_code','rate'])->having(['<=','max([tbl_product_rate_applicability].[wef_date])',$date])->where(['tbl_product_rate.product_code'=>$_POST['product_code'],'tbl_product_rate_applicability.dcs_code'=>$_POST['dcs_code']])->createCommand()->queryOne();
+//            $app=  TblProductSaleRateApplicability::find()->innerJoinWith('productRateCode')->select(['product_rate_applicability_code','tbl_product_rate.rate','max(tbl_product_rate_applicability.wef_date) as dt'])->groupBy(['product_rate_applicability_code','rate'])->having(['<=','max([tbl_product_rate_applicability].[wef_date])',$date])->where(['tbl_product_rate.product_code'=>$_POST['product_code'],'tbl_product_rate_applicability.dcs_code'=>$_POST['dcs_code']])->createCommand()->queryOne();
 
             /*  Patch suggested by Karan shah for product sale process. */
-            $appQuery = TblProductRateApplicability::find()->innerJoinWith('productRateCode')->select(['product_rate_applicability_code', 'tbl_product_rate.rate', 'max(tbl_product_rate_applicability.wef_date) as dt'])->groupBy(['product_rate_applicability_code', 'tbl_product_rate.rate', 'tbl_product_rate_applicability.wef_date'])->having(['<=', 'max([tbl_product_rate_applicability].[wef_date])', $date])->where(['tbl_product_rate.product_code' => $_POST['product_code'], 'tbl_product_rate_applicability.dcs_code' => $_POST['dcs_code']]);
-            $query = TblProductRate::find()->select(['wef_date', 'product_rate_code', 'union_code'])->where(['product_code' => $_POST['product_code'], 'union_code' => $_POST['union_code']])->andWhere(['<=', 'wef_date', $date])->orderBy(['wef_date' => SORT_DESC])->one();
+            $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith('productRateCode')->select(['product_rate_applicability_code', 'tbl_product_rate.rate', 'max(tbl_product_rate_applicability.wef_date) as dt'])->groupBy(['product_rate_applicability_code', 'tbl_product_rate.rate', 'tbl_product_rate_applicability.wef_date'])->having(['<=', 'max([tbl_product_rate_applicability].[wef_date])', $date])->where(['tbl_product_rate.product_code' => $_POST['product_code'], 'tbl_product_rate_applicability.dcs_code' => $_POST['dcs_code']]);
+            $query = TblProductSaleRate::find()->select(['wef_date', 'product_rate_code', 'union_code'])->where(['product_code' => $_POST['product_code'], 'union_code' => $_POST['union_code']])->andWhere(['<=', 'wef_date', $date])->orderBy(['wef_date' => SORT_DESC])->one();
             if ($appQuery->count() == 0) {
                 $this->setAppModel($query);
             } else {
@@ -151,7 +151,7 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
         if (!empty($main_model)) {
             foreach ($data as $key => $detail) {
                 if ($detail != null) {
-                    $model = new TblProductSaleDetails();
+                    $model = new TblProductSaleTransaction();
                     $model->product_sale_code = $main_model->product_sale_code;
                     $model->sale_detail_code = (string) (Yii::$app->general->getCodeAutoIncrement($model) + $key);
                     $model->product_code = $detail['product_code'];
@@ -170,7 +170,7 @@ class TblProductSaleDetailsController extends \app\controllers\ChildController {
     }
 
     private function setAppModel($query) {
-        $appModel = new TblProductRateApplicability();
+        $appModel = new TblProductSaleRateApplicability();
         $appModel->wef_date = $query['wef_date'];
         $appModel->product_rate_code = $query['product_rate_code'];
         $appModel->union_code = $query['union_code'];

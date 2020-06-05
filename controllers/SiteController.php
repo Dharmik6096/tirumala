@@ -82,7 +82,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -1606,6 +1606,9 @@ class SiteController extends Controller {
                         /* update record if already available */
                         $model->scenario = 'androidsync';
                         $model = Yii::$app->general->SetDataType($model);
+                        if (isset($model->is_sentbox)) {
+                            $model->is_sentbox = false;
+                        }
                         if ($model->validate()) {
                             if (isset($transaction_data->operation) && $transaction_data->operation == 'UPDATE') {
                                 

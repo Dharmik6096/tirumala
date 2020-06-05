@@ -62,14 +62,14 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_code', 'quantity', 'provisional_rate'], 'required', 'except' => 'submit'],
+                [['product_code', 'quantity', 'provisional_rate'], 'required', 'except' => ['submit', 'androidsync']],
                 [['requisition_transaction_code', 'check_record', 'req_action', 'union_code'], 'safe'],
                 [['requisition_transaction_code', 'requisition_on_date', 'product_requisition_code', 'product_code', 'status', 'approved_by', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['quantity'], 'number', 'min' => 1, 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "01".'), 'tooBig' => '{attribute} Should be less than 999', 'tooSmall' => '{attribute} Should be greater than 1', 'except' => ['addSchemeProduct']],
                 [['quantity', 'provisional_rate', 'provisional_amount', 'discount_amount', 'approved_quantity'], 'number'],
                 [['product_code'], 'validateProduct', 'on' => ['addProduct']],
-                [['requisition_on_date'], 'validateDeliveryDate'],
-                [['approved_quantity'], 'validateApprovedQty'],
+                [['requisition_on_date'], 'validateDeliveryDate', 'except' => ['androidsync']],
+                [['approved_quantity'], 'validateApprovedQty', 'except' => ['androidsync']],
                 [['is_approved', 'originating_type'], 'integer'],
                 [['approved_date', 'created_at', 'updated_at'], 'safe'],
                 ['discount_amount', 'default', 'value' => 0],

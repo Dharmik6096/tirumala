@@ -3,22 +3,22 @@
 namespace app\modules\webservice\bmc\v1\controllers;
 
 use app\modules\webservice\controllers\ChildController;
-use app\modules\payment\models\TblProductSaleDetails;
+use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\organisation\models\TblDcs;
-use app\modules\product\models\TblProductRate;
+use app\modules\product\models\TblProductSaleRate;
 use Yii;
 
 class ProductController extends ChildController {
 
     public function actionProductList() {
-        $model = new TblProductRate();
+        $model = new TblProductSaleRate();
         $model->setAttributes($this->post_data);
         $data = $model->productList();
         $this->response['data'] = $data;
     }
 
     public function actionProductSaleDetail() {
-        $model = new TblProductSaleDetails();
+        $model = new TblProductSaleTransaction();
         $model->setAttributes($this->post_data);
         $product_info = $this->post_data['content'];
         $dcs_model = new TblDcs();
@@ -29,7 +29,7 @@ class ProductController extends ChildController {
     }
     
     public function actionDcsProductSaleDetail() {
-        $model = new TblProductSaleDetails();
+        $model = new TblProductSaleTransaction();
         $model->setAttributes($this->post_data);
         $product_info = $this->post_data['content'];
         $dcs_model = new TblDcs();

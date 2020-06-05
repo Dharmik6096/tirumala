@@ -3,11 +3,11 @@
 namespace app\modules\product\models;
 
 /**
- * This is the ActiveQuery class for [[TblProductRateApplicability]].
+ * This is the ActiveQuery class for [[TblProductSaleRate]].
  *
- * @see TblProductRateApplicability
+ * @see TblProductSaleRate
  */
-class TblProductRateApplicabilityQuery extends \yii\db\ActiveQuery
+class TblProductSaleRateQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class TblProductRateApplicabilityQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return TblProductRateApplicability[]|array
+     * @return TblProductSaleRate[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class TblProductRateApplicabilityQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return TblProductRateApplicability|array|null
+     * @return TblProductSaleRate|array|null
      */
     public function one($db = null)
     {

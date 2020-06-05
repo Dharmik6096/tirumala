@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\payment\models\TblProductSaleDetails */
+/* @var $model app\modules\payment\models\TblProductSaleTransaction */
 
 $this->title = $model->sale_detail_code;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Product Sale Details'), 'url' => ['index']];

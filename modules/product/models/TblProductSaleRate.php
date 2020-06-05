@@ -22,7 +22,9 @@ use app\modules\syncutility\models\TblSentbox;
  *
  * @property TblProduct $productCode
  */
-class TblProductRate extends \app\models\ChildModel {
+class TblProductSaleRate extends \app\models\ChildModel {
+
+    public $is_sentbox = TRUE;
 
     /**
      * @inheritdoc
@@ -36,26 +38,26 @@ class TblProductRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_code', 'sale_rate', 'wef_date', 'union_code'], 'required'],
+                [['product_code', 'sale_rate', 'wef_date', 'union_code'], 'required', 'except' => ['androidsync']],
 //                [['product_code'], 'integer'],
             [['sale_rate'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
                 [['wef_date', 'created_at', 'updated_at', 'product_sale_rate_code', 'union_code', 'is_member_rate', 'commission'], 'safe'],
                 [['created_by', 'updated_by'], 'string'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
                 ['wef_date', 'unique', 'message' => Yii::t('app/validation', 'Rate is already taken on this WEF Date.'), 'when' => function($model) {
-                    $data = $this->find()->where(['union_code' => $model->union_code, 'product_code' => $model->product_code, 'wef_date' => Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT)])->andWhere(['<>', 'product_sale_rate_code', $model->product_sale_rate_code])->count();
+                    $data = $this->find()->where(['union_code' => $model->union_code, 'product_code' => $model->product_code, 'wef_date' => date('Y-m-d', strtotime($this->wef_date))])->andWhere(['<>', 'product_sale_rate_code', $model->product_sale_rate_code])->count();
                     return ($data == 1) ? true : false;
                 }],
                 [['commission'], 'required', 'when' => function ($model) {
                     return $model->is_member_rate == 1;
                 }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblproductrate-is_member_rate').is(':checked'); 
+              return $('#tblproductsalerate-is_member_rate').is(':checked'); 
                }"
             ],
                 [['commission'], 'number', 'min' => 0, 'when' => function ($model) {
                     return $model->is_member_rate == 1;
                 }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblproductrate-is_member_rate').is(':checked'); 
+              return $('#tblproductsalerate-is_member_rate').is(':checked'); 
                }"],
                 [['is_member_rate', 'commission'], 'default', 'value' => 0],
                 [['commission'], 'validateCommission', 'skipOnEmpty' => false],
@@ -91,7 +93,7 @@ class TblProductRate extends \app\models\ChildModel {
     }
 
     public function getProductRateAppCode() {
-        return $this->hasMany(TblProductRateApplicability::className(), ['product_sale_rate_code' => 'product_sale_rate_code']);
+        return $this->hasMany(TblProductSaleRateApplicability::className(), ['product_sale_rate_code' => 'product_sale_rate_code']);
     }
 
     /**
@@ -110,10 +112,10 @@ class TblProductRate extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
-     * @return TblProductRateQuery the active query used by this AR class.
+     * @return TblProductSaleRateQuery the active query used by this AR class.
      */
     public static function find() {
-        return new TblProductRateQuery(get_called_class());
+        return new TblProductSaleRateQuery(get_called_class());
     }
 
     public function getMinDate() {
@@ -150,7 +152,7 @@ class TblProductRate extends \app\models\ChildModel {
     }
 
     public function disableDelete() {
-        $app = TblProductRateApplicability::find()->where(['product_sale_rate_code' => $this->product_sale_rate_code])->one();
+        $app = TblProductSaleRateApplicability::find()->where(['product_sale_rate_code' => $this->product_sale_rate_code])->one();
         if (!empty($app))
             return false;
         else

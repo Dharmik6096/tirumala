@@ -5,12 +5,12 @@ namespace app\modules\payment\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\payment\models\TblProductSaleDetails;
+use app\modules\payment\models\TblProductSaleTransaction;
 
 /**
- * TblProductSaleDetailsSearch represents the model behind the search form about `app\modules\payment\models\TblProductSaleDetails`.
+ * TblProductSaleTransactionSearch represents the model behind the search form about `app\modules\payment\models\TblProductSaleTransaction`.
  */
-class TblProductSaleDetailsSearch extends TblProductSaleDetails {
+class TblProductSaleTransactionSearch extends TblProductSaleTransaction {
 
     /**
      * @inheritdoc
@@ -39,7 +39,7 @@ class TblProductSaleDetailsSearch extends TblProductSaleDetails {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblProductSaleDetails::find();
+        $query = TblProductSaleTransaction::find();
 
         // add conditions that should always apply here
 
