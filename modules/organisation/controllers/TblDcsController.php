@@ -218,7 +218,7 @@ class TblDcsController extends ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->model->scenario = 'updateDcs';
-        $this->model->tmcc_code = substr($this->model->dcs_code, 2);
+        $this->model->tmcc_code = $this->model->dcs_code;
         $vendorModel = new TblSocietyVendor();
 
         $this->viewFile = 'update';
