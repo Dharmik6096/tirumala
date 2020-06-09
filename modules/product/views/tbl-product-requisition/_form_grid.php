@@ -18,14 +18,14 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->mccCode, 'name');
         }, 'visible' => false],
         ['attribute' => 'vendor_type', 'value' => function($model) {
-            return isset($model->vendor_type) ? Yii::$app->dropdown->getRecords('requisition_type')['data'][$model->vendor_type] : '';
+            return !empty($model->vendor_type) && !empty(Yii::$app->dropdown->getRecords('requisition_type')['data'][$model->vendor_type]) ? Yii::$app->dropdown->getRecords('requisition_type')['data'][$model->vendor_type] : (!empty($model->vendor_type) ? $model->vendor_type : '');
         }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('requisition_type', $searchModel, 'vendor_type'),],
         ['attribute' => 'vendor_code', 'label' => Yii::t('app', 'Code')],
         ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return $model->getEntityName();
         }, 'vAlign' => 'middle'],
         ['attribute' => 'status', 'value' => function($model) {
-            return isset($model->status) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status] : '';
+            return !empty($model->status) && !empty(Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status] : (!empty($model->status) ? $model->status : '');
         }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('requisition_status', $searchModel, 'status'),],
         [
         'attribute' => 'req_date',

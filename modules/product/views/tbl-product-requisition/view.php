@@ -59,7 +59,7 @@ $this->title = Yii::$app->label->title('view', 'Product Requisition');
                             ],
                                 [
                                 'attribute' => 'vendor_type',
-                                'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
+                                'value' => !empty($model->vendor_type) && !empty(Yii::$app->dropdown->getRecords('requisition_type')['data'][$model->vendor_type]) ? Yii::$app->dropdown->getRecords('requisition_type')['data'][$model->vendor_type] : (!empty($model->vendor_type) ? $model->vendor_type : ''),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -83,7 +83,7 @@ $this->title = Yii::$app->label->title('view', 'Product Requisition');
                         'columns' => [
                                 [
                                 'attribute' => 'status',
-                                'value' => isset($model->status) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status] : '',
+                                'value' => !empty($model->status) && !empty(Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('requisition_status')['data'][$model->status] : (!empty($model->status) ? $model->status : ''),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
