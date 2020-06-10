@@ -55,7 +55,7 @@ foreach ($config_list as $config) {
         'value' => function($model) use ($config) {
             $model->config_code = $config->config_code;
             $configResult = $model->configResult;
-            return isset($configResult->configResultCode->config_result) ? $configResult->configResultCode->config_result : $configResult->config_result;
+            return !empty($configResult) ? (!empty($configResult->configResultCode->config_result) ? $configResult->configResultCode->config_result : $configResult->config_result) : '';
         }];
 }
 
