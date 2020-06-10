@@ -1607,19 +1607,6 @@ class SiteController extends Controller {
                         $model->scenario = 'androidsync';
                         $model = Yii::$app->general->SetDataType($model);
                         if ($model->validate()) {
-                            if (isset($transaction_data->operation) && $transaction_data->operation == 'UPDATE') {
-                                $primaryKey = $model->tableSchema->primaryKey[0];
-                                $key = $model->$primaryKey;
-                                $model_data = $model->findOne($key);
-                                if (!empty($model_data)) {
-                                    $model = $model_data;
-                                    $history = $model_name . 'History';
-                                    $historyModel = new $history();
-                                    Yii::$app->operation->history($model, $historyModel, 'UPDATE');
-                                    $childModel[] = $historyModel;
-                                    $model->setAttributes($json);
-                                }
-                            }
 
                             if (isset($model->is_sentbox)) {
                                 $model->is_sentbox = false;
