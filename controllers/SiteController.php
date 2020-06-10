@@ -1611,6 +1611,10 @@ class SiteController extends Controller {
                             if (isset($model->is_sentbox)) {
                                 $model->is_sentbox = false;
                             }
+
+                            if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
+                                $model->setTransactionData($model, $json, $childModel);
+                            }
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
