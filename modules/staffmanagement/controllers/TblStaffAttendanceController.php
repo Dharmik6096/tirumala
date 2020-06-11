@@ -49,14 +49,25 @@ class TblStaffAttendanceController extends \app\controllers\ChildController {
 
         $this->model = new TblStaffAttendance();
         $this->viewFile = 'create';
-
+        $modelSave = [];
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
             $this->model->staff_attendance_code = (string) Yii::$app->general->getCodeAutoIncrement($this->model);
-            $this->model->lwp_date = !empty($this->model->lwp_date) ? date('Y-m-d', strtotime($this->model->lwp_date)) : NULL;
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Staff Attendance', 'create']);
-            if ($transaction == 'customRedirect') {
-                return $this->{$transaction}();
+            $this->model->leave_from = !empty($this->model->leave_from) ? date('Y-m-d', strtotime($this->model->leave_from)) : NULL;
+            $this->model->leave_to = !empty($this->model->leave_to) ? date('Y-m-d', strtotime($this->model->leave_to)) : NULL;
+            if ($this->model->lwp_type == '0') {
+                $this->model->leave_to = $this->model->leave_from;
+            }
+            if ($this->model->validate()) {
+                if (date('Y-m', strtotime($this->model->leave_from)) != date('Y-m', strtotime($this->model->leave_to))) {
+                    $this->setModel($this->model, $modelSave);
+                } else {
+                    $modelSave[] = $this->model;
+                }
+                $transaction = $this->generalModel->saveTransaction($modelSave, ['Staff Attendance', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->{$transaction}();
+                }
             }
         }
         return $this->render('create', [
@@ -78,11 +89,21 @@ class TblStaffAttendanceController extends \app\controllers\ChildController {
             Yii::$app->operation->history($model, $historyModel, 'UPDATE');
             $master[] = $historyModel;
             $model->load(Yii::$app->request->post());
-            $model->lwp_date = !empty($model->lwp_date) ? date('Y-m-d', strtotime($model->lwp_date)) : NULL;
-            $master[] = $model;
-            $transaction = $this->generalModel->saveTransaction($master, ['Staff Attendance', 'edit']);
-            if ($transaction == 'customRedirect') {
-                return $this->{$transaction}();
+            $model->leave_from = !empty($model->leave_from) ? date('Y-m-d', strtotime($model->leave_from)) : NULL;
+            $model->leave_to = !empty($model->leave_to) ? date('Y-m-d', strtotime($model->leave_to)) : NULL;
+            if ($model->lwp_type == '0') {
+                $model->leave_to = $model->leave_from;
+            }
+            if ($model->validate()) {
+                if (date('Y-m', strtotime($model->leave_from)) != date('Y-m', strtotime($model->leave_to))) {
+                    $this->setModel($model, $master);
+                } else {
+                    $master[] = $model;
+                }
+                $transaction = $this->generalModel->saveTransaction($master, ['Staff Attendance', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->{$transaction}();
+                }
             }
         }
         return $this->render('update', [
@@ -115,6 +136,21 @@ class TblStaffAttendanceController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function setModel($modelData, &$saveModel) {
+        $model = new TblStaffAttendance();
+        $model->attributes = $modelData->attributes;
+        $model->staff_attendance_code = (string) Yii::$app->general->getCodeAutoIncrement($model);
+        $model->leave_to = date("Y-m-t", strtotime($modelData->leave_from));
+        $model->leave_count = Yii::$app->general->getDateDifference($modelData->leave_from, $model->leave_to) + 1;
+        $saveModel[] = $model;
+        $modelTwo = new TblStaffAttendance();
+        $modelTwo->attributes = $modelData->attributes;
+        $modelTwo->staff_attendance_code = (string) Yii::$app->general->getCodeAutoIncrement($modelTwo, 2);
+        $modelTwo->leave_from = date('Y-m-01', strtotime($modelData->leave_to));
+        $modelTwo->leave_count = Yii::$app->general->getDateDifference($modelTwo->leave_from, $modelData->leave_to) + 1;
+        $saveModel[] = $modelTwo;
     }
 
 }

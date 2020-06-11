@@ -31,24 +31,22 @@ use Yii;
  * @property string $operation_type
  * @property string $history_created_by
  */
-class TblStaffAttendanceHistory extends \yii\db\ActiveRecord
-{
+class TblStaffAttendanceHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_staff_attendance_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['staff_attendance_code', 'created_by', 'remark', 'updated_by', 'staff_member_code', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
-            [['created_at', 'lwp_date', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'lwp_date', 'updated_at', 'history_created_at', 'leave_from', 'leave_to', 'leave_count', 'leave_type'], 'safe'],
             [['lwp_type', 'salary_processed', 'originating_type'], 'safe'],
         ];
     }
@@ -56,8 +54,7 @@ class TblStaffAttendanceHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'staff_attendance_code' => Yii::t('app', 'Staff Attendance Code'),
@@ -84,4 +81,5 @@ class TblStaffAttendanceHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }

@@ -131,9 +131,13 @@ class TblStaffSalaryProcess extends \app\models\ChildModel {
         if ($month > $currentDate) {
             $this->addError($attribute, "Future month salary process not allow.");
         }
+        $cDate = date('Y-m');
+        if (date('Y-m', strtotime($month)) == $cDate) {
+            $this->addError($attribute, "Current month salary process not allow untill Month End.");
+        }
         $process = $this->checkProcess();
         if ($process == true) {
-            $this->addError($attribute, Yii::t('app/validation', 'Not allow to process salary of this month, As post month salary has been processed.'));
+            $this->addError($attribute, Yii::t('app/validation', 'Not allow to process salary of this month, As post month salary has been Disbursed.'));
         }
         $disburse = $this->checkDisburse();
         if ($disburse == true) {
@@ -145,22 +149,25 @@ class TblStaffSalaryProcess extends \app\models\ChildModel {
             $this->addError($attribute, "Missing salary for staff member.");
         }
         $Exist = $this->find()->where(['union_code' => $this->union_code])->andWhere(['<', 'month', $this->month])->orderBy('month desc')->one();
-
-        if (!empty($Exist->month)) {
-            $fDate = date_create($month);
-            $tDate = date_create($Exist->month);
-            $diff = date_diff($fDate, $tDate);
-            $count = $diff->format("%a");
-            if ($count > 31) {
-                $this->addError($attribute, Yii::t('app/validation', 'You cannot jump the month to process salary.'));
-            }
+        if (!empty($Exist) && empty($Exist->disbursement_date)) {
+            $this->addError($attribute, Yii::t('app/validation', 'You cannot jump the month to process salary.'));
         }
+//        if (!empty($Exist->month)) {
+//            $fDate = date_create($month);
+//            $tDate = date_create($Exist->month);
+//            $diff = date_diff($fDate, $tDate);
+//            $count = $diff->format("%a");
+//            if ($count > 31) {
+//                $this->addError($attribute, Yii::t('app/validation', 'You cannot jump the month to process salary.'));
+//            }
+//        }
     }
 
     public function checkProcess() {
         $count = $this->find()
                 ->where(['union_code' => $this->union_code])
                 ->andWhere(['>', 'month', $this->month])
+                ->andWhere(['!=', 'disbursement_date', ''])
                 ->count();
         if ($count > 0) {
             return true;

@@ -271,86 +271,101 @@ $defaultToggle = true;
                                             </div>                                        
                                             <?php
                                         }
-                                    }
-                                    if (isset($data['report_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
-                                    }
+                                        if (in_array($value, array('p_staff_member_code'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-3', $model->getAttributeLabel('p_staff_member_code'), 'p_staff_member_code'); ?>
+                                            </div> 
+                                            <?php
+                                        }
+                                        if (in_array($value, array('p_month'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?=
+                                                $form->field($model, 'p_month')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control '],
+                                                    'mask' => '99-9999',])
+                                                ?>                                               <?php
+                                            }
+                                        }
+                                        if (isset($data['report_type'])) {
+                                            echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
+                                        }
 
-                                    echo Html::activeHiddenInput($model, 'p_union_code');
-                                    echo Html::activeHiddenInput($model, 'p_union_name');
-                                    echo Html::activeHiddenInput($model, 'p_dcs_name');
-                                    echo Html::activeHiddenInput($model, 'p_route_name');
-                                    $model->p_report_name = Html::encode($this->title);
-                                    echo Html::activeHiddenInput($model, 'p_report_name');
-                                    ?>
+                                        echo Html::activeHiddenInput($model, 'p_union_code');
+                                        echo Html::activeHiddenInput($model, 'p_union_name');
+                                        echo Html::activeHiddenInput($model, 'p_dcs_name');
+                                        echo Html::activeHiddenInput($model, 'p_route_name');
+                                        $model->p_report_name = Html::encode($this->title);
+                                        echo Html::activeHiddenInput($model, 'p_report_name');
+                                        ?>
 
-                                    <!--            <div class="clearfix"></div>-->
-                                    <!--<div class="col-sm-3 mt25">-->
-                                    <?php
-                                    if ($param) {
+                                        <!--            <div class="clearfix"></div>-->
+                                        <!--<div class="col-sm-3 mt25">-->
+                                        <?php
+                                        if ($param) {
 //                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
-                                    }
-                                    ?>
-                                    <!--</div>-->
-                                </div>
-                                <div class="modal-footer mt10 col-sm-12">
-                                    <?php
-                                    if ($param) {
-                                        echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
-                                    }
-                                    ?>
-                                    <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                                        }
+                                        ?>
+                                        <!--</div>-->
+                                    </div>
+                                    <div class="modal-footer mt10 col-sm-12">
+                                        <?php
+                                        if ($param) {
+                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
+                                        }
+                                        ?>
+                                        <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <?php if ($result != '') { ?>
+                <?php if ($result != '') { ?>
 
-                <!--                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                                    
-                    <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
-                                </div>-->
-            <?php } ?>
+                    <!--                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                                        
+                        <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
+                                    </div>-->
+                <?php } ?>
 
-            <?php
-            $class = 'beforeGridLoad';
-            if (!empty($result)) {
-                $defaultToggle = false;
-            }
-            if (!empty($model->getErrors())) {
-                $defaultToggle = true;
-            }
-            ?>
-        </div>
-        <div class="grid-search search-filter searchBtnReport text-right <?= $class ?>">
-            <?php if ($result != '') { ?>
-                <?= GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
-                <?php if (!isset($data['pdf'])) { ?>
-                    <?= GhostHtml::submitButton('<i class="fa fa-file-code-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
-                    <?= GhostHtml::submitButton('<i class="fa fa-file-excel-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>
-                    <?php
+                <?php
+                $class = 'beforeGridLoad';
+                if (!empty($result)) {
+                    $defaultToggle = false;
                 }
-            }
-            ?>
-            <div class="btn-group btn btn-default jasper_report_modal_toggle"><i class="fa fa-search"></i></div>
-        </div>
-        <?php ActiveForm::end(); ?>
-
-
-
-        <?php if ($result != '') { ?>
-            <div class="report-grid">
-                <?php echo $result; ?>
+                if (!empty($model->getErrors())) {
+                    $defaultToggle = true;
+                }
+                ?>
             </div>
+            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?>">
+                <?php if ($result != '') { ?>
+                    <?= GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                    <?php if (!isset($data['pdf'])) { ?>
+                        <?= GhostHtml::submitButton('<i class="fa fa-file-code-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'csv', 'id' => 'csv', 'title' => Yii::t('app', 'csv')]); ?>
+                        <?= GhostHtml::submitButton('<i class="fa fa-file-excel-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'xls', 'id' => 'xls', 'title' => Yii::t('app', 'xls')]); ?>
+                        <?php
+                    }
+                }
+                ?>
+                <div class="btn-group btn btn-default jasper_report_modal_toggle"><i class="fa fa-search"></i></div>
+            </div>
+            <?php ActiveForm::end(); ?>
 
-        <?php }
-        ?>
-    </div>
-</div>            
-<?php
-$script = "
+
+
+            <?php if ($result != '') { ?>
+                <div class="report-grid">
+                    <?php echo $result; ?>
+                </div>
+
+            <?php }
+            ?>
+        </div>
+    </div>            
+    <?php
+    $script = "
    $(document).ready(function() {
         if('" . Yii::$app->session->get('Federations') . "' != ''){
          var id='" . strtolower((new ReflectionClass($model))->getShortName() . '-federation_code') . "';   
@@ -360,11 +375,11 @@ $script = "
          
     });
 ";
-Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . 'search'));
-?>
+    Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . 'search'));
+    ?>
 
-<?php
-$script = "
+    <?php
+    $script = "
        $('#reportsmodel-p_union_name').val($('select#reportsmodel-union_code option:selected').text());
         $('#reportsmodel-p_union_code').val($('select#reportsmodel-union_code option:selected').val());
     $('#reportsmodel-union_code').change(function() {
@@ -409,10 +424,10 @@ $script = "
        }
     });
 ";
-$this->registerJs($script, View::POS_END, 'shift');
-?>
-<?php
-$script = "$('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $this->registerJs($script, View::POS_END, 'shift');
+    ?>
+    <?php
+    $script = "$('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_member_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
             if('" . $model->p_member_code . "'=='0'){
         $('#reportsmodel-p_member_code').val(0);      
@@ -556,12 +571,12 @@ $('.jasper_report_modal_toggle').on('click', function(){
 
 ";
 
-if ($defaultToggle) {
-    $script .= "
+    if ($defaultToggle) {
+        $script .= "
         $(document).ready(function () {
             $('#jasper_report_search_filter').modal('toggle');
         });
     ";
-}
-$this->registerJs($script, View::POS_READY, 'dep-drop-member');
-?>
+    }
+    $this->registerJs($script, View::POS_READY, 'dep-drop-member');
+    ?>

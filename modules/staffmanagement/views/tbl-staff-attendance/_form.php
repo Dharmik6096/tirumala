@@ -28,10 +28,16 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffattendance-union_code', 'form-group col-sm-3 ' . $class, $model->getAttributeLabel('staff_member_code'), 'staff_member_code', $readonly); ?>
     </div>
     <div class="col-sm-3">
+        <?= Yii::$app->dropdown->leaveType($model, $form, 'tblstaffattendance-union_code,tblstaffattendance-staff_member_code', 'leave_type', $model->getAttributeLabel('leave_type')); ?>
+    </div>
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdownStatic('lwp_type', $model, $form, 'form-group', $model->getAttributeLabel('lwp_type')); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->controls->date($model, $form, 'lwp_date', 'form-group col-sm-3', true, '', false); ?>
+        <?= Yii::$app->controls->date($model, $form, 'leave_from', 'form-group col-sm-3', false, '', false); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'leave_to', 'form-group col-sm-3', false, '', false); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'remark', ['options' => ['class' => 'form-group']])->textarea() ?>
@@ -47,3 +53,25 @@ $form = ActiveForm::begin([
 </div>
 <?php ActiveForm::end(); ?>
 
+<?php
+$script = "
+   dateSelection();
+    $('#tblstaffattendance-lwp_type').on('change',function(){
+      dateSelection();
+    });
+    $('#tblstaffattendance-leave_from').on('change',function(){
+      dateSelection();
+    });
+    function dateSelection(){
+        var type = $('#tblstaffattendance-lwp_type').val();
+        var from = $('#tblstaffattendance-leave_from').val();
+        if(from != '' && type != '' && type=='0'){
+            $('#tblstaffattendance-leave_to').val(from);
+            $('#tblstaffattendance-leave_to').prop('disabled', true); 
+        }else{
+            $('#tblstaffattendance-leave_to').prop('disabled', false); 
+        }
+    } 
+";
+$this->registerJs($script, View::POS_END, 'panel-attendance-form');
+?>

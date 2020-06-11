@@ -114,6 +114,7 @@ class TblStaffMemberController extends \app\controllers\ChildController {
             $master[] = $historyModel;
             $model->load(Yii::$app->request->post());
             $model->birth_date = !empty($model->birth_date) ? date('Y-m-d', strtotime($model->birth_date)) : NULL;
+            $model->tenure_to_date = !empty($model->tenure_to_date) ? date('Y-m-d', strtotime($model->tenure_to_date)) : NULL;
             $master[] = $model;
             $transaction = $this->generalModel->saveTransaction($master, ['Staff Member', 'edit']);
             if ($transaction == 'customRedirect') {

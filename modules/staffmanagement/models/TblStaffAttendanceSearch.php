@@ -18,7 +18,7 @@ class TblStaffAttendanceSearch extends TblStaffAttendance {
     public function rules() {
         return [
             [['lwp_type', 'salary_processed'], 'integer'],
-            [['created_at', 'lwp_date', 'remark', 'updated_at', 'created_by', 'staff_member_code', 'updated_by', 'union_code'], 'safe'],
+            [['created_at', 'lwp_date', 'remark', 'updated_at', 'created_by', 'staff_member_code', 'updated_by', 'union_code', 'leave_from', 'leave_to', 'leave_type', 'leave_count'], 'safe'],
         ];
     }
 
@@ -62,11 +62,14 @@ class TblStaffAttendanceSearch extends TblStaffAttendance {
             'salary_processed' => $this->salary_processed,
             'tbl_staff_attendance.staff_member_code' => $this->staff_member_code,
         ]);
-        if (!empty($this->lwp_date))
-            $query->andFilterWhere(['and', ['>=', 'lwp_date', date('Y-m-d', strtotime($this->lwp_date))], ['<=', 'lwp_date', date('Y-m-d', strtotime($this->lwp_date))]]);
+        if (!empty($this->leave_to))
+            $query->andFilterWhere(['and', ['>=', 'leave_to', date('Y-m-d', strtotime($this->leave_to))], ['<=', 'leave_to', date('Y-m-d', strtotime($this->leave_to))]]);
+        if (!empty($this->leave_from))
+            $query->andFilterWhere(['and', ['>=', 'leave_from', date('Y-m-d', strtotime($this->leave_from))], ['<=', 'leave_from', date('Y-m-d', strtotime($this->leave_from))]]);
 
         $query->andFilterWhere(['like', 'remark', $this->remark])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'leave_type', $this->leave_type])
+                ->andFilterWhere(['like', 'leave_count', $this->leave_count])
 //                ->andFilterWhere(['like', 'tbl_staff_member.staff_member_name', $this->staff_member_code])
                 ->andFilterWhere(['like', 'union_code', $this->union_code]);
 

@@ -190,6 +190,8 @@ class TblStaffMember extends \app\models\ChildModel {
             [['pf_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
+            //required due to dependency in attendance
+            [['is_on_role'], 'required']
         ];
     }
 
@@ -423,8 +425,13 @@ class TblStaffMember extends \app\models\ChildModel {
     public function birthDatevalidate($attribute, $params) {
         $birth_date = !empty($this->birth_date) ? Yii::$app->controls->view_date($this->birth_date, 'php:Y-m-d') : NULL;
         $tenure_from_date = !empty($this->tenure_from_date) ? Yii::$app->controls->view_date($this->tenure_from_date, 'php:Y-m-d') : NULL;
+        $to_date = !empty($this->tenure_to_date) ? Yii::$app->controls->view_date($this->tenure_to_date, 'php:Y-m-d') : NULL;
         if (!empty($birth_date) && !empty($tenure_from_date) && ($birth_date > $tenure_from_date)) {
             $this->addError($attribute, Yii::t('app/validation', 'Tenure From Must be Greater than Birth Date'));
+            return false;
+        }
+        if (!empty($to_date) && !empty($tenure_from_date) && ($tenure_from_date > $to_date)) {
+            $this->addError('tenure_to_date', Yii::t('app/validation', 'Tenure To Must be Greater than Tenure From'));
             return false;
         }
     }

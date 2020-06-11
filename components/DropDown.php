@@ -377,6 +377,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/configuration/tbl-config/config-process-list', Yii::t('app', 'Select Process Name'), $multiple, '', $readonly);
     }
 
+    public function leaveType($model, $form, $depends, $name = 'leave_type', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/staffmanagement/tbl-staff-leave-master/leave-type', Yii::t('app', 'Select Leave Type'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -573,7 +578,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -925,6 +930,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => Yii::t('app', 'On Role'), '0' => Yii::t('app', 'Off Role')],
             ],
+            'leave_type' => [
+                'name' => 'leave_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'PL'), 2 => Yii::t('app', 'SL'), 3 => Yii::t('app', 'CL'), 4 => Yii::t('app', 'C-Off'), 5 => Yii::t('app', 'LWP')],
+            ],
         ];
         return $records[$l];
     }
@@ -1090,7 +1100,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

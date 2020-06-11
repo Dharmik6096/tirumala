@@ -257,6 +257,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionStaffSalary() {
+        $this->report = 'StaffSalary';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -285,12 +290,19 @@ class DefaultController extends \app\controllers\ChildController {
                     $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
+            if (isset($value_array[1]) && $value_array[1] == 'month') {
+                $month = !empty($model->{$value}) ? date('01-') . $model->{$value} : NULL;
+                $model->{$value} = !empty($month) ? date('Y-m', strtotime($month)) : NULL;
+            }
             if ($value == 'p_dcs_payment') {
                 $pay_cycle = explode(':', $model->{$value});
                 $controls[$value] = (int) $pay_cycle[1];
                 $controls['p_dcs_payment_date'] = $pay_cycle[0];
             } else {
                 $controls[$value] = $model->{$value};
+            }
+            if (isset($value_array[1]) && $value_array[1] == 'month') {
+                $model->{$value} = !empty($month) ? date('m-Y', strtotime($month)) : NULL;
             }
         }
         //$controls['locale'] = Yii::$app->session->get('LanguageCode');
@@ -598,6 +610,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/MemberMilkBill',
                 'scenario' => 'MemberMilkBill',
                 'title' => '610 - Member Milk Bill',
+            ],
+            'StaffSalary' => [
+                'param' => 'p_union_code,p_staff_member_code,p_month:month,p_language_code,p_report_name',
+                'path' => 'staff/StaffSalary',
+                'scenario' => 'StaffSalary',
+                'title' => 'Staff Salary',
             ],
         ];
         return $label[$l];

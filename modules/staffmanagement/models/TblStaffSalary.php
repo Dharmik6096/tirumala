@@ -142,7 +142,8 @@ class TblStaffSalary extends \app\models\ChildModel {
 
     public function memberJoinDate($attribute, $params) {
         $member = $this->staffMemberCode->tenure_from_date;
-        if (!empty($member) && !empty($this->wef_date) && ($this->wef_date < $member)) {
+        $tenure = !empty($member) ? date('Y-m', strtotime($member)) : '';
+        if (!empty($tenure) && !empty($this->wef_date) && (date('Y-m', strtotime($this->wef_date)) < $tenure)) {
             $this->addError($attribute, Yii::t('app/validation', 'Salary before Joining is not allow'));
             return false;
         }

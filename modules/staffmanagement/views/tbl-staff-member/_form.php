@@ -9,6 +9,7 @@ use yii\web\JsExpression;
 
 $class = $type == 'edit' ? 'disableDiv' : '';
 $readonly = $type == 'edit' ? true : false;
+$disable = $type == 'edit' ? false : true;
 
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-member-form'],
@@ -83,8 +84,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'tenure_from_date', 'form-group col-sm-3 ' . $class, FALSE, FALSE, $readonly); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->controls->date($model, $form, 'tenure_to_date', 'form-group col-sm-3', '', '', true); ?>
-
+        <?= Yii::$app->controls->date($model, $form, 'tenure_to_date', 'form-group col-sm-3 ' . $class, FALSE, FALSE, $disable); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdownStatic('is_on_role', $model, $form, 'form-group', $model->getAttributeLabel('is_on_role'), false, 'is_on_role', false); ?>

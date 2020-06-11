@@ -1509,4 +1509,11 @@ class GeneralFunctions extends Component {
         return isset(Yii::$app->dropdown->getRecords($flag)['data'][$value]) ? Yii::$app->dropdown->getRecords($flag)['data'][$value] : '';
     }
 
+    public function getDateDifference($fromDate, $toDate) {
+        $tenure_from = date_create($fromDate);
+        $tenure_to = date_create($toDate);
+        $diff = date_diff($tenure_to, $tenure_from);
+        return $diff->format("%a");
+    }
+
 }

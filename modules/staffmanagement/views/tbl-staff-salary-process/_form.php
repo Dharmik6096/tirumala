@@ -159,6 +159,9 @@ $form = ActiveForm::begin([
             'id' => 'salary-process-inner-list',
             'attributes' => $attribute,
             'active_column' => false,
+            'actions' => [
+                'view' => TRUE
+            ]
         ];
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
         ?>

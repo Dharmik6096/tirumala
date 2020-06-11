@@ -74,7 +74,7 @@ $form = ActiveForm::begin(['options' => [
                             <td class='number-validate'> <?= $form->field($transModel, '[' . $headData->salary_head_code . ']value', ['options' => ['class' => 'form-group number-validate addition']])->textInput(['value' => $newVal])->label(FALSE); ?></td>
                             <td class='hide_help_block member-checkbox-list'>
                                 <?php
-                                echo $form->field($transModel, '[' . $headData->salary_head_code . ']lwp_effect')->checkbox(['data-val' => $headData->salary_head_code], false)->label(false);
+                                echo $form->field($transModel, '[' . $headData->salary_head_code . ']lwp_effect')->checkbox(['data-val' => $headData->salary_head_code, 'class' => 'checkbox'], false)->label(false);
                                 ?>
 
                             </td>
@@ -153,6 +153,11 @@ $form = ActiveForm::begin(['options' => [
                 'type' => 'POST',
                 'url' => Url::to($url),
                 'beforeSend' => new JsExpression("function(data){
+                                        var len = $('input[class=\'checkbox\']:checked').length;
+                                        if(len == 0){
+                                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please Check Atleast one LWP</span></div></div>');
+                                            return false;
+                                        }     
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
                                                 }"),

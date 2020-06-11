@@ -16,7 +16,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->staffMemberCode, 'staff_member_name');
         }, 'filter' => false],
     [
-        'attribute' => 'lwp_date',
+        'attribute' => 'leave_from',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -24,7 +24,24 @@ $attribute = [
         ],
         'width' => '200px',
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->lwp_date);
+            return Yii::$app->controls->view_date($model->leave_from);
+        }],
+    [
+        'attribute' => 'leave_to',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'width' => '200px',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->leave_to);
+        }],
+    [
+        'attribute' => 'leave_type',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('leave_type', $searchModel, 'leave_type'),
+        'value' => function($model) {
+            return Yii::$app->general->getStaticValue($model->leave_type, 'leave_type');
         }],
     [
         'attribute' => 'lwp_type',
@@ -32,6 +49,7 @@ $attribute = [
         'value' => function($model) {
             return isset($model->lwp_type) ? Yii::$app->dropdown->getRecords('lwp_type')['data'][$model->lwp_type] : '';
         }],
+    ['attribute' => 'leave_count'],
     ['attribute' => 'remark', 'filter' => FALSE],
 ];
 $grid_option = [

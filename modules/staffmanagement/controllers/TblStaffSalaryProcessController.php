@@ -23,6 +23,7 @@ use app\modules\staffmanagement\models\TblStaffSalaryProcessTransactionHistory;
 use app\modules\staffmanagement\models\TblStaffSalaryProcessTransactionSearch;
 use app\modules\staffmanagement\models\TblStaffSalaryHoldDue;
 use app\modules\staffmanagement\models\TblStaffSalaryHoldDueHistory;
+use app\modules\staffmanagement\models\TblStaffMember;
 
 /**
  * TblStaffSalaryProcessController implements the CRUD actions for TblStaffSalaryProcess model.
@@ -94,6 +95,23 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                 foreach ($memberData as $member) {
                     $existData = $this->model->getExistData($member['staff_member_code']);
                     $TotalDays = cal_days_in_month(CAL_GREGORIAN, date('m', strtotime($month)), date('Y', strtotime($month)));
+                    $salaryMember = new TblStaffSalary();
+                    $salaryMember->staff_member_code = $member['staff_member_code'];
+                    $tenureFrom = Yii::$app->general->getforeignkey($salaryMember->staffMemberCode, 'tenure_from_date');
+                    $tenureTo = Yii::$app->general->getforeignkey($salaryMember->staffMemberCode, 'tenure_to_date');
+                    $salaryMonth = date('Y-m-d', strtotime($searchModel->month));
+                    $tenureDiff = 0;
+                    if ($processData['month'] == date('m-Y', strtotime($tenureFrom))) {
+                        $tenure_from = date('Y-m-d', strtotime($tenureFrom));
+                        $tenureDiff = Yii::$app->general->getDateDifference($salaryMonth, $tenure_from);
+                    }
+                    if ($processData['month'] == date('m-Y', strtotime($tenureTo))) {
+                        $tenure_to = date('Y-m-d', strtotime($tenureTo));
+                        $toDays = Yii::$app->general->getDateDifference($salaryMonth, $tenure_to);
+                        $totalTo = $TotalDays - $toDays;
+                        $tenureDiff = $tenureDiff + $totalTo;
+                    }
+                    $TotalDaysCount = $TotalDays - $tenureDiff;
                     $attendanceModel = new TblStaffAttendance();
                     $leave = $attendanceModel->getMemberAttendance($member['staff_member_code'], $searchModel->month);
                     $masterModel = new TblStaffSalaryProcess();
@@ -142,7 +160,7 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                     $TempModel = new TblStaffSalary();
                     $TempModel->staff_member_code = $member['staff_member_code'];
                     $masterModel->staff_member_code = $member['staff_member_code'];
-                    $masterModel->effective_working_days = $TotalDays;
+                    $masterModel->effective_working_days = $TotalDaysCount;
                     $masterModel->lwp = $leave;
                     $masterModel->month = $searchModel->month;
                     $masterModel->designation_code = Yii::$app->general->getforeignkey($TempModel->staffMemberCode, 'designation_code');
@@ -203,11 +221,17 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                                 $head = $transData->value;
                                 $lwp = $transData->lwp_effect;
                                 $transactionModel->actual_value = $head;
-
+                                $tenureLeave = $leave;
                                 if ($headtype == 1) {
-                                    if (!empty($leave) && $lwp == 1) {
-                                        $headValue = $head - (($head / $TotalDays) * $leave);
-                                        $leavededuction = $leavededuction + $head - $headValue;
+                                    if (!empty($tenureDiff)) {
+                                        $tenureLeave = $tenureLeave + $tenureDiff;
+                                    }
+                                    if (!empty($tenureLeave) && $lwp == 1) {
+                                        $headValue = $head - (($head / $TotalDays) * $tenureLeave);
+                                        if (!empty($leave)) {
+                                            $LeaveheadValue = $head - (($head / $TotalDays) * $leave);
+                                            $leavededuction = $leavededuction + $head - $LeaveheadValue;
+                                        }
                                         $netpayble = $netpayble + $headValue;
                                         $transactionModel->value = $headValue;
                                     } else {
@@ -219,6 +243,7 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                                     $transactionModel->value = $head;
                                 }
                             }
+
                             $modelSave[] = $transactionModel;
                         }
                         $defaultHead = $headModel->getallHead(1);
