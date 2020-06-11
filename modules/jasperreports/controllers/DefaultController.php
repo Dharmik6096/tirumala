@@ -615,7 +615,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'p_union_code,p_staff_member_code,p_month:month,p_language_code,p_report_name',
                 'path' => 'staff/StaffSalary',
                 'scenario' => 'StaffSalary',
-                'title' => 'Staff Salary',
+                'title' => '701 - Staff Salary',
             ],
         ];
         return $label[$l];
