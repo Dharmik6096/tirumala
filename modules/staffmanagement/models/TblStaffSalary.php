@@ -6,6 +6,7 @@ use Yii;
 use app\modules\staffmanagement\models\TblStaffMember;
 use app\models\TblUsers;
 use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_staff_salary".
@@ -159,10 +160,18 @@ class TblStaffSalary extends \app\models\ChildModel {
 
     public function getStaffMember($month, $union) {
         if (!empty($month)) {
+            $member = new TblStaffMember();
+            $resignation = $member->find()
+                    ->where(['union_code' => $union])
+                    ->andWhere(['IS NOT', 'tenure_to_date', NULL])
+                    ->andWhere(['<=', 'tenure_to_date', $month])
+                    ->all();
+            $notInMember = !empty($resignation) ? ArrayHelper::map($resignation, 'staff_member_code', 'staff_member_code') : [];
             $subQuery = (new \yii\db\Query())
                     ->select('staff_member_code,MAX(wef_date) as wef_date')
                     ->from('tbl_staff_salary AS t')
                     ->where("t.wef_date<='" . $month . "'  and t.union_code='" . $union . "' ")
+                    ->andWhere(['not in', 't.staff_member_code', $notInMember])
                     ->groupBy(['staff_member_code']);
 
             return $rows = (new \yii\db\Query())
@@ -170,6 +179,7 @@ class TblStaffSalary extends \app\models\ChildModel {
                     ->from('tbl_staff_salary AS st')
                     ->leftJoin(['x' => $subQuery], 'x.staff_member_code=st.staff_member_code')
                     ->where("st.wef_date=x.wef_date and st.union_code='" . $union . "' ")
+                    ->andWhere(['not in', 'st.staff_member_code', $notInMember])
                     ->all();
         }
     }
