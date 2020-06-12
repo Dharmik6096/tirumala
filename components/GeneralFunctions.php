@@ -955,13 +955,11 @@ class GeneralFunctions extends Component {
         } else
         if ($numericVal) {
             $records = $datamodel->find()
-                            ->select('test')
                             ->select([$fields[0]])
                             ->where([$fields[1] => $model->$attribute])
                             ->andWhere($where)->all();
         } else {
             $records = $datamodel->find()
-                            ->select('test')
                             ->select([$fields[0]])
                             ->where([$fields[0] => $model->$attribute])
                             ->andWhere($where)->all();
