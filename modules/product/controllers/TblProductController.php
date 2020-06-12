@@ -54,7 +54,7 @@ class TblProductController extends \app\controllers\ChildController {
             $this->model->product_name = ucwords($this->model->product_name);
             $this->model->product_code = Yii::$app->general->getPrimaryCode($this->model);
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Product', 'create']);
-            if ($transaction !== FALSE) {
+            if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
         }
@@ -69,6 +69,7 @@ class TblProductController extends \app\controllers\ChildController {
      */
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
+        $disableDpuProduct = !empty($this->model->dpu_product_code) ? true : false;
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
             $historyModel = new TblProductHistory();
@@ -76,11 +77,15 @@ class TblProductController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->model->product_name = ucwords($this->model->product_name);
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Product', 'edit']);
-            if ($transaction !== FALSE) {
+            if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
         }
-        return $this->customRender();
+        return $this->render('update', [
+                    'model' => $this->model,
+                    'disableDpuProduct' => $disableDpuProduct
+        ]);
+//        return $this->customRender();
     }
 
     /**
