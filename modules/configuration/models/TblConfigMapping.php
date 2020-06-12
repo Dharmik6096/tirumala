@@ -7,6 +7,9 @@ use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\configuration\models\TblConfigMapping;
 
 /**
  * This is the model class for table "tbl_config_mapping".
@@ -64,7 +67,7 @@ class TblConfigMapping extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'config_mapping_code' => Yii::t('app', 'Config Mapping Code'),
-            'config_code' => Yii::t('app', 'Config Code'),
+            'config_code' => Yii::t('app', 'Config'),
             'config_result' => Yii::t('app', 'Config Result'),
             'org_type' => Yii::t('app', 'Org Type'),
             'org_code' => Yii::t('app', 'Org Code'),
@@ -84,6 +87,7 @@ class TblConfigMapping extends \app\models\ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
+            'config_for' => Yii::t('app', 'Application'),
         ];
     }
 
@@ -172,6 +176,26 @@ class TblConfigMapping extends \app\models\ChildModel {
 
     public function getMccCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'org_code']);
+    }
+
+    public function getMainBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getMainMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getConfigCode() {
+        return $this->hasOne(TblConfig::className(), ['config_code' => 'config_code']);
     }
 
 }
