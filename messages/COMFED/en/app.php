@@ -131,4 +131,5 @@ return [
     'Company' => 'Union',
     '108 - Company Wise Collection vs Dispatch' => '108 - Union Wise Collection vs Dispatch',
     'Company Configuration ' => 'Union Configuration',
+    'Company Wise Collection vs Dispatch' => 'Union Wise Collection vs Dispatch',
 ];
