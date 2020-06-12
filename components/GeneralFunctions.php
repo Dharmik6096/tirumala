@@ -1519,20 +1519,22 @@ class GeneralFunctions extends Component {
 
     public function getUnionKeyPattern($union) {
         $PatternArray = [];
-        $model = new TblKeyPattern();
-        $unionKeyPattern = $model->find()->where(['union_code' => $union])->all();
-        foreach ($unionKeyPattern as $data) {
-            $key_config = [];
-            $key_config['ex_code_auto'] = $data->ex_code_auto;
-            $key_config['ex_code_length'] = $data->ex_code_length;
-            $key_config['ex_code_reset_on'] = $data->ex_code_reset_on;
-            $key_config['prefix_field'] = $data->prefix_field;
-            $key_config['ref_code_type'] = $data->ref_code_type;
-            $key_config['ref_code_length'] = $data->ref_code_length;
-            //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
-            $PatternArray[$data->pattern_for] = $key_config;
+        if (count($union) == 1) {
+            $model = new TblKeyPattern();
+            $unionKeyPattern = $model->find()->where(['union_code' => $union])->all();
+            foreach ($unionKeyPattern as $data) {
+                $key_config = [];
+                $key_config['ex_code_auto'] = $data->ex_code_auto;
+                $key_config['ex_code_length'] = $data->ex_code_length;
+                $key_config['ex_code_reset_on'] = $data->ex_code_reset_on;
+                $key_config['prefix_field'] = $data->prefix_field;
+                $key_config['ref_code_type'] = $data->ref_code_type;
+                $key_config['ref_code_length'] = $data->ref_code_length;
+                //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
+                $PatternArray[$data->pattern_for] = $key_config;
+            }
+            return $PatternArray;
         }
-        return $PatternArray;
     }
 
     public function getKeyPattern($table_name) {
@@ -1541,50 +1543,59 @@ class GeneralFunctions extends Component {
 
     public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
         $keyPattern = $this->getKeyPattern($table_name);
-        $ref_code_length = (int) $keyPattern['ref_code_length'];
-        $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
-        if ($keyPattern['ex_code_auto'] == 1) {
-            $data = $model->find()->select(['ex_code' => 'MAX(CAST(' . $ex_code_key . ' as int))+1'])
-                    ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+        if (!empty($keyPattern)) {
+            $ref_code_length = (int) $keyPattern['ref_code_length'];
+            $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
+            if ($keyPattern['ex_code_auto'] == 1) {
+                $data = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
+                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                        ->asArray()
+                        ->one();
+                $model->{$ex_code_key} = str_pad(($data['ex_code']), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+            } else {
+                if (!empty($model->{$ex_code_key})) {
+                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    $ex_cnt = $model->find()
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->andWhere([$ex_code_key => $model->{$ex_code_key}])
+                            ->count();
+                    if ($ex_cnt != '0') {
+                        $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
+                    }
+                    if (strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
+                        $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' length must be ' . $keyPattern['ex_code_length'] . '.'));
+                    }
+                } else {
+                    $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
+                }
+            }
+            $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+                    ->where(['union_code' => $model->union_code])
                     ->asArray()
                     ->one();
-            $model->{$ex_code_key} = str_pad(($data['ex_code']), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+            $model->auto_code = $data['auto_code'];
+            $pk_code = $model->union_code . str_pad(($data['auto_code']), $auto_code_lenght, '0', STR_PAD_LEFT);
+            if ($keyPattern['ref_code_type'] == 0) {
+                $model->ref_code = $pk_code;
+            } else if ($keyPattern['ref_code_type'] == 1) {
+                $prefix_seq = explode(',', $keyPattern['prefix_field']);
+                $ref_code = ($keyPattern['ref_code_length'] > 0 ) ? str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT) : '';
+                $model->ref_code = '';
+                foreach ($prefix_seq as $pre) {
+                    $model->ref_code.=$model->{$pre};
+                }
+                $model->ref_code.=$ref_code;
+            } else if (empty($model->ref_code)) {
+                $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+            }
+            if (!preg_match('/^[0-9]*$/', $model->ref_code)) {
+                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
+            }
+            return $pk_code;
         } else {
-            if (!empty($model->{$ex_code_key})) {
-                $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
-                $ex_cnt = $model->find()
-                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                        ->andWhere([$ex_code_key => $model->{$ex_code_key}])
-                        ->count();
-                if ($ex_cnt != '0') {
-                    $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
-                }
-                if (strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
-                    $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' lenght must be ' . $keyPattern['ex_code_length'] . '.'));
-                }
-            }
+            $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
+            return;
         }
-        $data = $model->find()->select(['ref_code' => 'MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as int))+1', 'auto_code' => 'MAX(auto_code)+1'])
-                ->where(['union_code' => $model->union_code])
-                ->asArray()
-                ->one();
-        $model->auto_code = $data['auto_code'];
-        $pk_code = $model->union_code . str_pad(($data['auto_code']), $auto_code_lenght, '0', STR_PAD_LEFT);
-        if ($keyPattern['ref_code_type'] == 0) {
-            $model->ref_code = $pk_code;
-        } else if ($keyPattern['ref_code_type'] == 1) {
-            $prefix_seq = explode(',', $keyPattern['prefix_field']);
-            $ref_code = str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT);
-            $model->ref_code = '';
-            foreach ($prefix_seq as $pre) {
-                $model->ref_code.=$model->{$pre};
-            }
-            $model->ref_code.=$ref_code;
-        }
-        if (!preg_match('/^[0-9]*$/', $model->ref_code)) {
-            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
-        }
-        return $pk_code;
     }
 
 }

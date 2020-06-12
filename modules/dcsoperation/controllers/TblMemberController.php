@@ -79,7 +79,7 @@ class TblMemberController extends \app\controllers\ChildController {
             }
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
-            if ($validate == 1) {
+            if ($validate == 1 && empty($this->model->getErrors())) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['member', 'create']);
                 if ($transaction !== FALSE) {

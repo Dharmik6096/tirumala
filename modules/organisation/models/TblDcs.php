@@ -121,12 +121,12 @@ class TblDcs extends ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'dcs_name', 'dcs_code_ex', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+            [['union_code', 'dcs_name', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
             [['dcs_short_name', 'hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code', 'ref_code'], 'required', 'on' => ['customImport']],
             [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
             [['milk_type_code', 'contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
-            [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor', 'tmcc_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+            [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
             [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
@@ -136,19 +136,19 @@ class TblDcs extends ChildModel {
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
 //            [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
             [['gst_no'], 'unique'],
-            [['dcs_code'], 'IntValidateDcs', 'on' => ['customImport', 'importCsv', 'createDcs']],
+            // [['dcs_code'], 'IntValidateDcs', 'on' => ['customImport', 'importCsv', 'createDcs']],
             [['allow_multi_family_member', /* 'destination_type', */], 'integer'],
             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live'], 'safe'],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
 //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
             [['registration_code'], 'string', 'max' => 20],
             [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
-            [['dcs_code_ex'], 'string', 'max' => 6, 'min' => '3', 'except' => ['saveCreamyData']],
+            //[['dcs_code_ex'], 'string', 'max' => 6, 'min' => '3', 'except' => ['saveCreamyData']],
             [['gst_no'], 'string', 'max' => 15],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['ifsc', 'pan_no'], 'trim'],
@@ -192,10 +192,10 @@ class TblDcs extends ChildModel {
 //            [['branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
-                    [['tmcc_code'], 'string', 'max' => 10],
-                    [['tmcc_code'], 'number', 'min' => 1],
-                    ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
-                    [['dcs_code_ex'], 'number'],
+                    //  [['tmcc_code'], 'string', 'max' => 10],
+                    //  [['tmcc_code'], 'number', 'min' => 1],
+                    // ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
+                    // [['dcs_code_ex'], 'number'],
                     [['is_active'], 'default', 'value' => 1],
                     [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code'], 'safe'],
                     [['is_dispatch_mandate', 'is_live'], 'default', 'value' => 0],
@@ -225,6 +225,7 @@ class TblDcs extends ChildModel {
                 }, 'on' => 'importCsv'],
                     [['dcs_type_code'], 'integer'],
                     [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
+                    ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                 ];
             }
 
@@ -329,6 +330,7 @@ class TblDcs extends ChildModel {
                     'f_mcc_code' => Yii::t('app', 'MCC'),
                     'f_bmc_code' => Yii::t('app', 'BMC'),
                     'f_union_code' => Yii::t('app', 'Union'),
+                    'ref_code' => Yii::t('app', 'Code'),
                 ];
             }
 
@@ -341,15 +343,7 @@ class TblDcs extends ChildModel {
             }
 
             public function getCode() {
-                return $this->tmcc_code;
-                //'00' . $this->tmcc_code;
-//                return $this->district_code . $this->village_code . $this->dcs_code_ex;
-//                $data = $this->find()->select(["max(convert(int,substring(dcs_code,12,1))) as dcs_code"])->where(['state_code' => $this->state_code, 'district_code' => $this->district_code, 'village_code' => $this->village_code])->one();
-//                if ((int) $data['dcs_code'] < 9) {
-//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code'] + 1);
-//                } else {
-//                    return $this->state_code . $this->district_code . $this->village_code . ((int) $data['dcs_code']);
-//                }
+                return Yii::$app->general->setKeyPattern($this, 'tbl_dcs', 'dcs_code_ex', 9);
             }
 
             public function getActiveDcs() {

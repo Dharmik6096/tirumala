@@ -60,28 +60,29 @@ class TblRouteMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'route_code', 'route_name', 'to_dest', 'route_type', 'morning_start_time', 'morning_end_time', 'evening_start_time', 'evening_end_time', 'route_length_kms', 'capacity', 'vehicle_type_code', 'valid_from'], 'required'],
+            [['union_code', 'route_name', 'to_dest', 'route_type', 'morning_start_time', 'morning_end_time', 'evening_start_time', 'evening_end_time', 'route_length_kms', 'capacity', 'vehicle_type_code', 'valid_from'], 'required'],
             [['morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
             [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
             [['route_length_kms'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', 'Route Length Kms must be greater than 0.')],
             [['morning_end_time'], 'morningTimeValidate'],
             [['evening_end_time'], 'eveningTimeValidate'],
-            [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
+            [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'route_code_ex', 'ref_code'], 'safe'],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             ['to_dest', 'compare', 'compareAttribute' => 'from_dest', 'operator' => '!=', 'message' => 'Source and destination can not be same'],
 //            [['route_name'], function ($attribute, $params) {
 //            Yii::$app->general->validateName($this, $attribute, $params);
 //        }, 'skipOnEmpty' => false],
             [['local_name'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['route_code'], 'string', 'min' => 1],
-            [['route_code'], 'string', 'max' => 8],
-            [['route_code'], 'safe'],
-            [['route_code'], 'unique'],
-            [['route_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                }, 'skipOnEmpty' => false,],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+//            [['route_code'], 'string', 'min' => 1],
+//            [['route_code'], 'string', 'max' => 8],
+//            [['route_code'], 'safe'],
+//            [['route_code'], 'unique'],
+            [['route_code_ex'], function ($attribute, $params) {
+            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+        }, 'skipOnEmpty' => false,],
+            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 
@@ -135,6 +136,8 @@ class TblRouteMapping extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'valid_from' => Yii::t('app', 'Valid From'),
+            'route_code_ex' => Yii::t('app', 'Route Code Ex'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -232,9 +235,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function getCode() {
-        return $this->route_code;
-        $data = $this->find()->select(["MAX(CONVERT(bigint,route_code)) as route_code"])->one();
-        return str_pad(((int) $data['route_code'] + 1), 8, '0', STR_PAD_LEFT);
+        return Yii::$app->general->setKeyPattern($this, 'tbl_route_mapping', 'route_code_ex', 7);
     }
 
     /**

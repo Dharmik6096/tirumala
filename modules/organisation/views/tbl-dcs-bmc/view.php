@@ -33,8 +33,18 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
-//                    'bmc_code',
                     [
+                        'columns' => [
+                            [
+                                'attribute' => 'bmc_code_ex',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'ref_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ], [
                         'columns' => [
                             [
                                 'attribute' => 'bmc_name',

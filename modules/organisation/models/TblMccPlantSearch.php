@@ -21,6 +21,7 @@ class TblMccPlantSearch extends TblMccPlant {
         return [
             [['mcc_plant_code', 'plant_code', 'federation_code', 'contact_person', 'created_at', 'created_by', 'description', 'email', 'mobile_no', 'name', 'updated_at', 'updated_by', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'union_code', 'village_code', 'capacity', 'valid_from', 'is_weight_manual', 'is_quality_manual'], 'safe'],
             [['is_active'], 'boolean'],
+            [['mcc_plant_code_ex', 'ref_code'], 'safe'],
         ];
     }
 
@@ -89,7 +90,9 @@ class TblMccPlantSearch extends TblMccPlant {
             'tbl_mcc_plant.is_quality_manual' => $this->is_quality_manual,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_mcc_plant.mcc_plant_code', $this->mcc_plant_code])
+        $query->andFilterWhere(['like', 'tbl_mcc_plant.mcc_plant_code_ex', $this->mcc_plant_code_ex])
+                ->andFilterWhere(['like', 'tbl_mcc_plant.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'tbl_mcc_plant.mcc_plant_code', $this->mcc_plant_code])
                 ->andFilterWhere(['like', 'tbl_mcc_plant.contact_person', $this->contact_person])
                 ->andFilterWhere(['like', 'tbl_mcc_plant.description', $this->description])
                 ->andFilterWhere(['like', 'tbl_mcc_plant.email', $this->email])

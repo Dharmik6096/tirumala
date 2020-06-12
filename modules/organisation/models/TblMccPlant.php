@@ -61,7 +61,7 @@ class TblMccPlant extends \app\models\ChildModel {
     public function rules() {
         return [
             [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['plant_code', 'name', 'hamlet_code', 'union_code', 'mcc_plant_code_ex', 'ref_code'], 'required'],
+            [['plant_code', 'name', 'hamlet_code', 'union_code'], 'required'],
             [['state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
             [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code'], 'safe'],
             [['capacity'], 'integer'],
@@ -86,7 +86,7 @@ class TblMccPlant extends \app\models\ChildModel {
         }, 'skipOnEmpty' => false],
 //            [['mcc_plant_code'], 'integer', 'min' => 1],
 //            [['mcc_plant_code'], 'string', 'max' => 6],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'mcc_plant_code_ex', 'ref_code'], 'safe'],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
@@ -130,8 +130,8 @@ class TblMccPlant extends \app\models\ChildModel {
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
-            'mcc_plant_code_ex' => Yii::t('app', 'MCC Code Ex.'),
-            'ref_code' => Yii::t('app', 'Ref. Code'),
+            'mcc_plant_code_ex' => Yii::t('app', 'MCC Code Ex'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 

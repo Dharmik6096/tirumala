@@ -62,29 +62,30 @@ class TblDcsBmc extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-                [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
-                [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
-                [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-                [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
+            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
+            [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
+            [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
+            [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
+            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-                [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
+            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['local_name'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-                [['bmc_code'], 'integer', 'min' => 1],
-                [['bmc_code'], 'string', 'max' => 5],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
-                [['mcc_plant_code'], 'setField'],
-                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
-                [['bmc_code'], 'unique']
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['local_name'], function ($attribute, $params) {
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+//            [['bmc_code'], 'integer', 'min' => 1],
+//            [['bmc_code'], 'string', 'max' => 5],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex'], 'safe'],
+            [['mcc_plant_code'], 'setField'],
+            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+//            [['bmc_code'], 'unique'],
+            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 
@@ -120,6 +121,8 @@ class TblDcsBmc extends \app\models\ChildModel {
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
+            'bmc_code_ex' => Yii::t('app', 'BMC Code Ex'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -200,9 +203,7 @@ class TblDcsBmc extends \app\models\ChildModel {
     }
 
     public function getCode() {
-        return $this->bmc_code;
-        $data = $this->find()->select(["max(convert(int,bmc_code)) as bmc_code"])->one();
-        return str_pad((int) $data['bmc_code'] + 1, 5, '0', STR_PAD_LEFT);
+        return Yii::$app->general->setKeyPattern($this, 'tbl_bmc', 'bmc_code_ex');
     }
 
     /**

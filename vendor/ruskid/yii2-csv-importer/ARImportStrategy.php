@@ -175,16 +175,17 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     }
                 }
                 $primaryKey = $model->tableSchema->primaryKey[0];
-                if ($this->isIncrement == 1) {
-                    $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
-                } else if (method_exists($model, 'getCode')) {
-                    $model->{$primaryKey} = $model->getCode();
-                }
+
 //                    print_r($model);
                 if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
                     $model->setChildTable($model, $modelList);
                 }
                 $error = ActiveForm::validate($model);
+                if ($this->isIncrement == 1) {
+                    $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
+                } else if (method_exists($model, 'getCode')) {
+                    $model->{$primaryKey} = $model->getCode();
+                }
                 if ($model->hasAttribute('is_active')) {
                     $nm = ucwords(str_replace('_', ' ', 'is_active'));
                     if (!(preg_match('/^[0-9]*$/', $model->is_active))) {

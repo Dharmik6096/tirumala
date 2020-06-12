@@ -168,7 +168,7 @@ class TblDcsController extends ChildController {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
-            if ($validate == 1) {
+            if ($validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {

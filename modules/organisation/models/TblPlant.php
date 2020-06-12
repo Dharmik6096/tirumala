@@ -51,7 +51,7 @@ class TblPlant extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['name', 'hamlet_code', 'union_code', 'plant_code_ex', 'ref_code'], 'required'],
+            [['name', 'hamlet_code', 'union_code'], 'required'],
             [['plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
             [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
             [['email'], 'email'],
@@ -101,8 +101,8 @@ class TblPlant extends \app\models\ChildModel {
             'description' => Yii::t('app', 'Description'),
             'capacity' => Yii::t('app', 'Capacity (LPD)'),
             'valid_from' => Yii::t('app', 'Valid From'),
-            'plant_code_ex' => Yii::t('app', 'Plant Code Ex.'),
-            'ref_code' => Yii::t('app', 'Ref. Code'),
+            'plant_code_ex' => Yii::t('app', 'Plant Code Ex'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 

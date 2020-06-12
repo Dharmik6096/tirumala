@@ -10,8 +10,10 @@ $cunit = !empty($request['TblRouteMappingSearch']['unit']) ? $request['TblRouteM
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
     'route_code',
+    ['attribute' => 'route_code_ex'],
+    ['attribute' => 'ref_code'],
     //'morning_start_time',
     //'morning_end_time',
     //'route_length_kms',

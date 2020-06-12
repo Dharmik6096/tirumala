@@ -39,9 +39,21 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-3">  
-        <?= $form->field($model, 'route_code')->textInput(['readonly' => $readonly]) ?>
-    </div>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_route_mapping');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-3">  
+                <?= $form->field($model, 'route_code_ex')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+        <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'route_name')->textInput() ?>
     </div>

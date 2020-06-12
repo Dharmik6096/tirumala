@@ -58,14 +58,23 @@ $form = ActiveForm::begin([
     <?= Html::activeHiddenInput($model, 'route_code') ?>
 
     <div class="col-sm-3 <?= $bmcDisable ?>">
-        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disabled); ?>
+        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $readonly); ?>
     </div>
-    <div class="col-sm-3 number-validate">
-        <?= $form->field($model, 'tmcc_code')->textInput(['maxlength' => true, 'readonly' => $disabled]) ?>
-    </div>
-    <div class="col-sm-3 number-validate">
-        <?= $form->field($model, 'dcs_code_ex')->textInput(['maxlength' => true]) ?>
-    </div>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_dcs');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'dcs_code_ex')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+        <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>
     </div>
@@ -170,7 +179,7 @@ $form = ActiveForm::begin([
     <?php //$form->field($model, 'service_tax')->textInput(['maxlength' => true]) ?>
         </div>-->
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('dcs_type_code', $model, $form, 'form-group col-sm-3', Yii::t('app','Society Type')); ?>
+        <?= Yii::$app->dropdown->dropdown('dcs_type_code', $model, $form, 'form-group col-sm-3', Yii::t('app', 'Society Type')); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('organisation_type', $model, $form, 'form-group col-sm-3', 'Organisation Type'); ?>

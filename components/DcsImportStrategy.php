@@ -42,7 +42,6 @@ class DcsImportStrategy extends ARImportStrategy {
                     $model = new $this->className;
                     if (!empty($this->scenario))
                         $model->scenario = $this->scenario;
-//                        $model->dcs_code=$model->getCode();
 
 
                     $uniqueAttributes = [];
@@ -77,6 +76,7 @@ class DcsImportStrategy extends ARImportStrategy {
                     $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_plant_code');
                     $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
                     $model->setModel();
+                    $model->dcs_code = $model->getCode();
                     $error = ActiveForm::validate($model);
 
                     if ($model->hasAttribute('is_active')) {
