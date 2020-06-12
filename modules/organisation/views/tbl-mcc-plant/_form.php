@@ -37,9 +37,21 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '', $disabled); ?>
     </div>
-    <div class="col-sm-3 number-validate">  
-        <?= $form->field($model, 'mcc_plant_code')->textInput(['readonly' => $readonly]) ?>
-    </div>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_plant');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'mcc_plant_code_ex')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+        <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>

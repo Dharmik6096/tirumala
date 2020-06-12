@@ -123,7 +123,7 @@ class TblMccPlantController extends \app\controllers\ChildController {
 
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'name', $this->model->name);
-            if ($validate == 1) {
+            if ($validate == 1 && empty($this->model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction($master, [$this->contactDetails], ['MCC', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
