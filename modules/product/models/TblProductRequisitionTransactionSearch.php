@@ -49,7 +49,7 @@ class TblProductRequisitionTransactionSearch extends TblProductRequisitionTransa
 
         $this->load($params);
         $query->joinWith(['productCode']);
-        $query->where(['product_requisition_code' => $this->product_requisition_code]);
+        $query->where(['product_requisition_code' => (string) $this->product_requisition_code]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

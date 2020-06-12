@@ -77,6 +77,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 $list = [];
                 $reqModel->addProductRequisition($jsonData);
                 $reqCode = $reqModel->product_requisition_code;
+                $reqModel->req_date = !empty($reqModel->req_date) ? Yii::$app->formatter->asDate($reqModel->req_date, DATE_FORMAT) : NULL;
             } else {
                 $reqCode = Yii::$app->getRequest()->getQueryParam('id');
             }
@@ -91,7 +92,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
                 $this->model->product_requisition_code = $reqCode;
                 $this->model->requisition_transaction_code = Yii::$app->general->getTransactionCode($this->model, $this->model->product_requisition_code);
                 $this->model->requisition_on_date = !empty($this->model->requisition_on_date) ? Yii::$app->formatter->asDate($this->model->requisition_on_date, DATE_FORMAT) : NULL;
-
+                
                 if (Yii::$app->request->get('id') == -1) {
                     $transaction = $this->generalModel->saveTransaction([$reqModel], [$this->model], ['Product Requisition transaction', 'create']);
                 } else {

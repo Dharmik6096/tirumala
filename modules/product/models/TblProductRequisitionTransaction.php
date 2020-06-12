@@ -140,7 +140,7 @@ class TblProductRequisitionTransaction extends \app\models\ChildModel {
         if ($this->requisition_on_date < $delivery_date) {
             $date = date_create($delivery_date);
             $date = date_format($date, 'd-m-Y');
-            $this->addError($attribute, Yii::t('app/validation', 'Delivery date must be greater than or qual to Requisition Date - ' . $date));
+            $this->addError($attribute, Yii::t('app/validation', 'Delivery date must be greater than or equal to Requisition Date - ' . $date));
             return false;
         }
     }
