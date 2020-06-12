@@ -141,7 +141,7 @@ $grid_option = [
         },
         'control-mapping' => function ($url, $model) {
             $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Control Mapping')];
-            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/configuration/tbl-config-mapping/create', 'id' => $model->union_code], $options);
+            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/configuration/tbl-config-mapping/index'], $options);
         },
     ]
 ];

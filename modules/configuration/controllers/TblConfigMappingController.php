@@ -102,6 +102,32 @@ class TblConfigMappingController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionIndex() {
+        $searchModel = new TblConfigMappingSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionMappingView($union, $plant, $mcc, $bmc, $for, $process) {
+        $searchModel = new TblConfigMappingSearch();
+        $searchModel->union_code = $union;
+        $searchModel->plant_code = $plant;
+        $searchModel->mcc_plant_code = $mcc;
+        $searchModel->bmc_code = $bmc;
+        $searchModel->config_for = $for;
+        $searchModel->process_name = $process;
+        $dataProvider = $searchModel->detailsearch(Yii::$app->request->queryParams);
+
+        return $this->render('_mapping_view', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
     /**
      * Finds the TblConfigMapping model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

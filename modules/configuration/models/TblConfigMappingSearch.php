@@ -10,13 +10,12 @@ use app\modules\configuration\models\TblConfigMapping;
 /**
  * TblConfigMappingSearch represents the model behind the search form about `app\modules\configuration\models\TblConfigMapping`.
  */
-class TblConfigMappingSearch extends TblConfigMapping
-{
+class TblConfigMappingSearch extends TblConfigMapping {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['config_mapping_code', 'config_code', 'originating_type'], 'integer'],
             [['config_result', 'org_type', 'org_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
@@ -26,8 +25,7 @@ class TblConfigMappingSearch extends TblConfigMapping
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,16 +37,15 @@ class TblConfigMappingSearch extends TblConfigMapping
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
-        $query = TblConfigMapping::find();
+    public function search($params) {
+        $query = TblConfigMapping::find()->select(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'config_for' => 'tbl_config.config_for', 'process_name' => 'tbl_config.process_name'])->groupBy(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'tbl_config.config_for', 'tbl_config.process_name']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+        $query->joinWith(['configCode']);
         $this->load($params);
 
         if (!$this->validate()) {
@@ -56,6 +53,8 @@ class TblConfigMappingSearch extends TblConfigMapping
             // $query->where('0=1');
             return $dataProvider;
         }
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_config_mapping', 'tbl_config_mapping', 'tbl_config_mapping');
+
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -67,19 +66,23 @@ class TblConfigMappingSearch extends TblConfigMapping
         ]);
 
         $query->andFilterWhere(['like', 'config_result', $this->config_result])
-            ->andFilterWhere(['like', 'org_type', $this->org_type])
-            ->andFilterWhere(['like', 'org_code', $this->org_code])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-            ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-            ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-            ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-            ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-            ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+                ->andFilterWhere(['like', 'org_type', $this->org_type])
+                ->andFilterWhere(['like', 'org_code', $this->org_code]);
 
         return $dataProvider;
     }
+
+    public function detailsearch($params) {
+
+        $query = TblConfigMapping::find();
+        $query->andWhere(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'tbl_config.config_for' => $this->config_for, 'tbl_config.process_name' => $this->process_name]);
+        // add conditions that should always apply here
+        $query->joinWith(['configCode']);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        return $dataProvider;
+    }
+
 }

@@ -932,7 +932,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function validateGlobalData($model, $attribute, $flag, $limit = FALSE, $show_error = true, $where = []) {
+    public function validateGlobalData($model, $attribute, $flag, $limit = FALSE, $show_error = true, $where = [], $numericVal = false) {
         $dropDown = new DropDown();
         $labelData = $dropDown->getLabels($flag);
         $fields = explode(',', $labelData['fields']);
@@ -952,8 +952,16 @@ class GeneralFunctions extends Component {
                 $query->limit(1);
             }
             $records = $query->all();
+        } else
+        if ($numericVal) {
+            $records = $datamodel->find()
+                            ->select('test')
+                            ->select([$fields[0]])
+                            ->where([$fields[1] => $model->$attribute])
+                            ->andWhere($where)->all();
         } else {
             $records = $datamodel->find()
+                            ->select('test')
                             ->select([$fields[0]])
                             ->where([$fields[0] => $model->$attribute])
                             ->andWhere($where)->all();
