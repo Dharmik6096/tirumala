@@ -18,7 +18,7 @@ class TblConfigMappingSearch extends TblConfigMapping {
     public function rules() {
         return [
             [['config_mapping_code', 'config_code', 'originating_type'], 'integer'],
-            [['config_result', 'org_type', 'org_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['config_result', 'org_type', 'org_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'process_name', 'config_for'], 'safe'],
         ];
     }
 
@@ -38,7 +38,7 @@ class TblConfigMappingSearch extends TblConfigMapping {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblConfigMapping::find()->select(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'config_for' => 'tbl_config.config_for', 'process_name' => 'tbl_config.process_name'])->groupBy(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'tbl_config.config_for', 'tbl_config.process_name']);
+        $query = TblConfigMapping::find()->select(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'config_for' => 'tbl_config.config_for', 'process_name' => 'tbl_config.process_name', 'org_type', 'org_code'])->groupBy(['tbl_config_mapping.union_code', 'tbl_config_mapping.plant_code', 'tbl_config_mapping.mcc_plant_code', 'tbl_config_mapping.bmc_code', 'tbl_config.config_for', 'tbl_config.process_name', 'org_type', 'org_code']);
 
         // add conditions that should always apply here
 
@@ -66,8 +66,10 @@ class TblConfigMappingSearch extends TblConfigMapping {
         ]);
 
         $query->andFilterWhere(['like', 'config_result', $this->config_result])
-                ->andFilterWhere(['like', 'org_type', $this->org_type])
-                ->andFilterWhere(['like', 'org_code', $this->org_code]);
+                ->andFilterWhere(['like', 'org_type', $this->config_for])
+                ->andFilterWhere(['like', 'org_code', $this->org_code])
+//                ->andFilterWhere(['like', 'tbl_config.config_for', $this->config_for])
+                ->andFilterWhere(['like', 'tbl_config.process_name', $this->process_name]);
 
         return $dataProvider;
     }

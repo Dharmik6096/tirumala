@@ -102,9 +102,11 @@ class TblConfigMappingController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionIndex() {
+    public function actionIndex($id = '') {
         $searchModel = new TblConfigMappingSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel->union_code = !empty($searchModel->f_union_code) ? $searchModel->f_union_code : $id;
 
         return $this->render('index', [
                     'searchModel' => $searchModel,
@@ -122,7 +124,11 @@ class TblConfigMappingController extends \app\controllers\ChildController {
         $searchModel->process_name = $process;
         $dataProvider = $searchModel->detailsearch(Yii::$app->request->queryParams);
 
-        return $this->render('_mapping_view', [
+        $model = new TblConfigMapping();
+        $model->setAttributes($searchModel->getAttributes());
+        $modelData = $model->getRecord($for, $process);
+        return $this->render('view', [
+                    'model' => $modelData, //$this->findModel($union, $plant, $mcc, $bmc, $for, $process),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);

@@ -4,7 +4,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Control Mapping'));
-$this->params['menu'][] = GhostHtml::a('' . Yii::t('app', 'Add Control Mapping'), ['/configuration/tbl-config-mapping/create', 'id' => $searchModel->union_code], ['class' => 'btn btn-danger btn-block']);
+$this->params['menu'][] = Yii::$app->controls->add('Control Mapping', ['/configuration/tbl-config-mapping/create', 'id' => $searchModel->union_code]); //GhostHtml::a('' . Yii::t('app', 'Add Control Mapping'), ['/configuration/tbl-config-mapping/create', 'id' => $searchModel->union_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
