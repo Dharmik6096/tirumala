@@ -671,7 +671,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '223 - Rate Acknowledgement',
             ],
             'VendorPayment' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_vendor_payment',
                 'scenario' => 'VendorPayment',
                 'title' => '602 - Vendor Payment',
