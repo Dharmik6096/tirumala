@@ -59,9 +59,16 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Member
                 'class' => '',
                 'attributes' => $attr,
                 'active_column' => false,
-                    ];
-                    Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['provisional-members-approval'], true);
-                    ?>
+                'actions' => [
+                    'milk_collection' => function ($url, $model) {
+                        $class = ($model->is_approved == 1) ? 'link-disable' : '';
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Milk Collection', 'class' => 'view_data '. $class, 'data-dcs_code' => $model->dcs_code, 'data-pro_ex_mem_code' => $model->pro_ex_member_code];
+                        return GhostHtml::a_alert('<i class="fa fa-list"></i>', ['/dcsoperation/tbl-member-provisional/provisional-milk-collection-list'], $options);
+                    },
+                ]
+            ];
+            Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['provisional-members-approval'], true);
+        ?>
             <?php //Html::submitButton(Yii::t('app', 'Reject'), ['class' => 'btn btn-default provisional-member-submit', 'name' => 'reject']); ?>
                     
             </div>
@@ -80,6 +87,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Member
             </div>
         </div>
 <div id="approvalDetails"></div>
+<div id="milkCollectionDetails"></div>
 <?php
 $script = "
 $('.provisional-member-submit').on('click',function(){
@@ -92,6 +100,30 @@ $('.provisional-member-submit').on('click',function(){
 $(document).ready(function() {
     $('.btn-toolbar.kv-grid-toolbar').hide();
 });
+
+$(document).ready(function(){
+    $(document).on('click','.view_data',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var dcs_code= $(this).attr('data-dcs_code');
+        var pro_ex_mem_code= $(this).attr('data-pro_ex_mem_code');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/dcsoperation/tbl-member-provisional/provisional-milk-collection-list']) . "',
+            data:{'member_code':dcs_code+pro_ex_mem_code},
+            success: function(data) {     
+                $('#milkCollectionDetails').html(data);
+                $('#provisionalMilkCollection').modal('toggle'); 
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
+    });
 
 ";
 $this->registerJs($script, View::POS_END, 'save-approval-data');

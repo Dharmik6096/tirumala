@@ -16,6 +16,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'provisional member
         $this->render('_form_grid', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            
         ])
         ?>
     </div>

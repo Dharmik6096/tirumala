@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
+use kartik\grid\GridView;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\dcsoperation\models\TblMemberProvisional */
@@ -211,7 +213,45 @@ if ($model->isNewRecord) {
             <?php // $form->field($model, 'payment_mode')->textInput() ?>
         </div>-->
     <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+
+<?php if($type != 'create'){
+    ?>
+<div class="row">
+    <div class="col-sm-12">
+        <?php
+        $attribute = [
+            ['header' => 'Member Code', 'attribute' => 'member_code', 'value' => function($model) {
+                    return $model->member_code;
+                }, 'filter' => false],
+            ['attribute' => 'member_code', 'label' => 'Member Name', 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+                }, 'filter' => false],
+            ['attribute' => 'name', 'filter' => false, 'visible' => false],
+            ['attribute' => 'milk_type_code', 'value' => 'milkTypeCode.animal_type_name', 'filter' => false],
+            ['attribute' => 'fat', 'filter' => false],
+            ['attribute' => 'snf', 'filter' => false],
+            ['attribute' => 'qty', 'filter' => false],
+            ['attribute' => 'rtpl', 'filter' => false],
+            ['attribute' => 'amount', 'filter' => false],
+            ['attribute' => 'date_time_of_collection', 'filter' => false, 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->date_time_of_collection);
+                }],
+            ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
+        ];
+
+        $grid_option = [
+            'id' => 'milk-coll-temp-grid',
+            'attributes' => $attribute,
+            'active_column' => FALSE,
+        ];
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['milk-coll-temp-list-grid'], false, [], [], false);
+        ?>
+    </div>
+</div>
+<?php
+}?>
+<br>
+<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'save']) ?>
             <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'approve']) ?>
@@ -219,11 +259,14 @@ if ($model->isNewRecord) {
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>
-</div>
-
+</div>               
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+
+$(document).ready(function() {
+    $('.btn-toolbar.kv-grid-toolbar').hide();
+});
     $('#tblmemberprovisional-dcs_code').on('change',function(){
         var id = $(this).val();
             $.ajax({

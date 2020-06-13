@@ -2,6 +2,10 @@
 
 namespace app\modules\dcsoperation\controllers;
 
+use app\modules\collection\models\TblMilkCollection;
+use app\modules\collection\models\TblProvisionalMilkCollection;
+use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
+use app\modules\collection\models\TblProvisionalMilkCollectionSearch;
 use app\modules\dcsoperation\models\TblMember;
 use Yii;
 use app\modules\dcsoperation\models\TblMemberProvisional;
@@ -135,6 +139,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->viewFile = 'update';
         $validate = 1;
         $this->setModel();
+        $searchModel = new TblProvisionalMilkCollectionSearch();
+        $dataProvider = $searchModel->searchCollection($this->model->dcs_code.$this->model->pro_ex_member_code);
         if(isset($this->model->scenarios()[Yii::$app->session['eiplCode']])){
             $this->model->scenario = Yii::$app->session['eiplCode'];
         }
@@ -160,6 +166,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             if ($validate == 1) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $master_model = [];
+                $deleteModel = [];
                 $master_model[] = $this->model;
                 if($this->model->is_approved == 1){
                     $tblMember = new TblMember();
@@ -167,9 +174,39 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $tblMember->setAttributes($this->model);
                     $tblMember->setAttributes($this->model->getAttributes());
                     $master_model[] = $tblMember;
+                    $milkCollectionData = new TblProvisionalMilkCollection();
+                    $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code.$this->model->pro_ex_member_code);
+                    foreach ($milkCollectionData as $key => $value) {
+                        $tblMilkCollection = new TblMilkCollection();
+                        $tblMilkCollection->setAttributes($value);
+                        $tblMilkCollection->setAttributes($value->getAttributes());
+                        $tblMilkCollection->member_code = $tblMember->member_code;
+                        $tblMilkCollection->is_provisional = 1;
+                        $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                        Yii::$app->operation->history($tblMilkCollection, $tblProvisionalMilkCollectionHistory, DELETE);
+                        $tblProvisionalMilkCollectionHistory->provisional_milk_collection_code = $tblMilkCollection->provisional_milk_collection_code;
+                        $master_model[] = $tblMilkCollection;
+                        $deleteModel[] = $tblMilkCollection;
+                        $master_model[] = $tblProvisionalMilkCollectionHistory;
+                    }
+    
                 }
                 $master_model[] = $historyModel;
-                $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'edit']);
+                // foreach ($master_model as $m) {
+                //     if(!$m->validate()) {
+                //         // var_dump($m);
+                //         var_dump($m->getErrors());
+                //     }
+                // }
+                // foreach ($deleteModel as $m) {
+                //     if(!$m->validate()) {
+                //         // var_dump($m);
+                //         var_dump($m->getErrors());
+                //     }
+                // }
+                $transaction = $this->generalModel->saveDeleteTransaction($master_model, [], $deleteModel, ['Member Provisional', 'edit']);
+                // var_dump($transaction);
+                // die;
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
                         if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
@@ -180,7 +217,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 }
             }
         }
-        return $this->customRender();
+        if($dataProvider != null){
+            return $this->render('update', ['model' => $this->model,'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+        }
     }
 
     protected function customRedirect() {
@@ -200,6 +239,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $data = Yii::$app->request->post();
             $selection = $data['selection'];
             $master = [];
+            $deleteModel = [];
             $errors = '';
             $success = '';
             $flag = $data['flag'];
@@ -221,6 +261,21 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $master[] = $tblMember;
                         $master[] = $this->model;
                         $master[] = $historyModel;
+                        $milkCollectionData = new TblProvisionalMilkCollection();
+                        $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code.$this->model->pro_ex_member_code);
+                        foreach ($milkCollectionData as $key => $value) {
+                            $tblMilkCollection = new TblMilkCollection();
+                            $tblMilkCollection->setAttributes($value);
+                            $tblMilkCollection->setAttributes($value->getAttributes());
+                            $tblMilkCollection->member_code = $tblMember->member_code;
+                            $tblMilkCollection->is_provisional = 1;
+                            $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                            Yii::$app->operation->history($tblMilkCollection, $tblProvisionalMilkCollectionHistory, DELETE);
+                            $tblProvisionalMilkCollectionHistory->provisional_milk_collection_code = $tblMilkCollection->provisional_milk_collection_code;
+                            $master_model[] = $tblMilkCollection;
+                            $deleteModel[] = $tblMilkCollection;
+                            $master_model[] = $tblProvisionalMilkCollectionHistory;
+                        }
                         $i++;
                     }
                     else{
@@ -299,6 +354,15 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->model->dob = empty($this->model->dob) ? NULL : $this->model->dob;
         $this->model->member_name = ucwords($this->model->member_name);
         $this->model->ex_member_code = str_pad($this->model->ex_member_code, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function actionProvisionalMilkCollectionList() {
+        $data = [];
+        $searchModel = new TblProvisionalMilkCollectionSearch();
+        if (!empty($_POST)) {
+            $dataProvider = $searchModel->searchCollection($_POST['member_code']);
+        }
+        return $this->renderAjax( 'provisional_milk_collection',['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
 }
