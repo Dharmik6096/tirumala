@@ -419,6 +419,16 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'credit_sale',
+                                'format' => 'html',
+                                'value' => $model->credit_sale == 1 ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget

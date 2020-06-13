@@ -40,7 +40,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
             [['union_code', 'report_type'], 'required', 'on' => ['CollectionDataSummary']],
             [['p_organization_type', 'rate_type', 'union_code', 'plant_code'], 'required', 'on' => ['RateAcknowledgement']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['VendorPayment']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['VendorPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MemberPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],

@@ -91,56 +91,56 @@ class TblUnions extends ChildModel {
      */
     public function rules() {
         return [
-                [['federation_code', 'union_code_ex', 'union_name', 'address', 'registration_no', 'hamlet_code', 'pincode', 'registration_date', 'city'], 'required'],
-                [['union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => ['importCsv']],
-                [['created_at', 'updated_at', 'districts', 'union_code_ex', 'is_active', 'name', 'fax_no', 'upi_no', 'union_short_name', 'registration_date', 'valid_from', 'logo', 'has_bmc', 'eipl_token', 'eipl_code'], 'safe'],
-                [['union_code', 'union_code_ex', 'registration_no', 'union_short_name', 'contact_person_mobile_no', 'gst_no'], 'unique'],
-                [['union_code', 'district_code'], 'string', 'max' => 3],
-                [['address'], 'string', 'max' => 500],
+            [['federation_code', 'union_code_ex', 'union_name', 'address', 'registration_no', 'hamlet_code', 'pincode', 'registration_date', 'city', 'union_short_name'], 'required'],
+            [['union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => ['importCsv']],
+            [['created_at', 'updated_at', 'districts', 'union_code_ex', 'is_active', 'name', 'fax_no', 'upi_no', 'union_short_name', 'registration_date', 'valid_from', 'logo', 'has_bmc', 'eipl_token', 'eipl_code'], 'safe'],
+            [['union_code', 'union_code_ex', 'registration_no', 'union_short_name', 'contact_person_mobile_no', 'gst_no'], 'unique'],
+            [['union_code', 'district_code'], 'string', 'max' => 3],
+            [['address'], 'string', 'max' => 500],
 //            [['registration_no', 'union_code_ex'], 'string', 'max' => 20],
             [['city'], 'string', 'max' => 50],
-                [['union_code_ex'], 'string', 'max' => 10],
-                [['union_name', 'contact_person'], function ($attribute, $params) {
+            [['union_code_ex'], 'string', 'max' => 10],
+            [['union_name', 'contact_person'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['local_name', 'local_address'], function ($attribute, $params) {
+            [['local_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['contact_person_email'], 'email'],
-                [['phone_no'], 'integer'],
+            [['contact_person_email'], 'email'],
+            [['phone_no'], 'integer'],
             //[['phone_no','contact_person_phone_no','contact_person_mobile_no'], 'integer','message'=>Yii::t('app/validation','{attribute} must be a numeric.')],
             //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
             //  [['contact_person_mobile_no'], 'integer', 'max' => 10, 'min' => 10,'message'=>Yii::t('app/validation','{attribute} must be a numeric.'), 'tooBig' => 'Please enter a valid Mobile No Length', 'tooSmall' => 'Please enter a valid Mobile No Length'],
             //  [['contact_person_phone_no','phone_no'], 'integer', 'max' => 16, 'min' => 16, 'tooBig' => 'Please enter a valid Phone No length', 'tooSmall' => 'Please enter a valid Phone No length'],
             [['union_name'], 'string', 'max' => 100],
-                [['phone_no', 'fax_no'], function ($attribute, $params) {
+            [['phone_no', 'fax_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
 //            ['bank_account_no', 'unique', 'targetAttribute' => 'ifsc'],
             [['contact_person_pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['union_code_ex'], 'integer'],
-                [['pincode', 'registration_no'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-                [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+            [['union_code_ex'], 'integer'],
+            [['pincode', 'registration_no'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
+            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-                [['ifsc', 'contact_person_pan_no'], 'trim'],
+            [['ifsc', 'contact_person_pan_no'], 'trim'],
             //[['bank_code'], 'string', 'max' => 4],
             [['federation_code', 'state_code'], 'string', 'max' => 2],
-                [['hamlet_code'], 'string', 'max' => 8],
-                [['sub_district_code'], 'string', 'max' => 5],
+            [['hamlet_code'], 'string', 'max' => 8],
+            [['sub_district_code'], 'string', 'max' => 5],
             //[['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code']],
             [['federation_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblFederations::className(), 'targetAttribute' => ['federation_code' => 'federation_code']],
-                [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
+            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
 //            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['created_by' => 'user_id']],
             [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
-                [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
-                [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+            [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
+            [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
             //[['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
             [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code']],
 //            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['updated_by' => 'user_id']],
             [['gst_no'], 'string', 'min' => 15, 'max' => 15],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'allow_member_create'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'allow_member_create'], 'safe'],
         ];
     }
 
