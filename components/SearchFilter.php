@@ -249,7 +249,7 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblConfigMappingSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'config_for', 'process_name'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

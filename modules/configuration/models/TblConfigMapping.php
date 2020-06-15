@@ -69,8 +69,8 @@ class TblConfigMapping extends \app\models\ChildModel {
             'config_mapping_code' => Yii::t('app', 'Config Mapping Code'),
             'config_code' => Yii::t('app', 'Config'),
             'config_result' => Yii::t('app', 'Config Result'),
-            'org_type' => Yii::t('app', 'Org Type'),
-            'org_code' => Yii::t('app', 'Org Code'),
+            'org_type' => Yii::t('app', 'Applicable Type'),
+            'org_code' => Yii::t('app', 'Applicable Code'),
             'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -87,7 +87,7 @@ class TblConfigMapping extends \app\models\ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
-            'config_for' => Yii::t('app', 'Application'),
+            'config_for' => Yii::t('app', 'Applicable Name'),
         ];
     }
 
@@ -196,6 +196,13 @@ class TblConfigMapping extends \app\models\ChildModel {
 
     public function getConfigCode() {
         return $this->hasOne(TblConfig::className(), ['config_code' => 'config_code']);
+    }
+
+    public function getRecord($for, $process) {
+        return $this->find()
+                        ->where(['tbl_config_mapping.union_code' => $this->union_code, 'tbl_config_mapping.plant_code' => $this->plant_code, 'tbl_config_mapping.mcc_plant_code' => $this->mcc_plant_code, 'tbl_config_mapping.bmc_code' => $this->bmc_code, 'tbl_config.config_for' => $for, 'tbl_config.process_name' => $process])
+                        ->joinWith(['configCode'])
+                        ->one();
     }
 
 }

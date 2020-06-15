@@ -188,6 +188,12 @@ $attribute = [
             return ($model->is_bmc == 1) ? 'Yes' : 'No';
         }, 'visible' => FALSE
     ],
+    [
+        'attribute' => 'credit_sale', 'filter' => false,
+        'value' => function($model) {
+            return ($model->credit_sale == 1) ? 'Yes' : 'No';
+        }, 'visible' => FALSE
+    ],
 ];
 
 $grid_option = [

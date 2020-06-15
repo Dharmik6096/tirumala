@@ -252,18 +252,22 @@ $form = ActiveForm::begin([
     <!--<div class="col-sm-3">-->
     <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
     <!--</div>-->
-    <div class="col-sm-3">
+    <div class="col-sm-3 mt25">
         <?= $form->field($model, 'allow_multi_family_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <!--<div class="col-sm-3">-->
     <?php // $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     <!--</div>-->
-    <div class="col-sm-3">
+    <div class="col-sm-2 mt25">
         <?= $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2 mt25">
         <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
+    <div class="col-sm-2 mt25">
+        <?= $form->field($model, 'credit_sale', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+
     <?php // if ($type == 'create') { ?>
     <!--        <div class="col-sm-3">
     <?= Yii::$app->controls->active($model, $form); ?>

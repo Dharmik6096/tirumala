@@ -142,7 +142,7 @@ class TblDcs extends ChildModel {
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code'], 'safe'],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
 //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
@@ -202,7 +202,7 @@ class TblDcs extends ChildModel {
                     [['is_dispatch_mandate'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate');
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
-                    [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+                    [['is_weight_manual', 'is_quality_manual', 'credit_sale'], 'boolean'],
                     [['dpu_type', 'is_dispatch_mandate'], 'required', 'on' => ['createDcs', 'updateDcs', 'customImportUpdate']],
                     [['x_col1'], 'default', 'value' => '1#1'],
                     [['dcs_code'], function ($attribute, $params) {
@@ -226,6 +226,7 @@ class TblDcs extends ChildModel {
                     [['dcs_type_code'], 'integer'],
                     [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
                     ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                    [['credit_sale'], 'default', 'value' => 0]
                 ];
             }
 
@@ -925,6 +926,8 @@ class TblDcs extends ChildModel {
 //    public function getBillHeadTransactions() {
 //        return $this->hasMany(TblBillHeadDetail::className(), ['dcs_code' => 'dcs_code']);
 //    }
+
+
             public function getIfscDetail() {
                 return $this->hasOne(TblBranch::className(), ['ifsc' => 'ifsc'])->andwhere(['is_active' => 1]);
             }
