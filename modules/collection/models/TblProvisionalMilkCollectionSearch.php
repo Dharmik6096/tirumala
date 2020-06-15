@@ -15,7 +15,7 @@ class TblProvisionalMilkCollectionSearch extends TblProvisionalMilkCollection {
     /**
      * @inheritdoc
      */
-    public $union_code;
+    public $union_code, $society_code;
     public $operator_fat, $operator_snf, $operator_qty, $operator_amount;
     public $from_date, $to_date, $from_shift, $to_shift, $sap_collection_type, $sap_data_post_status;
 
