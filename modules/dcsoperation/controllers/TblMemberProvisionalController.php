@@ -158,20 +158,21 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $master_model[] = $tblMember;
                     $milkCollectionData = new TblProvisionalMilkCollection();
                     $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code.$this->model->pro_ex_member_code);
-                    foreach ($milkCollectionData as $key => $value) {
-                        $deleteModel[] = $value;
-                        $tblMilkCollection = new TblMilkCollection();
-                        $tblMilkCollection->setAttributes($value);
-                        $tblMilkCollection->setAttributes($value->getAttributes());
-                        $tblMilkCollection->member_code = $tblMember->member_code;
-                        $tblMilkCollection->is_provisional = 1;
-                        $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
-                        Yii::$app->operation->history($tblMilkCollection, $tblProvisionalMilkCollectionHistory, DELETE);
-                        $tblProvisionalMilkCollectionHistory->provisional_milk_collection_code = $tblMilkCollection->provisional_milk_collection_code;
-                        $child_model[] = $tblMilkCollection;
-                        $child_model[] = $tblProvisionalMilkCollectionHistory;
+                    if($milkCollectionData != null && $milkCollectionData !=''){
+                        foreach ($milkCollectionData as $key => $value) {
+                            $deleteModel[] = $value;
+                            $tblMilkCollection = new TblMilkCollection();
+                            $tblMilkCollection->setAttributes($value);
+                            $tblMilkCollection->setAttributes($value->getAttributes());
+                            $tblMilkCollection->member_code = $tblMember->member_code;
+                            $tblMilkCollection->is_provisional = 1;
+                            $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                            Yii::$app->operation->history($tblMilkCollection, $tblProvisionalMilkCollectionHistory, DELETE);
+                            $tblProvisionalMilkCollectionHistory->provisional_milk_collection_code = $value->provisional_milk_collection_code;
+                            $child_model[] = $tblMilkCollection;
+                            $child_model[] = $tblProvisionalMilkCollectionHistory;
+                        }
                     }
-    
                 }
                 $master_model[] = $historyModel;
                 $modelError = '';
@@ -244,18 +245,20 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $master[] = $historyModel;
                         $milkCollectionData = new TblProvisionalMilkCollection();
                         $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code.$this->model->pro_ex_member_code);
-                        foreach ($milkCollectionData as $key => $value) {
-                            $deleteModel[] = $value;
-                            $tblMilkCollection = new TblMilkCollection();
-                            $tblMilkCollection->setAttributes($value);
-                            $tblMilkCollection->setAttributes($value->getAttributes());
-                            $tblMilkCollection->member_code = $tblMember->member_code;
-                            $tblMilkCollection->is_provisional = 1;
-                            $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
-                            Yii::$app->operation->history($tblMilkCollection, $tblProvisionalMilkCollectionHistory, DELETE);
-                            $tblProvisionalMilkCollectionHistory->provisional_milk_collection_code = $tblMilkCollection->provisional_milk_collection_code;
-                            $child_model[] = $tblMilkCollection;
-                            $child_model[] = $tblProvisionalMilkCollectionHistory;
+                        if($milkCollectionData != null && $milkCollectionData !=''){
+                            foreach ($milkCollectionData as $key => $value) {
+                                $deleteModel[] = $value;
+                                $tblMilkCollection = new TblMilkCollection();
+                                $tblMilkCollection->setAttributes($value);
+                                $tblMilkCollection->setAttributes($value->getAttributes());
+                                $tblMilkCollection->member_code = $tblMember->member_code;
+                                $tblMilkCollection->is_provisional = 1;
+                                $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                                Yii::$app->operation->history($tblMilkCollection, $tblProvisionalMilkCollectionHistory, DELETE);
+                                $tblProvisionalMilkCollectionHistory->provisional_milk_collection_code = $value->provisional_milk_collection_code;
+                                $child_model[] = $tblMilkCollection;
+                                $child_model[] = $tblProvisionalMilkCollectionHistory;
+                            }
                         }
                         $i++;
                     }
