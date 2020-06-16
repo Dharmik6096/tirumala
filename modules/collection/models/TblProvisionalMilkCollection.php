@@ -158,75 +158,8 @@ class TblProvisionalMilkCollection extends \app\models\ChildModel {
         return $this->hasOne(TblMemberProvisional::className(), ['member_code' => 'member_code']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRateCode() {
-        return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getVillageCode() {
-        return $this->hasOne(TblVillages::className(), ['village_code' => 'village_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMilkCollectionCode() {
-        return $this->hasOne(TblProvisionalMilkCollection::className(), ['provisional_milk_collection_code' => 'provisional_milk_collection_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTblProvisionalMilkCollection() {
-        return $this->hasOne(TblProvisionalMilkCollection::className(), ['provisional_milk_collection_code' => 'provisional_milk_collection_code']);
-    }
-
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
-    }
-
-    /**
-     * @inheritdoc
-     * @return TblProvisionalMilkCollectionQuery the active query used by this AR class.
-     */
-    public static function find() {
-        return new TblProvisionalMilkCollectionQuery(get_called_class());
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMilkQualityCode() {
-        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
-    }
-
-    public function setUuid($attribute, $params) {
-        $this->data_post_id = !empty($this->data_post_id) ? $this->data_post_id : $this->x_col1;
-    }
-
-    public function getMccPlantCode() {
-        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
-    }
-
-    public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
-    }
-
-    public function getRouteCode() {
-        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
-    }
-
-    public function getPlantCode() {
-        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
-    }
-
-    public function getUnionCode() {
-        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     public function getMilkCollectionData($member_code){
