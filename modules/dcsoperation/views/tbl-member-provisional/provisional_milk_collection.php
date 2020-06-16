@@ -32,7 +32,7 @@ use kartik\detail\DetailView;
                                                 'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
                                                 'valueColOptions' => ['style' => 'width:30%']
                                             ],
-                                        ],
+                                        ],  
                                     ],
                                     [
                                         'columns' => [
