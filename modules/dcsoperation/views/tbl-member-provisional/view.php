@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
+use yii\web\View;
 
 $this->title = Yii::$app->label->title('view', 'provisional member');
 $this->params['menu'][] = Yii::$app->controls->add('provisional member');
@@ -444,5 +445,27 @@ if ($model->is_approved != 1) {
             ]);
             ?>
         </div>
+        <div class="row">
+        <div class="col-sm-12">
+        <?=
+            $this->render('_milk_collection_grid', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                
+            ])?>
+        </div>
+    </div>
+    <br>
     </div>
 </div>
+<?php
+$script = "
+
+$(document).ready(function() {
+    $('.btn-toolbar.kv-grid-toolbar').hide();
+});
+
+";
+
+$this->registerJs($script, View::POS_END, 'provisional_view');
+?>

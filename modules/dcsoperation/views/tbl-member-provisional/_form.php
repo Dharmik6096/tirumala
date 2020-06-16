@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
+use kartik\grid\GridView;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\dcsoperation\models\TblMemberProvisional */
@@ -211,7 +213,23 @@ if ($model->isNewRecord) {
             <?php // $form->field($model, 'payment_mode')->textInput() ?>
         </div>-->
     <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+
+<?php if($type != 'create'){
+    ?>
+<div class="row">
+    <div class="col-sm-12">
+    <?=
+        $this->render('_milk_collection_grid', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            
+        ])?>
+    </div>
+</div>
+<?php
+}?>
+<br>
+<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'save']) ?>
             <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'approve']) ?>
@@ -219,11 +237,14 @@ if ($model->isNewRecord) {
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>
-</div>
-
+</div>               
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+
+$(document).ready(function() {
+    $('.btn-toolbar.kv-grid-toolbar').hide();
+});
     $('#tblmemberprovisional-dcs_code').on('change',function(){
         var id = $(this).val();
             $.ajax({
