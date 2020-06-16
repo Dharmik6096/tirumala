@@ -9,15 +9,6 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\geo\models\TblVillages;
 use app\modules\dcsoperation\models\TblShift;
-use app\modules\globalmaster\models\TblMilkQualityType;
-use app\modules\general\models\TblSocietyVendor;
-use app\modules\organisation\models\TblMccPlant;
-use app\modules\organisation\models\TblDcsBmc;
-use app\modules\organisation\models\TblRouteMapping;
-use app\modules\organisation\models\TblPlant;
-use app\modules\organisation\models\TblUnions;
-use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
-use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 
 /**
  * This is the model class for table "tbl_provisional_milk_collection".
@@ -56,8 +47,6 @@ use app\modules\dcsoperation\models\TblPurchaseRateDetails;
  * @property TblAnimalType $milkTypeCode
  * @property TblDcs $dcsCode
  * @property TblProvisionalMember $memberCode
- * @property TblPurchaseRate $rateCode
- * @property TblVillages $villageCode
  * @property TblProvisionalMilkCollection $milkCollectionCode
  * @property TblProvisionalMilkCollection $tblProvisionalMilkCollection
  * @property integer $data_post_id
@@ -68,7 +57,6 @@ use app\modules\dcsoperation\models\TblPurchaseRateDetails;
  */
 class TblProvisionalMilkCollection extends \app\models\ChildModel {
 
-    public $collection_date, $member;
 
     /**
      * @inheritdoc
