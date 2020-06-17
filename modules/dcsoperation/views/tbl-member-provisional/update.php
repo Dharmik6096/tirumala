@@ -9,8 +9,8 @@ use yii\web\View;
         <?=
         $this->render('_form', [
             'model' => $model,
+            'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
             'type' => 'edit',
-            'searchModel' => $searchModel, 'dataProvider' => $dataProvider
         ])
         ?>
     </div>
