@@ -422,9 +422,9 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'credit_sale',
+                                'attribute' => 'credit_sale_allow',
                                 'format' => 'html',
-                                'value' => $model->credit_sale == 1 ? 'Yes' : 'No',
+                                'value' => $model->credit_sale_allow == 1 ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
