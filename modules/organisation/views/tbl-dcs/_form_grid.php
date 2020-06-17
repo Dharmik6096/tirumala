@@ -188,9 +188,9 @@ $attribute = [
         }, 'visible' => FALSE
     ],
     [
-        'attribute' => 'credit_sale', 'filter' => false,
+        'attribute' => 'credit_sale_allow', 'filter' => false,
         'value' => function($model) {
-            return ($model->credit_sale == 1) ? 'Yes' : 'No';
+            return ($model->credit_sale_allow == 1) ? 'Yes' : 'No';
         }, 'visible' => FALSE
     ],
 ];
