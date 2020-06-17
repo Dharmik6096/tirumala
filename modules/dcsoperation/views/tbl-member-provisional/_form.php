@@ -36,14 +36,7 @@ if ($model->isNewRecord) {
     $disabled = true;
 }
 ?>
-<?php 
-if($type != 'create'){
-    echo $form->errorSummary([$model,$memberModel]);
-}
-else{
-    echo $form->errorSummary($model);
-}
- ?>
+<?php echo $form->errorSummary($model);?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row">
 

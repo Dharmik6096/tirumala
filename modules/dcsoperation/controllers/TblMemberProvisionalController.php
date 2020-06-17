@@ -128,7 +128,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model->is_approved = 1;
                 $this->model->approved_at = date('Y-m-d H:i:s');
                 $this->model->approved_by = Yii::$app->session['UserCode'];
-                // var_dump($this->model->scenario);
             }
             else{
                 $this->model->is_approved = 0;
@@ -151,10 +150,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $tblMember = new TblMember();
                     $tblMember->scenario = 'ApprovalMember';
                     $tblMember->attributes=$this->model->attributes;
-                    if($this->model->validate() && $tblMember->validate()){
-                        $master_model[] = $tblMember;
-                        $milkCollectionData = new TblProvisionalMilkCollection();
-                        $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code.$this->model->pro_ex_member_code);
+                    $master_model[] = $tblMember;
+                    $milkCollectionData = new TblProvisionalMilkCollection();
+                    $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code.$this->model->pro_ex_member_code);
+                    if(!empty($milkCollectionData)){
                         foreach ($milkCollectionData as $key => $value) {
                             $deleteModel[] = $value;
                             $tblMilkCollection = new TblMilkCollection();
@@ -173,10 +172,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['view', 'id' => $this->model->provisional_member_code]);
                 }
-                return $this->render('update', ['model' => $this->model,'searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'memberModel' => $tblMember]);
+                return $this->render('update', ['model' => $this->model,'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
             }
     }
-    return $this->render('update', ['model' => $this->model,'searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'memberModel' => $tblMember]);
+    return $this->render('update', ['model' => $this->model,'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
 }
 
     public function actionProvisionalMembersApproval() {
