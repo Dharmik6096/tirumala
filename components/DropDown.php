@@ -935,6 +935,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'PL'), 2 => Yii::t('app', 'SL'), 3 => Yii::t('app', 'CL'), 4 => Yii::t('app', 'C-Off'), 5 => Yii::t('app', 'LWP')],
             ],
+            'receipt_at' => [
+                'name' => 'receipt_at',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['PLANT' => Yii::t('app', 'PLANT'), 'VENDOR' => Yii::t('app', 'VENDOR')],
+            ],
+            'entry_type' => [
+                'name' => 'entry_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['INDIVIDUAL' => Yii::t('app', 'Individual'), 'CONSOLIDATED' => Yii::t('app', 'Consolidated')],
+            ],
         ];
         return $records[$l];
     }
@@ -1020,6 +1030,7 @@ class DropDown extends Component {
             'bmc_silos' => ['name' => 'bmc_silos_info_code', 'fields' => 'bmc_silos_info_code,silo_no,', 'prompt' => Yii::t('app', 'Select Silo'), 'model' => 'TblBmcSilosInfo', 'depend' => 'module_code', 'dependArray' => ['module_name']],
             'qty_diff_type' => ['name' => 'qty_diff_type_code', 'fields' => 'qty_diff_type_code,qty_diff_type_name', 'prompt' => Yii::t('app', 'Select'), 'model' => 'TblQtyDiffType'],
             'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
+            'trip_challan' => ['name' => 'challan_no', 'fields' => 'challan_no,challan_no,', 'prompt' => Yii::t('app', 'Select Challan'), 'model' => 'TblBmcMilkDispatch', 'depend' => 'trip_code'],
         ];
         return $label[$l];
     }
