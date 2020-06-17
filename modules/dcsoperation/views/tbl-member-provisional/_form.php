@@ -36,7 +36,7 @@ if ($model->isNewRecord) {
     $disabled = true;
 }
 ?>
-<?php echo $form->errorSummary($model);?>
+<?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row">
 
@@ -44,26 +44,26 @@ if ($model->isNewRecord) {
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', true, $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmemberprovisional-union_code', 'plant_code',true,false, '', $readonly); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmemberprovisional-union_code', 'plant_code', true, false, '', $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmemberprovisional-plant_code', 'mcc_plant_code',true,false, '', $readonly); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmemberprovisional-plant_code', 'mcc_plant_code', true, false, '', $readonly); ?>
     </div>  
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberprovisional-mcc_plant_code', 'bmc_code',true,false, '','', $readonly); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberprovisional-mcc_plant_code', 'bmc_code', true, false, '', '', $readonly); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmemberprovisional-bmc_code', 'dcs_code',true,false, '', $readonly); ?>         
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmemberprovisional-bmc_code', 'dcs_code', true, false, '', $readonly); ?>         
     </div>  
     <!-- <div class="col-sm-3">
-        <?php //Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmemberprovisional-union_code', '', 'Society', '', $readonly); ?>
+    <?php //Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmemberprovisional-union_code', '', 'Society', '', $readonly); ?>
     </div> -->
     <?php //Html::activeHiddenInput($model, 'district_code'); ?>
     <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'ex_member_code')->textInput() ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '',$model->getAttributeLabel('member_type_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code')); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'member_name')->textInput() ?>
@@ -170,7 +170,7 @@ if ($model->isNewRecord) {
         <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmemberprovisional-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
     </div>
     <div class="col-sm-3">
-        <!--<?php //$form->field($model, 'pincode')->textInput() ?>-->
+        <!--<?php //$form->field($model, 'pincode')->textInput()    ?>-->
         <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-3">
@@ -194,7 +194,7 @@ if ($model->isNewRecord) {
         <?= $form->field($model, 'bank_account_no')->textInput() ?>
     </div>
     <div class="col-sm-3">
-        <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc]) ?>-->
+        <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])    ?>-->
         <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
     </div>
     <div class="col-sm-3">
@@ -210,35 +210,37 @@ if ($model->isNewRecord) {
         <?= $form->field($model, 'annual_income')->textInput() ?>
     </div>
     <!--    <div class="col-sm-3">
-            <?php // $form->field($model, 'payment_mode')->textInput() ?>
+    <?php // $form->field($model, 'payment_mode')->textInput() ?>
         </div>-->
     <div class="clearfix"></div>
 
-<?php if($type != 'create'){
-    ?>
-<div class="row">
-    <div class="col-sm-12">
-    <?=
-        $this->render('_milk_collection_grid', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-            
-        ])?>
-    </div>
-</div>
-<?php
-}?>
-<br>
-<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'save']) ?>
-            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name'=>'submitBtn', 'value'=>'approve']) ?>
+            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>
 </div>               
 <?php ActiveForm::end(); ?>
+<?php if ($type != 'create') {
+    ?>
+    <div class="row">
+        <div class="col-sm-12">
+            <?=
+            $this->render('_milk_collection_grid', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ])
+            ?>
+        </div>
+    </div>
+<?php }
+?>
+
+
 <?php
 $script = "
 
