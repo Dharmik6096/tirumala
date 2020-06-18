@@ -146,6 +146,10 @@ class TblStaffAttendance extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
+        if ($this->leave_from > $this->leave_to) {
+            $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
+            return false;
+        }
         $dayDiff = Yii::$app->general->getDateDifference($this->leave_from, $this->leave_to);
 
         $tenure_from = date_create($this->leave_from);
