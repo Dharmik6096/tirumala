@@ -326,7 +326,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $bmc = Yii::$app->general->getforeignkey($this->silosCode, 'module_code');
             if ($bmc != $this->bmc_code) {
-                $this->addError($attribute, Yii::t('app/validation', 'Silo No. is invalidddd'));
+                $this->addError($attribute, Yii::t('app/validation', 'Silo No. is invalid'));
             }
             $this->union_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'union_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'plant_code');
