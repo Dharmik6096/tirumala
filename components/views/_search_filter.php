@@ -209,6 +209,23 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, $depend_str, 'form-group', Yii::t('app', 'Staff Member')); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('config_for'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-6">
+                                            <?= Yii::$app->dropdown->configFor($model, $form, 'config_for', FALSE, false, ['VLC', 'PORTAL']); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('process_name'))) {
+                                        $depend_str = $field_class . '-config_for';
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-6">
+                                            <?= Yii::$app->dropdown->processName($model, $form, $depend_str, 'process_name', FALSE); ?>
+                                        </div>
+                                    <?php } ?>
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
@@ -235,16 +252,16 @@ if (!empty($filter_data)) {
     <?php
 }
 $script = '
-        $(".modal_toggle").on("click", function(){
-            $("#search_filter").modal("toggle");
-        });
-        var checkSearch = "' . $f_cnt . '";
-            if(checkSearch > 0){
-                
-            } else {
-                $(".searchBtn").hide();
-            }
-';
+                                            $(".modal_toggle").on("click", function(){
+                                            $("#search_filter").modal("toggle");
+                                            });
+                                            var checkSearch = "' . $f_cnt . '";
+                                            if (checkSearch > 0) {
+                                                
+                                            } else {
+                                                $(".searchBtn") . hide();
+                                            }
+                                            ';
 
 $this->registerJs($script, View::POS_END, 'search-filter-popup');
 ?>

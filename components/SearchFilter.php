@@ -248,6 +248,9 @@ class SearchFilter {
             'TblStaffLeaveMasterSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblConfigMappingSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'config_for', 'process_name'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

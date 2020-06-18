@@ -7,7 +7,8 @@ $this->title = Yii::$app->label->title('create', 'Product');
         <?=
         $this->render('_form', [
             'model' => $model,
-            'type' => 'create'
+            'type' => 'create',
+            'disableDpuProduct' => false
         ])
         ?>
     </div>
