@@ -16,6 +16,8 @@ use app\modules\tankermovement\models\TblBmcMilkDispatch;
 use kartik\widgets\ActiveForm;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblVehicleTripDetailHistory;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
@@ -79,7 +81,8 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $this->model = $this->findModel($masterPost['milk_vehicle_entry_code']);
                     $this->model->load(Yii::$app->request->post());
                 } else {
-                    $this->model->milk_vehicle_entry_code = (string) Yii::$app->general->getCodeAutoIncrement($this->model);
+                    $this->model->originating_org_code = $this->model->union_code;
+                    $this->model->milk_vehicle_entry_code = Yii::$app->general->getPrimaryCode($this->model);
                     $this->model->grn_no = Yii::$app->session->get('financialYear') . '/' . $this->model->trip_code . '/1';
                     $tripModel = new TblVehicleTrip();
                     $tripModel->trip_code = $this->model->trip_code;
@@ -88,6 +91,17 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $tripModel->grn_no = $this->model->grn_no;
                     $tripModel->trip_status = 'closed';
                     $modelSave[] = $tripModel;
+                    $tripDetailModel = new TblVehicleTripDetail();
+                    $last_trip = $tripDetailModel->getLastTrip($this->model->trip_code);
+                    $trhistoryModel = new TblVehicleTripDetailHistory();
+                    Yii::$app->operation->history($last_trip, $trhistoryModel, UPDATE);
+                    $modelSave[] = $trhistoryModel;
+                    $tripDetailModel = $last_trip;
+                    $tripDetailModel->source_org_code = $last_trip->destination_code;
+                    $tripDetailModel->source_org_type = $last_trip->destination_type;
+                    $tripDetailModel->destination_code = !empty($this->model->customer_code) ? $this->model->customer_code : $this->model->plant_code;
+                    $tripDetailModel->destination_type = !empty($this->model->customer_type) ? $this->model->customer_type : 'PLANT';
+                    $modelSave[] = $tripDetailModel;
                 }
                 if (!empty($trPost['milk_vehicle_entry_transaction_code'])) {
                     $txnExist = TblMilkVehicleEntryTransaction::findOne($trPost['milk_vehicle_entry_transaction_code']);
@@ -99,7 +113,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $txn_model->load(Yii::$app->request->post());
                     $update = TRUE;
                 } else {
-                    $txn_model->milk_vehicle_entry_transaction_code = (string) Yii::$app->general->getCodeAutoIncrement($txn_model);
+                    $txn_model->milk_vehicle_entry_transaction_code = Yii::$app->general->getTransactionCode($txn_model, $this->model->milk_vehicle_entry_code);
                     $txn_model->milk_vehicle_entry_code = $this->model->milk_vehicle_entry_code;
                     $txn_model->grn_no = $this->model->grn_no;
                 }

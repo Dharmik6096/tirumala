@@ -134,7 +134,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
     }
 
     public function validateBottle($attribute, $params) {
-        $bottleCount = Yii::$app->general->getUnionConfiguration($this->union_code, 'sample_bottle_testing', 'PORTAL');
+        $bottleCount = Yii::$app->general->getUnionConfiguration($this->union_code, 'receipt_sample_testing_count', 'PORTAL');
         $sampleBottle = TblSampleBottleTesting::find()->where(['trip_code' => $this->trip_code])->count();
         if ($sampleBottle < $bottleCount) {
             $this->addError('trip_code', "Receipt Not Allow.");
@@ -157,6 +157,34 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
+    }
+
+    public function getPrimaryCode($model, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
+        $orgCode = 'PORTAL-' . $organizations_code . '-';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+
+        return $value;
+    }
+
+    public function getTransactionCode($model, $primaryCode, $autoInc = 1) {
+        $primaryKey = $model->tableSchema->primaryKey[0];
+        $orgCode = $primaryCode . 'T';
+        $len = strlen($orgCode);
+        $val = $model->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+        return $value;
     }
 
 }
