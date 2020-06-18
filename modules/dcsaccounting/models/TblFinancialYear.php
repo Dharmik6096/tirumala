@@ -156,9 +156,9 @@ class TblFinancialYear extends \app\models\ChildModel {
 
     public function getCurrentYear() {
 
-        $data = $this->find()->select('id,code')->where(['is_active' => 1, 'is_delete' => 0])->orderBy(['id' => SORT_DESC])->one();
+        $data = $this->find()->select('id,code')->where(['is_active' => 1])->orderBy(['id' => SORT_DESC])->one();
         //$data = $this->find()->select('code')->where('is_active=1  and ("'.$date.'" between starting_date and ending_date) ')->one();
-        return ($data) ? $data->code : '';
+        return !empty($data) ? $data->code : '';
     }
 
     public function getYear() {

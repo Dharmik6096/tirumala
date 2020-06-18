@@ -265,7 +265,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="col-sm-2 mt25">
-        <?= $form->field($model, 'credit_sale', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= $form->field($model, 'credit_sale_allow', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
 
     <?php // if ($type == 'create') { ?>

@@ -21,6 +21,7 @@ use app\modules\organisation\models\TblFederationsStateMapping;
 use app\modules\organisation\models\TblUnionsDistrictMapping;
 use app\modules\geo\models\TblDistricts;
 use app\modules\configuration\models\TblUnionConfigResult;
+use app\modules\dcsaccounting\models\TblFinancialYear;
 
 class LoginForm extends Model {
 
@@ -152,6 +153,7 @@ class LoginForm extends Model {
         $unionConfigArray = [];
         $unionKeyPattern = [];
         $hasBMC = 1;
+        $finacialYear = '';
         switch ($main_org_type) {
 
             case 'PCDF':
@@ -229,6 +231,8 @@ class LoginForm extends Model {
                 $unions = models\TblUnions::find()->where(['union_code' => explode(',', $union), 'is_active' => 1, 'has_bmc' => 1])->count();
                 $hasBMC = !empty($unions) && count($unions) > 0 ? 1 : 0;
                 $unionKeyPattern = Yii::$app->general->getUnionKeyPattern(explode(',', $union));
+                $finacialModel = new TblFinancialYear;
+                $finacialYear = $finacialModel->getCurrentYear();
                 break;
         }
         $language_code = 'en';
@@ -253,6 +257,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('unionConfig', $unionConfigArray);
         Yii::$app->session->set('hasBMC', $hasBMC);
         Yii::$app->session->set('unionKeyPattern', $unionKeyPattern);
+        Yii::$app->session->set('financialYear', $finacialYear);
         return true;
     }
 

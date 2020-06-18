@@ -88,7 +88,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
                 }, 'on' => 'importCsv'],
             [['bmc_silos_info_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'bmc_silos', FALSE, TRUE, ['module_name' => 'BMC'], TRUE);
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'bmc_silos', FALSE, TRUE, ['module_name' => 'BMC', 'module_code' => $this->bmc_code], TRUE);
                 }, 'on' => ['importCsv']],
             [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],

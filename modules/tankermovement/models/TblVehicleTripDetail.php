@@ -145,4 +145,11 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return FALSE;
     }
 
+    public function getLastTrip($trip) {
+        return $last_trip = $this->find()
+                ->where(['trip_code' => $trip])
+                ->orderBy(['transaction_datetime' => SORT_DESC])
+                ->one();
+    }
+
 }

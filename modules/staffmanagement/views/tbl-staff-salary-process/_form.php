@@ -64,7 +64,7 @@ $form = ActiveForm::begin([
                                                                     $("#pageloader").hide();
                                                                     reloadGrid();
                                                                      $("#tblstaffsalaryprocess-salary").val("");
-                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
+                                                                   bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
                                                                 }else{
                                                                     $("#loadercontent").hide();
                                                                     $("#pageloader").hide();
@@ -72,10 +72,15 @@ $form = ActiveForm::begin([
                                                                     $(".form-group").removeClass("has-error");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
+                                                                    var message = "";
                                                                     $.each(data, function(key, val) {
-                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+//                                                                        $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        message = message + val + "\r\n";
                                                                     });
-                                                                    $(".error-summary").show();
+//                                                                    $(".error-summary").show();
+                                                                    
+                                                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+message+"</span></div></div>");
+
                                                                 }
                                                  }'),
             ],
