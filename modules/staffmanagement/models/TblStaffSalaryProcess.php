@@ -191,6 +191,14 @@ class TblStaffSalaryProcess extends \app\models\ChildModel {
         if ($this->month > $this->disbursement_date) {
             $this->addError($attribute, Yii::t('app/validation', 'Disbursement Date greater than month.'));
         }
+
+        $count = $this->find()
+                ->where(['union_code' => $this->union_code, 'month' => $this->month])
+                ->andWhere(['!=', 'disbursement_date', ''])
+                ->count();
+        if ($count > 0) {
+            $this->addError($attribute, Yii::t('app/validation', 'Already Disbursed.'));
+        }
     }
 
     public function getHoldDue() {

@@ -221,20 +221,23 @@ class TblStaffSalaryProcessController extends \app\controllers\ChildController {
                                 $head = $transData->value;
                                 $lwp = $transData->lwp_effect;
                                 $transactionModel->actual_value = $head;
-                                $tenureLeave = $leave;
+                                $tenureLeave = 0;
                                 if ($headtype == 1) {
-                                    if (!empty($tenureDiff)) {
-                                        $tenureLeave = $tenureLeave + $tenureDiff;
-                                    }
-                                    if (!empty($tenureLeave) && $lwp == 1) {
-                                        $headValue = $head - (($head / $TotalDays) * $tenureLeave);
-                                        if (!empty($leave)) {
-                                            $LeaveheadValue = $head - (($head / $TotalDays) * $leave);
-                                            $leavededuction = $leavededuction + $head - $LeaveheadValue;
+                                    if (!empty($leave) && $lwp == 1) {
+                                        $headValue = $head - (($head / $TotalDays) * $leave);
+                                        $leavededuction = $leavededuction + $head - $headValue;
+                                        if (!empty($tenureDiff)) {
+                                            $tenureLeave = $leave;
+                                            $tenureLeave = $tenureLeave + $tenureDiff;
+                                            $headValue = $head - (($head / $TotalDays) * $tenureLeave);
                                         }
                                         $netpayble = $netpayble + $headValue;
                                         $transactionModel->value = $headValue;
                                     } else {
+                                        if (!empty($tenureDiff)) {
+                                            $tenureLeave = $tenureLeave + $tenureDiff;
+                                            $head = $head - (($head / $TotalDays) * $tenureLeave);
+                                        }
                                         $netpayble = $netpayble + $head;
                                         $transactionModel->value = $head;
                                     }
