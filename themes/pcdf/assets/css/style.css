@@ -2528,3 +2528,46 @@ div.crystalstyle{
 .dynamic-controls .radio-inline + .radio-inline, .dynamic-controls .checkbox-inline + .checkbox-inline{
     margin-left: 5px !important
 }
+
+
+.panel .panel-body input:not(.btn), .panel .panel-body select, .panel .panel-body .input-group-addon {
+    height: 31px !important;
+    max-width: 280px !important;
+}
+.panel .panel-body input:not(.btn), .panel .panel-body .form-control {
+    border-radius: 0;
+    border: 1px solid #ccc;
+    font-size: 11px !important;
+    padding: 3px;
+}
+
+.panel .panel-body .control-label, .error-summary{
+    font-size: 11px !important;
+}
+
+.panel .panel-body textarea {
+    height: 90px !important;
+}
+
+.help-block{
+    height: 2px !important;
+    font-size: 7px !important;
+}
+
+.btn{
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.575rem 0.95rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
