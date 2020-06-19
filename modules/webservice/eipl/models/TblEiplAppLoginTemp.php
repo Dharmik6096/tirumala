@@ -71,4 +71,13 @@ class TblEiplAppLoginTemp extends \yii\db\ActiveRecord {
                         ->one();
     }
 
+    public function getAppTempLogin() {
+        $encryptedmobile = Yii::$app->general->encryptData($this->mobile_no);
+        return $query = $this->find()
+                        ->where(['or',
+                            ['mobile_no' => $encryptedmobile],
+                            ['mobile_no' => $this->mobile_no]
+                        ])->all();
+    }
+
 }
