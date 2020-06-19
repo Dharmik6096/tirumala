@@ -59,10 +59,10 @@ class TblMccPlant extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
             [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['plant_code', 'name', 'hamlet_code', 'union_code'], 'required'],
-            [['state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
+            [['plant_code', 'name', 'union_code'], 'required'],
+            [['state_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
             [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code'], 'safe'],
             [['capacity'], 'integer'],
 //            [['is_active'], 'boolean'],
@@ -89,7 +89,11 @@ class TblMccPlant extends \app\models\ChildModel {
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'mcc_plant_code_ex', 'ref_code'], 'safe'],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblMccPlant', $this->process_name);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     public function validateAttribute($attribute, $params) {

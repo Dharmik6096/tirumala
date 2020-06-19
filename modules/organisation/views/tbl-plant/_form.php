@@ -77,13 +77,13 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3"> 
-        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblplant-union_code,tblplant-state_code', 'district_code', 'District', FALSE, $readonly); ?>
+        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblplant-union_code,tblplant-state_code', 'district_code', 'District', FALSE); ?>
     </div>
     <div class="col-sm-3"> 
-        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
     </div>
     <div class="col-sm-3"> 
-        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblplant-sub_district_code', 'form-group col-sm-4', 'Village', '', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblplant-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
     </div>
     <div class="col-sm-3">  
         <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblplant-village_code', 'form-group col-sm-4', 'Hamlet'); ?>

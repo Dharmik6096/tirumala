@@ -61,11 +61,11 @@ class TblDcsBmc extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
             [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['bmc_name', 'union_code', 'hamlet_code', 'mcc_plant_code'], 'required'],
+            [['bmc_name', 'union_code', 'mcc_plant_code'], 'required'],
             [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
-            [['bmc_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
             [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
             [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
 //            [['bmc_name'], 'unique'],
@@ -86,7 +86,11 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
 //            [['bmc_code'], 'unique'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->process_name);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

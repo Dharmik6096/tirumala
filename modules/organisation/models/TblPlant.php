@@ -50,9 +50,9 @@ class TblPlant extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['name', 'hamlet_code', 'union_code'], 'required'],
-            [['plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+        $main_rules = [
+            [['name', 'union_code'], 'required'],
+            [['plant_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
             [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
             [['email'], 'email'],
             //[['plant_code'], 'unique'],
@@ -72,7 +72,11 @@ class TblPlant extends \app\models\ChildModel {
 //            [['plant_code'], 'string', 'max' => 6],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code_ex', 'vendor_code', 'ref_code'], 'safe'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblPlant', $this->process_name);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

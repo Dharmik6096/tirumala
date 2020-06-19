@@ -120,19 +120,19 @@ class TblDcs extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
             [['union_code', 'dcs_name', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-            [['dcs_short_name', 'hamlet_code', 'pincode', 'dcs_type_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code', 'ref_code'], 'required', 'on' => ['customImport']],
+            [['dcs_short_name'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'ref_code'], 'required', 'on' => ['customImport']],
             [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
-            [['milk_type_code', 'contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
+            [['milk_type_code'], 'required', 'on' => ['importCsv']],
             [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from', 'vendor'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-            [['state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
+            [['state_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
             [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData']],
             [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-            [['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-            [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-            [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            //[['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            // [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            // [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
 //            [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
             [['gst_no'], 'unique'],
@@ -226,8 +226,12 @@ class TblDcs extends ChildModel {
                     [['dcs_type_code'], 'integer'],
                     [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
                     ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                    [['credit_sale_allow'], 'default', 'value' => 0]
+                    [['credit_sale_allow'], 'default', 'value' => 0],
+                    [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
                 ];
+                $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->process_name);
+                $rules = array_merge($client_rules, $main_rules);
+                return $rules;
             }
 
             public function validateGstNo($attribute, $params) {
@@ -945,32 +949,35 @@ class TblDcs extends ChildModel {
             }
 
             public function setbankContacts($model, &$saveModel, &$errors) {
-                $branch_model = new TblBankDetails();
-                $branch_model->setModel('society', $model->dcs_code);
-                $branch_model->ifsc = $model->ifsc;
-                $branch_model->bank_account_no = $model->bank_account_no;
-                $branch_model->bank_code = $model->bank_code;
-                $branch_model->branch_code = $model->branch_code;
-                if (!$branch_model->validate()) {
-                    $errors[] = $branch_model->getErrors();
+                if (!empty($model->bank_account_no)) {
+                    $branch_model = new TblBankDetails();
+                    $branch_model->setModel('society', $model->dcs_code);
+                    $branch_model->ifsc = $model->ifsc;
+                    $branch_model->bank_account_no = $model->bank_account_no;
+                    $branch_model->bank_code = $model->bank_code;
+                    $branch_model->branch_code = $model->branch_code;
+                    if (!$branch_model->validate()) {
+                        $errors[] = $branch_model->getErrors();
+                    }
+                    array_push($saveModel, $branch_model);
                 }
-                array_push($saveModel, $branch_model);
-
-                $contact_model = new TblContactDetails();
-                $contact_model->setModel('society', $model->dcs_code);
-                $contact_model->department = $model->department;
-                $contact_model->contact_person = $model->contact_person;
-                $contact_model->firstname = $model->contact_person;
-                $contact_model->local_contact_person = $model->local_contact_person;
-                $contact_model->lastname = $model->middle_name;
-                $contact_model->surname = $model->surname;
-                $contact_model->local_lastname = $model->local_middlename;
-                $contact_model->local_surname = $model->local_surname;
-                $contact_model->mobile_no = $model->mobile_no;
-                if (!$contact_model->validate()) {
-                    $errors[] = $contact_model->getErrors();
+                if (!empty($model->mobile_no)) {
+                    $contact_model = new TblContactDetails();
+                    $contact_model->setModel('society', $model->dcs_code);
+                    $contact_model->department = $model->department;
+                    $contact_model->contact_person = $model->contact_person;
+                    $contact_model->firstname = $model->contact_person;
+                    $contact_model->local_contact_person = $model->local_contact_person;
+                    $contact_model->lastname = $model->middle_name;
+                    $contact_model->surname = $model->surname;
+                    $contact_model->local_lastname = $model->local_middlename;
+                    $contact_model->local_surname = $model->local_surname;
+                    $contact_model->mobile_no = $model->mobile_no;
+                    if (!$contact_model->validate()) {
+                        $errors[] = $contact_model->getErrors();
+                    }
+                    array_push($saveModel, $contact_model);
                 }
-                array_push($saveModel, $contact_model);
             }
 
             public function getRecords($notInDcs = []) {

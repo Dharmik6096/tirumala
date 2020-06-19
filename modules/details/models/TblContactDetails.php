@@ -34,24 +34,26 @@ class TblContactDetails extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['detail_code', 'firstname'], 'required'],
+        $main_rules = [
+            [['detail_code'], 'required'],
             [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
             [['detail_code', 'mobile_no'], 'integer'],
             [['mobile_no'], 'CheckDuplicate'],
-            [['mobile_no'], 'required', 'on' => 'additional'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active'], 'safe'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->process_name);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

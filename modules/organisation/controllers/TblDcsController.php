@@ -98,6 +98,7 @@ class TblDcsController extends ChildController {
         $this->model->scenario = 'createDcs';
         $this->bankDetails = new TblBankDetails();
         $this->contactDetails = new TblContactDetails();
+        $this->contactDetails->process_name = 'dcs-create';
         $this->model->district_code = Yii::$app->session->get('Districts');
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
@@ -123,10 +124,12 @@ class TblDcsController extends ChildController {
 
 
             //set mapping data
-            $modelMapping = new TblDcsVillageMapping();
-            $this->setMapping($modelMapping);
             $mapList = [];
-            array_push($mapList, $modelMapping);
+            if (!empty($this->model->village_code)) {
+                $modelMapping = new TblDcsVillageMapping();
+                $this->setMapping($modelMapping);
+                array_push($mapList, $modelMapping);
+            }
 
             $modelCodes = new TblSocietyCodes();
             $modelCodes->dcs_code = $this->model->dcs_code;
@@ -143,9 +146,10 @@ class TblDcsController extends ChildController {
                 array_push($mapList, $this->bankDetails);
             }
             $this->contactDetails->load(Yii::$app->request->post());
-            $this->contactDetails->setModel('society', $this->model->dcs_code);
-
-            array_push($mapList, $this->contactDetails);
+            if (!empty($this->contactDetails->mobile_no)) {
+                $this->contactDetails->setModel('society', $this->model->dcs_code);
+                array_push($mapList, $this->contactDetails);
+            }
 
             //set milk type data
             $modelMilkType = $this->setMilk();
@@ -287,9 +291,11 @@ class TblDcsController extends ChildController {
                     array_push($mappingList, $mappingHistory);
                     array_push($mappingList, $oldModel);
                 }
-                $newModelMapping = new TblDcsVillageMapping();
-                $this->setMapping($newModelMapping);
-                array_push($mappingList, $newModelMapping);
+                if (!empty($this->model->village_code)) {
+                    $newModelMapping = new TblDcsVillageMapping();
+                    $this->setMapping($newModelMapping);
+                    array_push($mappingList, $newModelMapping);
+                }
             }
 
             // $this->model->milk_type_code = $this->model->milk_type_code[0];
