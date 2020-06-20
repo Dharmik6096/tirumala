@@ -17,7 +17,7 @@ $id2 = !empty($range_id2) ? $range_id2 : false;
 $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
 //Yii::$app->controls->view_date($date);
 ?>
-
+<div class="dashboard_controls">
 <?php
 $form = ActiveForm::begin([
             'action' => ['index'],
@@ -32,10 +32,11 @@ $form = ActiveForm::begin([
 </div>
 
     <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
-<div class="col-sm-2">
+<div class="col-sm-2 ml35">
 <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
 </div>
 <?php ActiveForm::end(); ?>
+</div>
 <?php
 $script = "
     $(document).ready(function () {

@@ -345,7 +345,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                 <div class="cal-header"><?= Yii::t('app', 'Collection Status Manual vs Auto'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'manual_vs_auto_collection', 'url' => $container_url, 'container' => 'manual_vs_auto_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'coll_status_mcc', 'bmc_code' => 'coll_status_bmc', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-3']); ?>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'manual_vs_auto_collection', 'url' => $container_url, 'container' => 'manual_vs_auto_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'coll_status_mcc', 'bmc_code' => 'coll_status_bmc', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-4']); ?>
                         <div id="manual_vs_auto_collection_container"  class="milk-collection mt0 cont"></div>
                     </div>         
                 </div>
@@ -359,7 +359,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                 </div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'dipatch_vs_receipt', 'url' => $container_url, 'container' => 'dipatch_vs_receipt', 'hidden_from_date' => $search_date, 'hidden_to_date' => $search_date, 'union_code' => true, 'mcc_code' => 'dispatch_vs_receipt', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'mcc_class' => 'col-sm-5']); ?>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'dipatch_vs_receipt', 'url' => $container_url, 'container' => 'dipatch_vs_receipt', 'hidden_from_date' => $search_date, 'hidden_to_date' => $search_date, 'union_code' => true, 'mcc_code' => 'dispatch_vs_receipt', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'mcc_class' => 'col-sm-6']); ?>
                         <div id="dipatch_vs_receipt_container"  class="milk-collection mt0 cont div_height495"></div>
                     </div>         
                 </div>

@@ -84,6 +84,9 @@ ul{
 .ml15{
     margin-left: 15px;
 }
+.ml35{
+    margin-left: 35px;
+}
 .hr10{
     margin: 10px 0;
 }
@@ -2554,7 +2557,7 @@ div.crystalstyle{
     font-size: 7px !important;
 }
 
-.btn{
+.panel .panel-body .btn{
     display: inline-block;
     font-weight: 400;
     text-align: center;
@@ -2570,4 +2573,67 @@ div.crystalstyle{
     line-height: 1.5;
     border-radius: 0.25rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.panel .panel-body .dashboard_controls .form-control input[type=text],
+.panel .panel-body .dashboard_controls .form-control input[type="number"],
+.table-bordered tr td  .form-control input[type=text],
+.table-bordered tr td  .form-control select{
+    border:none !important;
+    font-size: 10px !important;
+    width:80px !important;
+}
+
+.panel .panel-body .dashboard_controls select{
+    height:34px !important;
+}
+.datepicker.datepicker-dropdown.dropdown-menu {
+    font-size: 11px !important;
+    /* height: 500px; */
+}
+.panel .panel-body .dashboard_controls .btn{
+    margin-top: 3px !important;
+}
+
+.filt-btn .btn{
+    margin-top: 15px !important;
+}
+
+.table-bordered{
+    width: 100% !important
+  }
+
+.table-bordered tr th,
+.table-bordered tr th a{
+    /* background-color: ; */
+    color:rgb(58, 123, 213) !important;
+}
+
+.table-bordered tr th,
+.table-bordered tr th a,
+.table-bordered tr td {
+    font-size: 11px !important;
+    max-width: 150px !important;
+}
+
+th.action-cell,
+td.action-cell{
+    max-width: 80px !important;
+}
+
+.pagination{
+    font-size: 11px;
+}
+
+.panel .panel-body ul li .btn{
+    text-align: left !important;
+}
+
+.filters .input-group-addon {
+    padding: 2px;
+    font-size: 11px;
+}
+
+.panel-main .panel-body .grid-search .btn {
+    padding: 0.575rem 0.95rem;
 }
