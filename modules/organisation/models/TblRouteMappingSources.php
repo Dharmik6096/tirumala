@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblSocietyCodesHistory;
 use app\modules\organisation\models\TblDcsHistory;
+use app\modules\organisation\models\TblCustomerMasterHistory;
 
 /**
  * This is the model class for table "tbl_route_mapping_sources".
@@ -212,32 +213,73 @@ class TblRouteMappingSources extends \app\models\ChildModel {
             $this->to_type = Yii::$app->general->getforeignkey($this->routeCode, 'to_type');
             $this->from_dest = $this->customer_code;
             $this->from_type = strtoupper($this->customer_type) == 'DCS' ? 'society' : $this->customer_type;
+            //validate dcs in To Dest
+            if ($this->from_type == 'society') {
+                if (strtolower($this->to_type) == 'plant') {
+                    $plant = Yii::$app->general->getforeignkey($this->societyCode, 'plant_code');
+                    if (!empty($plant) && $plant != $this->to_dest) {
+                        $this->addError('from_dest', Yii::t('app/validation', Yii::t('app', 'Customer Code') . ' is invalid'));
+                    }
+                } elseif (strtolower($this->to_type) == 'mcc') {
+                    $mcc = Yii::$app->general->getforeignkey($this->societyCode, 'mcc_plant_code');
+                    if (!empty($mcc) && $mcc != $this->to_dest) {
+                        $this->addError('from_dest', Yii::t('app/validation', Yii::t('app', 'Customer Code') . ' is invalid'));
+                    }
+                } elseif (strtolower($this->to_type) == 'bmc') {
+                    $bmc = Yii::$app->general->getforeignkey($this->societyCode, 'bmc_code');
+                    if (!empty($bmc) && $bmc != $this->to_dest) {
+                        $this->addError('from_dest', Yii::t('app/validation', Yii::t('app', 'Customer Code') . ' is invalid'));
+                    }
+                }
+            } else {
+                //validate Route Should of BMC of customer
+                if (strtolower($this->to_type) == 'plant') {
+                    $plant = Yii::$app->general->getforeignkey($this->customerMainCode, 'plant_code');
+                    if (!empty($plant) && $plant != $this->to_dest) {
+                        $this->addError('from_dest', Yii::t('app/validation', Yii::t('app', 'Route Code') . ' is invalid For given Customer Code'));
+                    }
+                } elseif (strtolower($this->to_type) == 'mcc') {
+                    $mcc = Yii::$app->general->getforeignkey($this->customerMainCode, 'mcc_plant_code');
+                    if (!empty($mcc) && $mcc != $this->to_dest) {
+                        $this->addError('from_dest', Yii::t('app/validation', Yii::t('app', 'Route Code') . ' is invalid For given Customer Code'));
+                    }
+                } elseif (strtolower($this->to_type) == 'bmc') {
+                    $bmc = Yii::$app->general->getforeignkey($this->customerMainCode, 'bmc_code');
+                    if (!empty($bmc) && $bmc != $this->to_dest) {
+                        $this->addError('from_dest', Yii::t('app/validation', Yii::t('app', 'Route Code') . ' is invalid For given Customer Code'));
+                    }
+                }
+            }
         }
     }
 
     public function setChildTable(&$model, &$modelSave) {
         $modelRouteSource = TblRouteMapping::find()->where(['route_code' => $model->route_code])->one();
-        if ($modelRouteSource->route_type == 'Can' && strtolower($this->from_type) == 'society') {
+        if (strtolower($this->from_type) == 'society') {
             $societyCodes = TblSocietyCodes::find()->where(['dcs_code' => $model->from_dest])->one();
-            $historyModel = new TblSocietyCodesHistory();
-            Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
-            $societyCodes->route_code = $modelRouteSource->route_code;
-            $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + 1, 3, '0', STR_PAD_LEFT);
+            if (!empty($societyCodes)) {
+                $historyModel = new TblSocietyCodesHistory();
+                Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
+                $societyCodes->route_code = $modelRouteSource->route_code;
+                $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + 1, 3, '0', STR_PAD_LEFT);
+                array_push($modelSave, $societyCodes);
+                array_push($modelSave, $historyModel);
+            }
             $dcsCode = TblDcs::findOne($model->from_dest);
-            $dcsCode->scenario = 'routeMapping';
-            $dcsHistoryModel = new TblDcsHistory();
-            Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
-            $dcsCode->route_code = $model->route_code;
-            array_push($modelSave, $societyCodes);
-            array_push($modelSave, $historyModel);
-            array_push($modelSave, $dcsCode);
-            array_push($modelSave, $dcsHistoryModel);
+            if (!empty($dcsCode)) {
+                $dcsHistoryModel = new TblDcsHistory();
+                Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
+                $dcsCode->route_code = $model->route_code;
+                $dcsCode->scenario = 'routeMapping';
+                array_push($modelSave, $dcsCode);
+                array_push($modelSave, $dcsHistoryModel);
+            }
         } else {
-            $customerCodes = TblCustomerMaster::find()->where(['customer_code' => $model->from_dest, 'customer_type' => $model->from_type])->one();
-            $customerCodes->route_code = $model->route_code;
-            $model = new TblRouteMappingSources();
-            $model = NULL;
-            array_push($modelSave, $customerCodes);
+            $model = TblCustomerMaster::find()->where(['customer_code' => $model->from_dest, 'customer_type' => $model->from_type])->one();
+            $custoHistoryModel = new TblCustomerMasterHistory();
+            Yii::$app->operation->history($model, $custoHistoryModel, UPDATE);
+            $model->route_code = $modelRouteSource->route_code;
+            array_push($modelSave, $custoHistoryModel);
         }
     }
 
@@ -271,6 +313,10 @@ class TblRouteMappingSources extends \app\models\ChildModel {
             $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
             return $data = empty($Code) ? '' : $Code;
         }
+    }
+
+    public function getCustomerMainCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
 }

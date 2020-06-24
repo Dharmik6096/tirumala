@@ -97,7 +97,8 @@ class TblRouteMapping extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false,],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['union_code'], 'importData', 'on' => ['importCsv']],
-            [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']]
+            [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
+            [['mobile_no', 'firstname'], 'required', 'on' => ['importCsv']]
         ];
     }
 
@@ -278,6 +279,10 @@ class TblRouteMapping extends \app\models\ChildModel {
                 break;
             case 'mcc':
                 $bmc = TblMccPlant::findOne($this->to_dest);
+                echo "<pre>";
+                print_r($bmc->bmcCode);
+                echo "</pre>";
+                die;
                 $code = !empty($bmc->bmcCode->bmc_code) ? $bmc->bmcCode->bmc_code : '0';
                 break;
             case 'bmc':
@@ -410,9 +415,9 @@ class TblRouteMapping extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $this->valid_from = date('Y-m-d');
             $this->route_name = ucwords($this->route_name);
-            $plant = Yii::$app->general->getforeignkey($this->activePlantCode, 'name');
-            $mcc = Yii::$app->general->getforeignkey($this->activeMccCode, 'name');
-            $bmc = Yii::$app->general->getforeignkey($this->activeBmcCode, 'bmc_name');
+            $plant = Yii::$app->general->getforeignkey($this->activePlantCode, 'plant_code');
+            $mcc = Yii::$app->general->getforeignkey($this->activeMccCode, 'mcc_plant_code');
+            $bmc = Yii::$app->general->getforeignkey($this->activeBmcCode, 'bmc_code');
             $type_value = ['bmc', 'mcc', 'plant'];
             if (!in_array(strtolower($this->to_type), $type_value)) {
                 $this->addError($attribute, "Please Enter Valid To Type");
@@ -432,6 +437,15 @@ class TblRouteMapping extends \app\models\ChildModel {
                     $this->addError($attribute, "Please Enter Valid To Dest.");
                 } else if (strtolower($this->to_type) == 'mcc' && $this->to_dest != $mcc) {
                     $this->addError($attribute, "Please Enter Valid To Dest.");
+                }
+            }
+            if (!empty($this->mobile_no)) {
+                $contactModel = new TblContactDetails;
+                $data = $contactModel->find()->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]])
+                                ->andWhere(['<>', 'module_code', $this->route_code])
+                                ->andWhere(['is_active' => 1])->one();
+                if (!empty($data)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No has already been taken.'));
                 }
             }
         }

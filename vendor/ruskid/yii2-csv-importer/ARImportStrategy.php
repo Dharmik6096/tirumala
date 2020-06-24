@@ -177,9 +177,6 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                 $primaryKey = $model->tableSchema->primaryKey[0];
 
 //                    print_r($model);
-                if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
-                    $model->setChildTable($model, $modelList);
-                }
                 $error = ActiveForm::validate($model);
                 if ($this->isIncrement == 1) {
                     $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
@@ -194,6 +191,9 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     if ($model->is_active != 0 && $model->is_active != 1) {
                         $model->addError($model->is_active, $nm . ' must have 0 or 1 value');
                     }
+                }
+                if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
+                    $model->setChildTable($model, $modelList);
                 }
                 if (empty($model->getErrors()) && $model->validate()) {
                     $modelList[] = $model;

@@ -2,8 +2,8 @@
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Route Mapping'));
 if (Yii::$app->general->checkAccess('/organisation/tbl-route-mapping/create')) {
     $this->params['menu'][] = Yii::$app->controls->add('Route Mapping');
+    $this->params['menu'][] = Yii::$app->controls->custombutton('Delete Map Route', 'delete-map-route', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
     $this->params['menu'][] = Yii::$app->controls->import('route-master', $this);
-//    $this->params['menu'][] = Yii::$app->controls->custombutton('Delete Map Route', 'delete-map-route', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 }
 ?>
 <div class="tbl-banks-index">

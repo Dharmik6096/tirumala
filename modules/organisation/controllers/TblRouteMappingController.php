@@ -358,7 +358,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
     }
 
     public function actionDeleteMapRoute() {
-        $searchModel = new TblRouteMappingSourcesSearch();
+        $searchModel = new TblDcsSearch();
         $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
 
         return $this->render('delete_map_route', [
