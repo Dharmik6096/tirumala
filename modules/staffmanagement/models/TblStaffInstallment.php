@@ -91,6 +91,12 @@ class TblStaffInstallment extends \app\models\ChildModel {
     }
 
     public function DateApplyValidate($attribute, $params) {
+        $tenureTo = Yii::$app->general->getmultiforeignkey($this->staffAdditionDeductionNo, ['staffMemberCode'], 'tenure_to_date');
+        if (!empty($tenureTo) && !empty($this->deduction_date) && (date('Y-m-d', strtotime($this->deduction_date)) > $tenureTo)) {
+            $this->addError('app_from_date', Yii::t('app/validation', 'Staff Addition Deduction Not Allowed.'));
+            return false;
+        }
+
         $fromDate = Yii::$app->general->getforeignkey($this->staffAdditionDeductionNo, 'app_from_date');
         $applyDate = !empty($fromDate) && $fromDate != 'N/A' ? date('d-m-Y', strtotime($fromDate)) : '';
 

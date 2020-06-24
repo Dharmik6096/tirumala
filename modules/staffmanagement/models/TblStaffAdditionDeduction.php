@@ -151,10 +151,15 @@ class TblStaffAdditionDeduction extends \app\models\ChildModel {
             }
 
 
-            $member = $this->staffMemberCode->tenure_from_date;
+            $from = Yii::$app->general->getforeignkey($this->staffMemberCode, 'tenure_from_date');
+            $to = Yii::$app->general->getforeignkey($this->staffMemberCode, 'tenure_to_date');
 
-            if (!empty($member) && !empty($this->app_from_date) && ($this->app_from_date < $member)) {
+            if (!empty($from) && !empty($date) && ($date < date('Y-m', strtotime($from)))) {
                 $this->addError('app_from_date', Yii::t('app/validation', 'Month App From not in Tenure Date'));
+                return false;
+            }
+            if (!empty($to) && !empty($date) && ($date > date('Y-m', strtotime($to)))) {
+                $this->addError('app_from_date', Yii::t('app/validation', 'Staff Addition Deduction Not Allowed.'));
                 return false;
             }
         }
