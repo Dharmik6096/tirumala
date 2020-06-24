@@ -9,7 +9,7 @@ use yii\web\JsExpression;
 
 $class = $type == 'edit' ? 'disableDiv' : '';
 $readonly = $type == 'edit' ? true : false;
-$disable = $type == 'edit' ? false : true;
+$disable = $type == 'edit' ? (!empty($model->tenure_to_date) ? TRUE : FALSE) : true;
 
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-member-form'],
