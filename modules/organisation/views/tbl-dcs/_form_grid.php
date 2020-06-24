@@ -48,8 +48,8 @@ $attribute = [
         ],
         //'filter' => Yii::$app->controls->search_date($searchModel, 'registration_date'),
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->registration_date);
-},],
+            return Yii::$app->controls->view_date($model->registration_date);
+        },],
     [
         'attribute' => 'valid_from',
         'value' => function($model) {
@@ -82,8 +82,8 @@ $attribute = [
         'attribute' => 'allow_multi_family_member', 'visible' => false, 'filter' => false,
         'filter' => Html::activeDropDownList($searchModel, 'allow_multi_family_member', [1 => 'Yes', 0 => 'No'], ['class' => 'form-control', 'prompt' => 'Select']),
         'value' => function($model) {
-    return ($model->allow_multi_family_member == 1) ? 'Yes' : 'No';
-}
+            return ($model->allow_multi_family_member == 1) ? 'Yes' : 'No';
+        }
     ],
     ['attribute' => 'vendor',
         'value' => function($model) {
@@ -209,36 +209,37 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-                //'delete' => ['option' => 'dcs_name,dcs_code,tbl-dcs/delete'],
+        //'delete' => ['option' => 'dcs_name,dcs_code,tbl-dcs/delete'],
 //        'mapping' => function ($url, $model) {
 //            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code,'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Village Mapping'];
 //            return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-dcs/map-villages', 'id' => $model->dcs_code], $options);
 //        },
-                /* 'bmc_mapping' => function ($url, $model) {
-                  $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Bmc List'];
-                  $subCenter = $model->getMainSubCenter();
-                  return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code, 'dcsname' => $model->dcs_name, 'subcenter' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_code : 0, 'subname' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_name : '','type'=>'DCS'], $options);
-                  }, */
-                'deactive' => function ($url, $model) {
+        /* 'bmc_mapping' => function ($url, $model) {
+          $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Bmc List'];
+          $subCenter = $model->getMainSubCenter();
+          return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code, 'dcsname' => $model->dcs_name, 'subcenter' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_code : 0, 'subname' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_name : '','type'=>'DCS'], $options);
+          }, */
+        'deactive' => function ($url, $model) {
             $name = $model->dcs_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
+            $label = ($model->is_active == 1) ? 'Deactivate' : 'Activate';
+            $icon = ($model->is_active == 1) ? '<i class="fa fa-close"></i>' : '<i class="fa fa-check"></i>';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $label, 'class' => 'deact-dcs', 'data-val' => $model->dcs_code, 'data-name' => $name];
             if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
+                return GhostHtml::a_alert($icon, ['/organisation/tbl-dcs/deactivate-user'], $options);
             else
                 return false;
         },
-                'bank-details' => function ($url, $model) {
+        'bank-details' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], $options);
         },
-                'contact-details' => function ($url, $model) {
+        'contact-details' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], $options);
         },
-                'dpu-inst' => function ($url, $model) {
+        'dpu-inst' => function ($url, $model) {
             $inst_id = $model->getInstallationId();
             if (!$inst_id) {
                 $class = ($model->is_active == 1) ? '' : 'link-disable';
@@ -252,12 +253,12 @@ $grid_option = [
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'DPU Installation', 'class' => '' . $class];
             return GhostHtml::a($icon, $url, $options);
         },
-                'election-list' => function ($url, $model) {
+        'election-list' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Election Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-address-card-o"></i>', ['/organisation/tbl-dcs-election/create', 'dcs_code' => $model->dcs_code], $options);
         },
-                'society-status' => function ($url, $model) {
+        'society-status' => function ($url, $model) {
 
             if (!empty($model->societyStatus)) {
                 $status_id = $model->societyStatus->status;
@@ -269,7 +270,7 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa ' . $icon_class . '"></i>', ['/organisation/tbl-dcs/society-status', 'dcs_code' => $model->dcs_code, 'coll_status' => $status_id], $options);
             }
         },
-                'rate-list' => function ($url, $model) {
+        'rate-list' => function ($url, $model) {
             if (!empty($model->tblPurchaseRateApplicabilityUnblock) || !empty($model->tblPurchaseRateApplicabilityBlock)) {
                 $icon_class = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'fa-bar-chart text-danger' : 'fa-bar-chart text-success';
                 $title = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'Un-Block Rate Chart' : 'Block Rate Chart';
@@ -278,18 +279,18 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa ' . $icon_class . '""></i>', $url, $options);
             }
         },
-            /* 'miscellaneous' => function ($url, $model) {
-              $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
-              return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);
-              } */
-            ]
-        ];
+    /* 'miscellaneous' => function ($url, $model) {
+      $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
+      return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);
+      } */
+    ]
+];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
-        <?php
+<?php
 
-        $script = "
+$script = "
 $(document).ready(function(){
     $(document).on('click','.deact-dcs',function(e){
     var id= $(this).attr('data-val');
@@ -337,5 +338,4 @@ $(document).ready(function(){
       });
     });
 });";
-        $this->registerJs($script, View::POS_END, 'dcs-index');
-        
+$this->registerJs($script, View::POS_END, 'dcs-index');

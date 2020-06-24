@@ -33,7 +33,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code'],
             ],
             'TblRouteMappingSearch' => [
-                'filter' => ['f_union_code', 'unit'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'unit'],
             ],
             'TblFormulaMasterSearch' => [
                 'filter' => ['f_union_code'],

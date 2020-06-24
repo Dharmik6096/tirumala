@@ -63,7 +63,7 @@ class TblMccPlant extends \app\models\ChildModel {
             [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
             [['plant_code', 'name', 'union_code'], 'required'],
             [['state_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
-            [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code'], 'safe'],
+            [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code', 'gst_no'], 'safe'],
             [['capacity'], 'integer'],
 //            [['is_active'], 'boolean'],
             // [['mcc_plant_code'], 'unique'],
@@ -74,22 +74,26 @@ class TblMccPlant extends \app\models\ChildModel {
             [['email'], 'string', 'max' => 50],
             [['email'], 'email'],
             [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
             [['name',], 'string', 'max' => 255],
             [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
 //            [['mcc_plant_code'], 'integer', 'min' => 1],
 //            [['mcc_plant_code'], 'string', 'max' => 6],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'mcc_plant_code_ex', 'ref_code'], 'safe'],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+            [['gst_no'], 'string', 'min' => 15, 'max' => 15],
+            [['gst_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMccPlant', $this->process_name);
         $rules = array_merge($client_rules, $main_rules);
@@ -136,6 +140,7 @@ class TblMccPlant extends \app\models\ChildModel {
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
             'mcc_plant_code_ex' => Yii::t('app', 'MCC Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
+            'gst_no' => Yii::t('app', 'GSTIN No.'),
         ];
     }
 

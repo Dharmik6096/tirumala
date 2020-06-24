@@ -31,9 +31,9 @@ class TblCustomerType extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['customer_type', 'customer_desc', 'code_prefix', 'union_code'], 'string'],
-                [['code_length', 'is_organisation', 'is_active'], 'integer'],
-                [['is_applicability', 'is_product_sale', 'is_product_req', 'is_bmc_dispatch', 'is_collection'], 'safe'],
+            [['customer_type', 'customer_desc', 'code_prefix', 'union_code'], 'string'],
+            [['code_length', 'is_organisation', 'is_active'], 'integer'],
+            [['is_applicability', 'is_product_sale', 'is_product_req', 'is_bmc_dispatch', 'is_collection', 'is_routemapping'], 'safe'],
         ];
     }
 

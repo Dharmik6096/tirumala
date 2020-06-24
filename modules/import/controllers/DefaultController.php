@@ -68,7 +68,7 @@ class DefaultController extends \app\controllers\ChildController {
             $scenario = !empty($data['scenario']) ? $data['scenario'] : '';
             if ($mappingFlag == 1) {
                 $fields = $data['mapping_fields'];
-                $scenario = '';
+                $scenario = !empty($data['mapping_scenario']) ? $data['mapping_scenario'] : '';
             }
             $fields = explode(',', $fields);
 

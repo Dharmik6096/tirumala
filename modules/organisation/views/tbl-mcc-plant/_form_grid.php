@@ -36,6 +36,7 @@ $attribute = [
 //    ['attribute' => 'email','visible'=>false,],
 //    ['attribute' => 'mobile_no','visible'=>false,],
     ['attribute' => 'description', 'visible' => false, 'filter' => false],
+    ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'visible' => false, 'filter' => false],

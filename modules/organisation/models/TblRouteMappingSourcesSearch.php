@@ -79,4 +79,30 @@ class TblRouteMappingSourcesSearch extends TblRouteMappingSources {
         return $dataProvider;
     }
 
+    public function deletesearch($params) {
+        $this->load($params);
+        $query = TblRouteMappingSources::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        $query->joinWith(['dcsCode']);
+        $query->andWhere(['tbl_dcs.bmc_code' => $this->bmc_code]);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['like', 'tbl_dcs.route_code', $this->route_code]);
+
+        return $dataProvider;
+    }
+
 }

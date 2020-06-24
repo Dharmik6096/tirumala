@@ -357,4 +357,36 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         echo Json::encode(['output' => '', 'selected' => '']);
     }
 
+    public function actionDeleteMapRoute() {
+        $searchModel = new TblRouteMappingSourcesSearch();
+        $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
+
+        return $this->render('delete_map_route', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionBulkDelete() {
+
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $deletedata = Yii::$app->request->post('selection');
+                foreach ($deletedata as $key => $value) {
+                    $this->model = TblRouteMappingSources::findOne($value);
+                    $deleteModel[] = $this->model;
+                    $historyModel = new TblRouteMappingSourcesHistory();
+                    Yii::$app->operation->history($this->model, $historyModel, DELETE);
+                    $saveModel[] = $historyModel;
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Route', 'delete']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+    }
+
 }

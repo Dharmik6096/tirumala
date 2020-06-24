@@ -76,6 +76,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
     </div>
+    <div class="col-sm-3">  
+        <?= $form->field($model, 'gst_no')->textInput() ?>
+    </div>
     <div class="clearfix"></div>
     <div class="col-sm-3">
         <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>

@@ -945,6 +945,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['INDIVIDUAL' => Yii::t('app', 'Individual'), 'CONSOLIDATED' => Yii::t('app', 'Consolidated')],
             ],
+            'route_type' => [
+                'name' => 'route_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Can' => Yii::t('app', 'Can'), 'Tanker' => Yii::t('app', 'Tanker')],
+            ],
         ];
         return $records[$l];
     }

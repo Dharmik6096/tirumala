@@ -713,13 +713,15 @@ class TblDcsController extends ChildController {
                 $historyModel = new TblDcsHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $this->model->scenario = 'deactivate';
-                $this->model->is_active = 0;
+                $status = ($this->model->is_active == 1) ? 0 : 1;
+                $this->model->is_active = $status;
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['dcs', 'edit']);
                 if ($transaction == 'customRedirect') {
 //            if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
 //                $this->model->generateBiplMemberFiles();
 //            }
-                    $record = ['status' => 'success', 'msg' => 'Society Deactivated Successfully.'];
+                    $message = ($status == 1) ? 'Society Activated Successfully.' : 'Society Deactivated Successfully.';
+                    $record = ['status' => 'success', 'msg' => $message];
                 } else {
                     $record = ['status' => 'error', 'msg' => 'Society Not Deactivated.'];
                 }
