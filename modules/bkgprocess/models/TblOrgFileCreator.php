@@ -3,6 +3,7 @@
 namespace app\modules\bkgprocess\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "tbl_org_file_creator".
@@ -63,10 +64,20 @@ class TblOrgFileCreator extends \app\models\ChildModel {
     }
 
     public function getPendingData() {
-        return $this->find()
-                        ->where(['file_status' => $this->file_status, 'status' => $this->status])
-                        ->limit(25)
-                        ->all();
+        $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
+
+        $query = $this->find()
+                ->where(['file_status' => $this->file_status, 'status' => $this->status])
+                ->limit(30);
+
+        $pendingDataQuery = $this->find()
+                ->where(['file_status' => $this->file_status, 'status' => 1])
+                ->andWhere(['<', 'tbl_org_file_creator.pick_datetime', $datetime])
+                ->limit(10);
+
+        return $unionQuery = (new ActiveQuery(TblOrgFileCreator::className()))->from([
+                    'pending_data' => $query->union($pendingDataQuery, TRUE)
+                ])->all();
     }
 
     public function updateFileStatus($value) {

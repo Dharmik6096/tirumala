@@ -55,6 +55,8 @@ class BiplFtpCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['status'], 'default', 'value' => 0],
+            [['entry_datetime'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['cp_code', 'local_code', 'date', 'time', 'milk_type', 'quantity', 'fat', 'snf', 'awm', 'rate', 'amount', 'shift'], 'required'],
             [['cp_code', 'milk_type', 'extended_code', 'quantity_mode', 'measurement_mode', 'shift', 'census_code', 'mobile', 'given_name', 'fathers_name', 'family_name', 'process_type'], 'safe'],
             [['date', 'time', 'processed_at', 'person_position', 'route_code', 'dop_goodcans', 'dop_badcans', 'dop_starttime', 'dop_milksamplenum', 'dop_milksamplestatus', 'dcs_code'], 'safe'],
