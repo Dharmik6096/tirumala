@@ -37,6 +37,7 @@ use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\general\models\TblCollectionIncentiveDeduction;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\general\models\TblDepartment;
+use app\modules\organisation\models\TblRouteMappingSources;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -1023,6 +1024,10 @@ class TblDcs extends ChildModel {
     public function getValidDcs($dcs) {
         $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
+    }
+
+    public function getRouteSourceMapping() {
+        return $this->hasOne(TblRouteMappingSources::className(), ['route_code' => 'route_code', 'from_dest' => 'dcs_code']);
     }
 
 }
