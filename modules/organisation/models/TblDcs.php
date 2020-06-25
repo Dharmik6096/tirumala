@@ -228,6 +228,9 @@ class TblDcs extends ChildModel {
                     ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                     [['credit_sale_allow'], 'default', 'value' => 0],
                     [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+                    [['dcs_code'], function ($attribute, $params) {
+                    Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code);
+                }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
                 ];
                 $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->process_name);
                 $rules = array_merge($client_rules, $main_rules);
@@ -1003,6 +1006,17 @@ class TblDcs extends ChildModel {
                     }
                 }
                 $this->ref_code = $this->dcs_code;
+            }
+
+            public function getFtpCredentials() {
+                return $this->find()
+                                ->select(['module_code' => 'tbl_dcs.dcs_code', 'CP_Code' => 'tbl_dcs.ref_code', 'ftp_connection_code' => 'tbl_dcs.mcc_plant_code', 'sfd.ftp_type', 'sfd.ftp_host', 'sfd.ftp_username', 'sfd.ftp_password', 'sfd.ftp_port', 'sfd.ftp_path'])
+                                ->join('LEFT JOIN', 'tbl_society_vendor sv', 'sv.dcs_code = tbl_dcs.dcs_code')
+                                ->join('LEFT JOIN', 'tbl_ftp_detail sfd', 'sfd.ftp_connection_code = tbl_dcs.mcc_plant_code')
+                                ->where(['sv.vendor_code' => 'BIPL'])
+                                ->orderBy('ftp_connection_code ASC')
+                                ->asArray()
+                                ->all();
             }
 
         }

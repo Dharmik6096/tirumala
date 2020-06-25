@@ -39,6 +39,7 @@ use yii\helpers\ArrayHelper;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\models\TblKeyPattern;
+use app\modules\bkgprocess\models\TblFtpDetail;
 
 class GeneralFunctions extends Component {
 
@@ -613,13 +614,14 @@ class GeneralFunctions extends Component {
         if (!empty($append)) {
             $path = $path . '\\' . $append;
         }
+        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . $path;
         $dir = $this->checkDirectory($path);
         if ($dir) {
             if (empty($file_name)) {
                 $timestamp = date('d-m-Y-H-i-s');
-                $fileName = $path . "\\" . $timestamp . '.txt';
+                $fileName = $path . "/" . $timestamp . '.txt';
             } else {
-                $fileName = $path . "\\" . $file_name . '.txt';
+                $fileName = $path . "/" . $file_name . '.txt';
             }
             $logfile = fopen($fileName, "w") or die("Unable to open file!");
             fwrite($logfile, $text);
@@ -1601,6 +1603,51 @@ class GeneralFunctions extends Component {
         } else {
             $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
             return;
+        }
+    }
+
+    public function getFTPDirStructure($cp_code) {
+        $data = [
+            '/' . $cp_code . '/DIAG/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/DIAG/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/MASFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/MASFILES/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/RIPFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/RIPFILES/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/DATFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/DATFILES/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/TDFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/TDFILES/ARCHIVES/SUCCESS/',
+        ];
+        return $data;
+    }
+
+    public function generateFTPDir($model, $attribute, $params, $ftp_conn_code, $cp_code) {
+        $ftp_model = new TblFtpDetail();
+        $ftp_model->ftp_connection_code = $ftp_conn_code;
+        $ftpData = $ftp_model->getData();
+        $status = false;
+        if (!empty($ftpData)) {
+            $ftp = new FTPConnection();
+            $ftp->ftp_type = $ftpData->ftp_type;
+            $ftp->ftp_host = $ftpData->ftp_host;
+            $ftp->ftp_username = $ftpData->ftp_username;
+            $ftp->ftp_password = $ftpData->ftp_password;
+            $ftp->ftp_port = $ftpData->ftp_port;
+            $ftpDir = $this->getFTPDirStructure($cp_code);
+            foreach ($ftpDir as $dir) {
+                $ftp->ftp_path = $ftpData->ftp_path . $dir;
+                if ($ftp->CreateDirectory() && $this->checkDirectory(\Yii::$app->params['biplDirPath'] . $dir)) {
+                    $status = true;
+                } else {
+                    $status = false;
+                    break;
+                }
+            }
+        }
+        if ($status === false) {
+            $model->addError($attribute, Yii::t('app/validation', 'FTP Directory not Generated.'));
+            return false;
         }
     }
 
