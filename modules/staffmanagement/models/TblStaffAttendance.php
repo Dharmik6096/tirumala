@@ -152,7 +152,7 @@ class TblStaffAttendance extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
-        if ($this->leave_to > $to) {
+        if (!empty($to) && !empty($this->leave_to) && $this->leave_to > $to) {
             $this->addError($attribute, Yii::t('app/validation', 'Leave Not Allowed After Resignation'));
             return false;
         }
