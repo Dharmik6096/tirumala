@@ -53,16 +53,16 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['is_download'], 'default', 'value' => '1'],
-                [['is_active'], 'default', 'value' => '1'],
-                [['wef_date', 'shift_code'], 'required'],
-                [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
-                [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
+            [['is_download'], 'default', 'value' => '1'],
+            [['is_active'], 'default', 'value' => '1'],
+            [['wef_date', 'shift_code'], 'required'],
+            [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
+            [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
             //[['purchase_rate_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,],
-                [['purchase_rate_code'], 'required', 'on' => ['stellapps']],
-                [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code', 'purchase_rate_code'], 'on' => ['stellapps']],
+            [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,],
+            [['purchase_rate_code'], 'required', 'on' => ['stellapps']],
+            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code', 'purchase_rate_code'], 'on' => ['stellapps']],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
             [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
@@ -180,8 +180,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         return $vendor ? false : true;
     }
 
-    public function generateBiplRateFiles() {
-        $cp_code = !empty($this->dcsCode->societyCodes) ? $this->dcsCode->societyCodes->bipl_code : '';
+    public function generateBiplRateFiles($cp_code) {
         $dcs = $this->dcsCode;
         $path = Yii::$app->params['rateFilesPath'] . '/' . $this->purchase_rate_code . '/' . $cp_code;
         if (!empty($cp_code) && Yii::$app->general->checkDirectory($path)) {
@@ -191,7 +190,6 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                 return $files;
             }
         }
-        //exit;
         return false;
     }
 
@@ -200,18 +198,15 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         $files = [];
         foreach ($milktypes as $milktype) {
             $fileName = $path . '/rate_chart_' . strtolower($milktype->animal_type_name) . '.txt';
-            //if (!file_exists($fileName))
-            //{  
             $name = strtolower($milktype->animal_type_name) == 'mix' ? 'MIXED' : $milktype->animal_type_name;
             $text = $this->prepareData($id, $milktype->animal_type_code, $name, $dcs);
             if ($text != false) {
                 $ratefile = fopen($fileName, "w") or die("Unable to open file!");
                 if (fwrite($ratefile, $text)) {
-                    $files[][$dcs->societyCodes->bipl_code] = $fileName;
+                    $files[][$dcs->ref_code] = $fileName;
                 }
                 fclose($ratefile);
             }
-            //}            
         }
         return $files;
     }
@@ -220,15 +215,15 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         $purchaseDetail = new TblPurchaseRateDetails();
         $purchaseDetail->milk_type_code = $milk_type;
         $purchaseDetail->purchase_rate_code = $id;
-        $fat = $purchaseDetail->find()->select(['fat'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->distinct()->orderBy('fat')->all();
+        $fat = $purchaseDetail->find()->select(['fat'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->distinct()->orderBy('fat')->all();
         if (!empty($fat)) {
-            $snf = $purchaseDetail->find()->select(['snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->distinct()->orderBy('snf')->all();
-            $rate = $purchaseDetail->find()->select(['rtpl', 'fat', 'snf', 'code'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->orderBy(['fat' => SORT_ASC, 'snf' => SORT_ASC])->all();
+            $snf = $purchaseDetail->find()->select(['snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->distinct()->orderBy('snf')->all();
+            $rate = $purchaseDetail->find()->select(['rtpl', 'fat', 'snf', 'code'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->orderBy(['fat' => SORT_ASC, 'snf' => SORT_ASC])->all();
             $txt = '>START_TIME		= ' . date('d.m.Y H:i:s') . PHP_EOL .
                     '>END_TIME		= ' . date('d.m') . '.2099 23:59:59' . PHP_EOL .
                     '>CP_NAME		= ' . $dcs->dcs_name . PHP_EOL .
-                    '>CP_ADDRESS		= ' . $dcs->villageCode->village_name . PHP_EOL .
-                    '>CP_CODE		= ' . $dcs->societyCodes->bipl_code . PHP_EOL .
+                    '>CP_ADDRESS		= ' . $dcs->dcs_name . PHP_EOL .
+                    '>CP_CODE		= ' . $dcs->ref_code . PHP_EOL .
                     '>FILE_NAME		= v1' . PHP_EOL .
                     '>RATE_FAT_BELOW_MIN	= 0.0' . PHP_EOL .
                     '>RATE_SNF_BELOW_MIN	=0.0' . PHP_EOL .

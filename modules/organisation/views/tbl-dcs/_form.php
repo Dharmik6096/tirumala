@@ -30,7 +30,7 @@ if (isset($address[1])) {
     $model->street2 = $address[1];
 }
 
-$vendor = ['EIPL' => 'EIPL', 'STELLAPPS' => 'STELLAPPS'];
+$vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
 //$disable = !empty($model->bmc_code) ? TRUE : FALSE;

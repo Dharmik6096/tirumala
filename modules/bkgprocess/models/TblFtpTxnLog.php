@@ -60,7 +60,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             [['txn_type'], 'default', 'value' => 'EIPL'],
             [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'string'],
             [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'integer'],
-            [['txn_datetime', 'created_at', 'updated_at'], 'safe'],
+            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
         ];
     }
 
@@ -222,7 +222,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
     }
 
     public function updateFileStatus($value) {
-        return $this->updateAll(['status' => 1], ['ftp_txn_log_id' => $value]);
+        return $this->updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['ftp_txn_log_id' => $value]);
     }
 
 //    public function CheckDirectory() {
@@ -238,6 +238,16 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
     public function getCreatorId() {
         return $this->hasOne(TblFileCreator::className(), ['file_creator_id' => 'file_creator_id']);
+    }
+
+    public function getExistFileData() {
+        return $this->find()
+                        ->where(['file_name' => $this->file_name, 'txn_type' => $this->txn_type, 'file_status' => $this->file_status, 'file_path' => $this->file_path])
+                        ->one();
+    }
+
+    public function CheckDirectory() {
+        return $this->find()->where(['status' => 2, 'module_code' => $this->module_code, 'txn_type' => $this->txn_type])->count();
     }
 
 }
