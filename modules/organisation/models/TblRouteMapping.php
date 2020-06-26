@@ -279,10 +279,6 @@ class TblRouteMapping extends \app\models\ChildModel {
                 break;
             case 'mcc':
                 $bmc = TblMccPlant::findOne($this->to_dest);
-                echo "<pre>";
-                print_r($bmc->bmcCode);
-                echo "</pre>";
-                die;
                 $code = !empty($bmc->bmcCode->bmc_code) ? $bmc->bmcCode->bmc_code : '0';
                 break;
             case 'bmc':
