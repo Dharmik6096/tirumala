@@ -55,6 +55,7 @@ class BiplFtpDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+            [['status'], 'default', 'value' => 0],
             [['cp_code', 'milk_type', 'local_code', 'extended_code', 'quantity_mode', 'measurement_mode', 'shift', 'census_code', 'mobile', 'given_name', 'fathers_name', 'family_name', 'process_type', 'person_position', 'route_code', 'dop_goodcans', 'dop_badcans', 'dop_starttime', 'dop_milksamplenum', 'dop_milksamplestatus'], 'string'],
             [['date', 'time', 'processed_at', 'dcs_code'], 'safe'],
             [['quantity', 'fat', 'snf', 'awm', 'amount', 'rate'], 'number'],

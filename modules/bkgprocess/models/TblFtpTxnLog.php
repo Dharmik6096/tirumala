@@ -7,6 +7,7 @@ use PHPExcel;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblUnions;
 use app\modules\bkgprocess\models\TblFileCreator;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "tbl_ftp_txn_log".
@@ -210,6 +211,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
     }
 
     public function getPickRecords($ids = [], $limit = 100) {
+        $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
+
         $query = $this->find()
                 ->where(['file_status' => $this->file_status, 'txn_type' => $this->txn_type, 'status' => $this->status]);
         if (!empty($ids)) {
@@ -217,17 +220,23 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         } else {
             $query->limit($limit);
         }
-        return $query->orderBy(['ftp_host' => SORT_ASC, 'ftp_username' => SORT_ASC, 'ftp_password' => SORT_ASC, 'ftp_port' => SORT_ASC, 'ftp_type' => SORT_ASC])
-                        ->all();
+        $query->orderBy(['ftp_host' => SORT_ASC, 'ftp_username' => SORT_ASC, 'ftp_password' => SORT_ASC, 'ftp_port' => SORT_ASC, 'ftp_type' => SORT_ASC]);
+
+        $pendingDataQuery = $this->find()
+                ->where(['file_status' => $this->file_status, 'txn_type' => $this->txn_type, 'status' => 1])
+                ->andWhere(['<', 'tbl_ftp_txn_log.pick_datetime', $datetime])
+                ->orderBy(['ftp_host' => SORT_ASC, 'ftp_username' => SORT_ASC, 'ftp_password' => SORT_ASC, 'ftp_port' => SORT_ASC, 'ftp_type' => SORT_ASC])
+                ->limit(10);
+
+        return $unionQuery = (new ActiveQuery(TblFtpTxnLog::className()))->from([
+                    'pending_data' => $query->union($pendingDataQuery, TRUE)
+                ])->all();
     }
 
     public function updateFileStatus($value) {
         return $this->updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['ftp_txn_log_id' => $value]);
     }
 
-//    public function CheckDirectory() {
-//        return $this->find()->where(['status' => 2, 'module_code' => $this->module_code, 'txn_type' => $this->txn_type])->count();
-//    }
     public function getmccPlantCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }

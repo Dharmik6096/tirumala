@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "tbl_org_file_log".
@@ -167,11 +168,23 @@ class TblOrgFileLog extends \app\models\ChildModel {
     }
 
     public function getPendingData() {
-        return $this->find()
-                        ->where(['file_status' => $this->file_status, 'status' => $this->status])
-                        ->limit(100)
-                        ->orderBy(['ftp_host' => SORT_ASC, 'ftp_username' => SORT_ASC, 'ftp_password' => SORT_ASC, 'ftp_port' => SORT_ASC, 'ftp_type' => SORT_ASC])
-                        ->all();
+        $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
+
+        $query = $this->find()
+                ->where(['file_status' => $this->file_status, 'status' => $this->status])
+                ->limit(100)
+                ->orderBy(['ftp_host' => SORT_ASC, 'ftp_username' => SORT_ASC, 'ftp_password' => SORT_ASC, 'ftp_port' => SORT_ASC, 'ftp_type' => SORT_ASC]);
+
+
+        $pendingDataQuery = $this->find()
+                ->where(['file_status' => $this->file_status, 'status' => 1])
+                ->andWhere(['<', 'tbl_org_file_log.pick_datetime', $datetime])
+                ->orderBy(['ftp_host' => SORT_ASC, 'ftp_username' => SORT_ASC, 'ftp_password' => SORT_ASC, 'ftp_port' => SORT_ASC, 'ftp_type' => SORT_ASC])
+                ->limit(10);
+
+        return $unionQuery = (new ActiveQuery(TblOrgFileLog::className()))->from([
+                    'pending_data' => $query->union($pendingDataQuery, TRUE)
+                ])->all();
     }
 
     public function updateFileStatus($value) {
