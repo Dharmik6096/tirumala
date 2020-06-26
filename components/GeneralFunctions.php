@@ -1595,6 +1595,12 @@ class GeneralFunctions extends Component {
                 $model->ref_code.=$ref_code;
             } else if (empty($model->ref_code)) {
                 $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+            } else if ($keyPattern['ref_code_type'] == 2) {
+                $cnt = $model->find()->where(['convert(bigint,ref_code)' => (int) $model->ref_code, 'union_code' => $model->union_code])
+                        ->count();
+                if ($cnt > 0) {
+                    $model->addError('dcs_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                }
             }
             if (!preg_match('/^[0-9]*$/', $model->ref_code)) {
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
