@@ -36,10 +36,10 @@ if ($model->isNewRecord) {
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row">
 
-    <div class="col-sm-2" id="union">
+    <div class="col-sm-3" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmember-union_code', '', 'Society', '', $readonly); ?>
     </div>
     <?php //Html::activeHiddenInput($model, 'district_code');  ?>
@@ -48,74 +48,74 @@ if ($model->isNewRecord) {
     if (!empty($keyPattern)) {
         ?>
         <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
-            <div class="col-sm-2 number-validate">  
+            <div class="col-sm-3 number-validate">  
                 <?= $form->field($model, 'ex_member_code')->textInput(['readonly' => $readonly]) ?>
             </div>
         <?php } ?>
         <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
-            <div class="col-sm-2 number-validate">  
+            <div class="col-sm-3 number-validate">  
                 <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
             </div>
         <?php } ?>
     <?php } ?>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code')); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'member_name')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'father_name')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'local_father_name')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'surname')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'local_surname')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'nominee_name')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'local_nominee_name')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('relation', $model, $form, '', 'Relation With Nominee'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('blood-group', $model, $form, '', 'Blood Group'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', 'Gender'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('qualification', $model, $form, '', 'Qualification'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', 'Caste/Category'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('religion', $model, $form, '', 'Religion'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'registration_date'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, 'form-group', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
     </div>
-    <!--    <div class="col-sm-2">
+    <!--    <div class="col-sm-3">
             <? //$form->field($model, 'land_class')->textInput() ?>
         </div>-->
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'total_land')->textInput() ?>
     </div>
     <div class="clearfix"></div>
@@ -123,19 +123,19 @@ if ($model->isNewRecord) {
         <p class="form-subtitle">Animal Details</p>
         <hr class="hr10">
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'no_of_buffalo')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
     </div>
     <div class="clearfix"></div>
@@ -143,36 +143,36 @@ if ($model->isNewRecord) {
         <p class="form-subtitle">Contact Details</p>
         <hr class="hr10">
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmember-union_code,tblmember-state_code', 'district_code', 'District'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmember-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmember-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village'); ?>
     </div>
 
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmember-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <!--<? = $form->field($model, 'pincode')->textInput() ?>-->
         <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'mobile_no')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'email')->textInput() ?>
     </div>
     <div class="clearfix"></div>
@@ -180,32 +180,32 @@ if ($model->isNewRecord) {
         <p class="form-subtitle">Bank Details</p>
         <hr class="hr10">
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->bankdepended($model, $form, 'tblmember-district_code', 'bank_code', 'Bank'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tblmember-bank_code', '', 'Branch', 'branch_code'); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'bank_account_no')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <!--<? = $form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc]) ?>-->
         <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'pan_no')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'adhar_no')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'voter_id')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= $form->field($model, 'annual_income')->textInput() ?>
     </div>
-    <!--    <div class="col-sm-2">
+    <!--    <div class="col-sm-3">
             <? = $form->field($model, 'payment_mode')->textInput() ?>
         </div>-->
     <div class="clearfix"></div>
