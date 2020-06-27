@@ -146,15 +146,20 @@ $this->title = Yii::$app->label->title('view', 'Staff Salary Process');
                 ?>
             </div>
         </div>
-
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Head Wise Details') ?></h5></div>
-        <div class="form-grid">
-            <?=
-            $this->render('_detail_grid', [
-                'dataProvider' => $trDataProvider,
-                'searchModel' => $trModel,
-            ])
-            ?>
+        <div class="row theme_border_left theme_border_right theme_border_bottom">
+            <div class="col-md-12 padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 margin-top-10 margin-bottom-10 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Head Wise Details') ?></h4>
+                </div>
+                <div class="">
+                    <?=
+                    $this->render('_detail_grid', [
+                        'dataProvider' => $trDataProvider,
+                        'searchModel' => $trModel,
+                    ])
+                    ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>

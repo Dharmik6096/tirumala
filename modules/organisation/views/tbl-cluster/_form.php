@@ -26,36 +26,39 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($summary_model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
-<div class="row">
-    <div class="col-sm-3" id="union">
+<div class="row theme_border_left theme_border_right theme_border_bottom">
+<div class="col-md-12 padding_10_0 theme-box ">
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+        <h4 class="theme-box-heading">Cluster Details</h4>
+    </div>
+    <div class="col-sm-4" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union',$readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblcluster-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '',$disabled); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <?= $form->field($model, 'local_address')->textarea(['maxlength' => true]) ?>
     </div>
-    
+</div>
     <div class="clearfix"></div>
     <?php if($type=='create') { ?>
-    <div class="col-sm-12">
-        <p class="form-subtitle">Contact Details</p>
-        <hr class="hr10">
-    </div>
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Contact Details</h4>
+        </div>
       <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
@@ -64,11 +67,13 @@ $form = ActiveForm::begin([
         ?>
 
     <?php } ?>
-    <div class="col-sm-3 mt25">
+    <div class="col-sm-2 mt25">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+</div>
+<div class="row">
+    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>

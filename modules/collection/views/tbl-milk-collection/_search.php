@@ -34,7 +34,6 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('sap_data_post_status', $model, $form, 'form-group', false, false, 'sap_data_post_status', false); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, false); ?>
     </div>

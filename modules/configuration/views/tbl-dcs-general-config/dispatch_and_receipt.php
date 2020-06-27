@@ -16,13 +16,13 @@ use yii\web\View;
 <div class="panel-body">
     <div class="panel-subheading">
         <div class="row">
-            <?= Yii::$app->dropdown->dropdownStatic('disp_in', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('milk_dispatch_in'), false, 'milk_dispatch_in', false); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('disp_in', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('milk_dispatch_in'), false, 'milk_dispatch_in', false); ?>
 
-            <?= $form->field($model, 'headload_km', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+            <?= $form->field($model, 'headload_km', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
 
-            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('milk_dispatch_quantity_mode'), false, 'milk_dispatch_quantity_mode', false); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('milk_dispatch_quantity_mode'), false, 'milk_dispatch_quantity_mode', false); ?>
 
-            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('milk_receipt_quantity_mode'), false, 'milk_receipt_quantity_mode', false); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('milk_receipt_quantity_mode'), false, 'milk_receipt_quantity_mode', false); ?>
 
             <div class='clearfix'></div>
             <div class="form-group">

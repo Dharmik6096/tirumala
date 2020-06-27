@@ -22,10 +22,10 @@ $form = ActiveForm::begin([
 ?>
 
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'autofocus' => $model->isNewRecord ? true : false]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'code')->textInput(['maxlength' => 64]) ?>
     </div>
     <div class="clearfix"></div>

@@ -25,19 +25,19 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
     </div>
-    <div class="col-sm-3" >
+    <div class="col-sm-2" >
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tbldpuincentivemaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), false, '', $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbldpuincentivemaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
     </div>  
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbldpuincentivemaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
     </div>
-    <div class="col-sm-3 <?= $class ?>">
+    <div class="col-sm-2 <?= $class ?>">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbldpuincentivemaster-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, '', false, TRUE); ?>         
     </div>
     <div class="clearfix"></div>
@@ -79,20 +79,20 @@ $form = ActiveForm::begin([
             'mask' => '99:99',])
         ?> 
     </div>
-    <div class="col-sm-3 number-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'inc_rate')->textInput() ?>
     </div>
-    <div class="col-sm-3 number-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'inc_deduction')->textInput() ?>
     </div>
 
     <?php if ($type == 'edit') { ?>
         <div class="clearfix"></div>
         <hr class="line-color">
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->controls->date($detailModel, $form, 'from_date', '', date('Y-m-d'), false, false); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->controls->date($detailModel, $form, 'to_date', '', date('Y-m-d'), false, false); ?>
         </div>
         <div class="clearfix"></div>

@@ -34,8 +34,8 @@ if ($model->isNewRecord) {
 ?>
 <?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
-<div class="row">
-    <div class="col-md-6 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom">
+<div class="row theme_border_left theme_border_right theme_border_bottom">
+    <div class="col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Member Details</h4>
         </div>
@@ -123,7 +123,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
     </div>
-    <div class="col-md-6 padding_10_0 theme-box theme_border_right theme_border_bottom">
+    <div class="col-md-6 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Animal Details</h4>
         </div>
@@ -181,7 +181,7 @@ if ($model->isNewRecord) {
         </div>
     </div>
 
-    <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom">
+    <div class="col-md-12 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Bank Details</h4>
         </div>
@@ -215,7 +215,9 @@ if ($model->isNewRecord) {
             <? = $form->field($model, 'payment_mode')->textInput() ?>
         </div>-->
     <div class="clearfix"></div>
-    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+</div>
+<div class="row">
+<div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
@@ -225,7 +227,6 @@ if ($model->isNewRecord) {
         </div>
     </div>
 </div>
-
 <?php ActiveForm::end(); ?>
 <?php
 $script = "

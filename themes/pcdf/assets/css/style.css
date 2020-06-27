@@ -2260,9 +2260,11 @@ div.crystalstyle{
 }
 .actionButtons{
     position: absolute;
-    top: 75px;
+    top: 73px;
     z-index: 9;
     right: 25px;
+    background: rgb(239, 239, 239) !important;
+    color: #3a7ad5 !important;
 }
 
 #menu_buttons {
@@ -2535,16 +2537,23 @@ div.crystalstyle{
 
 .panel .panel-body input:not(.btn):not([type="checkbox"]):not([type="radio"]),
 /* .modal .modal-body input:not(.btn), */
-.panel .panel-body select, 
+.panel .panel-body select,
 .panel .panel-body .input-group-addon {
     height: 24px !important;
     /* max-width: 280px !important; */
 }
-.panel .panel-body input:not(.btn), .panel .panel-body .form-control, .modal .modal-body .form-control {
+.panel .panel-body .multiple select{
+    height: auto !important;
+}
+.radio-list input[type="radio"]{
+    height: 10px !important;
+}
+.panel .panel-body input:not(.btn), .panel .panel-body .form-control, .modal .modal-body .form-control{
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
     padding: 3px;
+    height: 24px;
 }
 
 .panel .panel-body .control-label, .error-summary, .modal .modal-body .control-label, .modal-msg p{
@@ -2691,8 +2700,16 @@ td.action-cell{
     border-bottom: 2px solid rgb(58, 123, 213);
 }
 
+.theme_border_top{
+    border-top: 2px solid rgb(58, 123, 213);
+}
+
 .padding_10_0 {
     padding: 0px !important;
+}
+
+.padding_10_1 {
+    padding: 1px !important;
 }
 
 .padding-bottom-20{
@@ -2701,4 +2718,21 @@ td.action-cell{
 
 .margin-top-10{
     margin-top: 10px;
+}
+
+.padding-bottom-32{
+    padding-bottom: 32px;
+}
+
+.margin-bottom-10{
+    margin-bottom: 10px;
+}
+
+.panel-default .panel-heading {
+    color: #fff !important;
+    background-color: rgb(58, 123, 213)!important;
+    border-bottom: 1px solid rgb(58, 123, 213);
+    font-size: 14px !important;
+    font-weight: 600;
+    /* text-transform: uppercase; */
 }

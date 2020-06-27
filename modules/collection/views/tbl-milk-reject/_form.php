@@ -14,7 +14,11 @@ $readonly = $type == 'create' ? false : true;
 ?>
 
 <?php echo $form->errorSummary($model); ?>
-<div class="row">
+<div class="row theme_border_left theme_border_right theme_border_bottom">
+    <div class="col-md-12 padding_10_0 theme-box ">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Milk Reject Details</h4>
+        </div>
     <div class="col-sm-2" id="union">
         <?php
         echo Yii::$app->dropdown->dropdownStatic('source_org_type', $model, $form, 'form-group', $model->getAttributeLabel('source_org_type'), false);
@@ -61,39 +65,40 @@ $readonly = $type == 'create' ? false : true;
         echo Yii::$app->dropdown->dropdownStatic('return_type', $model, $form, 'form-group', $model->getAttributeLabel('return_type'), false, 'return_type', false);
         ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="12">
-        <div class="col-sm-6">
-            <div class="col-sm-6">
-                <?= $form->field($model, 'action_taken')->textarea() ?>
-            </div>
-            <div class="col-sm-6">
-                <?= $form->field($model, 'remarks')->textarea() ?>
-            </div>
+    <div class="col-md-12 padding_10_0 theme-box ">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Milk Details</h4>
         </div>
-        <div class="col-sm-6">
-            <div class="col-sm-6">
-                <?= $form->field($model, 'fat')->textInput() ?>
-            </div>
-            <div class="col-sm-6">
-                <?= $form->field($model, 'snf')->textInput() ?>
-            </div>
-            <div class="col-sm-6">
-                <?= $form->field($model, 'qty')->textInput() ?>
-            </div>
-            <div class="col-sm-6">
-                <?= $form->field($model, 'no_of_can')->textInput() ?>
-            </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'action_taken')->textarea() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'remarks')->textarea() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'fat')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'snf')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'qty')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'no_of_can')->textInput() ?>
         </div>
     </div>
 
 </div>   
 <div class="clearfix"></div>
-<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-    <div class="form-group">
-        <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-        <?= Yii::$app->controls->reset(); ?>
-        <?= Yii::$app->controls->cancel($model); ?>
+</div>
+<div class="row">
+    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
     </div>
 </div>
 <?php ActiveForm::end(); ?>

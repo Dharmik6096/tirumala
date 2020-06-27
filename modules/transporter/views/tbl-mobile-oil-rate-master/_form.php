@@ -26,16 +26,16 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code', 'Vehicle',$readonly);  ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'rate')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d'),$readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'km_info')->textInput() ?>
     </div>
     <div class="clearfix"></div>

@@ -21,25 +21,25 @@ $form = ActiveForm::begin([
 ?>
 
 <div class="row">   
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>    
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->shift($model, $form, 'from_shift', 'From Shift', 'shift', false) ?>    
     </div>  
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE); ?>
     </div> 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->shift($model, $form, 'to_shift', 'To Shift', 'shift', false) ?>    
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'interval_value')->textInput() ?>
     </div>  
-    <div class="col-sm-2 mt35">
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'check_month', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}',])->checkbox(); ?>
     </div>
     <!--    <div class="col-sm-2 mt35">

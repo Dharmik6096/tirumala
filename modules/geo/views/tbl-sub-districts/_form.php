@@ -23,22 +23,22 @@ $form = ActiveForm::begin([
 
 <?php Yii::$app->warning->hiddenfields($nameWarning, ''); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?php Yii::$app->dropdown->state($model, $form, 'state', 'State', $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->district($model, $form, 'tblsubdistricts-state', 'district_code', 'District'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'sub_district_code')->textInput(['maxlength' => true, 'readOnly' => $model->isNewRecord ? false : true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'sub_district_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>

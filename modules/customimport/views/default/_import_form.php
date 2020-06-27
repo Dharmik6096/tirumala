@@ -31,7 +31,7 @@ $readonly = false;
         <?= Html::hiddenInput('flag', $flag); ?>
         <?= Html::activeHiddenInput($model, 'required'); ?>
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= $form->field($model, 'module_name')->dropDownList($data, ['prompt' => 'Select Module']); ?>
             </div>    
             <div class="clearfix"></div>
@@ -39,7 +39,7 @@ $readonly = false;
             <div class="clearfix"></div>
             <div class="col-md-12 mt25">
                 <div class="row">
-                    <div class="col-sm-10">
+                    <div class="col-sm-10 multiple">
                         <?= Yii::$app->controls->dualList($form, $model, 'fields', []); ?>
                     </div>
 

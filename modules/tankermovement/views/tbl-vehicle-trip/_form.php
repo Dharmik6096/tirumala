@@ -29,7 +29,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2"> 
         <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletrip-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
     </div>

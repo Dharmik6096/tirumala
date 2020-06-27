@@ -25,31 +25,31 @@ $form = ActiveForm::begin([
 <h5 class="panel-subtitle"></h5>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('transporter_code',$model, $form,'form-group col-sm-2 padding-right-5 padding-left-0','Transporter',true,'transporter_code');  ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
     <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code','Vehicle','true'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('route_code',$model, $form,'form-group col-sm-2 padding-right-5 padding-left-0','Route',true,'route_code');  ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false,false,true); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'morning_kms')->textInput(['class'=>'form-control morning_km']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'evening_kms')->textInput(['class'=>'form-control evening_km']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'extra_kms')->textInput(['class'=>'form-control extra_km']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'total_kms')->textInput(['readonly'=>true,'class'=>'form-control total_km']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, true, 'shift_code'); ?>
     </div>
     <div class="clearfix"></div>

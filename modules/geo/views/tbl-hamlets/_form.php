@@ -22,28 +22,28 @@ $form = ActiveForm::begin([
 echo Html::hiddenInput('warning', 0, ['id' => 'warning']);
 ?>
 <div class="row">
-    <div class="col-sm-3 <?= $disable ?>">
+    <div class="col-sm-2 <?= $disable ?>">
         <?php Yii::$app->dropdown->state($model, $form, 'state', 'State', $readonly); ?>
     </div>
-    <div class="col-sm-3 <?= $disable ?>">
+    <div class="col-sm-2 <?= $disable ?>">
         <?= Yii::$app->dropdown->district($model, $form, 'tblhamlets-state', 'district', 'District'); ?>
     </div>
-    <div class="col-sm-3 <?= $disable ?>">
+    <div class="col-sm-2 <?= $disable ?>">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblhamlets-district', '', 'Sub District', 'sub_district'); ?>
     </div>
-    <div class="col-sm-3 <?= $disable ?>">
+    <div class="col-sm-2 <?= $disable ?>">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblhamlets-sub_district', '', 'Village'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'hamlet_code')->textInput(['maxlength' => true, 'readOnly' => true, 'class' => 'form-control ']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'hamlet_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
-    <div class="col-sm-3 mt25">
+    <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>

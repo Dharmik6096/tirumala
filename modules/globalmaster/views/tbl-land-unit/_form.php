@@ -15,19 +15,19 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'land_unit_name')->textInput(['maxlength' => true, 'class' => 'form-control']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?php Yii::$app->dropdown->defaultlandunit($model, $form, 'land_unit', 'Convert To'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'conversion_factor')->textInput(['class' => 'form-control']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>

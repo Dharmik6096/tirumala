@@ -14,22 +14,22 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>    
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'unit_name')->textInput(['maxlength' => true, 'class' => 'form-control']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'short_name')->textInput(['maxlength' => true, 'class' => 'form-control']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>

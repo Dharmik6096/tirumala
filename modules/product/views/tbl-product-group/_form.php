@@ -21,22 +21,22 @@ $form = ActiveForm::begin([
 ?>
 <?= $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>    
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'product_group_name')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'ref_code')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', 'Unit', false, 'unit_code'); ?>
     </div>  
-    <div class="col-sm-3">
+    <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>

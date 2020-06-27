@@ -25,24 +25,23 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row">
-    <div class="col-sm-3" id="union">
+    <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>           
-    <div class="col-sm-3 change">
+    <div class="col-sm-2 change">
         <?= Yii::$app->dropdown->dropdown('rate_gen_method_code', $model, $form, '', 'Rate Method'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>
-    <div class="col-sm-3 shift">
+    <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift', false, 'shift_id'); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', 'Shift Applicability'); ?>
     </div>
 
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>

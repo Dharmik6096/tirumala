@@ -37,27 +37,27 @@ $form = ActiveForm::begin(['options' => [
         <?= Html::activeHiddenInput($model, 'staff_addition_deduction_no'); ?> 
         <?= Html::activeHiddenInput($model, 'installment_no'); ?> 
 
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffadditiondeduction-union_code', 'form-group  ' . $class, Yii::t('app', 'Staff Member'), 'staff_member_code', $readonly); ?>
         </div>
 
         <?php if ($type == 'create') { ?>
             <?php $model->tr_date = empty($model->tr_date) ? date('Y-m-d') : NULL; ?>
         <?php } ?>
-        <div class="col-sm-3">
-            <?= Yii::$app->controls->date($model, $form, 'tr_date', 'form-group col-sm-3 ' . $class, true, '', false); ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'tr_date', 'form-group col-sm-2 ' . $class, true, '', false); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('type', $model, $form, 'form-group ' . $class, $model->getAttributeLabel('type')); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($model, 'amount', ['options' => ['class' => 'form-group']])->textInput(['readOnly' => TRUE]) ?>
         </div>
         <div class="salaryInstall">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?php
                 $staffModel->deduction_date = !empty($model->app_from_date) ? date('m-Y', strtotime($model->app_from_date)) : NULL;
                 ?>
@@ -67,7 +67,7 @@ $form = ActiveForm::begin(['options' => [
                 ?> 
             </div> 
             <?= Html::activeHiddenInput($staffModel, 'staff_installment_code'); ?> 
-            <?= $form->field($staffModel, 'amount', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+            <?= $form->field($staffModel, 'amount', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
         </div>
     </div>
     <div class="clearfix"></div>

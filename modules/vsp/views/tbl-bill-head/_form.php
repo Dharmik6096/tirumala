@@ -52,33 +52,33 @@ $form = ActiveForm::begin([
 
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3" id="union">
+    <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'bill_head_name')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?php
         echo Yii::$app->dropdown->dropdownStatic('calc_type', $model, $form, 'form-group', $model->getAttributeLabel('bill_head_type'), false, 'bill_head_type', false);
         ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('general_formula_code', $model, $form, 'tblbillhead-union_code', '', $model->getAttributeLabel('general_formula_code')); ?>
-        <?php // Yii::$app->dropdown->dropdown('general_formula_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('general_formula_code'), false, 'general_formula_code'); ?>
+        <?php // Yii::$app->dropdown->dropdown('general_formula_code', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('general_formula_code'), false, 'general_formula_code'); ?>
         <?= Html::activeHiddenInput($model, 'general_formula', ['id' => 'general_formula']); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('bill_head_for', $model, $form, 'form-group', $model->getAttributeLabel('bill_head_for'), false, 'bill_head_for', false); ?> 
     </div>
 
-    <div class="col-sm-3 number-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
-    <div class="col-sm-3 h90">
+    <div class="col-sm-2 h90">
         <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox mt25 height_65">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
     </div>
-    <div class="col-sm-3" id="defaultbill">
+    <div class="col-sm-2" id="defaultbill">
         <?= Yii::$app->dropdown->dropdown('default_bill_head_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_bill_head_code'), false, 'default_bill_head_code'); ?>
     </div>
     <div class="clearfix"></div>

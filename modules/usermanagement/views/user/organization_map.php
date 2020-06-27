@@ -26,7 +26,7 @@ $this->title = Yii::t('app', $title);
 
         <h5 class="panel-subtitle"><?php echo $title; ?></h5>
         <?= $form->errorSummary($model); ?>
-        <div class="row">
+        <div class="row multiple">
             <?php
             echo $form->field($model, 'federation', [ 'options' => ['class' => 'form-group col-sm-12 hidden',]])
                     ->widget(DualListbox::className(), [

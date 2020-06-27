@@ -13,19 +13,19 @@ $form = ActiveForm::begin([
 
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'animal_type_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'short_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-2 mt25">
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_milch', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>

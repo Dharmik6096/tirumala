@@ -17,19 +17,19 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'dcs_code')->textInput(['maxlength' => true, 'disabled' => true, 'value' => $model->dcsCode->dcs_name]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'election_date', 'form-group col-sm-2',FALSE); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'tenure_from', 'form-group col-sm-2',FALSE); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'tenure_to', 'form-group col-sm-2',FALSE); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea(['maxlength' => true]) ?>
     </div>
     <?= Html::activeHiddenInput($model, 'dcs_code') ?>

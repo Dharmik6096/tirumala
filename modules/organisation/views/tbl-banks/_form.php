@@ -27,26 +27,27 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'bank_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'short_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'ac_no_length')->textInput(['readonly' => $disable == 0 ? false : true]) ?>
+    </div>
+    <!-- <div class="clearfix"></div> -->
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'checked_ac_no', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'checked_ac_no', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
-    </div>
-    <div class="col-sm-3">
         <?= $form->field($model, 'nationalized_bank', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
     </div>
     <div class="clearfix"></div>   

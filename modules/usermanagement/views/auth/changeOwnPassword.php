@@ -30,14 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row">
             <?php if ($model->scenario != 'restoreViaEmail'): ?>            
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <?= $form->field($model, 'current_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
                 </div>
             <?php endif; ?>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= $form->field($model, 'repeat_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
             </div>
             <div class="clearfix"></div>

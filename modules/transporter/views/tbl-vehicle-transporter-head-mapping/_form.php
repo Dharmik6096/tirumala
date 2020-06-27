@@ -25,19 +25,19 @@ $form = ActiveForm::begin([
 <h5 class="panel-subtitle"></h5>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code', 'Vehicle',$readonly);  ?>
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('transporter_payment_head_code', $model, $form, 'form-group col-sm-3', 'Transporter Payment Head',$readonly); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('transporter_payment_head_code', $model, $form, 'form-group col-sm-2', 'Transporter Payment Head',$readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false,'',$readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'amount')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>
     

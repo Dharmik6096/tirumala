@@ -26,16 +26,16 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3" id="union">
+    <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('fuel_type_code', $model, $form, 'form-group col-sm-3', 'Fuel Type',$readonly); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('fuel_type_code', $model, $form, 'form-group col-sm-2', 'Fuel Type',$readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'rate')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d'),$readonly); ?>
     </div>
     <div class="clearfix"></div>

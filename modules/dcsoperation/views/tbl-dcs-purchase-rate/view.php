@@ -62,13 +62,23 @@ $this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'BMC') . '
             </div>
         </div>
 
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ') ' . Yii::t('app', 'Transactions') ?></h5></div>
-        <div class="form-grid">
-            <?php echo $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]); ?>
-        </div>
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ') ' . Yii::t('app', 'Applicability') ?></h5></div>
-        <div class="form-grid">
-            <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
+        <div class="row theme_border_left theme_border_right theme_border_bottom">
+            <div class="col-md-12 padding_10_0 theme-box ">
+                <div class="col-sm-12 margin-bottom-10 margin-top-10 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ') ' . Yii::t('app', 'Transactions') ?></h4>
+                </div>
+                <div class="form-grid">
+                    <?php echo $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]); ?>
+                </div>
+            </div>
+            <div class="col-md-12 padding_10_0 theme-box ">
+                <div class="col-sm-12 margin-bottom-10 margin-top-10 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ') ' . Yii::t('app', 'Applicability') ?></h4>
+                </div>
+                <div class="form-grid">
+                    <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>

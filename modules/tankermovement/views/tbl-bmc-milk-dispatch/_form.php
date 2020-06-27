@@ -21,9 +21,12 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary([$model, $txn_model]); ?>
 
 <?= Html::activeHiddenInput($model, 'bmc_milk_dispatch_code'); ?>
-<div class="micro_form">
-    <div class="row">
-        <div class="col-lg-8 <?= $disabled ?>">
+<div class="row theme_border_left theme_border_right theme_border_bottom">
+    <div class="col-md-12 padding_10_0 theme-box ">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">BMC Milk Dispatch Detail</h4>
+        </div>
+        <div class="col-lg-8 micro_form <?= $disabled ?>">
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
@@ -104,10 +107,11 @@ $form = ActiveForm::begin([
                 </table>
             </div>
         </div>
-        <div class="clearfix"></div>
-        <div class="col-lg-12">
-            <h5 class="panel-heading mb15"><?= Yii::t('app', 'Dispatch Transactions') ?></h5>
-
+    </div>
+        <div class="col-md-12 padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions') ?></h4>
+            </div>
             <div class="col-sm-1"> 
                 <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
             </div>
@@ -195,7 +199,9 @@ $form = ActiveForm::begin([
 
             </div>
         </div>
-        <div class="col-sm-12 shortcut-main mt15" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    </div>
+    <div class="row">
+        <div class="col-sm-12 margin-top-10 shortcut-main mt15" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
                 <?= Yii::$app->controls->reset(); ?>
@@ -204,13 +210,14 @@ $form = ActiveForm::begin([
         </div>
     </div>
     <?php ActiveForm::end(); ?>
-    <div class="col-lg-12">
-        <h5 class="panel-heading mb15"><?= Yii::t('app', 'Dispatch Transactions Detail') ?></h5>
-        <div id="transactions-detial">
+        <div class="col-md-12 padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions Detail') ?></h4>
+            </div>
+            <div id="transactions-detial">
 
+            </div>
         </div>
-    </div>
-</div>
 <?php
 $script = "$(document).ready(function(){
 var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();

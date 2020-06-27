@@ -23,30 +23,28 @@ $status = array('Created' => 'Create', 'Processing' => 'Processing', 'Resolved' 
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     
-    <div class="col-sm-3" id="union">
+    <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblcomplaint-union_code', '', 'Society Name'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'contact_person')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?php echo $form->field($model, 'complaint_type')->dropdownList($complaint_type, ['prompt'=>'Select Complaint Type']); ?>
     </div>
-    <div class="col-sm-3">
-        <div class="">
-            <?php echo $form->field($model, 'status')->dropdownList($status); ?>
-        </div>
-        <div class="">
-            <?= Yii::$app->controls->date($model, $form, 'date'); ?>
-        </div>
+    <div class="col-sm-2">
+        <?php echo $form->field($model, 'status')->dropdownList($status); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'date'); ?>
+    </div>
+    <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>
-    <div class="col-sm-3 mt25">
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div>
     <div class="clearfix"></div>
