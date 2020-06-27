@@ -2533,19 +2533,26 @@ div.crystalstyle{
 }
 
 
-.panel .panel-body input:not(.btn), .panel .panel-body select, .panel .panel-body .input-group-addon {
-    height: 31px !important;
-    max-width: 280px !important;
+.panel .panel-body input:not(.btn):not([type="checkbox"]):not([type="radio"]),
+/* .modal .modal-body input:not(.btn), */
+.panel .panel-body select, 
+.panel .panel-body .input-group-addon {
+    height: 24px !important;
+    /* max-width: 280px !important; */
 }
-.panel .panel-body input:not(.btn), .panel .panel-body .form-control {
+.panel .panel-body input:not(.btn), .panel .panel-body .form-control, .modal .modal-body .form-control {
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
     padding: 3px;
 }
 
-.panel .panel-body .control-label, .error-summary{
+.panel .panel-body .control-label, .error-summary, .modal .modal-body .control-label, .modal-msg p{
     font-size: 11px !important;
+}
+
+.panel .panel-body .control-label{
+    font-size: 10px !important;
 }
 
 .panel .panel-body textarea {
@@ -2557,7 +2564,9 @@ div.crystalstyle{
     font-size: 7px !important;
 }
 
-.panel .panel-body .btn{
+.panel .panel-body .btn, 
+.modal .modal-body .btn,
+.modal .modal-footer .btn{
     display: inline-block;
     font-weight: 400;
     text-align: center;
@@ -2613,13 +2622,13 @@ div.crystalstyle{
 .table-bordered tr th a,
 .table-bordered tr td {
     font-size: 11px !important;
-    max-width: 150px !important;
+    /* max-width: 150px !important; */
 }
 
-th.action-cell,
+/* th.action-cell,
 td.action-cell{
     max-width: 80px !important;
-}
+} */
 
 .pagination{
     font-size: 11px;
@@ -2629,11 +2638,67 @@ td.action-cell{
     text-align: left !important;
 }
 
-.filters .input-group-addon {
-    padding: 2px;
+/* .filters  */
+.input-group-addon {
+    padding: 2px 7px;
     font-size: 11px;
 }
 
 .panel-main .panel-body .grid-search .btn {
     padding: 0.575rem 0.95rem;
+}
+
+.dropdown-menu{
+    font-size: 11px !important;
+}
+
+.sortable{
+    font-size: 11px;
+}
+
+.modal .close{
+    top: 15px !important;
+    right: 20px !important;
+}
+
+.dynagrid-config-form .form-group .input-group-addon{
+    width: 0%;
+}
+
+.theme-box{
+    /* margin: 10px; */
+}
+
+.theme-box-heading {
+    font-size: 13px;
+    text-align: center;
+    background: rgb(58, 123, 213);
+    opacity: 0.9;
+    padding: 3px 0px;
+    color: #fff !important;
+    font-weight: 300;
+}
+
+.theme_border_left {
+    border-left: 2px solid rgb(58, 123, 213);
+}
+
+.theme_border_right {
+    border-right: 2px solid rgb(58, 123, 213);
+}
+
+.theme_border_bottom{
+    border-bottom: 2px solid rgb(58, 123, 213);
+}
+
+.padding_10_0 {
+    padding: 0px !important;
+}
+
+.padding-bottom-20{
+    padding-bottom: 20px;
+}
+
+.margin-top-10{
+    margin-top: 10px;
 }
