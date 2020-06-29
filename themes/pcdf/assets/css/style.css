@@ -679,6 +679,7 @@ label{
     background-color: #f5f5f5;
     padding: 10px 15px 0;
     margin: 30px 0 15px;
+    border: 1px solid #ddd;
 }
 .local-control{
     font-family: initial !important;
@@ -1231,8 +1232,12 @@ input[type="hidden"] + .help-block{
 .app-check-list, .app-check-list-mcc, .app-check-list-bmc{
     background: none;
     border: 1px solid #ddd;
-    padding:5px 10px;
+    /* padding:5px 10px; */
     margin: 0 0 15px;
+}
+
+.app-check-list-padding{
+    padding:5px 10px;
 }
 .app-header-list #header{
     margin-bottom: 10px;
@@ -2263,8 +2268,6 @@ div.crystalstyle{
     top: 73px;
     z-index: 9;
     right: 25px;
-    background: rgb(239, 239, 239) !important;
-    color: #3a7ad5 !important;
 }
 
 #menu_buttons {
@@ -2556,6 +2559,14 @@ div.crystalstyle{
     height: 24px;
 }
 
+.panel .panel-body .dashboard_controls .form-control{
+    height: 36px !important;
+}
+
+.modal .modal-body #login-form .form-control{
+    height: 36px !important;
+}
+
 .panel .panel-body .control-label, .error-summary, .modal .modal-body .control-label, .modal-msg p{
     font-size: 11px !important;
 }
@@ -2688,6 +2699,16 @@ td.action-cell{
     font-weight: 300;
 }
 
+.table-bordered .bg-default th{
+    font-size: 13px;
+    text-align: center;
+    background: rgb(58, 123, 213);
+    opacity: 0.9;
+    padding: 3px 0px;
+    color: #fff !important;
+    font-weight: 300;
+}
+
 .theme_border_left {
     border-left: 2px solid rgb(58, 123, 213);
 }
@@ -2728,11 +2749,16 @@ td.action-cell{
     margin-bottom: 10px;
 }
 
-.panel-default .panel-heading {
+.set_checkbox input[type="checkbox"]{
+    height: 10px !important;
+    width: 10px!important;
+}
+
+/* .panel-default .panel-heading {
     color: #fff !important;
     background-color: rgb(58, 123, 213)!important;
     border-bottom: 1px solid rgb(58, 123, 213);
     font-size: 14px !important;
     font-weight: 600;
-    /* text-transform: uppercase; */
-}
+    /* text-transform: uppercase; 
+} */

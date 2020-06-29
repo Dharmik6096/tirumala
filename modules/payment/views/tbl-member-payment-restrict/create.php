@@ -54,14 +54,14 @@ $defaultToggle = true;
                                 <table class="table table-bordered table-striped table-main table-language table-rate">
                                     <thead>
                                         <tr>
-                                            <th width='17%' height='35' class='center-align center_text'><?= Html::checkbox('allowCashCheckAll', false, ['id' => 'allowCashCheckAll', 'class' => 'checkbox', 'label' => '']) ?></th>
-                                            <th width='60%' height='35'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
+                                            <th width='17%' height='25' class='center-align center_text'><?= Html::checkbox('allowCashCheckAll', false, ['id' => 'allowCashCheckAll', 'class' => 'checkbox checkboxHeight', 'label' => '']) ?></th>
+                                            <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php for ($i = 0; $i < $first_table; $i++) { ?>
                                             <tr>
-                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
+                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
                                                 <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
                                             </tr>
                                         <?php } ?>
@@ -72,8 +72,8 @@ $defaultToggle = true;
                                 <table class="table table-bordered table-striped table-main table-language table-rate">
                                     <thead>
                                         <tr>
-                                            <th width='17%' height='35'></th>
-                                            <th width='60%' height='35'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
+                                            <th width='17%' height='25'></th>
+                                            <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -81,7 +81,7 @@ $defaultToggle = true;
                                         for ($i = $first_table; $i < $second_table; $i++) {
                                             ?>
                                             <tr>
-                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
+                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
                                                 <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
                                             </tr>
                                         <?php } ?>
@@ -92,8 +92,8 @@ $defaultToggle = true;
                                 <table class="table table-bordered table-striped table-main table-language table-rate">
                                     <thead>
                                         <tr>
-                                            <th width='17%' height='35'></th>
-                                            <th width='60%' height='35'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
+                                            <th width='17%' height='25'></th>
+                                            <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -101,7 +101,7 @@ $defaultToggle = true;
                                         for ($i = $second_table; $i < $count; $i++) {
                                             ?>
                                             <tr>
-                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
+                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
                                                 <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
                                             </tr>
                                         <?php } ?>

@@ -31,6 +31,10 @@ use yii\bootstrap\ActiveForm;
             <?= Html::hiddenInput('department', $mappingModel->department, ['id' => 'department']); ?>
 
             <div class="panel-body">
+            <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                    <h4 class="theme-box-heading">Menu Permission</h4>
+                </div>
                 <div class="input-group">
                     <span class="input-group-btn">
                         <?=
@@ -134,6 +138,7 @@ use yii\bootstrap\ActiveForm;
                 ?>
             </div>
             <?php ActiveForm::end(); ?>
+            </div>
         </div>
     </div>
 </div>

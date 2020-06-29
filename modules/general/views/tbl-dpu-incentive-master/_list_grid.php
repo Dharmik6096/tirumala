@@ -4,7 +4,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 ?>
 
-<h5 class="panel-heading"><?= Yii::t('app', 'Incentive Deduction') ?></h5>
+<div class="view-subtitle">
+<h5 class="theme-box-heading"><?= Yii::t('app', 'Incentive Deduction') ?></h5>
 
 <?php
 $attribute = [
@@ -52,3 +53,4 @@ $grid_option = [
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+</div>

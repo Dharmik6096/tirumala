@@ -122,7 +122,11 @@ $this->title = Yii::$app->label->title('view', 'Product Requisition');
                 ?>
             </div>
         </div>
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"><?= Yii::t('app', 'Product Requisition Transactions') ?></h5></div>
+        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"></h5></div> -->
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Product Requisition Transactions') ?></h4>
+            </div>
         <div class="form-grid">
             <?=
             $this->render('../../../product/views/tbl-product-requisition-transaction/_list_grid', [
