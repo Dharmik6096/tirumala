@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;
 use Yii;
 use app\modules\organisation\models\TblDcsMilkType;
+use app\modules\general\models\TblSocietyVendor;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -122,6 +123,11 @@ class DcsImportStrategy extends ARImportStrategy {
                         $errors = [];
                         $model->setModelData($model, $modelList);
                         $model->setbankContacts($model, $modelList, $errors);
+
+                        $vendorModel = new TblSocietyVendor();
+                        $vendorModel->dcs_code = $model->dcs_code;
+                        $vendorModel->vendor_code = $model->vendor;
+                        array_push($modelList, $vendorModel);
 
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
