@@ -1538,6 +1538,7 @@ class GeneralFunctions extends Component {
                 $key_config['prefix_field'] = $data->prefix_field;
                 $key_config['ref_code_type'] = $data->ref_code_type;
                 $key_config['ref_code_length'] = $data->ref_code_length;
+                $key_config['ref_code_fix_length'] = $data->ref_code_fix_length;
                 //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
                 $PatternArray[$data->pattern_for] = $key_config;
             }
@@ -1549,10 +1550,11 @@ class GeneralFunctions extends Component {
         return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
     }
 
-    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
+   public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
         $keyPattern = $this->getKeyPattern($table_name);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
+            $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
             $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
             if ($keyPattern['ex_code_auto'] == 1) {
                 $data = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
@@ -1590,20 +1592,24 @@ class GeneralFunctions extends Component {
                 $ref_code = ($keyPattern['ref_code_length'] > 0 ) ? str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT) : '';
                 $model->ref_code = '';
                 foreach ($prefix_seq as $pre) {
-                    $model->ref_code .= $model->{$pre};
+                    $model->ref_code.=$model->{$pre};
                 }
-                $model->ref_code .= $ref_code;
-            } else if (empty($model->ref_code)) {
-                $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+                $model->ref_code.=$ref_code;
+            }
+            if (empty($model->ref_code)) {
+                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+            } else if (!preg_match('/^[0-9]*$/', $model->ref_code)) {
+                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
             } else if ($keyPattern['ref_code_type'] == 2) {
                 $cnt = $model->find()->where(['convert(bigint,ref_code)' => (int) $model->ref_code, 'union_code' => $model->union_code])
                         ->count();
                 if ($cnt > 0) {
-                    $model->addError('dcs_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                    $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
                 }
             }
-            if (!preg_match('/^[0-9]*$/', $model->ref_code)) {
-                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
+            $model->ref_code = str_pad(($model->ref_code), $ref_code_fix_length, '0', STR_PAD_LEFT);
+            if (strlen($model->ref_code) != $ref_code_fix_length) {
+                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
             }
             return $pk_code;
         } else {
