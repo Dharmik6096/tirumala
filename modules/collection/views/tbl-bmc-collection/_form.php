@@ -58,16 +58,21 @@ $script = "
         amount = rtpl * qty;
         $('#tblbmccollection-amount').val(amount);
     }
-
+    $('#tblbmccollection-date_time_of_collection').change(function(){
+        $('#tblbmccollection-customer_code').val('');     
+    });
     $('#tblbmccollection-customer_code').change(function(){
         var dcs = $(this).val();
         var type= $('#tblbmccollection-customer_type').val(); 
         var union= $('#tblbmccollection-union_code').val(); 
         var bmc= $('#tblbmccollection-bmc_code').val(); 
+        var plant= $('#tblbmccollection-plant_code').val(); 
+        var mcc= $('#tblbmccollection-mcc_plant_code').val(); 
+        var date= $('#tblbmccollection-date_time_of_collection').val(); 
         $.ajax({
             type: 'post',
             url:'" . Url::to(['validate-dcs']) . "',
-            data: {'dcs_code':dcs,'customer_type':type,'union_code':union,'bmc_code':bmc},
+            data: {'dcs_code':dcs,'customer_type':type,'union_code':union,'bmc_code':bmc,'mcc':mcc,'plant':plant,'date':date},
             success: function(data) {                                        
                 var obj = $.parseJSON(data);
                 if (obj.status == 'success')

@@ -38,7 +38,7 @@ $readonly = $type == 'create' ? false : true;
             <?= Yii::$app->dropdown->customer_type($model, $form, 'tblmilkreject-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblmilkreject-bmc_code,tblmilkreject-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblmilkreject-bmc_code,tblmilkreject-customer_type,tblmilkreject-date_time_of_collection', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
         </div>
     </div>
     <div class="col-sm-2">

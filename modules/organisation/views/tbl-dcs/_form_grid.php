@@ -221,11 +221,10 @@ $grid_option = [
           }, */
         'deactive' => function ($url, $model) {
             $name = $model->dcs_name;
-            $label = ($model->is_active == 1) ? 'Deactivate' : 'Activate';
-            $icon = ($model->is_active == 1) ? '<i class="fa fa-close"></i>' : '<i class="fa fa-check"></i>';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $label, 'class' => 'deact-dcs', 'data-val' => $model->dcs_code, 'data-name' => $name];
+            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
             if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
-                return GhostHtml::a_alert($icon, ['/organisation/tbl-dcs/deactivate-user'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
             else
                 return false;
         },

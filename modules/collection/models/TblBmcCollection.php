@@ -338,6 +338,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $this->dcs_code = $this->customer_code;
                 $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
                 $this->route_code = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
+                Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_collection);
             } else {
                 $this->dcs_code = NULL;
                 $this->village_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'village_code');

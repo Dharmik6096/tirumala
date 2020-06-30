@@ -38,6 +38,7 @@ use app\modules\general\models\TblCollectionIncentiveDeduction;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\general\models\TblDepartment;
 use app\modules\organisation\models\TblRouteMappingSources;
+use app\modules\organisation\models\TblDcsDeactive;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -658,7 +659,7 @@ class TblDcs extends ChildModel {
     }
 
     public function validDcs($dcs, $bmc) {
-        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1, 'bmc_code' => $bmc])->all();
+        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs], ['ref_code' => $dcs]])->andWhere(['is_active' => 1, 'bmc_code' => $bmc])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
     }
 
@@ -697,21 +698,27 @@ class TblDcs extends ChildModel {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
-    public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '') {
-        $value = $this->getBMCDCS($plantCode, $RLS);
+    public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '', $dateFilter = '') {
+        $value = $this->getBMCDCS($plantCode, $RLS, $dateFilter);
         $value = ArrayHelper::map($value, 'dcs_code', function($value) use ($type) {
                     return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ')' : $value->dcs_name;
                 });
         return $value;
     }
 
-    public function getBMCDCS($plantCode = [], $RLS = 'TRUE') {
+    public function getBMCDCS($plantCode = [], $RLS = 'TRUE', $dateFilter) {
         $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
         if (!empty($plantCode))
             $query->andWhere(['bmc_code' => $plantCode]);
         if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         }
+        if (!empty($dateFilter)) {
+            $dcsdeactivate = new TblDcsDeactive();
+            $deactivatedDCS = $dcsdeactivate->getDcsDEactivated($plantCode, $dateFilter);
+            $query->andWhere(['not in', 'dcs_code', $deactivatedDCS]);
+        }
+
         return $query->all();
     }
 
@@ -1022,7 +1029,7 @@ class TblDcs extends ChildModel {
     }
 
     public function getValidDcs($dcs) {
-        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs]])->andWhere(['is_active' => 1])->all();
+        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs], ['ref_code' => $dcs]])->andWhere(['is_active' => 1])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
     }
 

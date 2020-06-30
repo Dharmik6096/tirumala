@@ -705,7 +705,7 @@ class TblDcsController extends ChildController {
         return $out;
     }
 
-    public function actionDeactivateUser($id, $password) {
+     public function actionDeactivateUser($id, $password) {
         if (!empty($password)) {
             $user = User::getCurrentUser();
             if (Yii::$app->security->validatePassword($password, $user->password_hash)) {
@@ -713,15 +713,13 @@ class TblDcsController extends ChildController {
                 $historyModel = new TblDcsHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $this->model->scenario = 'deactivate';
-                $status = ($this->model->is_active == 1) ? 0 : 1;
-                $this->model->is_active = $status;
+                $this->model->is_active = 0;
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['dcs', 'edit']);
                 if ($transaction == 'customRedirect') {
 //            if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
 //                $this->model->generateBiplMemberFiles();
 //            }
-                    $message = ($status == 1) ? 'Society Activated Successfully.' : 'Society Deactivated Successfully.';
-                    $record = ['status' => 'success', 'msg' => $message];
+                    $record = ['status' => 'success', 'msg' => 'Society Deactivated Successfully.'];
                 } else {
                     $record = ['status' => 'error', 'msg' => 'Society Not Deactivated.'];
                 }

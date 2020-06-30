@@ -192,6 +192,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $dcs = Yii::$app->request->post('dcs_code');
         $union = Yii::$app->request->post('union_code');
         $type = Yii::$app->request->post('customer_type');
+        $mcc = Yii::$app->request->post('mcc');
+        $plant = Yii::$app->request->post('plant');
+        $date = Yii::$app->request->post('date');
         $bmcModel = new TblBmcCollection();
         if (!empty($type) && strtolower($type) != 'dcs') {
             $data = $bmcModel->validateCustomer($union, $dcs, $type);
@@ -199,6 +202,16 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($dcs, $bmc);
+            $bmcModel->union_code = $union;
+            $bmcModel->plant_code = $plant;
+            $bmcModel->mcc_plant_code = $mcc;
+            $bmcModel->bmc_code = $bmc;
+            $bmcModel->dcs_code = $data;
+            $bmcModel->date_time_of_collection = $date;
+            $detail = Yii::$app->general->validateDeactivateDcs($bmcModel, $bmcModel->date_time_of_collection);
+            if ($detail === false) {
+                $data = '';
+            }
             $bmcModel->customer_code = $data;
         }
         if (!empty($data)) {

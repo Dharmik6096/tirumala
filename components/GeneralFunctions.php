@@ -991,7 +991,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1590,9 +1590,9 @@ class GeneralFunctions extends Component {
                 $ref_code = ($keyPattern['ref_code_length'] > 0 ) ? str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT) : '';
                 $model->ref_code = '';
                 foreach ($prefix_seq as $pre) {
-                    $model->ref_code.=$model->{$pre};
+                    $model->ref_code .= $model->{$pre};
                 }
-                $model->ref_code.=$ref_code;
+                $model->ref_code .= $ref_code;
             } else if (empty($model->ref_code)) {
                 $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
             } else if ($keyPattern['ref_code_type'] == 2) {
@@ -1653,6 +1653,33 @@ class GeneralFunctions extends Component {
         }
         if ($status === false) {
             $model->addError($attribute, Yii::t('app/validation', 'FTP Directory not Generated.'));
+            return false;
+        }
+    }
+
+    public function validateDeactivateDcs($model, $date, $dcs = '', $memberCheck = false, $member = '') {
+        $dcsCode = !empty($dcs) ? $dcs : $model->dcs_code;
+        $checkdate = date('Y-m-d', strtotime($date));
+        if ($memberCheck) {
+            $memberCode = !empty($member) ? $member : $model->member_code;
+            $memberModel = new TblMemberDeactive();
+            $records = $memberModel->find()
+                    ->where('union_code=\'' . $model->union_code . '\' and plant_code=\'' . $model->plant_code . '\' and mcc_plant_code=\'' . $model->mcc_plant_code . '\' and bmc_code=\'' . $model->bmc_code . '\' and dcs_code=\'' . $dcsCode . '\' and member_code=\'' . $memberCode . '\'')
+                    ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'' . date('Y-m-d') . '\' else cast(to_date as date) end))')
+                    ->count();
+            if ($records > 0) {
+                $model->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' Is Deactivated.'));
+                return false;
+            }
+        }
+
+        $memberModel = new TblDcsDeactive();
+        $records = $memberModel->find()
+                ->where('union_code=\'' . $model->union_code . '\' and plant_code=\'' . $model->plant_code . '\' and mcc_plant_code=\'' . $model->mcc_plant_code . '\' and bmc_code=\'' . $model->bmc_code . '\' and dcs_code=\'' . $dcsCode . '\'')
+                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'' . date('Y-m-d') . '\' else cast(to_date as date) end))')
+                ->count();
+        if ($records > 0) {
+            $model->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Deactivated.'));
             return false;
         }
     }
