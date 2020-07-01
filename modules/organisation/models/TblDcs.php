@@ -239,9 +239,9 @@ class TblDcs extends ChildModel {
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['credit_sale_allow'], 'default', 'value' => 0],
             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
-            [['dcs_code'], function ($attribute, $params) {
-                    Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code);
-                }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
+//            [['dcs_code'], function ($attribute, $params) {
+//                    Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code);
+//                }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->process_name);
         $rules = array_merge($client_rules, $main_rules);
