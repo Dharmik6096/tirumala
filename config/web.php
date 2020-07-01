@@ -30,6 +30,7 @@ $config = [
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
         'sqlite' => ['class' => 'app\components\SqliteCreate'],
         'alertnotification' => ['class' => 'app\components\AlertNotification'],
+        'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -236,6 +237,7 @@ $config = [
         'soap' => ['class' => 'app\modules\soap\Soap',],
         'usermanagement' => ['class' => 'app\modules\usermanagement\usermanagement',],
         'emilkprolite' => ['class' => 'app\modules\webservice\emilkprolite\emilkProLite',],
+        'eipldpu' => [ 'class' => 'app\modules\eipldpu\Eipldpu',],
     ],
     'params' => $params,
 ];

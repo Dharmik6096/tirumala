@@ -391,6 +391,7 @@ echo GhostMenu::widget([
                     'items' => [
 //                        ['label' => 'BIPL Files Process', 'url' => ['/collection/tbl-processed-files/index']],
                         ['label' => 'EIPL Files Process', 'url' => ['/eipl-packet/create'], 'visible' => true],
+                        ['label' => 'EIPL Files Process - New', 'url' => ['/eipldpu/pendrive-import/create']],
                         ['label' => 'AMCS Files Process', 'url' => ['/syncutility/pendrive-import/create']],
                         ['label' => 'Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
                     ]
