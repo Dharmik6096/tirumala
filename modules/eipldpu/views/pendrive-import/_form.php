@@ -19,6 +19,7 @@ $form = ActiveForm::begin(['options' => [
 ?>
 <div class="modal-body">
     <div class="row">
+<<<<<<< HEAD
     <?php echo Html::hiddenInput('EiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
 <!--    <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
@@ -39,22 +40,54 @@ $form = ActiveForm::begin(['options' => [
             ],
             'clientEvents' => [
                 'success' => "function( file, response ){
+=======
+        <?php echo Html::hiddenInput('TblEiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
+        <div class="col-sm-3">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
+        </div>
+        <div class="col-sm-12">
+            <?=
+            Dropzone::widget([
+                'id' => 'mainDrop',
+                'options' => [
+                    'acceptedMimeTypes' => ".eip",
+                    'url' => \yii\helpers\Url::to(['/eipldpu/pendrive-import/import-file']),
+                    'addRemoveLinks' => true,
+                    'autoDiscover' => false,
+                    'maxFiles' => 20,
+                //'maxFilesize' => 0.0009,
+                //  'maxTotalSize' => 0.0009,
+                ],
+                'clientEvents' => [
+                    'success' => "function( file, response ){
+>>>>>>> origin/nif_preproduction
                                             var data=$.parseJSON(response);
                                             if(data.status=='success')
                                             { 
                                                 var file = $('#file_name').val();
                                                 $('#file_name').val(file+','+data.msg);
                                                 $('#upload-btn').attr('disabled',false);
+<<<<<<< HEAD
                                             }
                                             else
                                                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
                                                 
                                         }",
                 'removedfile' => "function(file){
+=======
+                                            } else {
+                                                $(file.previewElement).remove();
+                                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
+                                            }
+                                                
+                                        }",
+                    'removedfile' => "function(file){
+>>>>>>> origin/nif_preproduction
                           var file_str = $('#file_name').val();
                           var res = file_str.replace(file.name,''); 
                            $('#file_name').val(res);
                                            }",
+<<<<<<< HEAD
                 'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
             ]
         ]);
@@ -62,13 +95,26 @@ $form = ActiveForm::begin(['options' => [
     </div>
 </div>
 </div>
+=======
+                    'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
+                ]
+            ]);
+            ?>
+        </div>
+    </div>
+</div>
+>>>>>>> origin/nif_preproduction
 <div class="modal-footer">
     <?php
     AjaxSubmitButton::begin([
         'label' => Yii::t('app', 'Upload'),
         'ajaxOptions' => [
             'type' => 'POST',
+<<<<<<< HEAD
             'url' => \yii\helpers\Url::to(['/eipl-packet/create']),
+=======
+            'url' => \yii\helpers\Url::to(['/eipldpu/pendrive-import/create']),
+>>>>>>> origin/nif_preproduction
             'beforeSend' => new \yii\web\JsExpression('function(data){
                                             $("#loadercontent").show();
                                             $("#pageloader").show();
@@ -98,11 +144,18 @@ $form = ActiveForm::begin(['options' => [
                                         $("#importModal").modal("toggle");
                                         $("#import-pendrive-packet")[0].reset();
                                         Dropzone.forElement("#mainDrop").removeAllFiles(true);
+<<<<<<< HEAD
                                         bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>You have error in your file</span></div></div>");
                                     }
                              }'),
         ],
         'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit','disabled'=>true,],
+=======
+                                    }
+                             }'),
+        ],
+        'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true,],
+>>>>>>> origin/nif_preproduction
     ]);
     AjaxSubmitButton::end();
     ?>
