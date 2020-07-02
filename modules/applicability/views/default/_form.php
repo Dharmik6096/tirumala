@@ -81,8 +81,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <h4 class="theme-box-heading">Apply To</h4>
             </div>
             <?= Html::radioList('dcs-filter', 'society', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'dcs-filter']]); ?>
-        
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <div class="app-header-list">
                 <h4 class="mt10 mb15" id="header"><?= $title ?></h4>
                 <?php
@@ -117,7 +116,6 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <h4 class="theme-box-heading">Apply To</h4>
             </div>
             <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
-        
         <?php
     }
     $customerClass = "";
@@ -142,7 +140,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 ])
                 ?>
             </div>
-        
+        </div>
     <?php } ?>
     <div class="<?= $class ?>">
         <div class="col-sm-4 padding-left-0 selectMccArea disp_none">
@@ -242,7 +240,6 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             </div>
         </div>
     </div>
-        </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

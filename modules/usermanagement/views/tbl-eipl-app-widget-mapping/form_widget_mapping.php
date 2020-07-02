@@ -27,7 +27,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
                 $attribute = [
                     ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_SUCCESS,
-                        'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+                        'headerOptions' => ['class' => 'skip-export '], 'contentOptions' => ['class' => 'skip-export kv-align-center'],
                         'checkboxOptions' => function($model) use ($selectedArray) {
                             return ['class' => 'checkbox', 'value' => $model['widget_id'], 'checked' => in_array($model['widget_id'], $selectedArray)];
                         }],

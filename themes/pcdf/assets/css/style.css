@@ -97,7 +97,7 @@ ul{
     border: none;
     border-radius: 0px;
     position: relative;
-    padding: 8px 30px;
+    padding: 5px 30px;
     margin: 0 1px 10px;
     font-size: 14px;
     font-weight: 500;
@@ -370,7 +370,7 @@ h5 .badge{
     color: rgb(58, 123, 213);
     background-color: #fff !important;
     border-bottom: 1px solid rgb(58, 123, 213);
-    font-size: 18px;
+    font-size: 13px;
     font-weight: 600;
     /*text-transform: uppercase;*/
 }
@@ -385,8 +385,8 @@ h5 .badge{
 }
 .panel-default .panel-heading > .btn{
     margin: -11px 5px -11px -15px;
-    padding: 15px;
-    height: 48px;
+    padding: 12px;
+    height: 41px;
     border-radius: 2px 0 0 0;
     box-shadow: none;
 }
@@ -2661,7 +2661,7 @@ td.action-cell{
 
 /* .filters  */
 .input-group-addon {
-    padding: 2px 7px;
+    padding: 2px 2px;
     font-size: 11px;
 }
 
@@ -2678,8 +2678,8 @@ td.action-cell{
 }
 
 .modal .close{
-    top: 15px !important;
-    right: 20px !important;
+    top: 6px !important;
+    right: 12px !important;
 }
 
 .dynagrid-config-form .form-group .input-group-addon{
@@ -2750,7 +2750,7 @@ td.action-cell{
     margin-bottom: 10px;
 }
 
-.set_checkbox input[type="checkbox"]{
+input[type="checkbox"]{
     height: 10px !important;
     width: 10px!important;
 }
@@ -2766,3 +2766,17 @@ td.action-cell{
     font-weight: 600;
     /* text-transform: uppercase; 
 } */
+
+.modal-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.modal-header{
+    padding: 6px !important;
+}
+
+
+.modal-footer{
+    padding: 3px !important;
+}

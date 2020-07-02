@@ -61,7 +61,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     )
                     ?>
                 </div>
-            </div>
 
             <?= Html::beginForm(['set-child-routes', 'id' => $item->name]) ?>
 
@@ -123,6 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                     <?= Html::endForm() ?>
+                    </div>
                 </div>
             </div>
         </div>
