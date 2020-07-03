@@ -32,7 +32,7 @@ $form = ActiveForm::begin([
         ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
-<div class="row theme_border_left theme_border_right theme_border_bottom">
+<div class="row theme_border_left theme_border_right">
     <div class="col-md-12 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Manual Milk Collection</h4>
@@ -95,7 +95,7 @@ $form = ActiveForm::begin([
         </div>
     </div>
     <div class="clearfix"></div>
-</div>
+
 <div class="row">
 <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -165,7 +165,9 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
-<h5 class="panel-heading"><?= Yii::t('app', 'Manual Milk Collection Details') ?></h5>
+<div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+    <h4 class="theme-box-heading"><?= Yii::t('app', 'Manual Milk Collection Details') ?></h4>
+</div>
 <?php
 $attribute = [
     ['header' => 'Member Code', 'attribute' => 'member_code', 'value' => function($model) {
@@ -194,6 +196,7 @@ $grid_option = [
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['milk-coll-temp-grid']);
 ?>
+</div>
 <?php
 $script = "
     amount();

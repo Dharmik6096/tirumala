@@ -103,7 +103,6 @@ $form = ActiveForm::begin([
     </div>
     <?= Html::hiddenInput('from_plant', 0, ['id' => 'mcc']); ?>
     </div>
-    <div class="clearfix"></div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
         <h4 class="theme-box-heading">Contact Details</h4>

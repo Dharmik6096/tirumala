@@ -4,7 +4,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 ?>
 
-<div class="view-subtitle">
+<div class="view-subtitle padding_10_0 theme-box ">
 <h5 class="theme-box-heading"><?= Yii::t('app', 'Incentive Deduction') ?></h5>
 
 <?php

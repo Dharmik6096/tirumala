@@ -53,16 +53,16 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'dpu_product_code')->textInput(['readonly' => empty($model->is_dpu_product) || $disableDpuProduct, 'class' => 'form-control number-validate']) ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_inhouse', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_inclusive_tax', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_saleable', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_indent', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="clearfix"></div>

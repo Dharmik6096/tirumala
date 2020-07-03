@@ -145,6 +145,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-4 padding-right-5 padding-left-0', 'Sub District', ''); ?>
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-4 padding-right-5 padding-left-0', 'Village', ''); ?>
     </div>

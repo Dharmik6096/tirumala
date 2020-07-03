@@ -31,26 +31,26 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
         <h4 class="theme-box-heading">Cluster Details</h4>
     </div>
-    <div class="col-sm-4" id="union">
+    <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union',$readonly); ?>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblcluster-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '',$disabled); ?>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->local($model, $form); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-4">
+    
+    <div class="col-sm-2">
         <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <?= $form->field($model, 'local_address')->textarea(['maxlength' => true]) ?>
     </div>
 </div>

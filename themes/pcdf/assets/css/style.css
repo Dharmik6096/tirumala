@@ -737,6 +737,8 @@ form .checkbox input[type="checkbox"] + label,
 form .checkbox input[type="checkbox"] + span{
     position: relative;
     padding-left: 25px;
+    font-size: 11px;
+    font-weight: 400;
 }
 form .checkbox input[type="checkbox"] + label:before,
 form .checkbox input[type="checkbox"] + span:before{
@@ -2541,7 +2543,7 @@ div.crystalstyle{
 
 .panel .panel-body input:not(.btn):not([type="checkbox"]):not([type="radio"]),
 /* .modal .modal-body input:not(.btn), */
-.panel .panel-body select,
+.panel .panel-body select:not([multiple]),
 .panel .panel-body .input-group-addon {
     height: 24px !important;
     /* max-width: 280px !important; */
@@ -2552,7 +2554,9 @@ div.crystalstyle{
 .radio-list input[type="radio"]{
     height: 10px !important;
 }
-.panel .panel-body input:not(.btn), .panel .panel-body .form-control, .modal .modal-body .form-control{
+.panel .panel-body input:not(.btn),
+.panel .panel-body select:not([multiple]),
+.modal .modal-body .form-control{
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
@@ -2578,6 +2582,7 @@ div.crystalstyle{
 
 .panel .panel-body textarea {
     height: 90px !important;
+    font-size: 11px;
 }
 
 .help-block{
@@ -2811,3 +2816,35 @@ input[type="checkbox"]{
   ::-webkit-scrollbar-thumb:hover {
     background: rgb(58, 123, 213) !important; 
   }
+
+select[multiple]{
+    max-height: 50px !important;
+    border-radius: 0;
+    border: 1px solid #ccc;
+    font-size: 11px !important;
+    padding: 3px;
+}
+
+.tab-content{
+    border-top: 2px solid  rgb(58, 123, 213) !important;
+}
+
+.tabs-above>.nav-tabs>.active>a{
+    border: 1px solid  rgb(58, 123, 213) !important;
+    background: rgb(58, 123, 213) !important;
+    color: #ffffff !important;
+}
+.tabs-above>.nav-tabs>.active>a:hover{
+    color: #ffffff !important;
+}
+.nav-tabs > li > a{
+    border-radius: 0px !important;
+}
+.nav-tabs > li > a:active{
+    color: #ffffff !important;
+}
+
+.multiselect{
+    font-size: 11px !important;
+    height: 24px !important;
+}
