@@ -264,6 +264,8 @@ class PendriveImportController extends \app\controllers\ChildController {
 
             if ($transaction->isActive) {
                 $transaction->commit();
+                \Yii::$app->db->createCommand("{CALL GPRS_PD_DATA_PROCESS (:uuid)}")
+                        ->bindValue(':uuid', $uuid)->execute();
                 Yii::$app->display->message(true, 'Pendrive Data', 'create');
                 return TRUE;
             } else {
