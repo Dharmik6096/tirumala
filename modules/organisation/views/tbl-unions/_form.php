@@ -138,8 +138,8 @@ $form = ActiveForm::begin([
     </div>
 </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading"></h4>
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 theme_border_top clearfix">
+            <h4 class=""></h4>
         </div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
