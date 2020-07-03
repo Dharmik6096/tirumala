@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid'];
 
     /**
      * Lists all TblBmcCollection models.

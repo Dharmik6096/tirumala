@@ -13,6 +13,9 @@ use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;
 use Yii;
 use app\modules\organisation\models\TblDcsMilkType;
+use app\modules\general\models\TblSocietyVendor;
+use app\modules\organisation\models\TblDcsHistory;
+use app\modules\organisation\models\TblDcsVillageMappingHistory;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -73,12 +76,38 @@ class DcsImportStrategy extends ARImportStrategy {
                         }
                     }
                     $modelList = [];
+                    $deleteModel = [];
                     $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_plant_code');
                     $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
                     $model->setModel();
                     $error = ActiveForm::validate($model);
-                    $model->dcs_code = $model->getCode();
-
+//                    $model->dcs_code = $model->getCode();
+                    $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
+                    $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';
+                    if (!empty($findField)) {
+                        $findFields = explode(',', $findField);
+                        foreach ($findFields as $val) {
+                            $where[$val] = $model->$val;
+                        }
+                        $existData = $model::find()->where($where)->one();
+                        if (!empty($existData) && !empty($excludeField)) {
+                            $excludes = [];
+                            $exclude = explode(',', $excludeField);
+                            foreach ($exclude as $val) {
+                                $excludes[] = $val;
+                            }
+                            $oldVillage = $existData->village_code;
+                            $oldMilkType = $existData->milk_type_code;
+                            $model = $existData;
+                            $model->scenario = 'importCsv';
+                            $historyModel = new TblDcsHistory();
+                            \Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                            array_push($modelList, $historyModel);
+                            $this->setAttributes($this->configs, $model, $row, $excludes);
+                        } else {
+                            $model->dcs_code = $model->getCode();
+                        }
+                    }
                     if ($model->hasAttribute('is_active')) {
                         $nm = ucwords(str_replace('_', ' ', 'is_active'));
                         if (!(preg_match('/^[0-9]*$/', $model->is_active))) {
@@ -88,45 +117,64 @@ class DcsImportStrategy extends ARImportStrategy {
                             $model->addError($model->is_active, $nm . ' must have 0 or 1 value');
                         }
                     }
-//                    array_push($modelList, $model);
 
                     if (empty($model->getErrors()) && $model->validate()) {
                         array_push($modelList, $model);
-                        if (!empty($model->village_code)) {
+
+                        if (!empty($existData) && ($oldVillage != $model->village_code)) {
+                            $oldModel = TblDcsVillageMapping::find()->where(['dcs_code' => $model->dcs_code, 'village_code' => $oldVillage])->one();
+                            if (!empty($oldModel)) {
+                                $mappingHistory = new TblDcsVillageMappingHistory();
+                                Yii::$app->operation->history($oldModel, $mappingHistory, DELETE);
+                                array_push($modelList, $mappingHistory);
+                                array_push($deleteModel, $oldModel);
+                            }
+                            $modelMapping = new TblDcsVillageMapping();
+                            $modelMapping->dcs_code = $model->dcs_code;
+                            $modelMapping->village_code = $model->village_code;
+                            $modelMapping->is_active = isset($model->is_active) && $model->is_active != NULL ? $model->is_active : 1;
+                            array_push($modelList, $modelMapping);
+                        } elseif (empty($existData)) {
                             $modelMapping = new TblDcsVillageMapping();
                             $modelMapping->dcs_code = $model->dcs_code;
                             $modelMapping->village_code = $model->village_code;
                             $modelMapping->is_active = isset($model->is_active) && $model->is_active != NULL ? $model->is_active : 1;
                             array_push($modelList, $modelMapping);
                         }
-                        $modelCodes = new TblSocietyCodes();
-                        $modelCodes->dcs_code = $model->dcs_code;
-                        $modelCodes->bipl_code = substr($model->dcs_code, 2, 8);
-                        $modelCodes->union_code = $model->union_code;
-//                        $modelCodes->bmc_code = NULL;
-                        $modelCodes->bmc_code = $model->bmc_code;
-                        array_push($modelList, $modelCodes);
-//                        var_dump($model->dcs_code);exit;
-//                        $list = $model->setSubCenter('I',$this->scenario);
-//
-//                        foreach ($list as $row){
-//                            array_push($modelList, $row);
-//                        }
-                        $modelMilk = new TblDcsMilkType();
-                        $modelMilk->dcs_code = $model->dcs_code;
-                        $modelMilk->milk_type_code = $model->milk_type_code;
-                        $modelMilk->is_active = 1;
-                        $modelMilk->scenario = 'dcsImport';
-
-                        array_push($modelList, $modelMilk);
                         $errors = [];
-                        $model->setModelData($model, $modelList);
-                        $model->setbankContacts($model, $modelList, $errors);
+                        if (empty($existData)) {
+                            $modelCodes = new TblSocietyCodes();
+                            $modelCodes->dcs_code = $model->dcs_code;
+                            $modelCodes->bipl_code = substr($model->dcs_code, 2, 8);
+                            $modelCodes->union_code = $model->union_code;
+//                        $modelCodes->bmc_code = NULL;
+                            $modelCodes->bmc_code = $model->bmc_code;
+                            array_push($modelList, $modelCodes);
 
+                            $model->setbankContacts($model, $modelList, $errors);
+                            $model->setModelData($model, $modelList);
+                            $vendorModel = new TblSocietyVendor();
+                            $vendorModel->dcs_code = $model->dcs_code;
+                            $vendorModel->vendor_code = $model->vendor;
+                            array_push($modelList, $vendorModel);
+                        }
+                        $modelMilk = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1, 'milk_type_code' => $model->milk_type_code])->one();
+                        if (!empty($existData) && !empty($modelMilk)) {
+                            
+                        } else {
+                            $modelMilk = new TblDcsMilkType();
+                            $modelMilk->dcs_code = $model->dcs_code;
+                            $modelMilk->milk_type_code = $model->milk_type_code;
+                            $modelMilk->is_active = 1;
+                            $modelMilk->scenario = 'dcsImport';
+                            array_push($modelList, $modelMilk);
+                        }
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
                         }
-
+                        foreach ($deleteModel as $delete) {
+                            $master[] = $delete->delete();
+                        }
                         if ($this->isActiveRecordUnique($uniqueAttributes)) {
                             $importedPks[] = $model->primaryKey;
                         }
@@ -187,6 +235,27 @@ class DcsImportStrategy extends ARImportStrategy {
         }
         if ($count == count($data) - 1) {
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)/* ,'error'=>$errors */];
+        }
+    }
+
+    public function setAttributes($configs, &$model, $row, $excludes = []) {
+        foreach ($configs as $config) {
+            if (isset($config['attribute']) && !in_array($config['attribute'], $excludes)) {
+                $value = call_user_func($config['value'], $row);
+                if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
+                    //Create array of unique attributes
+                    if (isset($config['unique']) && $config['unique']) {
+                        $uniqueAttributes[$config['attribute']] = $value;
+                    }
+                    //Set value to the model
+                    ($model->hasAttribute($config['attribute'])) ? $model->setAttribute($config['attribute'], $value) : '';
+                    $addedAttributes[$config['attribute']] = $config['attribute'];
+                } else if (property_exists($model, $config['attribute'])) {
+                    //Set value to the model of public attribute
+                    $model->{$config['attribute']} = $value;
+                    $addedAttributes[$config['attribute']] = $config['attribute'];
+                }
+            }
         }
     }
 
