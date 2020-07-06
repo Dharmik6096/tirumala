@@ -207,8 +207,7 @@ class TblDcs extends ChildModel {
             //  [['tmcc_code'], 'number', 'min' => 1],
             // ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
             // [['dcs_code_ex'], 'number'],
-            [['is_active'], 'default', 'value' => 1, 'except' => ['importCsv']],
-            [['is_active'], 'default', 'value' => 0, 'on' => ['importCsv']],
+            [['is_active'], 'default', 'value' => 1],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code'], 'safe'],
             [['is_dispatch_mandate', 'is_live'], 'default', 'value' => 0],
             [['is_dispatch_mandate'], function ($attribute, $params) {

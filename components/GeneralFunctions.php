@@ -40,6 +40,8 @@ use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\models\TblKeyPattern;
 use app\modules\bkgprocess\models\TblFtpDetail;
+use app\modules\dcsoperation\models\TblMemberDeactive;
+use app\modules\organisation\models\TblDcsDeactive;
 
 class GeneralFunctions extends Component {
 
@@ -1550,7 +1552,7 @@ class GeneralFunctions extends Component {
         return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
     }
 
-   public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
+    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
         $keyPattern = $this->getKeyPattern($table_name);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
@@ -1592,9 +1594,9 @@ class GeneralFunctions extends Component {
                 $ref_code = ($keyPattern['ref_code_length'] > 0 ) ? str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT) : '';
                 $model->ref_code = '';
                 foreach ($prefix_seq as $pre) {
-                    $model->ref_code.=$model->{$pre};
+                    $model->ref_code .= $model->{$pre};
                 }
-                $model->ref_code.=$ref_code;
+                $model->ref_code .= $ref_code;
             }
             if (empty($model->ref_code)) {
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
@@ -1670,8 +1672,8 @@ class GeneralFunctions extends Component {
             $memberCode = !empty($member) ? $member : $model->member_code;
             $memberModel = new TblMemberDeactive();
             $records = $memberModel->find()
-                    ->where('union_code=\'' . $model->union_code . '\' and plant_code=\'' . $model->plant_code . '\' and mcc_plant_code=\'' . $model->mcc_plant_code . '\' and bmc_code=\'' . $model->bmc_code . '\' and dcs_code=\'' . $dcsCode . '\' and member_code=\'' . $memberCode . '\'')
-                    ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'' . date('Y-m-d') . '\' else cast(to_date as date) end))')
+                    ->where('dcs_code=\'' . $dcsCode . '\' and member_code=\'' . $memberCode . '\'')
+                    ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
                     ->count();
             if ($records > 0) {
                 $model->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' Is Deactivated.'));
@@ -1681,8 +1683,8 @@ class GeneralFunctions extends Component {
 
         $memberModel = new TblDcsDeactive();
         $records = $memberModel->find()
-                ->where('union_code=\'' . $model->union_code . '\' and plant_code=\'' . $model->plant_code . '\' and mcc_plant_code=\'' . $model->mcc_plant_code . '\' and bmc_code=\'' . $model->bmc_code . '\' and dcs_code=\'' . $dcsCode . '\'')
-                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'' . date('Y-m-d') . '\' else cast(to_date as date) end))')
+                ->where('dcs_code=\'' . $dcsCode . '\'')
+                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
                 ->count();
         if ($records > 0) {
             $model->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Deactivated.'));

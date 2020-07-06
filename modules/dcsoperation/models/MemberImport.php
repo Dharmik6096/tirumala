@@ -22,8 +22,8 @@ class MemberImport extends TblMember {
 
         $rules = [
             [['dcs_code'], function ($attribute, $params) {
-            
-        }, 'on' => ['customImport']],
+                    
+                }, 'on' => ['customImport']],
             [['dcs_code'], 'validateDcs'],
             [['hamlet_code'], 'validateHamlet'],
             [['member_type_code'], 'validateMemberType'],
@@ -34,8 +34,8 @@ class MemberImport extends TblMember {
             [['religion_code'], 'validateReligion'],
             [['no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind'], 'validateNoOfAnimal'],
             [['branch_code'], function ($attribute, $params) {
-            Yii::$app->general->validateBranch($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateBranch($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['dob'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true],
             [['animal_type_code'], 'validateAnimalType'],
             [['registration_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true],
@@ -60,6 +60,11 @@ class MemberImport extends TblMember {
     }
 
     public function validateDcs($attribute, $params) {
+        $dcs = new TblDcs();
+        $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
+        if (empty($this->dcs_code)) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+        }
         if (!empty($this->dcs_code)) {
             $dcs = Yii::$app->general->validateActiveRelation($this, 'TblDcs', 'dcs_code', 'dcs_code', 'Society Code', 'Society Code', 'dcs_code');
             if ($dcs['msg'] != '') {

@@ -100,7 +100,7 @@ class TblDcsDeactive extends \app\models\ChildModel {
 
     public function validateFromDate($attribute, $params) {
         $existDCS = $this->find()
-                ->where(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code])
+                ->where(['dcs_code' => $this->dcs_code])
                 ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
                 ->andWhere(['IS', 'to_date', NULL])
                 ->one();
@@ -109,7 +109,7 @@ class TblDcsDeactive extends \app\models\ChildModel {
             return false;
         }
         $dateData = $this->find()
-                ->where('union_code=\'' . $this->union_code . '\' and plant_code=\'' . $this->plant_code . '\' and mcc_plant_code=\'' . $this->mcc_plant_code . '\' and bmc_code=\'' . $this->bmc_code . '\' and dcs_code=\'' . $this->dcs_code . '\'')
+                ->where('dcs_code=\'' . $this->dcs_code . '\'')
                 ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date))')
                 ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
                 ->all();
@@ -128,7 +128,7 @@ class TblDcsDeactive extends \app\models\ChildModel {
         }
 
         $dateData = $this->find()
-                ->where('union_code=\'' . $this->union_code . '\' and plant_code=\'' . $this->plant_code . '\' and mcc_plant_code=\'' . $this->mcc_plant_code . '\' and bmc_code=\'' . $this->bmc_code . '\' and dcs_code=\'' . $this->dcs_code . '\'')
+                ->where('dcs_code=\'' . $this->dcs_code . '\'')
                 ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
                 ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
                 ->all();
