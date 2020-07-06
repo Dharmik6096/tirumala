@@ -663,13 +663,13 @@ class TblDcs extends ChildModel {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->where(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1]);
     }
 
-    public function getSocietyStatus() {
-        return $this->hasOne(TblSocietyCollection::className(), ['dcs_code' => 'dcs_code'])->orderBy('collection_id desc');
-    }
-
     public function validDcs($dcs, $bmc) {
         $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs], ['ref_code' => $dcs]])->andWhere(['is_active' => 1, 'bmc_code' => $bmc])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
+    }
+
+    public function getSocietyStatus() {
+        return $this->hasOne(TblSocietyCollection::className(), ['dcs_code' => 'dcs_code'])->orderBy('collection_id desc');
     }
 
     public function getNewDcs() {
@@ -703,10 +703,6 @@ class TblDcs extends ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function getPlantCode() {
-        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
-    }
-
     public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '', $dateFilter = '') {
         $value = $this->getBMCDCS($plantCode, $RLS, $dateFilter);
         $value = ArrayHelper::map($value, 'dcs_code', function($value) use ($type) {
@@ -729,6 +725,10 @@ class TblDcs extends ChildModel {
         }
 
         return $query->all();
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
     public function getTblPurchaseRateApplicabilityUnblock() {
@@ -1009,12 +1009,17 @@ class TblDcs extends ChildModel {
     }
 
     public function IntValidateDcs() {
-        if (substr($this->dcs_code, 0, 1) == '0') {
-            $msg = Yii::t('app', 'DCS Code') . ' must not contain leading zero.';
+        /* if (substr($this->dcs_code, 0, 1) == '0') {
+          $msg = Yii::t('app', 'DCS Code') . ' must not contain leading zero.';
+          $this->addError('dcs_code', Yii::t('app/validation', $msg));
+          return false;
+          } */
+        if (!preg_match('/^[0-9]*$/', $this->dcs_code)) {
+            $msg = Yii::t('app', 'DCS Code') . ' must be number.';
             $this->addError('dcs_code', Yii::t('app/validation', $msg));
             return false;
         } else {
-            $cnt = $this->find()->where(['convert(bigint,dcs_code)' => $this->dcs_code])
+            $cnt = $this->find()->where(['convert(bigint,dcs_code)' => (int) $this->dcs_code])
                     ->andWhere(['!=', 'dcs_code', $this->dcs_code])
                     ->count();
             if ($cnt > 0) {
