@@ -134,17 +134,18 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $main_data_model->attributes = $model->attributes;
                             if (!empty($packet_config)) {
                                 if (!isset($packet_config['savelog'])) {
-                                    $data_array = $this->PacketData($packet, $packet_config);
-                                    $model->attributes = $data_array;
-                                    $model->dcs_code = $model->vlccid;
-                                    $model->main_table = 1;
-                                    $dtdate = \DateTime::createFromFormat('dmy', $model->dtdate);
-                                    $model->dtdate = $dtdate->format('Y-m-d');
-                                    $model->sampletime = date('Y-m-d', strtotime($model->dtdate)) . (!empty($data_array['sampletime']) ? (' ' . $data_array['sampletime']) : '');
-                                    $model->mccid = substr($model->vlccid, 0, 6);
-                                    $model->response_msg = 'OK';
-                                    //$modelSave[] = $model;
                                     try {
+                                        $data_array = $this->PacketData($packet, $packet_config);
+                                        $model->attributes = $data_array;
+                                        $model->dcs_code = $model->vlccid;
+                                        $model->main_table = 1;
+                                        $dtdate = \DateTime::createFromFormat('dmy', $model->dtdate);
+                                        $model->dtdate = $dtdate->format('Y-m-d');
+                                        $model->sampletime = date('Y-m-d', strtotime($model->dtdate)) . (!empty($data_array['sampletime']) ? (' ' . $data_array['sampletime']) : '');
+                                        $model->mccid = substr($model->vlccid, 0, 6);
+                                        $model->response_msg = 'OK';
+                                        //$modelSave[] = $model;
+                                        $model->rate = (empty($model->rate) && !empty($model->qty)) ? ($model->amt / $model->qty) : $model->rate;
                                         $model->save();
                                         $success_cnt +=1;
                                     } catch (\Throwable $ex) {
