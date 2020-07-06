@@ -33,7 +33,7 @@ $form = ActiveForm::begin(['options' => [
                     'addRemoveLinks' => true,
                     'autoDiscover' => false,
                     'maxFiles' => 20,
-                //'maxFilesize' => 0.0009,
+                    'maxFilesize' => 0.02,
                 //  'maxTotalSize' => 0.0009,
                 ],
                 'clientEvents' => [

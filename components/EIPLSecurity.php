@@ -47,6 +47,9 @@ class EIPLSecurity extends Component {
                 $plaintext_dec = FALSE;
             }
         }
+        if ($plaintext_dec && strlen($plaintext_dec) != strlen(utf8_decode($plaintext_dec))) {
+            $plaintext_dec = FALSE;
+        }
         return $plaintext_dec;
     }
 
