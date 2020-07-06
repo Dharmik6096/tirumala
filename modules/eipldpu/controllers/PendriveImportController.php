@@ -25,26 +25,30 @@ class PendriveImportController extends \app\controllers\ChildController {
                 $cnt = 0;
                 $file_id = [];
                 foreach ($files as $key => $value) {
-                    $old_path = $path . $value;
-                    $file_path = $CollectionData . $value;
-                    if (copy($old_path, $file_path)) {
-                        $file = new TblEiplPacketFileLog();
-                        $file->attributes = $model->attributes;
-                        $file->file_path = str_replace('\\', '/', $file_path);
-                        $file->file_name = $value;
-                        $file->file_status = 0;
-                        $file->source_type = 1;
-                        $file->status = 1;
-                        $file->dpu_type = $this->validateFileName($file->file_name);
-                        if ($file->save(FALSE)) {
-                            $file_id[] = $file->file_id;
-                            $cnt++;
-                            unlink($old_path);
+                    try {
+                        $old_path = $path . $value;
+                        $file_path = $CollectionData . $value;
+                        if (copy($old_path, $file_path)) {
+                            $file = new TblEiplPacketFileLog();
+                            $file->attributes = $model->attributes;
+                            $file->file_path = str_replace('\\', '/', $file_path);
+                            $file->file_name = $value;
+                            $file->file_status = 0;
+                            $file->source_type = 1;
+                            $file->status = 1;
+                            $file->dpu_type = $this->validateFileName($file->file_name);
+                            if ($file->save(FALSE)) {
+                                $file_id[] = $file->file_id;
+                                $cnt++;
+                                unlink($old_path);
+                            } else {
+                                $error_file[] = $value;
+                            }
                         } else {
                             $error_file[] = $value;
                         }
-                    } else {
-                        $error_file[] = $value;
+                    } catch (\Throwable $ex) {
+                        
                     }
                 }
                 if (!empty($file_id)) {
@@ -126,19 +130,29 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $model->is_decrypted = ($dec_text) ? 1 : 0;
                             $model->main_table = 0;
                             $model->source_type = $file->source_type;
+                            $main_data_model = new TblEiplPacketProcess();
+                            $main_data_model->attributes = $model->attributes;
                             if (!empty($packet_config)) {
                                 if (!isset($packet_config['savelog'])) {
-                                    $data_array = $this->PacketData($packet, $packet_config);
-                                    $model->attributes = $data_array;
-                                    $model->dcs_code = $model->vlccid;
-                                    $model->main_table = 1;
-                                    $dtdate = \DateTime::createFromFormat('dmy', $model->dtdate);
-                                    $model->dtdate = $dtdate->format('Y-m-d');
-                                    $model->sampletime = date('Y-m-d', strtotime($model->dtdate)) . (!empty($data_array['sampletime']) ? (' ' . $data_array['sampletime']) : '');
-                                    $model->mccid = substr($model->vlccid, 0, 6);
-                                    $model->response_msg = 'OK';
-                                    $success_cnt +=1;
-                                    $modelSave[] = $model;
+                                    try {
+                                        $data_array = $this->PacketData($packet, $packet_config);
+                                        $model->attributes = $data_array;
+                                        $model->dcs_code = $model->vlccid;
+                                        $model->main_table = 1;
+                                        $dtdate = \DateTime::createFromFormat('dmy', $model->dtdate);
+                                        $model->dtdate = $dtdate->format('Y-m-d');
+                                        $model->sampletime = date('Y-m-d', strtotime($model->dtdate)) . (!empty($data_array['sampletime']) ? (' ' . $data_array['sampletime']) : '');
+                                        $model->mccid = substr($model->vlccid, 0, 6);
+                                        $model->response_msg = 'OK';
+                                        //$modelSave[] = $model;
+                                        $model->rate = (empty($model->rate) && !empty($model->qty)) ? ($model->amt / $model->qty) : $model->rate;
+                                        $model->save();
+                                        $success_cnt +=1;
+                                    } catch (\Throwable $ex) {
+                                        $main_data_model->response_msg = 'Not OK';
+                                        $main_data_model->save();
+                                        $error_cnt += 1;
+                                    }
                                 } else {
                                     unset($packet_config['savelog']);
                                     $data_array = $this->PacketData($packet, $packet_config);
@@ -147,7 +161,8 @@ class PendriveImportController extends \app\controllers\ChildController {
                                 }
                             } else {
                                 $model->response_msg = 'Packet Config Missing';
-                                $modelSave[] = $model;
+                                //$modelSave[] = $model;
+                                $model->save();
                                 $error_cnt += 1;
                             }
                             $cnt++;
@@ -178,8 +193,10 @@ class PendriveImportController extends \app\controllers\ChildController {
                 $file->file_status = 3; //not found
                 $file->response_msg = 'File Not Found';
             }
-            $modelSave[] = $file;
-            $transaction = $this->generalModel->saveTransaction($modelSave, ['Pendrive File', 'create']);
+            $file->save(FALSE);
+            Yii::$app->display->message(true, 'Pendrive Data', 'create');
+            //$modelSave[] = $file;
+            //$transaction = $this->generalModel->saveTransaction($modelSave, ['Pendrive File', 'create']);
         }
         $model = new TblEiplPacketProcess();
         $model->file_name = $file_id;
@@ -248,6 +265,8 @@ class PendriveImportController extends \app\controllers\ChildController {
 
             if ($transaction->isActive) {
                 $transaction->commit();
+                \Yii::$app->db->createCommand("{CALL GPRS_PD_DATA_PROCESS (:uuid)}")
+                        ->bindValue(':uuid', $uuid)->execute();
                 Yii::$app->display->message(true, 'Pendrive Data', 'create');
                 return TRUE;
             } else {
