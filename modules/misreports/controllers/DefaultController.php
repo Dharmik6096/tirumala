@@ -837,7 +837,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '124 - BMC Collection Consolidated',
             ],
             'AmcsSyncPending' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_organization_type:static:p_organization_type',
+                'param' => 'p_organization_type:static:p_organization_type,union_code,plant_code,mcc_code,bmc_code,dcs_code',
                 'sp_name' => 'sp_mis_sentbox_sync_pending_data',
                 'scenario' => 'AmcsSyncPending',
                 'title' => '224 - AMCS Sync Pending',
