@@ -129,4 +129,40 @@ class ReportController extends MasterController {
         return $this->prepareResposne();
     }
 
+    public function actionMemberWiseSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberWiseProductWiseDateWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberWisePaymentCycleWiseSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberWiseProductWisePaymentCycleWiseSummary() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberWiseNoOfPaymentCycle() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMemberWisePaymentCycleWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionMppWisePaymentCycleWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionBmcWisePaymentCycleWise() {
+        return $this->prepareResposne();
+    }
+
+    public function actionCompanyWisePaymentCycleWise() {
+        return $this->prepareResposne();
+    }
+
 }
