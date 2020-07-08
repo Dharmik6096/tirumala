@@ -494,11 +494,11 @@ class V1 extends \yii\base\Module {
                 'call_action' => TRUE
             ],
             'report/milk-collection-vs-receipt' => [
-                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_milk_collection_vs_milk_receipt',
             ],
             'report/milk-dispatch-vs-receipt' => [
-                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_milk_dispatch_vs_receipt',
             ],
             'report/member-collection-vs-dispatch' => [
@@ -506,19 +506,19 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_member_collection_vs_dispatch',
             ],
             'report/company-wise-collection-vs-dispatch' => [
-                'param' => 'union#route#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_vs_dispatch',
             ],
             'report/company-wise-collection-vs-recipt' => [
-                'param' => 'union#route#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_vs_receipt',
             ],
             'report/company-wise-dispatch-vs-recipt' => [
-                'param' => 'union#route#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_dispatch_vs_receipt',
             ],
             'report/bmc-collection-shift-report' => [
-                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_shift_report',
                 'call_action' => TRUE
             ],
@@ -533,7 +533,7 @@ class V1 extends \yii\base\Module {
                 'call_action' => TRUE
             ],
             'report/bmc-collection-consolidated' => [
-                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_consolidated',
                 'call_action' => TRUE
             ],
