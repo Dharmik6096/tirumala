@@ -552,6 +552,51 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_consolidated',
                 'call_action' => TRUE
             ],
+            'report/member-wise-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_summary',
+                'call_action' => TRUE
+            ],
+            'report/member-wise-product-wise-date-wise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_product_wise_date_wise',
+                'call_action' => TRUE
+            ],
+            'report/member-wise-payment-cycle-wise-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_payment_cycle_wise_summary',
+                'call_action' => TRUE
+            ],
+            'report/member-wise-product-wise-payment-cycle-wise-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_product_wise_payment_cycle_wise_summary',
+                'call_action' => TRUE
+            ],
+            'report/member-wise-no-of-payment-cycle' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#no_of_payment_cycle',
+                'sp' => 'sp_app_eipl_v1_member_wise_no_of_payment_cycle',
+                'call_action' => TRUE
+            ],
+            'report/member-wise-payment-cycle-wise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_payment_cycle_wise',
+                'call_action' => TRUE
+            ],
+            'report/mpp-wise-payment-cycle-wise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_mpp_wise_payemnt_cycle_wise',
+                'call_action' => TRUE
+            ],
+            'report/bmc-wise-payment-cycle-wise' => [
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_bmc_wise_payemnt_cycle_wise',
+                'call_action' => TRUE
+            ],
+            'report/company-wise-payment-cycle-wise' => [
+                'param' => 'union#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_company_wise_payemnt_cycle_wise',
+                'call_action' => TRUE
+            ],
         ];
         return $label;
     }
