@@ -965,6 +965,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Vendor'),
                 'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL')],
             ],
+            'action_perform' => [
+                'name' => 'action_perform',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['CREATE' => Yii::t('app', 'CREATE'), 'UPDATE' => Yii::t('app', 'UPDATE'), 'DELETE' => Yii::t('app', 'DELETE')],
+            ],
         ];
         return $records[$l];
     }
