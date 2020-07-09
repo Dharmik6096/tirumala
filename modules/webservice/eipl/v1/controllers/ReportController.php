@@ -31,10 +31,14 @@ class ReportController extends MasterController {
         $sp_param = [];
         $param = !empty($data['param']) ? explode('#', $data['param']) : [];
         $org_codes = $this->getOrgCodes();
+        $orgToZero = false;
+        if (isset($data['blank_org_to_zero']) && $data['blank_org_to_zero'] == true) {
+            $orgToZero = true;
+        }
         foreach ($param as $value) {
             $array_val = explode(':', $value);
             $param_val = !empty($array_val[1]) ? $array_val[1] : (isset($req_data[$value]) ? $req_data[$value] : NULL);
-            $param_val = empty($param_val) && isset($org_codes[$value]) ? (!empty($org_codes[$value]) ? (is_array($org_codes[$value]) ? (',' . implode(',', $org_codes[$value]) . ',') : $org_codes[$value]) : '0' ) : ((is_array($param_val) ? (',' . implode(',', $param_val) . ',') : $param_val));
+            $param_val = empty($param_val) && isset($org_codes[$value]) ? (!empty($org_codes[$value]) && !$orgToZero ? (is_array($org_codes[$value]) ? (',' . implode(',', $org_codes[$value]) . ',') : $org_codes[$value]) : '0' ) : ((is_array($param_val) ? (',' . implode(',', $param_val) . ',') : $param_val));
             $sp_param[] = $param_val;
         }
         $result = \Yii::$app->general->getSpData($sp_name, $sp_param);
