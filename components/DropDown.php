@@ -863,6 +863,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Method'),
                 'data' => ['all' => Yii::t('app', 'Rate ID Wise'), 'custom' => Yii::t('app', 'WEF Date Wise')],
             ],
+            'process_type' => [
+                'name' => 'process_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'RATE' => Yii::t('app', 'RATE')],
+            ],
+            'data_type' => [
+                'name' => 'data_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['PLAIN' => Yii::t('app', 'PLAIN'), 'ENCRYPTED' => Yii::t('app', 'ENCRYPTED')],
+            ],
         ];
         return $records[$l];
     }
@@ -937,6 +947,7 @@ class DropDown extends Component {
             'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],
             'reject_reason' => ['name' => 'rejection_reason_code', 'fields' => 'rejection_reason_code,rejection_reason', 'prompt' => Yii::t('app', 'Select Reject Reason'), 'model' => 'TblRejectionReason'],
+            'bmc-dcs' => ['name' => 'dcs_code', 'fields' => 'dcs_code,dcs_name,local_name', 'prompt' => Yii::t('app', 'Select Society'), 'model' => 'TblDcs', 'depend' => 'bmc_code', 'checkValid'],
         ];
         return $label[$l];
     }
