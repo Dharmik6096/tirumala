@@ -39,6 +39,18 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
                     'sp_name' => 'sp_vsp_payment',
                 ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
+                    'sp_name' => 'sp_remuneration_payment',
+                ],
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code',
+                    'sp_name' => 'sp_member_dcs_payment_processing_data',
+                ],
+                'transit_loss' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,dcs_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_bmc_transit_loss',
+                ],
             ],
         ];
     }
