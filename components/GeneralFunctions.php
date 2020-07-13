@@ -993,7 +993,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1689,6 +1689,52 @@ class GeneralFunctions extends Component {
         if ($records > 0) {
             $model->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Deactivated.'));
             return false;
+        }
+    }
+
+    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key) {
+        if (!$model->isNewRecord) {
+            $keyPattern = $this->getKeyPattern($table_name);
+            if (!empty($keyPattern)) {
+                $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
+                $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
+                if (empty($model->{$ex_code_key})) {
+                    $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
+                } else {
+                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    if (strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
+                        $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' length must be ' . $keyPattern['ex_code_length'] . '.'));
+                    } else {
+                        $ex_cnt = $model->find()
+                                ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                                ->andWhere([$ex_code_key => $model->{$ex_code_key}])
+                                ->andWhere(['!=', $pk_key, $model->{$pk_key}])
+                                ->count();
+                        if ($ex_cnt > 0) {
+                            $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
+                        }
+                    }
+                }
+                if (empty($model->ref_code)) {
+                    $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+                } else {
+                    $model->ref_code = str_pad(($model->ref_code), $ref_code_fix_length, '0', STR_PAD_LEFT);
+                    if (strlen($model->ref_code) != $ref_code_fix_length) {
+                        $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
+                    } else {
+                        $cnt = $model->find()
+                                ->where(['convert(bigint,ref_code)' => (int) $model->ref_code, 'union_code' => $model->union_code])
+                                ->andWhere(['!=', $pk_key, $model->{$pk_key}])
+                                ->count();
+                        if ($cnt > 0) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                        }
+                    }
+                }
+            } else {
+                $model->addError('ref_code', Yii::t('app/validation', 'Key pattern config missing.'));
+                return;
+            }
         }
     }
 
