@@ -30,6 +30,7 @@ $config = [
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
         'sqlite' => ['class' => 'app\components\SqliteCreate'],
         'alertnotification' => ['class' => 'app\components\AlertNotification'],
+        'customvalidation' => ['class' => 'app\components\CustomValidation'],
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',

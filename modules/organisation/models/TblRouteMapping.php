@@ -14,6 +14,7 @@ use \app\modules\globalmaster\models\TblUnitConversions;
 use app\modules\organisation\models\TblRouteMappingSources;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\details\models\TblContactDetails;
 
 //use app\modules\globalmaster\models\TblVehicleType;
 /**
@@ -47,6 +48,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
     public $unit;
     public $is_sentbox;
+    public $firstname, $mobile_no;
 
     /**
      * @inheritdoc
@@ -60,13 +62,24 @@ class TblRouteMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'route_code', 'route_name', 'to_dest', 'route_type', 'morning_start_time', 'morning_end_time', 'evening_start_time', 'evening_end_time', 'route_length_kms', 'capacity', 'vehicle_type_code', 'valid_from'], 'required'],
+            [['route_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'route_type');
+                }, 'on' => 'importCsv'],
+            [['capacity'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'capacity');
+                }, 'on' => 'importCsv'],
+            [['vehicle_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
+                }, 'on' => 'importCsv'],
+            [['union_code', 'route_name', 'to_dest', 'route_type', 'morning_start_time', 'morning_end_time', 'evening_start_time', 'evening_end_time', 'route_length_kms', 'capacity', 'vehicle_type_code'], 'required'],
+            [['valid_from'], 'required', 'except' => ['importCsv']],
             [['morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
             [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
             [['route_length_kms'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', 'Route Length Kms must be greater than 0.')],
             [['morning_end_time'], 'morningTimeValidate'],
             [['evening_end_time'], 'eveningTimeValidate'],
-            [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp'], 'safe'],
+            [['evening_grace_time'], 'graceTimeValidate', 'on' => ['importCsv']],
+            [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'route_code_ex', 'ref_code', 'mobile_no', 'firstname'], 'safe'],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             ['to_dest', 'compare', 'compareAttribute' => 'from_dest', 'operator' => '!=', 'message' => 'Source and destination can not be same'],
 //            [['route_name'], function ($attribute, $params) {
@@ -75,13 +88,17 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['route_code'], 'string', 'min' => 1],
-            [['route_code'], 'string', 'max' => 8],
-            [['route_code'], 'safe'],
-            [['route_code'], 'unique'],
-            [['route_code'], function ($attribute, $params) {
+//            [['route_code'], 'string', 'min' => 1],
+//            [['route_code'], 'string', 'max' => 8],
+//            [['route_code'], 'safe'],
+//            [['route_code'], 'unique'],
+            [['route_code_ex'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
+            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['union_code'], 'importData', 'on' => ['importCsv']],
+            [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
+            [['mobile_no', 'firstname'], 'required', 'on' => ['importCsv']]
         ];
     }
 
@@ -135,6 +152,8 @@ class TblRouteMapping extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'valid_from' => Yii::t('app', 'Valid From'),
+            'route_code_ex' => Yii::t('app', 'Route Code Ex'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -232,9 +251,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function getCode() {
-        return $this->route_code;
-        $data = $this->find()->select(["MAX(CONVERT(bigint,route_code)) as route_code"])->one();
-        return str_pad(((int) $data['route_code'] + 1), 8, '0', STR_PAD_LEFT);
+        return Yii::$app->general->setKeyPattern($this, 'tbl_route_mapping', 'route_code_ex', 7);
     }
 
     /**
@@ -372,6 +389,80 @@ class TblRouteMapping extends \app\models\ChildModel {
 
     public function getTblRouteMappingSources() {
         return $this->hasMany(TblRouteMappingSources::className(), ['route_code' => 'route_code'])->andFilterWhere(['from_type' => $this->from_type]);
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'to_dest']);
+    }
+
+    public function getActiveMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'to_dest', 'union_code' => 'union_code'])->andOnCondition(['is_active' => 1]);
+    }
+
+    public function getActivePlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'to_dest', 'union_code' => 'union_code'])->andOnCondition(['is_active' => 1]);
+    }
+
+    public function getActiveBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'to_dest', 'union_code' => 'union_code'])->andOnCondition(['is_active' => 1]);
+    }
+
+    public function importData($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->valid_from = date('Y-m-d');
+            $this->route_name = ucwords($this->route_name);
+            $plant = Yii::$app->general->getforeignkey($this->activePlantCode, 'plant_code');
+            $mcc = Yii::$app->general->getforeignkey($this->activeMccCode, 'mcc_plant_code');
+            $bmc = Yii::$app->general->getforeignkey($this->activeBmcCode, 'bmc_code');
+            $type_value = ['bmc', 'mcc', 'plant'];
+            if (!in_array(strtolower($this->to_type), $type_value)) {
+                $this->addError($attribute, "Please Enter Valid To Type");
+            }
+            if (strtolower($this->route_type) == 'tanker') {
+                if (strtolower($this->to_type) == 'bmc') {
+                    $this->addError($attribute, "Please Enter Valid To Type");
+                } else if (strtolower($this->to_type) == 'plant' && $this->to_dest != $plant) {
+                    $this->addError($attribute, "Please Enter Valid To Dest.");
+                } else if (strtolower($this->to_type) == 'mcc' && $this->to_dest != $mcc) {
+                    $this->addError($attribute, "Please Enter Valid To Dest.");
+                }
+            } else {
+                if (strtolower($this->to_type) == 'bmc' && $this->to_dest != $bmc) {
+                    $this->addError($attribute, "Please Enter Valid To Type");
+                } else if (strtolower($this->to_type) == 'plant' && $this->to_dest != $plant) {
+                    $this->addError($attribute, "Please Enter Valid To Dest.");
+                } else if (strtolower($this->to_type) == 'mcc' && $this->to_dest != $mcc) {
+                    $this->addError($attribute, "Please Enter Valid To Dest.");
+                }
+            }
+            if (!empty($this->mobile_no)) {
+                $contactModel = new TblContactDetails;
+                $data = $contactModel->find()->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]])
+                                ->andWhere(['<>', 'module_code', $this->route_code])
+                                ->andWhere(['is_active' => 1])->one();
+                if (!empty($data)) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No has already been taken.'));
+                }
+            }
+        }
+    }
+
+    public function setChildTable($model, &$modelSave) {
+        $model->route_code = $this->getCode();
+        $contactDetails = new TblContactDetails;
+        $contactDetails->firstname = $model->firstname;
+        $contactDetails->mobile_no = $model->mobile_no;
+        $contactDetails->setModel('routeMapping', $model->route_code);
+        array_push($modelSave, $contactDetails);
+    }
+
+    public function graceTimeValidate($attribute, $params) {
+        if (!empty($this->morning_grace_time) && !empty($this->evening_grace_time)) {
+            if ($this->evening_grace_time < $this->morning_grace_time) {
+                $this->addError($attribute, Yii::t('app/validation', 'Evening Grace Time Must be Greater Than Morning Grace Time.'));
+                return false;
+            }
+        }
     }
 
 }

@@ -426,14 +426,28 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $dcs_code = Yii::$app->request->post('dcsCode');
         $union = Yii::$app->request->post('union_code');
         $type = Yii::$app->request->post('customer_type');
+        $mcc = Yii::$app->request->post('mcc');
+        $plant = Yii::$app->request->post('plant');
+        $date = Yii::$app->request->post('date');
         $headModel = new TblProductSale();
         $headModel->union_code = $union;
         $headModel->customer_type = $type;
+        $headModel->plant_code = $plant;
+        $headModel->mcc_plant_code = $mcc;
+        $headModel->bmc_code = $bmc;
+        $headModel->invoice_date = $date;
         if (!empty($type) && strtolower($type) == 'member') {
             $model = new TblMember();
             $memberCode = str_pad($customer_code, 4, '0', STR_PAD_LEFT);
             $data = $model->validateMember($dcs_code, $memberCode);
+            $headModel->dcs_code = $dcs_code;
             $headModel->customer_code = !empty($data) ? $data->member_code : '';
+            if (!empty($data)) {
+                $detail = Yii::$app->general->validateDeactivateDcs($headModel, $headModel->invoice_date, '', TRUE, $headModel->customer_code);
+                if ($detail === false) {
+                    $data = '';
+                }
+            }
         } else if (!empty($type) && strtolower($type) != 'dcs') {
             $headModel->customer_code = $customer_code;
             $data = Yii::$app->general->validateCustomerCode($headModel);
@@ -441,6 +455,11 @@ class TblProductSaleController extends \app\controllers\ChildController {
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($customer_code, $bmc);
+            $headModel->dcs_code = $data;
+            $detail = Yii::$app->general->validateDeactivateDcs($headModel, $headModel->invoice_date);
+            if ($detail === false) {
+                $data = '';
+            }
             $headModel->customer_code = $data;
         }
         if (!empty($data)) {

@@ -480,7 +480,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         ];
         $username = explode('#', Yii::$app->session->get('UserName'))[1];
         if (!in_array(strtolower($username), ['bipl', 'reil']))
-            $appModel->actions = ['delete' => ['option' => 'dcs_code,rate_app_code,tbl-purchase-rate/delete-rate-app,checkVendorDcs()']];
+            $appModel->actions = ['delete' => ['option' => 'dcs_code,rate_app_code,tbl-purchase-rate/delete-rate-app']];
         $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
         $appModel->dcs_filters = ['society' => Yii::t('app', 'Society'), 'routes' => 'Routes', 'mcc' => 'MCC'];

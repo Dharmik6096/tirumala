@@ -2,6 +2,8 @@
 $this->title = Yii::$app->label->title('edit', 'Members');
 
 use yii\web\View;
+$this->title.= ' > ' . $model->ex_member_code . ' > ' . $model->ref_code;
+
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

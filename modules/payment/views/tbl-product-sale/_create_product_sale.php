@@ -442,7 +442,10 @@ $script = "
     $(document).on('change', '#tblproductsale-ex_code', function() {  
         setVendorCode();
     });
-
+    $('#tblproductsale-invoice_date').change(function(){
+        $('#tblproductsale-ex_code').val('');     
+    });
+    
     function setVendorCode(){
         $('#tblproductsale-customer_code').val('');
         $('#tblproductsale-customer_name').val('');
@@ -450,6 +453,9 @@ $script = "
         var type= $('#tblproductsale-customer_type').val(); 
         var union= $('#tblproductsale-union_code').val(); 
         var bmc= $('#tblproductsale-bmc_code').val(); 
+        var date= $('#tblproductsale-invoice_date').val(); 
+        var plant= $('#tblproductsale-plant_code').val(); 
+        var mcc= $('#tblproductsale-mcc_plant_code').val(); 
         var dcsCode = '';
         var formType = '" . $type . "';
         if(formType == 'memberWiseSale') {
@@ -459,7 +465,7 @@ $script = "
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-customer']) . "',
-                data: {'customer_code':code, 'dcsCode': dcsCode,'customer_type':type,'union_code':union,'bmc_code':bmc},
+                data: {'customer_code':code, 'dcsCode': dcsCode,'customer_type':type,'union_code':union,'bmc_code':bmc,'date':date,'plant':plant,'mcc':mcc},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {

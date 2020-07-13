@@ -16,8 +16,6 @@ if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
 }
-
-$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
@@ -44,12 +42,24 @@ if ($model->isNewRecord) {
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmember-union_code', '', 'Society', '', $readonly); ?>
     </div>
-    <?php //Html::activeHiddenInput($model, 'district_code'); ?>
-    <div class="col-sm-3 number-validate">
-        <?= $form->field($model, 'ex_member_code')->textInput() ?>
-    </div>
+    <?php //Html::activeHiddenInput($model, 'district_code');  ?>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_member');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ex_member_code')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+        <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '',$model->getAttributeLabel('member_type_code')); ?>
+        <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel('member_type_code')); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'member_name')->textInput() ?>

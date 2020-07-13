@@ -38,6 +38,10 @@ use app\modules\syncutility\models\TblSecurity;
 use yii\helpers\ArrayHelper;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\syncutility\models\TblGenerateSentbox;
+use app\models\TblKeyPattern;
+use app\modules\bkgprocess\models\TblFtpDetail;
+use app\modules\dcsoperation\models\TblMemberDeactive;
+use app\modules\organisation\models\TblDcsDeactive;
 
 class GeneralFunctions extends Component {
 
@@ -612,13 +616,14 @@ class GeneralFunctions extends Component {
         if (!empty($append)) {
             $path = $path . '\\' . $append;
         }
+        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . $path;
         $dir = $this->checkDirectory($path);
         if ($dir) {
             if (empty($file_name)) {
                 $timestamp = date('d-m-Y-H-i-s');
-                $fileName = $path . "\\" . $timestamp . '.txt';
+                $fileName = $path . "/" . $timestamp . '.txt';
             } else {
-                $fileName = $path . "\\" . $file_name . '.txt';
+                $fileName = $path . "/" . $file_name . '.txt';
             }
             $logfile = fopen($fileName, "w") or die("Unable to open file!");
             fwrite($logfile, $text);
@@ -988,7 +993,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1520,6 +1525,217 @@ class GeneralFunctions extends Component {
         $tenure_to = date_create($toDate);
         $diff = date_diff($tenure_to, $tenure_from);
         return $diff->format("%a");
+    }
+
+    public function getUnionKeyPattern($union) {
+        $PatternArray = [];
+        if (count($union) == 1) {
+            $model = new TblKeyPattern();
+            $unionKeyPattern = $model->find()->where(['union_code' => $union])->all();
+            foreach ($unionKeyPattern as $data) {
+                $key_config = [];
+                $key_config['ex_code_auto'] = $data->ex_code_auto;
+                $key_config['ex_code_length'] = $data->ex_code_length;
+                $key_config['ex_code_reset_on'] = $data->ex_code_reset_on;
+                $key_config['prefix_field'] = $data->prefix_field;
+                $key_config['ref_code_type'] = $data->ref_code_type;
+                $key_config['ref_code_length'] = $data->ref_code_length;
+                $key_config['ref_code_fix_length'] = $data->ref_code_fix_length;
+                //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
+                $PatternArray[$data->pattern_for] = $key_config;
+            }
+            return $PatternArray;
+        }
+    }
+
+    public function getKeyPattern($table_name) {
+        return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
+    }
+
+    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
+        $keyPattern = $this->getKeyPattern($table_name);
+        if (!empty($keyPattern)) {
+            $ref_code_length = (int) $keyPattern['ref_code_length'];
+            $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
+            $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
+            if ($keyPattern['ex_code_auto'] == 1) {
+                $data = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
+                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                        ->asArray()
+                        ->one();
+                $model->{$ex_code_key} = str_pad(($data['ex_code']), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+            } else {
+                if (!empty($model->{$ex_code_key})) {
+                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    $ex_cnt = $model->find()
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->andWhere([$ex_code_key => $model->{$ex_code_key}])
+                            ->count();
+                    if ($ex_cnt != '0') {
+                        $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
+                    }
+                    if (strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
+                        $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' length must be ' . $keyPattern['ex_code_length'] . '.'));
+                    }
+                } else {
+                    $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
+                }
+            }
+            $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+                    ->where(['union_code' => $model->union_code])
+                    ->asArray()
+                    ->one();
+            $model->auto_code = $data['auto_code'];
+            $pk_code = $model->union_code . str_pad(($data['auto_code']), $auto_code_lenght, '0', STR_PAD_LEFT);
+            if ($keyPattern['ref_code_type'] == 0) {
+                $model->ref_code = $pk_code;
+            } else if ($keyPattern['ref_code_type'] == 1) {
+                $prefix_seq = explode(',', $keyPattern['prefix_field']);
+                $ref_code = ($keyPattern['ref_code_length'] > 0 ) ? str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT) : '';
+                $model->ref_code = '';
+                foreach ($prefix_seq as $pre) {
+                    $model->ref_code .= $model->{$pre};
+                }
+                $model->ref_code .= $ref_code;
+            }
+            if (empty($model->ref_code)) {
+                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+            } else if (!preg_match('/^[0-9]*$/', $model->ref_code)) {
+                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
+            } else if ($keyPattern['ref_code_type'] == 2) {
+                $cnt = $model->find()->where(['convert(bigint,ref_code)' => (int) $model->ref_code, 'union_code' => $model->union_code])
+                        ->count();
+                if ($cnt > 0) {
+                    $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                }
+            }
+            $model->ref_code = str_pad(($model->ref_code), $ref_code_fix_length, '0', STR_PAD_LEFT);
+            if (strlen($model->ref_code) != $ref_code_fix_length) {
+                $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
+            }
+            return $pk_code;
+        } else {
+            $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
+            return;
+        }
+    }
+
+    public function getFTPDirStructure($cp_code) {
+        $data = [
+            '/' . $cp_code . '/DIAG/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/DIAG/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/MASFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/MASFILES/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/RIPFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/RIPFILES/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/DATFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/DATFILES/ARCHIVES/SUCCESS/',
+            '/' . $cp_code . '/TDFILES/ARCHIVES/ERRORS/',
+            '/' . $cp_code . '/TDFILES/ARCHIVES/SUCCESS/',
+        ];
+        return $data;
+    }
+
+    public function generateFTPDir($model, $attribute, $params, $ftp_conn_code, $cp_code) {
+        $ftp_model = new TblFtpDetail();
+        $ftp_model->ftp_connection_code = $ftp_conn_code;
+        $ftpData = $ftp_model->getData();
+        $status = false;
+        if (!empty($ftpData)) {
+            $ftp = new FTPConnection();
+            $ftp->ftp_type = $ftpData->ftp_type;
+            $ftp->ftp_host = $ftpData->ftp_host;
+            $ftp->ftp_username = $ftpData->ftp_username;
+            $ftp->ftp_password = $ftpData->ftp_password;
+            $ftp->ftp_port = $ftpData->ftp_port;
+            $ftpDir = $this->getFTPDirStructure($cp_code);
+            foreach ($ftpDir as $dir) {
+                $ftp->ftp_path = $ftpData->ftp_path . $dir;
+                if ($ftp->CreateDirectory() && $this->checkDirectory(\Yii::$app->params['biplDirPath'] . $dir)) {
+                    $status = true;
+                } else {
+                    $status = false;
+                    break;
+                }
+            }
+        }
+        if ($status === false) {
+            $model->addError($attribute, Yii::t('app/validation', 'FTP Directory not Generated.'));
+            return false;
+        }
+    }
+
+    public function validateDeactivateDcs($model, $date, $dcs = '', $memberCheck = false, $member = '') {
+        $dcsCode = !empty($dcs) ? $dcs : $model->dcs_code;
+        $checkdate = date('Y-m-d', strtotime($date));
+        if ($memberCheck) {
+            $memberCode = !empty($member) ? $member : $model->member_code;
+            $memberModel = new TblMemberDeactive();
+            $records = $memberModel->find()
+                    ->where('dcs_code=\'' . $dcsCode . '\' and member_code=\'' . $memberCode . '\'')
+                    ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
+                    ->count();
+            if ($records > 0) {
+                $model->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' Is Deactivated.'));
+                return false;
+            }
+        }
+
+        $memberModel = new TblDcsDeactive();
+        $records = $memberModel->find()
+                ->where('dcs_code=\'' . $dcsCode . '\'')
+                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
+                ->count();
+        if ($records > 0) {
+            $model->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Deactivated.'));
+            return false;
+        }
+    }
+
+    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key) {
+        if (!$model->isNewRecord) {
+            $keyPattern = $this->getKeyPattern($table_name);
+            if (!empty($keyPattern)) {
+                $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
+                $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
+                if (empty($model->{$ex_code_key})) {
+                    $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
+                } else {
+                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    if (strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
+                        $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' length must be ' . $keyPattern['ex_code_length'] . '.'));
+                    } else {
+                        $ex_cnt = $model->find()
+                                ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                                ->andWhere([$ex_code_key => $model->{$ex_code_key}])
+                                ->andWhere(['!=', $pk_key, $model->{$pk_key}])
+                                ->count();
+                        if ($ex_cnt > 0) {
+                            $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
+                        }
+                    }
+                }
+                if (empty($model->ref_code)) {
+                    $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' can not be blank.'));
+                } else {
+                    $model->ref_code = str_pad(($model->ref_code), $ref_code_fix_length, '0', STR_PAD_LEFT);
+                    if (strlen($model->ref_code) != $ref_code_fix_length) {
+                        $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
+                    } else {
+                        $cnt = $model->find()
+                                ->where(['convert(bigint,ref_code)' => (int) $model->ref_code, 'union_code' => $model->union_code])
+                                ->andWhere(['!=', $pk_key, $model->{$pk_key}])
+                                ->count();
+                        if ($cnt > 0) {
+                            $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
+                        }
+                    }
+                }
+            } else {
+                $model->addError('ref_code', Yii::t('app/validation', 'Key pattern config missing.'));
+                return;
+            }
+        }
     }
 
 }

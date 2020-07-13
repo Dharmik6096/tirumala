@@ -67,12 +67,24 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'dcs_code_ex',
+                                'attribute' => 'dcs_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'dcs_code',
+                                'attribute' => 'dcs_code_ex',
                                 'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'ref_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'dcs_name',
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
@@ -93,11 +105,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'label' => 'Milk Type',
                                 'format' => 'html',
                                 'value' => $model->milkType(),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                            [
-                                'attribute' => 'dcs_name',
-                                'valueColOptions' => ['style' => 'width:30%'],
+                                'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
                     ],

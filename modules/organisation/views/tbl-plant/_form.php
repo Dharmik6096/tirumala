@@ -30,9 +30,21 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-3 number-validate">  
-        <?= $form->field($model, 'plant_code')->textInput(['readonly' => $readonly]) ?>
-    </div>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_plant');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'plant_code_ex')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+        <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
     <div class="col-sm-3">  
         <?= $form->field($model, 'name')->textInput() ?>
     </div>
@@ -65,13 +77,13 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3"> 
-        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblplant-union_code,tblplant-state_code', 'district_code', 'District', FALSE, $readonly); ?>
+        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblplant-union_code,tblplant-state_code', 'district_code', 'District', FALSE); ?>
     </div>
     <div class="col-sm-3"> 
-        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
     </div>
     <div class="col-sm-3"> 
-        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblplant-sub_district_code', 'form-group col-sm-4', 'Village', '', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblplant-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
     </div>
     <div class="col-sm-3">  
         <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblplant-village_code', 'form-group col-sm-4', 'Hamlet'); ?>

@@ -68,7 +68,9 @@ class DefaultController extends \app\controllers\ChildController {
             $scenario = !empty($data['scenario']) ? $data['scenario'] : '';
             if ($mappingFlag == 1) {
                 $fields = $data['mapping_fields'];
-                $scenario = '';
+                $scenario = !empty($data['mapping_scenario']) ? $data['mapping_scenario'] : '';
+                $data['save_child'] = !empty($data['save_map_child']) ? TRUE : FALSE;
+                $data['update_key'] = FALSE;
             }
             $fields = explode(',', $fields);
 
@@ -138,6 +140,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => $scenario,
                 'updateField' => !empty($data['update_field']) ? $data['update_field'] : '',
                 'saveChild' => !empty($data['save_child']) ? $data['save_child'] : 0,
+                'details' => $data
             ]));
 
             return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg']];

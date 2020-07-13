@@ -8,8 +8,10 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'plant_code'],
+    ['attribute' => 'plant_code_ex'],
+    ['attribute' => 'ref_code'],
     ['attribute' => 'name'],
     ['attribute' => 'local_name', 'filter' => false],
     ['attribute' => 'capacity', 'value' => 'capacity0.value'],

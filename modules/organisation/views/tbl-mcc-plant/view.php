@@ -32,8 +32,18 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
-//                    'plantCode.name',
-//                    'mcc_plant_code',
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'mcc_plant_code_ex',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'ref_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
                     [
                         'columns' => [
                             [
@@ -164,6 +174,10 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     ],
                     [
                         'columns' => [
+                            [
+                                'attribute' => 'gst_no',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
                             [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',

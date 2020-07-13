@@ -21,7 +21,11 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsSearch;
 use app\modules\organisation\models\TblDcsHistory;
+use app\modules\organisation\models\TblCustomerMasterSearch;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblCustomerMasterHistory;
 
 /**
  * TblRouteMappingController implements the CRUD actions for TblRouteMapping model.
@@ -108,7 +112,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'route_name', $this->model->route_name);
-            if ($validate == 1) {
+            if ($validate == 1 && empty($this->model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapping, ['Route Mapping', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
@@ -355,6 +359,72 @@ class TblRouteMappingController extends \app\controllers\ChildController {
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionDeleteMapRoute() {
+        $searchModel = new TblDcsSearch();
+        $getData = Yii::$app->request->get();
+        $data = !empty($getData['TblDcsSearch']) ? $getData['TblDcsSearch'] : (!empty($getData['TblCustomerMasterSearch']) ? $getData['TblCustomerMasterSearch'] : []);
+        $customer = FALSE;
+        $searchModel->setAttributes($data);
+        if (!empty($searchModel->customer_type) && $searchModel->customer_type != 'DCS') {
+            $searchModel = new TblCustomerMasterSearch();
+            $customer = TRUE;
+            $searchModel->setAttributes($data);
+        }
+        $dataProvider = $searchModel->deleteroutemapsearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'deleteMapRoute';
+        return $this->render('delete_map_route', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'customer' => $customer
+        ]);
+    }
+
+    public function actionBulkDelete() {
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $deletedata = Yii::$app->request->post('selection');
+                $customerType = !empty(Yii::$app->request->post()['TblDcsSearch']['customer_type']) ? Yii::$app->request->post()['TblDcsSearch']['customer_type'] : '';
+                if (!empty($customerType) && $customerType == 'DCS') {
+                    foreach ($deletedata as $code) {
+                        $c = explode('###', $code);
+                        $rateCodes = $c[0];
+                        $dcs_codes = $c[1];
+                        $this->model = TblRouteMappingSources::find()->where(['route_code' => $rateCodes, 'from_dest' => $dcs_codes, 'from_type' => 'society'])->one();
+                        $deleteModel[] = $this->model;
+                        $historyModel = new TblRouteMappingSourcesHistory();
+                        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+                        $saveModel[] = $historyModel;
+
+                        $dcsModel = TblDcs::findOne($dcs_codes);
+                        $dcsHistoryModel = new TblDcsHistory();
+                        Yii::$app->operation->history($this->model, $dcsHistoryModel, 'UPDATE');
+                        $saveModel[] = $dcsHistoryModel;
+                        $dcsModel->route_code = NULL;
+                        $dcsModel->scenario = 'routeMapping';
+                        $saveModel[] = $dcsModel;
+                    }
+                } else {
+                    foreach ($deletedata as $key => $value) {
+                        $customerModel = TblCustomerMaster::findOne($value);
+                        $historyModel = new TblCustomerMasterHistory();
+                        Yii::$app->operation->history($customerModel, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $customerModel->route_code = NULL;
+                        $customerModel->scenario = 'deleteRouteMapping';
+                        $saveModel[] = $customerModel;
+                    }
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Route', 'delete']);
+
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
     }
 
 }

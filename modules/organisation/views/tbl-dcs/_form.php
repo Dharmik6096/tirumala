@@ -30,7 +30,7 @@ if (isset($address[1])) {
     $model->street2 = $address[1];
 }
 
-$vendor = ['EIPL' => 'EIPL', 'STELLAPPS' => 'STELLAPPS'];
+$vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
 //$disable = !empty($model->bmc_code) ? TRUE : FALSE;
@@ -58,14 +58,23 @@ $form = ActiveForm::begin([
     <?= Html::activeHiddenInput($model, 'route_code') ?>
 
     <div class="col-sm-3 <?= $bmcDisable ?>">
-        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $disabled); ?>
+        <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $readonly); ?>
     </div>
-    <div class="col-sm-3 number-validate">
-        <?= $form->field($model, 'tmcc_code')->textInput(['maxlength' => true, 'readonly' => $disabled]) ?>
-    </div>
-    <div class="col-sm-3 number-validate">
-        <?= $form->field($model, 'dcs_code_ex')->textInput(['maxlength' => true]) ?>
-    </div>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_dcs');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'dcs_code_ex')->textInput() ?>
+            </div>
+        <?php } ?>
+        <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput() ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>
     </div>
@@ -120,16 +129,16 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
     <div class="col-sm-3" id="district_section">
-        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcs-union_code,tbldcs-state_code', 'district_code', 'District', FALSE, $readonly); ?>
+        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcs-union_code,tbldcs-state_code', 'district_code', 'District', FALSE); ?>
     </div>
     <!--    <div class="col-sm-3">
     <?php //Yii::$app->dropdown->district($model, $form, 'tbldcs-state_code', 'district_code', 'District');  ?>
         </div>-->
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District', '', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District', ''); ?>
     </div>
     <div class="col-sm-3">
-        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village', '', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village', ''); ?>
     </div>
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>

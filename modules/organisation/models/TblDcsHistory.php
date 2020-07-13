@@ -72,6 +72,7 @@ class TblDcsHistory extends \yii\db\ActiveRecord {
             [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'local_name', 'local_short_name', 'local_address', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'data_post_status', 'origination_type', 'credit_sale_allow'], 'safe'],
             [['address', 'bank_code', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'contact_person', 'email', 'phone_no', 'dcs_short_name', 'dcs_code', 'dcs_code_ex', 'mobile_no', 'destination_code', 'dcs_name', 'bank_account_no', 'ifsc', 'pan_no', 'registration_code', 'service_tax', 'tin_no', 'destination_type', 'dcs_type_code', 'allow_multi_family_member', 'is_bmc', 'bmc_code', 'village_code', 'effective_date', 'registration_date', 'upi_no', 'branch_code', 'union_code', 'valid_from'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'ref_code'], 'safe'],
+            [['vendor_code', 'auto_code'], 'safe'],
         ];
     }
 

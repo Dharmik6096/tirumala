@@ -767,7 +767,7 @@ class DropDown extends Component {
             'dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL')],
             ],
             'file_type' => [
                 'name' => 'source_type',
@@ -944,6 +944,26 @@ class DropDown extends Component {
                 'name' => 'entry_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['INDIVIDUAL' => Yii::t('app', 'Individual'), 'CONSOLIDATED' => Yii::t('app', 'Consolidated')],
+            ],
+            'route_type' => [
+                'name' => 'route_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Can' => Yii::t('app', 'Can'), 'Tanker' => Yii::t('app', 'Tanker')],
+            ],
+            'EIPL_dpu_type' => [
+                'name' => 'dpu_type',
+                'prompt' => Yii::t('app', 'Select DPU Type'),
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS')],
+            ],
+            'BIPL_dpu_type' => [
+                'name' => 'dpu_type',
+                'prompt' => Yii::t('app', 'Select DPU Type'),
+                'data' => [91 => Yii::t('app', 'BIPL')],
+            ],
+            'vendor_type' => [
+                'name' => 'vendor_type',
+                'prompt' => Yii::t('app', 'Select Vendor'),
+                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL')],
             ],
         ];
         return $records[$l];
