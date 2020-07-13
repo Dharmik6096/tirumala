@@ -64,14 +64,14 @@ $form = ActiveForm::begin([
     $keyPattern = Yii::$app->general->getKeyPattern('tbl_dcs');
     if (!empty($keyPattern)) {
         ?>
-        <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
+        <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
             <div class="col-sm-3 number-validate">  
-                <?= $form->field($model, 'dcs_code_ex')->textInput(['readonly' => $readonly]) ?>
+                <?= $form->field($model, 'dcs_code_ex')->textInput() ?>
             </div>
         <?php } ?>
-        <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
+        <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
             <div class="col-sm-3 number-validate">  
-                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+                <?= $form->field($model, 'ref_code')->textInput() ?>
             </div>
         <?php } ?>
     <?php } ?>

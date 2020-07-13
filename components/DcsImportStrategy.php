@@ -119,6 +119,16 @@ class DcsImportStrategy extends ARImportStrategy {
                     }
 
                     if (empty($model->getErrors()) && $model->validate()) {
+                        $societyVendor = $model->societyVendors;
+                        if (!empty($societyVendor)) {
+                            $model->vendor = $societyVendor->vendor_code;
+                        } else {
+                            $vendorModel = new TblSocietyVendor();
+                            $vendorModel->dcs_code = $model->dcs_code;
+                            $vendorModel->vendor_code = $model->vendor;
+                            array_push($modelList, $vendorModel);
+                        }
+
                         array_push($modelList, $model);
 
                         if (!empty($existData) && ($oldVillage != $model->village_code)) {
@@ -134,7 +144,7 @@ class DcsImportStrategy extends ARImportStrategy {
                             $modelMapping->village_code = $model->village_code;
                             $modelMapping->is_active = isset($model->is_active) && $model->is_active != NULL ? $model->is_active : 1;
                             array_push($modelList, $modelMapping);
-                        } elseif (empty($existData)) {
+                        } elseif (empty($existData) && !empty($model->village_code)) {
                             $modelMapping = new TblDcsVillageMapping();
                             $modelMapping->dcs_code = $model->dcs_code;
                             $modelMapping->village_code = $model->village_code;
@@ -153,10 +163,6 @@ class DcsImportStrategy extends ARImportStrategy {
 
                             $model->setbankContacts($model, $modelList, $errors);
                             $model->setModelData($model, $modelList);
-                            $vendorModel = new TblSocietyVendor();
-                            $vendorModel->dcs_code = $model->dcs_code;
-                            $vendorModel->vendor_code = $model->vendor;
-                            array_push($modelList, $vendorModel);
                         }
                         $modelMilk = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1, 'milk_type_code' => $model->milk_type_code])->one();
                         if (!empty($existData) && !empty($modelMilk)) {
