@@ -32,6 +32,7 @@ $config = [
         'alertnotification' => ['class' => 'app\components\AlertNotification'],
         'customvalidation' => ['class' => 'app\components\CustomValidation'],
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
+        'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
