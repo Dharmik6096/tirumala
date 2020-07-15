@@ -14,10 +14,10 @@ $form = ActiveForm::begin([
             'method' => 'get',
         ]);
 ?>
-<div class="col-sm-3">
+<div class="col-sm-2">
     <?= Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-2 padding-right-5'); ?>
 </div>
-<div class="col-sm-2">
+<div class="col-sm-1">
     <?= Yii::$app->controls->search(); ?>
 </div>
 <?php ActiveForm::end(); ?>

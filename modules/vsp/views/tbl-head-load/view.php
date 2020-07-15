@@ -99,17 +99,17 @@ $this->title = Yii::$app->label->title('view', 'Head Load');
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Head Load Transaction') ?></h4>
             </div>
-        <div class="form-grid">
-            <?php echo $this->render('@app/modules/vsp/views/tbl-head-load-transaction/_form_grid', ['dataProvider' => $dataProvider, 'searchModel' => $searchModel]); ?>
+            <div class="form-grid">
+                <?php echo $this->render('@app/modules/vsp/views/tbl-head-load-transaction/_form_grid', ['dataProvider' => $dataProvider, 'searchModel' => $searchModel]); ?>
+            </div>
         </div>
 
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Head Load Applicability') ?></h4>
             </div>
-        <div class="form-grid">              
-            <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
-        </div>
-
-    </div>
+            <div class="form-grid">              
+                <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
+            </div>
+        </div>  
 </div>

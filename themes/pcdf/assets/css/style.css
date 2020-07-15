@@ -97,10 +97,11 @@ ul{
     border: none;
     border-radius: 0px;
     position: relative;
-    padding: 5px 30px;
+    padding: 3px 15px;
     margin: 0 1px 10px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
     text-transform: uppercase;
     letter-spacing: 0;
     transition: all 0.3s ease;
@@ -591,7 +592,7 @@ td.action-cell a i{
     color: #607188;
     text-align: center;
     line-height: 15px;
-    font-size: 16px;
+    font-size: 12px;
     border-radius: 50%;
     margin: 2px 0;
 }
@@ -1379,7 +1380,7 @@ footer p{
     background-color: rgb(58, 123, 213);
 }
 .milk-collection .table > thead > tr > th{
-    color: #fff;
+    color: #fff !important;
     text-align: center;
     border-bottom: none;
     border-right: 1px solid #ddd;
@@ -2053,7 +2054,7 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 
 .grid-search.search-filter {
     /*position: relative !important;*/
-    width: calc(100% - 170px) !important;
+    width: calc(100% - 215px) !important;
 }
 
 .navbar-brand img {
@@ -2270,6 +2271,7 @@ div.crystalstyle{
     top: 73px;
     z-index: 9;
     right: 25px;
+    padding: 6px 30px;
 }
 
 #menu_buttons {
@@ -2565,7 +2567,7 @@ div.crystalstyle{
 }
 
 .panel .panel-body .dashboard_controls .form-control{
-    height: 36px !important;
+    height: 26px !important;
 }
 
 .modal .modal-body #login-form .form-control{
@@ -2603,15 +2605,14 @@ div.crystalstyle{
     -ms-user-select: none;
     user-select: none;
     border: 1px solid transparent;
-    padding: 0.575rem 0.95rem;
-    font-size: 1rem;
+    /* padding: 0.575rem 0.95rem; */
+    padding: 3px 15px;
+    font-size: 11px;
     line-height: 1.5;
     border-radius: 0px !important;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.panel .panel-body .dashboard_controls .form-control input[type=text],
-.panel .panel-body .dashboard_controls .form-control input[type="number"],
 .table-bordered tr td  .form-control input[type=text],
 .table-bordered tr td  .form-control select{
     border:none !important;
@@ -2619,8 +2620,13 @@ div.crystalstyle{
     width:80px !important;
 }
 
+.panel .panel-body .dashboard_controls .form-control input[type=text],
+.panel .panel-body .dashboard_controls .form-control input[type="number"]{
+    height: 26px !important;
+}
+
 .panel .panel-body .dashboard_controls select{
-    height:34px !important;
+    height:26px !important;
 }
 .datepicker.datepicker-dropdown.dropdown-menu {
     font-size: 11px !important;
@@ -2628,6 +2634,7 @@ div.crystalstyle{
 }
 .panel .panel-body .dashboard_controls .btn{
     margin-top: 3px !important;
+    margin-left: -7px;
 }
 
 .filt-btn .btn{
@@ -2678,7 +2685,7 @@ td.action-cell{
 }
 
 .panel-main .panel-body .grid-search .btn {
-    padding: 0.575rem 0.95rem;
+    padding: 3px 15px;
 }
 
 .dropdown-menu{
