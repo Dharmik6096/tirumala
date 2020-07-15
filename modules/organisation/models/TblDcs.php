@@ -246,10 +246,10 @@ class TblDcs extends ChildModel {
                     ($this->vendor == 'BIPL' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs']],
                     [['dcs_code'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex','dcs_code');
+                    Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv']],
                 ];
-                $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->process_name);
+                $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
                 $rules = array_merge($client_rules, $main_rules);
                 return $rules;
             }

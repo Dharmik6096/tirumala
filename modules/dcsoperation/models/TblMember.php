@@ -183,7 +183,7 @@ class TblMember extends ChildModel {
             //  [['ex_member_code'], 'setExMember'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
-        $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->process_name);
+        $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }
