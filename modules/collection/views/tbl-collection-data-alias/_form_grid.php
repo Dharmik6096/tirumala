@@ -35,7 +35,7 @@ $milk_type = $milkType->getAnimalMilkTypeArray();
             }, 'filter' => false],
         ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($model) {
                 return substr($model->member_code, -4);
-            }, 'visible' => TRUE, 'filter' => false],
+            }, 'visible' => !empty($showFarmer) ? TRUE : FALSE, 'filter' => false],
         ['attribute' => 'member_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
             }, 'filter' => false, 'visible' => !empty($showFarmer) ? TRUE : FALSE],
@@ -58,23 +58,23 @@ $milk_type = $milkType->getAnimalMilkTypeArray();
         ['attribute' => 'old_milk_quality_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldMilkQualityCode, 'milk_quality_type_name');
             }, 'filter' => false, 'visible' => $showField],
+        ['attribute' => 'old_qty', 'filter' => false, 'visible' => $showField],
         ['attribute' => 'old_fat', 'filter' => false, 'visible' => $showField],
         ['attribute' => 'old_snf', 'filter' => false, 'visible' => $showField],
         ['attribute' => 'old_rtpl', 'filter' => false, 'visible' => $showField],
-        ['attribute' => 'old_qty', 'filter' => false, 'visible' => $showField],
-        ['attribute' => 'old_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+        ['attribute' => 'old_amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(), 'visible' => $showField],
         ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
             }, 'filter' => FALSE],
         ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkQualityCode, 'milk_quality_type_name');
             }, 'filter' => FALSE],
+        ['attribute' => 'qty', 'filter' => false],
         ['attribute' => 'fat', 'filter' => false],
         ['attribute' => 'snf', 'filter' => false],
         ['attribute' => 'rtpl', 'filter' => false],
-        ['attribute' => 'qty', 'filter' => false],
         ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
-//        ['attribute' => 'error_desc', 'filter' => false],
+        ['attribute' => 'error_desc', 'filter' => false],
     ];
 
     $grid_option = [

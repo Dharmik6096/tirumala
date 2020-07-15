@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'RMRD Collection Approval');
+$this->title = Yii::t('app', 'BMC Collection Approval');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">

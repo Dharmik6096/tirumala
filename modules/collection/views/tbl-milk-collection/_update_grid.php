@@ -41,7 +41,7 @@ $form = ActiveForm::begin([
             }, 'filter' => false],
         ['attribute' => 'shift_code', 'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']shift_code', ['value' => $model->shift_code]);
-                return $model->shift_code;
+                return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => false],
         ['attribute' => 'sample_no', 'filter' => false],
         ['attribute' => 'milk_type_code',

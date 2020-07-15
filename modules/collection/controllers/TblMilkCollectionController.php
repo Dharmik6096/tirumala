@@ -12,15 +12,13 @@ use app\modules\dcsoperation\models\TblPurchaseRate;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\data\ArrayDataProvider;
-use app\modules\collection\models\TblBmcCollection;
-use app\modules\collection\models\TblMilkCollectionHistory;
-use app\modules\collection\models\TblBmcCollectionHistory;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\collection\models\TblCollectionDataAlias;
 use yii\widgets\ActiveForm;
 use yii\base\Model;
+use app\modules\collection\models\TblMilkCollectionHistory;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -72,32 +70,37 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $this->model->shift_code = 1;
         $this->viewFile = 'create';
         $modelSave = [];
+        $message = 'Milk Collection';
+        $type = 'create';
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
             $this->model->sample_no = $this->model->getSampleNo();
-           
             $datetime = date('Y-m-d H:i:s');
             $this->model->date_time_of_collection = Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->shift_code);
             $this->model->date_time_of_recieve = $datetime;
-            $this->model->dt_date = $datetime;
             $this->model->qlty_time = $datetime;
             $this->model->qty_time = $datetime;
             $this->model->type_of_data_receive = 'Manual';
-            $this->model->status = 'Accept';
             $this->model->qty_mode = 0;
             $this->model->qlty_auto = 0;
             $this->model->qty_auto = 0;
-            $this->model->sms_status = 'n';
+            $this->model->setModel($this->model);
             $this->model->scenario = 'create';
             $this->model->member_code = $this->model->dcs_code . str_pad($this->model->member_code, 4, '0', STR_PAD_LEFT);
             if ($this->model->validate()) {
-                $approvalModel = new TblCollectionDataAlias();
-                $approvalModel->attributes = $this->model->attributes;
-                $approvalModel->table_name = 'tbl_milk_collection';
-                $approvalModel->action_perform = 'CREATE';
-                $approvalModel->setOldAttributesValues($approvalModel);
-                $modelSave[] = $approvalModel;
-                $transaction = $this->generalModel->saveTransaction($modelSave, ['Data For Approval', 'create']);
+                if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
+                    $approvalModel = new TblCollectionDataAlias();
+                    $approvalModel->attributes = $this->model->attributes;
+                    $approvalModel->table_name = 'tbl_milk_collection';
+                    $approvalModel->action_perform = 'CREATE';
+                    $approvalModel->setOldAttributesValues($approvalModel);
+                    $modelSave[] = $approvalModel;
+                    $message = 'Data For Approval';
+                    $type = 'create';
+                } else {
+                    $modelSave[] = $this->model;
+                }
+                $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'msg' => $msg];
@@ -336,6 +339,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
         $searchModel->scenario = 'deleteMilkCollection';
         $detailModel = $dataProvider->getModels();
+        $message = 'Milk Collection';
+        $type = 'edit';
 
         if (Yii::$app->request->post()) {
             foreach ($detailModel as $detail) {
@@ -354,25 +359,33 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
                     if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'])) {
-                        $approvalModel = new TblCollectionDataAlias();
-                        $approvalModel->attributes = $detalData->attributes;
-                        $approvalModel->old_qty = $detalData->oldAttributes['qty'];
-                        $approvalModel->old_fat = $detalData->oldAttributes['fat'];
-                        $approvalModel->old_snf = $detalData->oldAttributes['snf'];
-                        $approvalModel->old_rtpl = $detalData->oldAttributes['rtpl'];
-                        $approvalModel->old_amount = $detalData->oldAttributes['amount'];
-                        $approvalModel->old_milk_type_code = $detalData->oldAttributes['milk_type_code'];
-                        $approvalModel->old_milk_quality_type_code = $detalData->oldAttributes['milk_quality_type_code'];
-                        $approvalModel->old_purchase_rate_code = $detalData->oldAttributes['purchase_rate_code'];
-                        $approvalModel->old_clr = $detalData->oldAttributes['clr'];
-                        $approvalModel->table_name = 'tbl_milk_collection';
-                        $approvalModel->action_perform = 'UPDATE';
-                        $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                        $saveModel[] = $approvalModel;
+                        if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                            $approvalModel = new TblCollectionDataAlias();
+                            $approvalModel->attributes = $detalData->attributes;
+                            $approvalModel->old_qty = $detalData->oldAttributes['qty'];
+                            $approvalModel->old_fat = $detalData->oldAttributes['fat'];
+                            $approvalModel->old_snf = $detalData->oldAttributes['snf'];
+                            $approvalModel->old_rtpl = $detalData->oldAttributes['rtpl'];
+                            $approvalModel->old_amount = $detalData->oldAttributes['amount'];
+                            $approvalModel->old_milk_type_code = $detalData->oldAttributes['milk_type_code'];
+                            $approvalModel->old_milk_quality_type_code = $detalData->oldAttributes['milk_quality_type_code'];
+                            $approvalModel->old_purchase_rate_code = $detalData->oldAttributes['purchase_rate_code'];
+                            $approvalModel->old_clr = $detalData->oldAttributes['clr'];
+                            $approvalModel->table_name = 'tbl_milk_collection';
+                            $approvalModel->action_perform = 'UPDATE';
+                            $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
+                            $saveModel[] = $approvalModel;
+                            $message = 'Data For Approval';
+                            $type = 'create';
+                        } else {
+                            $existData = $this->findModel($detalData->milk_collection_code);
+                            $existData->attributes = $detalData->attributes;
+                            $existData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
+                            $saveModel[] = $existData;
+                        }
                     }
                 }
-
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Data For Approval', 'create']);
+                $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
@@ -399,24 +412,31 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
                 $deleteModel = [];
+                $message = 'Data For Approval';
+                $type = 'create';
                 $deletedata = Yii::$app->request->post('selection');
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 $where = [];
                 foreach ($deletedata as $code) {
-                    $c = explode('###', $code);
-                    $where['member_code'] = $c[0];
-                    $where['date_time_of_collection'] = $c[1];
-                    $where['milk_type_code'] = $c[2];
-                    $where['shift_code'] = $c[3];
+                    $where['milk_collection_code'] = $code;
                     $existData = TblMilkCollection::find()->where($where)->one();
-                    $ApprovalModel = new TblCollectionDataAlias();
-                    $ApprovalModel->attributes = $existData->attributes;
-                    $ApprovalModel->setOldAttributesValues($ApprovalModel);
-                    $ApprovalModel->table_name = 'tbl_milk_collection';
-                    $ApprovalModel->action_perform = 'DELETE';
-                    $saveModel[] = $ApprovalModel;
+                    if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                        $ApprovalModel = new TblCollectionDataAlias();
+                        $ApprovalModel->attributes = $existData->attributes;
+                        $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                        $ApprovalModel->table_name = 'tbl_milk_collection';
+                        $ApprovalModel->action_perform = 'DELETE';
+                        $saveModel[] = $ApprovalModel;
+                    } else {
+                        $historyModel = new TblMilkCollectionHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                        $saveModel[] = $historyModel;
+                        $deleteModel[] = $existData;
+                        $message = 'Milk Collection';
+                        $type = 'delete';
+                    }
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Data For Approval', 'create']);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
@@ -427,40 +447,6 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
-    }
-
-    public function actionBulkDelete() {
-        if (Yii::$app->request->post()) {
-            if (isset($_REQUEST['selection'])) {
-                $saveModel = [];
-                $deleteModel = [];
-                $deletedata = Yii::$app->request->post('selection');
-                $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
-                $where = [];
-                foreach ($deletedata as $code) {
-                    $c = explode('###', $code);
-                    $where['member_code'] = $c[0];
-                    $where['date_time_of_collection'] = $c[1];
-                    $where['milk_type_code'] = $c[2];
-                    $where['shift_code'] = $c[3];
-                    $existData = TblMilkCollection::find()->where($where)->one();
-                    $ApprovalModel = new TblCollectionDataAlias();
-                    $ApprovalModel->attributes = $existData->attributes;
-                    $ApprovalModel->setOldAttributesValues($ApprovalModel);
-                    $ApprovalModel->table_name = 'tbl_milk_collection';
-                    $ApprovalModel->action_perform = 'DELETE';
-                    $saveModel[] = $ApprovalModel;
-                }
-                echo "<pre>";
-                print_r($saveModel);
-                echo "</pre>";
-                die;
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Data For Approval', 'create']);
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
-                }
-            }
-        }
     }
 
 }

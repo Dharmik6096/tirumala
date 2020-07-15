@@ -113,6 +113,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
             [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code'], 'safe'],
             [['dcs_code'], 'validateMilkCollection', 'on' => ['MilkCollection']],
+            [['error_desc'], 'string', 'on' => ['approve']],
         ];
     }
 
@@ -214,8 +215,8 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
         $model->old_milk_quality_type_code = $model->milk_quality_type_code;
         $model->old_purchase_rate_code = $model->purchase_rate_code;
         $model->old_clr = $model->clr;
-        if ($model->table_name == 'VillageDispatch' || $model->table_name == 'collectionvillage') {
-            $model->old_can = $model->can;
+        if ($model->table_name == 'tbl_bmc_collection' || $model->table_name == 'tbl_dcs_milk_dispatch') {
+            $model->old_no_of_can = $model->no_of_can;
         }
     }
 
@@ -250,11 +251,11 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     public function validateMilkCollection($attribute, $params) {
         $MainModel = new TblMilkCollection();
         if (($this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code)) {
-            $mainTableData = $MainModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code])
+            $mainTableData = $MainModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])
                     ->andWhere(['!=', 'milk_type_code', $this->old_milk_type_code])
                     ->one();
         } else {
-            $mainTableData = $MainModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code])
+            $mainTableData = $MainModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])
                     ->one();
         }
         if (!empty($mainTableData)) {

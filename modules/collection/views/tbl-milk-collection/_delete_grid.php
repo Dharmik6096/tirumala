@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
-                return ['class' => 'checkbox-collection', 'value' => $model['member_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['milk_type_code'] . '###' . $model['shift_code']];
+                return ['class' => 'checkbox-collection', 'value' => $model['milk_collection_code']];
             }],
         ['attribute' => 'dcs_code',
             'value' => function($model) {
@@ -47,9 +47,16 @@ $form = ActiveForm::begin([
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
             }, 'filter' => false],
-        ['attribute' => 'shift_code', 'filter' => FALSE],
+        ['attribute' => 'shift_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
+            }, 'filter' => FALSE],
         ['attribute' => 'sample_no', 'filter' => FALSE],
-        ['attribute' => 'milk_type_code', 'filter' => FALSE],
+        ['attribute' => 'milk_type_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
+            }, 'filter' => FALSE],
+        ['attribute' => 'milk_type_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
+            }, 'filter' => FALSE],
         ['attribute' => 'qty', 'filter' => FALSE],
         ['attribute' => 'fat', 'filter' => FALSE],
         ['attribute' => 'snf', 'filter' => FALSE],
@@ -59,7 +66,7 @@ $form = ActiveForm::begin([
     ];
 
     $grid_option = [
-        'id' => 'delete-milk-collection-list',
+        'id' => 'delete-bmc-collection-list',
         'attributes' => $attribute,
         'active_column' => false,
         'showPageSummary' => false,
