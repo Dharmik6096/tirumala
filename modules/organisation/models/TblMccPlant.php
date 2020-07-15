@@ -95,7 +95,7 @@ class TblMccPlant extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
         ];
-        $client_rules = Yii::$app->customvalidation->getRules('TblMccPlant', $this->process_name);
+        $client_rules = Yii::$app->customvalidation->getRules('TblMccPlant', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }

@@ -243,7 +243,7 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code);
                 }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
         ];
-        $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->process_name);
+        $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }
