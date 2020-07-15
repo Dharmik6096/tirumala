@@ -66,10 +66,10 @@ $attribute = [
     ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
             return isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name : '';
         }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'qty_mode',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('p_ltr_kg', $searchModel, 'qty_mode'),
         'value' => function ($model) {

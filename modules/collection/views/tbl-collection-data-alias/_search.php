@@ -29,12 +29,22 @@ use yii\web\View;
     <div class="col-sm-2 ">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcollectiondataaliassearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
     </div>  
-    <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblcollectiondataaliassearch-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblcollectiondataaliassearch-dcs_code', '', Yii::t('app', 'Member')); ?>
-    </div>
+    <?php if (isset($showFarmer) && $showFarmer) { ?>
+        <div class="col-sm-2 ">
+            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblcollectiondataaliassearch-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblcollectiondataaliassearch-dcs_code', '', Yii::t('app', 'Member')); ?>
+        </div>
+    <?php } ?>
+    <?php if (isset($showType) && $showType) { ?>
+        <div class="col-sm-2 ">
+            <?= Yii::$app->dropdown->customer_type($model, $form, 'tblcollectiondataaliassearch-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
+        </div>  
+        <div class="col-sm-2 ">
+            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblcollectiondataaliassearch-bmc_code,tblcollectiondataaliassearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+        </div>  
+    <?php } ?>
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>

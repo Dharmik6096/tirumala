@@ -14,13 +14,15 @@ use kartik\grid\GridView;
     ?>
 </div>
 <div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
-    <?=
-    $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
-    ?>
+    <div class="QltyParamDivGrid">
+        <?=
+        $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
+        ?>
+    </div>
 </div>
-
 <?php
 $script = "
+    gridChange();
     visible();
     $('#tblbmccollection-collection_type').change(function(){
         visible();
@@ -38,14 +40,61 @@ $script = "
         }
     }
 
+
+    $(document).on('change', '#tblbmccollection-plant_code', function() {  
+        gridChange();
+    });
+    $(document).on('change', '#tblbmccollection-mcc_plant_code', function() {  
+       gridChange();
+    });
+    $(document).on('change', '#tblbmccollection-bmc_code', function() { 
+         gridChange();
+         $('#tblbmccollection-bmc_silos_info_code').val('');
+         var bmc = $('#tblbmccollection-bmc_code').val();
+        if(setData(bmc)){
+        $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+            $('#tblbmccollection-bmc_silos_info_code').val($('#tblbmccollection-bmc_silos_info_code option:nth-child(2)').val());
+        });
+        } 
+    });
+    
+    $(document).on('change', '#tblbmccollection-date_time_of_collection', function() {  
+        gridChange();
+    });
+    $(document).on('change', '#tblbmccollection-shift_code', function() {  
+        gridChange();
+    });
+    function gridChange(){
+       $('.add-collection').prop('disabled',true);
+       $('#bmc-coll-form .reset_field input').val('');
+       $('.QltyParamDiv').hide();
+        var plant = $('#tblbmccollection-plant_code').val();
+        var bmc = $('#tblbmccollection-bmc_code').val();
+        var mcc = $('#tblbmccollection-mcc_plant_code').val();
+        var date = $('#tblbmccollection-date_time_of_collection').val();
+        var shift = $('#tblbmccollection-shift_code').val();
+        if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift)){
+            $('.add-collection').removeAttr('disabled');
+        } 
+        
+    }
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    
     amount();
     $('#tblbmccollection-rtpl').change(function(){
         amount();
     });
     $('#tblbmccollection-qty').change(function(){
         amount();
+//        calculateCan();
     });
-    function amount(){
+   function amount(){
         var amount = 0;
         var rtpl = parseFloat($('#tblbmccollection-rtpl').val());
         var qty = parseFloat($('#tblbmccollection-qty').val());
@@ -58,48 +107,70 @@ $script = "
         amount = rtpl * qty;
         $('#tblbmccollection-amount').val(amount);
     }
-    $('#tblbmccollection-date_time_of_collection').change(function(){
-        $('#tblbmccollection-customer_code').val('');     
+    
+    $(document).on('click','.add-collection',function(e){
+        reloadGrid();
+        $('.QltyParamDiv').show();
     });
-    $('#tblbmccollection-customer_code').change(function(){
-        var dcs = $(this).val();
-        var type= $('#tblbmccollection-customer_type').val(); 
-        var union= $('#tblbmccollection-union_code').val(); 
-        var bmc= $('#tblbmccollection-bmc_code').val(); 
-        var plant= $('#tblbmccollection-plant_code').val(); 
-        var mcc= $('#tblbmccollection-mcc_plant_code').val(); 
-        var date= $('#tblbmccollection-date_time_of_collection').val(); 
-        $.ajax({
-            type: 'post',
-            url:'" . Url::to(['validate-dcs']) . "',
-            data: {'dcs_code':dcs,'customer_type':type,'union_code':union,'bmc_code':bmc,'mcc':mcc,'plant':plant,'date':date},
-            success: function(data) {                                        
-                var obj = $.parseJSON(data);
-                if (obj.status == 'success')
-                {
-                    $('#tblbmccollection-customer_name').val(obj.data); 
-                }else{
-                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter valid Code</span></div></div>');
-                        $('#tblbmccollection-customer_code').val('');                    
-                        $('#tblbmccollection-customer_name').val('');                    
-                        $('#tblbmccollection-customer_code').focus();
-                }
-            },
-            error:function(data){
-		
-	    }
-	});
+    function reloadGrid(){
+            var url = '" . Url::to(['/collection/tbl-bmc-collection/list-grid']) . "'+ '?' + $('#bmc-coll-form').serialize();
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    beforeSend:function(data) {
+                        $('#loadercontent').show();
+                        $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        $('#gridcontentSet .QltyParamDivGrid').html(data);
+                        $('#collectionvillage-vlccid').focus();
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
+                    },
+                });
+    }
+    
+
+    $('#tblbmccollection-snf').change(function(){
+        calculateClr();
     });
+    
+     $('#tblbmccollection-fat').change(function(){
+        calculateClr();
+    });
+    
+    function calculateClr(){
+        var union = $('#tblbmccollection-union_code').val();
+        var fat = $('#tblbmccollection-fat').val();
+        var snf = $('#tblbmccollection-snf').val();
+            if(fat !='' && snf !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['calculate-clr']) . "',
+                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblbmccollection-clr').val(obj.data.toFixed(2));
+                            $('#tblbmccollection-clr').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
+    
+
     $('.rtpl_validate select').change(function(){
         rtpl();
     });
     $('.rtpl_validate input').change(function(){
         rtpl();
     });
-//    $('#tblbmccollection-date_time_of_collection').change(function(){
-//        $.pjax.reload('#bmc-collection',{data: $('#bmc-form').serialize(),timeout : false});
-//    });
-    function rtpl(){
+      function rtpl(){
         var dcs = $('#tblbmccollection-customer_code').val();
         var milk_type = $('#tblbmccollection-milk_type_code').val();
         var milk_quality_type = $('#tblbmccollection-milk_quality_type_code').val();
@@ -143,126 +214,20 @@ $script = "
           $('#tblbmccollection-customer_code').val('');
           $('#tblbmccollection-rtpl').val('');
     });
-    
-    $('#tblbmccollection-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-        var length = $('#tblbmccollection-customer_type option[value!=\'\']').length;
-            if(length == 0) {
-                $('.show_hide_customer_type').hide();
-            }else if(length == 1) {
-                $('#tblbmccollection-customer_type').val('DCS');
-                $('.show_hide_customer_type').hide();
-            } else {
-                $('.show_hide_customer_type').show();
-            }
-    });
-     $(document).on('change', '#tblbmccollection-date_time_of_collection', function() {  
-        reloadGrid();
-    });
-     $(document).on('change', '#tblbmccollection-shift_code', function() {  
-        reloadGrid();
-    });
-     $(document).on('change', '#tblbmccollection-bmc_code', function() {  
-        reloadGrid();
-    });
-    function reloadGrid(){
-//        if($('#tblbmccollection-milk_collection_code').val()==''){
-            var url = '" . Url::to(['/collection/tbl-bmc-collection/list-grid']) . "'+ '?' + $('#bmc-coll-form').serialize();
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    beforeSend:function(data) {
-                        $('#loadercontent').show();
-                        $('#pageloader').show();
-                    },
-                    success: function(data) {
-                        $('#gridcontentSet').html(data);
-                        $('#loadercontent').hide();
-                        $('#pageloader').hide();
-                    },
-                });
-//        }    
-    }
-    
-
-    $(document).on('click','.edit-record',function(e){
-        var id= $(this).attr('data-val');
-        var name = $(this).attr('data-name');
-        editbmcCollection(id);
-    });
-    
-    function editbmcCollection(milk_collection_code){
-            if(milk_collection_code != ''){         
-            $.ajax({
-                    type: 'post',
-                    url: '" . Url::to(['/collection/tbl-bmc-collection/update-collection']) . "',
-                    data: {'milk_collection_code' : milk_collection_code},
-                    beforeSend:function(data) {
-                    $('#loadercontent').show();
-                    $('#pageloader').show();
-                    },
-                    success: function(data) {
-                        $.each(data.modelData, function(index, value) {
-                            $('#tblbmccollection-'+index).val(value);
-                        });
-                        $('#tblbmccollection-customer_name').val(data.name);
-                        $('#tblbmccollection-plant_code').val(data.modelData.plant_code);
-                        $('#tblbmccollection-plant_code').trigger('change');
-                        $('#tblbmccollection-mcc_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                            $('#tblbmccollection-mcc_plant_code').val(data.modelData.mcc_plant_code);
-                            $('#tblbmccollection-mcc_plant_code').trigger('change');
-                        });
-                        $('#tblbmccollection-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                            $('#tblbmccollection-bmc_code').val(data.modelData.bmc_code);
-                             $('#tblbmccollection-bmc_code').trigger('change');
-                        });
-                        $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                            $('#tblbmccollection-bmc_silos_info_code').val(data.modelData.bmc_silos_info_code);
-                        });
-                        $('#tblbmccollection-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                            $('#tblbmccollection-customer_type').val(data.modelData.customer_type);
-                        });
-                        $('#tblbmccollection-collection_type').trigger('change');
-                        $('#tblbmccollection-transporter_code').trigger('change');
-                        
-                        $('#tblbmccollection-vehicle_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-                            $('#tblbmccollection-vehicle_code').val(data.modelData.vehicle_code);
-                        });
-                        
-//                       $('#maincontent').html(data);
-                         $('.create_fields').addClass('disabled');
-                         $('#loadercontent').hide();
-                         $('#pageloader').hide();
-                         $(window).scrollTop(0);
-
-                    },
-                });
-            }
-
-    };
-    
-    $('#tblbmccollection-snf').change(function(){
-        calculateClr();
-    });
-    
-     $('#tblbmccollection-fat').change(function(){
-        calculateClr();
-    });
-    
-    function calculateClr(){
-        var union = $('#tblbmccollection-union_code').val();
-        var fat = $('#tblbmccollection-fat').val();
-        var snf = $('#tblbmccollection-snf').val();
-            if(fat !='' && snf !=''){
+     
+    function calculateCan(){
+        var bmcid = $('#collectionvillage-bmcid').val();
+        var qty = $('#collectionvillage-qty').val();
+            if(bmcid !='' && qty !=''){
                 $.ajax({
                     type: 'post',
-                    url:'" . Url::to(['calculate-clr']) . "',
-                    data: {'union_code':union,'fat':fat,'snf':snf},
+                    url:'" . Url::to(['calculate-can']) . "',
+                    data: {'bmcid':bmcid,'qty':qty},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
                         {
-                            $('#tblbmccollection-clr').val(obj.data.toFixed(2));
-                            $('#tblbmccollection-clr').trigger('change');
+                            $('#collectionvillage-can').val(obj.data);
                         }
                     },
                     error:function(data){
@@ -271,6 +236,39 @@ $script = "
                 });
             }
     };
+    
+     $('#tblbmccollection-customer_code').change(function(){
+        var dcs = $(this).val();
+        var type= $('#tblbmccollection-customer_type').val(); 
+        var union= $('#tblbmccollection-union_code').val(); 
+        var bmc= $('#tblbmccollection-bmc_code').val(); 
+        var plant= $('#tblbmccollection-plant_code').val(); 
+        var mcc= $('#tblbmccollection-mcc_plant_code').val(); 
+        var date= $('#tblbmccollection-date_time_of_collection').val(); 
+        $.ajax({
+            type: 'post',
+            url:'" . Url::to(['validate-dcs']) . "',
+            data: {'dcs_code':dcs,'customer_type':type,'union_code':union,'bmc_code':bmc,'mcc':mcc,'plant':plant,'date':date},
+            success: function(data) {                                        
+                var obj = $.parseJSON(data);
+                if (obj.status == 'success')
+                {
+                    $('#tblbmccollection-customer_name').val(obj.data); 
+                }else{
+                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please enter valid Code</span></div></div>');
+                        $('#tblbmccollection-customer_code').val('');                    
+                        $('#tblbmccollection-customer_name').val('');                    
+                        $('#tblbmccollection-customer_code').focus();
+                }
+            },
+            error:function(data){
+		
+	    }
+	});
+    });
+   
+    
+
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

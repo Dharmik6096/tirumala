@@ -11,6 +11,8 @@ use yii\filters\VerbFilter;
 use app\modules\collection\models\TblMilkCollection;
 use app\modules\collection\models\TblCollectionDataAliasHistory;
 use app\modules\collection\models\TblCollectionDataAliasReject;
+use app\modules\collection\models\TblBmcCollection;
+use app\modules\collection\models\TblBmcCollectionHistory;
 
 /**
  * TblCollectionDataAliasController implements the CRUD actions for TblCollectionDataAlias model.
@@ -35,6 +37,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             if ($action == 'CREATE') {
                                 $MainModel = new TblMilkCollection();
                                 $MainModel->attributes = $existData->attributes;
+                                $MainModel->setModel($MainModel);
                                 $saveModel[] = $MainModel;
                             } else if ($action == 'UPDATE') {
                                 $MainModel = new TblMilkCollection();
@@ -101,7 +104,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         ]);
     }
 
-    public function actionCollectionVillageApprove() {
+    public function actionBmcCollectionApprove() {
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $succCount = 0;
@@ -113,25 +116,28 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
                     $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
                     $existData = $this->findModel($value);
-                    ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'CollectionVillage' : '';
+                    ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'BmcCollection' : '';
                     if ($operation == 'approve') {
                         if ($existData->validate()) {
                             if ($action == 'CREATE') {
-                                $MainModel = new Collectionvillage();
+                                $MainModel = new TblBmcCollection();
                                 $MainModel->attributes = $existData->attributes;
+                                $MainModel->setModel($MainModel);
+                                $MainModel->rate_code = $existData->purchase_rate_code;
+                                $MainModel->purchase_rate_code = NULL;
                                 $saveModel[] = $MainModel;
                             } else if ($action == 'UPDATE') {
-                                $MainModel = new Collectionvillage();
+                                $MainModel = new TblBmcCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 $existMainData->attributes = $existData->attributes;
                                 $saveModel[] = $existMainData;
                             } else if ($action == 'DELETE') {
-                                $MainModel = new Collectionvillage();
+                                $MainModel = new TblBmcCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 $deleteModel[] = $existMainData;
                             }
                         }
-                        $historyModel = new TblCollectionDataAliasHistory();
+                        $historyModel = new TblBmcCollectionHistory();
                         Yii::$app->operation->history($existData, $historyModel, DELETE);
                         $saveModel[] = $historyModel;
                     } else if ($operation == 'reject') {
@@ -155,32 +161,34 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                         $saveModel[] = $existData;
                     }
 
-                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['RMRD Collection Approval', 'edit']);
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['BMC Collection Approval', 'edit']);
                 }
-                $msg = $operation == 'approve' ? ('RMRD Collection ' . strtolower($action) . ' approved successfully. <br />Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('RMRD Collection ' . strtolower($action) . ' rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
+                $msg = $operation == 'approve' ? ('BMC Collection ' . strtolower($action) . ' approved successfully. <br />Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('BMC Collection ' . strtolower($action) . ' rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
                 Yii::$app->getSession()->setFlash('success', ['type' => 'success',
                     'message' => $msg]);
                 $getData = Yii::$app->request->queryParams;
                 if (!empty($getData['TblCollectionDataAliasSearch'])) {
-                    return $this->redirect(['collection-village-approve', 'TblCollectionDataAliasSearch' => $getData['TblCollectionDataAliasSearch']]);
+                    return $this->redirect(['bmc-collection-approve', 'TblCollectionDataAliasSearch' => $getData['TblCollectionDataAliasSearch']]);
                 } else {
-                    return $this->redirect(['collection-village-approve']);
+                    return $this->redirect(['bmc-collection-approve']);
                 }
             }
         }
+        $showType = TRUE;
         $searchModel = new TblCollectionDataAliasSearch();
-        $searchModel->table_name = 'collectionvillage';
+        $searchModel->table_name = 'tbl_bmc_collection';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $searchModel->scenario = 'approvalCollection';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
-        $id = 'collection-village-approve-' . strtolower($searchModel->action_perform);
-        $url = 'collection-village-approve';
-        return $this->render('collection_village', [
+        $id = 'bmc-collection-approve-' . strtolower($searchModel->action_perform);
+        $url = 'bmc-collection-approve';
+        return $this->render('bmc_collection', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'showField' => $showField,
                     'id' => $id,
                     'url' => $url,
+                    'showType' => $showType,
         ]);
     }
 

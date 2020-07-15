@@ -54,8 +54,6 @@ use Yii;
  * @property string $incentive
  * @property string $deduction
  * @property string $total_amount
- * @property string $own_bmc_code
- * @property string $own_mcc_plant_code
  * @property integer $send_status
  * @property string $transporter_code
  * @property integer $collection_type
@@ -113,7 +111,7 @@ class TblCollectionDataAliasHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['collection_data_alias_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'qlty_auto', 'qty_auto', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'dispatch_type', 'destination_type', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type'], 'safe'],
-            [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'shift_code', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'route_code', 'remarks', 'sync_status', 'own_bmc_code', 'own_mcc_plant_code', 'transporter_code', 'vehicle_no', 'challan_no', 'destination_code', 'old_milk_type_code', 'old_milk_quality_type_code', 'error_desc', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
+            [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'shift_code', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'vehicle_no', 'challan_no', 'destination_code', 'old_milk_type_code', 'old_milk_quality_type_code', 'error_desc', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'temperature', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'safe'],
             [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
         ];
@@ -171,8 +169,6 @@ class TblCollectionDataAliasHistory extends \yii\db\ActiveRecord {
             'incentive' => Yii::t('app', 'Incentive'),
             'deduction' => Yii::t('app', 'Deduction'),
             'total_amount' => Yii::t('app', 'Total Amount'),
-            'own_bmc_code' => Yii::t('app', 'Own Bmc Code'),
-            'own_mcc_plant_code' => Yii::t('app', 'Own Mcc Plant Code'),
             'send_status' => Yii::t('app', 'Send Status'),
             'transporter_code' => Yii::t('app', 'Transporter Code'),
             'collection_type' => Yii::t('app', 'Collection Type'),

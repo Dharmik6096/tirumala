@@ -482,7 +482,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             }
             $approvalTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection'])->one();
             $mainTableData = $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])
-                    ->andWhere(['!=', 'milk_type_code', $oldMilktype])
+//                    ->andWhere(['!=', 'milk_type_code', $oldMilktype])
                     ->one();
             if ($flag == 1 && !empty($approvalTableData)) {
                 $this->addError($attribute, "Record is Already Exist In Approval");
