@@ -9,6 +9,8 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\collection\models\TblDcsMilkDispatchTxn;
+use app\modules\collection\models\TblCollectionDataAlias;
 
 /**
  * This is the model class for table "tbl_dcs_milk_dispatch".
@@ -45,7 +47,7 @@ use app\modules\organisation\models\TblPlant;
  */
 class TblDcsMilkDispatch extends \app\models\ChildModel {
 
-    public $from_date, $to_date, $from_shift, $to_shift;
+    public $from_date, $to_date, $from_shift, $to_shift, $name, $dcs, $status;
 
     /**
      * @inheritdoc
@@ -61,8 +63,14 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
         return [
             [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs_milk_dispatch_code'], 'safe', 'on' => ['androidsync']],
             [['challan_no', 'destination_code', 'vehicle_no', 'vehicle_in_time', 'vehicle_out_time', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks'], 'safe'],
-            [['date_time_of_dispatch', 'created_at', 'updated_at'], 'safe'],
+            [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs'], 'safe'],
             [['shift_code', 'dispatch_type', 'destination_type', 'originating_type', 'dcs_milk_dispatch_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['create', 'update']],
+//            [['date_time_of_dispatch'], function ($attribute, $params) {
+//                    if (empty($this->getErrors())) {
+//                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code');
+//                    }
+//                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
         ];
     }
 
@@ -137,6 +145,19 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
 
     public function getBmcCodeDest() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'destination_code']);
+    }
+
+    public function getDcsMilkDispatch() {
+        return $this->hasOne(TblDcsMilkDispatchTxn::className(), ['dcs_milk_dispatch_code' => 'dcs_milk_dispatch_code']);
+    }
+
+    public function getCode() {
+        $data = $this->find()->select(["MAX(dcs_milk_dispatch_code) AS dcs_milk_dispatch_code"])->one();
+        return (int) $data['dcs_milk_dispatch_code'] + 1;
+    }
+
+    public function getExistingDispatch($data) {
+        return $this->find()->where(['dcs_code' => $data->dcs_code, 'date_time_of_dispatch' => $data->date_time_of_collection, 'shift_code' => $data->shift_code])->one();
     }
 
 }

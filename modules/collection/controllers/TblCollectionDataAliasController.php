@@ -13,6 +13,8 @@ use app\modules\collection\models\TblCollectionDataAliasHistory;
 use app\modules\collection\models\TblCollectionDataAliasReject;
 use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblBmcCollectionHistory;
+use app\modules\collection\models\TblDcsMilkDispatch;
+use app\modules\collection\models\TblDcsMilkDispatchTxn;
 
 /**
  * TblCollectionDataAliasController implements the CRUD actions for TblCollectionDataAlias model.
@@ -137,7 +139,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                 $deleteModel[] = $existMainData;
                             }
                         }
-                        $historyModel = new TblBmcCollectionHistory();
+                        $historyModel = new TblCollectionDataAliasHistory();
                         Yii::$app->operation->history($existData, $historyModel, DELETE);
                         $saveModel[] = $historyModel;
                     } else if ($operation == 'reject') {
@@ -192,7 +194,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         ]);
     }
 
-    public function actionVillageDispatchApprove() {
+    public function actionMilkDispatchApprove() {
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $succCount = 0;
@@ -204,22 +206,41 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                     $action = Yii::$app->request->post('TblCollectionDataAlias')['action_perform'];
                     $operation = Yii::$app->request->post('TblCollectionDataAlias')['operation'];
                     $existData = $this->findModel($value);
-                    ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'DispatchVillage' : '';
+                    ($operation == 'approve' && ($action == 'CREATE' || $action == 'UPDATE')) ? $existData->scenario = 'MilkDispatch' : '';
                     if ($operation == 'approve') {
                         if ($existData->validate()) {
                             if ($action == 'CREATE') {
-                                $MainModel = new VillageDispatch();
+                                $MainModel = new TblDcsMilkDispatch();
                                 $MainModel->attributes = $existData->attributes;
+                                $MainModel->dcs_milk_dispatch_code = $MainModel->getCode($MainModel);
+                                $MainModel->date_time_of_dispatch = $existData->date_time_of_collection;
                                 $saveModel[] = $MainModel;
+                                $TxModel = new TblDcsMilkDispatchTxn();
+                                $TxModel->attributes = $existData->attributes;
+                                $TxModel->attributes = $MainModel->attributes;
+                                $TxModel->setModelData($existData, $TxModel);
+                                $TxModel->dcs_milk_dispatch_txn_code = $TxModel->getCode($TxModel);
+                                $saveModel[] = $TxModel;
                             } else if ($action == 'UPDATE') {
-                                $MainModel = new VillageDispatch();
-                                $existMainData = $MainModel->getExistingCollection($existData);
+                                $MainModel = new TblDcsMilkDispatch();
+                                $existMainData = $MainModel->getExistingDispatch($existData);
                                 $existMainData->attributes = $existData->attributes;
                                 $saveModel[] = $existMainData;
+
+                                $TxModel = new TblDcsMilkDispatchTxn();
+                                $TxModel->dcs_milk_dispatch_code = $existMainData->dcs_milk_dispatch_code;
+                                $existTxModel = $TxModel->getTxnExistingCollection($existData);
+                                $existTxModel->attributes = $existData->attributes;
+                                $existTxModel->setModelData($existData, $existTxModel);
+                                $saveModel[] = $existTxModel;
                             } else if ($action == 'DELETE') {
-                                $MainModel = new VillageDispatch();
-                                $existMainData = $MainModel->getExistingCollection($existData);
-                                $deleteModel[] = $existMainData;
+                                $MainModel = new TblDcsMilkDispatch();
+                                $existMainData = $MainModel->getExistingDispatch($existData);
+
+                                $TxModel = new TblDcsMilkDispatchTxn();
+                                $TxModel->dcs_milk_dispatch_code = $existMainData->dcs_milk_dispatch_code;
+                                $existTxModel = $TxModel->getTxnExistingCollection($existData);
+                                $deleteModel[] = $existTxModel;
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
@@ -245,27 +266,27 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                         $existData->scenario = 'approve';
                         $saveModel[] = $existData;
                     }
-                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['MPP Dispatch Approval', 'edit']);
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Milk Dispatch Approval', 'edit']);
                 }
-                $msg = $operation == 'approve' ? ('MPP Dispatch ' . strtolower($action) . ' approved successfully. <br />Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('MPP Dispatch ' . strtolower($action) . ' rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
+                $msg = $operation == 'approve' ? ('Milk Dispatch ' . strtolower($action) . ' approved successfully. <br />Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('MPP Dispatch ' . strtolower($action) . ' rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
                 Yii::$app->getSession()->setFlash('success', ['type' => 'success',
                     'message' => $msg]);
                 $getData = Yii::$app->request->queryParams;
                 if (!empty($getData['TblCollectionDataAliasSearch'])) {
-                    return $this->redirect(['village-dispatch-approve', 'TblCollectionDataAliasSearch' => $getData['TblCollectionDataAliasSearch']]);
+                    return $this->redirect(['milk-dispatch-approve', 'TblCollectionDataAliasSearch' => $getData['TblCollectionDataAliasSearch']]);
                 } else {
-                    return $this->redirect(['village-dispatch-approve']);
+                    return $this->redirect(['milk-dispatch-approve']);
                 }
             }
         }
         $searchModel = new TblCollectionDataAliasSearch();
-        $searchModel->table_name = 'VillageDispatch';
+        $searchModel->table_name = 'tbl_dcs_milk_dispatch';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $searchModel->scenario = 'approvalCollection';
+        $searchModel->scenario = 'approvalDispatch';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
-        $id = 'village-dispatch-approve-' . strtolower($searchModel->action_perform);
-        $url = 'collection-village-approve';
-        return $this->render('village_dispatch', [
+        $id = 'milk-dispatch-approve-' . strtolower($searchModel->action_perform);
+        $url = 'milk-dispatch-approve';
+        return $this->render('milk_dispatch', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'showField' => $showField,

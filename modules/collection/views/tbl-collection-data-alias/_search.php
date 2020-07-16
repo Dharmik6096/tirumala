@@ -29,10 +29,12 @@ use yii\web\View;
     <div class="col-sm-2 ">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcollectiondataaliassearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
     </div>  
-    <?php if (isset($showFarmer) && $showFarmer) { ?>
+    <?php if (!isset($showType)) { ?>
         <div class="col-sm-2 ">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblcollectiondataaliassearch-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
         </div>
+    <?php } ?>
+    <?php if (isset($showFarmer) && $showFarmer) { ?>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblcollectiondataaliassearch-dcs_code', '', Yii::t('app', 'Member')); ?>
         </div>

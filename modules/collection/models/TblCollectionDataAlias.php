@@ -12,6 +12,7 @@ use app\modules\collection\models\TblMilkCollection;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\collection\models\TblBmcCollection;
+use app\modules\collection\models\TblDcsMilkDispatchTxn;
 
 /**
  * This is the model class for table "tbl_collection_data_alias".
@@ -109,12 +110,13 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'shift_code', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'vehicle_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
+            [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'vehicle_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'qlty_auto', 'qty_auto', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type'], 'integer'],
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code', 'shift_code'], 'safe'],
             [['dcs_code'], 'validateMilkCollection', 'on' => ['MilkCollection']],
             [['customer_code'], 'validateBmcCollection', 'on' => ['BmcCollection']],
+            [['dcs_code'], 'validateMilkDispatch', 'on' => ['MilkDispatch']],
             [['error_desc'], 'string', 'on' => ['approve']],
         ];
     }
@@ -215,9 +217,29 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
         $model->old_milk_quality_type_code = $model->milk_quality_type_code;
         $model->old_purchase_rate_code = $model->purchase_rate_code;
         $model->old_clr = $model->clr;
-        if ($model->table_name == 'tbl_bmc_collection' || $model->table_name == 'tbl_dcs_milk_dispatch') {
+        if ($model->table_name == 'tbl_bmc_collection') {
             $model->old_no_of_can = $model->no_of_can;
         }
+    }
+
+    public function setModelAttributes($model, &$saveModel) {
+        $saveModel->qty = $model->dispatch_qty;
+        $saveModel->fat = $model->avg_fat;
+        $saveModel->snf = $model->avg_snf;
+        $saveModel->amount = $model->total_amount;
+        $saveModel->clr = $model->avg_clr;
+        $saveModel->no_of_can = $model->nos_of_can;
+
+        $saveModel->old_qty = $saveModel->qty;
+        $saveModel->old_fat = $saveModel->fat;
+        $saveModel->old_snf = $saveModel->snf;
+        $saveModel->old_rtpl = $model->rtpl;
+        $saveModel->old_amount = $saveModel->amount;
+        $saveModel->old_milk_type_code = $model->milk_type_code;
+        $saveModel->old_milk_quality_type_code = $model->milk_quality_type_code;
+        $saveModel->old_purchase_rate_code = $model->purchase_rate_code;
+        $saveModel->old_clr = $model->avg_clr;
+        $saveModel->old_no_of_can = $model->nos_of_can;
     }
 
     public function getMilkQualityCode() {
@@ -283,6 +305,30 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
         } else {
             $mainTableData = $MainModel->find()->where(['bmc_code' => $this->bmc_code, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])
                     ->one();
+        }
+        if (!empty($mainTableData)) {
+            $this->addError($attribute, "Record is Already Exist");
+        }
+    }
+
+    public function validateMilkDispatch($attribute, $params) {
+        $MainModel = new TblDcsMilkDispatch();
+        $txModel = new TblDcsMilkDispatchTxn();
+        $mainTableData = $MainModel->find()->where(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code, 'date_time_of_dispatch' => $this->date_time_of_collection])->one();
+
+        if (($this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code || $this->milk_quality_type_code != $this->old_milk_quality_type_code)) {
+            if (!empty($mainTableData)) {
+                $query = $txModel->find()->where(['dcs_code' => $this->dcs_code, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'dispatch_qty' => $this->qty, 'avg_fat' => $this->fat, 'avg_snf' => $this->snf]);
+                if ($this->milk_type_code == $this->old_milk_type_code && $this->milk_quality_type_code == $this->old_milk_quality_type_code) {
+                    $query->andWhere(['!=', 'milk_type_code', $this->old_milk_type_code]);
+                }
+                $txTableData = $query->one();
+            }
+        } else {
+            if (!empty($mainTableData)) {
+                $txTableData = $txModel->find()->where(['dcs_code' => $this->dcs_code, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'dispatch_qty' => $this->qty, 'avg_fat' => $this->fat, 'avg_snf' => $this->snf])
+                        ->one();
+            }
         }
         if (!empty($mainTableData)) {
             $this->addError($attribute, "Record is Already Exist");

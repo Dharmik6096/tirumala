@@ -380,7 +380,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         } else {
                             $existData = $this->findModel($detalData->milk_collection_code);
                             $historyModel = new TblMilkCollectionHistory();
-                            Yii::$app->operation->history($existData, $historyModel, DELETE);
+                            Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                             $saveModel[] = $historyModel;
                             $existData->attributes = $detalData->attributes;
                             $existData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
