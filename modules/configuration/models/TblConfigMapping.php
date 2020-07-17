@@ -9,7 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
-use app\modules\configuration\models\TblConfigMapping;
+use app\modules\configuration\models\TblConfigResult;
 
 /**
  * This is the model class for table "tbl_config_mapping".
@@ -203,6 +203,24 @@ class TblConfigMapping extends \app\models\ChildModel {
                         ->where(['tbl_config_mapping.union_code' => $this->union_code, 'tbl_config_mapping.plant_code' => $this->plant_code, 'tbl_config_mapping.mcc_plant_code' => $this->mcc_plant_code, 'tbl_config_mapping.bmc_code' => $this->bmc_code, 'tbl_config.config_for' => $for, 'tbl_config.process_name' => $process])
                         ->joinWith(['configCode'])
                         ->one();
+    }
+
+    public function getExistConfig() {
+        return $this->find()->where(['union_code' => $this->union_code, 'config_code' => $this->config_code, 'org_code' => $this->org_code, 'org_type' => $this->org_type,])->one();
+    }
+
+    public function getConfigResultCode() {
+        return $this->hasOne(TblConfigResult::className(), ['config_code' => 'config_code', 'config_result_key' => 'config_result']);
+    }
+
+    public function getConfigResult() {
+        return $this->hasOne(TblConfigResult::className(), ['config_code' => 'config_code']);
+    }
+
+    public function getType($code) {
+        $model = new TblConfigResult();
+        $data = $model->find()->where(['config_code' => $code, 'is_active' => 1])->all();
+        return $data;
     }
 
 }
