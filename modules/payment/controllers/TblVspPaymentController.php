@@ -61,6 +61,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function actionCreate() {
         $model = new TblVspPayment();
+        $model->scenario = 'processpayment';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             // $this->insertPaymentData($model);
             $this->getVspSpData($model);
@@ -360,6 +361,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 ])
                 ->one();
         if (!empty($PaymentApp)) {
+            $model->from_datetime = $PaymentApp->from_date;
             $PaymentApp->billing_lock_bmc = 1;
             $save_model[] = $PaymentApp;
         }
@@ -384,6 +386,13 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $data->status = 'sent';
             $save_model[] = $data;
             $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+            if ($transaction == 'customRedirect') {
+                $param = [];
+                $param['from_datetime'] = $model->from_datetime;
+                $param['customer_type'] = $model->customer_type;
+                $param['bmc_code'] = $model->bmc_code;
+                Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+            }
         }
     }
 

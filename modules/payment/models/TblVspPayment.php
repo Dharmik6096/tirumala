@@ -58,6 +58,7 @@ class TblVspPayment extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
             [['customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
             [['payment_cycle_code'], 'required', 'except' => ['remuneration']],
+            [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
         ];
     }
 
@@ -153,6 +154,21 @@ class TblVspPayment extends \app\models\ChildModel {
                     'to_datetime' => $this->to_datetime,
                     'bmc_code' => $this->bmc_code,
                     'billing_type' => 'remuneration', 'status' => 'processed']);
+    }
+
+    public function CheckPendingDisburse($attribute, $params) {
+        $data = $this->find()
+                ->select(['from_datetime', 'to_datetime'])
+                ->where(['status' => 'processed', 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code,
+                    'customer_type' => $this->customer_type,
+                ])
+                ->andWhere(['NOT IN', 'payment_cycle_code', $this->payment_cycle_code])
+                ->one();
+        if (!empty($data)) {
+            $from_date = date('d-m-Y', strtotime($data->from_datetime));
+            $to_date = date('d-m-Y', strtotime($data->to_datetime));
+            $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
+        }
     }
 
 }

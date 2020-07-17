@@ -196,6 +196,13 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data->status = 'sent';
             $save_model[] = $data;
             $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+            if ($transaction == 'customRedirect') {
+                $param = [];
+                $param['from_datetime'] = $model->from_datetime;
+                $param['customer_type'] = 'DCS';
+                $param['bmc_code'] = $model->bmc_code;
+                Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+            }
         }
     }
 

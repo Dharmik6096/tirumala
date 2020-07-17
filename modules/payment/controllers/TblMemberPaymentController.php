@@ -70,6 +70,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $paymentcycleAppModel = new TblPaymentCycleApplicability();
         if (Yii::$app->request->post()) {
             $result = 'success';
+            $model->scenario = 'processpayment';
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $appModel = new TblPaymentCycleApplicability();
                 $appModel->payment_cycle_code = $model->payment_cycle_code;
@@ -382,6 +383,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $historyModel = new TblPaymentCycleApplicabilityHistory();
                             Yii::$app->operation->history($payCycleModelData, $historyModel, UPDATE);
                             $save_model[] = $historyModel;
+                            $model->from_datetime = $payCycleModelData->from_date;
                             $payCycleModelData->billing_lock_member = 1;
                             $save_model[] = $payCycleModelData;
                         }
@@ -439,6 +441,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                     $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Member Payment Disburse', 'create']);
                     if ($transaction == 'customRedirect') {
+                        $param = [];
+                        $param['from_datetime'] = $model->from_datetime;
+                        $param['customer_type'] = 'MEMBER';
+                        $param['bmc_code'] = $model->bmc_code;
+                        Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
                         $this->redirect(['index']);
                     }
                 } else {

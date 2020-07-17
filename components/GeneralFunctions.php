@@ -42,6 +42,7 @@ use app\models\TblKeyPattern;
 use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
+use app\modules\configuration\models\TblConfigMapping;
 
 class GeneralFunctions extends Component {
 
@@ -1736,6 +1737,16 @@ class GeneralFunctions extends Component {
                 return;
             }
         }
+    }
+
+    public function getConfigMapping($config_key, $org_code, $org_type) {
+        $model = new TblConfigMapping();
+        $data = $model->find()->select(['tbl_config_mapping.config_result'])
+                        ->joinWith(['configCode'])
+                        ->where(['tbl_config_mapping.org_code' => $org_code,
+                            'tbl_config_mapping.org_type' => $org_type,
+                            'tbl_config.config_key' => $config_key])->one();
+        return !empty($data) ? $data->config_result : '';
     }
 
 }
