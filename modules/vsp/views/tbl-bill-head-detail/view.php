@@ -76,8 +76,8 @@ $this->title = Yii::$app->label->title('view', 'Bill Head');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'payment_cycle_code',
-                                'value' => Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')),
+                                'attribute' => 'transaction_date',
+                                'value' => Yii::$app->controls->view_date($model->transaction_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [

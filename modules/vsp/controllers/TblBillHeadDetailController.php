@@ -68,6 +68,8 @@ class TblBillHeadDetailController extends ChildController {
             $this->model->is_active = 1;
             $this->model->bill_head_for = Yii::$app->general->getforeignkey($this->model->billHeadCode, 'bill_head_for');
             $no = !empty($this->model->no_installment) ? ($this->model->no_installment) : 1;
+            $this->model->transaction_date = !empty($this->model->transaction_date) ? date('Y-m-d', strtotime($this->model->transaction_date)) : '';
+
             $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
             $installment = [];
             if ($this->model->validate()) {
@@ -82,17 +84,17 @@ class TblBillHeadDetailController extends ChildController {
                     $instModel->bill_head_for = $this->model->bill_head_for;
                     $instModel->installement_cycle = ($i + 1);
                     $instModel->installment_amount = floatval($this->model->amount / $no);
-                    $instModel->payment_cycle_code = $cycle;
-                    $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
+//                    $instModel->payment_cycle_code = $cycle;
+//                    $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
                     array_push($installment, $instModel);
-                    if ($this->model->no_installment > $i + 1) {
-                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $this->model->customer_type, 'BMC');
-                        if (empty($cycle)) {
-                            $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
-                            $record = ['msg' => $msg];
-                            return Json::encode($record);
-                        }
-                    }
+//                    if ($this->model->no_installment > $i + 1) {
+//                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $this->model->customer_type, 'BMC');
+//                        if (empty($cycle)) {
+//                            $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
+//                            $record = ['msg' => $msg];
+//                            return Json::encode($record);
+//                        }
+//                    }
                 }
                 if ($this->model->validate()) {
                     $transaction = $this->generalModel->saveTransaction([$this->model], $installment, ['Bill Head Detail', 'create']);
@@ -342,7 +344,9 @@ class TblBillHeadDetailController extends ChildController {
             $this->model->bill_head_for = Yii::$app->general->getforeignkey($this->model->billHeadCode, 'bill_head_for');
             $this->model->scenario = 'memberBillHead';
             $no = !empty($this->model->no_installment) ? ($this->model->no_installment) : 1;
-            $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
+            $this->model->transaction_date = !empty($this->model->transaction_date) ? date('Y-m-d', strtotime($this->model->transaction_date)) : '';
+
+//            $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
             $installment = [];
             if ($this->model->validate()) {
                 $cycle = $this->model->payment_cycle_code;
@@ -362,17 +366,17 @@ class TblBillHeadDetailController extends ChildController {
                     $instModel->bill_head_for = $this->model->bill_head_for;
                     $instModel->installement_cycle = ($i + 1);
                     $instModel->installment_amount = floatval($this->model->amount / $no);
-                    $instModel->payment_cycle_code = $cycle;
-                    $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
+//                    $instModel->payment_cycle_code = $cycle;
+//                    $instModel->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
                     array_push($installment, $instModel);
-                    if ($this->model->no_installment > $i + 1) {
-                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $customer_type, 'BMC');
-                        if (empty($cycle)) {
-                            $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
-                            $record = ['msg' => $msg];
-                            return Json::encode($record);
-                        }
-                    }
+//                    if ($this->model->no_installment > $i + 1) {
+//                        $cycle = $cycleModel->getNextCycleCode($instModel->payment_cycle_code, $this->model->bmc_code, $customer_type, 'BMC');
+//                        if (empty($cycle)) {
+//                            $msg = Yii::t('app/validation', 'Payment Cycle Applicability is not available For Future Installment.');
+//                            $record = ['msg' => $msg];
+//                            return Json::encode($record);
+//                        }
+//                    }
                 }
                 if ($this->model->validate()) {
                     $transaction = $this->generalModel->saveTransaction([$this->model], $installment, ['Member Bill Head Detail', 'create']);
