@@ -18,6 +18,8 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
+use app\modules\collection\models\TblCollectionDataAlias;
+use app\modules\configuration\models\TblUnionRatechartRange;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -89,6 +91,8 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
+            [['fat', 'snf', 'bmc_code'], 'required', 'except' => ['create']],
+            [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['create', 'importCsv']],
             [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['rtpl', 'amount'], 'trim'],
@@ -127,7 +131,14 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
             ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
             [['tag_1'], 'default', 'value' => 'X'],
-            [['adt_param', 'adt_value'], 'safe']
+            [['adt_param', 'adt_value'], 'safe'],
+            [['member_code'], 'validateUnique', 'on' => ['create']],
+            [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
         ];
     }
 
@@ -150,7 +161,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'amount' => Yii::t('app', 'Amount'),
             'auto_flag' => Yii::t('app', 'Auto Flag'),
             'shift_code' => Yii::t('app', 'Shift'),
-            'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
+            'date_time_of_collection' => Yii::t('app', 'Collection Date'),
             'date_time_of_recieve' => Yii::t('app', 'Date Time Of Recieve'),
             'village_code' => Yii::t('app', 'Village Name'),
             'sample_no' => Yii::t('app', 'Sample No'),
@@ -178,6 +189,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'adt_param' => Yii::t('app', 'Adultration Param'),
             'adt_value' => Yii::t('app', 'Adultration Value'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
         ];
     }
 
@@ -326,6 +338,10 @@ class TblMilkCollection extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
+    public function getRateRange() {
+        return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code']);
+    }
+
     public function ImportfieldSet($attribute, $params) {
         if (empty($this->getErrors())) {
             $dcs = new TblDcs();
@@ -430,6 +446,70 @@ class TblMilkCollection extends \app\models\ChildModel {
             $this->date_time_of_collection = !empty($this->date_time_of_collection) ? Yii::$app->controls->view_date($this->date_time_of_collection, 'php:Y-m-d') : NULL;
             $this->date_time_of_collection = $this->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->shift_code);
         }
+    }
+
+    public function getApprovalData() {
+        return $this->hasOne(TblCollectionDataAlias::className(), ['member_code' => 'member_code', 'old_milk_type_code' => 'milk_type_code', 'shift_code' => 'shift_code', 'date_time_of_collection' => 'date_time_of_collection'])->andOnCondition(['tbl_collection_data_alias.table_name' => 'tbl_milk_collection', 'action_perform' => 'DELETE']);
+    }
+
+    public function validateUnique($attribute, $params) {
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $model = new TblMember();
+        $data = $model->validMember($this->member_code);
+        if (empty($data)) {
+            $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' is Invalid'));
+        }
+
+        Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_collection, '', TRUE);
+        Yii::$app->general->validateRateRange($this);
+
+        $ApprovalModel = new TblCollectionDataAlias();
+        $approvalTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection'])->one();
+        $mainTableData = $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])->one();
+        if (($flag == 1 && !empty($approvalTableData)) || !empty($mainTableData)) {
+            $this->addError($attribute, "Milk Collection Already Exists.");
+        }
+    }
+
+    public function validateUpdate($attribute, $params) {
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        $ApprovalModel = new TblCollectionDataAlias();
+        $oldMilktype = $this->oldAttributes['milk_type_code'];
+        if (!empty($this->oldAttributes) && ($this->fat != $this->oldAttributes['fat'] || $this->snf != $this->oldAttributes['snf'] || $this->qty != $this->oldAttributes['qty'] || $this->milk_type_code != $this->oldAttributes['milk_type_code'])) {
+            $existTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'old_milk_type_code' => $this->oldAttributes['milk_type_code'], 'shift_code' => $this->shift_code, 'old_qty' => $this->oldAttributes['qty'], 'old_fat' => $this->oldAttributes['fat'], 'old_snf' => $this->oldAttributes['snf'], 'table_name' => 'tbl_milk_collection'])->one();
+            if ($flag == 1 && !empty($existTableData)) {
+                $this->addError($attribute, "Record is Already Exist For Approval");
+            }
+            $approvalTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection'])->one();
+            $mainTableData = $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])
+//                    ->andWhere(['!=', 'milk_type_code', $oldMilktype])
+                    ->one();
+            if ($flag == 1 && !empty($approvalTableData)) {
+                $this->addError($attribute, "Record is Already Exist In Approval");
+            }
+            if (!empty($mainTableData)) {
+                $this->addError($attribute, "Record is Already Exist");
+            }
+            Yii::$app->general->validateRateRange($this);
+        }
+    }
+
+    public function getExistingCollection($data) {
+        return $this->find()->where(['dcs_code' => $data->dcs_code, 'member_code' => $data->member_code, 'date_time_of_collection' => $data->date_time_of_collection, 'milk_type_code' => $data->old_milk_type_code, 'shift_code' => $data->shift_code, 'qty' => $data->old_qty, 'fat' => $data->old_fat, 'snf' => $data->old_snf])->one();
+    }
+
+    public function setModel(&$model) {
+        $datetime = date('Y-m-d H:i:s');
+        $model->status = 'Accept';
+        $model->sms_status = 'n';
+        $model->mobile_no = Yii::$app->general->getforeignkey($model->memberCode, 'mobile_no');
+        $model->name = Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+        $model->village_code = Yii::$app->general->getforeignkey($model->dcsCode, 'village_code');
+        $model->dt_date = Yii::$app->formatter->asDate($datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($model->shift_code);
+        $model->route_code = Yii::$app->general->getforeignkey($model->dcsCode, 'route_code');
+        $model->last_edited_type = 'P';
+        $model->own_mcc_plant_code = $model->mcc_plant_code;
+        $model->own_bmc_code = $model->bmc_code;
     }
 
 }
