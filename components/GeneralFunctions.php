@@ -43,6 +43,7 @@ use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\configuration\models\TblConfigMapping;
+use app\modules\payment\models\TblPaymentCycleApplicability;
 
 class GeneralFunctions extends Component {
 
@@ -1747,6 +1748,45 @@ class GeneralFunctions extends Component {
                             'tbl_config_mapping.org_type' => $org_type,
                             'tbl_config.config_key' => $config_key])->one();
         return !empty($data) ? $data->config_result : '';
+    }
+
+    public function validateRateRange($model) {
+        $minFat = !empty(Yii::$app->general->getforeignkey($model->rateRange, 'min_fat')) ? Yii::$app->general->getforeignkey($model->rateRange, 'min_fat') : '0.01';
+        $maxFat = Yii::$app->general->getforeignkey($model->rateRange, 'max_fat');
+        $minSnf = !empty(Yii::$app->general->getforeignkey($model->rateRange, 'min_snf')) ? Yii::$app->general->getforeignkey($model->rateRange, 'min_snf') : '0.01';
+        $maxSnf = Yii::$app->general->getforeignkey($model->rateRange, 'max_snf');
+
+        if (($minFat > $model->fat) || (!empty($maxFat) && $maxFat < $model->fat)) {
+            $model->addError('fat', Yii::t('app/validation', $model->getAttributeLabel('fat') . ' is Invalid'));
+        }
+        if (($minSnf > $model->snf) || (!empty($maxSnf) && $maxSnf < $model->snf)) {
+            $model->addError('snf', Yii::t('app/validation', $model->getAttributeLabel('snf') . ' is Invalid'));
+        }
+    }
+
+    public function paymentCycleLock($model, $dateParam, $codeParam, $for, $type, $flagArray = []) {
+        if (!empty($model->$dateParam)) {
+            $date = Yii::$app->formatter->asDate($model->$dateParam, DATE_FORMAT);
+            $payment_model = new TblPaymentCycleApplicability;
+            $data = $payment_model->find()
+                    ->where(['applicable_code' => $model->$codeParam, 'applicable_for' => $for, 'applicable_type' => $type])
+                    ->andWhere(['<=', 'CAST(from_date as date)', $date])
+                    ->andWhere(['>=', 'CAST(to_date as date)', $date])
+                    ->one();
+
+            if (empty($data)) {
+                $model->addError($dateParam, "Payment Cycle is Not Available");
+                return false;
+            } else if (!empty($data)) {
+
+                foreach ($flagArray as $flag) {
+                    if ($data->$flag == 1) {
+                        $model->addError($dateParam, "Payment Cycle is Locked");
+                        return false;
+                    }
+                }
+            }
+        }
     }
 
 }

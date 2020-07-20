@@ -1,6 +1,8 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collections'));
-//$this->params['menu'][] = Yii::$app->controls->add('Milk Collection');
+$this->params['menu'][] = Yii::$app->controls->add('Milk Collection');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Update Milk Collection', 'update-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Delete Milk Collection', 'delete-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 $this->params['menu'][] = Yii::$app->controls->import('milk-collection', $this);
 ?>
 <div class="tbl-banks-index">
@@ -18,4 +20,3 @@ $this->params['menu'][] = Yii::$app->controls->import('milk-collection', $this);
         </div>
     </div>
 </div>
-

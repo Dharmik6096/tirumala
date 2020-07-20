@@ -20,20 +20,20 @@ use yii\widgets\ActiveForm;
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkcollectionsearch-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmccollectionsearch-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
     </div>
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkcollectionsearch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmccollectionsearch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
     </div>  
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollectionsearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmccollectionsearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
     </div>  
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollectionsearch-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmilkcollectionsearch-dcs_code', '', Yii::t('app', 'Member')); ?>
-    </div>
+        <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollectionsearch-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
+    </div>  
+    <div class="col-sm-2 ">
+        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbmccollectionsearch-bmc_code,tblbmccollectionsearch-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+    </div>  
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>

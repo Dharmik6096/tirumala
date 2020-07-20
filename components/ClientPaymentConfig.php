@@ -33,10 +33,6 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
                     'sp_name' => 'sp_vsp_payment_cpmilk',
                 ],
-                'transit_loss' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,dcs_code,from_datetime,to_datetime',
-                    'sp_name' => 'sp_bmc_transit_loss_cpmilk',
-                ],
             ],
             'EIPLCOMMON' => [
                 'vsp_payment' => [

@@ -316,8 +316,8 @@ class TblProductSale extends \app\models\ChildModel {
         $appCycleAppModelData = $appCycleAppModel->getApplicablePaymentCycle($saleDate);
         if (!empty($model->payment_mode)) {
             $no = !empty($model->no_of_installment) ? ($model->no_of_installment) : 1;
-            $cycle = !empty($appCycleAppModelData->payment_cycle_code) ? $appCycleAppModelData->payment_cycle_code : NULL;
-            $appCode = !empty($appCycleAppModelData->payment_cycle_applicabilty_code) ? $appCycleAppModelData->payment_cycle_applicabilty_code : NULL;
+//            $cycle = !empty($appCycleAppModelData->payment_cycle_code) ? $appCycleAppModelData->payment_cycle_code : NULL;
+//            $appCode = !empty($appCycleAppModelData->payment_cycle_applicabilty_code) ? $appCycleAppModelData->payment_cycle_applicabilty_code : NULL;
             $model->amount_due = !empty($model->amount_due) ? $model->amount_due : 0;
             $instAmount = floatval($model->amount_due / $no);
             $ai = 1;
@@ -334,17 +334,17 @@ class TblProductSale extends \app\models\ChildModel {
                 $installmentModel->main_amount = $model->amount_due;
                 $installmentModel->installment_amount = $instAmount;
                 $installmentModel->installment_status = 0;
-                $installmentModel->payment_cycle_applicability_code = $appCode;
-                $installmentModel->payment_cycle_code = $cycle;
+                $installmentModel->payment_cycle_applicability_code = NULL;//$appCode;
+                $installmentModel->payment_cycle_code = NULL;//$cycle;
                 $installmentModel->product_sale_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $model->product_sale_code, $ai);
                 $paymentCycleDate = Yii::$app->general->getforeignkey($installmentModel->tblPaymentCycleCode, 'from_date');
                 $paymentCycleDate = !empty($paymentCycleDate) && $paymentCycleDate != 'N/A' ? date('Y-m-d', strtotime($paymentCycleDate)) : NULL;
-                $installmentModel->installment_date = $paymentCycleDate;
+                $installmentModel->installment_date = NULL;//$paymentCycleDate;
                 $childModel[] = $installmentModel;
-                if (!empty($installmentModel->payment_cycle_code)) {
-                    $appCycleAppModel = new TblPaymentCycle();
-                    $cycle = $appCycleAppModel->getNextCycleCode($installmentModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC', $appCode);
-                }
+//                if (!empty($installmentModel->payment_cycle_code)) {
+//                    $appCycleAppModel = new TblPaymentCycle();
+//                    $cycle = $appCycleAppModel->getNextCycleCode($installmentModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC', $appCode);
+//                }
                 $ai++;
             }
         }
