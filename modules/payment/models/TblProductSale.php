@@ -247,7 +247,7 @@ class TblProductSale extends \app\models\ChildModel {
     public function validatePaymentCycle($attribute, $params) {
         if (!empty($this->invoice_date) && $this->payment_mode == 1) {
             $model = new TblPaymentCycleApplicability();
-            $model->applicable_type = $this->customer_type;
+            $model->applicable_type = strtolower($this->customer_type) == 'member' ? 'DCS' : $this->customer_type;
             $model->applicable_code = $this->bmc_code;
             $model->applicable_for = 'BMC';
             $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
