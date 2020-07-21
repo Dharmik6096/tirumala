@@ -980,6 +980,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['PLAIN' => Yii::t('app', 'PLAIN'), 'ENCRYPTED' => Yii::t('app', 'ENCRYPTED')],
             ],
+            'billing_based_on' => [
+                'name' => 'Based On',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'RMRD' => Yii::t('app', 'RMRD')],
+            ],
         ];
         return $records[$l];
     }
