@@ -260,6 +260,7 @@ echo GhostMenu::widget([
                         ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/default/sap-status-report']],
                         ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
                         ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
+                        ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/cpmilk-sap-report']],
                     ]
                 ],
                 [
