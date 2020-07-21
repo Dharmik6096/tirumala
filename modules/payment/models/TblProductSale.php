@@ -274,10 +274,10 @@ class TblProductSale extends \app\models\ChildModel {
                 $model = new TblBmcCollection();
                 $collWhere = [];
                 $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
-//                if (strtolower($this->sale_type) == 'member') {
-//                    $model = new TblMilkCollection();
-//                    $collWhere = ['member_code' => $this->member_code];
-//                }
+                if (strtolower($this->customer_type) == 'member') {
+                    $model = new TblMilkCollection();
+                    $collWhere = ['member_code' => $this->customer_code];
+                }
                 $modelData = $model->find()
                         ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
                         ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
@@ -334,12 +334,12 @@ class TblProductSale extends \app\models\ChildModel {
                 $installmentModel->main_amount = $model->amount_due;
                 $installmentModel->installment_amount = $instAmount;
                 $installmentModel->installment_status = 0;
-                $installmentModel->payment_cycle_applicability_code = NULL;//$appCode;
-                $installmentModel->payment_cycle_code = NULL;//$cycle;
+                $installmentModel->payment_cycle_applicability_code = NULL; //$appCode;
+                $installmentModel->payment_cycle_code = NULL; //$cycle;
                 $installmentModel->product_sale_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $model->product_sale_code, $ai);
                 $paymentCycleDate = Yii::$app->general->getforeignkey($installmentModel->tblPaymentCycleCode, 'from_date');
                 $paymentCycleDate = !empty($paymentCycleDate) && $paymentCycleDate != 'N/A' ? date('Y-m-d', strtotime($paymentCycleDate)) : NULL;
-                $installmentModel->installment_date = NULL;//$paymentCycleDate;
+                $installmentModel->installment_date = NULL; //$paymentCycleDate;
                 $childModel[] = $installmentModel;
 //                if (!empty($installmentModel->payment_cycle_code)) {
 //                    $appCycleAppModel = new TblPaymentCycle();
