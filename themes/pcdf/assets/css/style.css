@@ -2540,7 +2540,6 @@ div.crystalstyle{
 .micro_form .radio-inline + .radio-inline, .micro_form .checkbox-inline + .checkbox-inline,
 .dynamic-controls .radio-inline + .radio-inline, .dynamic-controls .checkbox-inline + .checkbox-inline{
     margin-left: 5px !important
-<<<<<<< HEAD
 }
 
 
@@ -2855,6 +2854,4 @@ select[multiple]{
 .multiselect{
     font-size: 11px !important;
     height: 24px !important;
-=======
->>>>>>> origin/nif_preproduction
 }
