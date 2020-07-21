@@ -34,6 +34,7 @@ if (isset($data['url1'])) {
                 $sheet->getProtection()->setPassword("password");
             },];
     }
+    $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
     ?>
     <div class="panel-body padding-0">
         <div class="report-area not_ellipsis">
@@ -62,7 +63,7 @@ if (isset($data['url1'])) {
                             <div class="row margin_0">
 
                                 <div class="modal-body">
-                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false); ?>  
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);  ?>  
                                     <?php
                                     $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                     foreach ($param as $key => $value) {
@@ -92,9 +93,9 @@ if (isset($data['url1'])) {
                                             <div class="col-sm-6">
                                                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                                             </div>   <?php
-                                        }
-                                        if (in_array($value, array('plant_code'))) {
-                                            ?>
+                                            }
+                                            if (in_array($value, array('plant_code'))) {
+                                                ?>
                                             <div class="col-sm-6 val_plant_code">
                                                 <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
@@ -184,7 +185,7 @@ if (isset($data['url1'])) {
                                             }
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type','report_status'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -198,7 +199,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-6 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));  ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php

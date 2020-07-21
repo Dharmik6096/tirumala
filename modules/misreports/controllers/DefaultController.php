@@ -32,7 +32,20 @@ class DefaultController extends \app\controllers\ChildController {
             $this->LoadReport($model);
             if (empty($this->output)) {
                 $this->output = Yii::t('app', 'No Data Available.');
+            } else if (isset($this->data['export_file_name'])) {
+                $title_data = array_merge($model->attributes, $this->output[0]);
+                $export_file_name = $this->data['export_file_name'];
+                foreach ($title_data as $k => $v) {
+                    if ($k == 'from_date') {
+                        $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
+                    }
+                    $export_file_name = str_replace($k, $v, $export_file_name);
+                }
+                $this->data['export_file_name'] = $export_file_name;
             }
+        }
+        if (isset($this->data['export_file_name']) && empty($this->output)) {
+            $this->data['export_file_name'] = $this->data['title'];
         }
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
     }
@@ -330,6 +343,16 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionAmcsSyncPending() {
         $this->report = 'AmcsSyncPending';
+        return $this->actionIndex();
+    }
+
+    public function actionCpmilkSapReport() {
+        $this->report = 'CPMemberReportSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'CPRmrdReportSap';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -841,6 +864,22 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_sentbox_sync_pending_data',
                 'scenario' => 'AmcsSyncPending',
                 'title' => '224 - AMCS Sync Pending',
+            ],
+            'CPMemberReportSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_member_collection',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'export_file_name' => 'Plant_Code_VMCC_from_date_from_shift',
+            ],
+            'CPRmrdReportSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_rmrd_collection',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
             ],
         ];
         return $label[$l];
