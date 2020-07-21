@@ -12,7 +12,7 @@ use app\modules\collection\models\TblQualityCollection;
  */
 class TblQualityCollectionSearch extends TblQualityCollection {
 
-    public $operator_fat, $operator_snf, $from_date, $to_date, $from_shift, $to_shift;
+    public $operator_fat, $operator_snf, $from_date, $to_date, $from_shift, $to_shift, $bmc_ref_code;
 
     /**
      * @inheritdoc
@@ -22,7 +22,7 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             [['uuid', 'date_time_of_collection', 'shift_code', 'quality_datetime', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'device_id', 'version_no', 'originating_org_code', 'originating_org_type', 'milk_analyser_type_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
             [['sample_no', 'retest_count', 'doc_no', 'auto_flag', 'originating_type', 'qlty_auto'], 'integer'],
             [['fat', 'snf', 'clr', 'water'], 'number'],
-            [['operator_snf', 'operator_fat', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe']
+            [['operator_snf', 'operator_fat', 'from_date', 'to_date', 'from_shift', 'to_shift', 'bmc_ref_code'], 'safe']
         ];
     }
 
@@ -88,7 +88,8 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             'tbl_quality_collection.sample_no' => $this->sample_no,
             'tbl_quality_collection.qlty_auto' => $this->qlty_auto,
         ]);
-        $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
         $query->orderBy(['tbl_quality_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc.bmc_name' => SORT_ASC, 'tbl_quality_collection.doc_no' => SORT_ASC, 'tbl_quality_collection.sample_no' => SORT_ASC]);
 
         return $dataProvider;

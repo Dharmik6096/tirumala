@@ -33,6 +33,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
         }, 'filter' => false],
+    ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'ref_code',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        },],
     ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Society Name'),
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');

@@ -12,7 +12,7 @@ use app\modules\collection\models\TblMilkCollectionSummary;
  */
 class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
 
-    public $operator_fat, $operator_snf, $operator_qty;
+    public $operator_fat, $operator_snf, $operator_qty, $ref_code;
 
     /**
      * @inheritdoc
@@ -22,7 +22,7 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
             [['milk_collection_summary_code', 'shift_code', 'sample_count', 'auto_count', 'manual_count'], 'integer'],
             [['date_time_of_collection', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount'], 'number'],
-            [['from_date', 'to_date', 'from_shift', 'to_shift', 'operator_fat', 'operator_snf', 'operator_qty'], 'safe'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'operator_fat', 'operator_snf', 'operator_qty', 'ref_code'], 'safe'],
         ];
     }
 
@@ -100,6 +100,7 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
                 ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
                 ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
                 ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'total_amount', $this->total_amount])
                 ->andFilterWhere(['like', 'kg_snf', $this->kg_snf])
                 ->andFilterWhere(['like', 'kg_fat', $this->kg_fat]);

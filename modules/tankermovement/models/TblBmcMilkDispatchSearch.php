@@ -12,14 +12,14 @@ use app\modules\tankermovement\models\TblBmcMilkDispatch;
  */
 class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
 
-    public $from_date, $to_date, $from_shift, $to_shift;
+    public $from_date, $to_date, $from_shift, $to_shift, $bmc_ref_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'bmc_ref_code'], 'safe'],
             [['is_last_destination', 'transaction_date', 'originating_type'], 'integer'],
             [['gross_weight', 'tare_weight'], 'number'],
         ];
@@ -50,7 +50,7 @@ class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
         ]);
 
         $this->load($params);
-        $query->joinWith(['vehicleCode', 'vehicleCode.transporter']);
+        $query->joinWith(['vehicleCode', 'vehicleCode.transporter', 'bmcCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_milk_dispatch', 'tbl_bmc_milk_dispatch', 'tbl_bmc_milk_dispatch');
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
@@ -83,7 +83,8 @@ class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
                 ->andFilterWhere(['like', 'trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 'driver_name', $this->driver_name])
                 ->andFilterWhere(['like', 'driver_contact_no', $this->driver_contact_no])
-                ->andFilterWhere(['like', 'remarks', $this->remarks]);
+                ->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
 
         return $dataProvider;
     }
