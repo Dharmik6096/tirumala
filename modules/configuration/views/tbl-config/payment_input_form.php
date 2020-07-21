@@ -23,6 +23,15 @@ use yii\helpers\ArrayHelper;
                 'fieldConfig' => [
     ]]);
     ?>
+    <?php
+    if (!empty($model[0])) {
+        $bmc = $model[0]->bmc_code;
+        $bmcName = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'bmc_name');
+        $refCode = Yii::$app->general->getforeignkey($model[0]->mainBmcCode, 'ref_code');
+    }
+    ?>
+    <div class="panel-heading">BMC: <?= $bmcName . '(' . $bmc . ')' ?>, Ref. Code: <?= $refCode ?></div>
+
     <div class="panel-body">
         <div class="row">
             <?php $f_cnt = 0; ?>
