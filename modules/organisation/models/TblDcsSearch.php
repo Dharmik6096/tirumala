@@ -6,23 +6,26 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\organisation\models\TblDcs;
+use yii\db\Expression;
 
 /**
  * TblDcsSearch represents the model behind the search form about `app\modules\organisation\models\TblDcs`.
  */
 class TblDcsSearch extends TblDcs {
 
-    public $federation_code;
+    public $federation_code, $customer_type;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type'], 'safe'],
+            [['dcs_code', 'address', 'upi_no', 'destination_type', 'bank_account_no', 'contact_person', 'created_at', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'milk_type_code', 'destination_code', 'effective_date', 'email', 'ifsc', 'mobile_no', 'pan_no', 'phone_no', 'pincode', 'registration_code', 'registration_date', 'service_tax', 'tin_no', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'district_code', 'hamlet_code', 'route_code', 'state_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'federation_code', 'organisation_type_code', 'scheme_type_code', 'is_registerd', 'valid_from', 'dpu_type', 'customer_type'], 'safe'],
             [['allow_multi_family_member', 'destination_type', 'is_active', 'is_bmc', 'dcs_type_code'], 'integer'],
             [['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'], 'required', 'on' => ['dpuPassword']],
             [['dcs_code_ex', 'ref_code'], 'safe'],
+            [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'safe'],
+            [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']]
         ];
     }
 
@@ -120,6 +123,36 @@ class TblDcsSearch extends TblDcs {
         $query->andWhere(['tbl_dcs.bmc_code' => $this->f_bmc_code]);
         $query->andWhere('tbl_dcs.bmc_code is not null');
         $query->andFilterWhere(['tbl_dcs.dcs_code' => $this->dcs_code]);
+
+        return $dataProvider;
+    }
+
+    public function deleteroutemapsearch($params) {
+        $this->load($params);
+        $query = Tbldcs::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+        $query->joinWith(['routeSourceMapping'], true, 'INNER JOIN');
+        $query->andWhere(['tbl_dcs.bmc_code' => $this->bmc_code]);
+
+        $query->andFilterWhere([
+            'tbl_dcs.plant_code' => $this->plant_code,
+            'tbl_dcs.mcc_plant_code' => $this->mcc_plant_code,
+        ]);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['like', 'tbl_dcs.route_code', $this->route_code]);
 
         return $dataProvider;
     }

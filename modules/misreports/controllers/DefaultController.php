@@ -328,6 +328,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAmcsSyncPending() {
+        $this->report = 'AmcsSyncPending';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -830,6 +835,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'rpt_mis_bmc_collection_consolidated',
                 'scenario' => 'BmcCollectionConsolidated',
                 'title' => '124 - BMC Collection Consolidated',
+            ],
+            'AmcsSyncPending' => [
+                'param' => 'p_organization_type:static:p_organization_type,union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_sentbox_sync_pending_data',
+                'scenario' => 'AmcsSyncPending',
+                'title' => '224 - AMCS Sync Pending',
             ],
         ];
         return $label[$l];

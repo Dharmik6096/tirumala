@@ -35,18 +35,24 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'customer_code')->textInput(); ?>
     </div>
     <div class="col-sm-2">
-        <?php
-        $where = json_encode(['data_lock_member' => 0]);
-        echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
-        echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
-        echo Html::hiddenInput('head_for', 'MEMBER', ['id' => 'head_for']);
-        ?>
-        <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+        <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', '', false, FALSE, true); ?>
     </div>
+    <!--    <div class="col-sm-2">
+    <?php
+    $where = json_encode(['data_lock_member' => 0]);
+    echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
+    echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+    echo Html::hiddenInput('head_for', 'MEMBER', ['id' => 'head_for']);
+    ?>
+    <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+        </div>-->
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE); ?>
     </div>
     <div class="clearfix"></div>
+    <?php
+    echo Html::hiddenInput('head_for', 'MEMBER', ['id' => 'head_for']);
+    ?>
     <div class="col-sm-2 reset_field">
         <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-dcs_code,head_for', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
     </div>
@@ -195,7 +201,7 @@ $script = "
             $('#tblbillheaddetail-installment_amount').val('');
         }
     }
-     $(document).on('change', '#tblbillheaddetail-payment_cycle_code', function() {  
+     $(document).on('change', '#tblbillheaddetail-transaction_date', function() {  
         reloadGrid();
     });
     function reloadGrid(){

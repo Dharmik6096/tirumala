@@ -130,8 +130,10 @@ class TblStaffAttendance extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'Salary Disbursed'));
             return false;
         }
+        $from = Yii::$app->general->getforeignkey($this->staffMemberCode, 'tenure_from_date');
+        $to = Yii::$app->general->getforeignkey($this->staffMemberCode, 'tenure_to_date');
 
-        if (!empty($date) && !empty($this->staffMemberCode->tenure_from_date) && ($this->leave_from < $this->staffMemberCode->tenure_from_date)) {
+        if (!empty($this->leave_from) && !empty($from) && ($this->leave_from < $from)) {
             $this->addError($attribute, Yii::t('app/validation', 'Date of LWP Must be Greater than Tenure From'));
             return false;
         }
@@ -148,6 +150,10 @@ class TblStaffAttendance extends \app\models\ChildModel {
         }
         if ($this->leave_from > $this->leave_to) {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
+            return false;
+        }
+        if (!empty($to) && !empty($this->leave_to) && $this->leave_to > $to) {
+            $this->addError($attribute, Yii::t('app/validation', 'Leave Not Allowed After Resignation'));
             return false;
         }
         $dayDiff = Yii::$app->general->getDateDifference($this->leave_from, $this->leave_to);

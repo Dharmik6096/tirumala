@@ -34,7 +34,8 @@ class TblBillHeadInstallment extends \app\models\ChildModel {
             [['bill_head_detail_code'], 'integer'],
             [['bill_head_code', 'dcs_code', 'installement_cycle', 'installment_amount'], 'safe'],
             [['installment_date', 'payment_cycle_code'], 'safe'],
-            [['customer_type', 'customer_code', 'union_code', 'bill_head_for'], 'safe'],
+            [['customer_type', 'customer_code', 'union_code', 'bill_head_for', 'installment_status'], 'safe'],
+            [['installment_status'], 'default', 'value' => 0]
         ];
     }
 

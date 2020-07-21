@@ -31,6 +31,8 @@ $config = [
         'sqlite' => ['class' => 'app\components\SqliteCreate'],
         'alertnotification' => ['class' => 'app\components\AlertNotification'],
         'customvalidation' => ['class' => 'app\components\CustomValidation'],
+        'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
+        'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -237,7 +239,8 @@ $config = [
         'soap' => ['class' => 'app\modules\soap\Soap',],
         'usermanagement' => ['class' => 'app\modules\usermanagement\usermanagement',],
         'emilkprolite' => ['class' => 'app\modules\webservice\emilkprolite\emilkProLite',],
-        'tankermovement' => [ 'class' => 'app\modules\tankermovement\Tankermovement',],
+        'tankermovement' => ['class' => 'app\modules\tankermovement\Tankermovement',],
+        'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',],
     ],
     'params' => $params,
 ];

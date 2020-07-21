@@ -19,6 +19,8 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
         return [
             [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code'], 'safe'],
             [['is_active', 'originating_type'], 'integer'],
+            [['bmc_code', 'mcc_plant_code', 'plant_code'], 'safe'],
+            [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']]
         ];
     }
 
@@ -63,6 +65,37 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
                 ->andFilterWhere(['like', 'tbl_customer_master.gst_no', $this->gst_no])
                 ->andFilterWhere(['like', 'tbl_customer_master.sap_code', $this->sap_code])
                 ->andFilterWhere(['like', 'tbl_customer_master.refference_code', $this->refference_code]);
+
+        return $dataProvider;
+    }
+
+    public function deleteroutemapsearch($params) {
+        $this->load($params);
+        $query = TblCustomerMaster::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+        $query->joinWith(['routeCode'], true, 'INNER JOIN');
+        $query->andWhere(['tbl_customer_master.bmc_code' => $this->bmc_code]);
+
+        $query->andFilterWhere([
+            'tbl_customer_master.plant_code' => $this->plant_code,
+            'tbl_customer_master.mcc_plant_code' => $this->mcc_plant_code,
+            'tbl_customer_master.customer_type' => $this->customer_type,
+        ]);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_customer_master');
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['like', 'tbl_customer_master.route_code', $this->route_code]);
 
         return $dataProvider;
     }

@@ -15,7 +15,7 @@ use yii\helpers\ArrayHelper;
  */
 class TblConfig extends \app\models\ChildModel {
 
-    public $union_code;
+    public $union_code, $plant_code, $mcc_plant_code, $bmc_code;
 
     /**
      * @inheritdoc
@@ -30,7 +30,8 @@ class TblConfig extends \app\models\ChildModel {
     public function rules() {
         return [
             [['config_name', 'config_key', 'config_for'], 'string'],
-            [['union_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name'], 'required', 'on' => ['PaymentConfig']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
         ];
     }
 
@@ -44,6 +45,9 @@ class TblConfig extends \app\models\ChildModel {
             'config_key' => Yii::t('app', 'Config Key'),
             'config_for' => Yii::t('app', 'Application'),
             'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 
@@ -102,15 +106,27 @@ class TblConfig extends \app\models\ChildModel {
         }
     }
 
-    public function getProcessList($configFor) {
+    public function getProcessList($configFor, $inputAllow = '') {
         $data = $this->find()->select(['process_name'])
                 ->distinct()
                 ->where(['config_for' => $configFor])
                 ->andWhere(['IS NOT', 'process_name', NULL]);
+        if ($inputAllow == '0') {
+            $data->andWhere(['or', ['!=', 'is_input_config', 1], ['is', 'is_input_config', NULL]]);
+        } else if ($inputAllow == '1') {
+            $data->andWhere(['is_input_config' => 1]);
+        }
         $data = $data->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'process_name', 'process_name');
 
         return $array;
+    }
+
+    public function getConfigDetail() {
+        $data = $this->find()
+                ->where(['config_for' => $this->config_for, 'config_type' => $this->config_type, 'process_name' => $this->process_name, 'is_input_config' => $this->is_input_config])
+                ->all();
+        return $data;
     }
 
 }

@@ -22,7 +22,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         return [
             [['bill_head_detail_code', 'payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'no_installment', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_name', 'from_date', 'to_date'], 'safe'],
+            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_name', 'from_date', 'to_date', 'transaction_date'], 'safe'],
         ];
     }
 
@@ -51,7 +51,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'billHeadCode', 'installmentCode','memberCode']);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'billHeadCode', 'installmentCode', 'memberCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bill_head_detail', 'tbl_bill_head_detail', 'tbl_bill_head_detail');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -69,14 +69,26 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             'updated_at' => $this->updated_at,
         ]);
 
+//        if (!empty($this->from_date)) {
+//            $from_date = date('Y-m-d', strtotime($this->from_date));
+//            $query->andFilterWhere(['>=', 'tbl_bill_head_installment.installment_date', $from_date]);
+//        }
+//        if (!empty($this->to_date)) {
+//            $to_date = date('Y-m-d', strtotime($this->to_date));
+//            $query->andFilterWhere(['<=', 'tbl_bill_head_installment.installment_date', $to_date]);
+//        }
+
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['>=', 'tbl_bill_head_installment.installment_date', $from_date]);
+            $query->andFilterWhere(['>=', 'transaction_date', $from_date]);
         }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['<=', 'tbl_bill_head_installment.installment_date', $to_date]);
+            $query->andFilterWhere(['<=', 'transaction_date', $to_date]);
         }
+        if (!empty($this->transaction_date))
+            $query->andFilterWhere(['and', ['>=', 'transaction_date', date('Y-m-d', strtotime($this->transaction_date))], ['<=', 'transaction_date', date('Y-m-d', strtotime($this->transaction_date))]]);
+
 
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name], ['like', 'tbl_member.member_name', $this->customer_name]]);
         $query->andFilterWhere(['or', ['like', 'tbl_customer_type.customer_desc', $this->customer_type], ['like', 'tbl_bill_head_detail.customer_type', $this->customer_type]]);
@@ -112,9 +124,11 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         }
 
         Yii::$app->general->filterByOrg($query, $this);
-        $query->andWhere(['tbl_bill_head_detail.payment_cycle_code' => $this->payment_cycle_code]);
-        $query->andFilterWhere(['bmc_code' => $this->bmc_code])
-                ->andFilterWhere(['like', 'tbl_bill_head_detail.customer_type', $this->customer_type]);
+
+//        $query->andWhere(['tbl_bill_head_detail.payment_cycle_code' => $this->payment_cycle_code]);
+        $query->andWhere(['tbl_bill_head_detail.bmc_code' => $this->bmc_code]);
+//        $query->andFilterWhere(['bmc_code' => $this->bmc_code])
+        $query->andFilterWhere(['like', 'tbl_bill_head_detail.customer_type', $this->customer_type]);
 
         $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
         return $dataProvider;
@@ -161,8 +175,9 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
         }
 
         Yii::$app->general->filterByOrg($query, $this);
-        $query->andWhere(['tbl_bill_head_detail.payment_cycle_code' => $this->payment_cycle_code]);
-        $query->andFilterWhere(['bmc_code' => $this->bmc_code]);
+//        $query->andWhere(['tbl_bill_head_detail.payment_cycle_code' => $this->payment_cycle_code]);
+//        $query->andFilterWhere(['bmc_code' => $this->bmc_code]);
+        $query->andWhere(['tbl_bill_head_detail.bmc_code' => $this->bmc_code]);
 
         $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
         return $dataProvider;

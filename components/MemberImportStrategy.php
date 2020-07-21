@@ -103,14 +103,14 @@ class MemberImportStrategy extends ARImportStrategy {
             }
         }
         if ($count == count($data) - 1) {
-            if(!empty($dcs_code))
-            {
-                if(Yii::$app->general->isVendor($dcs_code,'BIPL')){
-                    $model=new \app\modules\dcsoperation\models\TblMember();
-                    $model->dcs_code=$dcs_code;
-                    $model->generateBiplMemberFiles();
-                }
-            }
+//            if(!empty($dcs_code))
+//            {
+//                if(Yii::$app->general->isVendor($dcs_code,'BIPL')){
+//                    $model=new \app\modules\dcsoperation\models\TblMember();
+//                    $model->dcs_code=$dcs_code;
+//                    $model->generateBiplMemberFiles();
+//                }
+//            }
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)/* ,'error'=>$errors */];
         }
 //        } catch (UserException $e) {

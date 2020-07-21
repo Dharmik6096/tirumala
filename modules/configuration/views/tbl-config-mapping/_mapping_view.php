@@ -1,4 +1,4 @@
-
+<?php ?>
 <?php
 
 $attribute = [
@@ -14,6 +14,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->configCode, 'check_value');
         },
         'filter' => false],
+    ['attribute' => 'config_result', 'filter' => false, 'visible' => Yii::$app->general->getforeignkey($model->configCode, 'is_input_config') == 1 ? TRUE : FALSE]
 ];
 $grid_option = [
     'id' => 'config-mapping-view-list',

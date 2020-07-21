@@ -30,7 +30,7 @@ if (isset($address[1])) {
     $model->street2 = $address[1];
 }
 
-$vendor = ['EIPL' => 'EIPL', 'STELLAPPS' => 'STELLAPPS'];
+$vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
 //$disable = !empty($model->bmc_code) ? TRUE : FALSE;
@@ -68,14 +68,14 @@ $form = ActiveForm::begin([
     $keyPattern = Yii::$app->general->getKeyPattern('tbl_dcs');
     if (!empty($keyPattern)) {
         ?>
-        <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
+        <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
             <div class="col-sm-4 number-validate">  
-                <?= $form->field($model, 'dcs_code_ex')->textInput(['readonly' => $readonly]) ?>
+                <?= $form->field($model, 'dcs_code_ex')->textInput() ?>
             </div>
         <?php } ?>
-        <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
+        <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
             <div class="col-sm-4 number-validate">  
-                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+                <?= $form->field($model, 'ref_code')->textInput() ?>
             </div>
         <?php } ?>
     <?php } ?>

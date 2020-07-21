@@ -147,4 +147,7 @@ return [
     'Dcs Count' => 'Collection Center Count',
     '208 - Society-Shift Collection Completed' => '208 - Collection Center-Shift Collection Completed',
     'Dcs Code Ex' => 'Collection Center Code Ex',
+    'DCS Deactivate' => 'Collection Center Deactivate',
+    'Society Deactivation' => 'Collection Center Deactivation',
+    'Activate DCS' => 'Activate Collection Center',
 ];

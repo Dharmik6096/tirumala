@@ -37,10 +37,10 @@ use kartik\grid\GridView;
         ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
                 return isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name : '';
             }, 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'qty_mode',
             'filter' => FALSE,
             'value' => function ($model) {
@@ -49,6 +49,7 @@ use kartik\grid\GridView;
         ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'status', 'filter' => FALSE],
     ];
 
 
@@ -56,12 +57,13 @@ use kartik\grid\GridView;
         'id' => 'bmc-coll-grid',
         'attributes' => $attribute,
         'active_column' => FALSE,
-        'actions' => [
-            'edit' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->milk_collection_code, 'data-name' => $model->milk_collection_code, 'title' => Yii::t('app', 'Edit')];
-                return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/collection/tbl-bmc-collection/update-collection'], $options);
-            },
-        ]
+        'default_sorting' => FALSE
+//        'actions' => [
+//            'edit' => function ($url, $model) {
+//                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->milk_collection_code, 'data-name' => $model->milk_collection_code, 'title' => Yii::t('app', 'Edit')];
+//                return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/collection/tbl-bmc-collection/update-collection'], $options);
+//            },
+//        ]
     ];
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
     ?>

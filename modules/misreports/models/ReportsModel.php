@@ -25,8 +25,8 @@ class ReportsModel extends Model {
             [['report_type'], 'required', 'on' => 'BmcCollection'],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
             [['to_date'], function ($attribute, $params) {
-                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+        }, 'skipOnEmpty' => false],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapStatusReport'],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
             [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
@@ -52,6 +52,7 @@ class ReportsModel extends Model {
             [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'route_code', 'report_status'], 'required', 'on' => ['UnionWiseCollectionVsDispatch']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status'], 'required', 'on' => ['CdaDateAndShiftWise', 'CdaConsolidated', 'BmcCollectionConsolidated', 'CdaDateWise']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['VariationPercentageWise', 'VariationVillageWise']],
+            [['p_organization_type', 'union_code', 'plant_code'], 'required', 'on' => ['AmcsSyncPending']],
         ];
     }
 
@@ -70,7 +71,7 @@ class ReportsModel extends Model {
             'p_date' => \Yii::t('app', 'As On Date'),
             'date' => \Yii::t('app', 'Date'),
             'shift' => \Yii::t('app', 'Shift'),
-            'p_organization_type' => \Yii::t('app', 'Organization Type'),
+            'p_organization_type' => ($this->scenario == 'AmcsSyncPending') ? \Yii::t('app', 'Application') : \Yii::t('app', 'Organization Type'),
             'p_purchase_rate_code' => \Yii::t('app', 'Rate'),
             'vendor_code' => \Yii::t('app', 'Name'),
             'customer_type' => \Yii::t('app', 'Type'),

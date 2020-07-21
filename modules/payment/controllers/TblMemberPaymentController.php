@@ -70,6 +70,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $paymentcycleAppModel = new TblPaymentCycleApplicability();
         if (Yii::$app->request->post()) {
             $result = 'success';
+            $model->scenario = 'processpayment';
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $appModel = new TblPaymentCycleApplicability();
                 $appModel->payment_cycle_code = $model->payment_cycle_code;
@@ -295,19 +296,31 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
     private function getMemberDcsSpData($model, $reGenerate = 0) {
         // use for generate or regenerate data for Member Payment
-        $fromDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
-        $toDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
-        $spname = 'sp_member_dcs_payment_processing_data';
-        $spParam = [];
-        $spParam[] = $fromDate;
-        $spParam[] = $toDate;
-        $spParam[] = $model->union_code;
-//        $spParam[] = $model->plant_code;
-//        $spParam[] = $model->mcc_plant_code;
-        $spParam[] = $model->bmc_code;
-        $spParam[] = $model->payment_cycle_code;
-//        $spParam[] = $reGenerate;
-        return \Yii::$app->general->getSpData($spname, $spParam, true);
+
+        $data = [];
+        $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
+        $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
+        $data['union_code'] = $model->union_code;
+        $data['bmc_code'] = $model->bmc_code;
+        $data['payment_cycle_code'] = $model->payment_cycle_code;
+        return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
+
+        /*
+          $fromDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
+          $toDate = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
+          $spname = 'sp_member_dcs_payment_processing_data';
+          $spParam = [];
+          $spParam[] = $fromDate;
+          $spParam[] = $toDate;
+          $spParam[] = $model->union_code;
+          //        $spParam[] = $model->plant_code;
+          //        $spParam[] = $model->mcc_plant_code;
+          $spParam[] = $model->bmc_code;
+          $spParam[] = $model->payment_cycle_code;
+          //        $spParam[] = $reGenerate;
+          return \Yii::$app->general->getSpData($spname, $spParam, true);
+
+         */
     }
 
     public function actionMemberPaymentDisburse() {
@@ -370,6 +383,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $historyModel = new TblPaymentCycleApplicabilityHistory();
                             Yii::$app->operation->history($payCycleModelData, $historyModel, UPDATE);
                             $save_model[] = $historyModel;
+                            $model->from_datetime = $payCycleModelData->from_date;
                             $payCycleModelData->billing_lock_member = 1;
                             $save_model[] = $payCycleModelData;
                         }
@@ -427,6 +441,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                     $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Member Payment Disburse', 'create']);
                     if ($transaction == 'customRedirect') {
+                        $param = [];
+                        $param['from_datetime'] = $model->from_datetime;
+                        $param['customer_type'] = 'MEMBER';
+                        $param['bmc_code'] = $model->bmc_code;
+                        Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
                         $this->redirect(['index']);
                     }
                 } else {
@@ -568,7 +587,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             ]);
         }
     }
-    
+
     public function actionMemberBillHead() {
         if (!empty($_POST['payment_cycle_code']) && !empty($_POST['bmc_code']) && !empty($_POST['dcs_code']) && !empty($_POST['member_code'])) {
             $searchModel = new TblMemberPaymentHeadSearch();
@@ -580,4 +599,5 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             ]);
         }
     }
+
 }

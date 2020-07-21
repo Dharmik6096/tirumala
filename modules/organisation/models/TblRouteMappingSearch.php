@@ -53,8 +53,8 @@ class TblRouteMappingSearch extends TblRouteMapping {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode']);
-        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['dcsCode', 'mccCode']);
+        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_plant');
 
         $where_bmc = [];
         if (Yii::$app->session->get('BMC') !== '') {

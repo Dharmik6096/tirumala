@@ -61,6 +61,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function actionCreate() {
         $model = new TblVspPayment();
+        $model->scenario = 'processpayment';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             // $this->insertPaymentData($model);
             $this->getVspSpData($model);
@@ -173,17 +174,28 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     private function getVspSpData($model) {
         $paymentCycle = $model->paymentCycleCode;
-        $result = \Yii::$app->db->createCommand("{CALL sp_vsp_payment (:union_code,:from_date,:from_shift,:to_date,:to_shift,:payment_cycle_code,:bmc_code,:customer_type)}")
-                ->bindValue(':from_date', date('Y-m-d H:i:s', strtotime($paymentCycle->from_date)))
-                ->bindValue(':to_date', date('Y-m-d H:i:s', strtotime($paymentCycle->to_date)))
-                ->bindValue(':from_shift', $paymentCycle->from_shift)
-                ->bindValue(':to_shift', $paymentCycle->to_shift)
-                ->bindValue(':union_code', $model->union_code)
-                ->bindValue(':payment_cycle_code', $model->payment_cycle_code)
-                ->bindValue(':bmc_code', $model->bmc_code)
-                ->bindValue(':customer_type', $model->customer_type);
-        $query = $result->execute();
-        return $query;
+        $data = [];
+        $data['union_code'] = $model->union_code;
+        $data['bmc_code'] = $model->bmc_code;
+        $data['customer_type'] = $model->customer_type;
+        $data['payment_cycle_code'] = $model->payment_cycle_code;
+        $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($paymentCycle->from_date));
+        $data['from_shift'] = $paymentCycle->from_shift;
+        $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($paymentCycle->to_date));
+        $data['to_shift'] = $paymentCycle->to_shift;
+        return Yii::$app->ClientPaymentConfig->processPayment('vsp_payment', $data);
+        /*
+          $result = \Yii::$app->db->createCommand("{CALL sp_vsp_payment (:union_code,:from_date,:from_shift,:to_date,:to_shift,:payment_cycle_code,:bmc_code,:customer_type)}")
+          ->bindValue(':from_date', date('Y-m-d H:i:s', strtotime($paymentCycle->from_date)))
+          ->bindValue(':to_date', date('Y-m-d H:i:s', strtotime($paymentCycle->to_date)))
+          ->bindValue(':from_shift', $paymentCycle->from_shift)
+          ->bindValue(':to_shift', $paymentCycle->to_shift)
+          ->bindValue(':union_code', $model->union_code)
+          ->bindValue(':payment_cycle_code', $model->payment_cycle_code)
+          ->bindValue(':bmc_code', $model->bmc_code)
+          ->bindValue(':customer_type', $model->customer_type);
+          $query = $result->execute();
+          return $query; */
     }
 
     public function actionPaymentDisburse() {
@@ -349,6 +361,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 ])
                 ->one();
         if (!empty($PaymentApp)) {
+            $model->from_datetime = $PaymentApp->from_date;
             $PaymentApp->billing_lock_bmc = 1;
             $save_model[] = $PaymentApp;
         }
@@ -373,6 +386,13 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $data->status = 'sent';
             $save_model[] = $data;
             $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+            if ($transaction == 'customRedirect') {
+                $param = [];
+                $param['from_datetime'] = $model->from_datetime;
+                $param['customer_type'] = $model->customer_type;
+                $param['bmc_code'] = $model->bmc_code;
+                Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+            }
         }
     }
 

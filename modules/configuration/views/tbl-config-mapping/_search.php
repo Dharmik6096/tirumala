@@ -30,7 +30,8 @@ use yii\bootstrap\ActiveForm;
                             <?= Yii::$app->dropdown->configFor($searchModel, $form, 'config_for', $searchModel->getAttributeLabel('config_for'), false, ['VLC', 'PORTAL']); ?>
                         </div>
                         <div class="col-sm-6">
-                            <?= Yii::$app->dropdown->processName($searchModel, $form, 'tblconfigsearch-config_for', 'process_name', $model->getAttributeLabel('process_name')); ?>
+                            <?= Html::hiddenInput('input', 0, ['id' => 'input']); ?>
+                            <?= Yii::$app->dropdown->processName($searchModel, $form, 'tblconfigsearch-config_for,input', 'process_name', $model->getAttributeLabel('process_name')); ?>
                         </div>
                         <div class="col-sm-6">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), TRUE); ?>

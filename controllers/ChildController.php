@@ -116,6 +116,12 @@ class ChildController extends Controller {
         }
     }
 
+    public function FTPSubFolder() {
+        return [
+            'DATFILES' => [['ext' => '.BDF', 'module_name' => 'TblMilkCollection']],
+        ];
+    }
+
 }
 
 ?>

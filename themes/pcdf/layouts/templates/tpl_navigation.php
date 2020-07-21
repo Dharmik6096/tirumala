@@ -76,6 +76,15 @@ echo GhostMenu::widget([
             'options' => ['class' => 'dropdown'],
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Collection <b class="caret"></b></a>',
             'items' => [
+                [
+                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Approval Data <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => 'Milk Collection Approval', 'url' => ['/collection/tbl-collection-data-alias/milk-collection-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'milk-collection-approve')],
+                        ['label' => 'BMC Collection Approval', 'url' => ['/collection/tbl-collection-data-alias/bmc-collection-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'bmc-collection-approve')],
+                        ['label' => 'Milk Dispatch Approval', 'url' => ['/collection/tbl-collection-data-alias/milk-dispatch-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'milk-dispatch-approve')],
+                    ]
+                ],
                 ['label' => 'Milk Collection', 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                 ['label' => 'Milk Dispatch', 'url' => ['/collection/tbl-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-milk-dispatch')],
                 ['label' => 'Milk Dispatch - New', 'url' => ['/collection/tbl-dcs-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-dcs-milk-dispatch')],
@@ -255,6 +264,7 @@ echo GhostMenu::widget([
                         // ['label' => Yii::t('app', 'Calibration Change Report'), 'url' => ['/report/default/calibration-change-report']],
                         ['label' => '222-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/default/rate-applicability-details']],
                         ['label' => '223-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/default/rate-acknowledgement']],
+                        ['label' => '224-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/default/amcs-sync-pending']],
                     ]
                 ],
                 [
@@ -420,6 +430,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Dpu Cleaning'), 'url' => ['/tbl-cleaning-dpu/index']],
                         ['label' => 'Member Acknowledgement', 'url' => ['/dcsoperation/tbl-member-download/index']],
                         ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
+                        ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
                     ]
                 ],
 //                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],
@@ -437,6 +448,7 @@ echo GhostMenu::widget([
                     'items' => [
 //                        ['label' => 'BIPL Files Process', 'url' => ['/collection/tbl-processed-files/index']],
                         ['label' => 'EIPL Files Process', 'url' => ['/eipl-packet/create'], 'visible' => true],
+                        ['label' => 'EIPL Files Process - New', 'url' => ['/eipldpu/pendrive-import/create']],
                         ['label' => 'AMCS Files Process', 'url' => ['/syncutility/pendrive-import/create']],
                         ['label' => 'Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
                     ]

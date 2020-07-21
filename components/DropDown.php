@@ -767,7 +767,7 @@ class DropDown extends Component {
             'dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL')],
             ],
             'file_type' => [
                 'name' => 'source_type',
@@ -945,6 +945,41 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['INDIVIDUAL' => Yii::t('app', 'Individual'), 'CONSOLIDATED' => Yii::t('app', 'Consolidated')],
             ],
+            'route_type' => [
+                'name' => 'route_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Can' => Yii::t('app', 'Can'), 'Tanker' => Yii::t('app', 'Tanker')],
+            ],
+            'EIPL_dpu_type' => [
+                'name' => 'dpu_type',
+                'prompt' => Yii::t('app', 'Select DPU Type'),
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS')],
+            ],
+            'BIPL_dpu_type' => [
+                'name' => 'dpu_type',
+                'prompt' => Yii::t('app', 'Select DPU Type'),
+                'data' => [91 => Yii::t('app', 'BIPL')],
+            ],
+            'vendor_type' => [
+                'name' => 'vendor_type',
+                'prompt' => Yii::t('app', 'Select Vendor'),
+                'data' => ['BIPL' => Yii::t('app', 'BIPL'), 'EIPL' => Yii::t('app', 'EIPL')],
+            ],
+            'action_perform' => [
+                'name' => 'action_perform',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['CREATE' => Yii::t('app', 'CREATE'), 'UPDATE' => Yii::t('app', 'UPDATE'), 'DELETE' => Yii::t('app', 'DELETE')],
+            ],
+            'process_type' => [
+                'name' => 'process_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'RATE' => Yii::t('app', 'RATE')],
+            ],
+            'data_type' => [
+                'name' => 'data_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['PLAIN' => Yii::t('app', 'PLAIN'), 'ENCRYPTED' => Yii::t('app', 'ENCRYPTED')],
+            ],
         ];
         return $records[$l];
     }
@@ -1031,6 +1066,7 @@ class DropDown extends Component {
             'qty_diff_type' => ['name' => 'qty_diff_type_code', 'fields' => 'qty_diff_type_code,qty_diff_type_name', 'prompt' => Yii::t('app', 'Select'), 'model' => 'TblQtyDiffType'],
             'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
             'trip_challan' => ['name' => 'challan_no', 'fields' => 'challan_no,challan_no,', 'prompt' => Yii::t('app', 'Select Challan'), 'model' => 'TblBmcMilkDispatch', 'depend' => 'trip_code'],
+            'bmc-dcs' => ['name' => 'dcs_code', 'fields' => 'dcs_code,dcs_name,local_name', 'prompt' => Yii::t('app', 'Select Society'), 'model' => 'TblDcs', 'depend' => 'bmc_code', 'checkValid'],
         ];
         return $label[$l];
     }

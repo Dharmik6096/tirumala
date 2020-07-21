@@ -144,8 +144,9 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1])) {
                 if (strtolower($parents[1]) == 'dcs') {
+                    $dateFilter = !empty($parents[2]) ? $parents[2] : '';
                     $mccs = new TblDcs();
-                    $data = $mccs->getBMCDCSList($parents[0], 'TRUE');
+                    $data = $mccs->getBMCDCSList($parents[0], 'TRUE', '', $dateFilter);
                 } else {
                     $model = new TblCustomerMaster();
                     $data = $model->getCustomerCodeList($parents[0], $parents[1]);

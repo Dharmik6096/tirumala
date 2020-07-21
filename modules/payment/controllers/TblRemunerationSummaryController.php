@@ -47,17 +47,28 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
     }
 
     private function getRemunerationSpData($model) {
-        $result = \Yii::$app->db->createCommand("{CALL sp_remuneration_payment (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:from_date,:to_date,:calculate_milk_recovey,:calculate_other_head)}")
-                ->bindValue(':from_date', $model->from_datetime)
-                ->bindValue(':to_date', $model->to_datetime)
-                ->bindValue(':union_code', $model->union_code)
-                ->bindValue(':bmc_code', $model->bmc_code)
-                ->bindValue(':plant_code', $model->plant_code)
-                ->bindValue(':mcc_plant_code', $model->mcc_plant_code)
-                ->bindValue(':calculate_milk_recovey', $model->calculate_milk_recovey)
-                ->bindValue(':calculate_other_head', $model->calculate_other_head);
-        $query = $result->execute();
-        return $query;
+        $data = [];
+        $data['from_datetime'] = $model->from_datetime;
+        $data['to_datetime'] = $model->to_datetime;
+        $data['union_code'] = $model->union_code;
+        $data['bmc_code'] = $model->bmc_code;
+        $data['plant_code'] = $model->plant_code;
+        $data['mcc_plant_code'] = $model->mcc_plant_code;
+        $data['calculate_milk_recovey'] = $model->calculate_milk_recovey;
+        $data['calculate_other_head'] = $model->calculate_other_head;
+        return Yii::$app->ClientPaymentConfig->processPayment('remuneration_payment', $data);
+
+        /* $result = \Yii::$app->db->createCommand("{CALL sp_remuneration_payment (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:from_date,:to_date,:calculate_milk_recovey,:calculate_other_head)}")
+          ->bindValue(':from_date', $model->from_datetime)
+          ->bindValue(':to_date', $model->to_datetime)
+          ->bindValue(':union_code', $model->union_code)
+          ->bindValue(':bmc_code', $model->bmc_code)
+          ->bindValue(':plant_code', $model->plant_code)
+          ->bindValue(':mcc_plant_code', $model->mcc_plant_code)
+          ->bindValue(':calculate_milk_recovey', $model->calculate_milk_recovey)
+          ->bindValue(':calculate_other_head', $model->calculate_other_head);
+          $query = $result->execute();
+          return $query; */
     }
 
     public function actionPaymentDisburse() {
@@ -185,6 +196,13 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data->status = 'sent';
             $save_model[] = $data;
             $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+            if ($transaction == 'customRedirect') {
+                $param = [];
+                $param['from_datetime'] = $model->from_datetime;
+                $param['customer_type'] = 'DCS';
+                $param['bmc_code'] = $model->bmc_code;
+                Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+            }
         }
     }
 

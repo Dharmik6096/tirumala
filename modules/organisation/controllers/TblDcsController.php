@@ -98,7 +98,7 @@ class TblDcsController extends ChildController {
         $this->model->scenario = 'createDcs';
         $this->bankDetails = new TblBankDetails();
         $this->contactDetails = new TblContactDetails();
-        $this->contactDetails->process_name = 'dcs-create';
+        $this->contactDetails->form_validation_type = 'dcs-create';
         $this->model->district_code = Yii::$app->session->get('Districts');
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
