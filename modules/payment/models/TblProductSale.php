@@ -41,7 +41,7 @@ use app\modules\payment\models\TblSaleInstallments;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code, $customer_name, $ex_code;
+    public $payment_cycle_code, $available_credit, $customer_name, $ex_code;
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
 
@@ -60,7 +60,7 @@ class TblProductSale extends \app\models\ChildModel {
                 [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync']],
                 [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
-                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'number', 'min' => 0],
                 [['discount'], 'validateDisccount'],
