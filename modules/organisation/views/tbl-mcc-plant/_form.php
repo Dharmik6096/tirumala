@@ -83,7 +83,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">  
         <?= $form->field($model, 'gst_no')->textInput() ?>
     </div>
-    <div class="clearfix"></div>
+    
     <div class="col-sm-2">
         <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
     </div>
@@ -99,6 +99,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmccplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmccplant-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
     </div>

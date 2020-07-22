@@ -49,7 +49,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($summary_model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-6 padding_10_0 theme-box ">
+    <div class="col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Society Details</h4>
         </div>
@@ -109,7 +109,7 @@ $form = ActiveForm::begin([
     <?php } ?>
 
     </div>
-    <div class="col-md-6 padding_10_0 theme-box theme_border_left">
+    <div class="col-md-6 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
@@ -229,6 +229,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
+        <div class="clearfix"></div>
         <div class='pull-left col-sm-6'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
