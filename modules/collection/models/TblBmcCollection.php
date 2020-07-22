@@ -144,11 +144,11 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['tag_1'], 'default', 'value' => 'X'],
             [['adt_param', 'adt_value'], 'safe'],
             [['date_time_of_recieve'], 'default', 'value' => date('Y-m-d H:i:s'), 'on' => 'androidsync'],
-//            [['bmc_code'], function ($attribute, $params) {
-//                    if (empty($this->getErrors())) {
-//                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc']);
-//                    }
-//                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc']);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
             [['customer_code'], 'validateUnique', 'on' => ['create']],
             [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
         ];
@@ -387,7 +387,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
             (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
             $this->clr = ($snf - ($fat * $lr1) - $lr2) * 4;
-
+            Yii::$app->general->validateRateRange($this);
             //set rtpl,rate_code and amount
             if (empty($this->getErrors()) && $this->amount === '' && $this->rtpl === '') {
                 $data['milk_type'] = $this->milk_type_code;

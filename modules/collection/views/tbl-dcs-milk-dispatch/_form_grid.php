@@ -14,10 +14,10 @@ $attribute = [
         }, 'filter' => false, 'visible' => FALSE],
     ['label' => Yii::t('app', 'Plant'), 'attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['plantCode'], 'name');
-        }, 'filter' => false,],
+        }, 'filter' => false, 'visible' => FALSE],
     ['label' => Yii::t('app', 'MCC'), 'attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['mccPlantCode'], 'name');
-        }, 'filter' => false],
+        }, 'filter' => false, 'visible' => FALSE],
     ['label' => Yii::t('app', 'BMC'), 'attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['bmcCode'], 'bmc_name');
         }, 'filter' => false],
@@ -49,7 +49,8 @@ $attribute = [
         }],
     ['label' => Yii::t('app', 'Shift'), 'attribute' => 'shift_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['shiftCode'], 'shift');
-        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilter('shift', $searchModel, 'shift_code', Yii::t('app', 'Select'))],
+        }, 'vAlign' => 'middle', 'filter' => false
+    ],
     ['attribute' => 'milk_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
         }, 'filter' => false],

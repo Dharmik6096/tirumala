@@ -138,7 +138,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
         ];
     }
 
@@ -385,7 +385,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 $this->last_edited_type = 'P';
                 $this->own_mcc_plant_code = $this->mcc_plant_code;
                 $this->own_bmc_code = $this->bmc_code;
-
+                Yii::$app->general->validateRateRange($this);
                 //set rtpl,rate_code and amount
                 if (empty($this->getErrors()) && $this->amount === '' && $this->rtpl === '') {
                     $data['milk_type'] = $this->milk_type_code;

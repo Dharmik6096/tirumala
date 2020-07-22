@@ -212,14 +212,19 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             if ($action == 'CREATE') {
                                 $MainModel = new TblDcsMilkDispatch();
                                 $MainModel->attributes = $existData->attributes;
-                                $MainModel->dcs_milk_dispatch_code = $MainModel->getCode($MainModel);
-                                $MainModel->date_time_of_dispatch = $existData->date_time_of_collection;
-                                $saveModel[] = $MainModel;
+                                $existMainData = $MainModel->getExistingDispatch($existData);
+                                if (!empty($existMainData)) {
+                                    $MainModel->dcs_milk_dispatch_code = $existMainData->dcs_milk_dispatch_code;
+                                } else {
+                                    $MainModel->dcs_milk_dispatch_code = Yii::$app->general->getPrimaryCode($MainModel);
+                                    $MainModel->date_time_of_dispatch = $existData->date_time_of_collection;
+                                    $saveModel[] = $MainModel;
+                                }
                                 $TxModel = new TblDcsMilkDispatchTxn();
                                 $TxModel->attributes = $existData->attributes;
                                 $TxModel->attributes = $MainModel->attributes;
                                 $TxModel->setModelData($existData, $TxModel);
-                                $TxModel->dcs_milk_dispatch_txn_code = $TxModel->getCode($TxModel);
+                                $TxModel->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($TxModel, $MainModel->dcs_milk_dispatch_code);
                                 $saveModel[] = $TxModel;
                             } else if ($action == 'UPDATE') {
                                 $MainModel = new TblDcsMilkDispatch();
@@ -236,7 +241,10 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             } else if ($action == 'DELETE') {
                                 $MainModel = new TblDcsMilkDispatch();
                                 $existMainData = $MainModel->getExistingDispatch($existData);
-
+                                $txCount = TblDcsMilkDispatchTxn::find()->where(['dcs_milk_dispatch_code' => $existMainData->dcs_milk_dispatch_code])->count();
+                                if ($txCount == 1) {
+                                    $deleteModel[] = $existMainData;
+                                }
                                 $TxModel = new TblDcsMilkDispatchTxn();
                                 $TxModel->dcs_milk_dispatch_code = $existMainData->dcs_milk_dispatch_code;
                                 $existTxModel = $TxModel->getTxnExistingCollection($existData);

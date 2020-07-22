@@ -66,13 +66,13 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txModel, $form, '', $txModel->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
         </div>
         <div class="clearfix"></div>
-        <div class="col-sm-1 reset_field">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'dispatch_qty')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'avg_fat')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'avg_snf')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field rtpl_validate ">
@@ -81,9 +81,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= $form->field($txModel, 'rtpl')->textInput(['readOnly' => true]) ?>
             <?= $form->field($txModel, 'purchase_rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
-        </div>
-        <div class="col-sm-1 reset_field">
-            <?= $form->field($txModel, 'nos_of_can')->textInput() ?>
         </div>
         <div class="col-sm-2 reset_field">
             <?= $form->field($txModel, 'total_amount')->textInput(['readOnly' => true]) ?>

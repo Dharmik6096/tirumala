@@ -24,7 +24,7 @@ $form = ActiveForm::begin([
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
-                return ['class' => 'checkbox-collection', 'value' => $model['dcs_milk_dispatch_code']];
+                return ['class' => 'checkbox-collection', 'value' => $model['dcs_milk_dispatch_txn_code']];
             }],
         ['attribute' => 'dcs_code', 'filter' => FALSE],
         ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
@@ -87,7 +87,7 @@ $script = '
     $("#delete").click(function() {
         var len = $("input[class=\"checkbox-collection kv-row-checkbox\"]:checked").length;
             if(len == 0){
-             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>' . Yii::t('app', 'Please select at least one Collection.') . '</span></div></div>");
+             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>' . Yii::t('app', 'Please select at least one Dispatch.') . '</span></div></div>");
                 return false;
             } else {
             $("#delete-milk-dispatch").submit();

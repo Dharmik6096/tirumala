@@ -71,13 +71,13 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
         </div>
         <div class="clearfix"></div>
-        <div class="col-sm-1 reset_field">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($model, 'qty')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($model, 'fat')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field">
+        <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($model, 'snf')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field rtpl_validate ">
