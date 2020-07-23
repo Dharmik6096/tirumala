@@ -88,7 +88,7 @@ class importData extends \yii\base\Module {
             'route-master' => ['import_class' => 'tbl_route_mapping',
                 'table_name' => 'tbl_route_mapping',
                 'fields' => 'union_code,route_code_ex,ref_code,route_name,route_type,to_type,to_dest,capacity,vehicle_type_code,route_length_kms,morning_grace_time,evening_grace_time,morning_start_time,morning_end_time,evening_start_time,evening_end_time,firstname,mobile_no', 'save_child' => true, 'scenario' => 'importCsv', 'mapping' => 1, 'mapping_model' => 'TblRouteMappingSources', 'mapping_fields' => 'route_code,customer_type,customer_code', 'mapping_scenario' => 'importMapping', 'save_map_child' => TRUE],
-            'milk-dispatch' => ['table_name' => 'tbl_dcs_milk_dispatch_txn', 'fields' => 'bmc_code,dcs_code,date_time_of_dispatch,shift_code,milk_type_code,milk_quality_type_code,dispatch_qty,avg_fat,avg_snf,rtpl,total_amount', 'save_child' => true, 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
+            'milk-dispatch' => ['table_name' => 'tbl_dcs_milk_dispatch_txn', 'fields' => 'bmc_code,dcs_code,date_time_of_dispatch,shift_code,milk_type_code,milk_quality_type_code,dispatch_qty,avg_fat,avg_snf,rtpl,total_amount', 'save_child' => true, 'old_label' => ['dispatch_qty', 'avg_fat', 'avg_snf', 'total_amount'], 'new_label' => ['qty', 'fat', 'snf', 'amount'], 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

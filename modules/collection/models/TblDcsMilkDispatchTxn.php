@@ -9,6 +9,9 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\configuration\models\TblUnionRatechartRange;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 
 /**
  * This is the model class for table "tbl_dcs_milk_dispatch_txn".
@@ -44,7 +47,7 @@ use app\modules\organisation\models\TblDcsBmc;
  */
 class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_date, $to_date, $from_shift, $to_shift, $status, $date_time_of_dispatch, $shift_code, $bmc_code;
+    public $from_date, $to_date, $from_shift, $to_shift, $status, $date_time_of_dispatch, $shift_code, $bmc_code, $union_code;
 
     /**
      * @inheritdoc
@@ -76,24 +79,26 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount', 'purchase_rate_code', 'rtpl'], 'safe'],
             [['dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['created_at', 'updated_at', 'dcs_milk_dispatch_txn_code'], 'safe'],
-            [['dcs_code', 'milk_type_code', 'milk_quality_type_code', 'dispatch_qty', 'avg_fat', 'avg_snf', 'rtpl'], 'required', 'on' => ['create', 'update', 'importCsv']],
+            [['dcs_code', 'milk_type_code', 'milk_quality_type_code', 'dispatch_qty', 'avg_fat', 'avg_snf'], 'required', 'on' => ['create', 'update', 'importCsv']],
+            [['rtpl'], 'required', 'on' => ['create', 'update']],
             [['water', 'avg_clr', 'nos_of_can'], 'default', 'value' => 0],
             [['nos_of_can'], 'integer', 'min' => 0, 'on' => ['create', 'update']],
             [['avg_clr'], 'double', 'min' => 0, 'on' => ['create', 'update']],
             [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
             [['dispatch_qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['create', 'update']],
-            [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'safe'],
+            [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'union_code'], 'safe'],
             [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'required', 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
             [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
+            [['dcs_code'], 'importSet', 'on' => ['importCsv']],
             [['date_time_of_dispatch'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code', 'BMC', 'DCS', ['data_lock_bmc', 'billing_lock_bmc']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['importCsv']],
-            [['dcs_code'], 'importSet', 'on' => ['importCsv']]
+            [['dcs_code'], 'validateRateRange', 'on' => ['update']]
         ];
     }
 
@@ -238,7 +243,8 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             }
             $union = $existMainData->union_code;
         }
-
+        $model->union_code = $union;
+        $model->validateRateRange();
         // set clr
         (float) $fat = $this->avg_fat;
         (float) $snf = $this->avg_snf;
@@ -252,17 +258,73 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
     public function importSet($attribute, $params) {
         $model = new TblDcs();
-        $data = $model->validDcs($this->dcs_code, $this->bmc_code);
-        if (empty($data)) {
+        $code = $model->validDcs($this->dcs_code, $this->bmc_code);
+        if (empty($code)) {
             $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
         } else {
-            $this->dcs_code = $data;
+            $this->dcs_code = $code;
             Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_dispatch);
+        }
+        $this->date_time_of_dispatch = !empty($this->date_time_of_dispatch) ? date('Y-m-d', strtotime($this->date_time_of_dispatch)) : '';
+        $this->date_time_of_dispatch = $this->date_time_of_dispatch . ' ' . \Yii::$app->general->getshift($this->shift_code);
+
+        if (empty($this->getErrors()) && $this->total_amount === '' && $this->rtpl === '') {
+            $data['milk_type'] = $this->milk_type_code;
+            $data['milk_quality_type'] = $this->milk_quality_type_code;
+            $data['fat'] = $this->avg_fat;
+            $data['snf'] = $this->avg_snf;
+            $data['shift'] = $this->shift_code;
+            $model = new TblPurchaseRateApplicability();
+            $model->dcs_code = $this->dcs_code;
+            $model->wef_date = $this->date_time_of_dispatch;
+            $model_data = $model->getPurchaseRateApplicableData($data);
+
+            if (!empty($model_data)) {
+                $detail_model = new TblPurchaseRateDetails();
+                $detail_model->rate_type_code = $model_data->rate_app_code;
+                $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
+                $rate_type = $detail_model->rateTypeCode->rate_type;
+                $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+                if (!empty($detail_data)) {
+                    $this->purchase_rate_code = (string) $detail_data->purchase_rate_code;
+                    $this->rtpl = $detail_data->rtpl;
+                    $this->total_amount = $detail_data->rtpl * $this->dispatch_qty;
+                } else {
+                    $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+                }
+            } else {
+                $this->addError('rtpl', Yii::t('app/validation', $this->getAttributeLabel('rtpl') . ' not available'));
+            }
+        } else if (empty(floatval($this->rtpl)) && !empty(floatval($this->total_amount))) {
+            $this->rtpl = $this->total_amount / $this->dispatch_qty;
+        } else if (!empty(floatval($this->rtpl)) && empty(floatval($this->total_amount))) {
+            $this->total_amount = $this->rtpl * $this->dispatch_qty;
+        } else if (empty(floatval($this->rtpl)) || empty(floatval($this->total_amount))) {
+            $this->total_amount = 0;
+            $this->rtpl = 0;
         }
     }
 
     public function getTxnExistingData($data) {
         return $this->find()->where(['dcs_milk_dispatch_code' => $this->dcs_milk_dispatch_code, 'dcs_code' => $data->dcs_code, 'milk_type_code' => $data->milk_type_code, 'milk_quality_type_code' => $data->milk_quality_type_code])->one();
+    }
+
+    public function getRateRange() {
+        return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code']);
+    }
+
+    public function validateRateRange() {
+        $minFat = !empty(Yii::$app->general->getforeignkey($this->rateRange, 'min_fat')) ? Yii::$app->general->getforeignkey($this->rateRange, 'min_fat') : '0.01';
+        $maxFat = Yii::$app->general->getforeignkey($this->rateRange, 'max_fat');
+        $minSnf = !empty(Yii::$app->general->getforeignkey($this->rateRange, 'min_snf')) ? Yii::$app->general->getforeignkey($this->rateRange, 'min_snf') : '0.01';
+        $maxSnf = Yii::$app->general->getforeignkey($this->rateRange, 'max_snf');
+
+        if (($minFat > $this->avg_fat) || (!empty($maxFat) && $maxFat < $this->avg_fat)) {
+            $this->addError('avg_fat', Yii::t('app/validation', $this->getAttributeLabel('avg_fat') . ' is Invalid'));
+        }
+        if (($minSnf > $this->avg_snf) || (!empty($maxSnf) && $maxSnf < $this->avg_snf)) {
+            $this->addError('avg_snf', Yii::t('app/validation', $this->getAttributeLabel('avg_snf') . ' is Invalid'));
+        }
     }
 
 }

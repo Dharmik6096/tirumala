@@ -90,6 +90,8 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
             $this->model->date_time_of_dispatch = $this->model->date_time_of_dispatch . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             if ($txModel->validate()) {
                 $this->model->validateUnique($this->model, $txModel);
+                $txModel->union_code = $this->model->union_code;
+                $txModel->validateRateRange();
             }
             if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
@@ -394,7 +396,7 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                         Yii::$app->operation->history($existData, $historyModelMain, DELETE);
                         $saveModel[] = $historyModelMain;
                         $txCount = TblDcsMilkDispatchTxn::find()->where(['dcs_milk_dispatch_code' => $existData->dcs_milk_dispatch_code])->count();
-                     
+
                         if ($txCount == 1) {
                             $deleteModel[] = $existData;
                         }

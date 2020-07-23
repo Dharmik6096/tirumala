@@ -65,7 +65,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2 create_fields">
             <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmccollection-module_name']); ?>
-            <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmccollection-bmc_code,tblbmccollection-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
+            <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmccollection-bmc_code,tblbmccollection-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), '', false, '', '', FALSE, '', TRUE); ?>
         </div>
         <div class="col-sm-2 rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>

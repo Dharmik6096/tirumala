@@ -19,6 +19,7 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
 } else if (Yii::$app->session->get('Login-sess') == 'Rail') {
     $logout_url[] = '/site/rail-logout';
 }
+$collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 <?php
 
@@ -77,7 +78,7 @@ echo GhostMenu::widget([
             'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Milk Collection <b class="caret"></b></a>',
             'items' => [
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'options' => ['class' => 'dropdown-submenu toggle_right'], 'visible' => $collectionApproval,
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Approval Data <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'Milk Collection Approval', 'url' => ['/collection/tbl-collection-data-alias/milk-collection-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'milk-collection-approve')],

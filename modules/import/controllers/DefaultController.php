@@ -275,6 +275,12 @@ class DefaultController extends \app\controllers\ChildController {
         $data_fields = $mapping == 1 ? $data['mapping_fields'] : $data['fields'];
 
         $a = str_replace('local_name', $localField, $data_fields);
+        if (!empty($data['old_label'])) {
+            $this->old_att = array_merge($this->old_att, $data['old_label']);
+        }
+        if (!empty($data['new_label'])) {
+            $this->change_att = array_merge($this->change_att, $data['new_label']);
+        }
         $a = str_replace($this->old_att, $this->change_att, $a);
         $fields = explode(',', $a);
         $fields = array_map(function($str) {
@@ -304,6 +310,12 @@ class DefaultController extends \app\controllers\ChildController {
         $data = \app\modules\import\importData::getLabels(Yii::$app->request->post('type'));
         $fields = ($_POST['sel'] == 1) ? $data['mapping_fields'] : $data['fields'];
         $array = str_replace(',', ', ', $fields);
+        if (!empty($data['old_label'])) {
+            $this->old_att = array_merge($this->old_att, $data['old_label']);
+        }
+        if (!empty($data['new_label'])) {
+            $this->change_att = array_merge($this->change_att, $data['new_label']);
+        }
         $array = str_replace($this->old_att, $this->change_att, $array);
         echo (Json::encode($array));
         //}

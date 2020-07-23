@@ -440,7 +440,7 @@ class DropDown extends Component {
                 ])->label($islable);
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '') {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE) {
         if ($multiselect) {
             $this->depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList);
             return;
@@ -453,6 +453,7 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $depends = explode(',', $depends);
         $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
+        $tabIndex = ($tab) ? -1 : '';
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
                     'data' => [$model->{$control_name} => $model->{$control_name}],
@@ -466,7 +467,8 @@ class DropDown extends Component {
                     ],
                     'options' => [
                         'readonly' => $readonly,
-                        'class' => 'form-control ' . $class
+                        'class' => 'form-control ' . $class,
+                        'tabindex' => $tabIndex
                     ]
                 ])->label($label);
     }
