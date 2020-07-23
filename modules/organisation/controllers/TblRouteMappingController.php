@@ -178,11 +178,28 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public function actionDeleteSource() {
         $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_route_mapping_sources', Yii::$app->request->post('id'), 'route_mapping_source_code']);
+        $saveModel = [];
+        $deleteModel = [];
         if ($valueOut == 0) {
             $this->model = TblRouteMappingSources::findOne(Yii::$app->request->post('id'));
             $historyModel = new TblRouteMappingSourcesHistory();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
-            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+            $saveModel[] = $historyModel;
+            $deleteModel[] = $this->model;
+            $dcsModel = TblDcs::findOne($this->model->from_dest);
+            if (!empty($dcsModel)) {
+                $dcsHistoryModel = new TblDcsHistory();
+                Yii::$app->operation->history($this->model, $dcsHistoryModel, 'UPDATE');
+                $saveModel[] = $dcsHistoryModel;
+                $dcsModel->route_code = NULL;
+                $dcsModel->scenario = 'routeMapping';
+                $saveModel[] = $dcsModel;
+            }
+            $transaction = $this->generalModel->saveDeleteTransaction([], $saveModel, $deleteModel, ['Mapped Route', 'delete']);
+//            $record = $this->generalModel->deleteTransaction([$this->model, $saveModel]);
+            if ($transaction == 'customRedirect') {
+                $record = ['status' => 'success', 'msg' => 'Record Deleted Successfully.'];
+            }
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }
