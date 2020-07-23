@@ -250,7 +250,8 @@ echo GhostMenu::widget([
 //                        ['label' => '310-' . Yii::t('app', 'Date Wise Difference Report'), 'url' => ['/jasperreports/default/difference-report-date-wise']],
 //                        ['label' => '311-' . Yii::t('app', 'Village Wise Difference Report'), 'url' => ['/jasperreports/default/difference-report-village-wise']],
                         ['label' => '312-' . Yii::t('app', 'BMC Collection'), 'url' => ['/jasperreports/default/bmc-collection']],
-                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/jasperreports/default/gprs-data-reconciliation']],
+//                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/jasperreports/default/gprs-data-reconciliation']],
+                        ['label' => '313-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/misreports/default/gprs-data-reconciliation']],
                     ]
                 ],
                 [
