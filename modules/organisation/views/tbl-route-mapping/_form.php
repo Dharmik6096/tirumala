@@ -58,6 +58,7 @@ $form = ActiveForm::begin([
                 </div>
             <?php } ?>
         <?php } ?>
+        <div class="clearfix"></div>
         <div class="col-sm-2">
             <?= $form->field($model, 'route_name')->textInput() ?>
         </div>

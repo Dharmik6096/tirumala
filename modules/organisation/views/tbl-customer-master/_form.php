@@ -68,10 +68,14 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-4">
-            <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+                </div>
+                <div class="col-sm-12">
+                    <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+                </div>
+            </div>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->state($model, $form, 'state_code', $model->getAttributeLabel('state_code'), FALSE); ?>
@@ -82,7 +86,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblcustomermaster-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('sub_district_code'), 'sub_district_code', FALSE); ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblcustomermaster-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('village_code'), 'village_code', FALSE); ?>
         </div>

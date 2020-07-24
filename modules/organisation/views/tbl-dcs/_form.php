@@ -79,22 +79,31 @@ $form = ActiveForm::begin([
             </div>
         <?php } ?>
     <?php } ?>
+
     <div class="col-sm-4">
-        <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-12">
+                <?= Yii::$app->controls->local($model, $form); ?>
+            </div>
+        </div>
     </div>
+    <?php //Yii::$app->dropdown->ismilk($model, $form, 'milk_type_code', 'Milk Type');    ?>
+
     <div class="col-sm-4">
-        <?= Yii::$app->controls->local($model, $form); ?>
+        <div class="row">            
+            <div class="col-sm-12">
+                <?= $form->field($model, 'dcs_short_name')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-12">
+                <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
+            </div>
+        </div>
     </div>
     <div class="col-sm-4">
         <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
-    </div>
-    <?php //Yii::$app->dropdown->ismilk($model, $form, 'milk_type_code', 'Milk Type');    ?>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'dcs_short_name')->textInput(['maxlength' => true]) ?>
-    </div>
-
-    <div class="col-sm-4">
-        <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
     <div class="col-sm-4">
         <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'disabled' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
@@ -124,10 +133,10 @@ $form = ActiveForm::begin([
             <div class="col-sm-12">
                 <?= $form->field($model, 'street2')->textInput(['maxlength' => true]) ?>
             </div>
+            <div class="col-sm-12">
+                <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+            </div>
         </div>
-    </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
     </div>
     <?php
     //Yii::$app->dropdown->state($model, $form, 'state_code', 'State');
@@ -145,7 +154,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-4 padding-right-5 padding-left-0', 'Sub District', ''); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-4 padding-right-5 padding-left-0', 'Village', ''); ?>
     </div>
@@ -261,8 +269,9 @@ $form = ActiveForm::begin([
         ])
         ?>
     <?php } ?>
-
+    <div class="clearfix "></div>
     <!--<div class="col-sm-2">-->
+    <div class="theme_border_bottom"></div>
     <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
     <!--</div>-->
     <div class="col-sm-2 mt15">

@@ -17,21 +17,23 @@ $form = ActiveForm::begin(['id' => 'manual_form',
         ]]);
 ?>
 
-<div class="panel-subheading">
-    <h5 class="panel-subtitle"><?php echo Yii::t('app', $this->title); ?></h5>
+<div class="row panel-subheading padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom">
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+        <h4 class="theme-box-heading"><?php echo Yii::t('app', $this->title); ?></h4>
+    </div>
     <?php echo $form->errorSummary($purchaseBasedModel[0]); ?>
-    <div class="row">
-        <div class="col-sm-3 change">
+    
+        <div class="col-sm-2 change">
             <div class="form-group">
                 <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel[0], $form, '', 'Rate Type', false, '[0]rate_type'); ?>
             </div>
         </div>
-        <div class="col-sm-3 change">
+        <div class="col-sm-2 change">
             <div class="form-group">
                 <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $purchaseBasedModel[0], $form, '', 'Milk Quality Type', false, '[0]milk_quality_type_code'); ?>
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <div class="form-group">
                 <?= Yii::$app->dropdown->dropdown('milk_type_code', $purchaseBasedModel[0], $form, '', 'Milk Type', false, '[0]milk_type_code'); ?>
             </div>
@@ -43,10 +45,10 @@ $form = ActiveForm::begin(['id' => 'manual_form',
 
                     $names = explode('+', $model->rateType->rate_type);
                     ?>
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <?= $form->field($model, '[' . $key . ']start_range')->textInput(['class' => 'form-control number-validate'])->label($names[$key] . ' Start'); ?>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <?= $form->field($model, '[' . $key . ']end_range')->textInput(['class' => 'form-control number-validate'])->label($names[$key] . ' End'); ?>
                     </div>
                     <?= Html::activeHiddenInput($model, '[' . $key . ']quality_param_code'); ?>
@@ -55,7 +57,7 @@ $form = ActiveForm::begin(['id' => 'manual_form',
                 foreach ($purchaseBasedModel as $key => $model) {
                     $names = explode('+', $model->rateType->rate_type);
                     ?>
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <?= $form->field($model, '[' . $key . ']kg_rate')->textInput(['class' => 'form-control number-validate'])->label('kg' . $names[$key]); ?>
                     </div>
 
@@ -65,22 +67,21 @@ $form = ActiveForm::begin(['id' => 'manual_form',
             // exit;
             ?>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-2">
             <?php //$form->field($purchaseBasedModel[0], '[0]formula_code')->dropDownList([]) ?>
 
             <?= $form->field($purchaseBasedModel[0], '[0]formula')->textInput(['class' => 'form-control']); ?>
 
         </div>
         <?= Html::hiddenInput('purchase_rate', '', ['id' => 'purchase_rate']); ?>
-        <?= Html::hiddenInput('quality_param', $quality_param, ['id' => 'quality_param']); ?>
-        <div class="clearfix"></div>   
-        <div class="col-sm-12">
+        <?= Html::hiddenInput('quality_param', $quality_param, ['id' => 'quality_param']); ?> 
+        <div class="col-sm-2 padding_top_20">
             <div class="form-group">
                 <?= Yii::$app->controls->save(Yii::t('app', 'Save'), $purchaseBasedModel[0]); ?>
             </div>
         </div>
     </div>
-</div>
+
 
 <?php ActiveForm::end();
 ?>
@@ -107,7 +108,7 @@ $script = "
         $('#tbldcspurchaseratebased-0-formula_code').val('');
         $('#tbldcspurchaseratebased-0-milk_type_code').val('');
         var rateType = $('#tbldcspurchaseratebased-0-rate_type :selected').text();     
-        var field_before = '<div class=\"col-sm-3\"><div class=\"form-group\">';
+        var field_before = '<div class=\"col-sm-2\"><div class=\"form-group\">';
         var field_after = '<div class=\"help-block\"></div></div></div>';
         var quality_param=$.parseJSON($('#quality_param').val());
 

@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-6 padding_10_0 theme-box ">
+    <div class="col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Transporter Detail</h4>
         </div>
@@ -61,7 +61,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'email')->textInput() ?>
         </div>
     </div>
-    <div class="col-md-6 padding_10_0 theme-box theme_border_left">
+    <div class="col-md-6 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Address Detail</h4>
         </div>

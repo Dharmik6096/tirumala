@@ -82,8 +82,8 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             </div>
             <?= Html::radioList('dcs-filter', 'society', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'dcs-filter']]); ?>
         <div class="col-sm-3">
-            <div class="app-header-list">
-                <h4 class="mt10 mb15" id="header"><?= $title ?></h4>
+                <h4 class="mb15 theme-box-heading" id="header"><?= $title ?></h4>
+            <div class="margin_top_15_reverse mb15">
                 <?php
                 /* foreach ($filter_data as $key => $data) {
                   ?>
@@ -96,7 +96,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                   <?php } */
                 foreach ($filters as $key => $data) {
                     if ($key != 'society')
-                        echo '<div id="' . $key . '-list" class="row flt" style="display:none"></div>';
+                        echo '<div id="' . $key . '-list" class="row flt app-check-list-bmc" style="display:none"></div>';
                 }
                 ?>
             </div>
@@ -144,8 +144,8 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
     <?php } ?>
     <div class="<?= $class ?>">
         <div class="col-sm-4 padding-left-0 selectMccArea disp_none">
+            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'MCC List') ?></h4>
             <div class="app-check-list-mcc ">
-                <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'MCC List') ?></h4>
                 <div class="form-group">
                     <div class="checkbox app-check-all-mcc app-check-list-padding">
                         <label class="route-text">
@@ -168,8 +168,8 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             </div>
         </div>
         <div class="col-sm-4 padding-left-0 selectBmcArea disp_none">
+            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'BMC List') ?></h4>
             <div class="app-check-list-bmc ">
-                <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'BMC List') ?></h4>
                 <div class="form-group">
                     <div class="checkbox app-check-all-bmc app-check-list-padding">
                         <label class="route-text">
@@ -192,8 +192,8 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             </div>
         </div>
         <div class="col-sm-4 padding-left-0 selectRouteArea disp_none">
-            <div class="app-check-list-bmc ">
                 <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'Route List') ?></h4>
+                <div class="app-check-list-bmc ">
                 <div class="form-group">
                     <div class="checkbox app-check-all-route app-check-list-padding">
                         <label class="route-text">
@@ -217,8 +217,8 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         </div>
         <div class="clearfix"></div>
         <div class="col-sm-12 padding-left-0 padding-right-0 applicableCodeArea">
-            <div class="app-check-list ">
-                <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= $title ?> List</h4>
+            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= $title ?> List</h4>
+                <div class="app-check-list ">
                 <div class="form-group">
                     <div class="checkbox app-check-all app-check-list-padding">
                         <label class="route-text">
@@ -490,7 +490,7 @@ $script = "
                                     var flag_check = $('input[type=\'radio\']:checked').val();
                                     if(flag_check == flag){
                                         $.each(obj1.data, function(index, value) {
-                                            $('#dcs_code-list').append('<div class=\"col-sm-4 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"{$cname}[dcs_code][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
+                                            $('#dcs_code-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"{$cname}[dcs_code][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
                                         });
                                     }
                                 }

@@ -83,13 +83,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">  
         <?= $form->field($model, 'gst_no')->textInput() ?>
     </div>
-    
-    <div class="col-sm-2">
-        <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
-    </div>
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
@@ -99,12 +92,14 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmccplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmccplant-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
     </div>
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmccplant-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>

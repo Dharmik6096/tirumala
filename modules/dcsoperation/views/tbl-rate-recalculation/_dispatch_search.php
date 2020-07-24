@@ -33,6 +33,7 @@ $form = ActiveForm::begin([
     <?= Yii::$app->dropdown->bmc_society($searchModel, $form, 'tblraterecalculationsearch-bmc_code', 'dcs_code', false, FALSE, '', $disable_search); ?>         
 </div>  
 <?= Yii::$app->dropdown->dropdownStatic('rate_recalc_type', $searchModel, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', FALSE, $disable_search, 'recalc_type', FALSE) ?> 
+<div class="clearfix"></div>
 <div class="col-sm-2">
     <?= Yii::$app->controls->date($searchModel, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, $disable_search, false); ?>
 </div>

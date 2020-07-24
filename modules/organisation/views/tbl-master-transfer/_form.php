@@ -18,8 +18,11 @@ $form = ActiveForm::begin([
         ]]);
 ?>
 <?php echo $form->errorSummary($model); ?>
-<div class="row theme_border_left theme_border_right theme_border_bottom theme_border_top">
+<div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-12 padding_10_0 theme-box">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Transfer Request For') ?></h4>
+        </div>
         <div class="col-sm-2">
             <?php
             echo Yii::$app->dropdown->dropdown('transfer_master_type', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('master_type'), false, 'master_type');

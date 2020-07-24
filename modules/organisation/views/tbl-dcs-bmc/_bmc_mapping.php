@@ -52,7 +52,7 @@ $this->title = Yii::t('app', $title);
                     'item' =>
                     function ($index, $label, $name, $checked, $value) {
 
-                        return "<div class='col-sm-4 checklist data-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
+                        return "<div class='col-sm-2 checklist data-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
                                     'value' => $value,
                                     'label' => '<label for=' . $value . '>' . $label . '</label>',
                                     'labelOptions' => [

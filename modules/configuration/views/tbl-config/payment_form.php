@@ -43,6 +43,7 @@ $defaultToggle = true;
                             <?= Html::hiddenInput('input', 1, ['id' => 'input']); ?>
                             <?= Yii::$app->dropdown->processName($model, $form, 'tblconfig-config_for,input', 'process_name', $model->getAttributeLabel('process_name')); ?>
                         </div>
+                        <div class="clearfix"></div>
                         <div class="col-sm-4">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblconfig-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
                         </div>

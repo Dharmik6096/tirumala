@@ -29,10 +29,10 @@ use yii\web\JsExpression;
                     ]);
                     ?>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <?= Yii::$app->controls->date($model, $form, 'to_date'); ?>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>
                     </div>
                     <?= Html::activeHiddenInput($model, 'member_deactive_code'); ?>

@@ -56,7 +56,7 @@ $form = ActiveForm::begin([
     </div>
 
 <?php } ?>
-
+<div class="clearfix"></div>
 <div class="col-sm-2">
     <?= Yii::$app->controls->date($searchModel, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, false); ?>
 </div>

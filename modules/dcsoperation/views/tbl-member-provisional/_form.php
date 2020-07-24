@@ -128,33 +128,19 @@ if ($model->isNewRecord) {
 </div>
 
     <div class="col-md-6 padding_10_0 theme-box ">
-        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Animal Details</h4>
-        </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
-    </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'no_of_buffalo')->textInput() ?>
-    </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
-    </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
-    </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
-    </div>
         
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
         <h4 class="theme-box-heading">Contact Details</h4>
     </div>
     <div class="col-sm-4">
-        <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
-    </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-12">
+                <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+            </div>
+        </div>
     </div>
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
@@ -165,7 +151,6 @@ if ($model->isNewRecord) {
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmemberprovisional-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District'); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmemberprovisional-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village'); ?>
     </div>
@@ -182,6 +167,25 @@ if ($model->isNewRecord) {
     </div>
     <div class="col-sm-4 padding-bottom-32">
         <?= $form->field($model, 'email')->textInput() ?>
+    </div>
+
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Animal Details</h4>
+        </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
+    </div>
+    <div class="col-sm-4">
+        <?= $form->field($model, 'no_of_buffalo')->textInput() ?>
+    </div>
+    <div class="col-sm-4">
+        <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
+    </div>
+    <div class="col-sm-4">
+        <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
+    </div>
+    <div class="col-sm-4">
+        <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
     </div>
 
     </div>

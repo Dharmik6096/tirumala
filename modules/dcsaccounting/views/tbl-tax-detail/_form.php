@@ -29,14 +29,14 @@ $form = ActiveForm::begin(['options' => [
     <?php echo $form->errorSummary($model); ?>
     <div class="row">
         <div class="col-sm-12">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>    
             </div>
-            <div class="col-sm-3">
-                <?= Yii::$app->dropdown->dropdown('tax', $model, $form, 'form-group padding-right-5 col-sm-3', 'Tax Setting', 'true'); ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdown('tax', $model, $form, 'form-group padding-right-5 col-sm-2', 'Tax Setting', 'true'); ?>
             </div>
             <?= Html::activeHiddenInput($model, 'tax_code') ?>
-            <?= $form->field($model, 'basic_tax_code', ['options' => ['class' => 'form-group padding-right-5 col-sm-3']])->dropDownList($basic_tax, ['prompt' => 'Select Basic Tax']); ?>
+            <?= $form->field($model, 'basic_tax_code', ['options' => ['class' => 'form-group padding-right-5 col-sm-2']])->dropDownList($basic_tax, ['prompt' => 'Select Basic Tax']); ?>
             <?= $form->field($model, 'type', ['options' => ['class' => 'form-group col-sm-2']])->dropDownList(['0' => 'Addition(+)', '1' => 'Substraction(-)']) ?>
             <?= $form->field($model, 'percentage', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
         </div>

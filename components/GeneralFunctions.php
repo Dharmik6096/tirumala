@@ -995,7 +995,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1337,7 +1337,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false) {
+    public function getCustomer($model, $type, $exCode = false, $bmcCode = false) {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1351,12 +1351,6 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'bmc_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'bmc_code');
-            }
-        } else if ($refCode) {
-            if (strtolower($type) == 'dcs') {
-                $name = $this->getforeignkey($model->dcsCode, 'ref_code');
-            } else {
-                $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
             }
         } else {
             if (strtolower($type) == 'dcs') {

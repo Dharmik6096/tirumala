@@ -33,8 +33,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'remarks')->textarea(['maxlength' => true]) ?>
     </div>
     <?= Html::activeHiddenInput($model, 'dcs_code') ?>
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>

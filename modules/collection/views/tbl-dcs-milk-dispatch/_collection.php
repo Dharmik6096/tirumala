@@ -24,8 +24,11 @@ $form = ActiveForm::begin([
         ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
-<div class="row">
-    <div class="DisableAferAdd">
+<div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
+    <div class="col-sm-12 padding_10_0 DisableAferAdd">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Milk Dispatch Collection</h4>
+        </div>
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
         </div>
@@ -44,25 +47,28 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 shift rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
         </div>
-        <div class="clearfix"></div>
-        <div class="Button disabled mb25 ml15">
+        <div class="col-sm-1 padding_top_20 Button disabled mb25 ml15">
             <button type="button" class="add-collection btn btn-default apply-shortcut ml15 "><?= Yii::t('app', 'Add Dispatch') ?></button>
         </div>
     </div>
     <div class="clearfix"></div>
-    <div class="QltyParamDiv">
-        <div class="col-sm-2 rtpl_validate create_fields reset_field">
-            <?= $form->field($model, 'dcs_code')->hiddenInput()->label(FALSE) ?>
+    <div class="col-sm-1"></div>
+    <div class="col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Dispatch Collection Details</h4>
+        </div>
+        <?= $form->field($model, 'dcs_code')->hiddenInput()->label(FALSE) ?>
+        <div class="col-sm-3 rtpl_validate create_fields reset_field">
             <?= $form->field($model, 'dcs')->textInput()->label(Yii::t('app', 'Code')) ?>
         </div>
-        <div class="col-sm-2 create_fields reset_field">
+        <div class="col-sm-3 create_fields reset_field">
             <?= $form->field($model, 'name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
         </div>
-        <div class="col-sm-2 rtpl_validate create_fields">
+        <div class="col-sm-3 rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $txModel, $form, '', 'Milk Type', $readonly); ?>
         </div>
 
-        <div class="col-sm-2 rtpl_validate create_fields">
+        <div class="col-sm-3 rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txModel, $form, '', $txModel->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
         </div>
         <div class="clearfix"></div>
@@ -89,8 +95,7 @@ $form = ActiveForm::begin([
             <?= $form->field($txModel, 'total_amount')->textInput(['readOnly' => true]) ?>
         </div>
 
-        <div class="clearfix"></div>
-        <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?php
                 AjaxSubmitButton::begin([

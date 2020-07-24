@@ -11,7 +11,7 @@ use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 use yii\helpers\ArrayHelper;
 ?>
-<div class="panel panel-main">
+<div class="panel panel-main view-subtitle">
     <?php
     $form = ActiveForm::begin(['options' => [
                     'field-class' => 'form-group col-sm-3'

@@ -41,13 +41,12 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', 'Shift Applicability'); ?>
     </div>
 
-    <div class="col-sm-4">
+    <div class="col-sm-2">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>
 
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([

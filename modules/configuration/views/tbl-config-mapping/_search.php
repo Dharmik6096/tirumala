@@ -36,6 +36,7 @@ use yii\bootstrap\ActiveForm;
                         <div class="col-sm-4">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), TRUE); ?>
                         </div>
+                        <div class="clearfix"></div>
                         <div class="col-sm-4">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblconfigmapping-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
                         </div>

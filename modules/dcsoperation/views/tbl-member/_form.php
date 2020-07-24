@@ -146,12 +146,17 @@ if ($model->isNewRecord) {
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Contact Details</h4>
         </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
-    </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
-    </div>
+
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+                </div>
+                <div class="col-sm-12">
+                    <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+                </div>
+            </div>
+        </div>
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
@@ -161,7 +166,6 @@ if ($model->isNewRecord) {
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmember-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District'); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-4">
         <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmember-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village'); ?>
     </div>

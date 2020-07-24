@@ -97,7 +97,7 @@ ul{
     border: none;
     border-radius: 0px;
     position: relative;
-    padding: 3px 15px;
+    padding: 3px 8px;
     margin: 0 1px 10px;
     font-size: 11px;
     font-weight: 400;
@@ -721,7 +721,7 @@ select[multiple]{
     margin-left: -25px;
 }
 input[type="radio"], input[type="checkbox"]{
-    margin: 4px 5px 0 0;
+    margin: 4px 5px 0 2px;
     vertical-align: text-top;
 }
 .radio-list input[type="radio"]{
@@ -1220,7 +1220,7 @@ input[type="hidden"] + .help-block{
     margin-bottom: 15px;
 }*/
 .app-radio-list{
-    margin: 0 0 15px;
+    margin: 0 0 15px 10px;
 }
 .app-radio-list label{
     padding: 5px 10px;
@@ -1228,15 +1228,20 @@ input[type="hidden"] + .help-block{
     margin: 0 5px 0 0;
 }
 .app-header-list{
-    background-color: #eee;
-    padding: 1px 10px;
+    /* background-color: #eee; */
+    /* padding: 1px 10px; */
     margin: 0 0 15px;
+    /* border: 1px solid rgb(58, 123, 213); */
+    box-shadow: 0px;
 }
-.app-check-list, .app-check-list-mcc, .app-check-list-bmc{
+.app-header-list, .app-check-list, .app-check-list-mcc, .app-check-list-bmc{
     background: none;
     border: 1px solid #4c87d975;
     /* padding:5px 10px; */
     margin: 0 0 15px;
+    max-height: 450px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .app-check-list-padding{
@@ -2054,7 +2059,7 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 
 .grid-search.search-filter {
     /*position: relative !important;*/
-    width: calc(100% - 215px) !important;
+    width: calc(100% - 155px) !important;
 }
 
 .navbar-brand img {
@@ -2276,9 +2281,9 @@ div.crystalstyle{
 
 #menu_buttons {
     position: absolute;
-    top: 117px;
+    top: 102px;
     z-index: 9;
-    right: 15px;
+    right: 25px;
 }
 
 #menu_buttons ul {
@@ -2440,8 +2445,8 @@ div.crystalstyle{
 }
 
 .set_checkbox .checkbox input[type="checkbox"], .set_checkbox input[type="checkbox"] {
-    height: 20px !important;
-    width: 20px!important;
+    height: 10px !important;
+    width: 15px!important;
 }
 
 .tbl_border .table-bordered {
@@ -2583,7 +2588,7 @@ div.crystalstyle{
 }
 
 .panel .panel-body textarea {
-    height: 50px !important;
+    height: 77px !important;
     font-size: 11px;
 }
 
@@ -2606,7 +2611,7 @@ div.crystalstyle{
     user-select: none;
     border: 1px solid transparent;
     /* padding: 0.575rem 0.95rem; */
-    padding: 3px 15px;
+    padding: 3px 8px;
     font-size: 11px;
     line-height: 1.5;
     border-radius: 0px !important;
@@ -2765,6 +2770,14 @@ td.action-cell{
     padding-bottom: 32px;
 }
 
+.padding_top_20{
+    padding-top: 20px;
+}
+
+.padding_left_10{
+    padding: 10px;
+}
+
 .margin-bottom-10{
     margin-bottom: 10px;
 }
@@ -2825,7 +2838,7 @@ input[type="checkbox"]{
   }
 
 select[multiple]{
-    max-height: 50px !important;
+    max-height: 77px !important;
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
@@ -2854,4 +2867,13 @@ select[multiple]{
 .multiselect{
     font-size: 11px !important;
     height: 24px !important;
+}
+.datepicker table tr td, 
+.datepicker table tr th,
+.kv-container-to>.form-control {
+    border-radius: 0px!important;
+}
+
+.margin_top_15_reverse{
+    margin-top :  -15px;
 }

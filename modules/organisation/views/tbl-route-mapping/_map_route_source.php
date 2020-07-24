@@ -69,7 +69,7 @@ $this->title = Yii::t('app', $title);
                             $checked = in_array($value, $selected);
                             $modelRouteSource->route_code = Yii::$app->getRequest()->getQueryParam('id');
                             $disabled = $checked ? ' disabled' : '';
-                            return "<div class='col-sm-4 checklist dcs-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
+                            return "<div class='col-sm-2 checklist dcs-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
                                         'value' => $value,
                                         'label' => '<label for=' . $value . '>' . $label . '</label>',
                                         'labelOptions' => [
