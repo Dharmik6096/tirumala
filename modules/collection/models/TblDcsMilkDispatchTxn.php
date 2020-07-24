@@ -46,7 +46,8 @@ use app\modules\organisation\models\TblPlant;
  */
 class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_date, $to_date, $from_shift, $to_shift;
+    public $from_date, $to_date, $from_shift, $to_shift, $dispatch_type;
+
     /**
      * @inheritdoc
      */
