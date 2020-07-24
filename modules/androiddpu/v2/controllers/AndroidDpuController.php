@@ -314,12 +314,12 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     if (!empty($shiftTimigData)) {
                         $res_data['shift_timing'] = $shiftTimigData;
                     }
+                    $model = new TblAmcsAppMenuMapping();
+                    $model->union_code = $model_data->union_code;
+                    $model->application_type = $org_type;
+                    $menu_mapping = $model->getMenuMapping();
+                    $res_data['menu_mapping'] = implode(',', $menu_mapping);
                 }
-                $model = new TblAmcsAppMenuMapping();
-                $model->union_code = $model_data->union_code;
-                $model->application_type = $org_type;
-                $menu_mapping = $model->getMenuMapping();
-                $res_data['menu_mapping'] = implode(',', $menu_mapping);
             }
         }
         $this->response['data'] = $res_data;
