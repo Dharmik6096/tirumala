@@ -19,6 +19,7 @@ use app\modules\androiddpu\controllers\RestController;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\configuration\models\TblUnionConfigResult;
 use yii\helpers\ArrayHelper;
+use app\modules\usermanagement\models\TblAmcsAppMenuMapping;
 
 /**
  * Default controller for the `vendorapi` module
@@ -314,6 +315,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['shift_timing'] = $shiftTimigData;
                     }
                 }
+                $model = new TblAmcsAppMenuMapping();
+                $model->union_code = $model_data->union_code;
+                $model->application_type = $org_type;
+                $menu_mapping = $model->getMenuMapping();
+                $res_data['menu_mapping'] = implode(',', $menu_mapping);
             }
         }
         $this->response['data'] = $res_data;
