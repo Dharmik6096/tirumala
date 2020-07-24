@@ -42,7 +42,7 @@ use app\modules\collection\models\TblCollectionDataAlias;
  */
 class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_date, $to_date, $from_shift, $to_shift, $status;
+    public $from_date, $to_date, $from_shift, $to_shift, $status, $dispatch_type;
 
     /**
      * @inheritdoc

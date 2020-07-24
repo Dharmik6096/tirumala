@@ -22,11 +22,11 @@ class ReportsModel extends Model {
         return [
             [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type', 'route_code'], 'default', 'value' => 0],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code'], 'safe'],
-            [['report_type'], 'required', 'on' => ['BmcCollection','CPReportSap']],
+            [['report_type'], 'required', 'on' => ['BmcCollection', 'CPReportSap']],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
             [['to_date'], function ($attribute, $params) {
-            Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
+                }, 'skipOnEmpty' => false],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapStatusReport'],
             [['union_code', 'plant_code', 'report_type'], 'required', 'on' => 'SapComparisionReport'],
             [['union_code', 'plant_code'], 'required', 'on' => 'DispatchVsReceipt'],
@@ -40,7 +40,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code'], 'required', 'on' => ['MemberMobileAppDetail']],
             [['union_code', 'report_type'], 'required', 'on' => ['CollectionDataSummary']],
             [['p_organization_type', 'rate_type', 'union_code', 'plant_code'], 'required', 'on' => ['RateAcknowledgement']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['VendorPayment','CPReportSap']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['VendorPayment', 'CPReportSap']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MemberPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],
@@ -53,6 +53,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status'], 'required', 'on' => ['CdaDateAndShiftWise', 'CdaConsolidated', 'BmcCollectionConsolidated', 'CdaDateWise']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['VariationPercentageWise', 'VariationVillageWise']],
             [['p_organization_type', 'union_code', 'plant_code'], 'required', 'on' => ['AmcsSyncPending']],
+            [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => 'GprsDataReconciliation'],
         ];
     }
 
