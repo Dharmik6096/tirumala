@@ -76,7 +76,13 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
             [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv', 'importDetailCsv']],
             [['customer_code'], 'required', 'on' => ['importCsv']],
-            [['customer_code'], 'validatePaymentCycle', 'except' => ['importCsv']]
+            [['customer_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        $customer_type = !empty($this->dcs_code) ? 'DCS' : $this->customer_type;
+                        $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
+                        Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
         ];
     }
 
@@ -185,46 +191,22 @@ class TblBillHeadDetail extends \app\models\ChildModel {
                 $this->customer_type = 'MEMBER';
                 $customer_type = 'DCS';
                 $customer_code = $this->dcs_code;
+                $flag = ['data_lock_member', 'billing_lock_member'];
             } else {
                 $this->bill_head_for = 'VENDOR';
                 Yii::$app->general->validateCustomer($this);
                 $customer_type = $this->customer_type;
                 $customer_code = $this->customer_code;
+                $flag = ['data_lock_bmc', 'billing_lock_bmc'];
             }
             $billModel = new TblBillHead();
             $list = $billModel->billHeadTypeWise($this->union_code, $customer_type, $customer_code, $this->bill_head_for);
             if (!array_key_exists($this->bill_head_code, $list)) {
                 $this->addError('bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('bill_head_code') . ' is invalid'));
             }
-            $paymentModel = new TblPaymentCycleApplicability();
-            $paymentModel->applicable_type = $customer_type;
-            $paymentModel->applicable_code = $this->bmc_code;
-            $paymentModel->applicable_for = 'BMC';
-            $modelData = $paymentModel->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->transaction_date)));
-            if (empty($modelData)) {
-                $this->addError('transaction_date', "Payment Cycle aplicability not available for Transaction Date.");
-                return false;
-            } else {
-                return $this->payment_cycle_code = $modelData->payment_cycle_code;
-            }
+            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
         }
     }
-
-    public function validatePaymentCycle() {
-        $model = new TblPaymentCycleApplicability();
-        $model->applicable_type = !empty($this->dcs_code) ? 'DCS' : $this->customer_type;
-        $model->applicable_code = $this->bmc_code;
-        $model->applicable_for = 'BMC';
-        $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->transaction_date)));
-        if (empty($modelData)) {
-            $this->addError('transaction_date', "Payment Cycle aplicability not available for Transaction Date.");
-            return false;
-        }
-//        else {
-//            return $this->payment_cycle_code = $modelData->payment_cycle_code;
-//        }
-    }
-
     public function getCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
     }

@@ -21,16 +21,20 @@ $attribute = [
     ['label' => Yii::t('app', 'BMC'), 'attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['bmcCode'], 'bmc_name');
         }, 'filter' => false],
-    ['label' => Yii::t('app', 'Dcs Code Ex'), 'attribute' => 'dcs_code',
-        'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['dcsCode'], 'dcs_code_ex');
-        }, 'filter' => false],
     ['label' => Yii::t('app', 'DCS Code'),
         'attribute' => 'dcs_code',
         'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['dcsCode'], 'dcs_code');
         },
         'filter' => FALSE],
+    ['label' => Yii::t('app', 'Dcs Code Ex'), 'attribute' => 'dcs_code',
+        'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['dcsCode'], 'dcs_code_ex');
+        }, 'filter' => false],
+    ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'ref_code',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        },],
     ['label' => Yii::t('app', 'DCS Name'), 'attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['dcsCode'], 'dcs_name');
         }, 'filter' => false],

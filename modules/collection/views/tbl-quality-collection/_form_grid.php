@@ -23,6 +23,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC Code'), 'value' => 'bmc_code', 'vAlign' => 'middle', 'visible' => FALSE, 'filter' => false],
+    ['attribute' => 'bmc_ref_code', 'label' => (Yii::t('app', 'BMC Ref.Code')), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'vAlign' => 'middle'],
     ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],

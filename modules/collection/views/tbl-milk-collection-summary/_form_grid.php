@@ -24,6 +24,10 @@ $attribute = [
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
+    ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'ref_code',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        },],
     ['attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

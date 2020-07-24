@@ -13,7 +13,7 @@ use app\modules\collection\models\TblDcsMilkDispatchTxn;
 class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
 
     public $shift_code, $dispatch_type, $destination_type, $challan_no, $destination_code;
-    public $union_code, $plant_code, $mcc_plant_code, $bmc_code;
+    public $union_code, $plant_code, $mcc_plant_code, $bmc_code, $ref_code;
 
     /**
      * @inheritdoc
@@ -23,7 +23,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
             [['shift_code', 'dispatch_type', 'destination_type', 'challan_no', 'destination_code'], 'safe'],
             [['dcs_milk_dispatch_txn_code', 'dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'integer'],
             [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount'], 'number'],
-            [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkDispatch']],
         ];
@@ -54,7 +54,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsMilkDispatch']);
+        $query->joinWith(['dcsMilkDispatch', 'dcsCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_milk_dispatch', 'tbl_dcs_milk_dispatch', 'tbl_dcs_milk_dispatch');
 
         if (!$this->validate()) {
@@ -97,6 +97,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
         ]);
 
         $query->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.challan_no', $this->challan_no])
+                ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.destination_code', $this->destination_code]);
 
         $query->orderBy(['tbl_dcs_milk_dispatch.date_time_of_dispatch' => SORT_DESC,

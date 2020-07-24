@@ -15,6 +15,9 @@ $attribute = [
     ['attribute' => 'bmc_code',
         'label' => Yii::t('app', 'BMC Code'),
         'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'bmc_ref_code', 'label' => (Yii::t('app', 'BMC Ref.Code')), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'vAlign' => 'middle'],
     ['attribute' => 'bmc_name',
         'label' => Yii::t('app', 'BMC Name'),
         'value' => function($model) {
@@ -28,8 +31,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->sample_bottle_testing_date);
-}],
+            return Yii::$app->controls->view_date($model->sample_bottle_testing_date);
+        }],
     ['attribute' => 'trip_code'],
     ['attribute' => 'sample_no'],
     ['attribute' => 'milk_type_code', 'value' => function($model) {

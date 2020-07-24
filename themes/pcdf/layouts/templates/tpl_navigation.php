@@ -145,6 +145,7 @@ echo GhostMenu::widget([
             'items' => [
                 ['label' => Yii::t('app', 'Payment Cycle'), 'url' => ['/payment/tbl-payment-cycle/index'], 'active' => ($cntrl == 'tbl-dcs-payment-cycle')],
                 ['label' => Yii::t('app', 'Member Payment Restrict'), 'url' => ['/payment/tbl-member-payment-restrict/index'], 'active' => ($cntrl == 'tbl-member-payment-restrict' && $action == 'index')],
+                ['label' => Yii::t('app', 'DCS Wise Billing Config'), 'url' => ['/payment/tbl-vsp-payment-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-config' && $action == 'index')],
                 ['label' => Yii::t('app', 'Member Payment'), 'url' => ['/payment/tbl-member-payment/index'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'index')],
                 ['label' => Yii::t('app', 'Vendor Payment'), 'url' => ['/payment/tbl-vsp-payment/index'], 'active' => ($cntrl == 'tbl-vsp-payment' && $action == 'index')],
 //                ['label' => Yii::t('app', 'Member Payment Process'), 'url' => ['/payment/tbl-member-payment/create'], 'active' => ($cntrl == 'tbl-member-payment' && $action == 'create')],
@@ -308,6 +309,7 @@ echo GhostMenu::widget([
                         ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/default/sap-status-report']],
                         ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
                         ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
+                        ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/cpmilk-sap-report']],
                     ]
                 ],
                 [
@@ -407,8 +409,8 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Notification'), 'url' => ['/notification/tbl-notifications/index'], 'active' => ($cntrl == 'tbl-notifications')],
                         ['label' => Yii::t('app', 'Complaint'), 'url' => ['/complaint/tbl-complaint/index'], 'active' => ($cntrl == 'tbl-complaint')],
                         ['label' => Yii::t('app', 'General Configuration'), 'url' => ['/setting/tbl-general-config/index'], 'active' => ($cntrl == 'tbl-general-config')],
-                        ['label' => Yii::t('app', 'Custom Import (Create)'), 'url' => ['/customimport/default/create-by-import'], 'active' => ($cntrl == 'customimport-create')],
-                        ['label' => Yii::t('app', 'Custom Import (Update)'), 'url' => ['/customimport/default/update-by-import'], 'active' => ($cntrl == 'customimport-update')],
+//                        ['label' => Yii::t('app', 'Custom Import (Create)'), 'url' => ['/customimport/default/create-by-import'], 'active' => ($cntrl == 'customimport-create')],
+//                        ['label' => Yii::t('app', 'Custom Import (Update)'), 'url' => ['/customimport/default/update-by-import'], 'active' => ($cntrl == 'customimport-update')],
                         ['label' => Yii::t('app', 'DPU Incentive'), 'url' => ['/general/tbl-dpu-incentive-master/index'], 'active' => ($cntrl == 'tbl-dpu-incentive-master')],
                         ['label' => Yii::t('app', 'Escalation'), 'url' => ['/email/tbl-email-rule-master/index']],
                         ['label' => Yii::t('app', 'Union Credit'), 'url' => ['/payment/tbl-union-credit-limit/index']],

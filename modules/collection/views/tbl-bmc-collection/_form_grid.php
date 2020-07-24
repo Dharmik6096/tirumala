@@ -22,6 +22,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'bmc_code', 'visible' => false, 'value' => 'bmc_code', 'vAlign' => 'middle', 'filter' => true],
+    ['attribute' => 'bmc_ref_code', 'label' => (Yii::t('app', 'BMC Ref.Code')), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->mainBmcCode, 'ref_code');
+        }, 'vAlign' => 'middle'],
     ['attribute' => 'bmc_name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
@@ -43,6 +46,9 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type);
+        }],
+    ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref. Code'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->customer_type, false, false, TRUE);
         }],
     [
         'attribute' => 'date_time_of_collection',

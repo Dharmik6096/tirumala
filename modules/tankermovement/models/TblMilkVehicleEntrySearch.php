@@ -12,14 +12,14 @@ use app\modules\tankermovement\models\TblMilkVehicleEntry;
  */
 class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $bmc_ref_code, $ref_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name'], 'safe'],
+            [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code'], 'safe'],
             [['gross_weight', 'tare_weight'], 'number'],
             [['originating_type'], 'integer'],
         ];
@@ -56,7 +56,7 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType']);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'bmcCode']);
         // grid filtering conditions
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry');
@@ -65,6 +65,7 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
             'receipt_at' => $this->receipt_at,
         ]);
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.ref_code', $this->ref_code], ['like', 'tbl_customer_master.ref_code', $this->ref_code]]);
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $query->andFilterWhere(['>=', 'CAST(vehicle_entry_date as date)', $from_date]);
@@ -83,7 +84,8 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
                 ->andFilterWhere(['like', 'qty', $this->qty])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
                 ->andFilterWhere(['like', 'tbl_bmc_collection.customer_code', $this->customer_code])
-                ->andFilterWhere(['like', 'vehicle_entry_date', (!empty($this->vehicle_entry_date)) ? date('Y-m-d', strtotime($this->vehicle_entry_date)) : '']);
+                ->andFilterWhere(['like', 'vehicle_entry_date', (!empty($this->vehicle_entry_date)) ? date('Y-m-d', strtotime($this->vehicle_entry_date)) : ''])
+                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
 
 
         return $dataProvider;
