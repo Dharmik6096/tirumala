@@ -47,7 +47,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateDetails;
  */
 class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
-    public $from_date, $to_date, $from_shift, $to_shift, $status, $date_time_of_dispatch, $shift_code, $bmc_code, $union_code;
+    public $from_date, $to_date, $from_shift, $to_shift, $status, $date_time_of_dispatch, $shift_code, $bmc_code, $union_code, $dispatch_type;
 
     /**
      * @inheritdoc

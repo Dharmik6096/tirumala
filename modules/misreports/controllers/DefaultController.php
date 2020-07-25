@@ -356,6 +356,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionGprsDataReconciliation() {
+        $this->report = 'GprsDataReconciliation';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -880,6 +885,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '404 - SAP Data Export',
                 'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+            ],
+            'GprsDataReconciliation' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_dpu_gprs_data_reconciliation',
+                'scenario' => 'GprsDataReconciliation',
+                'title' => '313 - DPU-GPRS Data Reconciliation',
             ],
         ];
         return $label[$l];
