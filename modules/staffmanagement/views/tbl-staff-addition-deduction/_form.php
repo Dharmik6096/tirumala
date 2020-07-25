@@ -58,8 +58,7 @@ $form = ActiveForm::begin([
     <?= $form->field($model, 'installment_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
     <?= $form->field($model, 'remark', ['options' => ['class' => 'form-group col-sm-2']])->textarea() ?>
 
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>

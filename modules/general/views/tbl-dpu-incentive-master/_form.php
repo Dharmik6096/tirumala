@@ -101,7 +101,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->date($detailModel, $form, 'to_date', '', date('Y-m-d'), false, false); ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-2 shift">
             <?= Yii::$app->dropdown->dropdown('shift_applicability', $detailModel, $form, '', $detailModel->getAttributeLabel('shift_code'), false, 'shift_code'); ?>
         </div> 
@@ -125,7 +124,7 @@ $form = ActiveForm::begin([
             <?= $form->field($detailModel, 'amount')->textInput() ?>
         </div>
     <?php } ?>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php if ($type == 'edit') { ?> 
                 <?php

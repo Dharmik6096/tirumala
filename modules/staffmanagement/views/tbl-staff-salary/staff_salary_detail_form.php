@@ -22,9 +22,10 @@ $form = ActiveForm::begin(['options' => [
             //'labelOptions' => [ 'class' => false],
         ]]);
 ?>
-<div class="row">
-    <div class="col-sm-6">
-        <div class="col-sm-12 panel-subheading">
+<div class="row theme-box ">
+    <div class="col-sm-5 ">
+        <div class="table-responsive col-sm-12 hide_help_block padding_10_0 view-subtitle2" id='checkHasSubLedgerField'>
+        <div class="col-sm-12 theme-box-heading">
             <div class="col-sm-4 col-xs-4">
                 <h5><?php echo Yii::t('app', 'Addition'); ?></h5>
             </div>
@@ -35,7 +36,6 @@ $form = ActiveForm::begin(['options' => [
                 <?= $form->field($salaryModel, 'addition', ['options' => ['class' => 'form-group hide_help_block']])->textInput(['readOnly' => TRUE])->label(FALSE) ?>
             </div>
         </div>
-        <div class="table-responsive col-sm-12 hide_help_block" id='checkHasSubLedgerField'>
             <table class="table table-bordered table-striped table-main table-language web_theme_table">
                 <thead>
                     <tr>
@@ -86,10 +86,9 @@ $form = ActiveForm::begin(['options' => [
             </table>
         </div>
     </div>
-    <div class="col-sm-6">
-
-        <div class="table-responsive col-sm-12 hide_help_block" id='checkHasSubLedgerField'>
-            <div class="col-sm-12 panel-subheading">
+    <div class="col-sm-5">
+        <div class="table-responsive col-sm-12 hide_help_block padding_10_0 view-subtitle2" id='checkHasSubLedgerField'>
+            <div class="col-sm-12 theme-box-heading">
                 <div class="col-sm-4 col-xs-4">
                     <h5><?php echo Yii::t('app', 'Deduction'); ?></h5>
                 </div>
@@ -144,7 +143,7 @@ $form = ActiveForm::begin(['options' => [
     </div>
 </div>
 <div class="clearfix"></div>
-<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+<div class="col-sm-12 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <div class="form-group">
         <?php
         AjaxSubmitButton::begin([

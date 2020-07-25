@@ -46,10 +46,9 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="clearfix"></div>
-    <?= $form->field($model, 'description', ['options' => ['class' => 'form-group col-sm-4']])->textArea() ?>
+    <?= $form->field($model, 'description', ['options' => ['class' => 'form-group col-sm-2']])->textArea() ?>
 
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([

@@ -53,7 +53,7 @@ $form = ActiveForm::begin(['options' => [
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('type', $model, $form, 'form-group ' . $class, $model->getAttributeLabel('type')); ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?= $form->field($model, 'amount', ['options' => ['class' => 'form-group']])->textInput(['readOnly' => TRUE]) ?>
         </div>
         <div class="salaryInstall">
@@ -67,12 +67,9 @@ $form = ActiveForm::begin(['options' => [
                 ?> 
             </div> 
             <?= Html::activeHiddenInput($staffModel, 'staff_installment_code'); ?> 
-            <?= $form->field($staffModel, 'amount', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
+            <?= $form->field($staffModel, 'amount', ['options' => ['class' => 'form-group col-sm-1']])->textInput() ?>
         </div>
-    </div>
-    <div class="clearfix"></div>
-
-    <div class="panel-footer col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <?php
         $url = ($type == 'create') ? ['salary-installment'] : ['salary-installment'];
         AjaxSubmitButton::begin([
@@ -120,6 +117,7 @@ $form = ActiveForm::begin(['options' => [
         AjaxSubmitButton::end();
         ?>
     </div>
+</div>
 </div>
 
 <?php ActiveForm::end(); ?>

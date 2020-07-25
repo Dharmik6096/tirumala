@@ -33,7 +33,6 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('sap_file_status', $model, $form, 'form-group padding-right-5', false, false, 'status') ?> 
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>

@@ -72,7 +72,7 @@ $form = ActiveForm::begin([
                 $checked = in_array($value, $map_model);
                 $check = $model->getDistrictUsed($bankCode, $label);
                 $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                return "<div class='col-sm-4 dcs-checklist checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
+                return "<div class='col-sm-2 dcs-checklist checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
                             'value' => $value,
                             'label' => '<label for="' . $value . '">' . $label . '</label>',
                             'labelOptions' => [
@@ -90,9 +90,7 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->controls->active($model, $form); ?>
             </div>
-
-            <div class="clearfix"></div>
-            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+            <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
                     <?= Yii::$app->controls->reset(); ?>

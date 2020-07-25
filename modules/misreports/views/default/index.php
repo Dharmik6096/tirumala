@@ -72,17 +72,17 @@ if (isset($data['url1'])) {
 
                                         if (isset($value_array[1]) && $value_array[1] == 'string') {
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?php
-                                                echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-4 padding-left-5 padding-right-5', false);
+                                                echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-3 padding-left-5 padding-right-5', false);
                                                 ?>
                                             </div>    
                                             <?php
                                             if (isset($value_array[2])) {
                                                 ?>
-                                                <div class="col-sm-4 shift">
+                                                <div class="col-sm-3 shift">
                                                     <?php
-                                                    echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel($value_array[2]), false, $value_array[2]);
+                                                    echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value_array[2]), false, $value_array[2]);
                                                     ?>
                                                 </div>    
                                                 <?php
@@ -90,17 +90,17 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('union_code'))) {
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                                             </div>   <?php
                                             }
                                             if (in_array($value, array('plant_code'))) {
                                                 ?>
-                                            <div class="col-sm-4 val_plant_code">
+                                            <div class="col-sm-3 val_plant_code">
                                                 <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
-                                            <div class="col-sm-4 val_mcc_code">
+                                            <div class="col-sm-3 val_mcc_code">
                                                 <?php
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                     Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'));
@@ -113,42 +113,42 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('bmc_code'))) {
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('dcs_code'))) {
                                             ?>
-                                            <div class="col-sm-4 val_dcs_code">
+                                            <div class="col-sm-3 val_dcs_code">
                                                 <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
                                             </div>
                                             <?php
                                         }
                                         if (isset($value_array[1]) && $value_array[1] == 'txt') {
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?= $form->field($model, $value_array[0])->textInput(['maxlength' => true]) ?>
                                             </div>    
                                             <?php
                                         }
                                         if (in_array($value, array('customer_code'))) {
                                             ?>
-                                            <div class="col-sm-4 val_dcs_code">
+                                            <div class="col-sm-3 val_dcs_code">
                                                 <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-bmc_code', 'customer_code', Yii::t('app', 'Name')); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('customer_type'))) {
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->customer_type($model, $form, 'reportsmodel-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('vendor_code'))) {
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodel-bmc_code,reportsmodel-customer_type', 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
                                             </div>
                                             <?php
@@ -162,14 +162,14 @@ if (isset($data['url1'])) {
                                                 echo Html::hiddenInput('customer_type', $value_array[2], ['id' => 'reportsmodel-customer_type']);
                                             }
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('member_code'))) {
                                             ?>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('member')); ?>
                                             </div>
                                             <?php
@@ -178,7 +178,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('p_organization_type'), false, 'p_organization_type') ?> 
                                                 </div>
                                                 <?php
@@ -189,7 +189,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                                 </div>
                                                 <?php
@@ -198,7 +198,7 @@ if (isset($data['url1'])) {
                                         if (in_array($value, array('p_purchase_rate_code'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
-                                                <div class="col-sm-4 val_dcs_code">
+                                                <div class="col-sm-3 val_dcs_code">
                                                     <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));  ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
@@ -207,14 +207,14 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('member_type'))) {
                                             ?>
-                                            <div class="col-sm-4 val_dcs_code">
+                                            <div class="col-sm-3 val_dcs_code">
                                                 <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel($value), false, 'member_type'); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('route_code'))) {
                                             ?>
-                                            <div class="col-sm-4 val_dcs_code">
+                                            <div class="col-sm-3 val_dcs_code">
                                                 <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
                                             </div>
                                             <?php
@@ -222,7 +222,7 @@ if (isset($data['url1'])) {
                                     }
 
                                     if (isset($data['report_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-4']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
+                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
                                     }
                                     ?>
 

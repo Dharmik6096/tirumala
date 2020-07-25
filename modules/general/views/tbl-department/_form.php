@@ -28,13 +28,13 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'local_name')->textInput() ?>
     </div>
-</div>
 
-<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-    <div class="form-group">
-        <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-        <?= Yii::$app->controls->reset(); ?>
-        <?= Yii::$app->controls->cancel($model); ?>
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
     </div>
 </div>
 

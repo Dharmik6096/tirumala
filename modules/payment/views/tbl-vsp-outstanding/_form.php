@@ -37,20 +37,18 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, FALSE, FALSE, $model->getAttributeLabel('transaction_date')); ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'hold_amount')->textInput() ?>
     </div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'due_amount')->textInput() ?>
     </div>
-</div>   
-<div class="clearfix"></div>
-<div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-    <div class="form-group">
-        <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-        <?= Yii::$app->controls->reset(); ?>
-        <?= Yii::$app->controls->cancel($model); ?>
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
     </div>
 </div>
 <?php ActiveForm::end(); ?>

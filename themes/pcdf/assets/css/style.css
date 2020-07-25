@@ -2585,6 +2585,7 @@ div.crystalstyle{
 
 .panel .panel-body .control-label{
     font-size: 10px !important;
+    white-space: nowrap;
 }
 
 .panel .panel-body textarea {
@@ -2711,7 +2712,7 @@ td.action-cell{
 }
 
 .theme-box{
-    /* margin: 10px; */
+    /* margin: 10px !important; */
 }
 
 .theme-box-heading {
@@ -2876,4 +2877,32 @@ select[multiple]{
 
 .margin_top_15_reverse{
     margin-top :  -15px;
+}
+
+.set_overflow{
+    max-height: 450px;
+    overflow-y: scroll;
+    overflow-x: none;
+}
+
+.set_sticky {
+    position: fixed;
+    top: 0;
+    width: 100%
+}
+
+.set_margin{
+    margin:5px;
+}
+
+.view-subtitle2{
+    background-color: #f5f5f5;
+    padding: 10px 15px 0;
+    margin: 0px 0 0px 5px;
+    border: 1px solid #4c87d975;
+}
+
+.table .kv-child-table > tbody > tr > td, 
+.table .kv-child-table > tbody > tr > th{
+    padding: 0px !important;
 }

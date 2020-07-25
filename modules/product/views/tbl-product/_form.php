@@ -53,6 +53,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'dpu_product_code')->textInput(['readonly' => empty($model->is_dpu_product) || $disableDpuProduct, 'class' => 'form-control number-validate']) ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'product_desc')->textarea() ?>
+    </div>
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_inhouse', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
@@ -64,12 +67,8 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_indent', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'product_desc')->textarea() ?>
-    </div>
-    <div class="col-sm-2 mt35">
+    </div>    
+    <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>   
     <div class="clearfix"></div>

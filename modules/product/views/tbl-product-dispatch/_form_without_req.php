@@ -34,9 +34,9 @@ $this->title = Yii::t('app', $title);
                     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                         <h4 class="theme-box-heading">Dispatch Details</h4>
                     </div>
-                    <?= $form->field($model, 'challan_date', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')]) ?>                      
+                    <?= $form->field($model, 'challan_date', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')]) ?>                      
 
-                    <?= $form->field($model, 'reference_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'autofocus' => 'autofocus']) ?>      
+                    <?= $form->field($model, 'reference_no', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['maxlength' => true, 'autofocus' => 'autofocus']) ?>      
                     <div class="col-sm-2" id="union">
                         <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_no', $model->getAttributeLabel('vehicle_no'), false); ?>
                     </div>
@@ -74,15 +74,15 @@ $this->title = Yii::t('app', $title);
                     </div>
                     <?= Html::hiddenInput('transaction_code', '0', ['id' => 'transaction_code']); ?>
                     <?= Html::hiddenInput('edit_tr', '0', ['id' => 'edit_tr']); ?>
-                    <?= $form->field($transaction, 'dispatch_qty', ['options' => ['class' => 'form-group col-sm-2 number-validate']])->textInput(['class' => 'form-control number-validate']) ?>
-                    <?= $form->field($transaction, 'rate', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
-                    <?= $form->field($transaction, 'amount', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
-                    <?= $form->field($transaction, 'discount_amount', ['options' => ['class' => 'form-group col-sm-2 number-validate']])->textInput() ?>
+                    <?= $form->field($transaction, 'dispatch_qty', ['options' => ['class' => 'form-group col-sm-1 number-validate']])->textInput(['class' => 'form-control number-validate']) ?>
+                    <?= $form->field($transaction, 'rate', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['readonly' => true]) ?>
+                    <?= $form->field($transaction, 'amount', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['readonly' => true]) ?>
+                    <?= $form->field($transaction, 'discount_amount', ['options' => ['class' => 'form-group col-sm-1 number-validate']])->textInput() ?>
                     <?= Html::hiddenInput('dispatch_transaction', '', ['id' => 'dispatch_transaction']); ?>
                     <?= Html::hiddenInput('dispatch_master', '', ['id' => 'dispatch_master']); ?>
 
-                    <div class="col-sm-3">
-                        <?php echo Html::button(Yii::t('app', 'Add Product'), ['class' => 'mt25 btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'id' => 'addbutton']); ?>
+                    <div class="col-sm-2 padding_top_20">
+                        <?php echo Html::button(Yii::t('app', 'Add Product'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'id' => 'addbutton']); ?>
                     </div>
                 </div>
             </div>

@@ -14,14 +14,14 @@ $dcs_url= Url::to(['/organisation/tbl-dcs/load-societies']);
 ?>
 <?php $form = ActiveForm::begin(); ?>
 <div class="row">
-    <div class="col-sm-3" id="union">
+    <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblproductsale-union_code', '', 'Society'); ?>
         <?php //Yii::$app->dropdown->depend_select2($model, $form,'dcs_code',$dcs_url, 'tblproductsale-union_code'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblproductsale-dcs_code', '', 'Member'); ?>
     </div>
     <!--<div class="col-sm-4">

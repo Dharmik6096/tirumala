@@ -24,8 +24,7 @@ use yii\web\View;
 
             <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('milk_receipt_quantity_mode'), false, 'milk_receipt_quantity_mode', false); ?>
 
-            <div class='clearfix'></div>
-            <div class="form-group">
+            <div class="form-group padding_top_20">
                 <?php
                 AjaxSubmitButton::begin([
                     'label' => Yii::t('app', 'Save & Next'),

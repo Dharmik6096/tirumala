@@ -43,8 +43,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'tenure_to_date', 'form-group col-sm-2', FALSE); ?>
     </div>
     <?= $form->field($model, 'remark', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([

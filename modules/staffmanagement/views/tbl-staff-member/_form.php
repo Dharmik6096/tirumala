@@ -53,6 +53,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', 'Caste/Category'); ?>
         </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdown('designation_code', $model, $form, 'col-sm-3 form-group ' . $class, $model->getAttributeLabel('designation_code'), $readonly); ?>
+        </div>
     </div>
     <div class="col-md-6 padding_10_0 theme-box theme_border_left">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -86,9 +89,6 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'email_id')->textInput() ?>
-        </div>
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('designation_code', $model, $form, 'col-sm-3 form-group ' . $class, $model->getAttributeLabel('designation_code'), $readonly); ?>
         </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box">

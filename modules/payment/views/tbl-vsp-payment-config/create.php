@@ -50,7 +50,10 @@ $defaultToggle = true;
                             $first_table = ceil($disp_table);
                             $second_table = $first_table * 2;
                             ?>
-                            <div class="col-sm-4 ">
+                            <div class="col-sm-3 set_overflow padding_10_0 theme-box view-subtitle2">
+                                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                                    <h4 class="theme-box-heading">Societies</h4>
+                                </div>
                                 <table class="table table-bordered table-striped table-main table-language table-rate">
                                     <thead>
                                         <tr>
@@ -68,7 +71,10 @@ $defaultToggle = true;
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col-sm-4 ">
+                            <div class="col-sm-3 set_overflow padding_10_0 theme-box view-subtitle2">
+                                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                                    <h4 class="theme-box-heading">Societies</h4>
+                                </div>
                                 <table class="table table-bordered table-striped table-main table-language table-rate">
                                     <thead>
                                         <tr>
@@ -92,7 +98,10 @@ $defaultToggle = true;
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col-sm-4 ">
+                            <div class="col-sm-3 set_overflow padding_10_0 theme-box view-subtitle2">
+                                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                                    <h4 class="theme-box-heading">Societies</h4>
+                                </div>
                                 <table class="table table-bordered table-striped table-main table-language table-rate">
                                     <thead>
                                         <tr>

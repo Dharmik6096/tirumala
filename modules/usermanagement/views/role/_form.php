@@ -39,7 +39,7 @@ $form = ActiveForm::begin([
 //                        ->dropDownList(['portal' => 'Portal', 'desktop' => 'Desktop'], ['class' => 'form-control ' . ((isset($_REQUEST['flag'])) ? 'disabled' : '')])
     ?>
         </div>-->
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save($button, $model); ?>
             <?= Yii::$app->controls->reset(); ?>
