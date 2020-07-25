@@ -160,4 +160,20 @@ class FormulaMasterController extends \app\controllers\ChildController {
         echo \yii\helpers\Json::encode(['status' => $status, 'data' => $formula]);
     }
 
+    public function actionCreateTextFormula() {
+        $this->model = new TblFormulaMaster();
+        $this->viewFile = 'create_text_rate';
+        $this->model->scenario = 'TextFormula';
+        if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+            $this->model->formula_code = $this->model->getCode();
+            $this->model->formula_description = $this->model->formula;
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Milk Rate formula', 'create']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
+            }
+        }
+        return $this->customRender();
+    }
+
 }

@@ -24,50 +24,8 @@ $model->union_code = !empty($selected) ? $selected : $model->union_code;
     <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('d-m-Y')); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-12">
-        <div id="calculator">
-            <!-- Screen and clear key -->
-            <div class="top">
-                <div class="screen"><span class="formula"><?= $value ?></span></div>
-                <?= Html::activeTextInput($model, 'formula_description', ['id' => 'formula_description']); ?>
-                <?= Html::activeTextInput($model, 'formula', ['id' => 'formula']); ?>
-                <input id="hdn_screen" type="hidden">
-                <!--<span class="bkspc">Backspace</span>-->
-                <span class="bkspc">B</span>
-                <span class="clear">C</span>
-            </div>
-            <div class="keys">
-                <span>CLR</span>
-                <span>FAT</span>
-                <span>FATKG</span>
-                <span>SNF</span>
-                <span>SNFKG</span>
-                <span>TS</span>
-                <span>TSKG</span>
-                <span class="operator">+</span>
-                <span>7</span>
-                <span>8</span>
-                <span>9</span>
-                <span class="operator">-</span>
-                <span>4</span>
-                <span>5</span>
-                <span>6</span>
-                <span class="operator">*</span>
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span class="operator">/</span>
-                <span>0</span>
-                <span>(</span>
-                <span>)</span>
-                <span>.</span>
-            </div>
-            <div id="finalformula">
-                <strong>Formula:</strong>
-                <div></div>
-            </div>
-        </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'formula')->textInput() ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
