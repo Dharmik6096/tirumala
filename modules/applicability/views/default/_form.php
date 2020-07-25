@@ -148,6 +148,8 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             <div class="app-check-list-mcc ">
                 <div class="form-group">
                     <div class="checkbox app-check-all-mcc app-check-list-padding">
+                        <?php $field_name_for_filter = 'f_mcc_code'?>
+                        <?= Html::textInput('filter','',['id'=>$field_name_for_filter,'onchange'=>'checkBoxFilter(this)']); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllMccList', 'class' => 'mcc-list-checkbox']) ?>
                             <label for="checkAllMccList"><?= Yii::t('app', 'Check ALL MCC') ?></label>
@@ -158,7 +160,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <div id="mcc-wrap checkAllMcc" class="app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => 'f_mcc_code',
+                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => $mccList, 'selected' => [], 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
                         'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'mcc',
                         'checkboxClass' => ' flt-checkbox mccCheckboxes', 'setCheckboxClass' => 'mccCheck'
@@ -172,6 +174,8 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             <div class="app-check-list-bmc ">
                 <div class="form-group">
                     <div class="checkbox app-check-all-bmc app-check-list-padding">
+                        <?php $field_name_for_filter = 'f_bmc_code'?>
+                        <?= Html::textInput('filter','',['id'=>$field_name_for_filter,'onchange'=>'checkBoxFilter(this)']); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
                             <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL BMC') ?></label>
@@ -182,7 +186,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <div id="bmc-wrap checkAllBmc" class="app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => 'f_bmc_code',
+                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => [], 'selected' => $selectedBmcCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
                         'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'bmc',
                         'checkboxClass' => ' flt-checkbox bmcCheckboxes', 'setCheckboxClass' => 'bmcCheck'
@@ -252,6 +256,22 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+
+    function checkBoxFilter(val){
+        var id = $(val).attr('id');
+        var value = $(val).val();
+        count = 0;
+        console.log(value);
+        $('#'+id+'-list div').each(function() {
+            if ($(this).text().search(new RegExp(value, 'i')) < 0) {
+                $(this).hide();
+            } else {
+                $(this).show();
+                count++;
+            }
+        });
+    }
+
     var selectedMcc = [];
     var selectedBmc = [];
     var selectedSociety = [];

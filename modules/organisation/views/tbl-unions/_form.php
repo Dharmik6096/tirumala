@@ -101,22 +101,25 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
         <h4 class="theme-box-heading">Address Details</h4>
     </div>
-    <div class="col-sm-4 <?//= $checkChild; ?>">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-sm-6 <?//= $checkChild; ?>">
+                <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+            </div>
+            <div class="col-sm-6 <?//= $checkChild; ?>">
+                <?= Yii::$app->dropdown->district($model, $form, 'tblunions-state_code', 'district_code', 'District', FALSE, $readonly); ?>
+            </div>
+            <div class="col-sm-6">
+                <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblunions-district_code', '', 'Sub District', '', $readonly); ?>
+            </div>
+            <div class="col-sm-6 <?//= $checkChild; ?>">
+                <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblunions-sub_district_code', '', 'Village', '', $readonly); ?>
+            </div>
+            <div class="col-sm-6 <?//= $checkChild; ?>">
+                <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblunions-village_code', '', 'Hamlet'); ?>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-4 <?//= $checkChild; ?>">
-        <?= Yii::$app->dropdown->district($model, $form, 'tblunions-state_code', 'district_code', 'District', FALSE, $readonly); ?>
-    </div>
-    <div class="col-sm-4">
-        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblunions-district_code', '', 'Sub District', '', $readonly); ?>
-    </div>
-    <div class="col-sm-4 <?//= $checkChild; ?>">
-        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblunions-sub_district_code', '', 'Village', '', $readonly); ?>
-    </div>
-    <div class="col-sm-4 <?//= $checkChild; ?>">
-        <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblunions-village_code', '', 'Hamlet'); ?>
-    </div>
-    <div class="clearfix"></div>
     <div class="col-sm-4">
         <?= $form->field($model, 'address')->textarea() ?>
     </div>
@@ -129,9 +132,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-4">
         <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="clearfix"></div>
     <div class="col-sm-4">
         <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col-sm-4">
+        <?= $form->field($model, 'contact_person_email')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-4">
         <?= $form->field($model, 'fax_no')->textInput(['maxlength' => true]) ?>
@@ -166,9 +171,7 @@ $form = ActiveForm::begin([
         ])
         ?>
     <?php } ?>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'contact_person_email')->textInput(['maxlength' => true]) ?>
-    </div>
+    
     <div class="col-sm-2">
         <?= $form->field($model, 'contact_person_pan_no')->textInput(['maxlength' => true]) ?>
     </div>

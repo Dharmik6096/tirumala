@@ -374,6 +374,7 @@ h5 .badge{
     font-size: 13px;
     font-weight: 600;
     /*text-transform: uppercase;*/
+    padding: 8px 15px !important;
 }
 .panel-default .panel-subtitle{
     display: inline-block;
@@ -472,7 +473,7 @@ h5 .badge{
 .panel-main .panel-body .grid-search .btn, 
 .panel-main .panel-body .grid-search-padding .form-group,
 .panel-main .panel-body .grid-search-padding .btn{
-    margin: 10px 0;
+    margin: 5px 0;
 }
 .panel-main .panel-body .grid-search .help-block{
     height: auto;
@@ -2905,4 +2906,8 @@ select[multiple]{
 .table .kv-child-table > tbody > tr > td, 
 .table .kv-child-table > tbody > tr > th{
     padding: 0px !important;
+}
+
+.kv-panel-before{
+    padding: 5px;
 }
