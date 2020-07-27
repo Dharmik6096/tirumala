@@ -251,7 +251,7 @@ class TblConfigController extends \app\controllers\ChildController {
                 $master[] = $saveModel;
             }
             if ($saveModel->validate()) {
-                $transaction = $this->generalModel->saveTransaction($master, $childModel, ['Vendor Payment config', 'create']);
+                $transaction = $this->generalModel->saveTransaction($master, $childModel, ['Payment Configurations', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['/organisation/tbl-unions/index']);
                 } else {
