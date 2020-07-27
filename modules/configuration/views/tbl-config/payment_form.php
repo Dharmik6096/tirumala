@@ -16,7 +16,7 @@ $defaultToggle = true;
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?php echo Yii::t('app', 'Search Vendor Payment Config'); ?></h4>
+                <h4 class="modal-title"><?php echo Yii::t('app', 'Search Payment Configurations'); ?></h4>
             </div>
             <div class="">
                 <?php
