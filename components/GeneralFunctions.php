@@ -1795,4 +1795,15 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function validateBMC($model, $attribute) {
+        $bmcModel = new TblDcsBmc();
+        $records = $bmcModel->find()->select('bmc_code')->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        if (!empty($records) && count($records) == 1) {
+            $model->$attribute = $records[0]->bmc_code;
+        } else {
+            $model->addError('bmc_code', Yii::t('app/validation', Yii::t('app', 'BMC') . ' Is Invalid.'));
+            return false;
+        }
+    }
+
 }

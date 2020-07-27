@@ -88,6 +88,9 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             [['dispatch_qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['create', 'update']],
             [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'union_code'], 'safe'],
             [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'required', 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],

@@ -77,10 +77,11 @@ class DcsImportStrategy extends ARImportStrategy {
                     }
                     $modelList = [];
                     $deleteModel = [];
-                    $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_plant_code');
-                    $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
                     $model->setModel();
                     $error = ActiveForm::validate($model);
+                    $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_plant_code');
+                    $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
+
 //                    $model->dcs_code = $model->getCode();
                     $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
                     $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';

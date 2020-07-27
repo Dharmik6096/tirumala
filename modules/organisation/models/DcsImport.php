@@ -19,6 +19,9 @@ class DcsImport extends TblDcs {
         $array = parent::rules();
 
         $rules = [
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
             [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name'], 'required', 'on' => ['customImport']],
             [['dpu_type'], 'required', 'on' => 'importCsv'],
             [['union_code'], 'validateUnionCode'],
@@ -32,8 +35,8 @@ class DcsImport extends TblDcs {
             [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
             [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
             [['dpu_type'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalStatic($this, $attribute, 'dpu_type');
-        }, 'on' => 'importCsv']
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'dpu_type');
+                }, 'on' => 'importCsv']
         ];
 
         foreach ($rules as $row) {

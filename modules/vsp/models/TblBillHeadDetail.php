@@ -63,7 +63,10 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['originating_org_code', 'originating_org_type', 'originating_type', 'transaction_date'], 'safe'],
             [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'transaction_date'], 'safe'],
             [['no_installment'], 'default', 'value' => 1],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv', 'importDetailCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv', 'importDetailCsv']],
             [['bill_head_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBillHead::className(), 'targetAttribute' => ['bill_head_code' => 'bill_head_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
@@ -207,6 +210,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
         }
     }
+
     public function getCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
     }

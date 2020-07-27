@@ -76,15 +76,18 @@ class TblCustomerMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
             ['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
             [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
                 }, 'on' => ['importCsv']],
-            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerMaster::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['x_col1'], 'default', 'value' => '1#1']
+            [['x_col1'], 'default', 'value' => '1#1'],
         ];
     }
 
@@ -283,8 +286,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
         $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
         $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
-        $this->bmc_code = Yii::$app->general->getforeignkey($this->bmcCode, 'bmc_code');
-
+//        $this->bmc_code = Yii::$app->general->getforeignkey($this->bmcCode, 'bmc_code');
 //        $this->union_code = Yii::$app->general->getforeignkey($this->routeCode, 'union_code');
 //        $toType = Yii::$app->general->getforeignkey($this->routeCode, 'to_type');
 //        if (strtolower($toType) == 'bmc') {

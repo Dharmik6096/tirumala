@@ -69,7 +69,7 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                         $model->originating_type = 1;
                         $no = !empty($model->no_installment) ? ($model->no_installment) : 1;
                         $cycleModel = new \app\modules\payment\models\TblPaymentCycle();
-                        $cycle = $model->validatePaymentCycle();
+//                        $cycle = $model->validatePaymentCycle();
                         for ($i = 0; $i < $no; $i++) {
                             $instModel = new TblBillHeadInstallment();
                             $instModel->bill_head_detail_code = $model->bill_head_detail_code;

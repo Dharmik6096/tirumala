@@ -92,7 +92,7 @@ class TblMilkCollectionTemp extends \app\models\ChildModel {
             [['rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['rate_code' => 'purchase_rate_code']],
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount'], 'default', 'value' => '0'],
             [['is_approved', 'is_updated'], 'default', 'value' => '0'],
-            [['dcs_code'], 'validateDCS']
+//            [['dcs_code'], 'validateDCS']
         ];
     }
 
