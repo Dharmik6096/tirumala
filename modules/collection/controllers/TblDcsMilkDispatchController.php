@@ -91,7 +91,7 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
             if ($txModel->validate()) {
                 $this->model->validateUnique($this->model, $txModel);
                 $txModel->union_code = $this->model->union_code;
-                $txModel->validateRateRange();
+                Yii::$app->general->validateRateRange($txModel, 'avg_fat', 'avg_snf');
             }
             if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {

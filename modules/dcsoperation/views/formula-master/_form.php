@@ -30,8 +30,8 @@ $model->union_code = !empty($selected) ? $selected : $model->union_code;
             <!-- Screen and clear key -->
             <div class="top">
                 <div class="screen"><span class="formula"><?= $value ?></span></div>
-                <?= Html::activeTextInput($model, 'formula_description', ['id' => 'formula_description']); ?>
-                <?= Html::activeTextInput($model, 'formula', ['id' => 'formula']); ?>
+                <?= Html::activeHiddenInput($model, 'formula_description', ['id' => 'formula_description']); ?>
+                <?= Html::activeHiddenInput($model, 'formula', ['id' => 'formula']); ?>
                 <input id="hdn_screen" type="hidden">
                 <!--<span class="bkspc">Backspace</span>-->
                 <span class="bkspc">B</span>

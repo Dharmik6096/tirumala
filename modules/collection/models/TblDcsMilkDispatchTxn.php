@@ -101,7 +101,11 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code', 'BMC', 'DCS', ['data_lock_bmc', 'billing_lock_bmc']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['importCsv']],
-            [['dcs_code'], 'validateRateRange', 'on' => ['update']]
+            [['dcs_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->validateRateRange($this, 'avg_fat', 'avg_snf');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['update']],
         ];
     }
 
@@ -247,7 +251,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             $union = $existMainData->union_code;
         }
         $model->union_code = $union;
-        $model->validateRateRange();
+        Yii::$app->general->validateRateRange($model, 'avg_fat', 'avg_snf');
         // set clr
         (float) $fat = $this->avg_fat;
         (float) $snf = $this->avg_snf;
@@ -314,20 +318,6 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
     public function getRateRange() {
         return $this->hasOne(TblUnionRatechartRange::className(), ['union_code' => 'union_code', 'animal_type_code' => 'milk_type_code']);
-    }
-
-    public function validateRateRange() {
-        $minFat = !empty(Yii::$app->general->getforeignkey($this->rateRange, 'min_fat')) ? Yii::$app->general->getforeignkey($this->rateRange, 'min_fat') : '0.01';
-        $maxFat = Yii::$app->general->getforeignkey($this->rateRange, 'max_fat');
-        $minSnf = !empty(Yii::$app->general->getforeignkey($this->rateRange, 'min_snf')) ? Yii::$app->general->getforeignkey($this->rateRange, 'min_snf') : '0.01';
-        $maxSnf = Yii::$app->general->getforeignkey($this->rateRange, 'max_snf');
-
-        if (($minFat > $this->avg_fat) || (!empty($maxFat) && $maxFat < $this->avg_fat)) {
-            $this->addError('avg_fat', Yii::t('app/validation', $this->getAttributeLabel('avg_fat') . ' is Invalid'));
-        }
-        if (($minSnf > $this->avg_snf) || (!empty($maxSnf) && $maxSnf < $this->avg_snf)) {
-            $this->addError('avg_snf', Yii::t('app/validation', $this->getAttributeLabel('avg_snf') . ' is Invalid'));
-        }
     }
 
 }

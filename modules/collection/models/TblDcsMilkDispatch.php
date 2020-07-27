@@ -151,21 +151,6 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
         return $this->hasOne(TblDcsMilkDispatchTxn::className(), ['dcs_milk_dispatch_code' => 'dcs_milk_dispatch_code']);
     }
 
-    public function getPrimaryCode($model, $autoInc = 1) {
-        $primaryKey = $model->tableSchema->primaryKey[0];
-        $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
-        $orgCode = 'PORTAL-' . $organizations_code . '-';
-        $len = strlen($orgCode);
-        $val = $model->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
-                ->one();
-        $code1 = (int) $val[$primaryKey] + $autoInc;
-        $value = $orgCode . $code1;
-
-        return $value;
-    }
-
     public function getExistingDispatch($data) {
         return $this->find()->where(['dcs_code' => $data->dcs_code, 'date_time_of_dispatch' => $data->date_time_of_collection, 'shift_code' => $data->shift_code])->one();
     }
@@ -185,7 +170,7 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
             $model->addError('date_time_of_dispatch', "Milk Dispatch Already Exists.");
         }
     }
-  
+
     public function getExistingData($data) {
         return $this->find()->where(['dcs_code' => $data->dcs_code, 'date_time_of_dispatch' => $data->date_time_of_dispatch, 'shift_code' => $data->shift_code])->one();
     }
