@@ -388,7 +388,7 @@ h5 .badge{
 .panel-default .panel-heading > .btn{
     margin: -11px 5px -11px -15px;
     padding: 12px;
-    height: 41px;
+    height: 35px;
     border-radius: 2px 0 0 0;
     box-shadow: none;
 }
@@ -2905,7 +2905,7 @@ select[multiple]{
 
 .table .kv-child-table > tbody > tr > td, 
 .table .kv-child-table > tbody > tr > th{
-    padding: 0px !important;
+    padding: 0px 0px 0px 5px !important;
 }
 
 .kv-panel-before{
