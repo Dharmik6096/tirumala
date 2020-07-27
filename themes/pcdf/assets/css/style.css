@@ -2911,3 +2911,11 @@ select[multiple]{
 .kv-panel-before{
     padding: 5px;
 }
+
+.margin_bottom_10{
+    margin-bottom: 10px;
+}
+
+#applicable_type-list {
+    margin-left: 10px;
+}

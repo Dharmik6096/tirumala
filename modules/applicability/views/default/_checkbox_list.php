@@ -6,7 +6,7 @@ use yii\web\View;
 use app\components\GeneralFunctions;
 
 $selectedDataCode = !empty($selectedData) ? $selectedData : [];
-$checkboxWidthClass = !empty($checkboxWidthClass) ? $checkboxWidthClass : 'col-sm-4';
+$checkboxWidthClass = !empty($checkboxWidthClass) ? $checkboxWidthClass : 'col-sm-2';
 $idPrefix = !empty($idPrefix) ? $idPrefix : 'nd';
 $checkboxClass = !empty($checkboxClass) ? $checkboxClass : ' ';
 $setCheckboxClass = !empty($setCheckboxClass) ? $setCheckboxClass : ' route-checkbox ';
