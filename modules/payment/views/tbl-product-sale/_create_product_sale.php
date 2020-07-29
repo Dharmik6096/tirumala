@@ -356,6 +356,11 @@ $script = "
         }
     }
     function setRate(){
+        $('#tblproductsaletransaction-rate').val('');
+//        $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
+        $('#tblproductsaletransaction-x_col1').val('');
+        $('#tblproductsaletransaction-unit_code').val('');
+        $('#tblproductsaletransaction-product_sale_rate_applicability_code').val('');
         var product_code=$('#tblproductsaletransaction-product_code').val();
         var csrfToken = $('meta[name=\"csrf-token\"]').attr('content');
         var customer_type=$('#tblproductsale-customer_type').val();
