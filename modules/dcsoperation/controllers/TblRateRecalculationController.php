@@ -72,10 +72,15 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 } else if (strtolower($searchModel->recalc_for) == 'bmc') {
                     $dcs_codes = $searchModel->customer_code;
                     if (empty($dcs_codes)) {
-                        $custome = new TblCustomerMaster();
-                        $dcs = new TblDcs();
-                        $dcs_codes = $custome->getBMCCustomerList($searchModel->bmc_code);
-                        $customeCode = array_keys($dcs->getBMCDCSList($searchModel->bmc_code));
+                        $dcs_codes = $customeCode = [];
+                        if (empty($searchModel->customer_type) || $searchModel->customer_type != 'DCS') {
+                            $custome = new TblCustomerMaster();
+                            $dcs_codes = $custome->getBMCCustomerList($searchModel->bmc_code, $searchModel->customer_type);
+                        }
+                        if (empty($searchModel->customer_type) || $searchModel->customer_type == 'DCS') {
+                            $dcs = new TblDcs();
+                            $customeCode = array_keys($dcs->getBMCDCSList($searchModel->bmc_code));
+                        }
                     }
                 }
 
