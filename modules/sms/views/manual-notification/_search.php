@@ -107,7 +107,7 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : 'Search');
                             }
                         }
                         if (isset($data['report_type'])) {
-                            echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-4']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
+                            echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-4']])->dropDownList($data['report_type']);
                         }
                         ?>
                         <div class="modal-footer mt10 col-sm-12">

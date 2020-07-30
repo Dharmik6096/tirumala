@@ -28,14 +28,22 @@ if (!empty($result) && !is_array($result)) {
             $attr[] = ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                'checkboxOptions' => function($model) use ($value) {
-
-            return ['class' => 'checkbox', 'value' => $value];
+                'checkboxOptions' => function($model) {
+            return ['class' => 'checkbox', 'value' => $model['checkbox_id']];
         }];
         } else {
-            $format = 'raw';
+            $attr_arr = [];
+            if (in_array($att, ['mobile_no', 'email'])) {
+                $attr_arr['value'] = function($model) use ($att) {
+                    return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : '';
+                };
+            }
             $str = ucwords(str_replace('_', ' ', $att));
-            $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
+            $attr_arr['label'] = Yii::t('app', $str);
+            $attr_arr['attribute'] = $att;
+            $attr_arr['filter'] = false;
+            $attr_arr['format'] = 'raw';
+            $attr[] = $attr_arr;
         }
     }
     $grid_option = [
@@ -48,6 +56,7 @@ if (!empty($result) && !is_array($result)) {
 }
 ?> 
 <div class="clearfix"></div>
+<br/>
 <div class="col-md-12" >    
     <?php
     if (!empty($result) && is_array($result)) {

@@ -57,9 +57,7 @@ class ManualNotificationController extends \app\controllers\ChildController {
         if (empty($model->dcs_code)) {
             $model->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
         }
-        if (empty($model->customer_code)) {
-            $model->customer_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
-        }
+
 
         $controls = [];
         $param = explode(',', $this->data['param']);
@@ -115,7 +113,7 @@ class ManualNotificationController extends \app\controllers\ChildController {
                 'sp_process' => 'sp_alert_eipl_manual_rmrd_collection_vsp_process',
                 'scenario' => 'RmrdCollectionVsp',
                 'title' => 'RMRD Collection (VSP)',
-                'report_type' => ['SMS' => 'SMS', 'EMAIL' => 'EMAIL'],
+                'report_type' => ['SMS' => 'SMS'],
             ],
         ];
         return $label[$l];
