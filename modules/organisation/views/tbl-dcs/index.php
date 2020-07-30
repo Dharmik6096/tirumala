@@ -15,7 +15,7 @@ if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/update')) {
 <?= $this->title; ?>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body hide-grid-export">
             <?=
             $this->render('_form_grid', [
                 'model' => $model,

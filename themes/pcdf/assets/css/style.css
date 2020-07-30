@@ -2528,3 +2528,11 @@ div.crystalstyle{
 .dynamic-controls .radio-inline + .radio-inline, .dynamic-controls .checkbox-inline + .checkbox-inline{
     margin-left: 5px !important
 }
+
+.hide-grid-export .kv-panel-before [role="group"] {
+    display: none !important;
+}
+
+.hide-grid-export .grid-search.search-filter {
+    width: calc(100% - 102px) !important;
+}

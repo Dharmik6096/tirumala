@@ -361,6 +361,16 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionDcsMaster() {
+        $this->report = 'DcsMaster';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMaster() {
+        $this->report = 'MemberMaster';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -434,6 +444,7 @@ class DefaultController extends \app\controllers\ChildController {
 
         if (!empty($output)) {
             $attr = '';
+            $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
             foreach ($output[0] as $att => $value) {
                 $attr .= "'" . $att . "',";
             }
@@ -891,6 +902,22 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_dpu_gprs_data_reconciliation',
                 'scenario' => 'GprsDataReconciliation',
                 'title' => '313 - DPU-GPRS Data Reconciliation',
+            ],
+            'DcsMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_dcs_master_register',
+                'scenario' => '',
+                'title' => 'DCS Register',
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No'],
+                'removeExportType' => ['CSV']
+            ],
+            'MemberMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
+                'sp_name' => 'sp_mis_member_master_register',
+                'scenario' => '',
+                'title' => 'Member Register',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
+                'removeExportType' => ['CSV']
             ],
         ];
         return $label[$l];

@@ -190,6 +190,14 @@ echo GhostMenu::widget([
             'items' => [
                 [
                     'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/default/dcs-master']],
+                        ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/default/member-master']],
+                    ]
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Mobile Report <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'M01-' . Yii::t('app', 'Member Collection Passbook'), 'url' => ['/misreports/default/member-collection-passbook']],

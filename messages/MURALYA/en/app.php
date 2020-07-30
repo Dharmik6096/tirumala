@@ -150,4 +150,5 @@ return [
     'DCS Deactivate' => 'Collection Center Deactivate',
     'Society Deactivation' => 'Collection Center Deactivation',
     'Activate DCS' => 'Activate Collection Center',
+    'DCS Register' => 'Collection Center Register',
 ];
