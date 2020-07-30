@@ -66,7 +66,7 @@ class TblBmcCollection extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $date, $weigh_time, $testing_time;
-    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $ex_code, $allow_rate_zero, $status;
+    public $dcs_name, $bmc_name, $route_name, $dcs_incharge_name, $customer_name, $ex_code, $allow_rate_zero, $status, $bmc_ref_code, $ref_code;
 
     public static function tableName() {
         return 'tbl_bmc_collection';
