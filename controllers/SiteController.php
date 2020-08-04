@@ -158,17 +158,17 @@ class SiteController extends Controller {
         $bmc_str = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
         $dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
         $month = date('Y-m', strtotime($end_date));
-        $results = $this->callDashboardSp($union_str, $start_date, $end_date, $dcs_str);
-        $results2 = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
-        $results3 = $this->callDashboardSp($union_str, $end_date, $end_date, $dcs_str);
+        $results = [];// $results = $this->callDashboardSp($union_str, $start_date, $end_date, $dcs_str);
+        $results2 = [];// $results2 = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
+        $results3 = [];// $results3 = $this->callDashboardSp($union_str, $end_date, $end_date, $dcs_str);
         $results4 = $this->callDashboardCalSp($union_str, $month);
-        $results5 = $this->getSpResult('fed_union');
-        $results6 = $this->getWidgetDetails('sp_Portal_dashboard_bmc_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
-        $results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
-        $results8 = $this->getReconciliationSpResult('sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
-        $milk_collection = $this->getWidgetDetails('sp_Portal_dashboard_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $results5 = [];//$results5 = $this->getSpResult('fed_union');
+        $results6 = [];//$results6 = $this->getWidgetDetails('sp_Portal_dashboard_bmc_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $results7 = [];//$results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
+        $results8 = [];//$results8 = $this->getReconciliationSpResult('sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $milk_collection = [];//$this->getWidgetDetails('sp_Portal_dashboard_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $monthly_milk_collection = $this->getWidgetDetails('sp_Portal_dashboard_monthly_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $start_date, $end_date);
-        $dashboard_blocks = $this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $dashboard_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $member_mobile_detail = $this->getMemberMobileDetail('sp_Portal_dashboard_piechart_member_app', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code);
         return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail]);
     }
@@ -831,6 +831,18 @@ class SiteController extends Controller {
                 'name' => 'sp_Portal_dashboard_qlty_qty_sap_summary',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift',
             ],
+            'monthly_milk_collection' => [
+                'name' => 'sp_Portal_dashboard_monthly_milk_collection',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',hidden_from_date=' . date('Y-m-d') . '|date,hidden_to_date=' . date('Y-m-d') . '|date',
+            ],
+            'dashboard_blocks' => [
+                'name' => 'sp_Portal_dashboard_blocks',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'piechart_member_app' => [
+                'name' => 'sp_Portal_dashboard_piechart_member_app',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+            ],
         ];
         return $array[$sp];
     }
@@ -1134,6 +1146,23 @@ class SiteController extends Controller {
                 ->bindValue(':enddate', $edate);
         $results = $query->queryAll();
         return $results;
+    }
+
+    public function actionGetWidgetLazyDetails() {
+        $data = Yii::$app->request->post();
+        $sp_name = $data['sp_name'];
+        $query = \Yii::$app->db->createCommand("{CALL $sp_name(:union_code,:plant_code,:mcc_code,:bmc_code,:dcs_code,:startdate,:enddate)}")
+                ->bindValue(':union_code', ',' . $data['union_str'] . ',')
+                ->bindValue(':plant_code', $data['plant_str'])
+                ->bindValue(':mcc_code', $data['mcc_str'])
+                ->bindValue(':bmc_code', $data['bmc_str'])
+                ->bindValue(':dcs_code', $data['dcs_str'])
+                ->bindValue(':startdate', $data['sdate'])
+                ->bindValue(':enddate', $data['edate']);
+        $output = $query->queryAll();
+        $output = json_encode($output);
+        // var_dump($output);die;
+        return $output;
     }
 
     public function actionCollectionFarmerCreamy() {
@@ -1823,6 +1852,17 @@ class SiteController extends Controller {
                 ->bindValue(':dcs_code', $dcs_str);
         $results = $query->queryAll();
         return $results;
+    }
+
+    public function actionLoadDashboardBlockData() {
+        $sp = 'dashboard_blocks';
+        $results = $this->getSpResult($sp);
+        $res = [];
+        foreach ($results[0] as $key => $value) {
+            $res[$key] = $value;
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $res];        
     }
 
 }

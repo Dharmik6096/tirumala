@@ -73,6 +73,29 @@ $mobile_app_active = array_sum(array_map(function($item) {
 $mobile_app_block = array_sum(array_map(function($item) {
             return $item['mobile_app_block'];
         }, $member_mobile_detail));
+
+$refreshWidgets = [
+'fed_union',
+'fed_comparison',
+'fed_datewise',
+'union_comparison',
+'union_datewise',
+'bmc_union_comparison',
+'bmc_union_datewise',
+'milk_coll_widget',
+'bmc_coll_widget',
+'bmc_dispatch_widget',
+'reconciliation_chart_widget',
+'table_milk_collection',
+'manual_vs_auto_collection',
+'dipatch_vs_receipt',
+'bmc_collection_summary',
+'monthly_milk_collection',
+'dashboard_blocks',
+'piechart_member_app'];
+
+$allowWidgets = $refreshWidgets;
+$refreshWidgets = json_encode($refreshWidgets);
 ?>
 <div class="panel-group row panel-fixed" id="filter">
     <div class="panel panel-default min_h_0">
@@ -233,8 +256,8 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'No. of Societies') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h4>
-                        <p><b>M:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_M'] : 0 ?> | <b>E:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_E'] : 0 ?></p>
+                        <h4 id="dashboard_blk_1"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h4>
+                        <p><b>M:</b> <span id="dashboard_blk_1_1"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_M'] : 0 ?></span> | <b>E:</b> <span id="dashboard_blk_1_2"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_E'] : 0 ?></span></p>
                     </div>
                 </div>
             </div>
@@ -243,7 +266,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p>No. of Pourers</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h4>
+                        <h4 id="dashboard_blk_2"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h4>
                     </div>
                 </div>
             </div>
@@ -252,7 +275,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Collection vs Installed') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
+                        <p><h4 id="dashboard_blk_3"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
                     </div>
                 </div>
             </div>
@@ -261,7 +284,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Collection vs Dispatch') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h4><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) ?></h4></p>
+                        <p><h4 id="dashboard_blk_4"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) ?></h4></p>
                     </div>
                 </div>
             </div>
@@ -270,7 +293,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Dispatch vs Receipt') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h3><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
+                        <p><h3 id="dashboard_blk_5"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
                     </div>
                 </div>
             </div>
@@ -279,7 +302,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p>Total Milk Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_avg_snf'] . '</span>' : 0 ?></h3>
+                        <h3 id="dashboard_blk_6"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_avg_snf'] . '</span>' : 0 ?></h3>
                     </div>
                 </div>
             </div>
@@ -288,8 +311,8 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p>Total Milk Dispatch(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionDisQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionDisQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_dis_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_dis_avg_snf'] . '</span>' : 0 ?></h3>
-                        <p><b>M:</b> <?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['Dcs_DisQty_M']) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?> | <b>E:</b> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></p>
+                        <h3 id="dashboard_blk_7"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionDisQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionDisQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_dis_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_dis_avg_snf'] . '</span>' : 0 ?></h3>
+                        <p><b>M:</b> <span id="dashboard_blk_7_1"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['Dcs_DisQty_M']) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?></span> | <b>E:</b><span id="dashboard_blk_7_2"> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></span></p>
                     </div>
                 </div>
             </div>
@@ -298,7 +321,7 @@ $mobile_app_block = array_sum(array_map(function($item) {
                     <div class="tbl-cell">
                         <p>Total BMC Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['BmcQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['BmcQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['bmc_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['bmc_avg_snf'] . '</span>' : 0 ?></h4>
+                        <h4 id="dashboard_blk_8"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['BmcQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['BmcQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['bmc_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['bmc_avg_snf'] . '</span>' : 0 ?></h4>
                     </div>
                 </div>
             </div>
@@ -411,7 +434,60 @@ $mobile_app_block = array_sum(array_map(function($item) {
 <div id="chartToTable"></div>
 <?php
 $script = "  
-    
+
+    $(window).load(function(){
+        var position = '';
+        var widgets = '" . $refreshWidgets . "';
+        var widget = $.parseJSON(widgets);
+        $.each(widget, function(index, value) {
+            var datastring = $('form#'+value).serialize();
+            $('#dataStringVal').val(datastring);
+            if(['union_comparison','reconciliation_chart_widget','bmc_union_datewise','bmc_coll_widget','fed_datewise','fed_union','union_datewise','fed_comparison','bmc_union_comparison','milk_coll_widget','bmc_dispatch_widget','table_milk_collection','manual_vs_auto_collection','dipatch_vs_receipt','bmc_collection_summary','monthly_milk_collection','dashboard_blocks','piechart_member_app'].indexOf(value) == -1) {
+                setChartWidgets(value);
+            }
+            // console.log(value)
+            else if(['dashboard_blocks'].indexOf(value) == 0){
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/site/load-dashboard-block-data']) . "',
+                    data: datastring,
+                    success: function(data) {
+                        var obj1 = data;
+                        if (obj1.status == 'success')
+                        {
+                            for (var key in obj1.res){
+                                if(obj1.res[key] == null){
+                                    obj1.res[key] = 0;
+                                }
+                            }
+                            $('#dashboard_blk_1').text(obj1.res.Dcs_Count);
+                            $('#dashboard_blk_1_1').text(obj1.res.Dcs_Count_M);
+                            $('#dashboard_blk_1_2').text(obj1.res.Dcs_Count_E);
+                            $('#dashboard_blk_2').text(obj1.res.Total_Member); 
+                            $('#dashboard_blk_3').text(obj1.res.Dcs_Count+'/'+obj1.res.Install_Count);
+                            $('#dashboard_blk_4').text(obj1.res.Dcs_Count+'/'+obj1.res.Dcs_DisQty_total);
+                            $('#dashboard_blk_5').text(obj1.res.Dcs_DisQty_total+'/'+obj1.res.bmc_dcs_Count);
+                            $('#dashboard_blk_6').text(obj1.res.UnionQty+'/'+obj1.res.union_avg_fat+'/'+obj1.res.union_avg_snf);
+                            $('#dashboard_blk_7').text(obj1.res.UnionDisQty+'/'+obj1.res.union_dis_avg_fat+'/'+obj1.res.union_dis_avg_snf);
+                            $('#dashboard_blk_7_1').text(obj1.res.Dcs_DisQty_M);
+                            $('#dashboard_blk_7_2').text(obj1.res.Dcs_DisQty_E);
+                            $('#dashboard_blk_8').text(obj1.res.BmcQty+'/'+obj1.res.bmc_avg_fat+'/'+obj1.res.bmc_avg_snf);
+                        }
+                    },
+                    error:function(data){
+                        //alert('Your data has not been submitted..Please try again');
+                    }
+                });
+            }
+        });
+    });
+
+    function setChartWidgets(set_widget_id){
+        drawChart(set_widget_id,set_widget_id+'_container','{$chart_url}','column');   
+        // console.log(set_widget_id);
+        // console.log(set_widget_id+'_container');
+    }
+
     function barChart(cont,text,xdata,ydata){
     var bar_chart = $('#'+cont);
         if (bar_chart.length) {
@@ -491,6 +567,7 @@ $script = "
                         var vals=[];
                         var color='3a7bd5';
                         var suf='';
+                        console.log(chart +'--'+id);
                         while( chart.series.length > 0 ) {
                             chart.series[0].remove( false );
                         }
