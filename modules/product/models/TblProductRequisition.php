@@ -42,7 +42,7 @@ use app\modules\syncutility\models\TblSentbox;
 class TblProductRequisition extends \app\models\ChildModel {
 
     public $operation = TRUE;
-    public $plant_name, $mcc_name;
+    public $plant_name, $mcc_name, $customer_name, $route_code;
     public $is_sentbox = TRUE;
 
     /**
@@ -57,18 +57,18 @@ class TblProductRequisition extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vendor_type', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['androidsync']],
-                [['product_requisition_code'], 'safe'],
-                [['product_requisition_code'], 'required', 'on' => ['androidsync']],
-                [['dcs_code'], 'required', 'when' => function ($model) {
-                    return $model->vendor_type == 'DCS';
-                }, 'whenClient' => "function (attribute, value) { 
+            [['vendor_type', 'req_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'except' => ['androidsync']],
+            [['product_requisition_code'], 'safe'],
+            [['product_requisition_code'], 'required', 'on' => ['androidsync']],
+            [['dcs_code'], 'required', 'when' => function ($model) {
+            return $model->vendor_type == 'DCS';
+        }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductrequisition-vendor_type').val() == 'DCS'; 
           }", 'except' => ['androidsync']],
-                [['product_requisition_code', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['req_date', 'created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
-                [['description'], 'string', 'max' => 500],
+            [['product_requisition_code', 'description', 'status', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['req_date', 'created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
+            [['description'], 'string', 'max' => 500],
         ];
     }
 

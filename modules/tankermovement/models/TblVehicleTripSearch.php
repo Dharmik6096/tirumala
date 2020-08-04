@@ -75,10 +75,10 @@ class TblVehicleTripSearch extends TblVehicleTrip {
         }
         $query->andFilterWhere(['=', 't.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);
 
-        $query->andFilterWhere(['like', 'trip_code', $this->trip_code])
-                ->andFilterWhere(['like', 'grn_no', $this->grn_no])
-                ->andFilterWhere(['like', 'trip_status', $this->trip_status])
-                ->andFilterWhere(['like', 'trip_mode', $this->trip_mode]);
+        $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
+                ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
+                ->andFilterWhere(['like', 't.trip_status', $this->trip_status])
+                ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode]);
         $query->groupBy(['t.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
             't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code']);
         $query->orderBy(['transaction_date' => SORT_DESC, 'vehicle_trip_code' => SORT_ASC]);

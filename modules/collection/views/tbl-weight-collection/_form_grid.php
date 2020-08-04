@@ -54,8 +54,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->date_time_of_collection);
-        }],
+    return Yii::$app->controls->view_date($model->date_time_of_collection);
+}],
     ['attribute' => 'shift_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }
@@ -88,6 +88,7 @@ $grid_option = [
     'id' => 'tbl-weight-collection-grid',
     'attributes' => $attribute,
     'active_column' => false,
+    'default_sorting' => FALSE
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

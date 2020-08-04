@@ -12,7 +12,7 @@ use app\modules\product\models\TblProductRequisition;
  */
 class TblProductRequisitionSearch extends TblProductRequisition {
 
-    public $from_date, $to_date, $customer_name, $route_code;
+    public $from_date, $to_date;
 
     /**
      * @inheritdoc

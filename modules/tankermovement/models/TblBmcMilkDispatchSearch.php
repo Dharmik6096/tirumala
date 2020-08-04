@@ -57,33 +57,33 @@ class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
             $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
             $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'from_date', $from_date]);
+            $query->andFilterWhere(['>=', 'tbl_bmc_milk_dispatch.from_date', $from_date]);
         }
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $from_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $from_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
             $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'to_date', $from_date]);
+            $query->andFilterWhere(['>=', 'tbl_bmc_milk_dispatch.to_date', $from_date]);
         }
 
         $query->andFilterWhere(['=', 'tbl_bmc_milk_dispatch.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'gross_weight' => $this->gross_weight,
-            'tare_weight' => $this->tare_weight,
+            'tbl_bmc_milk_dispatch.gross_weight' => $this->gross_weight,
+            'tbl_bmc_milk_dispatch.tare_weight' => $this->tare_weight,
             'tbl_bmc_milk_dispatch.vehicle_code' => $this->vehicle_code,
             'tbl_vehicle_master.transporter_code' => $this->transporter_code
         ]);
 
-        $query->andFilterWhere(['like', 'challan_no', $this->challan_no])
-                ->andFilterWhere(['like', 'destination_type', $this->destination_type])
-                ->andFilterWhere(['like', 'destination_code', $this->destination_code])
-                ->andFilterWhere(['like', 'trip_code', $this->trip_code])
-                ->andFilterWhere(['like', 'driver_name', $this->driver_name])
-                ->andFilterWhere(['like', 'driver_contact_no', $this->driver_contact_no])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
+        $query->andFilterWhere(['like', 'tbl_bmc_milk_dispatch.challan_no', $this->challan_no])
+                ->andFilterWhere(['like', 'tbl_bmc_milk_dispatch.destination_type', $this->destination_type])
+                ->andFilterWhere(['like', 'tbl_bmc_milk_dispatch.destination_code', $this->destination_code])
+                ->andFilterWhere(['like', 'tbl_bmc_milk_dispatch.trip_code', $this->trip_code])
+                ->andFilterWhere(['like', 'tbl_bmc_milk_dispatch.driver_name', $this->driver_name])
+                ->andFilterWhere(['like', 'tbl_bmc_milk_dispatch.driver_contact_no', $this->driver_contact_no])
+                ->andFilterWhere(['like', 'tbl_bmc_milk_dispatch.remarks', $this->remarks])
                 ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
 
         return $dataProvider;
