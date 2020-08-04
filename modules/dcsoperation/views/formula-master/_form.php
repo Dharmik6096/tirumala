@@ -24,9 +24,6 @@ $model->union_code = !empty($selected) ? $selected : $model->union_code;
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('d-m-Y')); ?>
     </div>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
-    </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">
         <div id="calculator">

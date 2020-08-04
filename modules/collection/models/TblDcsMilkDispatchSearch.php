@@ -95,11 +95,11 @@ class TblDcsMilkDispatchSearch extends TblDcsMilkDispatch {
 
     public function createsearch($params) {
         $this->load($params);
-        $ApprovalData = TblCollectionDataAlias::find()->select(['union_code', 'bmc_code', 'dcs_code', 'date_time_of_collection', 'shift_code', 'milk_type_code', 'milk_quality_type_code', '(qty) as dispatch_qty', 'avg_fat' => 'fat', 'avg_snf' => 'snf', 'avg_clr' => 'clr', 'rtpl', 'total_amount' => 'amount', 'status' => new Expression("'Not Verified'")])
+        $ApprovalData = TblCollectionDataAlias::find()->select(['union_code', 'bmc_code', 'dcs_code', 'date_time_of_dispatch' => 'date_time_of_collection', 'shift_code', 'milk_type_code', 'milk_quality_type_code', '(qty) as dispatch_qty', 'avg_fat' => 'fat', 'avg_snf' => 'snf', 'avg_clr' => 'clr', 'rtpl', 'total_amount' => 'amount', 'status' => new Expression("'Not Verified'")])
                 ->where(['bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'action_perform' => 'CREATE', 'table_name' => 'tbl_dcs_milk_dispatch'])
                 ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_dispatch))]);
 
-        $query = TblDcsMilkDispatchTxn::find()->select(['tbl_dcs_milk_dispatch.union_code', 'tbl_dcs_milk_dispatch.bmc_code', 'tbl_dcs_milk_dispatch.dcs_code', 'tbl_dcs_milk_dispatch.date_time_of_dispatch', 'tbl_dcs_milk_dispatch.shift_code', 'tbl_dcs_milk_dispatch_txn.milk_type_code', 'tbl_dcs_milk_dispatch_txn.milk_quality_type_code', 'tbl_dcs_milk_dispatch_txn.dispatch_qty', 'tbl_dcs_milk_dispatch_txn.avg_fat', 'tbl_dcs_milk_dispatch_txn.avg_snf', 'tbl_dcs_milk_dispatch_txn.avg_clr', 'tbl_dcs_milk_dispatch_txn.rtpl', 'tbl_dcs_milk_dispatch_txn.total_amount', 'status' => new Expression("'Verified'")]);
+        $query = TblDcsMilkDispatchTxn::find()->select(['tbl_dcs_milk_dispatch.union_code', 'tbl_dcs_milk_dispatch.bmc_code', 'tbl_dcs_milk_dispatch.dcs_code', 'date_time_of_dispatch' => 'date_time_of_dispatch', 'shift_code', 'tbl_dcs_milk_dispatch_txn.milk_type_code', 'tbl_dcs_milk_dispatch_txn.milk_quality_type_code', 'tbl_dcs_milk_dispatch_txn.dispatch_qty', 'tbl_dcs_milk_dispatch_txn.avg_fat', 'tbl_dcs_milk_dispatch_txn.avg_snf', 'tbl_dcs_milk_dispatch_txn.avg_clr', 'tbl_dcs_milk_dispatch_txn.rtpl', 'tbl_dcs_milk_dispatch_txn.total_amount', 'status' => new Expression("'Verified'")]);
 
         $unionQuery = (new ActiveQuery(TblDcsMilkDispatchTxn::className()))->from([
                     'tbl_dcs_milk_dispatch_txn' => $query->union($ApprovalData, TRUE)

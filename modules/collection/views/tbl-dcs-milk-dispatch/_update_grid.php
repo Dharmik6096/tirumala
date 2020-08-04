@@ -205,6 +205,9 @@ $script = "
         var union = $('#tbldcsmilkdispatch-'+tr_key+'-union_code').val();
         var fat = $('#tbldcsmilkdispatchtxn-'+tr_key+'-avg_fat').val();
         var snf = $('#tbldcsmilkdispatchtxn-'+tr_key+'-avg_snf').val();
+        console.log(union);
+        console.log(fat);
+        console.log(snf);
             if(fat !='' && snf !=''){
                 $.ajax({
                     type: 'post',

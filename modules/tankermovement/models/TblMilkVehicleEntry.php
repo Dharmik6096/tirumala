@@ -44,7 +44,7 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblMilkVehicleEntry extends \app\models\ChildModel {
 
-    public $vehicle, $customer_name;
+    public $vehicle, $customer_name, $bmc_ref_code, $bmc_name, $ref_code;
 
     /**
      * @inheritdoc

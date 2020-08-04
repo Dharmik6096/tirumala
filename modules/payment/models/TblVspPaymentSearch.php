@@ -75,24 +75,24 @@ class TblVspPaymentSearch extends TblVspPayment {
         $query->andFilterWhere(['=', 'CAST(tbl_vsp_payment.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
         // grid filtering conditions
 
-        $query->andFilterWhere(['like', 'kg_fat', $this->kg_fat])
-                ->andFilterWhere(['like', 'kg_snf', $this->kg_snf])
-                ->andFilterWhere(['like', 'total_qty', $this->total_qty])
-                ->andFilterWhere(['like', 'total_loss', $this->total_loss])
-                ->andFilterWhere(['like', 'amount', $this->amount])
-                ->andFilterWhere(['like', 'addition', $this->addition])
-                ->andFilterWhere(['like', 'deduction', $this->deduction])
-                ->andFilterWhere(['like', 'net_payable', $this->net_payable])
-                ->andFilterWhere(['like', 'adjust_amount', $this->adjust_amount])
-                ->andFilterWhere(['like', 'final_pay', $this->final_pay])
-                ->andFilterWhere(['like', 'previous_hold', $this->previous_hold])
-                ->andFilterWhere(['like', 'previous_due', $this->previous_due])
-                ->andFilterWhere(['like', 'hold_amount', $this->hold_amount])
-                ->andFilterWhere(['like', 'adjust_remark', $this->adjust_remark])
+        $query->andFilterWhere(['like', 'tbl_vsp_payment.kg_fat', $this->kg_fat])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.kg_snf', $this->kg_snf])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.total_qty', $this->total_qty])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.total_loss', $this->total_loss])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.amount', $this->amount])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.addition', $this->addition])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.deduction', $this->deduction])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.net_payable', $this->net_payable])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_amount', $this->adjust_amount])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.final_pay', $this->final_pay])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.previous_hold', $this->previous_hold])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.previous_due', $this->previous_due])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.hold_amount', $this->hold_amount])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_remark', $this->adjust_remark])
                 ->andFilterWhere(['like', 'tbl_vsp_payment.customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
-                ->andFilterWhere(['like', 'status', $this->status]);
-        $query->orderBy(['tbl_vsp_payment.from_datetime' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_vsp_payment.customer_code' => SORT_ASC]);
+                ->andFilterWhere(['like', 'tbl_vsp_payment.status', $this->status]);
+        //$query->orderBy(['tbl_vsp_payment.from_datetime' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_vsp_payment.customer_code' => SORT_ASC]);
 
         return $dataProvider;
     }

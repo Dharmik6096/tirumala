@@ -295,8 +295,17 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $query->orderby('bmc_name asc')->all();
     }
 
-    public function bmcData() {
-        return $this->find()->select(['bmc_code', 'bmc_name'])->where(['bmc_code' => $this->bmc_code])->one();
+    public function bmcData($ref_code_check = FALSE) {
+        if ($ref_code_check) {
+            $data = $this->find()
+                    ->where(['or', ['bmc_code' => $this->bmc_code], ['ref_code' => $this->bmc_code]])
+                    ->andWhere(['is_active' => 1])
+                    ->all();
+            $data = (count($data) == 1) ? $data : [];
+        } else {
+            $data = $this->find()->select(['bmc_code', 'bmc_name'])->where(['bmc_code' => $this->bmc_code])->one();
+        }
+        return $data;
     }
 
     public function bmcInfo() {

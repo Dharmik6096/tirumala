@@ -33,6 +33,8 @@ if (isset($data['url1'])) {
                 $sheet->getProtection()->setSheet(true);
                 $sheet->getProtection()->setPassword("password");
             },];
+    } else if (!empty($data['removeExportType'])) {
+        $removeExportType = $data['removeExportType'];
     }
     $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
     ?>
@@ -93,9 +95,9 @@ if (isset($data['url1'])) {
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                                             </div>   <?php
-                                            }
-                                            if (in_array($value, array('plant_code'))) {
-                                                ?>
+                                        }
+                                        if (in_array($value, array('plant_code'))) {
+                                            ?>
                                             <div class="col-sm-3 val_plant_code">
                                                 <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
@@ -277,9 +279,20 @@ if (isset($data['url1'])) {
                         $format = ['decimal', 2];
                     }
 //                    $attr_arr['attribute'] = $att;
+                    $attr_arr = [];
+                    if (!empty($data['to_decrypt'])) {
+                        $attr_arr['value'] = function($model) use ($att) {
+                            return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
+                        };
+                    }
+
                     $str = ucwords(str_replace('_', ' ', $att));
-                    ;
-                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
+                    $attr_arr['attribute'] = $att;
+                    $attr_arr['label'] = Yii::t('app', $str);
+                    $attr_arr['format'] = $format;
+                    $attr_arr['filter'] = false;
+                    $attr[] = $attr_arr;
+//                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
                 }
                 $grid_option = [
                     'id' => 'mis-report-list',

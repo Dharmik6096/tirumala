@@ -17,12 +17,13 @@ use kartik\grid\GridView;
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false],
         ['attribute' => 'date_time_of_dispatch',
+            'label' => Yii::t('app', 'Date'),
             'filter' => false,
             'value' => function($model) {
-                return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->dcsMilkDispatch, 'date_time_of_dispatch'));
+                return Yii::$app->controls->view_date($model->date_time_of_dispatch);
             }, 'filter' => false],
         ['attribute' => 'shift_code', 'label' => Yii::t('app', 'Shift'), 'value' => function($model) {
-                return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['shiftCode'], 'shift');
+                return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'vAlign' => 'middle', 'filter' => false],
 //        ['attribute' => 'doc_no', 'vAlign' => 'middle', 'filter' => false],
 //        ['attribute' => 'sample_no', 'vAlign' => 'middle', 'filter' => false],

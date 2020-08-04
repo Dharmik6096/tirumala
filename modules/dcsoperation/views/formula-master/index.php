@@ -2,6 +2,7 @@
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'rate formula'));
 if (Yii::$app->general->checkAccess('/dcsoperation/formula-master/create')) {
     $this->params['menu'][] = Yii::$app->controls->add('rate formula');
+    $this->params['menu'][] = Yii::$app->controls->custombutton('Add Text Rate Formula', 'create-text-formula', '', 'btn btn-danger btn-block', '<i class="fa fa-plus"></i>');
     //$this->params['menu'][] = Yii::$app->controls->import('rate-formula', $this);
 }
 ?>

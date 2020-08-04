@@ -2919,3 +2919,11 @@ select[multiple]{
 #applicable_type-list {
     margin-left: 10px;
 }
+
+.hide-grid-export .kv-panel-before [role="group"] {
+    display: none !important;
+}
+
+.hide-grid-export .grid-search.search-filter {
+    width: calc(100% - 102px) !important;
+}

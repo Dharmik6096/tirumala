@@ -4,7 +4,7 @@ use kartik\grid\GridView;
 ?>
 
 <div class="">
-    <h5 class="panel-heading"><?= Yii::t('app', 'MPP Collection Details') ?></h5>
+    <h5 class="panel-heading"><?= Yii::t('app', 'Milk Collection Details') ?></h5>
 
     <?php
     $attribute = [
@@ -32,7 +32,7 @@ use kartik\grid\GridView;
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => FALSE],
         ['attribute' => 'sample_no', 'filter' => FALSE],
-        ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+        ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
             }, 'filter' => FALSE],
         ['attribute' => 'qty', 'filter' => FALSE],

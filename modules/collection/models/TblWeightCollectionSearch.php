@@ -99,7 +99,7 @@ class TblWeightCollectionSearch extends TblWeightCollection {
                 ->andFilterWhere(['like', 'tbl_weight_collection.cans', $this->cans])
                 ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
 
-        $query->orderBy(['tbl_weight_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc.bmc_name' => SORT_ASC, 'tbl_weight_collection.doc_no' => SORT_ASC, 'tbl_weight_collection.sample_no' => SORT_ASC]);
+        //$query->orderBy(['tbl_weight_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc.bmc_name' => SORT_ASC, 'tbl_weight_collection.doc_no' => SORT_ASC, 'tbl_weight_collection.sample_no' => SORT_ASC]);
 
         return $dataProvider;
     }

@@ -1750,17 +1750,19 @@ class GeneralFunctions extends Component {
         return !empty($data) ? $data->config_result : '';
     }
 
-    public function validateRateRange($model) {
+    public function validateRateRange($model, $fatAttr = '', $snfAttr = '') {
+        $fat = !empty($fatAttr) ? $fatAttr : 'fat';
+        $snf = !empty($snfAttr) ? $snfAttr : 'snf';
         $minFat = !empty(Yii::$app->general->getforeignkey($model->rateRange, 'min_fat')) ? Yii::$app->general->getforeignkey($model->rateRange, 'min_fat') : '0.01';
         $maxFat = Yii::$app->general->getforeignkey($model->rateRange, 'max_fat');
         $minSnf = !empty(Yii::$app->general->getforeignkey($model->rateRange, 'min_snf')) ? Yii::$app->general->getforeignkey($model->rateRange, 'min_snf') : '0.01';
         $maxSnf = Yii::$app->general->getforeignkey($model->rateRange, 'max_snf');
 
-        if (($minFat > $model->fat) || (!empty($maxFat) && $maxFat < $model->fat)) {
-            $model->addError('fat', Yii::t('app/validation', $model->getAttributeLabel('fat') . ' is Invalid'));
+        if (($minFat > $model->$fat) || (!empty($maxFat) && $maxFat < $model->$fat)) {
+            $model->addError($fat, Yii::t('app/validation', $model->getAttributeLabel('fat') . ' is Invalid'));
         }
-        if (($minSnf > $model->snf) || (!empty($maxSnf) && $maxSnf < $model->snf)) {
-            $model->addError('snf', Yii::t('app/validation', $model->getAttributeLabel('snf') . ' is Invalid'));
+        if (($minSnf > $model->$snf) || (!empty($maxSnf) && $maxSnf < $model->$snf)) {
+            $model->addError($snf, Yii::t('app/validation', $model->getAttributeLabel('snf') . ' is Invalid'));
         }
     }
 
@@ -1786,6 +1788,17 @@ class GeneralFunctions extends Component {
                     }
                 }
             }
+        }
+    }
+
+    public function validateBMC($model, $attribute) {
+        $bmcModel = new TblDcsBmc();
+        $records = $bmcModel->find()->select('bmc_code')->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        if (!empty($records) && count($records) == 1) {
+            $model->$attribute = $records[0]->bmc_code;
+        } else {
+            $model->addError('bmc_code', Yii::t('app/validation', Yii::t('app', 'BMC') . ' Is Invalid.'));
+            return false;
         }
     }
 

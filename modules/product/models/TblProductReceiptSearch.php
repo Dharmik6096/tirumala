@@ -12,7 +12,7 @@ use app\modules\product\models\TblProductReceipt;
  */
 class TblProductReceiptSearch extends TblProductReceipt {
 
-    public $from_date, $to_date, $customer_name;
+    public $from_date, $to_date;
 
     /**
      * @inheritdoc

@@ -64,7 +64,7 @@ use app\modules\organisation\models\TblPlant;
  */
 class TblWeightCollection extends \app\models\ChildModel {
 
-    public $customer_name;
+    public $customer_name, $ref_code, $bmc_ref_code;
 
     /**
      * @inheritdoc

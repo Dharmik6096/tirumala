@@ -59,67 +59,65 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-10">
             <div class="row">
-                <div class="col-sm-2 create_fields">
-                    <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
+                <div class="QltyParamDiv">
+                    <div class="col-sm-2 create_fields">
+                        <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
+                    </div>
+                    <div class="col-sm-2 rtpl_validate create_fields reset_field">
+                        <?= $form->field($model, 'customer_code')->textInput() ?>
+                    </div>
+                    <div class="col-sm-2 create_fields reset_field">
+                        <?= $form->field($model, 'customer_name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
+                    </div>
+                    <div class="col-sm-2 rtpl_validate create_fields">
+                        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', $readonly); ?>
+                    </div>
+                    <div class="col-sm-2 create_fields">
+                        <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmccollection-module_name']); ?>
+                        <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmccollection-bmc_code,tblbmccollection-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), '', false, '', '', FALSE, '', TRUE); ?>
+                    </div>
+                    <div class="col-sm-2 rtpl_validate create_fields">
+                        <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-sm-1 reset_field number-validate">
+                        <?= $form->field($model, 'qty')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 reset_field number-validate">
+                        <?= $form->field($model, 'fat')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 reset_field number-validate">
+                        <?= $form->field($model, 'snf')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 reset_field rtpl_validate ">
+                        <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
+                    </div>
+                    <div class="col-sm-1 reset_field">
+                        <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
+                        <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
+                    </div>
+                    <div class="col-sm-3 reset_field">
+                        <?= $form->field($model, 'remarks')->textarea() ?>
+                    </div>
+                    <!-- <div class="clearfix"></div> -->
+                    <div class="col-sm-2 reset_field">
+                        <?= Yii::$app->dropdown->dropdownStatic('collection_type', $model, $form, 'form-group', $model->getAttributeLabel('collection_type'), false, 'collection_type', false); ?>
+                    </div>
                 </div>
-                <div class="col-sm-2 rtpl_validate create_fields reset_field">
-                    <?= $form->field($model, 'customer_code')->textInput() ?>
+                <div class="transporter">
+                    <div class="col-sm-2 reset_field">
+                        <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', true, true, 'transporter_code'); ?>
+                    </div>
+                    <div class='col-sm-2 reset_field'>
+                        <?= Yii::$app->dropdown->vehicletransporter($model, $form, 'tblbmccollection-transporter_code', 'vehicle_code', 'Vehicle'); ?>
+                    </div>
+                    <div class="col-sm-2 reset_field">
+                        <?=
+                        $form->field($model, 'route_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+                            'mask' => '99:99',])
+                        ?> 
+                    </div>
                 </div>
-                <div class="col-sm-2 create_fields reset_field">
-                    <?= $form->field($model, 'customer_name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
-                </div>
-                <div class="col-sm-2 rtpl_validate create_fields">
-                    <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', $readonly); ?>
-                </div>
-                <div class="col-sm-2 create_fields">
-                    <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmccollection-module_name']); ?>
-                    <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmccollection-bmc_code,tblbmccollection-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
-                </div>
-                <div class="col-sm-2 rtpl_validate create_fields">
-                    <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
-                </div>
-                <div class="clearfix"></div>
-                <div class="col-sm-2 reset_field">
-                    <?= $form->field($model, 'qty')->textInput() ?>
-                </div>
-                <div class="col-sm-2 reset_field">
-                    <?= $form->field($model, 'fat')->textInput() ?>
-                </div>
-                <div class="col-sm-2 reset_field">
-                    <?= $form->field($model, 'snf')->textInput() ?>
-                </div>
-                <div class="col-sm-2 reset_field rtpl_validate ">
-                    <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
-                </div>
-                <div class="col-sm-2 reset_field">
-                    <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
-                    <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
-                </div>
-                <div class="col-sm-2 reset_field">
-                    <?php // Html::activeHiddenInput($model, 'milk_collection_code', ['value' => $model->milk_collection_code]) ?>
-                    <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2 reset_field">
-            <?= $form->field($model, 'remarks')->textarea() ?>
-        </div>
-        <div class="clearfix"></div>
-        <div class="col-sm-2 reset_field">
-            <?= Yii::$app->dropdown->dropdownStatic('collection_type', $model, $form, 'form-group', $model->getAttributeLabel('collection_type'), false, 'collection_type', false); ?>
-        </div>
-        <div class="transporter">
-            <div class="col-sm-2 reset_field">
-                <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', true, true, 'transporter_code'); ?>
-            </div>
-            <div class='col-sm-2 reset_field'>
-                <?= Yii::$app->dropdown->vehicletransporter($model, $form, 'tblbmccollection-transporter_code', 'vehicle_code', 'Vehicle'); ?>
-            </div>
-            <div class="col-sm-2 reset_field">
-                <?=
-                $form->field($model, 'route_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
-                    'mask' => '99:99',])
-                ?> 
             </div>
         </div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

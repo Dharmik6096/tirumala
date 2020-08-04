@@ -20,6 +20,7 @@ use app\modules\collection\models\TblCollectionDataAlias;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
 use app\modules\collection\models\TblDcsMilkDispatchTxnHistory;
+use app\modules\collection\models\TblDcsMilkDispatchHistory;
 
 /**
  * TblDcsMilkDispatchController implements the CRUD actions for TblDcsMilkDispatch model.
@@ -79,14 +80,20 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->model->scenario = 'create';
         $modelSave = [];
+        $message = 'Milk Dispatch';
+        $type = 'create';
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
             $txModel->load(Yii::$app->request->post());
             $txModel->dcs_code = $this->model->dcs_code;
             $this->model->date_time_of_dispatch = !empty($this->model->date_time_of_dispatch) ? date('Y-m-d', strtotime($this->model->date_time_of_dispatch)) : '';
             $this->model->date_time_of_dispatch = $this->model->date_time_of_dispatch . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
-            $this->qty_mode = 0;
-            if ($this->model->validate() && $txModel->validate()) {
+            if ($txModel->validate()) {
+                $this->model->validateUnique($this->model, $txModel);
+                $txModel->union_code = $this->model->union_code;
+                Yii::$app->general->validateRateRange($txModel, 'avg_fat', 'avg_snf');
+            }
+            if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
                     $approvalModel = new TblCollectionDataAlias();
                     $approvalModel->attributes = $this->model->attributes;
@@ -95,12 +102,21 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                     $approvalModel->table_name = 'tbl_dcs_milk_dispatch';
                     $approvalModel->action_perform = 'CREATE';
                     $approvalModel->date_time_of_collection = $this->model->date_time_of_dispatch;
+                    $approvalModel->qty_mode = 0;
                     $modelSave[] = $approvalModel;
                     $message = 'Data For Approval';
                     $type = 'create';
                 } else {
-                    $modelSave[] = $this->model;
+                    $existMainData = $this->model->getExistingData($this->model);
+                    if (empty($existMainData)) {
+                        $this->model->dcs_milk_dispatch_code = Yii::$app->general->getPrimaryCode($this->model);
+                        $modelSave[] = $this->model;
+                    }
+                    $txModel->dcs_milk_dispatch_code = !empty($existMainData) ? $existMainData->dcs_milk_dispatch_code : $this->model->dcs_milk_dispatch_code;
+                    $txModel->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->dcs_milk_dispatch_code);
+                    $modelSave[] = $txModel;
                 }
+
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -113,7 +129,16 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                 return Json::encode($record);
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return Json::encode(ActiveForm::validate($this->model, $txModel));
+                $err = [];
+                foreach ($this->model->getErrors() as $key => $value) {
+                    $err[$key] = $value;
+                }
+                foreach ($txModel->getErrors() as $key => $value) {
+                    $err[$key] = $value;
+                }
+
+                return Json::encode($err);
+//                return Json::encode(ActiveForm::validate($this->model, $txModel));
             }
         } else {
             return $this->render('create', [
@@ -280,7 +305,7 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
 
-                    if (!empty($detalData->oldAttributes) && ($detalData->avg_fat != $detalData->oldAttributes['avg_fat'] || $detalData->avg_snf != $detalData->oldAttributes['avg_snf'] || $detalData->dispatch_qty != $detalData->oldAttributes['dispatch_qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->nos_of_can != $detalData->oldAttributes['nos_of_can'])) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->avg_fat != $detalData->oldAttributes['avg_fat'] || $detalData->avg_snf != $detalData->oldAttributes['avg_snf'] || $detalData->dispatch_qty != $detalData->oldAttributes['dispatch_qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'])) {
                         $existData = $this->findModel($detalData->dcs_milk_dispatch_code);
                         if (Yii::$app->general->getUnionConfiguration(Yii::$app->general->getforeignkey($detalData->dcsMilkDispatch, 'union_code'), 'collection_approval', 'PORTAL') == 1) {
                             $approvalModel = new TblCollectionDataAlias();
@@ -296,7 +321,6 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                             $approvalModel->old_milk_type_code = $detalData->oldAttributes['milk_type_code'];
                             $approvalModel->old_milk_quality_type_code = $detalData->oldAttributes['milk_quality_type_code'];
                             $approvalModel->old_purchase_rate_code = $detalData->oldAttributes['purchase_rate_code'];
-                            $approvalModel->old_no_of_can = $detalData->oldAttributes['nos_of_can'];
                             $approvalModel->table_name = 'tbl_dcs_milk_dispatch';
                             $approvalModel->action_perform = 'UPDATE';
                             $date = Yii::$app->general->getforeignkey($detalData->dcsMilkDispatch, 'date_time_of_dispatch');
@@ -306,12 +330,16 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                             $message = 'Data For Approval';
                             $type = 'create';
                         } else {
-                            $existTxnData = TblDcsMilkDispatchTxn::findOne($detalData->dcs_milk_dispatch_code);
+                            $historyModelMain = new TblDcsMilkDispatchHistory();
+                            Yii::$app->operation->history($existData, $historyModelMain, 'UPDATE');
+                            $saveModel[] = $historyModelMain;
+
+                            $existTxnData = TblDcsMilkDispatchTxn::findOne($detalData->dcs_milk_dispatch_txn_code);
                             $historyModel = new TblDcsMilkDispatchTxnHistory();
                             Yii::$app->operation->history($existTxnData, $historyModel, 'UPDATE');
                             $saveModel[] = $historyModel;
                             $existTxnData->attributes = $detalData->attributes;
-                            $existTxnData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
+                            $existTxnData->date_time_of_dispatch = $existData->date_time_of_dispatch . ' ' . \Yii::$app->general->getshift($existData->shift_code);
                             $saveModel[] = $existTxnData;
                         }
                     }
@@ -346,11 +374,12 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                 $deletedata = Yii::$app->request->post('selection');
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 $where = [];
-
+                $message = 'Data For Approval';
+                $type = 'create';
                 foreach ($deletedata as $code) {
-                    $where['dcs_milk_dispatch_code'] = $code;
-                    $existData = TblDcsMilkDispatch::find()->where($where)->one();
+                    $where['dcs_milk_dispatch_txn_code'] = $code;
                     $existTxnData = TblDcsMilkDispatchTxn::find()->where($where)->one();
+                    $existData = TblDcsMilkDispatch::find()->where(['dcs_milk_dispatch_code' => $existTxnData->dcs_milk_dispatch_code])->one();
                     if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
                         $ApprovalModel = new TblCollectionDataAlias();
                         $ApprovalModel->attributes = $existData->attributes;
@@ -358,12 +387,24 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                         $ApprovalModel->setModelAttributes($existTxnData, $ApprovalModel);
                         $ApprovalModel->table_name = 'tbl_dcs_milk_dispatch';
                         $ApprovalModel->action_perform = 'DELETE';
+                        $date = $existData->date_time_of_dispatch;
+                        $ApprovalModel->date_time_of_collection = !empty($date) ? date('Y-m-d', strtotime($date)) : '';
+                        $ApprovalModel->date_time_of_collection = $ApprovalModel->date_time_of_collection . ' ' . \Yii::$app->general->getshift($existData->shift_code);
                         $saveModel[] = $ApprovalModel;
                     } else {
+                        $historyModelMain = new TblDcsMilkDispatchHistory();
+                        Yii::$app->operation->history($existData, $historyModelMain, DELETE);
+                        $saveModel[] = $historyModelMain;
+                        $txCount = TblDcsMilkDispatchTxn::find()->where(['dcs_milk_dispatch_code' => $existData->dcs_milk_dispatch_code])->count();
+
+                        if ($txCount == 1) {
+                            $deleteModel[] = $existData;
+                        }
+
                         $historyModel = new TblDcsMilkDispatchTxnHistory();
                         Yii::$app->operation->history($existTxnData, $historyModel, DELETE);
                         $saveModel[] = $historyModel;
-                        $deleteModel[] = $existData;
+                        $deleteModel[] = $existTxnData;
                         $message = 'Milk Dispatch';
                         $type = 'delete';
                     }

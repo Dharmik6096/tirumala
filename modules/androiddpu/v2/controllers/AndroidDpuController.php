@@ -26,6 +26,78 @@ use app\modules\usermanagement\models\TblAmcsAppMenuMapping;
  */
 class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\AndroidDpuController {
 
+    public function actionRegister() {
+        $res_data = [];
+        $data = $this->post_data;
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            if (!empty($data['organization_type']) && !empty($data['organization_code'])) {
+                $type = $data['organization_type'];
+                $detail_type = '';
+                $code = $data['organization_code'];
+                if ($type == 'VLC') {
+                    $model = new TblDcs();
+                    $model->dcs_code = $code;
+                    $detail_type = 'society';
+                    $model_data = $model->getData(TRUE);
+                    $code = !empty($model_data) ? $model_data[0]->dcs_code : $code;
+                } else if ($type == 'BMC') {
+                    $model = new TblDcsBmc();
+                    $model->bmc_code = $code;
+                    $detail_type = 'bmc';
+                    $model_data = $model->bmcData(TRUE);
+                    $code = !empty($model_data) ? $model_data[0]->bmc_code : $code;
+                } else if ($type == 'MCC') {
+                    $model = new TblMccPlant();
+                    $model->mcc_plant_code = $code;
+                    $detail_type = 'mccPlant';
+                    $model_data = $model->getData(TRUE);
+                    $code = !empty($model_data) ? $model_data[0]->mcc_plant_code : $code;
+                }
+                if (!empty($model_data)) {
+                    $contact_data = Yii::$app->general->getDefaultContactDetail($code, $detail_type);
+                    if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
+                        $master = [];
+                        $andoidIdModel = new TblAndroidInstallation();
+                        $andoidIdModel->organization_code = $code;
+                        $andoidIdModel->organization_type = $data['organization_type'];
+                        $andoidIdModelData = $andoidIdModel->getData();
+                        if (!empty($andoidIdModelData)) {
+                            $andoidIdModel = $andoidIdModelData;
+                        } else {
+                            $andoidIdModel->android_installation_id = $andoidIdModel->getCode();
+                        }
+                        $master[] = $andoidIdModel;
+                        $andoidIdDetailModel = new TblAndroidInstallationDetails();
+                        $andoidIdDetailModel->android_installation_id = $andoidIdModel->android_installation_id;
+                        $andoidIdDetailModel->device_id = $data['device_id'];
+                        $andoidIdDetailModel->imei_no = $data['imei'];
+                        $andoidIdDetailModel->mobile_no = $content['mobile_no'];
+                        $andoidIdDetailModel->version_no = !empty($content['version_no']) ? $content['version_no'] : NULL;
+                        $andoidIdDetailModelData = $andoidIdDetailModel->getActiveCount();
+//                        if (!empty($andoidIdDetailModelData)) {
+//                            $res_data['message'] = 'Mobile Number already registered.';
+//                        } else {
+                        $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
+                        $andoidIdDetailModel->otp_code = 1234;
+                        $andoidIdDetailModel->is_active = 0;
+                        $andoidIdDetailModel->is_expired = 0;
+                        $master[] = $andoidIdDetailModel;
+                        $transaction = $this->generalModel->saveTransaction($master, ['app registration', 'create']);
+                        if ($transaction !== 'customRedirect') {
+                            return FALSE;
+                        }
+                        $res_data['token'] = $andoidIdDetailModel->hash_key;
+                        $res_data['org_pk_code'] = $code;
+//                        }
+                    }
+                }
+            }
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
     public function actionVerification() {
         $res_data = [];
         $data = $this->post_data;

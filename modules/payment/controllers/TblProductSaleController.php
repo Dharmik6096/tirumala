@@ -616,7 +616,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                                 Yii::$app->operation->history($taxModel, $historyModel, UPDATE);
                                 $child[] = $historyModel;
                             } else {
-                                $taxModel->product_sale_tax_calculated_code = Yii::$app->general->getTransactionCode($detailModel, $detailModel->product_sale_code, $j);
+                                $taxModel->product_sale_tax_calculated_code = Yii::$app->general->getTransactionCode($taxModel, $taxModel->product_sale_code, $j);
                                 $j++;
                             }
                             $taxModel->value = $val;

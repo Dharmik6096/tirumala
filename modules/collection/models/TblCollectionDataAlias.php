@@ -118,6 +118,20 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
             [['customer_code'], 'validateBmcCollection', 'on' => ['BmcCollection']],
             [['dcs_code'], 'validateMilkDispatch', 'on' => ['MilkDispatch']],
             [['error_desc'], 'string', 'on' => ['approve']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        $flag = ['data_lock_bmc', 'billing_lock_bmc'];
+                        $type = 'DCS';
+                        if ($this->table_name == 'tbl_milk_collection') {
+                            $flag = ['data_lock_member', 'billing_lock_member'];
+                            $type = 'DCS';
+                        }
+                        if ($this->table_name == 'tbl_bmc_collection') {
+                            $type = $this->customer_type;
+                        }
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $type, $flag);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection', 'MilkDispatch']],
         ];
     }
 
@@ -330,7 +344,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                         ->one();
             }
         }
-        if (!empty($mainTableData)) {
+        if (!empty($txTableData)) {
             $this->addError($attribute, "Record is Already Exist");
         }
     }

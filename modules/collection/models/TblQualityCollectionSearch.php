@@ -90,7 +90,7 @@ class TblQualityCollectionSearch extends TblQualityCollection {
         ]);
         $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
                 ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
-        $query->orderBy(['tbl_quality_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc.bmc_name' => SORT_ASC, 'tbl_quality_collection.doc_no' => SORT_ASC, 'tbl_quality_collection.sample_no' => SORT_ASC]);
+        //$query->orderBy(['tbl_quality_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc.bmc_name' => SORT_ASC, 'tbl_quality_collection.doc_no' => SORT_ASC, 'tbl_quality_collection.sample_no' => SORT_ASC]);
 
         return $dataProvider;
     }

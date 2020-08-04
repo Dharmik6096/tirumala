@@ -23,7 +23,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
             [['shift_code', 'dispatch_type', 'destination_type', 'challan_no', 'destination_code'], 'safe'],
             [['dcs_milk_dispatch_txn_code', 'dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'integer'],
             [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount'], 'number'],
-            [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code'], 'safe'],
+            [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code', 'date_time_of_dispatch'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkDispatch']],
         ];
@@ -148,11 +148,11 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
 
     public function deletesearch($params) {
         $this->load($params);
-        $query = TblDcsMilkDispatchTxn::find()->where(['IS NOT', 'tbl_dcs_milk_dispatch.bmc_code', NULL]);
+        $query = TblDcsMilkDispatchTxn::find();
         // add conditions that should always apply here
 
         $query->joinWith(['dcsMilkDispatch', 'approvalData']);
-        $query->andWhere('tbl_dcs_milk_dispatch.date_time_of_dispatch=tbl_collection_data_alias.date_time_of_collection and tbl_dcs_milk_dispatch.shift_code=tbl_collection_data_alias.shift_code');
+        $query->join('LEFT JOIN', 'tbl_dcs_milk_dispatch dmd', 'dmd.date_time_of_dispatch = tbl_collection_data_alias.date_time_of_collection and dmd.shift_code = tbl_collection_data_alias.shift_code');
         $query->andWhere([
             'tbl_dcs_milk_dispatch.bmc_code' => $this->bmc_code]);
 
@@ -172,7 +172,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
 
         $query->andFilterWhere(['tbl_dcs_milk_dispatch.dcs_code' => $this->dcs_code]);
 
-        $query->andWhere(['or', ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.milk_type_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
+        $query->andWhere(['or', ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.milk_type_code', NULL], ['is', 'tbl_collection_data_alias.milk_quality_type_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
 //        $query->andwhere(['tbl_collection_data_alias.action_perform' => 'DELETE', 'tbl_collection_data_alias.table_name' => 'collectionvillage']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
