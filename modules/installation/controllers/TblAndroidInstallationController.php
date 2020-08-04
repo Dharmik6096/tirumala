@@ -327,4 +327,55 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
         return Json::encode($record);
     }
 
+    public function actionAndroidPassword() {
+        $id = Yii::$app->request->post('id');
+        $name = Yii::$app->request->post('name');
+        $type = Yii::$app->request->post('type');
+        $MainCode = Yii::$app->request->post('code');
+        //step 1
+        $date = (int) Yii::$app->controls->view_date(date('Y-m-d'), 'php:ydm');
+             
+        //step2
+        $code = str_replace('0', '', $MainCode);
+        $orgCode = substr($code, -1);
+              
+        $result1 = $date * $orgCode;
+          
+        //step3
+        $result2 = $date + $result1;
+             
+        //step4
+        $result3 = 5000 + $MainCode;
+            
+        //step5
+        $result4 = $result2 - $result3;
+      
+        //step6
+        $result5 = 0;
+        for ($i = 0; $i <= strlen($type); $i++) {
+            $result5 = $result5 + ord(substr($type, $i, 1));
+        }
+      
+        //step7
+        $result6 = $result4 + $result5;
+      
+        //step8
+        $result7 = abs($result6);
+
+        $existData = TblAndroidInstallationDetails::find()->where(['android_installation_details_id' => $id])->one();
+        $historyModel = new TblAndroidInstallationDetailsHistory();
+        Yii::$app->operation->history($existData, $historyModel, UPDATE);
+        $existData->password_date = date('Y-m-d');
+        $existData->password = $result7;
+        $transaction = $this->generalModel->saveTransaction([$existData, $historyModel], ['AMCS Installation', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'New Password for ' . $type . ' - ' . $name . '(' . $MainCode . ') is "' . $result7 . '"'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Password not Generated'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }
