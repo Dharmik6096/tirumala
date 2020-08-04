@@ -59,7 +59,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
                         $master = [];
                         $andoidIdModel = new TblAndroidInstallation();
-                        $andoidIdModel->organization_code = $data['organization_code'];
+                        $andoidIdModel->organization_code = $code;
                         $andoidIdModel->organization_type = $data['organization_type'];
                         $andoidIdModelData = $andoidIdModel->getData();
                         if (!empty($andoidIdModelData)) {
