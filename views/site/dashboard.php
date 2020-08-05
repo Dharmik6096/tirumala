@@ -138,32 +138,32 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="flt">
                         <?=
                         $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
-                            'url' => $chart_url, 'container' => 'container1',
+                            'url' => $chart_url, 'container' => 'fed_union_container',
                             'date_range' => false, 'range2' => false,
                             'range_id1' => 'dt1',
                             'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
                         ?>
-                        <div id="container1" class="cont"></div>
+                        <div id="fed_union_container" class="cont"></div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="flt">
                         <?=
                         $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_comparison',
-                            'url' => $chart_url, 'container' => 'container2',
+                            'url' => $chart_url, 'container' => 'fed_comparison_container',
                             'date_range' => true, 'range2' => true,
                             'range_id1' => 'comp1', 'range_id2' => 'comp2',
                             'shift' => false, 'type' => 'column',
                             'title' => 'Compare Milk Collection']);
                         ?>
-                        <div id="container2" class="cont"></div>
+                        <div id="fed_comparison_container" class="cont"></div>
                     </div>
                 </div>
                 <div class="clearfix"></div>
                 <div class="col-sm-12">
                     <div class="flt">
-                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
-                        <div id="container3" class="cont"></div>
+                        <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'fed_datewise_container', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
+                        <div id="fed_datewise_container" class="cont"></div>
                     </div>
                 </div>
             <?php } else { ?>
@@ -172,12 +172,12 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="col-sm-6 text-center widget-tab bmc-compare"><?= Yii::t('app', 'BMC Milk Collection'); ?></div>
                     <div class="flt">
                         <div id="society-compare">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'container1', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
-                            <div id="container1" class="cont"></div>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
+                            <div id="union_comparison_container" class="cont"></div>
                         </div>
                         <div id="bmc-compare">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'container3', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2', 'table_popup' => true, 'table_class' => 'bmc_union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection')]); ?>
-                            <div id="container3" class="cont"></div>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'bmc_union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2', 'table_popup' => true, 'table_class' => 'bmc_union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection')]); ?>
+                            <div id="bmc_union_comparison_container" class="cont"></div>
                         </div>
                     </div>
                 </div>
@@ -186,12 +186,12 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="col-sm-6 text-center widget-tab bmc-datewise"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
                     <div class="flt">
                         <div id="society-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'container2', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise')]); ?>
-                            <div id="container2" class="cont"></div>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise')]); ?>
+                            <div id="union_datewise_container" class="cont"></div>
                         </div>
                         <div id="bmc-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'container4', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise')]); ?>
-                            <div id="container4" class="cont"></div>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise')]); ?>
+                            <div id="bmc_union_datewise_container" class="cont"></div>
                         </div>
                     </div>
                 </div>
@@ -200,16 +200,59 @@ $refreshWidgets = json_encode($refreshWidgets);
         <div class="clearfix mt25"></div>      
         <div class="row">
             <div class="col-sm-6">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'container5', 'diff_sp_name' => 'milk_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'milk_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Milk Collection')]); ?>
-                <div id="container5" class="cont"></div>
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'milk_coll_widget_container', 'diff_sp_name' => 'milk_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'milk_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Milk Collection')]); ?>
+                <div id="milk_coll_widget_container" class="cont">
+                    <!-- <div class="milk_coll_widget_container">
+                        <div id="milk_coll_widget_container" class="cont chart_type widget_two_bar_chart"></div>
+                        <div id="milk_coll_widget_container_table" class="cont table_type table-responsive widget_two_table_data">
+                            <table cellpadding="1" cellspacing="1" class="table milk_coll_widget_container">
+                                <thead>
+
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> -->
+                </div>
+                <!-- <div id="container5" class="cont"></div> -->
             </div>
             <div class="col-sm-6">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'container6', 'diff_sp_name' => 'bmc_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Collection')]); ?>
-                <div id="container6" class="cont"></div>
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'bmc_coll_widget_container', 'diff_sp_name' => 'bmc_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Collection')]); ?>
+                <div id="bmc_coll_widget_container" class="cont">
+                    <!-- <div class="bmc_coll_widget_container">
+                        <div id="bmc_coll_widget_container" class="cont chart_type widget_two_bar_chart"></div>
+                        <div id="bmc_coll_widget_container_table" class="cont table_type table-responsive widget_two_table_data">
+                            <table cellpadding="1" cellspacing="1" class="table bmc_coll_widget_container">
+                                <thead>
+
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> -->
+                </div>
             </div>
             <div class="col-sm-6">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'container7', 'diff_sp_name' => 'bmc_dispatch_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_dispatch_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Dispatch')]); ?>
-                <div id="container7" class="cont"></div>
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'bmc_dispatch_widget_container', 'diff_sp_name' => 'bmc_dispatch_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_dispatch_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Dispatch')]); ?>
+                <div id="bmc_dispatch_widget_container" class="cont">
+                    <!-- <div class="bmc_dispatch_widget_container">
+                        <div id="bmc_dispatch_widget_container" class="cont chart_type widget_two_bar_chart"></div>
+                        <div id="bmc_dispatch_widget_container_table" class="cont table_type table-responsive widget_two_table_data">
+                            <table cellpadding="1" cellspacing="1" class="table bmc_dispatch_widget_container">
+                                <thead>
+
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> -->
+                </div>
             </div>
             <div class="col-sm-6">
                 <div class="milk-collection">
@@ -442,9 +485,20 @@ $script = "
         $.each(widget, function(index, value) {
             var datastring = $('form#'+value).serialize();
             $('#dataStringVal').val(datastring);
-            if(['union_comparison','reconciliation_chart_widget','bmc_union_datewise','bmc_coll_widget','fed_datewise','fed_union','union_datewise','fed_comparison','bmc_union_comparison','milk_coll_widget','bmc_dispatch_widget','table_milk_collection','manual_vs_auto_collection','dipatch_vs_receipt','bmc_collection_summary','monthly_milk_collection','dashboard_blocks','piechart_member_app'].indexOf(value) == -1) {
-                setChartWidgets(value);
-            }
+            if(['fed_union',
+                'fed_comparison',
+                'fed_datewise',
+                'reconciliation_chart_widget',
+                'table_milk_collection',
+                'manual_vs_auto_collection',
+                'dipatch_vs_receipt',
+                'bmc_collection_summary',
+                'monthly_milk_collection',
+                'dashboard_blocks',
+                'piechart_member_app'].indexOf(value) == -1) 
+                {
+                    setChartWidgets(value);
+                }
             // console.log(value)
             else if(['dashboard_blocks'].indexOf(value) == 0){
                 $.ajax({
@@ -487,122 +541,126 @@ $script = "
         // console.log(set_widget_id);
         // console.log(set_widget_id+'_container');
     }
-
+//new code
+    barChart('bmc_dispatch_widget_container','BMC Dispatch',[],[]);
+    barChart('milk_coll_widget_container','Milk Collection',[],[]);
+    barChart('bmc_coll_widget_container','BMC Collection',[],[]);
+    // barChart('collection_farmer_container','',[],[]);
     function barChart(cont,text,xdata,ydata){
-    var bar_chart = $('#'+cont);
-        if (bar_chart.length) {
-            Highcharts.chart(cont, {
-                chart: {
-                    zoomType: 'xy'
-                },
-                title: {
-                    text: text
-                },
-                xAxis: [{
-                        categories: xdata,
-                        crosshair: true
-                    }],
-                yAxis: [{// Primary yAxis
-                        labels: {
-                            format: '{value}',
-                            style: {
-                                color: Highcharts.getOptions().colors[1]
+        var bar_chart = $('#'+cont);
+            if (bar_chart.length) {
+                Highcharts.chart(cont, {
+                    chart: {
+                        zoomType: 'xy'
+                    },
+                    title: {
+                        text: text
+                    },
+                    xAxis: [{
+                            categories: xdata,
+                            crosshair: true
+                        }],
+                    yAxis: [{// Primary yAxis
+                            labels: {
+                                format: '{value}',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            },
+                            title: {
+                                text: '',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
                             }
-                        },
-                        title: {
-                            text: '',
-                            style: {
-                                color: Highcharts.getOptions().colors[1]
+                        }, {// Secondary yAxis
+                            title: {
+                                text: '',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                            opposite: false,
+                        }
+                    ],
+                    tooltip: {
+                        shared: true
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'left',
+                        x: 120,
+                        verticalAlign: 'top',
+                        y: 100,
+                        floating: true,
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+                    },
+                    series: [{
+                                name: 'QTY(ltr)',
+                            type: 'column',
+                            color: '#3a7bd5',
+                            yAxis: 1,
+                                data: ydata,
+                            tooltip: {
+                                valueSuffix: ' lt'
                             }
-                        }
-                    }, {// Secondary yAxis
-                        title: {
-                            text: '',
-                            style: {
-                                color: Highcharts.getOptions().colors[0]
-                            }
-                        },
-                        opposite: false,
-                    }
-                ],
-                tooltip: {
-                    shared: true
-                },
-                legend: {
-                    layout: 'vertical',
-                    align: 'left',
-                    x: 120,
-                    verticalAlign: 'top',
-                    y: 100,
-                    floating: true,
-                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
-                },
-                series: [{
-                            name: 'QTY(ltr)',
-                        type: 'column',
-                        color: '#3a7bd5',
-                        yAxis: 1,
-                            data: ydata,
-                        tooltip: {
-                            valueSuffix: ' lt'
-                        }
-
-                    }]
-            });
-        }
-     }
-     
-      function drawChart(id,cntr,url,type)
-      {
-        var datastring = $('#'+id).serialize();
-        var union= $('#dashboard-union_code').val();
-        $.ajax({
-                     type: 'post',
-                     url: url,
-                     data: datastring+'&sp='+id+'&union='+union,
-                     success: function(data) {
-                    
-                        var index=$('#'+cntr).data('highcharts-chart');
-                        var chart=Highcharts.charts[index];
-                        var vals=[];
-                        var color='3a7bd5';
-                        var suf='';
-                        console.log(chart +'--'+id);
-                        while( chart.series.length > 0 ) {
-                            chart.series[0].remove( false );
-                        }
-                        $.each(data.res, function (key, val) {
-                        vals = val.map(function (x) { 
-                            return parseFloat(x, 10); 
-                        });
-                        if(key.toLowerCase()==='qty')
-                        {
-                            suf='(ltr)';
-                        }
-                        else
-                        {
-                            suf='';
-                        }
+    
+                        }]
+                });
+            }
+         }
+         
+          function drawChart(id,cntr,url,type)
+          {
+            var datastring = $('#'+id).serialize();
+            var union= $('#dashboard-union_code').val();
+            $.ajax({
+                         type: 'post',
+                         url: url,
+                         data: datastring+'&sp='+id+'&union='+union,
+                         success: function(data) {
                         
-                        chart.addSeries({  
-                            type: type,
-                            name: key.toUpperCase()+suf,
-                            data: vals,
-                            yAxis:1,
-                            color:'#'+color,
-                        }, false);
-                        color=parseInt(color)+003333;
-                       
-                        });
-                        chart.xAxis[0].setCategories(data.lbl[0]);
-                         chart.redraw();
-                     },
-                     error:function(data){
-                                 //alert('Your data has not been submitted..Please try again');
+                            var index=$('#'+cntr).data('highcharts-chart');
+                            var chart=Highcharts.charts[index];
+                            var vals=[];
+                            var color='3a7bd5';
+                            var suf='';
+                            console.log(chart +'--'+id);
+                            while( chart.series.length > 0 ) {
+                                chart.series[0].remove( false );
                             }
-        });
-      }
-          
+                            $.each(data.res, function (key, val) {
+                            vals = val.map(function (x) { 
+                                return parseFloat(x, 10); 
+                            });
+                            if(key.toLowerCase()==='qty')
+                            {
+                                suf='(ltr)';
+                            }
+                            else
+                            {
+                                suf='';
+                            }
+                            
+                            chart.addSeries({  
+                                type: type,
+                                name: key.toUpperCase()+suf,
+                                data: vals,
+                                yAxis:1,
+                                color:'#'+color,
+                            }, false);
+                            color=parseInt(color)+003333;
+                           
+                            });
+                            chart.xAxis[0].setCategories(data.lbl[0]);
+                             chart.redraw();
+                         },
+                         error:function(data){
+                                     //alert('Your data has not been submitted..Please try again');
+                                }
+            });
+          }
+       //completed new code
 //calender functions
 var cal_data=" . $cal_data . ";
 var chartModal = $('#chartModal').modal({
@@ -930,9 +988,9 @@ var ecollection = b.map(function (x) {
     return parseFloat(x, 10); 
 });
 
-var bar_chart = $('#container5');
+var bar_chart = $('#milk_coll_widget');
 if (bar_chart.length) {      
-    Highcharts.chart('container5', {
+    Highcharts.chart('milk_coll_widget', {
         chart: {
             zoomType: 'xy'
         },

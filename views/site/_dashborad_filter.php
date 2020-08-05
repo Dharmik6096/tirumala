@@ -85,7 +85,7 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
 if (!empty($url) && !empty($id)) {
     $script = "
     barChart('{$container}','{$title}',[],[]);
-    drawChart('{$id}','{$container}','{$url}','{$type}');
+    // drawChart('{$id}','{$container}','{$url}','{$type}');
     $('.{$id}').on('click',function(e) {
         e.preventDefault();
         drawChart('{$id}','{$container}','{$url}','{$type}');        

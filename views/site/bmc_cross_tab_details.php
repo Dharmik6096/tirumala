@@ -17,8 +17,8 @@
                                     <th><?= Yii::t('app', 'Date') ?></th>
                                     <th><?= Yii::t('app', 'Sample Count') ?></th>
                                     <th><?= Yii::t('app', 'Qty') ?></th>
-                                    <th><?= Yii::t('app', 'Avg Fat') ?></th>
-                                    <th><?= Yii::t('app', 'Avg Snf') ?></th>
+                                    <th><?= Yii::t('app', 'Avg FAT') ?></th>
+                                    <th><?= Yii::t('app', 'Avg SNF') ?></th>
                                     <th><?= Yii::t('app', 'Amount') ?></th>
                                 </tr>
                             </thead>
