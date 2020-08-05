@@ -1605,7 +1605,7 @@ class GeneralFunctions extends Component {
             } else if (!preg_match('/^[0-9]*$/', $model->ref_code)) {
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
             } else if ($keyPattern['ref_code_type'] == 2) {
-                $cnt = $model->find()->where(['convert(bigint,ref_code)' => (int) $model->ref_code, 'union_code' => $model->union_code])
+                $cnt = $model->find()->where(['union_code' => $model->union_code, 'convert(bigint,ref_code)' => (int) $model->ref_code])
                         ->count();
                 if ($cnt > 0) {
                     $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
@@ -1725,7 +1725,7 @@ class GeneralFunctions extends Component {
                         $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
                     } else {
                         $cnt = $model->find()
-                                ->where(['convert(bigint,ref_code)' => (int) $model->ref_code, 'union_code' => $model->union_code])
+                                ->where(['union_code' => $model->union_code, 'convert(bigint,ref_code)' => (int) $model->ref_code])
                                 ->andWhere(['!=', $pk_key, $model->{$pk_key}])
                                 ->count();
                         if ($cnt > 0) {
