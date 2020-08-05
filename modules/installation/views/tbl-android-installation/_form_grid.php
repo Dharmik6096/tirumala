@@ -188,8 +188,26 @@ $script = "
                          var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
                             {
-                                $.pjax.reload({container: '#android-installation-list'});
-                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            
+                                bootbox.confirm({
+                                   message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj1.msg+'</span></div></div>',
+                                   buttons: {
+                                        'cancel': {
+                                                        label: '" . Yii::t('app', 'Cancel') . "',
+                                                        className: 'btn btn-default disp_none'
+                                          },
+                                           'confirm': {
+                                                          label: '" . Yii::t('app', 'OK') . "',
+                                                          className: 'btn btn-default',
+                                            }
+                                       },
+                                       callback: function(result) {
+                                                 $.pjax.reload({container: '#android-installation-list'});
+                                       }
+                                   });
+
+//                                $.pjax.reload({container: '#android-installation-list'});
+//                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
                             }
                             else if (obj1.status == 'error'){
                                 bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
