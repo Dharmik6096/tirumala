@@ -12,8 +12,7 @@ use app\modules\collection\models\TblDcsMilkDispatchTxn;
  */
 class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
 
-    public $shift_code, $dispatch_type, $destination_type, $challan_no, $destination_code;
-    public $union_code, $plant_code, $mcc_plant_code, $bmc_code, $ref_code;
+    public $destination_type, $challan_no, $destination_code;
 
     /**
      * @inheritdoc
@@ -54,7 +53,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsMilkDispatch', 'dcsCode']);
+        $query->joinWith(['dcsMilkDispatch', 'dcsMilkDispatch.dcsCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_milk_dispatch', 'tbl_dcs_milk_dispatch', 'tbl_dcs_milk_dispatch');
 
         if (!$this->validate()) {
