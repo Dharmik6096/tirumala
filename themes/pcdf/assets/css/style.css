@@ -2554,6 +2554,7 @@ div.crystalstyle{
 .panel .panel-body select:not([multiple]),
 .panel .panel-body .input-group-addon {
     height: 24px !important;
+    border-radius: 0px;
     /* max-width: 280px !important; */
 }
 .panel .panel-body .multiple select{
@@ -2724,7 +2725,7 @@ td.action-cell{
     opacity: 0.9;
     padding: 3px 0px;
     color: #fff !important;
-    font-weight: 300;
+    font-weight: 500;
 }
 
 .table-bordered .bg-default th{
@@ -2927,4 +2928,15 @@ select[multiple]{
 
 .hide-grid-export .grid-search.search-filter {
     width: calc(100% - 102px) !important;
+}
+
+@media (min-width: 768px){
+.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+    float: left;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+}
+div#society-compare {
+    padding-left: 5px;
 }

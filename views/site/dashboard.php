@@ -482,6 +482,8 @@ $script = "
         var position = '';
         var widgets = '" . $refreshWidgets . "';
         var widget = $.parseJSON(widgets);
+        // var data = $('form.panel-body').serialize();
+        // console.log(data);
         $.each(widget, function(index, value) {
             var datastring = $('form#'+value).serialize();
             $('#dataStringVal').val(datastring);
