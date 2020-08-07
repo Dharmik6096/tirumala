@@ -35,7 +35,7 @@ $this->title = Yii::t('app', $title);
         </div>
         <?php echo $form->errorSummary($model); ?>
         <?php echo Html::activeHiddenInput($model, 'plant_code', ['value' => $modelPlant->plant_code]) ?>
-        <div class="row">
+        <div class="row pading_l_15">
             <div class="col-sm-6">
                 <div class="btn-group">
                     <span class="input-group-btn">

@@ -49,7 +49,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($summary_model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-6 padding_10_0 theme-box theme_border_right">
+    <div class="col-md-6 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Society Details</h4>
         </div>
@@ -81,27 +81,21 @@ $form = ActiveForm::begin([
     <?php } ?>
 
     <div class="col-sm-4">
-        <div class="row">
-            <div class="col-sm-12">
-                <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-sm-12">
-                <?= Yii::$app->controls->local($model, $form); ?>
-            </div>
-        </div>
+        <?= $form->field($model, 'dcs_name')->textInput(['maxlength' => true]) ?>
     </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->controls->local($model, $form); ?>
+    </div>
+
     <?php //Yii::$app->dropdown->ismilk($model, $form, 'milk_type_code', 'Milk Type');    ?>
 
     <div class="col-sm-4">
-        <div class="row">            
-            <div class="col-sm-12">
-                <?= $form->field($model, 'dcs_short_name')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-sm-12">
-                <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
-            </div>
+        <?= $form->field($model, 'dcs_short_name')->textInput(['maxlength' => true]) ?>
         </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
     </div>
+
     <div class="col-sm-4">
         <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
     </div>
@@ -118,7 +112,7 @@ $form = ActiveForm::begin([
     <?php } ?>
 
     </div>
-    <div class="col-md-6 padding_10_0 theme-box">
+    <div class="col-md-6 padding_10_0 theme-box theme_border_left">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
@@ -126,18 +120,15 @@ $form = ActiveForm::begin([
             <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
         </div>-->
     <div class="col-sm-4">
-        <div class="row">
-            <div class="col-sm-12">
-                <?= $form->field($model, 'street1')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-sm-12">
-                <?= $form->field($model, 'street2')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-sm-12">
-                <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
-            </div>
-        </div>
+        <?= $form->field($model, 'street1')->textInput(['maxlength' => true]) ?>
     </div>
+    <div class="col-sm-4">
+        <?= $form->field($model, 'street2')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+    </div>
+        
     <?php
     //Yii::$app->dropdown->state($model, $form, 'state_code', 'State');
     ?>

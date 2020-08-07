@@ -68,15 +68,12 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Address Details</h4>
         </div>
         <div class="col-sm-4">
-            <div class="row">
-                <div class="col-sm-12">
-                    <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
-                </div>
-                <div class="col-sm-12">
-                    <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
-                </div>
-            </div>
+            <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
         </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+        </div>
+
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->state($model, $form, 'state_code', $model->getAttributeLabel('state_code'), FALSE); ?>
         </div>

@@ -123,6 +123,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-4">
         <?= $form->field($model, 'address')->textarea() ?>
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-4">
         <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
     </div>
