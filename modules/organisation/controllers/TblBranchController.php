@@ -52,7 +52,8 @@ class TblBranchController extends ChildController {
         $this->model = new TblBranch();
         $this->viewFile = 'create';
         $old_ifsc = '';
-        $this->model->valid_from =  date('Y-m-d');
+        $validate = 1;
+        $this->model->valid_from = date('Y-m-d');
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
             $this->model->branch_name = ucwords($this->model->branch_name);
@@ -61,9 +62,15 @@ class TblBranchController extends ChildController {
             $this->model->branch_code = $this->model->getCode();
             //$this->model->union_code=Yii::$app->session->get('Unions');
 
-            $transaction = $this->generalModel->saveTransaction([$this->model],['branch', 'create']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
+            if ($_POST['warning'] == 0) {
+                $msg = 'IFSC in {' . Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name') . '}  {' . $this->model->branch_name . '}';
+                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, $msg);
+            }
+            if ($validate == 1 && empty($this->model->getErrors())) {
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['branch', 'create']);
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
             }
         }
         $this->model->ifsc = $old_ifsc;
@@ -82,7 +89,7 @@ class TblBranchController extends ChildController {
         $old_ifsc = $this->model->ifsc;
         $this->model->state_code = $this->model->subDistrictCode->districtCode->stateCode->state_code;
         $this->model->district_code = $this->model->subDistrictCode->districtCode->district_code;
-
+        $validate = 1;
         if (Yii::$app->request->post()) {
             $historyModel = new TblBranchHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
@@ -91,10 +98,15 @@ class TblBranchController extends ChildController {
             $this->model->branch_name = ucwords($this->model->branch_name);
             $old_ifsc = $this->model->ifsc;
             $this->model->ifsc = strtoupper($this->model->ifsc);
-
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['branch', 'edit']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
+            if ($_POST['warning'] == 0) {
+                $msg = 'IFSC in {' . Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name') . '}  {' . $this->model->branch_name . '}';
+                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, $msg);
+            }
+            if ($validate == 1) {
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['branch', 'edit']);
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
             }
         }
         $this->model->ifsc = $old_ifsc;
@@ -108,12 +120,12 @@ class TblBranchController extends ChildController {
      * @return mixed
      */
     public function actionDelete() {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_branch','','', Yii::$app->request->post('id'), 'branch_code']);
+        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_branch', '', '', Yii::$app->request->post('id'), 'branch_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
-            $historyModel=new TblBranchHistory();
-            Yii::$app->operation->history($this->model,$historyModel, DELETE);
-            $record = $this->generalModel->deleteTransaction([$this->model,$historyModel]);
+            $historyModel = new TblBranchHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }
@@ -141,7 +153,7 @@ class TblBranchController extends ChildController {
      * By: Dhara
      * DAte: 8-11-2016
      * @return type
-     */    
+     */
     public function actionGetIfscCode() {
 
         $ifsc = '';
@@ -151,12 +163,13 @@ class TblBranchController extends ChildController {
         }
         echo Json::encode(['code' => $ifsc]);
     }
-    
+
     private function setModel() {
-        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);        
+        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
     }
 
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->branch_code]);
     }
+
 }

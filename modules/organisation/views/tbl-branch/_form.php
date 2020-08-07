@@ -1,7 +1,12 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
+
+$nameWarning = 0;
 $readonly = $type == 'create' ? FALSE : TRUE;
+if (!empty($_POST) && !empty($_POST['warning'])) {
+    $nameWarning = $_POST['warning'];
+}
 ?>
 
 <?php
@@ -15,6 +20,8 @@ $form = ActiveForm::begin([
         ]]);
 ?>
 <?php echo $form->errorSummary($model); ?>
+<?php Yii::$app->warning->hiddenfields($nameWarning,''); ?>
+
 <div class="row">
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-3', 'Bank'); ?>
@@ -34,7 +41,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->bankdistrict($model, $form, 'tblbranch-state_code,tblbranch-bank_code', 'district_code', 'District'); ?>
     </div>
-    <?php //Yii::$app->dropdown->dropdown('state_code', $model, $form, 'form-group col-sm-3','State');  ?>
+    <?php //Yii::$app->dropdown->dropdown('state_code', $model, $form, 'form-group col-sm-3','State');    ?>
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblbranch-district_code', 'form-group padding-right-5 col-sm-2', 'Sub District'); ?>
     </div>
