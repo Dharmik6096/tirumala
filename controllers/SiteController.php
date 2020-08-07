@@ -161,7 +161,7 @@ class SiteController extends Controller {
         $results = [];// $results = $this->callDashboardSp($union_str, $start_date, $end_date, $dcs_str);
         $results2 = [];// $results2 = $this->callDashboardSp($union_str, $today_date, $today_date, $dcs_str);
         $results3 = [];// $results3 = $this->callDashboardSp($union_str, $end_date, $end_date, $dcs_str);
-        $results4 = $this->callDashboardCalSp($union_str, $month);
+        $results4 = [];//$this->callDashboardCalSp($union_str, $month);
         $results5 = [];//$results5 = $this->getSpResult('fed_union');
         $results6 = [];//$results6 = $this->getWidgetDetails('sp_Portal_dashboard_bmc_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $results7 = [];//$results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
@@ -575,14 +575,14 @@ class SiteController extends Controller {
         $labels = [];
 
         //echo '<pre>';
-        //print_r($results);die;
+        // print_r($results);die;
         if (!empty($results)) {
             $keys = array_keys($results[0]);
             foreach ($keys as $key) {
-                if (in_array($key, ['qty', 'fat', 'snf', 'kgfat', 'kgsnf', 'm_qty', 'e_qty', 'm_fat', 'm_snf', 'e_fat', 'e_snf', 'm_kgfat', 'e_kgfat', 'm_kgsnf', 'e_kgsnf'])) {
+                if (in_array($key, ['qty', 'fat', 'snf', 'kgfat', 'kgsnf', 'm_qty', 'e_qty', 'm_fat', 'm_snf', 'e_fat', 'e_snf', 'm_kgfat', 'e_kgfat', 'm_kgsnf', 'e_kgsnf','m_quantity','e_quantity','DPUCount','CFCount','quantity'])) {
                     $series[$key] = array_column($results, $key);
                 }
-                if (in_array($key, ['union_short_name', 'collection_date', 'period'])) {
+                if (in_array($key, ['union_short_name', 'collection_date', 'period','dcs_name','union_name','VillageName','bmc_name'])) {
                     $labels[] = array_column($results, $key);
                 }
             }
@@ -753,6 +753,14 @@ class SiteController extends Controller {
             $union_str = implode('-', $union_ary);
         }
 
+        $cur_time = date_create(date('H:i:s'));
+        $morning_time = date_create('16:00:00');
+        $diff = date_diff($morning_time, $cur_time);
+        $time = '06:00:00';
+        if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
+            $time = '18:00:00';
+        }
+
         $plant_code = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
 //        $mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : (!empty(Yii::$app->request->post['mcc_code']) ? ',' . Yii::$app->request->post['mcc_code'] . ',' : 0);
 //        $bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : (!empty(Yii::$app->request->post['bmc_code']) ? ',' . Yii::$app->request->post['bmc_code'] . ',' : 0);
@@ -810,7 +818,7 @@ class SiteController extends Controller {
             'reconciliation_chart_widget' => [
                 'name' => 'sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart',
                 'appendTime' => true,
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d').' '.$time . '|date,date=' . date('Y-m-d').' '.$time . '|date',
             ],
             'table_milk_collection' => [
                 'name' => 'sp_portal_dashboard_milk_collection_table',
@@ -1855,7 +1863,7 @@ class SiteController extends Controller {
     }
 
     public function actionLoadDashboardBlockData() {
-        $sp = 'dashboard_blocks';
+        $sp = Yii::$app->request->post('sp');
         $results = $this->getSpResult($sp);
         $res = [];
         foreach ($results[0] as $key => $value) {

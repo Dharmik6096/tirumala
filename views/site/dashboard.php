@@ -92,7 +92,8 @@ $refreshWidgets = [
 'bmc_collection_summary',
 'monthly_milk_collection',
 'dashboard_blocks',
-'piechart_member_app'];
+'piechart_member_app',
+'calender'];
 
 $allowWidgets = $refreshWidgets;
 $refreshWidgets = json_encode($refreshWidgets);
@@ -299,8 +300,8 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'No. of Societies') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4 id="dashboard_blk_1"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h4>
-                        <p><b>M:</b> <span id="dashboard_blk_1_1"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_M'] : 0 ?></span> | <b>E:</b> <span id="dashboard_blk_1_2"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_E'] : 0 ?></span></p>
+                        <h4 id="no_of_societies"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h4>
+                        <p><b>M:</b> <span id="no_of_societies_M"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_M'] : 0 ?></span> | <b>E:</b> <span id="no_of_societies_E"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_E'] : 0 ?></span></p>
                     </div>
                 </div>
             </div>
@@ -309,7 +310,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p>No. of Pourers</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4 id="dashboard_blk_2"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h4>
+                        <h4 id="no_of_pourers"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h4>
                     </div>
                 </div>
             </div>
@@ -318,7 +319,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Collection vs Installed') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h4 id="dashboard_blk_3"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
+                        <p><h4 id="collection_vs_installed"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
                     </div>
                 </div>
             </div>
@@ -327,7 +328,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Collection vs Dispatch') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h4 id="dashboard_blk_4"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) ?></h4></p>
+                        <p><h4 id="collection_vs_dispatch"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) ?></h4></p>
                     </div>
                 </div>
             </div>
@@ -336,7 +337,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Dispatch vs Receipt') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h3 id="dashboard_blk_5"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
+                        <p><h3 id="dispatch_vs_receipt"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
                     </div>
                 </div>
             </div>
@@ -345,7 +346,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p>Total Milk Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3 id="dashboard_blk_6"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_avg_snf'] . '</span>' : 0 ?></h3>
+                        <h3 id="total_milk_collection_ltr"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_avg_snf'] . '</span>' : 0 ?></h3>
                     </div>
                 </div>
             </div>
@@ -354,8 +355,8 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p>Total Milk Dispatch(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3 id="dashboard_blk_7"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionDisQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionDisQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_dis_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_dis_avg_snf'] . '</span>' : 0 ?></h3>
-                        <p><b>M:</b> <span id="dashboard_blk_7_1"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['Dcs_DisQty_M']) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?></span> | <b>E:</b><span id="dashboard_blk_7_2"> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></span></p>
+                        <h3 id="total_milk_dispatch_ltr"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionDisQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionDisQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_dis_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_dis_avg_snf'] . '</span>' : 0 ?></h3>
+                        <p><b>M:</b> <span id="total_milk_dispatch_M"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['Dcs_DisQty_M']) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?></span> | <b>E:</b><span id="total_milk_dispatch_E"> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></span></p>
                     </div>
                 </div>
             </div>
@@ -364,7 +365,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="tbl-cell">
                         <p>Total BMC Collection(ltr)</p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4 id="dashboard_blk_8"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['BmcQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['BmcQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['bmc_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['bmc_avg_snf'] . '</span>' : 0 ?></h4>
+                        <h4 id="total_bmc_collection_ltr"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['BmcQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['BmcQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['bmc_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['bmc_avg_snf'] . '</span>' : 0 ?></h4>
                     </div>
                 </div>
             </div>
@@ -372,8 +373,8 @@ $refreshWidgets = json_encode($refreshWidgets);
 
         <div class="row">            
             <div class="col-sm-12">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'reconciliation', 'diff_sp_name' => 'reconciliation_chart_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'reconciliation_chart_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Reconciliation Chart')]); ?>
-                <div id="reconciliation" class="cont"></div>
+                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'reconciliation_chart_widget_container', 'diff_sp_name' => 'reconciliation_chart_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'reconciliation_chart_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Reconciliation Chart')]); ?>
+                <div id="reconciliation_chart_widget_container" class="cont"></div>
             </div>            
         </div>
 
@@ -482,31 +483,32 @@ $script = "
         var position = '';
         var widgets = '" . $refreshWidgets . "';
         var widget = $.parseJSON(widgets);
-        // var data = $('form.panel-body').serialize();
-        // console.log(data);
         $.each(widget, function(index, value) {
             var datastring = $('form#'+value).serialize();
             $('#dataStringVal').val(datastring);
             if(['fed_union',
                 'fed_comparison',
                 'fed_datewise',
-                'reconciliation_chart_widget',
                 'table_milk_collection',
                 'manual_vs_auto_collection',
                 'dipatch_vs_receipt',
                 'bmc_collection_summary',
                 'monthly_milk_collection',
                 'dashboard_blocks',
-                'piechart_member_app'].indexOf(value) == -1) 
+                'piechart_member_app',
+                'calender'].indexOf(value) == -1) 
                 {
                     setChartWidgets(value);
                 }
-            // console.log(value)
+            
             else if(['dashboard_blocks'].indexOf(value) == 0){
+                var blockDataString = $('#collapse1 form').serialize();
+                var id= 'dashboard_blocks';
+                var union= $('#dashboard-union_code').val();
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/site/load-dashboard-block-data']) . "',
-                    data: datastring,
+                    data: blockDataString+'&sp='+id+'&union='+union,
                     success: function(data) {
                         var obj1 = data;
                         if (obj1.status == 'success')
@@ -516,24 +518,107 @@ $script = "
                                     obj1.res[key] = 0;
                                 }
                             }
-                            $('#dashboard_blk_1').text(obj1.res.Dcs_Count);
-                            $('#dashboard_blk_1_1').text(obj1.res.Dcs_Count_M);
-                            $('#dashboard_blk_1_2').text(obj1.res.Dcs_Count_E);
-                            $('#dashboard_blk_2').text(obj1.res.Total_Member); 
-                            $('#dashboard_blk_3').text(obj1.res.Dcs_Count+'/'+obj1.res.Install_Count);
-                            $('#dashboard_blk_4').text(obj1.res.Dcs_Count+'/'+obj1.res.Dcs_DisQty_total);
-                            $('#dashboard_blk_5').text(obj1.res.Dcs_DisQty_total+'/'+obj1.res.bmc_dcs_Count);
-                            $('#dashboard_blk_6').text(obj1.res.UnionQty+'/'+obj1.res.union_avg_fat+'/'+obj1.res.union_avg_snf);
-                            $('#dashboard_blk_7').text(obj1.res.UnionDisQty+'/'+obj1.res.union_dis_avg_fat+'/'+obj1.res.union_dis_avg_snf);
-                            $('#dashboard_blk_7_1').text(obj1.res.Dcs_DisQty_M);
-                            $('#dashboard_blk_7_2').text(obj1.res.Dcs_DisQty_E);
-                            $('#dashboard_blk_8').text(obj1.res.BmcQty+'/'+obj1.res.bmc_avg_fat+'/'+obj1.res.bmc_avg_snf);
+                            $('#no_of_societies').text(obj1.res.Dcs_Count);
+                            $('#no_of_societies_M').text(obj1.res.Dcs_Count_M);
+                            $('#no_of_societies_E').text(obj1.res.Dcs_Count_E);
+                            $('#no_of_pourers').text(obj1.res.Total_Member); 
+                            $('#collection_vs_installed').text(obj1.res.Dcs_Count+'/'+obj1.res.Install_Count);
+                            $('#collection_vs_dispatch').text(obj1.res.Dcs_Count+'/'+obj1.res.Dcs_DisQty_total);
+                            $('#dispatch_vs_receipt').text(obj1.res.Dcs_DisQty_total+'/'+obj1.res.bmc_dcs_Count);
+                            $('#total_milk_collection_ltr').text(obj1.res.UnionQty+'/'+obj1.res.union_avg_fat+'/'+obj1.res.union_avg_snf);
+                            $('#total_milk_dispatch_ltr').text(obj1.res.UnionDisQty+'/'+obj1.res.union_dis_avg_fat+'/'+obj1.res.union_dis_avg_snf);
+                            $('#total_milk_dispatch_M').text(obj1.res.Dcs_DisQty_M);
+                            $('#total_milk_dispatch_E').text(obj1.res.Dcs_DisQty_E);
+                            $('#total_bmc_collection_ltr').text(obj1.res.BmcQty+'/'+obj1.res.bmc_avg_fat+'/'+obj1.res.bmc_avg_snf);
                         }
                     },
                     error:function(data){
                         //alert('Your data has not been submitted..Please try again');
                     }
                 });
+            }
+            else if(['calender'].indexOf(value) == 0){
+                //calendar widget
+                $('#calendar').fullCalendar({
+                dayRender: function(date, cell) {
+                    var d=date.format('YYYY-MM-DD');
+                    if(d in cal_data)
+                    {
+                        cell.append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">'+cal_data[d][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\">'+cal_data[d][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">'+cal_data[d][2]+'</span></div>');
+                    }
+                },
+                defaultDate: moment('" . $date . "'),
+                viewRender: function (view, element) {
+                var b = $('#calendar').fullCalendar('getDate');
+                var m=b.format('Y-MM');
+                var union= $('#dashboard-union_code').val();
+                        $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                    $.ajax({
+                                type: 'post',
+                                url: '" . Url::to(['/site/load-month-data']) . "',
+                                data: 'm='+m+'&union='+union,
+                                success: function(data) {
+
+                                    var obj1 = data;
+                                    if (obj1.status == 'success')
+                                    {
+                                    cal_data=obj1.res;                                                   
+                                    }
+                                    let cview = $('#calendar').fullCalendar('getView');  
+                                    cview.unrenderDates();
+                                    cview.renderDates();
+                                    $(window).trigger('resize'); 
+                                    
+
+                                },
+                                error:function(data){
+                                            //alert('Your data has not been submitted..Please try again');
+                                        }
+                    });
+                },
+                dayClick: function(date, jsEvent, view) {
+                var dt=date.format();
+                var union= $('#dashboard-union_code').val();
+                    $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
+                    $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                    $.ajax({
+                                type: 'post',
+                                url: '" . Url::to(['/site/load-dcs-data']) . "',
+                                data: 'dt='+dt+'&union='+union,
+                                success: function(data) {
+
+                                    var obj1 = data;
+                                    if (obj1.status == 'success')
+                                    {
+                                    
+                                        var html='<div class=\"milk-collection\">'+
+                                        '<div class=\"table-responsive\"><table class=\"table table-striped\">'+
+                                        '<thead><tr><th>Union</th><th>Villages</th><th>Avg FAT</th><th>Avg SNF</th><th>Milk Collection (ltr)</th></tr></thead>';
+                                    $.each(obj1.res, function(index, value) {
+                                        html=html+'<tr>'+
+                                            '<td>'+value.union_name+'</td>'+
+                                            '<td>'+value.dcs_name+'</td>'+
+                                            '<td>'+value.AvgFAT+'</td>'+
+                                            '<td>'+value.AvgSNF+'</td>'+
+                                            '<td>'+value.total_qty+'</td>'+
+                                        '</tr>';
+                                        });
+                                        
+                                    html=html+'</table></div></div>';
+                                $('#calendar_details').html(html);
+                                    }
+                                    else{
+                                        $('#calendar_details').html('Data not available.');
+                                    }
+
+                                },
+                                error:function(data){
+                                            //alert('Your data has not been submitted..Please try again');
+                                        }
+                    });
+                    chartModal.modal('show');
+                }
+            });
             }
         });
     });
@@ -544,9 +629,10 @@ $script = "
         // console.log(set_widget_id+'_container');
     }
 //new code
-    barChart('bmc_dispatch_widget_container','BMC Dispatch',[],[]);
-    barChart('milk_coll_widget_container','Milk Collection',[],[]);
-    barChart('bmc_coll_widget_container','BMC Collection',[],[]);
+    barChart('bmc_dispatch_widget_container','".Yii::$app->controls->view_date($date)." BMC Dispatch',[],[]);
+    barChart('milk_coll_widget_container','".Yii::$app->controls->view_date($date)." Milk Collection',[],[]);
+    barChart('bmc_coll_widget_container','".Yii::$app->controls->view_date($date)." BMC Collection',[],[]);
+    barChart('reconciliation_chart_widget_container','".Yii::$app->controls->view_date($date)." Reconciliation Chart',[],[]);
     // barChart('collection_farmer_container','',[],[]);
     function barChart(cont,text,xdata,ydata){
         var bar_chart = $('#'+cont);
@@ -556,7 +642,7 @@ $script = "
                         zoomType: 'xy'
                     },
                     title: {
-                        text: text
+                        text:text
                     },
                     xAxis: [{
                             categories: xdata,
@@ -614,7 +700,11 @@ $script = "
          
           function drawChart(id,cntr,url,type)
           {
-            var datastring = $('#'+id).serialize();
+            if(['bmc_union_comparison','union_datewise','bmc_union_datewise','union_comparison'].indexOf(id) == -1){
+                var datastring = $('#collapse1 form').serialize();
+            }else{
+                var datastring = $('#'+id).serialize();
+            }
             var union= $('#dashboard-union_code').val();
             $.ajax({
                          type: 'post',
@@ -668,87 +758,7 @@ var cal_data=" . $cal_data . ";
 var chartModal = $('#chartModal').modal({
         show: false
     });
-//calendar widget
-    $('#calendar').fullCalendar({
-    dayRender: function(date, cell) {
-        var d=date.format('YYYY-MM-DD');
-        if(d in cal_data)
-        {
-            cell.append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">'+cal_data[d][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\">'+cal_data[d][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">'+cal_data[d][2]+'</span></div>');
-        }
-      },
-    defaultDate: moment('" . $date . "'),
-    viewRender: function (view, element) {
-       var b = $('#calendar').fullCalendar('getDate');
-       var m=b.format('Y-MM');
-       var union= $('#dashboard-union_code').val();
-            $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
-        $.ajax({
-                     type: 'post',
-                     url: '" . Url::to(['/site/load-month-data']) . "',
-                     data: 'm='+m+'&union='+union,
-                     success: function(data) {
 
-                         var obj1 = data;
-                         if (obj1.status == 'success')
-                         {
-                          cal_data=obj1.res;                                                   
-                         }
-                        let cview = $('#calendar').fullCalendar('getView');  
-                        cview.unrenderDates();
-                        cview.renderDates();
-                        $(window).trigger('resize'); 
-                         
-
-                     },
-                     error:function(data){
-                                 //alert('Your data has not been submitted..Please try again');
-                             }
-         });
-    },
-    dayClick: function(date, jsEvent, view) {
-       var dt=date.format();
-       var union= $('#dashboard-union_code').val();
-        $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
-        $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
-        $.ajax({
-                     type: 'post',
-                     url: '" . Url::to(['/site/load-dcs-data']) . "',
-                     data: 'dt='+dt+'&union='+union,
-                     success: function(data) {
-
-                         var obj1 = data;
-                          if (obj1.status == 'success')
-                         {
-                          
-                            var html='<div class=\"milk-collection\">'+
-                            '<div class=\"table-responsive\"><table class=\"table table-striped\">'+
-                            '<thead><tr><th>Union</th><th>Villages</th><th>Avg FAT</th><th>Avg SNF</th><th>Milk Collection (ltr)</th></tr></thead>';
-                           $.each(obj1.res, function(index, value) {
-                            html=html+'<tr>'+
-                                '<td>'+value.union_name+'</td>'+
-                                '<td>'+value.dcs_name+'</td>'+
-                                '<td>'+value.AvgFAT+'</td>'+
-                                '<td>'+value.AvgSNF+'</td>'+
-                                '<td>'+value.total_qty+'</td>'+
-                            '</tr>';
-                             });
-                            
-                        html=html+'</table></div></div>';
-                       $('#calendar_details').html(html);
-                         }
-                         else{
-                            $('#calendar_details').html('Data not available.');
-                         }
-
-                     },
-                     error:function(data){
-                                 //alert('Your data has not been submitted..Please try again');
-                             }
-         });
-        chartModal.modal('show');
-    }
-});
 
 function barChart(cont,text,xdata,ydata){
 var bar_chart = $('#'+cont);
