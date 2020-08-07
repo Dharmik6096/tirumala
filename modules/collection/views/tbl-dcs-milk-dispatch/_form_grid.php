@@ -33,7 +33,7 @@ $attribute = [
         }, 'filter' => false],
     ['label' => Yii::t('app', 'Ref. Code'), 'attribute' => 'ref_code',
         'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+            return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['dcsCode'], 'ref_code');
         },],
     ['label' => Yii::t('app', 'DCS Name'), 'attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['dcsCode'], 'dcs_name');
