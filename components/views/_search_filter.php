@@ -117,11 +117,11 @@ if (!empty($filter_data)) {
                                         $request = Yii::$app->request->queryParams;
                                         $model->$value = !empty($model->$value) ? $model->$value : date('d-m-Y');
                                         $f_cnt++;
-                                        if(in_array($value,array('from_date'))){
+                                        //if(in_array($value,array('from_date'))){
                                             ?>
-                                            <div class="clearfix"></div>
+                                            <!-- <div class="clearfix"></div> -->
                                             <?php
-                                        }
+                                        // }
                                         ?>
                                         <div class="col-sm-3">
                                             <?= Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, false); ?>

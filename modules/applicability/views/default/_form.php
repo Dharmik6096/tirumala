@@ -158,7 +158,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="mcc-wrap checkAllMcc" class="app-check-list-padding <?= $customerClass ?>">
+                <div id="mcc-wrap checkAllMcc" class="pading_l_15 app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
                         'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
@@ -184,7 +184,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="bmc-wrap checkAllBmc" class="app-check-list-padding <?= $customerClass ?>">
+                <div id="bmc-wrap checkAllBmc" class="pading_l_15 app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
                         'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
@@ -210,7 +210,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="route-wrap checkAllRoute" class="app-check-list-padding <?= $customerClass ?>">
+                <div id="route-wrap checkAllRoute" class="pading_l_15 app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
                         'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
@@ -237,7 +237,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="dcs-wrap" class="app-check-list-padding <?= $customerClass ?>">
+                <div id="dcs-wrap" class="pading_l_15 app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
                         'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,

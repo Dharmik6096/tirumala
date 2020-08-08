@@ -1093,6 +1093,8 @@ input[type="hidden"] + .help-block{
 .bootbox-alert .bootbox-body,
 .bootbox-confirm .bootbox-body{
     text-align: center;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 .bootbox-alert .modal-body,
 .bootbox-confirm .modal-body{

@@ -29,6 +29,7 @@ $this->title = Yii::t('app', $title);
                 <h4 class="theme-box-heading"><?php echo $title; ?></h4>
             </div>
         <?= $form->errorSummary($model); ?>
+        <div class="col-md-12">
         <div class="row multiple">
             <?php
             echo $form->field($model, 'federation', [ 'options' => ['class' => 'form-group col-sm-12 hidden',]])
@@ -95,7 +96,6 @@ $this->title = Yii::t('app', $title);
             ]);
             ?>
             <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
-
             <div class="clearfix"></div>
             <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
@@ -104,6 +104,7 @@ $this->title = Yii::t('app', $title);
                     <?= Yii::$app->controls->cancel($model); ?>
                 </div>
             </div>
+        </div>
         </div>
     </div>
         <?php ActiveForm::end(); ?>

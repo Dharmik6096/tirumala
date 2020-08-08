@@ -44,49 +44,49 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 <?= $class ?>">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbldpuincentivemaster-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, '', false, TRUE); ?>         
         </div>
-        <div class="clearfix"></div>
+        
 
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?=
             $form->field($model, 'm_start_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                 'mask' => '99:99',])
             ?> 
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?=
             $form->field($model, 'm_cutoff_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                 'mask' => '99:99',])
             ?> 
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?=
             $form->field($model, 'm_lock_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                 'mask' => '99:99',])
             ?> 
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?=
             $form->field($model, 'e_start_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                 'mask' => '99:99',])
             ?> 
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?=
             $form->field($model, 'e_cutoff_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                 'mask' => '99:99',])
             ?> 
         </div>
 
-        <div class="col-sm-2">
+        <div class="col-sm-1">
             <?=
             $form->field($model, 'e_lock_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                 'mask' => '99:99',])
             ?> 
         </div>
-        <div class="col-sm-2 number-validate">
+        <div class="col-sm-1 number-validate">
             <?= $form->field($model, 'inc_rate')->textInput() ?>
         </div>
-        <div class="col-sm-2 number-validate">
+        <div class="col-sm-1 number-validate">
             <?= $form->field($model, 'inc_deduction')->textInput() ?>
         </div>
 

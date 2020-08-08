@@ -26,7 +26,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">BMC Milk Dispatch Detail</h4>
         </div>
-        <div class="col-lg-8 micro_form <?= $disabled ?>">
+        <div class="col-md-8 micro_form <?= $disabled ?> padding-bottom-20">
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>

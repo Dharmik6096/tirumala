@@ -35,28 +35,29 @@ use yii\bootstrap\ActiveForm;
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                     <h4 class="theme-box-heading">Menu Permission</h4>
                 </div>
-                <div class="input-group">
-                    <span class="input-group-btn">
-                        <?=
-                        Html::submitButton(
-                                Yii::t('app', 'Save'), ['class' => 'btn btn-default']
-                        )
-                        ?>
-                    </span>
-
-                    <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= UserManagementModule::t('back', 'Search route'); ?>">
-
-                    <span class="input-group-btn">
-                        <span id="show-only-selected-routes" class="btn btn-default">
-                            <i class="fa fa-minus"></i> <?= Yii::t('app', 'Show only selected'); ?>
+                <div class="col-sm-12 col-md-12 margin-bottom-10 clearfix">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <?=
+                            Html::submitButton(
+                                    Yii::t('app', 'Save'), ['class' => 'btn btn-default']
+                            )
+                            ?>
                         </span>
 
-                        <span id="show-all-routes" class="btn btn-default hide">
-                            <i class="fa fa-plus"></i> <?= Yii::t('app', 'Show all'); ?>
+                        <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= UserManagementModule::t('back', 'Search route'); ?>">
+
+                        <span class="input-group-btn">
+                            <span id="show-only-selected-routes" class="btn btn-default">
+                                <i class="fa fa-minus"></i> <?= Yii::t('app', 'Show only selected'); ?>
+                            </span>
+
+                            <span id="show-all-routes" class="btn btn-default hide">
+                                <i class="fa fa-plus"></i> <?= Yii::t('app', 'Show all'); ?>
+                            </span>
                         </span>
-                    </span>
+                    </div>
                 </div>
-
                 <hr/>
                 <div id="routes-list" class="checkbox">
                     <?php
