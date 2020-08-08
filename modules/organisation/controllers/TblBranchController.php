@@ -52,6 +52,7 @@ class TblBranchController extends ChildController {
         $this->model = new TblBranch();
         $this->viewFile = 'create';
         $old_ifsc = '';
+        $old_bank = '';
         $validate = 1;
         $this->model->valid_from = date('Y-m-d');
         if ($this->model->load(Yii::$app->request->post())) {
@@ -60,12 +61,22 @@ class TblBranchController extends ChildController {
             $old_ifsc = $this->model->ifsc;
             $this->model->ifsc = strtoupper($this->model->ifsc);
             $this->model->branch_code = $this->model->getCode();
+            $old_bank = $this->model->bank_code;
             //$this->model->union_code=Yii::$app->session->get('Unions');
 
             if ($_POST['warning'] == 0) {
-                $msg = 'IFSC in {' . Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name') . '}  {' . $this->model->branch_name . '}';
-                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, $msg);
+                $detail = $this->model->getExistingIfsc();
+                $bankName = '';
+                $branchName = '';
+                if (!empty($detail)) {
+                    $branchName = $detail->branch_name;
+                    $this->model->bank_code = $detail->bank_code;
+                    $bankName = Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name');
+                }
+                $msg = 'IFSC has alreday been taken in ' . $bankName . ' and ' . $branchName . ' Are you sure you want to continue?';
+                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, '', $msg);
             }
+            $this->model->bank_code = $old_bank;
             if ($validate == 1 && empty($this->model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['branch', 'create']);
                 if ($transaction !== FALSE) {
@@ -98,10 +109,20 @@ class TblBranchController extends ChildController {
             $this->model->branch_name = ucwords($this->model->branch_name);
             $old_ifsc = $this->model->ifsc;
             $this->model->ifsc = strtoupper($this->model->ifsc);
+            $old_bank = $this->model->bank_code;
             if ($_POST['warning'] == 0) {
-                $msg = 'IFSC in {' . Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name') . '}  {' . $this->model->branch_name . '}';
-                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, $msg);
+                $detail = $this->model->getExistingIfsc();
+                $bankName = '';
+                $branchName = '';
+                if (!empty($detail)) {
+                    $branchName = $detail->branch_name;
+                    $this->model->bank_code = $detail->bank_code;
+                    $bankName = Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name');
+                }
+                $msg = 'IFSC has alreday been taken in ' . $bankName . ' and ' . $branchName . ' Are you sure you want to continue?';
+                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, '', $msg);
             }
+            $this->model->bank_code = $old_bank;
             if ($validate == 1) {
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['branch', 'edit']);
                 if ($transaction !== FALSE) {

@@ -282,4 +282,9 @@ class TblBranch extends ChildModel {
         return $record;
     }
 
+    public function getExistingIfsc() {
+        $record = $this->find()->where(['ifsc' => ucwords($this->ifsc), 'is_active' => 1])->andWhere(['<>', 'branch_code', $this->branch_code])->one();
+        return $record;
+    }
+
 }
