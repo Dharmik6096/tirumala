@@ -73,7 +73,7 @@ class TblBranchController extends ChildController {
                     $this->model->bank_code = $detail->bank_code;
                     $bankName = Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name');
                 }
-                $msg = 'IFSC has alreday been taken in ' . $bankName . ' and ' . $branchName . ' Are you sure you want to continue?';
+                $msg = 'IFSC has alreday been taken in ' . '<b>' . $bankName . '</b> and <b>' . $branchName . '</b> Are you sure you want to continue?';
                 $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, '', $msg);
             }
             $this->model->bank_code = $old_bank;
@@ -119,7 +119,7 @@ class TblBranchController extends ChildController {
                     $this->model->bank_code = $detail->bank_code;
                     $bankName = Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name');
                 }
-                $msg = 'IFSC has alreday been taken in ' . $bankName . ' and ' . $branchName . ' Are you sure you want to continue?';
+                $msg = 'IFSC has alreday been taken in ' . '<b>' . $bankName . '</b> and <b>' . $branchName . '</b> Are you sure you want to continue?';
                 $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, '', $msg);
             }
             $this->model->bank_code = $old_bank;
