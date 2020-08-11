@@ -156,13 +156,15 @@ if (isset($data['url1'])) {
                                             <?php
                                         }
                                         if (in_array($value, array('payment_cycle_code'))) {
-                                            $where = json_encode(['data_lock_bmc' => 1]);
-                                            echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
-                                            echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
 
                                             if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {
                                                 echo Html::hiddenInput('customer_type', $value_array[2], ['id' => 'reportsmodel-customer_type']);
+                                                $where = json_encode(['data_lock_member' => 1]);
+                                            } else {
+                                                $where = json_encode(['data_lock_bmc' => 1]);
                                             }
+                                            echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
+                                            echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                                             ?>
                                             <div class="col-sm-6">
                                                 <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>

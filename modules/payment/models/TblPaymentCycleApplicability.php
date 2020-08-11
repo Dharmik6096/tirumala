@@ -191,7 +191,7 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
                 $query->andWhere(['billing_lock_member' => 1]);
             }
         }
-        $data = $query->orderBy('from_date ASC')->all();
+        $data = $query->orderBy('from_date DESC')->all();
         return \yii\helpers\ArrayHelper::map($data, function($model) {
                     return $model['payment_cycle_code'];
                 }, function($model) {
