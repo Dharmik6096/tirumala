@@ -239,7 +239,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'TotalPaymentCompanyWisePaymentCycleWise';
         if (Yii::$app->request->queryParams) {
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
-                $this->report = 'CompanyWiseVendorPaymentConsolidated';
+                $this->report = 'TotalPaymentCompanyWiseConsolidated';
             }
         }
         return $this->actionIndex();
@@ -343,6 +343,96 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionCalibrationFlag() {
         $this->report = 'CalibrationFlag';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsMaster() {
+        $this->report = 'DcsMaster';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMaster() {
+        $this->report = 'MemberMaster';
+        return $this->actionIndex();
+    }
+
+    public function actionSapStatusReport() {
+        $this->report = 'SapStatusReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapDetailedStatusReport';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionSapComparisionReport() {
+        $this->report = 'SapComparisionReportDateWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SapComparisionReportDateShiftWise';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionDispatchVsReceipt() {
+        $this->report = 'DispatchVsReceipt';
+        return $this->actionIndex();
+    }
+
+    public function actionCpmilkSapReport() {
+        $this->report = 'CPMemberReportSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'CPRmrdReportSap';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionVendorPayment() {
+        $this->report = 'VendorPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPayment() {
+        $this->report = 'MemberPaymentDcsWise';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberPaymentMemberWise';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionVendorBankPayment() {
+        $this->report = 'VendorBankPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberBankPayment() {
+        $this->report = 'MemberBankPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberOutstandingDetail() {
+        $this->report = 'MemberOutstandingDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionRateApplicabilityDetails() {
+        $this->report = 'RateApplicabilityDetails';
+        return $this->actionIndex();
+    }
+
+    public function actionRateAcknowledgement() {
+        $this->report = 'RateAcknowledgement';
+        return $this->actionIndex();
+    }
+
+    public function actionAmcsSyncPending() {
+        $this->report = 'AmcsSyncPending';
         return $this->actionIndex();
     }
 
@@ -908,6 +998,130 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_procurment_cleaning_flag',
                 'scenario' => 'CleaningFlagBmc',
                 'title' => '807- Cleaning Flag Bmc',
+            ],
+            'DcsMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_dcs_master_register',
+                'scenario' => '',
+                'title' => 'DCS Register',
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No'],
+                'removeExportType' => ['CSV'],
+                'output_type' => FALSE
+            ],
+            'MemberMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
+                'sp_name' => 'sp_mis_member_master_register',
+                'scenario' => '',
+                'title' => 'Member Register',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
+                'removeExportType' => ['CSV'],
+                'output_type' => FALSE
+            ],
+            'SapStatusReport' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_status_report',
+                'scenario' => 'SapStatusReport',
+                'title' => '401 - Status Report',
+                'report_type' => [Yii::t('app', 'Date Shift Wise'), Yii::t('app', 'MCC and Date Shift Wise')],
+            ],
+            'SapDetailedStatusReport' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_detailed_status_report',
+                'scenario' => 'SapStatusReport',
+                'title' => '401 - Status Report',
+                'report_type' => [Yii::t('app', 'Date Shift Wise'), Yii::t('app', 'MCC and Date Shift Wise')],
+            ],
+            'SapComparisionReportDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_comparision_date_wise',
+                'scenario' => 'SapComparisionReport',
+                'title' => '402 - Comparision Report',
+                'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
+            ],
+            'SapComparisionReportDateShiftWise' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_comparision_date_shift_wise',
+                'scenario' => 'SapComparisionReport',
+                'title' => '402 - Comparision Report',
+                'report_type' => [Yii::t('app', 'Date Wise'), Yii::t('app', 'Date & Shift Wise')],
+            ],
+            'DispatchVsReceipt' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_dispatch_vs_receipt',
+                'scenario' => 'DispatchVsReceipt',
+                'title' => '403 - Dispatch vs Receipt Report',
+            ],
+            'CPMemberReportSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_member_collection',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'export_file_name' => 'Plant_Code_VMCC_from_date_from_shift',
+            ],
+            'CPRmrdReportSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_rmrd_collection',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+            ],
+            'VendorPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_vendor_payment',
+                'scenario' => 'VendorPayment',
+                'title' => '602 - Vendor Payment',
+            ],
+            'MemberPaymentDcsWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_billing_dcs_wise',
+                'scenario' => 'MemberPayment',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+            ],
+            'MemberPaymentMemberWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_billing_member_wise',
+                'scenario' => 'MemberPayment',
+                'title' => '603 - Member Payment',
+                'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
+            ],
+            'VendorBankPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,payment_cycle_code,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_vendor_bank_payment',
+                'scenario' => 'VendorBankPayment',
+                'title' => '606 - Vendor Bank Payment',
+            ],
+            'MemberBankPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,payment_cycle_code:default:dcs,bank_type:static:bank_type',
+                'sp_name' => 'sp_mis_member_bank_payment',
+                'scenario' => 'MemberBankPayment',
+                'title' => '607 - Member Bank Payment',
+            ],
+            'MemberOutstandingDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_member_outstanding_detail',
+                'scenario' => 'MemberOutstandingDetail',
+                'title' => '608 - Member Outstanding Detail',
+            ],
+            'RateApplicabilityDetails' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'sp_name' => 'sp_mis_dcs_wise_rate_applicability_details',
+                'scenario' => 'RateApplicabilityDetails',
+                'title' => '901 - Rate Applicability Details',
+            ],
+            'RateAcknowledgement' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,rate_type:static:rate_type,p_organization_type:static:p_organization_type,p_date:string',
+                'sp_name' => 'sp_mis_rate_download_acknowledgement',
+                'scenario' => 'RateAcknowledgement',
+                'title' => '902 - Rate Acknowledgement',
+            ],
+            'AmcsSyncPending' => [
+                'param' => 'p_organization_type:static:p_organization_type,union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_sentbox_sync_pending_data',
+                'scenario' => 'AmcsSyncPending',
+                'title' => '903 - AMCS Sync Pending',
             ],
         ];
         return $label[$l];

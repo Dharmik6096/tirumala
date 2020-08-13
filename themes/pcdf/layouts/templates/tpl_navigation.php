@@ -370,8 +370,8 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
                     'items' => [
-                        ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/default/dcs-master']],
-                        ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/default/member-master']],
+                        ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/reports/dcs-master']],
+                        ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/reports/member-master']],
                     ]
                 ],
                 [
@@ -422,10 +422,10 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'SAP') . '<b class="caret"></b></a>',
                     'items' => [
-                        ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/default/sap-status-report']],
-                        ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/default/sap-comparision-report']],
-                        ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/default/dispatch-vs-receipt']],
-                        ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/cpmilk-sap-report']],
+                        ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/reports/sap-status-report']],
+                        ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/reports/sap-comparision-report']],
+                        ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/reports/dispatch-vs-receipt']],
+                        ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/cpmilk-sap-report']],
                     ]
                 ],
                 [
@@ -447,13 +447,13 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
                     'items' => [
                         ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
-                        ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/default/vendor-payment']],
-                        ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/default/member-payment']],
+                        ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment']],
+                        ['label' => '603-' . Yii::t('app', 'Member Payment'), 'url' => ['/misreports/reports/member-payment']],
                         ['label' => '604-' . Yii::t('app', 'Vendor Milk Payment'), 'url' => ['/jasperreports/default/vendor-milk-payment']],
                         ['label' => '605-' . Yii::t('app', 'Member Milk Payment'), 'url' => ['/jasperreports/default/member-milk-payment']],
-                        ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/default/vendor-bank-payment']],
-                        ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/default/member-bank-payment']],
-                        ['label' => '608-' . Yii::t('app', 'Member Outstanding Detail'), 'url' => ['/misreports/default/member-outstanding-detail']],
+                        ['label' => '606-' . Yii::t('app', 'Vendor Bank Payment'), 'url' => ['/misreports/reports/vendor-bank-payment']],
+                        ['label' => '607-' . Yii::t('app', 'Member Bank Payment'), 'url' => ['/misreports/reports/member-bank-payment']],
+                        ['label' => '608-' . Yii::t('app', 'Member Outstanding Detail'), 'url' => ['/misreports/reports/member-outstanding-detail']],
                         ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill']],
                         ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill']],
                     ]
@@ -482,9 +482,9 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other MIS') . '<b class="caret"></b></a>',
                     'items' => [
-                        ['label' => '901-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/default/rate-applicability-details']],
-                        ['label' => '902-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/default/rate-acknowledgement']],
-                        ['label' => '903-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/default/amcs-sync-pending']],
+                        ['label' => '901-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/reports/rate-applicability-details']],
+                        ['label' => '902-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/reports/rate-acknowledgement']],
+                        ['label' => '903-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/reports/amcs-sync-pending']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

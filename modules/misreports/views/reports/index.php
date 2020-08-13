@@ -226,9 +226,11 @@ if (isset($data['url1'])) {
                                     }
 
                                     if (isset($data['report_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
+                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type']);
                                     }
-                                    echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
+                                    if (!isset($data['output_type'])) {
+                                        echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
+                                    }
                                     ?>
 
                                     <div class="modal-footer mt10 col-sm-12">

@@ -235,19 +235,19 @@ class V1 extends \yii\base\Module {
             ],
             'report/member-collection' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
-                'sp' => 'sp_app_eipl_v1_member_collection_day_wise_report',
+                'sp' => 'sp_mis_member_collection_day_wise_report',
                 'call_action' => TRUE,
                 'blank_org_to_zero' => true
             ],
             'report/member-collection-passbook' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
-                'sp' => 'sp_app_eipl_v1_member_collection_passbook',
+                'sp' => 'sp_mis_member_collection_passbook',
                 'call_action' => TRUE,
                 'blank_org_to_zero' => true
             ],
             'report/member-collection-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
-                'sp' => 'sp_app_eipl_v1_member_collection_summary',
+                'sp' => 'sp_mis_member_collection_summary',
                 'call_action' => TRUE,
                 'blank_org_to_zero' => true
             ],
@@ -390,12 +390,12 @@ class V1 extends \yii\base\Module {
             ],
             'report/member-collection-paymentcyclewise' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime',
-                'sp' => 'sp_app_eipl_v1_member_collection_paymentcycle_wise_report',
+                'sp' => 'sp_mis_member_collection_paymentcycle_wise_report',
                 'blank_org_to_zero' => true
             ],
             'report/member-collection-monthwise' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime',
-                'sp' => 'sp_app_eipl_v1_member_collection_monthwise_report',
+                'sp' => 'sp_mis_member_collection_monthwise_report',
                 'blank_org_to_zero' => true
             ],
             'dashboard/shift-collection-summary' => [
