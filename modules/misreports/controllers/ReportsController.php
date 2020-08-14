@@ -552,21 +552,21 @@ class ReportsController extends \app\controllers\ChildController {
             //101
             'MemberDailyCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'sp_app_eipl_v1_member_collection_day_wise_report',
+                'sp_name' => 'sp_mis_member_collection_day_wise_report',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'sp_app_eipl_v1_member_collection_passbook',
+                'sp_name' => 'sp_mis_member_collection_passbook',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
-                'sp_name' => 'sp_app_eipl_v1_member_collection_summary',
+                'sp_name' => 'sp_mis_member_collection_summary',
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
@@ -601,13 +601,13 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MemberCollectionPaymentCycleWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,date:string',
-                'sp_name' => 'sp_app_eipl_v1_member_collection_paymentcycle_wise_report',
+                'sp_name' => 'sp_mis_member_collection_paymentcycle_wise_report',
                 'scenario' => 'MemberCollectionPaymentCycleWise',
                 'title' => '104 - Member Collection Payment Cycle Wise',
             ],
             'MemberWiseMonthlyCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,date:string',
-                'sp_name' => 'sp_app_eipl_v1_member_collection_monthwise_report',
+                'sp_name' => 'sp_mis_member_collection_monthwise_report',
                 'scenario' => 'MemberWiseMonthlyCollection',
                 'title' => '105 - Member Wise Monthly Collection',
             ],
