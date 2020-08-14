@@ -540,7 +540,7 @@ class ReportsController extends \app\controllers\ChildController {
             header('Content-Type: text/plain');
             echo $content;
         }
-        if ($model->output_type !== 'VIEW') {
+        if ($model->output_type == 'DOWNLOAD') {
             $this->downloadData();
         }
     }
@@ -1002,7 +1002,7 @@ class ReportsController extends \app\controllers\ChildController {
             'DcsMaster' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
                 'sp_name' => 'sp_mis_dcs_master_register',
-                'scenario' => '',
+                'scenario' => 'DcsMaster',
                 'title' => 'DCS Register',
                 'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No'],
                 'removeExportType' => ['CSV'],
@@ -1011,7 +1011,7 @@ class ReportsController extends \app\controllers\ChildController {
             'MemberMaster' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
                 'sp_name' => 'sp_mis_member_master_register',
-                'scenario' => '',
+                'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
                 'removeExportType' => ['CSV'],

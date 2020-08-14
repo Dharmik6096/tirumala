@@ -27,14 +27,14 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['BmcCollectionShiftReport', 'DCSWiseFromDateToDateSummary', 'AgentPaymentFromDateToDate', 'VendorPaymentConsolidated']],
             [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status'], 'required', 'on' => ['UnionWiseCollVsDispatch', 'UnionWiseCollVsRecipt', 'UnionWiseDispatchVsRecipt']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'member_code', 'no_of_payment_cycle'], 'required', 'on' => ['MemberWiseNoOfPaymentCycle']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['AnalyzerCleaningReview', 'AnalyzerCleaningPendingActivity', 'AnalyzerPcbReplacement', 'CPReportSap', 'VendorPayment']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['AnalyzerCleaningReview', 'AnalyzerCleaningPendingActivity', 'AnalyzerPcbReplacement', 'VendorPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'date'], 'required', 'on' => ['CleaningFlag', 'EkoMilkCalibration']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'date', 'calibration_day'], 'required', 'on' => ['CalibrationFlag', 'CleaningFlagBmc']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MemberDailyCollection', 'MemberWiseSummary']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['DcsCollDateShiftSummary', 'ManualMilkEntryMemberDateShiftWise']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['ManualMilkEntrySocietyDateShiftWise']],
             [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['UnionCollDateShiftWiseSummary']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['VendorWiseSummary', 'BmcWiseSummary', 'VendorPaymentCycleWiseBmcWise']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['VendorWiseSummary', 'BmcWiseSummary', 'VendorPaymentCycleWiseBmcWise', 'CPReportSap']],
             [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['UnionWiseSummary', 'CompanyWisePaymentCycleWise', 'VendorPaymentCycleWiseUnionWise', 'TotalPaymentCompanyWisePaymentCycleWise']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['BmcWisePaymentCycleWise', 'SocietyWiseCda']],
             [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => 'GprsDataReconciliation'],
@@ -47,7 +47,7 @@ class ReportsModel extends Model {
             [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
             [['p_organization_type', 'rate_type', 'union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['RateAcknowledgement']],
             [['p_organization_type', 'union_code', 'plant_code'], 'required', 'on' => ['AmcsSyncPending']],
-            [['output_type'], 'required']
+            [['output_type'], 'required', 'except' => ['DcsMaster', 'MemberMaster']]
         ];
     }
 
