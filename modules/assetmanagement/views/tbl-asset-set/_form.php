@@ -46,10 +46,10 @@ $btn = $type == 'create' ? 'create' : 'update';
             <div class="col-sm-3 from_warehouse from_plant from_hide <?= $class ?>">
                 <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetset-from_type', '', $model->getAttributeLabel('from_dest'), 'from_dest', $readonly); ?>
             </div>
-            <div class="col-sm-3 from_mcc from_dsk default_hide from_hide">
+            <div class="col-sm-3 from_bmc from_dcs default_hide from_hide">
                 <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassetset-union_code', 'from_plant', $model->getAttributeLabel('from_plant')); ?>
             </div>
-            <div class="col-sm-3 from_mcc from_dsk default_hide from_hide">
+            <div class="col-sm-3 from_bmc from_dcs default_hide from_hide">
                 <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassetset-from_plant', 'from_mcc', $model->getAttributeLabel('from_mcc')); ?>
             </div>
             <div class="col-sm-3 default_hide from_hide">

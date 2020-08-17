@@ -56,7 +56,7 @@ class Path extends Component {
         '\\app\modules\dcsaccounting\models\\' =>
         ['TblLedgerGroup', 'TblLedger',
             'TblFinancialYear',
-            'TblAssetGroup', 'TblLedgerSubledgerMapping', 'TblLedgerSubledgerMappingHistory', 'TblAssetHistory', 'TblAssetSubGroup',
+            'TblLedgerSubledgerMapping', 'TblLedgerSubledgerMappingHistory', 'TblAssetHistory', 'TblAssetSubGroup',
             'TblUnionBillHead', 'TblUnionBillHeadHistory',
             'TblTax', 'TblTaxStateMapping', 'TblTaxStateMappingHistory', 'TblTaxDepends', 'TblTaxDependsHistory',
             'TblTaxGroup', 'TblTaxGroupHistory', 'TblBasicTax', 'TblSubLedger', 'TblTaxHistory', 'TblBasicTaxHistory', 'TblTaxDetail', 'TblTaxDetailHistory'],
@@ -85,6 +85,8 @@ class Path extends Component {
         '\\app\modules\staffmanagement\models\\' => ['TblStaffMember', 'TblStaffMemberHistory', 'TblStaffAttendance', 'TblStaffAttendanceHistory', 'TblStaffSalaryTransaction', 'TblStaffSalaryTransactionHistory', 'TblStaffSalaryHistory', 'TblStaffInstallment', 'TblStaffInstallmentHistory', 'TblStaffMemberDesignationHistory', 'TblStaffSalaryProcess', 'TblStaffSalaryProcessTransaction', 'TblStaffSalaryProcessHistory', 'TblStaffSalaryProcessTransactionHistory', 'TblStaffAdditionDeduction', 'TblStaffMemberFamilyDetails', 'TblStaffMemberFamilyDetailsHistory', 'TblStaffSalaryHoldDue', 'TblStaffSalaryHoldDueHistory', 'TblStaffLeaveMaster', 'TblStaffLeaveMasterHistory'],
         '\\app\modules\payment\models\\' => ['TblProductSaleTransaction', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding', 'TblProductSaleTaxCalculated', 'TblProductSaleTaxCalculatedHistory', 'TblProductSaleTransactionHistory', 'TblProductSale', 'TblVspPaymentConfig'],
         '\\app\modules\tankermovement\models\\' => ['TblQtyDiffType', 'TblConfigTxnResult', 'TblBmcDispatchInspection', 'TblBmcMilkDispatch', 'TblBmcMilkDispatchTxn', 'TblBmcDispatchStock', 'TblVehicleTrip', 'TblPreCollectionCheck', 'TblMilkVehicleEntry', 'TblMilkVehicleEntryTransaction'],
+        '\\app\modules\assetmanagement\models\\' => ['TblAssetDetail', 'TblStoreLocation', 'TblAssetGroup', 'TblAssetMaster', 'TblAssetMasterHistory', 'TblAssetGroupHistory', 'TblAssetDetailHistory', 'TblStoreLocationHistory', 'TblStoreLocationType', 'TblAssetTransaction', 'TblAssetTransactionHistory', 'TblAssetSet', 'TblAssetSetHistory'],
+        '\\app\modules\complaint\models\\' => ['TblComplainProduct'],
     ];
 
     public function get($model) {
