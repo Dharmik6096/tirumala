@@ -38,19 +38,19 @@ $form = ActiveForm::begin([
     <?php //Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetdetail-store_location_type', '', $model->getAttributeLabel('store_location_code'), 'store_location_code', $readonly);  ?>
         </div> -->
 
-    <div class="col-sm-3 to_warehouse to_plant default_hide to_hide">
+    <div class="col-sm-3 to_4 to_1 default_hide to_hide">
         <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetdetail-store_location_type', '', $model->getAttributeLabel('store_location_code'), 'store_location_code', $readonly); ?>
     </div>
-    <div class="col-sm-3 to_mcc to_dsk default_hide to_hide">
+    <div class="col-sm-3 to_2 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassetdetail-union_code', 'to_plant', $model->getAttributeLabel('to_plant'), FALSE, '', $readonly); ?>
     </div>
-    <div class="col-sm-3 to_mcc to_dsk default_hide to_hide">
+    <div class="col-sm-3 to_2 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassetdetail-to_plant', 'to_mcc', $model->getAttributeLabel('to_mcc'), FALSE, '', $readonly); ?>
     </div>
-    <div class="col-sm-3 default_hide to_hide">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassetdetail-to_mcc', 'to_bmc', $model->getAttributeLabel('to_bmc'), FALSE, '', $readonly); ?>
+    <div class="col-sm-3 to_2 to_3 default_hide to_hide">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassetdetail-to_mcc', 'to_bmc', $model->getAttributeLabel('to_bmc'), FALSE, '', '', $readonly); ?>
     </div>
-    <div class="col-sm-3 to_dsk default_hide to_hide">
+    <div class="col-sm-3 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassetdetail-to_bmc', 'to_dcs', $model->getAttributeLabel('to_dcs'), FALSE, '', $readonly, TRUE); ?>
     </div>
 
@@ -99,6 +99,9 @@ $script = "
 $(document).ready(function(){
    $('.hide-serial-no').hide(); 
    $('.hide-qty-no').hide(); 
+   if('$type'!='create'){ 
+     hideSerialno();     
+   }   
     });
      $('.default_hide').hide();
     showHideParams('to');
@@ -107,27 +110,24 @@ $(document).ready(function(){
         showHideParams('to');
         getStoreLocationCode('to', 'Yes');
     });
- $('#tblassetdetail-to_mcc').on('change', function(){
+ $('#tblassetdetail-to_bmc').on('change', function(){
         var selectedParamName = getParamName('to');
-        if(selectedParamName == 'mcc'){
+        if(selectedParamName == '2'){
             getStoreLocationCode('to');
         }
     });
     $('#tblassetdetail-to_dcs').on('change', function(){
         var selectedParamName = getParamName('to');
-        if(selectedParamName == 'dcs'){
+        if(selectedParamName == '3'){
             getStoreLocationCode('to');
         }
     }); 
     function getParamName(select_type){
-        var selectParam = $('#tblassetdetail-store_location_type option:selected').text();
-        selectParam = selectParam.toLowerCase();
-        var paramName = selectParam == 'dsk' ? 'dcs' : selectParam;
+        var paramName = $('#tblassetdetail-store_location_type').val();
         return paramName;
     }
 function showHideParams(type) {
-        var selectParam = $('#tblassetdetail-store_location_type option:selected').text();
-        selectParam = selectParam.toLowerCase();
+        var selectParam = $('#tblassetdetail-store_location_type').val();
         $('.'+type+'_hide').hide();
         $('.'+type+'_'+selectParam).show();
     }
@@ -162,19 +162,19 @@ function showHideParams(type) {
         });
     }
      function getStoreLocationCode(select_type, checkEvent = 'No'){
-        var selectParam = $('#tblassetdetail-store_location_type option:selected').text();
+        var selectParam = $('#tblassetdetail-store_location_type').val();
         selectParam = selectParam.toLowerCase();
-        if(selectParam == 'dsk' || selectParam == 'mcc'){
-            var paramName = selectParam == 'dsk' ? 'dcs' : selectParam;
+        if(selectParam == '3' || selectParam == '2'){
+            var paramName = selectParam == '3' ? 'dcs' : 'bmc';
             mainVal = $('#tblassetdetail-'+select_type+'_'+paramName).val();
             var dest_type_code = $('#tblassetdetail-store_location_type').val();
             if(mainVal != '' && mainVal != null && mainVal != undefined && dest_type_code != '') {
                 var dcs_code = $('#tblassetdetail-'+select_type+'_dcs').val();
-                var mcc_code = $('#tblassetdetail-'+select_type+'_mcc').val();
+                var bmc_code = $('#tblassetdetail-'+select_type+'_bmc').val();
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/assetmanagement/tbl-store-location/get-store-location-code']) . "',
-                    data: {'dest_type_code' : dest_type_code, 'dest_type' : selectParam, 'mcc_code' : mcc_code, 'dsk_code' : dcs_code},
+                    data: {'dest_type_code' : dest_type_code, 'dest_type' : paramName, 'bmc_code' : bmc_code, 'dcs_code' : dcs_code},
                     success: function(data) {
                         var obj1 = $.parseJSON(data);
                         if(obj1.status == 'success') {

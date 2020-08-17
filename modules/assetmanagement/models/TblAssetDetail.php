@@ -8,7 +8,7 @@ use app\modules\assetmanagement\models\TblAssetGroup;
 //use app\modules\organisation\models\TblManufacturer;
 use app\modules\assetmanagement\models\TblStoreLocation;
 use app\modules\organisation\models\TblUnions;
-use app\modules\materialmanagement\models\TblCustomerMaster;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_asset_detail".

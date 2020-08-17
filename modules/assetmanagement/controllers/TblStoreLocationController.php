@@ -18,6 +18,11 @@ class TblStoreLocationController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['/assetmanagement/tbl-store-location/get-store-location-code'];
 
+    public function init() {
+        parent::init();
+        $this->enableCsrfValidation = FALSE;
+    }
+
     /**
      * Displays a single TblStoreLocation model.
      * @param string $id

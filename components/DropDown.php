@@ -997,6 +997,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['-1' => Yii::t('app', 'In-Transit'), 0 => Yii::t('app', 'In-Store'), 1 => Yii::t('app', 'Outward'), 2 => Yii::t('app', 'In-Use')],
             ],
+            'asset_type' => [
+                'name' => 'asset_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'New'), 1 => Yii::t('app', 'Faulty')],
+            ],
         ];
         return $records[$l];
     }
@@ -1089,6 +1094,9 @@ class DropDown extends Component {
             'store_location_type' => ['name' => 'store_location_type', 'fields' => 'slt_code,slt_name', 'prompt' => 'Select Type', 'model' => 'TblStoreLocationType'],
             'slc_type' => ['name' => 'store_location_code', 'fields' => 'store_location_code,store_location_name,local_name', 'prompt' => Yii::t('app', 'Store Location'), 'model' => 'TblStoreLocation', 'depend' => 'store_location_type'],
             'asset_set' => ['name' => 'sap_code', 'fields' => 'asset_set_code,sap_code', 'prompt' => Yii::t('app', 'SAP Code'), 'model' => 'TblAssetSet', 'depend' => 'store_location_code'],
+            'union_asset' => ['name' => 'asset_code', 'fields' => 'asset_code,asset_name,local_name', 'prompt' => Yii::t('app', 'Select Asset'), 'model' => 'TblAssetMaster', 'depend' => 'union_code'],
+            'asset_code' => ['name' => 'asset_code', 'fields' => 'asset_code,asset_name,local_name', 'prompt' => Yii::t('app', 'Select Asset'), 'model' => 'TblAssetMaster', 'depend' => 'asset_group_code'],
+            'customer_code' => ['name' => 'customer_code', 'fields' => 'customer_code,customer_name,local_name', 'prompt' => Yii::t('app', 'Select Customer'), 'model' => 'TblCustomerMaster', 'depend' => 'customer_type'],
         ];
         return $label[$l];
     }

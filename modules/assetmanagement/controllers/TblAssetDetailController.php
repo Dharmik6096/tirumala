@@ -27,6 +27,11 @@ class TblAssetDetailController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['get-asset-is-serial', 'get-serial-no', 'validate-asset-qty'];
 
+    public function init() {
+        parent::init();
+        $this->enableCsrfValidation = FALSE;
+    }
+
     /**
      * Lists all TblAssetDetail models.
      * @return mixed
@@ -117,10 +122,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         if ($this->model->store_location_type == 3) {
             $this->model->to_plant = Yii::$app->general->getmultiforeignkey($this->model->storeLocCode, ['toDcsCode'], 'plant_code');
             $this->model->to_mcc = Yii::$app->general->getmultiforeignkey($this->model->storeLocCode, ['toDcsCode'], 'mcc_plant_code');
+            $this->model->to_bmc = Yii::$app->general->getmultiforeignkey($this->model->storeLocCode, ['toDcsCode'], 'bmc_code');
             $this->model->to_dcs = Yii::$app->general->getforeignkey($this->model->storeLocCode, 'reference_code');
         } elseif ($this->model->store_location_type == 2) {
             $this->model->to_plant = Yii::$app->general->getmultiforeignkey($this->model->storeLocCode, ['toMccPlantCode'], 'plant_code');
-            $this->model->to_mcc = Yii::$app->general->getforeignkey($this->model->storeLocCode, 'reference_code');
+            $this->model->to_mcc = Yii::$app->general->getmultiforeignkey($this->model->storeLocCode, ['toMccPlantCode'], 'mcc_plant_code');
+            $this->model->to_bmc = Yii::$app->general->getforeignkey($this->model->storeLocCode, 'reference_code');
         }
         if (Yii::$app->request->post()) {
             $historyModel = new TblAssetDetailHistory();
@@ -281,6 +288,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                 }
             }
         }
+        return $this->redirect(['index']);
     }
 
     public function actionCheckSerialNumber($serial_number) {
@@ -436,12 +444,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             if (!$trModel->validate()) {
                 foreach ($trModel->getErrors() as $e) {
                     $errMsg = !empty($e[0]) ? $e[0] : '';
-                    $msg .= !empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
+                    $msg .=!empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
                 }
             }
             if ($diffQty < $_POST['qty'] || !empty($msg)) {
                 $e = $diffQty < $_POST['qty'] ? Yii::t('app', 'Quantity can not be greater than ') . $diffQty : '';
-                $msg .= !empty($msg) ? '<br/>' . $e : $e;
+                $msg .=!empty($msg) ? '<br/>' . $e : $e;
                 $data['msg'] = $msg;
             } else {
                 $isSerialNo = Yii::$app->general->getforeignkey($trModel->assetCode, 'is_serial_number');

@@ -92,6 +92,7 @@ class importData extends \yii\base\Module {
             'asset-master' => ['table_name' => 'tbl_asset_master', 'fields' => 'asset_group_code,asset_code,asset_name,local_name,cmpl_product_code,is_serial_number', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
             'store-location' => ['table_name' => 'tbl_store_location', 'fields' => 'union_code,store_location_name,local_name,store_location_type,reference_code,sloc_code', 'default_fields' => 'is_active:1', 'increment' => 1, 'scenario' => 'importCsv'],
             'asset-group' => ['table_name' => 'tbl_asset_group', 'fields' => 'union_code,asset_group_code,asset_group_name,local_name,reference_code', 'default_fields' => 'is_active:1'],
+            'asset-detail' => ['import_class' => 'tbl_asset_transaction', 'import_main_class' => 'AssetDetailImportStrategy', 'table_name' => 'tbl_asset_detail', 'fields' => 'asset_code,sap_code,serial_number,qty,make,from_type,from_sloc,to_type,to_sloc,capacity,purchase_date,transaction_date,warranty_period,maintanance_duration_in_days,in_use', 'default_fields' => 'is_active:1', 'increment' => 1, 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

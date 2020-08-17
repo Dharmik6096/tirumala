@@ -399,6 +399,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Asset Master'), 'url' => ['/assetmanagement/tbl-asset-master/index'], 'active' => ($cntrl == 'tbl-asset-master')],
                         ['label' => Yii::t('app', 'Store Location'), 'url' => ['/assetmanagement/tbl-store-location/index'], 'active' => ($cntrl == 'tbl-store-location')],
                         ['label' => Yii::t('app', 'Asset SAP Code'), 'url' => ['/assetmanagement/tbl-asset-set/index'], 'active' => ($cntrl == 'tbl-asset-set/index')],
+                        ['label' => Yii::t('app', 'Asset Detail'), 'url' => ['/assetmanagement/tbl-asset-detail/index'], 'active' => ($cntrl == 'tbl-asset-detail/index')],
                     ],
                 ],
                 [
