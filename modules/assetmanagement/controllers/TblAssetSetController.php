@@ -21,7 +21,7 @@ use app\modules\assetmanagement\models\TblAssetTransactionHistory;
  */
 class TblAssetSetController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['org-aap-code-list', 'get-dcs-data', 'union-sap-code-list'];
+    public $freeAccessActions = ['org-aap-code-list', 'get-dcs-data', 'union-sap-code-list','set-detail'];
 
     /**
      * Lists all TblAssetSet models.
@@ -206,9 +206,9 @@ class TblAssetSetController extends \app\controllers\ChildController {
 
     public function actionGetDcsData() {
         $model = new TblAssetSet();
-        $mcc = Yii::$app->request->post('from_mcc');
+        $bmc = Yii::$app->request->post('from_bmc');
         $dcsmodel = new TblDcs();
-        $data = $dcsmodel->dcsData($mcc);
+        $data = $dcsmodel->dcsData($bmc);
         return $this->renderAjax('_dcs_form', [
                     'model' => $model,
                     'data' => $data,

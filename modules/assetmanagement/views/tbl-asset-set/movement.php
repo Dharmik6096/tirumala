@@ -35,19 +35,19 @@ $this->title = Yii::$app->label->title('create', 'Asset SAP Code Movement');
                 <div class="col-sm-2 from_warehouse from_plant default_hide from_hide">
                     <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassettransaction-from_type', '', $model->getAttributeLabel('from_dest'), 'from_dest', false); ?>
                 </div>
-                <div class="col-sm-2 from_mcc from_dsk default_hide from_hide">
+                <div class="col-sm-2 from_bmc from_dcs default_hide from_hide">
                     <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassettransaction-union_code', 'from_plant', $model->getAttributeLabel('from_plant')); ?>
                 </div>
-                <div class="col-sm-2 from_mcc from_dsk default_hide from_hide">
+                <div class="col-sm-2 from_bmc from_dcs default_hide from_hide">
                     <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassettransaction-from_plant', 'from_mcc', $model->getAttributeLabel('from_mcc')); ?>
                 </div>
-                <div class="col-sm-2 default_hide from_hide">
+                <div class="col-sm-2 from_bmc from_dcs default_hide from_hide">
                     <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassettransaction-from_mcc', 'from_bmc', $model->getAttributeLabel('from_bmc')); ?>
                 </div>
-                <div class="col-sm-2 from_dsk default_hide from_hide">
+                <div class="col-sm-2 from_dcs default_hide from_hide">
                     <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassettransaction-from_bmc', 'from_dcs', $model->getAttributeLabel('from_dcs'), FALSE, '', FALSE, TRUE); ?>
                 </div>
-                <div class="col-sm-2 from_warehouse from_plant from_dsk from_mcc default_hide from_hide">
+                <div class="col-sm-2 from_warehouse from_plant from_dcs from_bmc default_hide from_hide">
                     <?= Yii::$app->dropdown->depend_dropdown('asset_set', $model, $form, 'tblassettransaction-from_dest', '', $model->getAttributeLabel('sap_code'), 'sap_code', false); ?>
                 </div>
             </div>
@@ -64,16 +64,16 @@ $this->title = Yii::$app->label->title('create', 'Asset SAP Code Movement');
                 <div class="col-sm-2 to_warehouse to_plant default_hide to_hide">
                     <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassettransaction-to_type', '', $model->getAttributeLabel('to_dest'), 'to_dest', false); ?>
                 </div>
-                <div class="col-sm-2 to_mcc to_dsk default_hide to_hide disa_drop">
+                <div class="col-sm-2 to_bmc to_dcs default_hide to_hide disa_drop">
                     <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassettransaction-union_code', 'to_plant', $model->getAttributeLabel('to_plant')); ?>
                 </div>
-                <div class="col-sm-2 to_mcc to_dsk default_hide to_hide disa_drop">
+                <div class="col-sm-2 to_bmc to_dcs default_hide to_hide disa_drop">
                     <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassettransaction-to_plant', 'to_mcc', $model->getAttributeLabel('to_mcc')); ?>
                 </div>
-                <div class="col-sm-2 default_hide to_hide disa_drop">
+                <div class="col-sm-2 to_bmc to_dcs default_hide to_hide disa_drop">
                     <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassettransaction-to_mcc', 'to_bmc', $model->getAttributeLabel('to_bmc')); ?>
                 </div>
-                <div class="col-sm-2 to_dsk default_hide to_hide">
+                <div class="col-sm-2 to_dcs default_hide to_hide">
                     <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassettransaction-to_bmc', 'to_dcs', $model->getAttributeLabel('to_dcs'), FALSE, '', FALSE, TRUE); ?>
                 </div>
             </div>
@@ -148,9 +148,9 @@ $script = "
         $('.'+type+'_'+selectParam).show();
     }
     
-    $('#tblassettransaction-from_mcc').on('change', function(){
+    $('#tblassettransaction-from_bmc').on('change', function(){
         var selectedParamName = getParamName('from');
-        if(selectedParamName == 'mcc'){
+        if(selectedParamName == 'bmc'){
             getStoreLocationCode('from');
         }
     });
@@ -160,9 +160,9 @@ $script = "
             getStoreLocationCode('from');
         }
     });
-    $('#tblassettransaction-to_mcc').on('change', function(){
+    $('#tblassettransaction-to_bmc').on('change', function(){
         var selectedParamName = getParamName('to');
-        if(selectedParamName == 'mcc'){
+        if(selectedParamName == 'bmc'){
             getStoreLocationCode('to');
         }
     });
@@ -175,23 +175,23 @@ $script = "
     function getParamName(select_type){
         var selectParam = $('#tblassettransaction-'+select_type+'_type option:selected').text();
         selectParam = selectParam.toLowerCase();
-        var paramName = selectParam == 'dsk' ? 'dcs' : selectParam;
+        var paramName = selectParam == 'dcs' ? 'dcs' : selectParam;
         return paramName;
     }
     function getStoreLocationCode(select_type, checkEvent = 'No'){
         var selectParam = $('#tblassettransaction-'+select_type+'_type option:selected').text();
         selectParam = selectParam.toLowerCase();
-        if(selectParam == 'dsk' || selectParam == 'mcc'){
-            var paramName = selectParam == 'dsk' ? 'dcs' : selectParam;
+        if(selectParam == 'dcs' || selectParam == 'bmc'){
+            var paramName = selectParam == 'dcs' ? 'dcs' : selectParam;
             mainVal = $('#tblassettransaction-'+select_type+'_'+paramName).val();
             var dest_type_code = $('#tblassettransaction-'+select_type+'_type').val();
             if(mainVal != '' && mainVal != null && mainVal != undefined && dest_type_code != '') {
                 var dcs_code = $('#tblassettransaction-'+select_type+'_dcs').val();
-                var mcc_code = $('#tblassettransaction-'+select_type+'_mcc').val();
+                var bmc_code = $('#tblassettransaction-'+select_type+'_bmc').val();
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/assetmanagement/tbl-store-location/get-store-location-code']) . "',
-                    data: {'dest_type_code' : dest_type_code, 'dest_type' : selectParam, 'mcc_code' : mcc_code, 'dsk_code' : dcs_code},
+                    data: {'dest_type_code' : dest_type_code, 'dest_type' : selectParam, 'bmc_code' : bmc_code, 'dcs_code' : dcs_code},
                     success: function(data) {
                         var obj1 = $.parseJSON(data);
                         if(obj1.status == 'success') {
@@ -254,14 +254,15 @@ $script = "
         selectParam = selectParam.toLowerCase();
          var fromType = $('#tblassettransaction-from_type').val();
          var fromPlant = $('#tblassettransaction-from_plant').val();
+         var fromBmc = $('#tblassettransaction-from_bmc').val();
          var fromMcc = $('#tblassettransaction-from_mcc').val();
          var fromDcs = $('#tblassettransaction-from_dcs').val();
          $('#tblassettransaction-to_type').val('');
          $('#tblassettransaction-to_type').trigger('change');
          $('.disa_drop').removeClass('disabled');
          $('.dis_dcs').removeClass('disabled');
-        if(selectParam == 'dsk'){
-             $('#tblassettransaction-to_type').val(2);
+        if(selectParam == 'dcs'){
+            $('#tblassettransaction-to_type').val(2);
              $('#tblassettransaction-to_type').trigger('change');
                    $('#tblassettransaction-to_plant').val(fromPlant);
                    $('#tblassettransaction-to_plant').trigger('change');
@@ -271,9 +272,14 @@ $script = "
                    $('#tblassettransaction-to_mcc').trigger('change');
                    $('#tblassettransaction-to_mcc').trigger('select2:select');
                });
+               $('#tblassettransaction-to_bmc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                   $('#tblassettransaction-to_bmc').val(fromBmc);
+                   $('#tblassettransaction-to_bmc').trigger('change');
+                   $('#tblassettransaction-to_bmc').trigger('select2:select');
+               });
                $('.disa_drop').addClass('disabled');
                $('.dis_dcs').addClass('disabled');
-        }
+         }
         
     }
     
@@ -283,12 +289,13 @@ $script = "
         selectParam = selectParam.toLowerCase();
          var fromType = $('#tblassettransaction-from_type').val();
          var fromPlant = $('#tblassettransaction-from_plant').val();
+         var fromBmc = $('#tblassettransaction-from_bmc').val();
          var fromMcc = $('#tblassettransaction-from_mcc').val();
          var fromDcs = $('#tblassettransaction-from_dcs').val();
-         if(selectParam == 'mcc'){
+         if(selectParam == 'bmc'){
             var selectToParam = $('#tblassettransaction-to_type option:selected').text();
             selectToParams = selectToParam.toLowerCase();
-                if(selectToParams == 'dsk'){
+                if(selectToParams == 'dcs'){
                    $('#tblassettransaction-to_plant').val(fromPlant);
                    $('#tblassettransaction-to_plant').trigger('change');
                    $('#tblassettransaction-to_plant').trigger('select2:select');
@@ -296,6 +303,11 @@ $script = "
                          $('#tblassettransaction-to_mcc').val(fromMcc);
                          $('#tblassettransaction-to_mcc').trigger('change');
                          $('#tblassettransaction-to_mcc').trigger('select2:select');
+                       });
+                      $('#tblassettransaction-to_bmc').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                         $('#tblassettransaction-to_bmc').val(fromBmc);
+                         $('#tblassettransaction-to_bmc').trigger('change');
+                         $('#tblassettransaction-to_bmc').trigger('select2:select');
                        });
                         $('.disa_drop').addClass('disabled');
                 }
