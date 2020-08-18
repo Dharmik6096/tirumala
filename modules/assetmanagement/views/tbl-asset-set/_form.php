@@ -52,16 +52,16 @@ $btn = $type == 'create' ? 'create' : 'update';
             <div class="col-sm-3 from_bmc from_dcs default_hide from_hide">
                 <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassetset-from_plant', 'from_mcc', $model->getAttributeLabel('from_mcc')); ?>
             </div>
-            <div class="col-sm-3 default_hide from_hide">
+            <div class="col-sm-3 from_bmc from_dcs default_hide from_hide">
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassetset-from_mcc', 'from_bmc', $model->getAttributeLabel('from_bmc')); ?>
             </div>
             <div class="col-sm-3 default_hide from_hide">
                 <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassetset-from_bmc', 'from_dcs', $model->getAttributeLabel('from_dcs'), FALSE, '', FALSE, TRUE); ?>
             </div>
-            <div class="col-sm-3 from_mcc from_plant from_warehouse from_hide <?= $class ?>">
+            <div class="col-sm-3 from_bmc from_plant from_warehouse from_hide <?= $class ?>">
                 <?= $form->field($model, 'sap_code')->textInput() ?>
             </div>
-            <div class="col-sm-3 from_mcc from_plant from_warehouse from_hide <?= $class ?><?= $class_dcs ?>">
+            <div class="col-sm-3 from_bmc from_plant from_warehouse from_hide <?= $class ?><?= $class_dcs ?>">
                 <?= $form->field($model, 'status', ['checkboxTemplate' => "<div class='checkbox mt25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox()->label('In-Use'); ?>
             </div> 
         </div>
@@ -134,12 +134,12 @@ $script = "
         $('#dcs_view').hide();
     }
     
-    $('#tblassetset-from_mcc').on('change', function(){
+    $('#tblassetset-from_bmc').on('change', function(){
         var selectedParamName = getParamName('from');
         if(selectedParamName == 'dcs'){
         getDcsData();
         }
-        if(selectedParamName == 'mcc'){
+        if(selectedParamName == 'bmc'){
             getStoreLocationCode('from');
         }
     });
@@ -151,7 +151,7 @@ $script = "
     });
     $('#tblassetset-to_mcc').on('change', function(){
         var selectedParamName = getParamName('to');
-        if(selectedParamName == 'mcc'){
+        if(selectedParamName == 'bmc'){
             getStoreLocationCode('to');
         }
     });
@@ -164,23 +164,23 @@ $script = "
     function getParamName(select_type){
         var selectParam = $('#tblassetset-'+select_type+'_type option:selected').text();
         selectParam = selectParam.toLowerCase();
-        var paramName = selectParam == 'dsk' ? 'dcs' : selectParam;
+        var paramName = selectParam == 'dcs' ? 'dcs' : selectParam;
         return paramName;
     }
     function getStoreLocationCode(select_type, checkEvent = 'No'){
         var selectParam = $('#tblassetset-'+select_type+'_type option:selected').text();
         selectParam = selectParam.toLowerCase();
-        if(selectParam == 'dsk' || selectParam == 'mcc'){
-            var paramName = selectParam == 'dsk' ? 'dcs' : selectParam;
+        if(selectParam == 'dcs' || selectParam == 'bmc'){
+            var paramName = selectParam == 'dcs' ? 'dcs' : selectParam;
             mainVal = $('#tblassetset-'+select_type+'_'+paramName).val();
             var dest_type_code = $('#tblassetset-'+select_type+'_type').val();
             if(mainVal != '' && mainVal != null && mainVal != undefined && dest_type_code != '') {
                 var dcs_code = $('#tblassetset-'+select_type+'_dcs').val();
-                var mcc_code = $('#tblassetset-'+select_type+'_mcc').val();
+                var bmc_code = $('#tblassetset-'+select_type+'_bmc').val();
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/assetmanagement/tbl-store-location/get-store-location-code']) . "',
-                    data: {'dest_type_code' : dest_type_code, 'dest_type' : selectParam, 'mcc_code' : mcc_code, 'dsk_code' : dcs_code},
+                    data: {'dest_type_code' : dest_type_code, 'dest_type' : selectParam, 'bmc_code' : bmc_code, 'dcs_code' : dcs_code},
                     success: function(data) {
                         var obj1 = $.parseJSON(data);
                         if(obj1.status == 'success') {
@@ -212,12 +212,12 @@ $script = "
     }
        
     function getDcsData(){
-    var mcc_code=$('#tblassetset-from_mcc').val();
-        if(mcc_code != '' && mcc_code != null && mcc_code != undefined){
+    var bmc_code=$('#tblassetset-from_bmc').val();
+        if(bmc_code != '' && bmc_code != null && bmc_code != undefined){
             $.ajax({
             type: 'post',
             url:'" . Url::to(['get-dcs-data']) . "',
-            data: {'from_mcc':mcc_code},
+            data: {'from_bmc':bmc_code},
            beforeSend:function(data) {
                 $('#loadercontent').show();
                 $('#pageloader').show();

@@ -446,7 +446,7 @@ class DropDown extends Component {
             return;
         }
         $class = $readonly ? 'depend-control' : '';
-        $data = $this->getLabels($flag);
+        $data = $this->getLabels($flag);  
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
         $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;

@@ -25,10 +25,10 @@ use yii\web\JsExpression;
                 <tr>
                     <td><?= $dcs_data['dcs_code'] ?></td>
                     <td><?= $dcs_data['dcs_name'] ?></td>
-                    <td><?= $dcs_data['sloc_code'] ?></td>
+                    <td><?= $dcs_data['ref_code'] ?></td>
                     <td> <?php
                         echo Html::hiddenInput('dcs[' . $dcs_data['dcs_code'] . '][asset_set_code]', $dcs_data['asset_set_code']);
-                        echo Html::hiddenInput('dcs[' . $dcs_data['dcs_code'] . '][sloc_code]', $dcs_data['sloc_code']);
+                        echo Html::hiddenInput('dcs[' . $dcs_data['dcs_code'] . '][ref_code]', $dcs_data['ref_code']);
                         echo Html::hiddenInput('dcs[' . $dcs_data['dcs_code'] . '][store_location_code]', $dcs_data['store_location_code']);
                         echo Html::hiddenInput('dcs[' . $dcs_data['dcs_code'] . '][store_location_type]', $dcs_data['store_location_type']);
                         echo Html::textInput('dcs[' . $dcs_data['dcs_code'] . '][sap_code]', $dcs_data['sap_code'], ['class' => 'form-control']);
