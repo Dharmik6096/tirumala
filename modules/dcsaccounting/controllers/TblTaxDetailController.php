@@ -146,7 +146,7 @@ class TblTaxDetailController extends \app\controllers\ChildController {
     public function addTexDepends($post, $tax_detail_id, $is_active) {
         $list = [];
         if (!empty($post)) {
-            $i = 0;
+            $i = 1;
             foreach ($post as $key => $value) {
                 $depends = new TblTaxDepends();
                 $depends->tax_depends_code = Yii::$app->general->getCodeAutoIncrement($this->model, $i);
@@ -235,7 +235,6 @@ class TblTaxDetailController extends \app\controllers\ChildController {
         $model = new TblTaxDepends();
         $data = $model->find()->select(['tax_detail_code'])->where(['tax_detail_code' => $id])->asArray()->all();
         $this->list = array_merge($this->list, $this->getchild($data));
-        
     }
 
     private function getchild($array) {
