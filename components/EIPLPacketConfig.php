@@ -41,6 +41,10 @@ class EIPLPacketConfig extends Component {
                     'vlccid' => 'pckt=9-12',
                     'savelog' => false,
                 ],
+                '32' => [
+                    'vlccid' => 'pckt=14-12',
+                    'savelog' => false,
+                ],
                 '34#3' => [
                     'farmerid' => 'pckt=0-3',
                     'milktype' => 'pckt=3-1',
@@ -61,6 +65,17 @@ class EIPLPacketConfig extends Component {
                     'qty' => 'pckt=12-3#fix=.#pckt=15-2',
                     'sampletime' => 'pckt=19-2#fix=:#pckt=17-2#fix=:00',
                     'txflag' => 'pckt=21-3',
+                ],
+                '44#3' => [
+                    'farmerid' => 'pckt=0-3',
+                    'milktype' => 'pckt=3-1',
+                    'fat' => 'pckt=4-2#fix=.#pckt=6-1',
+                    'snf' => 'pckt=7-2#fix=.#pckt=9-1',
+                    'water' => 'pckt=10-2',
+                    'qty' => 'pckt=12-3#fix=.#pckt=15-2',
+                    'amt' => 'pckt=17-5#fix=.#pckt=22-2',
+                    'sampletime' => 'pckt=26-2#fix=:#pckt=24-2#fix=:00',
+                    'txflag' => 'pckt=28-3',
                 ],
                 '64#3' => [
                     'farmerid' => 'pckt=0-3',

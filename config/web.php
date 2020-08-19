@@ -241,6 +241,7 @@ $config = [
         'emilkprolite' => ['class' => 'app\modules\webservice\emilkprolite\emilkProLite',],
         'tankermovement' => ['class' => 'app\modules\tankermovement\Tankermovement',],
         'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',],
+        'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
     ],
     'params' => $params,
 ];
