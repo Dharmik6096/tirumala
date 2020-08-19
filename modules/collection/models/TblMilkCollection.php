@@ -305,7 +305,7 @@ class TblMilkCollection extends \app\models\ChildModel {
     public function getSampleNo() {
         $data = $this->find()
                 ->select('max(sample_no) as sample_no')
-                ->where(['member_code' => $this->member_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => date('Y-m-d')])
+                ->where(['dcs_code' => $this->dcs_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => Yii::$app->formatter->asDate($this->date_time_of_collection, DATE_FORMAT)])
                 ->one();
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
@@ -513,6 +513,7 @@ class TblMilkCollection extends \app\models\ChildModel {
         $model->last_edited_type = 'P';
         $model->own_mcc_plant_code = $model->mcc_plant_code;
         $model->own_bmc_code = $model->bmc_code;
+        $model->sample_no = $model->getSampleNo();
     }
 
 }

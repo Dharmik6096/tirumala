@@ -530,6 +530,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         $model->last_edited_type = 'P';
         $model->own_mcc_plant_code = $model->mcc_plant_code;
         $model->own_bmc_code = $model->bmc_code;
+        $model->sample_no = $model->getSampleNo();
     }
 
 }
