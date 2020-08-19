@@ -115,7 +115,7 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('bmc_code'))) {
                                             ?>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6 val_bmc_code">
                                                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
                                             </div>
                                             <?php
@@ -223,6 +223,34 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('store_location_type'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), FALSE, 'store_location_type'); ?>
+
+                                            </div>
+
+                                            <?php
+                                        }
+                                        if (in_array($value, array('asset_code'))) {
+                                            $depends = 'reportsmodel-' . $value_array[1];
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?php
+                                                echo Yii::$app->dropdown->depend_dropdown('union_asset', $model, $form, $depends, 'form-group col-sm-6 padding-right-5 padding-left-5', $model->getAttributeLabel('asset_code'), $value);
+                                                ?>
+                                            </div>
+
+                                            <?php
+                                        }
+                                        if (in_array($value, array('sap_code'))) {
+                                            $depends = 'reportsmodel-' . $value_array[1] . ',' . 'reportsmodel-' . $value_array[2] . ',' . 'reportsmodel-' . $value_array[3] . ',' . 'reportsmodel-' . $value_array[4];
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?php echo Yii::$app->dropdown->org_sap_code($model, $form, $depends, 'sap_code', $model->getAttributeLabel('sap_code')); ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {
@@ -315,7 +343,43 @@ if (isset($data['url1'])) {
 $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
-});";
+});
+
+    $(document).ready(function(){  
+        if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
+            hideFields();
+            $(document).on('change','#reportsmodel-store_location_type', function() {
+                hideFields();
+            });
+        }
+    });
+    function hideFields(){
+        var locat_type =  $('#reportsmodel-store_location_type option:selected').text();
+        $('.val_plant_code').hide();
+        $('.val_mcc_code').hide();
+        $('.val_bmc_code').hide();
+        $('.val_dcs_code').hide();
+        $('.val_plant_code select').val('');
+        $('.val_plant_code select').trigger('change');
+        $('.val_plant_code select').trigger('select2:select');
+  
+        if(locat_type == 'PLANT'){
+            $('.val_plant_code').show();
+        }else if(locat_type =='BMC'){
+            $('.val_plant_code').show();
+            $('.val_mcc_code').show();
+            $('.val_bmc_code').show();
+        }
+        else if(locat_type =='DCS' || locat_type == 'Warehouse'){
+            $('.val_plant_code').show();
+            $('.val_mcc_code').show();
+            $('.val_bmc_code').show();
+            $('.val_dcs_code').show();
+        }
+       
+    }
+
+";
 
 if ($defaultToggle) {
     $script .= "
