@@ -992,6 +992,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'All')],
             ],
+            'asset_status' => [
+                'name' => 'asset_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['-1' => Yii::t('app', 'In-Transit'), 0 => Yii::t('app', 'In-Store'), 1 => Yii::t('app', 'Outward'), 2 => Yii::t('app', 'In-Use')],
+            ],
+            'asset_type' => [
+                'name' => 'asset_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'New'), 1 => Yii::t('app', 'Faulty')],
+            ],
         ];
         return $records[$l];
     }
@@ -1079,6 +1089,15 @@ class DropDown extends Component {
             'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
             'trip_challan' => ['name' => 'challan_no', 'fields' => 'challan_no,challan_no,', 'prompt' => Yii::t('app', 'Select Challan'), 'model' => 'TblBmcMilkDispatch', 'depend' => 'trip_code'],
             'bmc-dcs' => ['name' => 'dcs_code', 'fields' => 'dcs_code,dcs_name,local_name', 'prompt' => Yii::t('app', 'Select Society'), 'model' => 'TblDcs', 'depend' => 'bmc_code', 'checkValid'],
+            'cmpl_product_code' => ['name' => 'cmpl_product_code', 'fields' => 'cmpl_product_code,cmpl_product_name', 'prompt' => 'Select Asset Type', 'model' => 'TblComplainProduct'],
+            'asset_group_code' => ['name' => 'asset_group_code', 'fields' => 'asset_group_code,asset_group_name', 'prompt' => 'Select Asset Group', 'model' => 'TblAssetGroup'],
+            'store_location_type' => ['name' => 'store_location_type', 'fields' => 'slt_code,slt_name', 'prompt' => 'Select Type', 'model' => 'TblStoreLocationType'],
+            'slc_type' => ['name' => 'store_location_code', 'fields' => 'store_location_code,store_location_name,local_name', 'prompt' => Yii::t('app', 'Store Location'), 'model' => 'TblStoreLocation', 'depend' => 'store_location_type'],
+            'asset_set' => ['name' => 'sap_code', 'fields' => 'asset_set_code,sap_code,sloc_code', 'prompt' => Yii::t('app', 'SAP Code'), 'model' => 'TblAssetSet', 'depend' => 'store_location_code'],
+            'union_asset' => ['name' => 'asset_code', 'fields' => 'asset_code,asset_name,local_name', 'prompt' => Yii::t('app', 'Select Asset'), 'model' => 'TblAssetMaster', 'depend' => 'union_code'],
+            'asset_code' => ['name' => 'asset_code', 'fields' => 'asset_code,asset_name,local_name', 'prompt' => Yii::t('app', 'Select Asset'), 'model' => 'TblAssetMaster', 'depend' => 'asset_group_code'],
+            'customer_code' => ['name' => 'customer_code', 'fields' => 'customer_code,customer_name,local_name', 'prompt' => Yii::t('app', 'Select Customer'), 'model' => 'TblCustomerMaster', 'depend' => 'customer_type'],
+            'store_location_code' => ['name' => 'store_location_code', 'fields' => 'store_location_code,store_location_name,local_name', 'prompt' => Yii::t('app', 'Store Location'), 'model' => 'TblStoreLocation', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }

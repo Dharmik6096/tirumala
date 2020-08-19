@@ -263,6 +263,9 @@ class SearchFilter {
             'TblVspPaymentConfigSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
             ],
+            'TblAssetTransactionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 
-
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -38,8 +37,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->transaction_date);
-        }],
+    return Yii::$app->controls->view_date($model->transaction_date);
+}],
 //    ['attribute' => 'payment_cycle_code', 'value' => function($model) {
 //            return '<div>' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')) . '</div>';
 //        }, 'format' => 'raw', 'filter' => false],
@@ -50,6 +49,7 @@ $grid_option = [
     'id' => 'bill-head-detail-list',
     'attributes' => $attribute,
     'active_column' => FALSE,
+    'default_sorting' => FALSE,
     'actions' => [
         'view' => true,
     ]

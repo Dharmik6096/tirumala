@@ -59,15 +59,7 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'bill_head_detail_code' => $this->bill_head_detail_code,
-            'payment_cycle_code' => $this->payment_cycle_code,
-            'is_installment' => $this->is_installment,
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ]);
+
 
 //        if (!empty($this->from_date)) {
 //            $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -80,29 +72,27 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
-            $query->andFilterWhere(['>=', 'transaction_date', $from_date]);
+            $query->andFilterWhere(['>=', 'tbl_bill_head_detail.transaction_date', $from_date]);
         }
         if (!empty($this->to_date)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
-            $query->andFilterWhere(['<=', 'transaction_date', $to_date]);
+            $query->andFilterWhere(['<=', 'tbl_bill_head_detail.transaction_date', $to_date]);
         }
         if (!empty($this->transaction_date))
-            $query->andFilterWhere(['and', ['>=', 'transaction_date', date('Y-m-d', strtotime($this->transaction_date))], ['<=', 'transaction_date', date('Y-m-d', strtotime($this->transaction_date))]]);
+            $query->andFilterWhere(['and', ['>=', 'tbl_bill_head_detail.transaction_date', date('Y-m-d', strtotime($this->transaction_date))], ['<=', 'transaction_date', date('Y-m-d', strtotime($this->transaction_date))]]);
 
 
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name], ['like', 'tbl_member.member_name', $this->customer_name]]);
         $query->andFilterWhere(['or', ['like', 'tbl_customer_type.customer_desc', $this->customer_type], ['like', 'tbl_bill_head_detail.customer_type', $this->customer_type]]);
 
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
+        $query->andFilterWhere(['like', 'tbl_bill_head_detail.union_code', $this->union_code])
                 ->andFilterWhere(['like', 'tbl_bill_head.bill_head_name', $this->bill_head_code])
-                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'amount', $this->amount])
-                ->andFilterWhere(['like', 'no_installment', $this->no_installment])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-//                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_bill_head_detail.dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'tbl_bill_head_detail.amount', $this->amount])
+                ->andFilterWhere(['like', 'tbl_bill_head_detail.no_installment', $this->no_installment])
+                //                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
                 ->andFilterWhere(['like', 'tbl_bill_head_detail.customer_code', $this->customer_code]);
-        $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
+        // $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
         return $dataProvider;
     }
 
