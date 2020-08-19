@@ -253,6 +253,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                     }
 
                     if ($save_applicability) {
+                        $current_datetime = date('Y-m-d H:i:s');
                         $model_name = Yii::$app->path->define($request_param['model'] . 'Applicability');
                         $rateAppModel = new $model_name();
                         $rateAppModel->deleteAll(['purchase_rate_code' => $model_data->purchase_rate_code]);
@@ -267,7 +268,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                         Yii::$app->db->createCommand("update d set d.rate_flag=1 from tbl_dcs d inner join tbl_purchase_rate p on p.reference_code=d.rate_chart_code where p.purchase_rate_code=:purchase_rate_code")
                                 ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
                                 ->execute();
-                        Yii::$app->db->createCommand("insert into tbl_generate_sentbox ([table_name],[where_clause],[operation_type],[sentbox_key],[union_code],[dcs_code],[status],[entry_datetime]) select 'tbl_purchase_rate_applicability',CONCAT('dcs_code=''',dcs_code,''' and wef_date=''',wef_date,''),'INSERT','dcs_code',union_code,dcs_code,0,GETDATE() from tbl_purchase_rate_applicability_pending where purchase_rate_code=:purchase_rate_code")
+                        Yii::$app->db->createCommand("insert into tbl_generate_sentbox ([table_name],[where_clause],[operation_type],[sentbox_key],[union_code],[dcs_code],[status],[entry_datetime]) select 'tbl_purchase_rate_applicability',CONCAT('dcs_code=''',dcs_code,''' and wef_date=''',wef_date,''),'INSERT','dcs_code',union_code,dcs_code,0,'$current_datetime' from tbl_purchase_rate_applicability_pending where purchase_rate_code=:purchase_rate_code")
                                 ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
                                 ->execute();
 
