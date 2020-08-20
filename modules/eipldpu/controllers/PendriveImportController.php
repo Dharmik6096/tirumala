@@ -251,6 +251,7 @@ class PendriveImportController extends \app\controllers\ChildController {
     public function savePacketData($file_id) {
         $transaction = \Yii::$app->db->beginTransaction();
         $file_id = implode(',', $file_id);
+        $current_datetime = date('Y-m-d H:i:s');
         try {
             $command = Yii::$app->getDb()->createCommand('SELECT NEWID() as id')->queryOne();
             $uuid = $command['id'];
@@ -260,7 +261,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                     ->execute();
 
             Yii::$app->db->createCommand("insert into txfarmer (farmerid,farmername,farmermo,vlccid,mccid,sampleno,txflag,qty,amt,rate,fat,snf,water,dtdate,shift,milktype,qtymode,sampletime,createdtime,packet,uuid) "
-                            . "SELECT farmerid,farmername,farmermo,vlccid,mccid,sampleno,txflag,qty,amt,rate,fat,snf,water,dtdate,shift,milktype,qtymode,sampletime,GETDATE(),line_text,'$uuid' from tbl_eipl_packet_process where file_name in ($file_id) and main_table=1")
+                            . "SELECT farmerid,farmername,farmermo,vlccid,mccid,sampleno,txflag,qty,amt,rate,fat,snf,water,dtdate,shift,milktype,qtymode,sampletime,'$current_datetime',line_text,'$uuid' from tbl_eipl_packet_process where file_name in ($file_id) and main_table=1")
                     ->execute();
 
             if ($transaction->isActive) {
