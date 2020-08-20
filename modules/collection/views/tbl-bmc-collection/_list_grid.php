@@ -30,7 +30,7 @@ use kartik\grid\GridView;
             }, 'filter' => false],
         ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'doc_no', 'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'sample_no', 'vAlign' => 'middle', 'filter' => false],
+//        ['attribute' => 'sample_no', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return isset($model->milkType) ? $model->milkType->animal_type_name : '';
             }, 'vAlign' => 'middle', 'filter' => false],

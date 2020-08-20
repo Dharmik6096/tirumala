@@ -31,7 +31,7 @@ use kartik\grid\GridView;
         ['attribute' => 'shift_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => FALSE],
-        ['attribute' => 'sample_no', 'filter' => FALSE],
+//        ['attribute' => 'sample_no', 'filter' => FALSE],
         ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
             }, 'filter' => FALSE],

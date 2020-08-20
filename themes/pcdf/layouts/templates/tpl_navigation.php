@@ -393,6 +393,17 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Asset <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'Asset Group'), 'url' => ['/assetmanagement/tbl-asset-group/index'], 'active' => ($cntrl == 'tbl-asset-group')],
+                        ['label' => Yii::t('app', 'Asset Master'), 'url' => ['/assetmanagement/tbl-asset-master/index'], 'active' => ($cntrl == 'tbl-asset-master')],
+                        ['label' => Yii::t('app', 'Store Location'), 'url' => ['/assetmanagement/tbl-store-location/index'], 'active' => ($cntrl == 'tbl-store-location')],
+                        ['label' => Yii::t('app', 'Asset SAP Code'), 'url' => ['/assetmanagement/tbl-asset-set/index'], 'active' => ($cntrl == 'tbl-asset-set/index')],
+                        ['label' => Yii::t('app', 'Asset Detail'), 'url' => ['/assetmanagement/tbl-asset-detail/index'], 'active' => ($cntrl == 'tbl-asset-detail/index')],
+                    ],
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Global <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Society Type'), 'url' => ['/globalmaster/tbl-dcs-types/index'], 'active' => ($cntrl == 'tbl-dcs-types')],

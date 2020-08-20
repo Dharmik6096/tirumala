@@ -1,7 +1,12 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
+
+$nameWarning = 0;
 $readonly = $type == 'create' ? FALSE : TRUE;
+if (!empty($_POST) && !empty($_POST['warning'])) {
+    $nameWarning = $_POST['warning'];
+}
 ?>
 
 <?php
@@ -15,6 +20,8 @@ $form = ActiveForm::begin([
         ]]);
 ?>
 <?php echo $form->errorSummary($model); ?>
+<?php Yii::$app->warning->hiddenfields($nameWarning,''); ?>
+
 <div class="row">
 
     <div class="col-sm-2">

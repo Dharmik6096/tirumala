@@ -74,7 +74,6 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $type = 'create';
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
-            $this->model->sample_no = $this->model->getSampleNo();
             $datetime = date('Y-m-d H:i:s');
             $this->model->date_time_of_collection = Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->shift_code);
             $this->model->date_time_of_recieve = $datetime;
