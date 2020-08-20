@@ -37,6 +37,7 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblMember' => [],
+                'TblBranch' => [],
             ],
             'EIPLCOMMON' => [
                 'TblPlant' => [
