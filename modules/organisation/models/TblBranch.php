@@ -111,7 +111,7 @@ class TblBranch extends ChildModel {
             //  [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['created_by' => 'user_id']],
             [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
         ];
-        $client_rules = Yii::$app->customvalidation->getRules('TblPlant', $this->form_validation_type);
+        $client_rules = Yii::$app->customvalidation->getRules('TblBranch', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }
