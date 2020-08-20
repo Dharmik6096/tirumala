@@ -436,6 +436,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionLocationWiseAssetSummary() {
+        $this->report = 'LocationWiseAssetSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionLocationWiseAssetDetail() {
+        $this->report = 'LocationWiseAssetDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionLocationWiseAssetMovement() {
+        $this->report = 'LocationWiseAssetMovement';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1122,6 +1137,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_sentbox_sync_pending_data',
                 'scenario' => 'AmcsSyncPending',
                 'title' => '903 - AMCS Sync Pending',
+            ],
+            'LocationWiseAssetSummary' => [
+                'param' => 'store_location_type,union_code,plant_code,mcc_code,bmc_code,dcs_code,asset_code:union_code,date:string',
+                'sp_name' => 'sp_mis_location_wise_asset_summary',
+                'scenario' => 'LocationWiseAssetSummary',
+                'title' => '904 - Location Wise Asset Summary',
+            ],
+            'LocationWiseAssetDetail' => [
+                'param' => 'store_location_type,union_code,plant_code,mcc_code,bmc_code,dcs_code,asset_code:union_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_location_wise_asset_details',
+                'scenario' => 'LocationWiseAssetDetail',
+                'title' => '905 - Location Wise Asset Detail',
+            ],
+            'LocationWiseAssetMovement' => [
+                'param' => 'store_location_type,union_code,plant_code,mcc_code,bmc_code,dcs_code,asset_code:union_code,date:string,sap_code:store_location_type:plant_code:mcc_code:dcs_code,sr_no:txt',
+                'sp_name' => 'sp_mis_location_wise_asset_movement_details',
+                'scenario' => 'LocationWiseAssetMovement',
+                'title' => '906 - Location Wise Asset Movement',
             ],
         ];
         return $label[$l];

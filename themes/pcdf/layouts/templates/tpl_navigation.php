@@ -485,6 +485,9 @@ echo GhostMenu::widget([
                         ['label' => '901-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/reports/rate-applicability-details']],
                         ['label' => '902-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/reports/rate-acknowledgement']],
                         ['label' => '903-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/reports/amcs-sync-pending']],
+                        ['label' => '904-' . Yii::t('app', 'Location Wise Asset Summary'), 'url' => ['/misreports/reports/location-wise-asset-summary']],
+                        ['label' => '905-' . Yii::t('app', 'Location Wise Asset Detail'), 'url' => ['/misreports/reports/location-wise-asset-detail']],
+                        ['label' => '906-' . Yii::t('app', 'Location Wise Asset Movement'), 'url' => ['/misreports/reports/location-wise-asset-movement']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
