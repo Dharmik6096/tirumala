@@ -65,6 +65,10 @@ class CustomValidation extends Component {
                     [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
                     [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'mobile_no'], 'required', 'on' => ['ApprovalMember']],
                 ],
+                'TblBranch' => [
+                    [['hamlet_code'], 'required'],
+                    [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
+                ],
             ],
         ];
     }
