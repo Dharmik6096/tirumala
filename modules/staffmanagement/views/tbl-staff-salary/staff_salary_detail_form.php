@@ -14,7 +14,7 @@ $label = $type == 'edit' ? 'update' : 'Add';
 $form = ActiveForm::begin(['options' => [
                 'field-class' => 'form-group col-sm-3'
             ], 'validateOnBlur' => FALSE,
-            'validateOnEnter' => FALSE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

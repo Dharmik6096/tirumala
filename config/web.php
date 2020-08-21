@@ -12,6 +12,10 @@ $config = [
     'bootstrap' => ['log'],
     'timeZone' => 'Asia/Calcutta',
     // 'language'=>'gu',
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm' => '@vendor/npm-asset',
+    ],
     'components' => [
         'session' => ['name' => 'tirumala'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
@@ -34,7 +38,7 @@ $config = [
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'urlManager' => [
-            'class' => 'app\components\UrlManager',
+            // 'class' => 'app\components\UrlManager',
             'showScriptName' => false,
             'enablePrettyUrl' => true,
             // 'enableStrictParsing' => true,
@@ -51,7 +55,7 @@ $config = [
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
                 'webservice/emilkprolite/v1' => 'webservice/emilkprolite/v1/request-master',
-                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
+                // ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
             //  ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
         /* 'urlManager' => [
@@ -150,7 +154,7 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-        'db_rmrd' => require(__DIR__ . '/db_rmrd.php'),
+        // 'db_rmrd' => require(__DIR__ . '/db_rmrd.php'),
         // 'db_reil' => require(__DIR__ . '/db_reil.php'),
         // 'db_creamy' => require(__DIR__ . '/db_creamy.php'),
         /*

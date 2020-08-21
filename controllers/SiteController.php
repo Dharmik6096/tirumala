@@ -314,7 +314,7 @@ class SiteController extends Controller {
             echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     /* function for retriving data for common depend dropdown */
@@ -384,10 +384,10 @@ class SiteController extends Controller {
                     $out[] = array('id' => $r['id'],
                         'name' => $value);
             }
-            echo Json::encode(['output' => $out, 'selected' => '']);
+            return Json::encode(['output' => $out, 'selected' => '']);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
         return;
     }
 
@@ -453,7 +453,7 @@ class SiteController extends Controller {
             }
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        echo Json::encode(['status' => 'failure', 'res' => '']);
+        return Json::encode(['status' => 'failure', 'res' => '']);
         return;
     }
 
@@ -475,7 +475,7 @@ class SiteController extends Controller {
             }
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        echo Json::encode(['status' => 'failure', 'res' => '']);
+        return Json::encode(['status' => 'failure', 'res' => '']);
         return;
     }
 
@@ -502,7 +502,7 @@ class SiteController extends Controller {
             return ['status' => 'success', 'res' => $results];
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        echo Json::encode(['status' => 'failure', 'res' => '']);
+        return Json::encode(['status' => 'failure', 'res' => '']);
         return;
     }
 
@@ -1044,10 +1044,10 @@ class SiteController extends Controller {
                     $out[] = array('id' => $r[$data[3]],
                         'name' => $value);
             }
-            echo Json::encode(['output' => $out, 'selected' => '']);
+            return Json::encode(['output' => $out, 'selected' => '']);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
         return;
     }
 

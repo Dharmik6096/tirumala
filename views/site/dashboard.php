@@ -198,7 +198,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                 </div>
             <?php } ?>
         </div>
-        <div class="clearfix mt25"></div>      
+        <!-- <div class="clearfix mt25"></div>       -->
         <div class="row">
             <div class="col-sm-6">
                 <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'milk_coll_widget_container', 'diff_sp_name' => 'milk_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'milk_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Milk Collection')]); ?>
@@ -257,7 +257,7 @@ $refreshWidgets = json_encode($refreshWidgets);
             </div>
             <div class="col-sm-6">
                 <div class="milk-collection">
-                    <div class="table-responsive">
+                    <div class="table-responsive dashboard_tbl">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -592,7 +592,7 @@ $script = "
                                     {
                                     
                                         var html='<div class=\"milk-collection\">'+
-                                        '<div class=\"table-responsive\"><table class=\"table table-striped\">'+
+                                        '<div class=\"table-responsive dashboard_tbl\"><table class=\"table table-striped\">'+
                                         '<thead><tr><th>Union</th><th>Villages</th><th>Avg FAT</th><th>Avg SNF</th><th>Milk Collection (ltr)</th></tr></thead>';
                                     $.each(obj1.res, function(index, value) {
                                         html=html+'<tr>'+

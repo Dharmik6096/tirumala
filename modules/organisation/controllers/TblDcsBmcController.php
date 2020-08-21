@@ -244,11 +244,11 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionBmcListUnion() {
@@ -260,11 +260,11 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                 $plants = new TblDcsBmc();
                 $out = $plants->bmcUnion($parents[0]);
 
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionGetMccBmc() {
@@ -275,7 +275,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             $model = new TblDcsBmc();
             $mccList = $model->getBMCList($palnt, $RLS);
         }
-        echo Json::encode(['status' => 'success', 'data' => $mccList]);
+        return Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
     private function setMilk() {

@@ -9,7 +9,7 @@ $form = ActiveForm::begin(['options' => [
                 'class' => 'popup-form',
                 'id' => 'download-sample',
             ], 'validateOnBlur' => FALSE,
-            'validateOnEnter' => FALSE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => FALSE,
             'validateOnSubmit' => FALSE,

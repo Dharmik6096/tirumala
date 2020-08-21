@@ -192,12 +192,12 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
                     foreach ($rows as $value) {
                         $out[] = array('id' => $value->device_id, 'name' => $value->device_id);
                     }
-                    echo Json::encode(['output' => $out, 'selected' => '']);
+                    return Json::encode(['output' => $out, 'selected' => '']);
                     return;
                 }
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function generateIdentity($file, $token) {

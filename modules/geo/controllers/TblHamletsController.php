@@ -132,7 +132,7 @@ class TblHamletsController extends ChildController {
         $id = $_POST['id'];
         $model = new TblHamlets();
         $code = $model->getMaxVillageCode($id);
-        echo Json::encode(['status' => 'success', 'code' =>$code]);
+        return Json::encode(['status' => 'success', 'code' =>$code]);
         return;
     }
 

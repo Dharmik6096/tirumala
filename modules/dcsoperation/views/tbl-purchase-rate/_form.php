@@ -15,7 +15,6 @@ $model->union_code = !empty($selected) ? $selected : $model->union_code;
 <?php
 $form = ActiveForm::begin(['id' => 'purchase-rate-form',
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

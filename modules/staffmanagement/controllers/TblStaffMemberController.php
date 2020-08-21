@@ -160,7 +160,7 @@ class TblStaffMemberController extends \app\controllers\ChildController {
             $model = new TblBranch();
             $ifsc = $model->getIfcs($_POST['id']);
         }
-        echo Json::encode(['code' => $ifsc]);
+        return Json::encode(['code' => $ifsc]);
     }
 
     public function actionStaffMemberDesignation($id) {

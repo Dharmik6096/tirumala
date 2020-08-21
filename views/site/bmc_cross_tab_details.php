@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body" id="modal-body">
                 <div class="milk-collection  h450">
-                    <div class="table-responsive">
+                    <div class="table-responsive dashboard_tbl">
                         <table class="table table-striped">
                             <thead>
                                 <tr>

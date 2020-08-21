@@ -414,7 +414,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $total = ($value * 100) / ($per + 100);
             $value = $total;
         }
-        echo Json::encode(['status' => 'success', 'rateWithTax' => $rateWithTax, 'changedAmount' => (float) $value, 'total' => $total, 'data' => $records]);
+        return Json::encode(['status' => 'success', 'rateWithTax' => $rateWithTax, 'changedAmount' => (float) $value, 'total' => $total, 'data' => $records]);
     }
 
     public function actionValidateCustomer() {
@@ -634,16 +634,16 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $record = ['status' => 'error', 'msg' => $msg];
                     }
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    echo Json::encode($record);
+                    return Json::encode($record);
                     return;
                 } else {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    echo Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+                    return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
                     return;
                 }
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                echo Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+                return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
                 return;
             }
         }

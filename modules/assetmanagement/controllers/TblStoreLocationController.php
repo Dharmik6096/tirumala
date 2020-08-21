@@ -125,7 +125,7 @@ class TblStoreLocationController extends \app\controllers\ChildController {
                 }
             }
         }
-        echo Json::encode($data);
+        return Json::encode($data);
     }
 
 }

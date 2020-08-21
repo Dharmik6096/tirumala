@@ -16,12 +16,14 @@ $form = ActiveForm::begin(['id' => 'manual_form',
             'fieldConfig' => [
         ]]);
 ?>
-<h5 class="panel-subtitle"><?php echo Yii::t('app', 'Purchase Rate - Automatic'); ?></h5>
-<div class="row">
-    <div class="col-sm-3 change">
+<div class="row padding_10_0 theme-box view-subtitle">
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+        <h4 class="theme-box-heading"><?= Yii::t('app', 'Purchase Rate - Automatic') ?></h4>
+    </div>
+    <div class="col-sm-2 change">
         <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel[0], $form, '', 'Rate Type', false, '[0]rate_type_code'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $purchaseBasedModel[0], $form, '', 'Milk Type', false, '[0]milk_type_code'); ?>
     </div>
     <div id="range">
@@ -31,10 +33,10 @@ $form = ActiveForm::begin(['id' => 'manual_form',
 
                 $names = explode('+', $model->rateType->rate_type);
                 ?>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <?= $form->field($model, '[' . $key . ']start_range')->textInput(['class' => 'form-control number-validate'])->label($names[$key] . ' Start'); ?>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <?= $form->field($model, '[' . $key . ']end_range')->textInput(['class' => 'form-control number-validate'])->label($names[$key] . ' End'); ?>
                 </div>
                 <?= Html::activeHiddenInput($model, '[' . $key . ']quality_param_code'); ?>
@@ -43,7 +45,7 @@ $form = ActiveForm::begin(['id' => 'manual_form',
             foreach ($purchaseBasedModel as $key => $model) {
                 $names = explode('+', $model->rateType->rate_type);
                 ?>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <?= $form->field($model, '[' . $key . ']kg_rate')->textInput(['class' => 'form-control number-validate'])->label($names[$key] . ' KG'); ?>
                 </div>
 
@@ -95,7 +97,7 @@ $script = "
         $('#tblpurchaseratebased-0-formula_code').val('');
         $('#tblpurchaseratebased-0-milk_type_code').val('');
         var rateType = $('#tblpurchaseratebased-0-rate_type_code :selected').text();     
-        var field_before = '<div class=\"col-sm-3\"><div class=\"form-group\">';
+        var field_before = '<div class=\"col-sm-2\"><div class=\"form-group\">';
         var field_after = '<div class=\"help-block\"></div></div></div>';
         var quality_param=$.parseJSON($('#quality_param').val());
 

@@ -131,11 +131,11 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionCustomerCodeList() {
@@ -154,11 +154,11 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionGetCustomerType() {
@@ -175,10 +175,10 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo Json::encode(['output' => $out]);
+            return Json::encode(['output' => $out]);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => $selected]);
+        return Json::encode(['output' => '', 'selected' => $selected]);
     }
 
 }

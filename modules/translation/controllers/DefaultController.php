@@ -169,9 +169,9 @@ class DefaultController extends ChildController {
         $save_model = new $modelname();
         $data = $this->data($save_model, $_POST['code'], $_POST['language_code'], $_POST['data_fields']);
         if (isset($data)) {
-            echo Json::encode($data);
+            return Json::encode($data);
         } else {
-            echo Json::encode(['status' => 'error']);
+            return Json::encode(['status' => 'error']);
         }
     }
 

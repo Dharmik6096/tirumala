@@ -177,11 +177,11 @@ class DefaultController extends Controller
                     $out[] = array('id' => $key,
                         'name' => $r);
                 }
-                echo Json::encode(['output' => $out]);
+                return Json::encode(['output' => $out]);
                 return;
             }
         }
-        echo Json::encode(['output' => '']);
+        return Json::encode(['output' => '']);
     }
     
     public function actionDcsList(){
@@ -196,10 +196,10 @@ class DefaultController extends Controller
                     $out[] = array('id' => $key,
                         'name' => $r);
                 }
-                echo Json::encode(['output' => $out]);
+                return Json::encode(['output' => $out]);
                 return;
         }
-        echo Json::encode(['output' => '']);
+        return Json::encode(['output' => '']);
     }
     
     protected function customRedirect(){

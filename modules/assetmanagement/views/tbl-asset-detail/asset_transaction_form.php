@@ -26,51 +26,51 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
         ?>   
         <div class="single_entry_area col-sm-12 padding-left-0 padding-right-0">
             <div class="col-sm-12 padding-left-0 padding-right-0">
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('from_type'), false, 'from_type'); ?>
                 </div>
-                <div class="col-sm-3 from_4 from_1 default_hide from_hide">
+                <div class="col-sm-2 from_4 from_1 default_hide from_hide">
                     <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassettransaction-from_type', '', $model->getAttributeLabel('from_dest'), 'from_dest', false); ?>
                 </div>
-                <div class="col-sm-3 from_2 from_3 default_hide from_hide">
+                <div class="col-sm-2 from_2 from_3 default_hide from_hide">
                     <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassettransaction-union_code', 'from_plant', $model->getAttributeLabel('from_plant')); ?>
                 </div>
-                <div class="col-sm-3 from_2 from_3 default_hide from_hide">
+                <div class="col-sm-2 from_2 from_3 default_hide from_hide">
                     <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassettransaction-from_plant', 'from_mcc', $model->getAttributeLabel('from_mcc')); ?>
                 </div>
-                <div class="col-sm-3 from_2 from_3 default_hide from_hide">
+                <div class="col-sm-2 from_2 from_3 default_hide from_hide">
                     <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassettransaction-from_mcc', 'from_bmc', $model->getAttributeLabel('from_bmc')); ?>
                 </div>
-                <div class="col-sm-3 from_3 default_hide from_hide">
+                <div class="col-sm-2 from_3 default_hide from_hide">
                     <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassettransaction-from_bmc', 'from_dcs', $model->getAttributeLabel('from_dcs'), FALSE, '', FALSE, TRUE); ?>
                 </div>
             </div>
             <div class="col-sm-12 padding-left-0 padding-right-0">
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('to_type'), false, 'to_type'); ?>
                 </div>
-                <div class="col-sm-3 to_4 to_1 default_hide to_hide">
+                <div class="col-sm-2 to_4 to_1 default_hide to_hide">
                     <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassettransaction-to_type', '', $model->getAttributeLabel('to_dest'), 'to_dest', false); ?>
                 </div>
-                <div class="col-sm-3 to_2 to_3 default_hide to_hide disa_drop">
+                <div class="col-sm-2 to_2 to_3 default_hide to_hide disa_drop">
                     <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassettransaction-union_code', 'to_plant', $model->getAttributeLabel('to_plant')); ?>
                 </div>
-                <div class="col-sm-3 to_2 to_3 default_hide to_hide disa_drop">
+                <div class="col-sm-2 to_2 to_3 default_hide to_hide disa_drop">
                     <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassettransaction-to_plant', 'to_mcc', $model->getAttributeLabel('to_mcc')); ?>
                 </div>
-                <div class="col-sm-3 to_2 to_3 default_hide to_hide disa_drop">
+                <div class="col-sm-2 to_2 to_3 default_hide to_hide disa_drop">
                     <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassettransaction-to_mcc', 'to_bmc', $model->getAttributeLabel('to_bmc')); ?>
                 </div>
-                <div class="col-sm-3 to_3 default_hide to_hide">
+                <div class="col-sm-2 to_3 default_hide to_hide">
                     <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassettransaction-to_bmc', 'to_dcs', $model->getAttributeLabel('to_dcs'), FALSE, '', FALSE, TRUE); ?>
                 </div>
                 <?php // Html::activeHiddenInput($model, 'to_type', ['id' => 'to_type']) ?>
             </div>
             <!--<div class="col-sm-6">-->
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', false, false, false); ?>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= $form->field($model, 'in_ward', ['checkboxTemplate' => "<div class='checkbox mt25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div> 
             <div class="col-sm-6">
@@ -79,13 +79,13 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
             <!--</div>-->
         </div>
         <div class="col-sm-12 padding-left-0 padding-right-0">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE, FALSE); ?>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= Yii::$app->dropdown->depend_dropdown('union_asset', $model, $form, 'tblassettransaction-union_code', '', $model->getAttributeLabel('asset_code'), 'asset_code', FALSE); ?>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= $form->field($model, 'qty')->textInput() ?>
             </div>
             <!--<div class="disp_none">-->

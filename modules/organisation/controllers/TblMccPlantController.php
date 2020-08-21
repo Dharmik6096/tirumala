@@ -261,11 +261,11 @@ class TblMccPlantController extends \app\controllers\ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionGetPlantMcc() {
@@ -276,7 +276,7 @@ class TblMccPlantController extends \app\controllers\ChildController {
             $model = new TblMccPlant();
             $mccList = $model->getMCCList($palnt, $RLS);
         }
-        echo Json::encode(['status' => 'success', 'data' => $mccList]);
+        return Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
     private function setMilk() {
@@ -349,11 +349,11 @@ class TblMccPlantController extends \app\controllers\ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionSilosInfo($id) {

@@ -5,7 +5,7 @@ use yii\web\View;
 use yii\helpers\Url;
 ?>
 
-<div class="table-responsive h450">
+<div class="table-responsive dashboard_tbl h450">
     <table class="table table-striped">
         <thead>
             <tr>

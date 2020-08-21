@@ -119,7 +119,7 @@ class MasterController extends ActiveController {
                 $filterErrorArray['file'] = $error['file'];
                 $filterErrorArray['line'] = $error['line'];
             }
-            echo Json::encode($filterErrorArray);
+            return Json::encode($filterErrorArray);
         }
     }
 

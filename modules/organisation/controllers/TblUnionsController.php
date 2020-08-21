@@ -345,10 +345,10 @@ class TblUnionsController extends ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo Json::encode(['output' => $out]);
+            return Json::encode(['output' => $out]);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => $selected]);
+        return Json::encode(['output' => '', 'selected' => $selected]);
     }
 
     public function actionBankDetails($id) {

@@ -22,68 +22,68 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('asset_group_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('asset_group_code'), $readonly); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('asset_group_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('asset_group_code'), $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('asset_code', $model, $form, 'tblassetdetail-asset_group_code', '', $model->getAttributeLabel('asset_code'), 'asset_code', $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), $readonly, 'store_location_type'); ?>
     </div>
-    <!--    <div class="col-sm-3">
+    <!--    <div class="col-sm-2">
     <?php //Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetdetail-store_location_type', '', $model->getAttributeLabel('store_location_code'), 'store_location_code', $readonly);  ?>
         </div> -->
 
-    <div class="col-sm-3 to_4 to_1 default_hide to_hide">
+    <div class="col-sm-2 to_4 to_1 default_hide to_hide">
         <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetdetail-store_location_type', '', $model->getAttributeLabel('store_location_code'), 'store_location_code', $readonly); ?>
     </div>
-    <div class="col-sm-3 to_2 to_3 default_hide to_hide">
+    <div class="col-sm-2 to_2 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassetdetail-union_code', 'to_plant', $model->getAttributeLabel('to_plant'), FALSE, '', $readonly); ?>
     </div>
-    <div class="col-sm-3 to_2 to_3 default_hide to_hide">
+    <div class="col-sm-2 to_2 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassetdetail-to_plant', 'to_mcc', $model->getAttributeLabel('to_mcc'), FALSE, '', $readonly); ?>
     </div>
-    <div class="col-sm-3 to_2 to_3 default_hide to_hide">
+    <div class="col-sm-2 to_2 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassetdetail-to_mcc', 'to_bmc', $model->getAttributeLabel('to_bmc'), FALSE, '', '', $readonly); ?>
     </div>
-    <div class="col-sm-3 to_3 default_hide to_hide">
+    <div class="col-sm-2 to_3 default_hide to_hide">
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassetdetail-to_bmc', 'to_dcs', $model->getAttributeLabel('to_dcs'), FALSE, '', $readonly, TRUE); ?>
     </div>
 
-    <div class="col-sm-3 hide-serial-no">
+    <div class="col-sm-2 hide-serial-no">
         <?= $form->field($model, 'serial_number')->textInput() ?>
     </div>
-    <div class="col-sm-3 hide-qty-no <?= $class ?>">
+    <div class="col-sm-2 hide-qty-no <?= $class ?>">
         <?= $form->field($model, 'qty')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Html::hiddenInput('customer_type', 'SUPPLIER', ['id' => 'customer_type']); ?>
-        <?= Yii::$app->dropdown->depend_dropdown('customer_code', $model, $form, 'customer_type', 'form-group col-sm-3', $model->getAttributeLabel('manufacturer_code'), 'manufacturer_code', $readonly, 0, [], FALSE, Yii::t('app', 'Select Vendor')); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('customer_code', $model, $form, 'customer_type', 'form-group col-sm-2', $model->getAttributeLabel('manufacturer_code'), 'manufacturer_code', $readonly, 0, [], FALSE, Yii::t('app', 'Select Vendor')); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'make')->textInput() ?>   
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'capacity')->textInput() ?>   
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'purchase_date', '', FALSE); ?>
     </div>
-    <div class="col-sm-3 <?= $class ?>">
+    <div class="col-sm-2 <?= $class ?>">
         <?= Yii::$app->controls->date($model, $form, 'put_to_use_date', '', FALSE); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'warranty_period')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'maintanance_duration_in_days')->textInput() ?>
     </div>
     <?= Html::activeHiddenInput($model, 'is_serial_number', ['id' => 'is_serial_number']) ?>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>

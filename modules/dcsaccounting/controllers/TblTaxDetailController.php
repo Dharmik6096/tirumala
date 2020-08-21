@@ -68,7 +68,7 @@ class TblTaxDetailController extends \app\controllers\ChildController {
         $total = 0;
         foreach ($data as $key => $d) {
             $records[$key]['tax_code'] = $d->basic_tax_code;
-            $records[$key]['tax_name'] = $d->basicTaxCode->basic_tax_name;
+            $records[$key]['tax_name'] = $d->basicTaxCode['basic_tax_name'];
             $records[$key]['tax_val'] = $d->percentage;
             $records[$key]['operation'] = ($d->type == 0) ? 'Addition' : 'Substraction';
 

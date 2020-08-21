@@ -17,7 +17,7 @@ $form = ActiveForm::begin(['options' => [
                 'field-class' => 'form-group col-sm-3',
             ],
             'validateOnBlur' => TRUE,
-            'validateOnEnter' => FALSE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
