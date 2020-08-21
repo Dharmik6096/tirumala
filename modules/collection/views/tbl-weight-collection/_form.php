@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
 
             'options' => ['id' => 'bmc-weight-data-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

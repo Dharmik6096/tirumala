@@ -18,7 +18,7 @@ $list = array('0' => 'No', '1' => 'Yes');
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

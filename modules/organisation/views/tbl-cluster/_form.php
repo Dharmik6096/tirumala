@@ -18,7 +18,7 @@ $disabled = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

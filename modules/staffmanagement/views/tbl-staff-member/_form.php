@@ -14,7 +14,7 @@ $disable = $type == 'edit' ? (!empty($model->tenure_to_date) ? TRUE : FALSE) : t
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-member-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

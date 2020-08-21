@@ -14,7 +14,7 @@ $readonly = $type == 'edit' ? false : true;
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-add-ded-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

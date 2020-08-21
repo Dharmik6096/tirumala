@@ -13,7 +13,7 @@ $readonly = $type == 'edit' ? true : false;
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-leave-master-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

@@ -16,7 +16,7 @@ $this->title = Yii::$app->label->title('create', 'Bank Detail');
         $form = ActiveForm::begin([
                     'action' => $url,
                     'validateOnBlur' => FALSE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableAjaxValidation' => true,
                     'enableClientValidation' => true,

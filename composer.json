@@ -15,7 +15,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": "~2.0.5",
+        "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "webvimark/module-user-management": "^1.0",
@@ -41,7 +41,8 @@
         "2amigos/yii2-multi-select-widget": "*",
         "softark/yii2-dual-listbox": "dev-master",
         "linslin/yii2-curl": "*",
-        "kartik-v/yii2-tabs-x": "1.2.3"
+        "kartik-v/yii2-tabs-x": "1.2.3",
+        "yiisoft/yii2-queue": "^2.0@dev"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

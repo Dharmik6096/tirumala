@@ -16,7 +16,7 @@ $disable = $readonly ? 'disabled' : '';
 $form = ActiveForm::begin([
             'options' => ['id' => 'milk-collection-from'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

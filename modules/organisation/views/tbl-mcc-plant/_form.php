@@ -21,7 +21,7 @@ $milkType = $model->getMilkTypes();
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

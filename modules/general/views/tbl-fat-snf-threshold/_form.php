@@ -12,7 +12,7 @@ isset($model->dcsCode) ? $model->union_code = $model->dcsCode->union_code : $mod
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true

@@ -14,7 +14,7 @@ $summary_model=$type=='create'?[$model,$bankDetails,$contactDetails]:$model;
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
             //'enableAjaxValidation' => true,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

@@ -16,7 +16,7 @@ $this->title = Yii::$app->label->title('create', 'Society Wise Transaction');
         $form = ActiveForm::begin([
                     'options' => ['id' => 'search-bill-head-form'],
                     'validateOnBlur' => false,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

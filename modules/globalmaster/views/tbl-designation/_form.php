@@ -13,7 +13,7 @@ $readonly = $type == 'edit' ? false : true;
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-designation-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

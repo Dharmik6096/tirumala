@@ -12,7 +12,7 @@ use yii\web\JsExpression;
 $form = ActiveForm::begin([
             'options' => ['id' => 'create-product-sale-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

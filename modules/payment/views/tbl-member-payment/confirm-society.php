@@ -53,7 +53,7 @@ $this->title = 'Farmer Payment Process : Step 2';
                 <?php
                 $form = ActiveForm::begin([
                             'validateOnBlur' => false,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,

@@ -56,7 +56,7 @@ if (isset($data['url1'])) {
                                         ],
                                         'method' => 'get',
                                         'validateOnBlur' => FALSE,
-                                        'validateOnEnter' => TRUE,
+                                        
                                         'validateOnChange' => FALSE,
                                         'enableClientValidation' => true,
                                         'validateOnSubmit' => true,

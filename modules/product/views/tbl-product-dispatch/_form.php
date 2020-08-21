@@ -29,7 +29,7 @@ $this->title = Yii::t('app', $title);
                     'field-class' => 'col-sm-3'
                 ],
                 'validateOnBlur' => TRUE,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

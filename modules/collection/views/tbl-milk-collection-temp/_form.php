@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
 
             'options' => ['id' => 'milk-coll-temp-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

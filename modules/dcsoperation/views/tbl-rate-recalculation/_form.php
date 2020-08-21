@@ -13,7 +13,7 @@ $rec_data = !empty($dataProvider) ? $dataProvider->allModels : '';
 $form = ActiveForm::begin([
             'options' => ['id' => 'recalculation-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

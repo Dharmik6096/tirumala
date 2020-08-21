@@ -20,7 +20,7 @@ $this->title = Yii::t('app', $title);
                             'id' => 'dispatch-without-form',
                             'field-class' => 'form-group col-sm-3'
                         ], 'validateOnBlur' => FALSE,
-                        'validateOnEnter' => TRUE,
+                        
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,

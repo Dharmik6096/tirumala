@@ -10,7 +10,7 @@ use yii\helpers\Url;
 $form = ActiveForm::begin(['options' => [
                 'id' => 'sms-list-save',
                 'validateOnBlur' => TRUE,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => TRUE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

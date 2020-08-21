@@ -17,7 +17,7 @@ $class = $type == 'create' ? '' : 'disabled';
 $form = ActiveForm::begin([
             'options' => ['id' => 'dpu-incentive-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

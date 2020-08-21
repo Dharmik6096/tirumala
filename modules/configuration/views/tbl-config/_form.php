@@ -14,7 +14,7 @@ $class = $type == 'create' ? '' : 'no_pointer';
 $form = ActiveForm::begin([
             'options' => [],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

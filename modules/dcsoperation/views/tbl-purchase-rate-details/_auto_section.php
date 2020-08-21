@@ -9,7 +9,7 @@ $this->title = Yii::t('app', 'Purchase Rate - Automatic');
 <?php
 $form = ActiveForm::begin(['id' => 'manual_form',
             'validateOnBlur' => true,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => true,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

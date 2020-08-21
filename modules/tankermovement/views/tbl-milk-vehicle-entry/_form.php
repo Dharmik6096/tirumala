@@ -16,7 +16,7 @@ $milk_vehicle_entry_code = $model->milk_vehicle_entry_code;
 $form = ActiveForm::begin([
             'options' => ['id' => 'milk-vehicle-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

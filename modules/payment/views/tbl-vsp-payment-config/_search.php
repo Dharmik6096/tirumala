@@ -19,7 +19,7 @@ use yii\bootstrap\ActiveForm;
                             ],
                             'method' => 'get',
                             'validateOnBlur' => FALSE,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,

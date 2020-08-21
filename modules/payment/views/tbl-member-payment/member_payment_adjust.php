@@ -32,7 +32,7 @@ $tot_amt = array_sum(array_map(function($array) {
         $form = ActiveForm::begin([
                     'id' => 'payment-adjust',
                     'validateOnBlur' => TRUE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => TRUE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

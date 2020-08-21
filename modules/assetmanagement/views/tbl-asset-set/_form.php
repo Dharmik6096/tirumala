@@ -20,7 +20,7 @@ $btn = $type == 'create' ? 'create' : 'update';
                     'field-class' => 'form-group col-sm-6'
                 ],
                 'validateOnBlur' => FALSE,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

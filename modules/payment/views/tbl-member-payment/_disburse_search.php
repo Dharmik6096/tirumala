@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
     $form = ActiveForm::begin([
                 'method' => 'get',
                 'validateOnBlur' => false,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

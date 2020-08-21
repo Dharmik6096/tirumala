@@ -11,7 +11,7 @@ $form = ActiveForm::begin(['options' => [
                 'class' => 'popup-form',
                 'id' => 'kyc-form',
             ], 'validateOnBlur' => TRUE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => TRUE,
             'validateOnSubmit' => TRUE,

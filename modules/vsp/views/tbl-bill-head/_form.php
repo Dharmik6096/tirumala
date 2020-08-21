@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

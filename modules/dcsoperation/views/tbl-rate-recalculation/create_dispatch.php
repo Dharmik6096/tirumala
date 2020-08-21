@@ -24,7 +24,7 @@ use kartik\grid\GridView;
             $form = ActiveForm::begin([
                         'options' => ['id' => 'recalculation-form'],
                         'validateOnBlur' => FALSE,
-                        'validateOnEnter' => TRUE,
+                        
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,

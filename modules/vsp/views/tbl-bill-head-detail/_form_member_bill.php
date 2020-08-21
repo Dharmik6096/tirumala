@@ -10,7 +10,7 @@ use yii\web\JsExpression;
 $form = ActiveForm::begin([
             'options' => ['id' => 'member-bill-head-detail-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

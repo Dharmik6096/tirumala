@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
             'action' => ['transporter-payment'],
             //'method' => 'GET',
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

@@ -179,7 +179,7 @@ $this->title = Yii::t('app', 'Consolidate Challan Preview');
     <?php
     $form = ActiveForm::begin([
                 'validateOnBlur' => FALSE,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

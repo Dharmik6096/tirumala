@@ -4,7 +4,7 @@ use yii\bootstrap\ActiveForm;
 
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

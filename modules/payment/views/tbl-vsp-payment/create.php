@@ -15,7 +15,7 @@ $this->title = 'Vendor Payment Process : Step 1';
                     //'action' => ['list-payment'],
                     //'method' => 'GET',
                     'validateOnBlur' => false,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

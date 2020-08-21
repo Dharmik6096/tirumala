@@ -29,7 +29,16 @@ class ErrorHandler extends \yii\base\ErrorHandler
      */
     protected function renderException($exception)
     {
-        if ($exception instanceof Exception && ($exception instanceof UserException || !YII_DEBUG)) {
+        if ($exception instanceof UnknownCommandException) {
+            // display message and suggest alternatives in case of unknown command
+            $message = $this->formatMessage($exception->getName() . ': ') . $exception->command;
+            $alternatives = $exception->getSuggestedAlternatives();
+            if (count($alternatives) === 1) {
+                $message .= "\n\nDid you mean \"" . reset($alternatives) . '"?';
+            } elseif (count($alternatives) > 1) {
+                $message .= "\n\nDid you mean one of these?\n    - " . implode("\n    - ", $alternatives);
+            }
+        } elseif ($exception instanceof Exception && ($exception instanceof UserException || !YII_DEBUG)) {
             $message = $this->formatMessage($exception->getName() . ': ') . $exception->getMessage();
         } elseif (YII_DEBUG) {
             if ($exception instanceof Exception) {
@@ -56,6 +65,15 @@ class ErrorHandler extends \yii\base\ErrorHandler
         } else {
             echo $message . "\n";
         }
+        if (YII_DEBUG && ($previous = $exception->getPrevious()) !== null) {
+            $causedBy = "\n" . $this->formatMessage('Caused by: ', [Console::BOLD]);
+            if (PHP_SAPI === 'cli') {
+                Console::stderr($causedBy);
+            } else {
+                echo $causedBy;
+            }
+            $this->renderException($previous);
+        }
     }
 
     /**
@@ -73,6 +91,7 @@ class ErrorHandler extends \yii\base\ErrorHandler
             || Yii::$app instanceof \yii\console\Application && Console::streamSupportsAnsiColors($stream)) {
             $message = Console::ansiFormat($message, $format);
         }
+
         return $message;
     }
 }

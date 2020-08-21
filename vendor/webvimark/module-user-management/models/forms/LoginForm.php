@@ -229,7 +229,7 @@ class LoginForm extends Model {
                     $unionConfigArray[$data->union_code][$data->config_key] = $data->config_result_key;
                 }
                 $unions = models\TblUnions::find()->where(['union_code' => explode(',', $union), 'is_active' => 1, 'has_bmc' => 1])->count();
-                $hasBMC = !empty($unions) && count($unions) > 0 ? 1 : 0;
+                $hasBMC = !empty($unions) && $unions > 0 ? 1 : 0;
                 $unionKeyPattern = Yii::$app->general->getUnionKeyPattern(explode(',', $union));
                 $finacialModel = new TblFinancialYear;
                 $finacialYear = $finacialModel->getCurrentYear();

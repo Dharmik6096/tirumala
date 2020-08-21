@@ -9,7 +9,7 @@ $disable = (!$model->isNewRecord) ? ' disabled' : '';
 $readonly = $type == 'create' ? FALSE : TRUE;
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

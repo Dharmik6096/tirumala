@@ -17,7 +17,7 @@ $list = array('0' => 'No', '1' => 'Yes');
 $form = ActiveForm::begin([
             'options' => ['id' => 'milk-dispatch-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

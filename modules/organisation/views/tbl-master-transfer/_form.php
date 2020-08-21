@@ -10,7 +10,7 @@ use yii\helpers\Url;
 $form = ActiveForm::begin([
             'options' => ['id' => 'master-transfer-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

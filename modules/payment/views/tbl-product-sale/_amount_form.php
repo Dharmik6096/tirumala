@@ -10,7 +10,7 @@ use yii\web\View;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => true,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

@@ -17,7 +17,7 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
         $form = ActiveForm::begin([
                     'action' => $url,
                     'validateOnBlur' => false,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

@@ -10,7 +10,7 @@ $this->title = Yii::t('app', 'Milk Rate - Manually');
 <?php
 $form = ActiveForm::begin(['id' => 'dynamic-form',
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

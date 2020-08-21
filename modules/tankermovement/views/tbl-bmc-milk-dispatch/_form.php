@@ -12,7 +12,7 @@ $bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

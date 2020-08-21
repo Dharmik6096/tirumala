@@ -17,7 +17,7 @@ $class = $type == 'edit' ? 'disabled' : '';
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-designation-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

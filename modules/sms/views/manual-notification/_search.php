@@ -21,7 +21,7 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : 'Search');
                             ],
                             'method' => 'get',
                             'validateOnBlur' => FALSE,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,

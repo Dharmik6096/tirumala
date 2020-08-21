@@ -59,7 +59,7 @@ $this->title = Yii::t('app', 'File Data Preview');
         $form = ActiveForm::begin([
                     'id' => 'file-preview',
                     'validateOnBlur' => TRUE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => TRUE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

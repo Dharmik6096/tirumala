@@ -13,7 +13,7 @@ $this->title = Yii::t('app', 'Update Collection Status for Society: ').$model->d
         <?php
         $form = ActiveForm::begin([
                     'validateOnBlur' => false,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

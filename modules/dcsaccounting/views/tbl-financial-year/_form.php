@@ -18,7 +18,7 @@ $minDate = ($model->isNewRecord)?'':date('d-m-Y', strtotime($model->starting_dat
     $form = ActiveForm::begin(['options' => [
                     'field-class' => 'form-group col-sm-3'
                 ], 'validateOnBlur' => FALSE,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

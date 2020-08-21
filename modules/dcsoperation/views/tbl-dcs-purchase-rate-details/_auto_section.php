@@ -9,7 +9,7 @@ $this->title = Yii::t('app', 'BMC Purchase Rate - Formula based');
 <?php
 $form = ActiveForm::begin(['id' => 'manual_form',
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

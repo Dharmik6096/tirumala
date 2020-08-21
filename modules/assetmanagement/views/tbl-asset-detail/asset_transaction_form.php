@@ -18,7 +18,7 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
                         'field-class' => 'form-group col-sm-6'
                     ],
                     'validateOnBlur' => FALSE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

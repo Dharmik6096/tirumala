@@ -24,7 +24,7 @@ $defaultToggle = true;
                             'id' => 'userUpdatePsd',
                             'options' => [],
                             'validateOnBlur' => FALSE,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
