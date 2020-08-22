@@ -527,7 +527,12 @@ h5 .badge{
 
 /*table*/
 .table-responsive{
+    overflow-y: hidden;
+    overflow-x: hidden !important;
+}
+.table-responsive:hover{
     overflow-y: auto;
+    overflow-x: auto !important;
 }
 table{
     margin-bottom: 0 !important;
@@ -1246,10 +1251,13 @@ input[type="hidden"] + .help-block{
     /* padding:5px 10px; */
     margin: 0 0 15px;
     max-height: 450px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+.app-header-list:hover, .app-check-list:hover, .app-check-list-mcc:hover, .app-check-list-bmc:hover{
     overflow-y: scroll;
     overflow-x: hidden;
 }
-
 .app-check-list-padding{
     padding:5px 10px;
 }
