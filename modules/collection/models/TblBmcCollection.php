@@ -113,15 +113,15 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
             [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create', 'update']],
-            [['bmc_silos_info_code'], 'required', 'on' => ['create']],
+            [['bmc_silos_info_code'], 'required', 'on' => ['create', 'update']],
             [['customer_code', 'bmc_code'], 'required', 'on' => ['importCsv']],
             [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv']],
             [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
-            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
-                    return empty($this->getErrors());
-                }, 'on' => ['create', 'update', 'importCsv']],
+//            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
+//                    return empty($this->getErrors());
+//                }, 'on' => ['create', 'update', 'importCsv']],
             [['rtpl'], function ($attribute, $params) {
                     Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
                 }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
@@ -364,6 +364,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $this->village_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'village_code');
                 $this->route_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
             }
+            $this->milkTypeWiseUnique($this, $this, FALSE, FALSE);
             $datetime = date('Y-m-d H:i:s');
             $this->qlty_auto = 0;
             $this->qty_auto = 0;
@@ -473,34 +474,23 @@ class TblBmcCollection extends \app\models\ChildModel {
         Yii::$app->general->validateRateRange($this);
 
         $ApprovalModel = new TblCollectionDataAlias();
-        $approvalTableData = $ApprovalModel->find()->where(['bmc_code' => $this->bmc_code, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_bmc_collection'])->one();
-        $mainTableData = $this->find()->where(['bmc_code' => $this->bmc_code, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])->one();
-        if (($flag == 1 && !empty($approvalTableData)) || !empty($mainTableData)) {
-            $this->addError($attribute, "BMC Collection Already Exists.");
-        }
+        $this->milkTypeWiseUnique($ApprovalModel, $this, TRUE);
+        $this->milkTypeWiseUnique($this, $this);
     }
 
     public function validateUpdate($attribute, $params) {
         $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
 
         $ApprovalModel = new TblCollectionDataAlias();
-        $oldMilktype = $this->oldAttributes['milk_type_code'];
-        $oldMilkqlttype = $this->oldAttributes['milk_quality_type_code'];
         if (!empty($this->oldAttributes) && ($this->fat != $this->oldAttributes['fat'] || $this->snf != $this->oldAttributes['snf'] || $this->qty != $this->oldAttributes['qty'] || $this->milk_type_code != $this->oldAttributes['milk_type_code'] || $this->milk_quality_type_code != $this->oldAttributes['milk_quality_type_code'] || $this->no_of_can != $this->oldAttributes['no_of_can'])) {
 
             $existTableData = $ApprovalModel->find()->where(['bmc_code' => $this->bmc_code, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'shift_code' => $this->shift_code, 'old_milk_type_code' => $this->oldAttributes['milk_type_code'], 'old_milk_quality_type_code' => $this->oldAttributes['milk_quality_type_code'], 'old_qty' => $this->oldAttributes['qty'], 'old_fat' => $this->oldAttributes['fat'], 'old_snf' => $this->oldAttributes['snf'], 'table_name' => 'tbl_bmc_collection'])->one();
             if ($flag == 1 && !empty($existTableData)) {
                 $this->addError($attribute, "Record is Already Exist For Approval");
             }
-            $approvalTableData = $ApprovalModel->find()->where(['bmc_code' => $this->bmc_code, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_quality_type_code' => $this->milk_quality_type_code, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_bmc_collection'])->one();
-            $query = $this->find()->where(['bmc_code' => $this->bmc_code, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_quality_type_code' => $this->milk_quality_type_code, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf]);
-//            if ($this->milk_type_code == $oldMilktype && $this->milk_quality_type_code == $oldMilkqlttype) {
-//                $query->andWhere(['!=', 'milk_type_code', $oldMilktype]);
-//            }
-            $mainTableData = $query->one();
-            if (($flag == 1 && !empty($approvalTableData)) || !empty($mainTableData)) {
-                $this->addError($attribute, "Record is Already Exist");
-            }
+            $this->milkTypeWiseUnique($ApprovalModel, $this, TRUE);
+            $this->milkTypeWiseUnique($this, $this, FALSE, TRUE);
+
             Yii::$app->general->validateRateRange($this);
         }
     }
@@ -531,6 +521,123 @@ class TblBmcCollection extends \app\models\ChildModel {
         $model->own_mcc_plant_code = $model->mcc_plant_code;
         $model->own_bmc_code = $model->bmc_code;
         $model->sample_no = $model->getSampleNo();
+    }
+
+    public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false) {
+        $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
+        if (strtolower($modelData->customer_type) == 'dcs') {
+            $xclol = Yii::$app->general->getforeignkey($modelData->dcsCode, 'x_col1');
+        } else {
+            $xclol = Yii::$app->general->getforeignkey($modelData->mainCustomerCode, 'x_col1');
+        }
+        if (!empty($xclol)) {
+            $value = explode('#', $xclol);
+            $sameMilkType = !empty($value[0]) ? $value[0] : 0;
+            $diffMilkType = !empty($value[1]) ? $value[1] : 0;
+        } else {
+            $sameMilkType = 0;
+            $diffMilkType = 0;
+        }
+        $oldMilktype = !empty($model->oldAttributes['milk_type_code']) ? $model->oldAttributes['milk_type_code'] : '';
+        $oldMilkqlttype = !empty($model->oldAttributes['milk_quality_type_code']) ? $model->oldAttributes['milk_quality_type_code'] : '';
+        if ($approvalUpdate) {
+            $oldMilktype = $modelData->old_milk_type_code;
+            $oldMilkqlttype = $modelData->old_milk_quality_type_code;
+        }
+        if ($sameMilkType != 1 && $diffMilkType != 1) {
+            $returnModel = $model->find()->where(['bmc_code' => $modelData->bmc_code,
+                'customer_code' => $modelData->customer_code,
+                'customer_type' => $modelData->customer_type,
+                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                'shift_code' => $modelData->shift_code]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
+            }
+            if ($update && !$approvalUpdate) {
+                $returnModel->andWhere(['!=', 'milk_collection_code', $modelData->milk_collection_code]);
+            }
+            if ($approvalUpdate) {
+                $returnModel = $returnModel->count();
+                if ($returnModel > 1) {
+                    $modelData->addError('milk_type_code', "Record is Already Exist.");
+                    return FALSE;
+                } else {
+                    $returnModel = '';
+                }
+            } else {
+                $returnModel = $returnModel->one();
+            }
+        } else if ($sameMilkType != 1 && $diffMilkType == 1) {
+            $returnModel = $model->find()->where(['bmc_code' => $modelData->bmc_code,
+                'customer_code' => $modelData->customer_code,
+                'customer_type' => $modelData->customer_type,
+                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                'shift_code' => $modelData->shift_code,
+                'milk_type_code' => $modelData->milk_type_code]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
+            }
+            if ($update && $modelData->milk_type_code == $oldMilktype) {
+                $returnModel->andWhere(['!=', 'milk_type_code', $oldMilktype]);
+            }
+            $returnModel = $returnModel->one();
+            if (($approval && $flag == 1 && !empty($returnModel)) || (!$approval && !empty($returnModel))) {
+                $modelData->addError('milk_type_code', "Milk Type Must Not Same.");
+                return FALSE;
+            }
+        } else if ($sameMilkType == 1 && $diffMilkType != 1) {
+            $returnModel = $model->find()->where(['bmc_code' => $modelData->bmc_code,
+                        'customer_code' => $modelData->customer_code,
+                        'customer_type' => $modelData->customer_type,
+                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                        'shift_code' => $modelData->shift_code])
+                    ->andWhere(['!=', 'milk_type_code', $modelData->milk_type_code]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
+            }
+            $returnModel = $returnModel->one();
+            if (($approval && $flag == 1 && !empty($returnModel)) || (!$approval && !empty($returnModel))) {
+                $modelData->addError('milk_type_code', "Milk Type Must Same.");
+                return FALSE;
+            }
+            if (empty($returnModel)) {
+                $returnModel = $model->find()->where([
+                    'bmc_code' => $modelData->bmc_code,
+                    'customer_code' => $modelData->customer_code,
+                    'customer_type' => $modelData->customer_type,
+                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'shift_code' => $modelData->shift_code,
+                    'milk_type_code' => $modelData->milk_type_code,
+                    'milk_quality_type_code' => $modelData->milk_quality_type_code,
+                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+                if ($approval) {
+                    $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
+                }
+                $returnModel = $returnModel->one();
+            }
+        } else if ($sameMilkType == 1 && $diffMilkType == 1) {
+            $returnModel = $model->find()->where([
+                'bmc_code' => $this->bmc_code,
+                'customer_code' => $this->customer_code,
+                'customer_type' => $this->customer_type,
+                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection)),
+                'milk_type_code' => $this->milk_type_code,
+                'milk_quality_type_code' => $this->milk_quality_type_code,
+                'shift_code' => $this->shift_code,
+                'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
+            }
+            $returnModel = $returnModel->one();
+        }
+        if (($approval && $flag == 1 && !empty($returnModel))) {
+            $modelData->addError('customer_code', "Record is Already Exist In Approval.");
+            return FALSE;
+        }
+        if (!$approval && !empty($returnModel)) {
+            $modelData->addError('customer_code', "Record is Already Exist.");
+            return FALSE;
+        }
     }
 
 }
