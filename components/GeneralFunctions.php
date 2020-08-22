@@ -801,12 +801,10 @@ class GeneralFunctions extends Component {
     }
 
     public function base64url_encode($data) {
-        return $data;
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     public function base64url_decode($data) {
-        return $data;
         if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess'])) {
             return $data;
         }
