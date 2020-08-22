@@ -60,6 +60,7 @@ class SqliteCreate extends Component {
 
     public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code = '') {
         try {
+            $current_date = date('Y-m-d');
             if ($this->is_offline) {
                 $sqls = 'SELECT *  FROM tbl_table_list';
             } else {
@@ -105,7 +106,7 @@ class SqliteCreate extends Component {
                         }
 
                         if (in_array($tableName, ['tbl_purchase_rate_applicability', 'tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'])) {
-                            $sql.= ' and tbl_purchase_rate_applicability.is_active=1 and tbl_purchase_rate_applicability.wef_date >= (select TOP(1) wef_date from tbl_purchase_rate_applicability where ' . $field['key_field'] . " in (${$field['key_field']})" . '  and tbl_purchase_rate_applicability.is_active=1 and CAST(wef_date as date) <= CAST(GETDATE() as date) order by wef_date DESC)';
+                            $sql.= ' and tbl_purchase_rate_applicability.is_active=1 and tbl_purchase_rate_applicability.wef_date >= (select TOP(1) wef_date from tbl_purchase_rate_applicability where ' . $field['key_field'] . " in (${$field['key_field']})" . '  and tbl_purchase_rate_applicability.is_active=1 and CAST(wef_date as date) <= \''.$current_date.'\' order by wef_date DESC)';
                         }
                         $cmd = $this->export_db->createCommand($sql);
                         $dataReader = $cmd->queryAll();
