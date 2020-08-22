@@ -472,7 +472,8 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_society_wise_milk_collection_consolidated',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/manual-milk-entry-society-date-shift-wise' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
