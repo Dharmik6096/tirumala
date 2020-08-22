@@ -513,32 +513,38 @@ class V1 extends \yii\base\Module {
             'report/milk-collection-vs-receipt' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_milk_collection_vs_milk_receipt',
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/milk-dispatch-vs-receipt' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_milk_dispatch_vs_receipt',
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/member-collection-vs-dispatch' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_member_collection_vs_dispatch',
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/company-wise-collection-vs-dispatch' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_vs_dispatch',
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['mcc', 'bmc']
             ],
             'report/company-wise-collection-vs-recipt' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_vs_receipt',
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['mcc', 'bmc']
             ],
             'report/company-wise-dispatch-vs-recipt' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_dispatch_vs_receipt',
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['mcc', 'bmc']
             ],
             'report/bmc-collection-shift-report' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime',
@@ -550,19 +556,22 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_date_and_shift_wise_summary',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/bmc-collection-date-wise-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_date_wise_summary',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/bmc-collection-consolidated' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_consolidated',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/union-collection-date-shift-summary' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
@@ -622,13 +631,15 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_mpp_wise_payemnt_cycle_wise',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['dcs']
             ],
             'report/bmc-wise-payment-cycle-wise' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_bmc_wise_payemnt_cycle_wise',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['mcc', 'bmc']
             ],
             'report/company-wise-payment-cycle-wise' => [
                 'param' => 'union#from_datetime#to_datetime',
