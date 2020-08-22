@@ -29,6 +29,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                 </div>
             </div>
             <div class="col-sm-12">
+                <div class="col-sm-12">
                 <div class="table-responsive table-rate-chart">
                     <table class="table table-bordered table-striped table-input" id="table">
                         <?php
@@ -67,6 +68,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                         <?php } ?>
 
                     </table>
+                    </div>
                 </div>
             </div>
         </div>

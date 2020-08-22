@@ -528,7 +528,6 @@ h5 .badge{
 /*table*/
 .table-responsive{
     overflow-y: auto;
-    padding:0 10px;
 }
 table{
     margin-bottom: 0 !important;
@@ -2955,3 +2954,23 @@ div#bmc-compare {
 .dashboard_tbl{
     padding: 0px !important;
 }
+table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
+ 
+}
+.table-hover thead{
+    background-color: #3a7bd5 !important;
+}
+.table-hover thead tr th,
+.table-hover thead tr th a{
+    color: white !important;
+}
+.table-hover thead tr.filters.skip-export {
+    background-color: #ffffff !important;
+}
+.table-hover tbody td.action-cell a i {
+    color: rgb(58, 123, 213) !important;
+}
+.table-hover tbody td{
+    white-space: nowrap;
+}
+.table-hover tbody tr:nth-child(odd) {background-color: #f1f1f1 /*dfedff*/;}
