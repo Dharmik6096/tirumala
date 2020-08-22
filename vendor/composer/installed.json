@@ -3273,7 +3273,7 @@
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "git@github.com:nickcv-ln/yii2-encrypter.git",
+            "url": "https://github.com/nickcv-ln/yii2-encrypter.git",
             "reference": "eaedea577f10ba605c1408cb9901e591d8034a8b"
         },
         "dist": {
@@ -6690,7 +6690,7 @@
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "git@github.com:zainiafzan/yii2-dropzone.git",
+            "url": "https://github.com/zainiafzan/yii2-dropzone.git",
             "reference": "788f36cb8b7cea1a4205a226c6d0e58e963aabeb"
         },
         "dist": {
