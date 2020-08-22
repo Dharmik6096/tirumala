@@ -162,8 +162,28 @@ class DcsImportStrategy extends ARImportStrategy {
                             $modelCodes->bmc_code = $model->bmc_code;
                             array_push($modelList, $modelCodes);
 
-                            $model->setbankContacts($model, $modelList, $errors);
+                            $model->setbankDetails($model, $modelList, $errors);
+                            $model->setContactDetails($model, $modelList, $errors);
                             $model->setModelData($model, $modelList);
+                        } else {
+                            $defaultBankDetail = $existData->defaultBankDetail;
+                            $defaultContactDetail = $existData->defaultContactDetail;
+                            if (empty($defaultBankDetail) || $defaultBankDetail->bank_account_no != $model->bank_account_no) {
+                                if (!empty($defaultBankDetail)) {
+                                    $defaultBankDetail->is_default = 0;
+                                    $defaultBankDetail->is_active = 0;
+                                    array_push($modelList, $defaultBankDetail);
+                                }
+                                $model->setbankDetails($model, $modelList, $errors);
+                            }
+                            if (empty($defaultContactDetail) || $defaultContactDetail->mobile_no != $model->mobile_no) {
+                                if (!empty($defaultContactDetail)) {
+                                    $defaultContactDetail->is_default = 0;
+                                    $defaultContactDetail->is_active = 0;
+                                    array_push($modelList, $defaultContactDetail);
+                                }
+                                $model->setContactDetails($model, $modelList, $errors);
+                            }
                         }
                         $modelMilk = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1, 'milk_type_code' => $model->milk_type_code])->one();
                         if (!empty($existData) && !empty($modelMilk)) {
