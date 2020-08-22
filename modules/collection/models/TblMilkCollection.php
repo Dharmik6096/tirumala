@@ -602,37 +602,4 @@ class TblMilkCollection extends \app\models\ChildModel {
             return FALSE;
         }
     }
-
-    public function setChildTable(&$model, &$modelSave) {
-//        $model->addError('milk_type_code', "Record is Already Exist");
-//        return FALSE;
-        $modelRouteSource = TblRouteMapping::find()->where(['route_code' => $model->route_code])->one();
-        if (strtolower($this->from_type) == 'society') {
-            $societyCodes = TblSocietyCodes::find()->where(['dcs_code' => $model->from_dest])->one();
-            if (!empty($societyCodes)) {
-                $historyModel = new TblSocietyCodesHistory();
-                Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
-                $societyCodes->route_code = $modelRouteSource->route_code;
-                $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + 1, 3, '0', STR_PAD_LEFT);
-                array_push($modelSave, $societyCodes);
-                array_push($modelSave, $historyModel);
-            }
-            $dcsCode = TblDcs::findOne($model->from_dest);
-            if (!empty($dcsCode)) {
-                $dcsHistoryModel = new TblDcsHistory();
-                Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
-                $dcsCode->route_code = $model->route_code;
-                $dcsCode->scenario = 'routeMapping';
-                array_push($modelSave, $dcsCode);
-                array_push($modelSave, $dcsHistoryModel);
-            }
-        } else {
-            $model = TblCustomerMaster::find()->where(['customer_code' => $model->from_dest, 'customer_type' => $model->from_type])->one();
-            $custoHistoryModel = new TblCustomerMasterHistory();
-            Yii::$app->operation->history($model, $custoHistoryModel, UPDATE);
-            $model->route_code = $modelRouteSource->route_code;
-            array_push($modelSave, $custoHistoryModel);
-        }
-    }
-
 }
