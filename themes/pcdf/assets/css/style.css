@@ -320,6 +320,7 @@ h5 .badge{
     -webkit-box-shadow: none;
     box-shadow: none;
     margin: 0;
+    border-radius: 0px !important;
 }
 .panel-button{
     background-color: transparent;
@@ -378,6 +379,10 @@ h5 .badge{
     font-weight: 600;
     /*text-transform: uppercase;*/
     padding: 8px 15px !important;
+    /* position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 999; */
 }
 .panel-default .panel-subtitle{
     display: inline-block;
@@ -392,7 +397,7 @@ h5 .badge{
     margin: -11px 5px -11px -15px;
     padding: 12px;
     height: 35px;
-    border-radius: 2px 0 0 0;
+    border-radius: 0px 0 0 0;
     box-shadow: none;
 }
 .panel-default .panel-heading > .btn i,
@@ -2282,6 +2287,9 @@ div.crystalstyle{
     margin: 0;
     overflow: hidden;
 }
+/* .panel:hover{
+    overflow-y:scroll;
+} */
 .panel.panel-default{
     min-height: calc(100vH - 100px);
 }
