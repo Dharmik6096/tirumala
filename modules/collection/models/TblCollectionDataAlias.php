@@ -287,7 +287,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     public function validateMilkCollection($attribute, $params) {
         $MainModel = new TblMilkCollection();
         if (($this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code)) {
-            $MainModel->milkTypeWiseUnique($MainModel, $this, FALSE, TRUE, TRUE);
+            $MainModel->milkTypeWiseUnique($MainModel, $this, FALSE, FALSE, TRUE);
         } else {
             $MainModel->milkTypeWiseUnique($MainModel, $this);
         }
@@ -304,7 +304,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     public function validateBmcCollection($attribute, $params) {
         $MainModel = new TblBmcCollection();
         if (($this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code || $this->milk_quality_type_code != $this->old_milk_quality_type_code)) {
-            $MainModel->milkTypeWiseUnique($MainModel, $this, FALSE, TRUE, TRUE);
+            $MainModel->milkTypeWiseUnique($MainModel, $this, FALSE, FALSE, TRUE);
         } else {
             $MainModel->milkTypeWiseUnique($MainModel, $this);
         }

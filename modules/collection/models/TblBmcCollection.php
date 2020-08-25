@@ -114,7 +114,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
             [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create', 'update']],
             [['bmc_silos_info_code'], 'required', 'on' => ['create', 'update']],
-            [['customer_code', 'bmc_code'], 'required', 'on' => ['importCsv']],
+            [['customer_code', 'bmc_code', 'sample_no'], 'required', 'on' => ['importCsv']],
             [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv']],
             [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
@@ -144,6 +144,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+            [['bmc_code'], 'pastDateValidate', 'on' => 'importCsv'],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
             [['tag_1'], 'default', 'value' => 'X'],
             [['adt_param', 'adt_value'], 'safe'],
@@ -364,12 +365,11 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $this->village_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'village_code');
                 $this->route_code = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
             }
-            $this->milkTypeWiseUnique($this, $this, FALSE, FALSE);
             $datetime = date('Y-m-d H:i:s');
             $this->qlty_auto = 0;
             $this->qty_auto = 0;
             $this->dt_date = $datetime;
-            $this->sample_no = $this->getSampleNo();
+//            $this->sample_no = $this->getSampleNo();
             $this->date_time_of_recieve = $datetime;
             $this->type_of_data_receive = 'Manual';
             $this->sms_status = 'n';
@@ -437,6 +437,12 @@ class TblBmcCollection extends \app\models\ChildModel {
             } else if (empty(floatval($this->rtpl)) || empty(floatval($this->amount))) {
                 $this->amount = 0;
                 $this->rtpl = 0;
+            }
+            $existData = $this::find()->where(['bmc_code' => $this->bmc_code, 'customer_code' => $this->customer_code, 'customer_type' => $this->customer_type, 'date_time_of_collection' => $this->date_time_of_collection, 'sample_no' => $this->sample_no, 'shift_code' => $this->shift_code])->one();
+            if (!empty($existData)) {
+                $this->milkTypeWiseUnique($this, $this, FALSE, FALSE, FALSE, TRUE);
+            } else {
+                $this->milkTypeWiseUnique($this, $this, FALSE, FALSE);
             }
         }
     }
@@ -523,7 +529,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         $model->sample_no = $model->getSampleNo();
     }
 
-    public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false) {
+    public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
         $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
         if (strtolower($modelData->customer_type) == 'dcs') {
             $xclol = Yii::$app->general->getforeignkey($modelData->dcsCode, 'x_col1');
@@ -553,7 +559,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
             }
-            if ($update && !$approvalUpdate) {
+            if ($update || $importUpdate) {
                 $returnModel->andWhere(['!=', 'milk_collection_code', $modelData->milk_collection_code]);
             }
             if ($approvalUpdate) {
@@ -577,7 +583,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
             }
-            if ($update && $modelData->milk_type_code == $oldMilktype) {
+            if (($update || $approvalUpdate || $importUpdate) && $modelData->milk_type_code == $oldMilktype) {
                 $returnModel->andWhere(['!=', 'milk_type_code', $oldMilktype]);
             }
             $returnModel = $returnModel->one();
@@ -596,7 +602,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
             }
             $returnModel = $returnModel->one();
-            if (($approval && $flag == 1 && !empty($returnModel)) || (!$approval && !empty($returnModel))) {
+            if (!empty($returnModel)) {
                 $modelData->addError('milk_type_code', "Milk Type Must Same.");
                 return FALSE;
             }
@@ -613,6 +619,9 @@ class TblBmcCollection extends \app\models\ChildModel {
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
                 }
+                if ($importUpdate) {
+                    $returnModel->andWhere(['!=', 'milk_collection_code', $modelData->milk_collection_code]);
+                }
                 $returnModel = $returnModel->one();
             }
         } else if ($sameMilkType == 1 && $diffMilkType == 1) {
@@ -628,6 +637,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_bmc_collection']);
             }
+            if ($importUpdate) {
+                $returnModel->andWhere(['!=', 'milk_collection_code', $modelData->milk_collection_code]);
+            }
             $returnModel = $returnModel->one();
         }
         if (($approval && $flag == 1 && !empty($returnModel))) {
@@ -637,6 +649,13 @@ class TblBmcCollection extends \app\models\ChildModel {
         if (!$approval && !empty($returnModel)) {
             $modelData->addError('customer_code', "Record is Already Exist.");
             return FALSE;
+        }
+    }
+
+    public function pastDateValidate($attribute, $params) {
+        $this->date_time_of_collection = ($this->date_time_of_collection == '') ? null : date('Y-m-d', strtotime($this->date_time_of_collection));
+        if (!empty($this->date_time_of_collection) && ($this->date_time_of_collection > date('Y-m-d'))) {
+            $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be smaller than ' . date('d.m.Y')));
         }
     }
 
