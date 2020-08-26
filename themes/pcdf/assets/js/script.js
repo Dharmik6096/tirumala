@@ -117,7 +117,9 @@ var initDepdropMs;
             {
                 $(this).find('input[name=q]').remove();
                 encryptData($(this));
+                  if ($(this).attr('id') != 'report-form') {
                 $(this).unbind().submit();
+            }
             }
         });
         $(document).on('submit', 'form[data-pjax]', function (event) {
@@ -149,8 +151,10 @@ var initDepdropMs;
                 name: 'q'
             }).appendTo(frm);
             $('#qstr').val(encrypted);
+            if (frm.attr('id') != 'report-form') {
             frm.find('select').not($('#qstr')).attr('disabled', 'disabled');
             frm.find('input').not($('#qstr')).attr('disabled', 'disabled');
+        }
         }
         function Base64UrlEncode(s)
         {
