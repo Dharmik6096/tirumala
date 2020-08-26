@@ -51,7 +51,7 @@ use app\modules\details\models\TblBankDetails;
 class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
-    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $mobile_nos, $department, $ifsc, $bank_account_no;
+    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no;
 
     /**
      * @inheritdoc
@@ -92,6 +92,16 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
             [['x_col1'], 'default', 'value' => '1#1'],
+            [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no'], 'safe'],
+            [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+            [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+            [['ifsc'], 'trim', 'on' => ['importCsv']],
+            [['email'], 'email', 'on' => ['importCsv']],
+            [['mobile_no', 'contact_person'], 'required', 'on' => ['importCsv']]
         ];
     }
 
@@ -363,7 +373,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $defaultBankDetail = $existData->defaultBankDetail;
             $defaultContactDetail = $existData->defaultContactDetail;
         }
-      
+
         if (empty($defaultBankDetail) || $defaultBankDetail->bank_account_no != $model->bank_account_no) {
             if (!empty($defaultBankDetail)) {
                 $defaultBankDetail->is_default = 0;
@@ -373,7 +383,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $model->setbankDetails($model, $modelList, $errors);
         }
 
-        if (empty($defaultContactDetail) || $defaultContactDetail->mobile_no != $model->mobile_nos) {
+        if (empty($defaultContactDetail) || $defaultContactDetail->mobile_no != $model->mobile_no) {
             if (!empty($defaultContactDetail)) {
                 $defaultContactDetail->is_default = 0;
                 $defaultContactDetail->is_active = 0;
@@ -403,7 +413,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function setContactDetails($model, &$saveModel, &$errors) {
-        if (!empty($model->mobile_nos)) {
+        if (!empty($model->mobile_no)) {
             $contact_model = new TblContactDetails();
             $contact_model->setModel('customer', $model->customer_code);
             $contact_model->department = $model->department;
@@ -414,7 +424,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $contact_model->surname = $model->surname;
             $contact_model->local_lastname = $model->local_middlename;
             $contact_model->local_surname = $model->local_surname;
-            $contact_model->mobile_no = $model->mobile_nos;
+            $contact_model->mobile_no = $model->mobile_no;
             $contact_model->email = $model->email;
             if (!$contact_model->validate()) {
                 $errors[] = $contact_model->getErrors();

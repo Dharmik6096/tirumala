@@ -451,6 +451,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCustomerMaster() {
+        $this->report = 'CustomerMaster';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -564,7 +569,7 @@ class ReportsController extends \app\controllers\ChildController {
 
     private function getLabels($l) {
         $label = [
-            //101
+//101
             'MemberDailyCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_collection_day_wise_report',
@@ -1155,6 +1160,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_location_wise_asset_movement_details',
                 'scenario' => 'LocationWiseAssetMovement',
                 'title' => '906 - Location Wise Asset Movement',
+            ],
+            'CustomerMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_customer_master_register',
+                'scenario' => 'CustomerMaster',
+                'title' => 'Customer Master Register',
+                'removeExportType' => ['CSV'],
+                'output_type' => FALSE
             ],
         ];
         return $label[$l];
