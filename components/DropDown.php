@@ -449,7 +449,7 @@ class DropDown extends Component {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
-        $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
+        $field_value = !empty($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         $control_name = ($name == '') ? $data['name'] : $name;
         $depends = explode(',', $depends);
         $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
