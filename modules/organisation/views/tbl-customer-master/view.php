@@ -158,5 +158,26 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
             ]);
             ?>
         </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div>
+        <div class="form-grid">
+            <?=
+            $this->render('../../../details/views/tbl-bank-details/_bank_details', [
+                'model' => $model,
+                'dataProvider' => $bdataProvider,
+                'searchModel' => $bsearchModel,
+            ])
+            ?>
+        </div>
+
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
+        <div class="form-grid">
+            <?=
+            $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                'model' => $model,
+                'dataProvider' => $cdataProvider,
+                'searchModel' => $csearchModel,
+            ])
+            ?>
+        </div>  
     </div>
 </div>

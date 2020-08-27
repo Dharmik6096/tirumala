@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 ?>
 <?php
@@ -40,6 +41,16 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'update' => true,
+        'bank-details' => function ($url, $model) {
+            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-customer-master/bank-details', 'id' => $model->customer_code], $options);
+        },
+        'contact-details' => function ($url, $model) {
+            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
+        },
     ]
 ];
 

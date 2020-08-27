@@ -5,7 +5,7 @@ namespace app\modules\misreports\controllers;
 use yii\web\Controller;
 use yii;
 use Jaspersoft\Client\Client;
-use app\modules\misreports\models\ReportsModel;
+use app\modules\misreports\models\ReportsModelOld;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 
@@ -21,7 +21,7 @@ class DefaultController extends \app\controllers\ChildController {
     private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '';
 
     public function actionIndex() {
-        $model = new ReportsModel();
+        $model = new ReportsModelOld();
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
             if (!empty($this->data['scenario'])) {
@@ -83,9 +83,9 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionSapReport() {
         $this->report = 'VmReportSap';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'WqReportSap';
-            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'SdReportSap';
             }
         }
@@ -95,7 +95,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionDateShiftBmcCollection() {
         $this->report = 'DateBmcCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'DateShiftBmcCollection';
             }
         }
@@ -105,7 +105,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionSapStatusReport() {
         $this->report = 'SapStatusReport';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'SapDetailedStatusReport';
             }
         }
@@ -115,7 +115,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionSapComparisionReport() {
         $this->report = 'SapComparisionReportDateWise';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'SapComparisionReportDateShiftWise';
             }
         }
@@ -205,7 +205,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionCollectionDataSummary() {
         $this->report = 'CollectionDataSummary';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'CollectionDataSummaryProductWise';
             }
         }
@@ -230,7 +230,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionMemberPayment() {
         $this->report = 'MemberPaymentDcsWise';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'MemberPaymentMemberWise';
             }
         }
@@ -245,10 +245,10 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionMemberMilkCollection() {
         $this->report = 'MemberMilkCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'MemberMilkCollectionDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'MemberMilkCollectionConsolidate';
             }
         }
@@ -258,10 +258,10 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionConsolidatedUnionMilkCollection() {
         $this->report = 'ConsolidatedUnionMilkCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'ConsolidatedUnionMilkCollectionDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'ConsolidatedUnionMilkCollectionConsolidate';
             }
         }
@@ -271,10 +271,10 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionDcsWiseMilkCollection() {
         $this->report = 'DcsWiseMilkCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'DcsWiseMilkCollectionDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'DcsWiseMilkCollectionConsolidate';
             }
         }
@@ -349,7 +349,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionCpmilkSapReport() {
         $this->report = 'CPMemberReportSap';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'CPRmrdReportSap';
             }
         }

@@ -52,13 +52,13 @@ class TblBankDetails extends \app\models\ChildModel {
 //        }],
             [['bank_account_no'], 'CheckDuplicate'],
             [['ifsc'], function ($attribute, $params) {
-            Yii::$app->general->validateIfsc($this, $attribute, $params);
-        }, 'skipOnEmpty' => true],
+                    Yii::$app->general->validateIfsc($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
             [['bank_account_no'], function ($attribute, $params) {
-            $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
-            if ($error !== TRUE)
-                $this->addError($attribute, $error);
-        }],
+                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+                    if ($error !== TRUE)
+                        $this->addError($attribute, $error);
+                }],
             [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
             [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code']],
         ];

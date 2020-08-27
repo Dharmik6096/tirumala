@@ -11,6 +11,10 @@ use app\modules\organisation\models\TblCustomerMasterHistory;
 use yii\helpers\Json;
 use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\details\models\TblBankDetails;
+use app\modules\details\models\TblContactDetails;
+use app\modules\details\models\TblBankDetailsSearch;
+use app\modules\details\models\TblContactDetailsSearch;
 
 /**
  * TblCustomerMasterController implements the CRUD actions for TblCustomerMaster model.
@@ -18,6 +22,8 @@ use app\modules\globalmaster\models\TblCustomerType;
 class TblCustomerMasterController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type'];
+    public $bankDetails;
+    public $contactDetails;
 
     /**
      * Lists all TblCustomerMaster models.
@@ -39,8 +45,19 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+
+        $bsearchModel = new TblBankDetailsSearch();
+        $bsearchModel->module_name = 'customer';
+        $bsearchModel->module_code = $id;
+        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
+        $csearchModel = new TblContactDetailsSearch();
+        $csearchModel->module_name = 'customer';
+        $csearchModel->module_code = $id;
+        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
+                    'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
         ]);
     }
 
@@ -52,11 +69,26 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblCustomerMaster();
         $this->viewFile = 'create';
+        $this->bankDetails = new TblBankDetails();
+        $this->contactDetails = new TblContactDetails();
+        $this->contactDetails->scenario = 'additional';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->customer_code = $this->model->getCode();
 //            $this->model->customer_code_ex = $this->model->getCodeEx();
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Customer Master', 'create']);
+            $mapList = [];
+            $this->bankDetails->load(Yii::$app->request->post());
+            if (!empty($this->bankDetails->bank_code)) {
+                $this->bankDetails->setModel('customer', $this->model->customer_code);
+                $this->bankDetails->scenario = 'bank_selected';
+                array_push($mapList, $this->bankDetails);
+            }
+            $this->contactDetails->load(Yii::$app->request->post());
+            if (!empty($this->contactDetails->mobile_no)) {
+                $this->contactDetails->setModel('customer', $this->model->customer_code);
+                array_push($mapList, $this->contactDetails);
+            }
+            $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Customer Master', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -179,6 +211,46 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             return;
         }
         echo Json::encode(['output' => '', 'selected' => $selected]);
+    }
+
+    protected function customRender() {
+        return $this->render($this->viewFile, ['model' => $this->model,
+                    'bankDetails' => $this->bankDetails,
+                    'contactDetails' => $this->contactDetails
+        ]);
+    }
+
+    public function actionBankDetails($id) {
+        $bankDetails = new TblBankDetails();
+        $searchModel = new TblBankDetailsSearch();
+        $searchModel->module_name = 'customer';
+        $searchModel->module_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $modelDcs = $this->findModel($id);
+        return $this->render('../../../details/views/tbl-bank-details/create', [
+                    'model' => $bankDetails,
+                    'id' => $id,
+                    'module' => 'customer',
+                    'dist' => $modelDcs->district_code,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'dist_field' => 'tblcustomermaster-district_code'
+        ]);
+    }
+
+    public function actionContactDetails($id) {
+        $contactDetails = new TblContactDetails();
+        $searchModel = new TblContactDetailsSearch();
+        $searchModel->module_name = 'customer';
+        $searchModel->module_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('../../../details/views/tbl-contact-details/create', [
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'customer',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
+        ]);
     }
 
 }
