@@ -55,6 +55,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'bmc_code,from_datetime,customer_type',
                     'sp_name' => 'sp_payment_installment_status_update',
                 ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'sp_name' => 'sp_tpt_primary_payment',
+                ]
             ],
         ];
     }

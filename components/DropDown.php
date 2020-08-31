@@ -387,9 +387,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-set/org-sap-code-list', Yii::t('app', 'Select SAP Code'), $multiple, $model->$name, $readonly);
     }
 
-    public function datewise_transporter_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
+    public function datewise_bmc_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $extra_param, $readOnly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readOnly);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
@@ -590,7 +590,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1195,7 +1195,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

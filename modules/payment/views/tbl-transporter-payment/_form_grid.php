@@ -11,16 +11,34 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'filter' => FALSE, 'visible' => FALSE],
-    ['attribute' => 'transporter_type', 'value' => function($model) {
-            return isset($model->transporter_type) ? Yii::$app->dropdown->getRecords('transporter_type')['data'][$model->transporter_type] : '';
-        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('transporter_type', $searchModel, 'transporter_type'),],
+    ['attribute' => 'plant_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'filter' => FALSE, 'visible' => FALSE
+    ],
+    ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+        }, 'filter' => FALSE, 'visible' => FALSE
+    ],
+    ['attribute' => 'bmc_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        }
+    ],
     ['attribute' => 'bill_no'],
+    ['attribute' => 'route_code', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+        }, 'label' => Yii::t('app', 'Route Code')],
+    ['attribute' => 'route_name', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+        }
+    ],
     ['attribute' => 'transporter_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
-        }, 'filter' => FALSE],
-    ['attribute' => 'route_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
-        },],
+        }],
+    ['attribute' => 'vehicle_code',
+        'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
+        },
+    ],
     [
         'label' => 'Period',
         'filterType' => GridView::FILTER_DATE,
@@ -31,23 +49,20 @@ $attribute = [
         'value' => function($model) {
     return Yii::$app->controls->view_date($model->from_date) . ' To ' . Yii::$app->controls->view_date($model->to_date);
 }],
+    ['attribute' => 'billing_method', 'visible' => FALSE],
     ['attribute' => 'no_of_days'],
-    ['attribute' => 'billing_type_code',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->billingTypeCode, 'billing_type') . ($model->billing_type_code == 2 ? ($model->is_day_wise == 1 ? '(Day Wise)' : '(Month Wise)') : '');
-        }
-    ],
     ['attribute' => 'total_kms'],
-    ['attribute' => 'total_vts_kms'],
-    ['attribute' => 'total_least_kms'],
     ['attribute' => 'total_qty'],
-    ['attribute' => 'total_rejected_qty'],
-    ['attribute' => 'qty_amount'],
+    ['attribute' => 'rec_kg_fat'],
+    ['attribute' => 'rec_kg_snf'],
+    ['attribute' => 'fixed_rent'],
+    ['attribute' => 'fuel_consumption'],
+    ['attribute' => 'vehicle_average'],
+    ['attribute' => 'fuel_rate'],
     ['attribute' => 'total_amount'],
-    ['attribute' => 'total_deduction'],
-    ['attribute' => 'total_rejected_amount'],
-    ['attribute' => 'total_penalty_amount'],
+    ['attribute' => 'fixed_amount'],
     ['attribute' => 'total_addition'],
+    ['attribute' => 'total_deduction'],
     ['attribute' => 'net_amount'],
     ['attribute' => 'adjust_amount'],
     ['attribute' => 'final_amount'],
@@ -71,27 +86,28 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'lock-bill' => function ($url, $model) {
-            $icon = ($model->status == 'processed') ? '<i class="fa fa-unlock"></i>' : '<i class="fa fa-lock"></i>';
-            $class = ($model->status == 'processed') ? '' : 'disabled';
-            $url = Url::to(['lock-bill']);
-            $name = Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name') . '(' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) . ')';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Lock Bill'), 'class' => 'lock-bill ' . $class, 'data-val' => $model->transporter_payment_code, 'data-name' => $name, 'data-url' => $url];
-            return GhostHtml::a_alert($icon, ['/payment/tbl-transporter-payment/lock-bill'], $options);
-        },
-                'print-bill' => function ($url, $model) {
-            $options = ['target' => '_blank', 'title' => Yii::t('app', 'View Bill'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View Bill')];
-            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/payment/tbl-transporter-payment/view-bill', 'union_code' => $model->union_code, 'transporter_code' => $model->transporter_code, 'from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_type' => $model->transporter_type, 'route_code' => $model->route_code], $options);
-        },
-            ]
-        ];
+        'view' => true
+//        'lock-bill' => function ($url, $model) {
+//            $icon = ($model->status == 'processed') ? '<i class="fa fa-unlock"></i>' : '<i class="fa fa-lock"></i>';
+//            $class = ($model->status == 'processed') ? '' : 'disabled';
+//            $url = Url::to(['lock-bill']);
+//            $name = Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name') . '(' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) . ')';
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Lock Bill'), 'class' => 'lock-bill ' . $class, 'data-val' => $model->transporter_payment_code, 'data-name' => $name, 'data-url' => $url];
+//            return GhostHtml::a_alert($icon, ['/payment/tbl-transporter-payment/lock-bill'], $options);
+//        },
+//                'print-bill' => function ($url, $model) {
+//            $options = ['target' => '_blank', 'title' => Yii::t('app', 'View Bill'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View Bill')];
+//            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/payment/tbl-transporter-payment/view-bill', 'union_code' => $model->union_code, 'transporter_code' => $model->transporter_code, 'from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_type' => $model->transporter_type, 'route_code' => $model->route_code], $options);
+//        },
+    ]
+];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-        ?>
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
 
-        <?php
+<?php
 
-        $script = "
+$script = "
 $(document).ready(function(){
     $(document).on('click','.lock-bill',function(e){
     var id= $(this).attr('data-val');
@@ -128,5 +144,4 @@ $(document).ready(function(){
     });
     });
 });";
-        $this->registerJs($script, View::POS_END, 'tpt-payment-index');
-        
+$this->registerJs($script, View::POS_END, 'tpt-payment-index');

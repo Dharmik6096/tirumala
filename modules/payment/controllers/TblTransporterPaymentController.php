@@ -21,7 +21,7 @@ use yii\base\Model;
  */
 class TblTransporterPaymentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['payment-detail-primary', 'datewise-transporter-list'];
+    public $freeAccessActions = ['payment-detail-primary', 'datewise-bmc-list'];
 
     /**
      * @inheritdoc
@@ -44,12 +44,22 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date));
             $model->to_date = date('Y-m-d', strtotime($model->to_date));
+            $model->plant_code = $model->bmcCode->plant_code;
+            $model->mcc_plant_code = $model->bmcCode->mcc_plant_code;
+            $data = [];
+            $data['union_code'] = $model->union_code;
+            $data['plant_code'] = $model->plant_code;
+            $data['mcc_plant_code'] = $model->mcc_plant_code;
+            $data['bmc_code'] = $model->bmc_code;
+            $data['from_date'] = $model->from_date;
+            $data['to_date'] = $model->to_date;
+            $data['user_code'] = \Yii::$app->user->identity->user_code;
             if ($model->transporter_type == 1) {
-                $this->getSecondaryTPTSpData($model);
-                return $this->redirect(['payment-adjust', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'union_code' => $model->union_code]]);
+                //Yii::$app->ClientPaymentConfig->processPayment('secondary_tpt_payment', $data);
+                //return $this->redirect(['payment-adjust', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'union_code' => $model->union_code]]);
             } else {
-                $this->getPrimaryTPTSpData($model);
-                return $this->redirect(['payment-adjust-primary', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'union_code' => $model->union_code]]);
+                Yii::$app->ClientPaymentConfig->processPayment('primary_tpt_payment', $data);
+                return $this->redirect(['payment-adjust-primary', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code]]);
             }
         }
         return $this->render('create', [
@@ -106,7 +116,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblTransporterPayment();
         $model->load(Yii::$app->request->get());
-        $detailModel = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code])->all();
+        $detailModel = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code])->all();
         if (!empty($detailModel)) {
             if (Yii::$app->request->post('TblTransporterPayment')) {
                 $hisModel = [];
@@ -122,7 +132,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
                         $dh->final_amount = $dh->net_amount + $dh->adjust_amount;
                         $mainModel[] = $dh;
                     }
-                    $transaction = $this->generalModel->saveTransaction($mainModel, $hisModel, ['Payment of ' . $model->transporterCode->transporter_name . '(' . $model->transporterCode->vendor_code . ')' . ' adjusted succesfully', 'info']);
+                    $transaction = $this->generalModel->saveTransaction($mainModel, $hisModel, ['Payment of ' . $model->bmcCode->bmc_name . '(' . $model->bmcCode->ref_code . ')' . ' adjusted succesfully', 'info']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(['index']);
                     }
@@ -179,34 +189,31 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         }
     }
 
-    private function getSecondaryTPTSpData($model) {
-        $result = \Yii::$app->db->createCommand("{CALL sp_tpt_sec_payment (:union_code,:from_date,:to_date,:transporter_code)}")
-                ->bindValue(':from_date', $model->from_date)
-                ->bindValue(':to_date', $model->to_date)
-                ->bindValue(':union_code', $model->union_code)
-                ->bindValue(':transporter_code', $model->transporter_code);
-        // ->bindValue(':primary_tpt_cost', $model->primary_tpt_cost);
-        $query = $result->execute();
-        return $query;
+    public function actionView($id) {
+        $model = TblTransporterPayment::find()->where(['transporter_payment_code' => $id])->one();
+        $searchModel = new TblTransporterPaymentDetailSearch();
+        $searchModel->transporter_payment_code = $model->transporter_payment_code;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $searchModelHead = new TblTransporterPaymentHeadDetailSearch();
+        $searchModelHead->transporter_payment_code = $model->transporter_payment_code;
+        $dataProviderHead = $searchModelHead->search(Yii::$app->request->queryParams);
+        return $this->render('view', [
+                    'model' => $model,
+                    'vehicleDetail' => $dataProvider,
+                    'headDetail' => $dataProviderHead,
+                    'searchModel' => $searchModel,
+                    'searchModelHead' => $searchModelHead
+        ]);
     }
 
-    private function getPrimaryTPTSpData($model) {
-        $result = \Yii::$app->db->createCommand("{CALL sp_tpt_primary_payment (:union_code,:from_date,:to_date,:transporter_code)}")
-                ->bindValue(':from_date', $model->from_date)
-                ->bindValue(':to_date', $model->to_date)
-                ->bindValue(':union_code', $model->union_code)
-                ->bindValue(':transporter_code', $model->transporter_code);
-        $query = $result->execute();
-        return $query;
-    }
-
-    public function actionDatewiseTransporterList() {
+    public function actionDatewiseBmcList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[2]) && !empty($parents[3])) {
                 $mccs = new TblTransporterPayment();
-                $data = $mccs->getdatewiseTransportersList($parents[0], $parents[1], $parents[2], $parents[3]);
+                $data = $mccs->getdatewiseBmcList($parents[0], $parents[1], $parents[2], $parents[3]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

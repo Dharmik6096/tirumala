@@ -9,7 +9,9 @@ use app\modules\organisation\models\TblRouteMapping;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\payment\models\TblTransporterPaymentDetail;
 use app\modules\organisation\models\TblUnions;
-use app\modules\transporter\models\TblBillingType;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblPlant;
+use app\modules\transporter\models\TblVehicleMaster;
 
 /**
  * This is the model class for table "tbl_transporter_payment".
@@ -74,7 +76,7 @@ use app\modules\transporter\models\TblBillingType;
  */
 class TblTransporterPayment extends \app\models\ChildModel {
 
-    public $vendor_code, $final_pay;
+    public $vendor_code, $final_pay,$route_name;
 
     /**
      * @inheritdoc
@@ -88,20 +90,15 @@ class TblTransporterPayment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['adjust_amount'], 'default', 'value' => 0],
-            [['union_code', 'transporter_type', 'transporter_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
-            [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'safe'],
-            [['transporter_type', 'is_verified', 'bill_no', 'primary_tpt_cost', 'incentive_value', 'chilling_cost', 'billing_type_code', 'is_day_wise', 'qty_amount', 'total_vts_kms', 'total_rejected_qty', 'total_rejected_amount', 'rejected_kg_fat', 'rejected_kg_snf'], 'safe'],
+            [['adjust_amount', 'transporter_type'], 'default', 'value' => 0],
+            [['union_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
+            [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by', 'bmc_code'], 'safe'],
+            [['transporter_type', 'is_verified', 'bill_no', 'primary_tpt_cost', 'incentive_value', 'chilling_cost', 'billing_method', 'is_day_wise', 'qty_amount', 'total_vts_kms', 'total_rejected_qty', 'total_rejected_amount', 'rejected_kg_fat', 'rejected_kg_snf'], 'safe'],
             [['from_date', 'to_date', 'payment_date', 'disburse_date', 'process_date', 'created_at', 'updated_at', 'mcc_plant_code', 'total_penalty_amount', 'total_least_kms'], 'safe'],
             [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'no_of_days', 'total_kms', 'avg_rate', 'total_qty', 'total_amount', 'total_deduction', 'total_addition', 'net_amount', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_amount', 'final_amount', 'disburse_amount'], 'number'],
             [['from_date',], function ($attribute, $params) {
             Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date');
         }, 'on' => 'paymentprocess'],
-//            [['primary_tpt_cost'], 'required', 'on' => 'paymentprocess', 'when' => function() {
-//            return ($this->transporter_type == 1);
-//        }, 'whenClient' => "function (attribute, value) {
-//        return $('#tbltransporterpayment-transporter_type').val()==1;
-//    }"],
         ];
     }
 
@@ -123,21 +120,21 @@ class TblTransporterPayment extends \app\models\ChildModel {
             'disp_kg_fat' => Yii::t('app', 'Disp Kg Fat'),
             'disp_kg_snf' => Yii::t('app', 'Disp Kg Snf'),
             'rec_qty' => Yii::t('app', 'Rec Qty'),
-            'rec_kg_fat' => Yii::t('app', 'Rec Kg Fat'),
-            'rec_kg_snf' => Yii::t('app', 'Rec Kg Snf'),
+            'rec_kg_fat' => Yii::t('app', 'FAT Kg'),
+            'rec_kg_snf' => Yii::t('app', 'SNF Kg'),
             'cd_qty_diff' => Yii::t('app', 'Cd Qty Diff'),
             'cd_kg_fat_diff' => Yii::t('app', 'Cd Kg Fat Diff'),
             'cd_kg_snf_diff' => Yii::t('app', 'Cd Kg Snf Diff'),
             'rd_qty_diff' => Yii::t('app', 'Rd Qty Diff'),
             'rd_kg_fat_diff' => Yii::t('app', 'Rd Kg Fat Diff'),
             'rd_kg_snf_diff' => Yii::t('app', 'Rd Kg Snf Diff'),
-            'no_of_days' => Yii::t('app', 'No Of Days'),
-            'total_kms' => Yii::t('app', 'Defined KM'),
+            'no_of_days' => Yii::t('app', 'Days'),
+            'total_kms' => Yii::t('app', 'KM'),
             'avg_rate' => Yii::t('app', 'Avg Rate'),
-            'total_qty' => Yii::t('app', 'Qty'),
-            'total_amount' => Yii::t('app', 'Total Amount'),
-            'total_deduction' => Yii::t('app', 'Total Deduction'),
-            'total_addition' => Yii::t('app', 'Total Addition'),
+            'total_qty' => Yii::t('app', 'Milk Qty.'),
+            'total_amount' => Yii::t('app', 'HSD Amount'),
+            'total_deduction' => Yii::t('app', 'Deduction'),
+            'total_addition' => Yii::t('app', 'Addition'),
             'net_amount' => Yii::t('app', 'Net Amount'),
             'previous_hold' => Yii::t('app', 'Previous Hold'),
             'previous_due' => Yii::t('app', 'Previous Due'),
@@ -169,12 +166,12 @@ class TblTransporterPayment extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'vendor_code' => Yii::t('app', 'V.CODE'),
             'final_pay' => Yii::t('app', 'Final Amount'),
-            'mcc_plant_code' => Yii::t('app', 'MCC Name'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bill_no' => Yii::t('app', 'Bill No.'),
             'primary_tpt_cost' => Yii::t('app', 'Primary Transportaion'),
             'incentive_value' => Yii::t('app', 'Incentive Value'),
             'chilling_cost' => Yii::t('app', 'Chilling Cost'),
-            'billing_type_code' => Yii::t('app', 'Billing Method'),
+            'billing_method' => Yii::t('app', 'Billing Method'),
             'is_day_wise' => Yii::t('app', 'KM Rate Method'),
             'qty_amount' => Yii::t('app', 'Amount as per Qty'),
             'total_vts_kms' => Yii::t('app', 'VTS KM'),
@@ -184,6 +181,14 @@ class TblTransporterPayment extends \app\models\ChildModel {
             'rejected_kg_snf' => Yii::t('app', 'Rejected Kg SNF'),
             'total_penalty_amount' => Yii::t('app', 'Penalty Amount'),
             'total_least_kms' => Yii::t('app', 'Least KM'),
+            'vehicle_code' => Yii::t('app', 'Vehicle No.'),
+            'fixed_rent' => Yii::t('app', 'Fixed Charge'),
+            'fuel_consumption' => Yii::t('app', 'HSD(Ltr.)'),
+            'vehicle_average' => Yii::t('app', 'Avg'),
+            'fuel_rate' => Yii::t('app', 'Rate Avg'),
+            'fixed_amount' => Yii::t('app', 'Fixed Amount'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'plant_code' => Yii::t('app', 'Plant'),
         ];
     }
 
@@ -203,11 +208,11 @@ class TblTransporterPayment extends \app\models\ChildModel {
         return $this->hasOne(TblTransporterPaymentDetail::className(), ['transporter_payment_code' => 'transporter_payment_code']);
     }
 
-    public function getdatewiseTransportersList($union_code, $transporter_type, $from_date, $to_date) {
+    public function getdatewiseBmcList($union_code, $transporter_type, $from_date, $to_date) {
         $from_date = date('Y-m-d', strtotime($from_date));
         $to_date = date('Y-m-d', strtotime($to_date));
 
-        $exclude = TblTransporterPayment::find()->select(['transporter_code'])
+        $exclude = TblTransporterPayment::find()->select(['bmc_code'])
                 ->where(['transporter_type' => $transporter_type, 'union_code' => $union_code])
                 ->andWhere(['not in', 'status', ['processed']])
                 ->andWhere(['or',
@@ -220,14 +225,20 @@ class TblTransporterPayment extends \app\models\ChildModel {
                 "'$to_date' BETWEEN [from_date] AND [to_date]"
         ]]);
 
-        $query = TblTransporter::find()->select(['transporter_code', 'transporter_name', 'vendor_code'])
+        $query = TblDcsBmc::find()->select(['bmc_code', 'bmc_name'])
                 ->where(['union_code' => $union_code, 'is_active' => 1])
-                ->andWhere(['not in', 'transporter_code', $exclude]);
+                ->andWhere(['not in', 'bmc_code', $exclude]);
+
+        if (Yii::$app->session->get('BMC') !== '') {
+            $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        } else if (Yii::$app->session->get('MCC') !== '') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        } else if (Yii::$app->session->get('Plant') !== '') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
 
         $value = $query->all();
-        $value = ArrayHelper::map($value, 'transporter_code', function ($value) {
-                    return $value['transporter_name'] . '(' . $value['vendor_code'] . ')';
-                });
+        $value = ArrayHelper::map($value, 'bmc_code', 'bmc_name');
         return $value;
     }
 
@@ -235,8 +246,16 @@ class TblTransporterPayment extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getBillingTypeCode() {
-        return $this->hasOne(TblBillingType::className(), ['billing_type_code' => 'billing_type_code']);
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getVehicleCode() {
+        return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
     }
 
 }

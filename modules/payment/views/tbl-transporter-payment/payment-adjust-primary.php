@@ -6,7 +6,10 @@ use yii\web\View;
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$this->title = 'Transporter Payment Process : Step 2' . ' (' . Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name') . ')';
+$this->title = 'Transporter Payment Process : Step 2';
+$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
+        Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+
 
 $array = $dataProvider->getModels();
 $tot_amt = array_sum(array_map(function($array) {
@@ -19,7 +22,7 @@ $net_amt = array_sum(array_map(function($array) {
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body hide_help_block">      
         <div class="panel-heading">
-            <?= $this->title ?>  
+            <?= $this->title . ' (' . $bmc_info . ')' ?>  
             <div id="total-payment">
                 Total Payable :: <?= $tot_amt; ?>
             </div>
@@ -36,23 +39,34 @@ $net_amt = array_sum(array_map(function($array) {
         ?>
         <?php
         $attribute = [
-            ['attribute' => 'mcc_plant_code', 'label' => Yii::t('app', 'MCC Code'),
-                'value' => function ($model) {
-                    return Yii::$app->general->getforeignkey($model->mccPlantCode, 'sloc_code');
-                },
-            ],
-            ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
-                    return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-                },
-            ],
-            ['attribute' => 'route_code', 'label' => Yii::t('app', 'Route Code')],
+            //  ['attribute' => 'transporter_code'],
+
+            ['attribute' => 'route_code', 'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+                }, 'label' => Yii::t('app', 'Route Code')],
             ['attribute' => 'route_code', 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
                 }
             ],
+            ['attribute' => 'transporter_code',
+                'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
+                },
+            ],
+            ['attribute' => 'vehicle_code',
+                'value' => function ($model) {
+                    return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
+                },
+            ],
+            ['attribute' => 'no_of_days', 'pageSummary' => true],
+            ['attribute' => 'fixed_rent'],
+            ['attribute' => 'total_qty'],
+            ['attribute' => 'total_kms'],
+            ['attribute' => 'fuel_consumption'],
+            ['attribute' => 'vehicle_average'],
+            ['attribute' => 'fuel_rate'],
             ['attribute' => 'total_amount', 'pageSummary' => true],
-            ['attribute' => 'total_rejected_amount', 'pageSummary' => true],
-            ['attribute' => 'total_penalty_amount', 'pageSummary' => true],
+            ['attribute' => 'fixed_amount', 'pageSummary' => true],
             ['attribute' => 'total_addition', 'pageSummary' => true],
             ['attribute' => 'total_deduction', 'pageSummary' => true],
             ['attribute' => 'net_amount',

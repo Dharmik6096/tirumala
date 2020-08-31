@@ -2536,3 +2536,7 @@ div.crystalstyle{
 .hide-grid-export .grid-search.search-filter {
     width: calc(100% - 102px) !important;
 }
+.popup-100-60{
+    width: calc(100% - 60px) !important;
+    margin: 30px auto !important;
+}
