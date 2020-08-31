@@ -34,6 +34,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->unitCode, 'unit_name');
         }],
         ['attribute' => 'ref_code', 'visible' => false],
+        ['attribute' => 'product_code'],
         ['attribute' => 'product_name'],
         ['attribute' => 'tax_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->taxCode, 'tax_name');

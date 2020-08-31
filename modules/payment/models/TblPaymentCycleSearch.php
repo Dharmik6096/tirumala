@@ -57,21 +57,21 @@ class TblPaymentCycleSearch extends TblPaymentCycle {
             return $dataProvider;
         }
 
-        if (!empty($request['TblPaymentCycleSearch']['from_date'])) {
-            $from_date = date('Y-m-d', strtotime($request['TblPaymentCycleSearch']['from_date']));
-            $query->andFilterWhere(['like', 'CAST(from_date AS DATE)', $from_date]);
-        }
-        if (!empty($request['TblPaymentCycleSearch']['to_date'])) {
-            $to_date = date('Y-m-d', strtotime($request['TblDcsPaymentCycleSearch']['to_date']));
-            $query->andFilterWhere(['like', 'CAST(tbl_payment_cycle.to_date AS DATE)', $to_date]);
-        }
+//        if (!empty($request['TblPaymentCycleSearch']['from_date'])) {
+//            $from_date = date('Y-m-d', strtotime($request['TblPaymentCycleSearch']['from_date']));
+//            $query->andFilterWhere(['CAST(from_date AS DATE)' => $from_date]);
+//        }
+//        if (!empty($request['TblPaymentCycleSearch']['to_date'])) {
+//            $to_date = date('Y-m-d', strtotime($request['TblPaymentCycleSearch']['to_date']));
+//            $query->andFilterWhere(['CAST(tbl_payment_cycle.to_date AS DATE)' => $to_date]);
+//        }
 
         // grid filtering conditions
 
         if (!empty($this->from_date))
-            $query->andFilterWhere(['like', 'tbl_payment_cycle.from_date', date('Y-m-d', strtotime($this->from_date))]);
+            $query->andFilterWhere(['like', 'cast(tbl_payment_cycle.from_date as DATE)', date('Y-m-d', strtotime($this->from_date))]);
         if (!empty($this->to_date))
-            $query->andFilterWhere(['like', 'tbl_payment_cycle.to_date', date('Y-m-d', strtotime($this->to_date))]);
+            $query->andFilterWhere(['like', 'cast(tbl_payment_cycle.to_date as DATE)', date('Y-m-d', strtotime($this->to_date))]);
 
         Yii::$app->general->filterByNumber($query, $this, ['interval_value']);
 

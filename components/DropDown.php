@@ -590,7 +590,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1113,6 +1113,8 @@ class DropDown extends Component {
             'asset_code' => ['name' => 'asset_code', 'fields' => 'asset_code,asset_name,local_name', 'prompt' => Yii::t('app', 'Select Asset'), 'model' => 'TblAssetMaster', 'depend' => 'asset_group_code'],
             'customer_code' => ['name' => 'customer_code', 'fields' => 'customer_code,customer_name,local_name', 'prompt' => Yii::t('app', 'Select Customer'), 'model' => 'TblCustomerMaster', 'depend' => 'customer_type'],
             'store_location_code' => ['name' => 'store_location_code', 'fields' => 'store_location_code,store_location_name,local_name', 'prompt' => Yii::t('app', 'Store Location'), 'model' => 'TblStoreLocation', 'depend' => 'union_code'],
+            'unit' => ['name' => 'unit_code', 'fields' => 'unit_code,unit_name,local_name', 'prompt' => 'Select Unit', 'model' => 'TblUnits', 'depend' => 'union_code'],
+            'tax_group' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name,', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
@@ -1193,7 +1195,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

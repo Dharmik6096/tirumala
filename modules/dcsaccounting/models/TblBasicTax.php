@@ -89,7 +89,8 @@ class TblBasicTax extends \app\models\ChildModel {
     public function basicTaxForDetail($tax_code) {
         $taxDetail = new TblTaxDetail();
         $tax_data = $taxDetail->find()->select(['basic_tax_code'])->where(['tax_code' => $tax_code, 'is_active' => 1])->all();
-        $values = $this->find()->select(['basic_tax_code', 'basic_tax_name'])->where(['is_active' => 1])->andWhere(['not in', 'basic_tax_code', $tax_data])->all();
+        $values = $this->find()->select(['basic_tax_code', 'basic_tax_name'])->where(['is_active' => 1])->andWhere(['not in', 'basic_tax_code', $tax_data])
+                        ->andWhere(['union_code' => explode(',', Yii::$app->session->get('Unions'))])->all();
         $values = \yii\helpers\ArrayHelper::map($values, 'basic_tax_code', 'basic_tax_name');
         return $values;
     }

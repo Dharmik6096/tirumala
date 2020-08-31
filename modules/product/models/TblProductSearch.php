@@ -17,8 +17,8 @@ class TblProductSearch extends TblProduct {
      */
     public function rules() {
         return [
-                [['product_code', 'is_active'], 'integer'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'unit_code', 'product_group_code', 'product_name', 'product_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'union_code', 'ref_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'tax_code', 'dpu_product_code', 'is_dpu_product'], 'safe'],
+                [['is_active'], 'integer'],
+                [['product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'unit_code', 'product_group_code', 'product_name', 'product_desc', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'union_code', 'ref_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'tax_code', 'dpu_product_code', 'is_dpu_product'], 'safe'],
         ];
     }
 
@@ -57,7 +57,6 @@ class TblProductSearch extends TblProduct {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'tbl_product.product_code' => $this->product_code,
             'tbl_product.is_active' => $this->is_active,
             'tbl_product.is_inhouse' => $this->is_inhouse,
             'tbl_product.is_inclusive_tax' => $this->is_inclusive_tax,
@@ -67,6 +66,7 @@ class TblProductSearch extends TblProduct {
         ]);
 
         $query->andFilterWhere(['like', 'tbl_product.product_name', $this->product_name])
+                ->andFilterWhere(['like', 'tbl_product.product_code', $this->product_code])
                 ->andFilterWhere(['like', 'tbl_product.product_desc', $this->product_desc])
                 ->andFilterWhere(['like', 'tbl_product_group.product_group_name', $this->product_group_code])
                 ->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
