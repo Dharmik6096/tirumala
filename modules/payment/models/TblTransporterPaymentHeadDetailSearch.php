@@ -1,25 +1,24 @@
 <?php
 
-namespace app\modules\transporter\models;
+namespace app\modules\payment\models;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\transporter\models\TblKmWiseRate;
+use app\modules\payment\models\TblTransporterPaymentHeadDetail;
 
 /**
- * TblKmWiseRateSearch represents the model behind the search form about `app\modules\transporter\models\TblKmWiseRate`.
+ * TblTransporterPaymentHeadDetailSearch represents the model behind the search form about `app\modules\payment\models\TblTransporterPaymentHeadDetail`.
  */
-class TblKmWiseRateSearch extends TblKmWiseRate {
+class TblTransporterPaymentHeadDetailSearch extends TblTransporterPaymentHeadDetail {
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['km_code'], 'integer'],
-            [['rate', 'from_km', 'to_km'], 'number'],
-            [['wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'vehicle_code', 'transporter_code'], 'safe'],
+            [['head_detail_code', 'transporter_payment_code', 'transporter_payment_head_code', 'type'], 'integer'],
+            [['amount'], 'number'],
         ];
     }
 
@@ -39,16 +38,17 @@ class TblKmWiseRateSearch extends TblKmWiseRate {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblKmWiseRate::find();
+        $query = TblTransporterPaymentHeadDetail::find();
+        $query->where(['transporter_payment_code' => $this->transporter_payment_code]);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => FALSE
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -58,14 +58,13 @@ class TblKmWiseRateSearch extends TblKmWiseRate {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'transporter_code' => $this->transporter_code,
-            'vehicle_code' => $this->vehicle_code,
-            'rate' => $this->rate,
-            'from_km' => $this->from_km,
-            'to_km' => $this->to_km,
-            'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
+            'head_detail_code' => $this->head_detail_code,
+            'transporter_payment_code' => $this->transporter_payment_code,
+            'transporter_payment_head_code' => $this->transporter_payment_head_code,
+            'type' => $this->type,
+            'amount' => $this->amount,
         ]);
-        $query->orderBy('wef_date DESC, transporter_code DESC,vehicle_code DESC,from_km ASC');
+        $query->orderBy('type');
         return $dataProvider;
     }
 

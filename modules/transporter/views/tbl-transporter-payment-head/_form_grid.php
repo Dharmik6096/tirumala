@@ -8,13 +8,19 @@ use yii\helpers\Html;
     ?>
 </div>
 <?php
-
 $attribute = [
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'filter' => false],
     ['attribute' => 'transporter_payment_head'],
 //    ['attribute' => 'transporter_code'],
     ['attribute' => 'type',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('calc_type', $searchModel),'value' => function($model) {
-        return (Yii::$app->dropdown->getRecords('calc_type')['data'][$model->type] != '') ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->type] : '';},],
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('calc_type', $searchModel), 'value' => function($model) {
+            return (Yii::$app->dropdown->getRecords('calc_type')['data'][$model->type] != '') ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->type] : '';
+        },],
+    ['attribute' => 'is_default', 'value' => function($model) {
+            return $model->is_default == 1 ? 'Yes' : 'No';
+        }, 'filter' => false],
 ];
 
 $grid_option = [

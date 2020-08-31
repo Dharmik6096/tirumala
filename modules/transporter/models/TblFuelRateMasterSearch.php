@@ -17,7 +17,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster {
      */
     public function rules() {
         return [
-            [['fuel_rate_code', 'fuel_type_code'], 'integer'],
+            [['fuel_type_code'], 'safe'],
             [['rate'], 'number'],
             [['wef_date', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
         ];
@@ -40,7 +40,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster {
      */
     public function search($params) {
         $query = TblFuelRateMaster::find();
-
+        $query->joinWith(['fuelType']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -48,7 +48,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_fuel_rate_master', 'tbl_fuel_rate_master');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -57,17 +57,11 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'fuel_rate_code' => $this->fuel_rate_code,
             'rate' => $this->rate,
-            'wef_date' => $this->wef_date,
-            'fuel_type_code' => $this->fuel_type_code,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
         ]);
+        $query->andFilterWhere(['like', 'tbl_fuel_type_master.fuel_type', $this->fuel_type_code]);
 
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }

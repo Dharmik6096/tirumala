@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\payment\models\TblVehiclePayment;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_vehicle_km_info".
@@ -23,8 +24,6 @@ use app\modules\dcsoperation\models\TblShift;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
- * @property string $delete_at
- * @property string $delete_by
  * @property integer $is_active
  */
 class TblVehicleKmInfo extends \app\models\ChildModel {
@@ -32,7 +31,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $bmc_code,$union_code;
+    public $bmc_code;
 
     public static function tableName() {
         return 'tbl_vehicle_km_info';
@@ -45,8 +44,8 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
         return [
 //            [['km_info_code'], 'required'],
             [['data_lock'], 'default', 'value' => 0],
-            [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by', 'delete_by'], 'string'],
-            [['wef_date', 'created_at', 'updated_at', 'delete_at', 'shift_code', 'data_lock'], 'safe'],
+            [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by'], 'string'],
+            [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock'], 'safe'],
             [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'number', 'min' => 1],
             [['wef_date'], 'wefValidate', 'on' => 'create'],
             [['morning_kms'], 'routeValidate'],
@@ -54,7 +53,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
             [['wef_date', 'vehicle_code'], function ($attribute, $params) {
             Yii::$app->general->validateVehiclePayment($this);
         }, 'skipOnEmpty' => false],
-            [['route_code', 'vehicle_code', 'transporter_code', 'wef_date', 'morning_kms', 'evening_kms', 'total_kms'], 'required', 'on' => 'update'],
+            [['union_code', 'route_code', 'vehicle_code', 'transporter_code', 'wef_date', 'morning_kms', 'evening_kms', 'total_kms'], 'required', 'on' => 'update'],
         ];
     }
 
@@ -76,10 +75,9 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'delete_at' => Yii::t('app', 'Delete At'),
-            'delete_by' => Yii::t('app', 'Delete By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'shift_code' => Yii::t('app', 'Shift'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
 
@@ -169,6 +167,10 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
         return $this->find()->where(['transporter_code' => $this->transporter_code, 'data_lock' => 0])
                         ->andWhere(['or', ['>=', 'wef_date', $from_date], ['<=', 'wef_date', $to_date]])
                         ->all();
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }

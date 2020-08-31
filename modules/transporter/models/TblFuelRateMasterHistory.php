@@ -37,7 +37,7 @@ class TblFuelRateMasterHistory extends \yii\db\ActiveRecord
     {
         return [
             [['fuel_rate_code', 'fuel_type_code'], 'safe'],
-            [['rate'], 'safe'],
+            [['rate','plant_code', 'mcc_plant_code'], 'safe'],
             [['wef_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['union_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
         ];

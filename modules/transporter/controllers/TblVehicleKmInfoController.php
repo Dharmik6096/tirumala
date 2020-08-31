@@ -20,20 +20,6 @@ use yii\widgets\ActiveForm;
 class TblVehicleKmInfoController extends \app\controllers\ChildController {
 
     /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all TblVehicleKmInfo models.
      * @return mixed
      */
@@ -72,7 +58,7 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->searchVehicle(Yii::$app->request->queryParams);
         $count = count($dataProvider->models);
         $models[0] = new TblVehicleKmInfo();
-        for ($i = 0; $i < $count; $i++){
+        for ($i = 0; $i < $count; $i++) {
             $models[$i] = new TblVehicleKmInfo();
         }
         $this->viewFile = 'create';
@@ -88,7 +74,7 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
                 $main_model = [];
                 $exist_data_model = [];
                 foreach ($data['TblVehicleKmInfo'] as $id => $values) {
-                    if($values['route_code'] != '' && ($values['morning_kms'] != '' || $values['evening_kms'] != '' || $values['extra_kms'] != '' || $values['total_kms'] != '')){
+                    if ($values['route_code'] != '' && ($values['morning_kms'] != '' || $values['evening_kms'] != '' || $values['extra_kms'] != '' || $values['total_kms'] != '')) {
                         $model = new TblVehicleKmInfo();
                         $wef_date = Yii::$app->formatter->asDate($values['wef_date'], DATE_FORMAT);
                         foreach ($values as $model_keys => $model_values) {
@@ -102,10 +88,10 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
                         $main_model[] = $model;
                     }
                 }
-                $transaction = $this->generalModel->saveTransaction($main_model,$exist_data_model, ['Vehicle KM Information', 'create']);
+                $transaction = $this->generalModel->saveTransaction($main_model, $exist_data_model, ['Vehicle KM Information', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
-                }           
+                }
             }
             $models = $modelAttributesLoaded;
         }

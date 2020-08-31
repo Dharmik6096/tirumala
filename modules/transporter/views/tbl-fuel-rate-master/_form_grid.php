@@ -1,17 +1,25 @@
 <?php
 
-use yii\helpers\Html;
+use kartik\grid\GridView;
 ?>
 
 <?php
 
 $attribute = [
-    ['attribute' => 'fuel_type_code', 'value' => 'fuelType.fuel_type', 'filter' => false],
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
-    ['attribute' => 'rate', 'filter' => false],
-    ['attribute' => 'wef_date', 'value' => function($model) {
-            return Yii::$app->controls->view_date($model->wef_date);
-        }, 'filter' => false],
+    ['attribute' => 'plant_code', 'value' => 'plantCode.name', 'filter' => false],
+    ['attribute' => 'mcc_plant_code', 'value' => 'mccCode.name', 'filter' => false],
+    ['attribute' => 'fuel_type_code', 'value' => 'fuelType.fuel_type'],
+    ['attribute' => 'rate'],
+    ['attribute' => 'wef_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+    return Yii::$app->controls->view_date($model->wef_date);
+}],
 ];
 
 $grid_option = [
@@ -21,7 +29,6 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'update' => true,
-//        'delete' => ['option' => 'rate,fuel_rate_code,tbl-fuel-rate-master/delete'],
     ]
 ];
 

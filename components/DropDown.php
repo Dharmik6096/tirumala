@@ -387,6 +387,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-set/org-sap-code-list', Yii::t('app', 'Select SAP Code'), $multiple, $model->$name, $readonly);
     }
 
+    public function datewise_transporter_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $extra_param, $readOnly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1006,6 +1011,11 @@ class DropDown extends Component {
                 'name' => 'asset_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'New'), 1 => Yii::t('app', 'Faulty')],
+            ],
+            'transporter_type' => [
+                'name' => 'transporter_type',
+                'prompt' => Yii::t('app', 'Billing Type'),
+                'data' => [0 => Yii::t('app', 'Primary'), 1 => Yii::t('app', 'Secondary')],
             ],
         ];
         return $records[$l];

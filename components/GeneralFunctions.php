@@ -1649,6 +1649,7 @@ class GeneralFunctions extends Component {
         $ftp_model->ftp_connection_code = $ftp_conn_code;
         $ftpData = $ftp_model->getData();
         $status = false;
+        var_dump($model);die;
         if (!empty($ftpData)) {
             $ftp = new FTPConnection();
             $ftp->ftp_type = $ftpData->ftp_type;

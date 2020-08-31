@@ -11,38 +11,23 @@ use yii\filters\VerbFilter;
 use app\modules\transporter\models\TblFuelRateMasterHistory;
 use yii\helpers\Json;
 use yii\web\Response;
+
 /**
  * TblFuelRateMasterController implements the CRUD actions for TblFuelRateMaster model.
  */
-class TblFuelRateMasterController extends \app\controllers\ChildController
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblFuelRateMasterController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblFuelRateMaster models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblFuelRateMasterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -51,10 +36,9 @@ class TblFuelRateMasterController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -63,8 +47,7 @@ class TblFuelRateMasterController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblFuelRateMaster();
         $this->model->scenario = 'create';
         $this->viewFile = 'create';
@@ -85,8 +68,7 @@ class TblFuelRateMasterController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
@@ -108,17 +90,16 @@ class TblFuelRateMasterController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete()
-    {
+    public function actionDelete() {
 //        $this->findModel($id)->delete();
-        if(Yii::$app->request->post('id')){
-                $this->model = $this->findModel(Yii::$app->request->post('id'));
-                $historyModel = new TblFuelRateMasterHistory();
-                Yii::$app->operation->history($this->model, $historyModel, DELETE);
-                $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        if (Yii::$app->request->post('id')) {
+            $this->model = $this->findModel(Yii::$app->request->post('id'));
+            $historyModel = new TblFuelRateMasterHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
 
-                Yii::$app->response->format = trim(Response::FORMAT_JSON);
-                return Json::encode($record);
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
         }
     }
 
@@ -129,12 +110,12 @@ class TblFuelRateMasterController extends \app\controllers\ChildController
      * @return TblFuelRateMaster the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblFuelRateMaster::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

@@ -24,6 +24,20 @@ $this->params['menu'][] = Yii::$app->controls->update($model->fuel_rate_code);
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
+                            'attribute' => 'plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'fuel_type_code',
                             'value' => isset($model->fuelType) ? $model->fuelType->fuel_type : '',
                             'valueColOptions' => ['style' => 'width:30%']

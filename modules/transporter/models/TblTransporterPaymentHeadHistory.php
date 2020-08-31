@@ -37,7 +37,7 @@ class TblTransporterPaymentHeadHistory extends \yii\db\ActiveRecord
         return [
             [['transporter_payment_head_code', 'type', 'is_active'], 'integer'],
             [['transporter_payment_head', 'created_by', 'updated_by', 'operation_type'], 'string'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at','union_code'], 'safe'],
         ];
     }
 

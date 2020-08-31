@@ -3,6 +3,8 @@
 namespace app\modules\transporter\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_vehicle_transporter_head_mapping".
@@ -18,74 +20,90 @@ use Yii;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblVehicleTransporterHeadMapping extends \app\models\ChildModel
-{
+class TblVehicleTransporterHeadMapping extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vehicle_transporter_head_mapping';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
 //            [['vehicle_transporter_head_mapping_code'], 'required'],
             [['transporter_payment_head_code', 'is_active'], 'integer'],
             [['is_active'], 'default', 'value' => '1'],
-            [['vehicle_code', 'created_by', 'updated_by','remarks'], 'string'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['amount'], 'number','min'=>1],
-            [['wef_date'], 'wefValidate','on'=>'create'],
-            [['wef_date','vehicle_code'], function ($attribute, $params) {
-                Yii::$app->general->validateVehiclePayment($this);
-            }, 'skipOnEmpty' => false],
-            [['vehicle_code','transporter_payment_head_code','wef_date','amount'], 'required','on' => 'create'],
+            [['vehicle_code', 'created_by', 'updated_by', 'remarks'], 'string'],
+            [['wef_date', 'created_at', 'updated_at', 'union_code', 'transporter_code', 'billing_type', 'route_code'], 'safe'],
+            [['amount'], 'number', 'min' => 1],
+            [['wef_date'], 'wefValidate', 'on' => 'create'],
+//            [['wef_date', 'vehicle_code'], function ($attribute, $params) {
+//            Yii::$app->general->validateVehiclePayment($this);
+//        }, 'skipOnEmpty' => false],
+            [['vehicle_code', 'transporter_payment_head_code', 'wef_date', 'amount', 'union_code', 'transporter_code', 'billing_type'], 'required', 'on' => 'create'],
+            [['route_code'], 'required', 'when' => function ($model) {
+            return $model->billing_type == 0;
+        }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblvehicletransporterheadmapping-billing_type').val() == '0'; 
+          }", 'on' => ['create']],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'vehicle_transporter_head_mapping_code' => Yii::t('app', 'Vehicle Transporter Head Mapping Code'),
-            'transporter_payment_head_code' => Yii::t('app', 'Transporter Payment Head'),
+            'transporter_payment_head_code' => Yii::t('app', 'Payment Head'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
-            'wef_date' => Yii::t('app', 'Wef Date'),
+            'wef_date' => Yii::t('app', 'Date'),
             'amount' => Yii::t('app', 'Amount'),
             'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'transporter_code' => Yii::t('app', 'Transporter'),
+            'union_code' => Yii::t('app', 'Union'),
+            'route_code' => Yii::t('app', 'Route'),
         ];
     }
-    
-    
-    public function getTransporterPaymentHead(){
+
+    public function getTransporterPaymentHead() {
         return $this->hasOne(TblTransporterPaymentHead::className(), ['transporter_payment_head_code' => 'transporter_payment_head_code']);
     }
-    
-    public function getVehicle(){
+
+    public function getVehicle() {
         return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
-    } 
-    
-    
+    }
+
     public function wefValidate($attribute, $params) {
         $wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
         $data = $this->find()
-                ->where(['=','vehicle_code',$this->vehicle_code])
-                ->andWhere(['>=','wef_date',$wef_date])
+                ->where(['vehicle_code' => $this->vehicle_code, 'transporter_payment_head_code' => $this->transporter_payment_head_code, 'billing_type' => $this->billing_type, 'route_code' => $this->route_code])
+                ->andWhere(['=', 'wef_date', $wef_date])
                 ->orderBy('wef_date desc')
                 ->one();
-        if(!empty($data)){
-            $this->addError($attribute, "Please select Wef Date greater than '".Yii::$app->controls->view_date($data->wef_date)."'");
+        if (!empty($data)) {
+            $this->addError($attribute, "Please select Date Other than '" . Yii::$app->controls->view_date($data->wef_date) . "'");
         }
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getTransporterCode() {
+        return $this->hasOne(TblTransporter::className(), ['transporter_code' => 'transporter_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
 }
