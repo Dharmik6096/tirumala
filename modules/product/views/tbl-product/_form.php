@@ -30,7 +30,8 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('product_group_code', $model, $form, '', 'Product Group', false, 'product_group_code'); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', $model->getAttributeLabel('unit_code'), false, 'unit_code'); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('unit', $model, $form, 'tblproduct-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('unit_code')); ?>
+        <?php // Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', $model->getAttributeLabel('unit_code'), false, 'unit_code'); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'product_name')->textInput() ?>

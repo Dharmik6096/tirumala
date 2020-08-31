@@ -6,7 +6,7 @@ use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Product');
 if (Yii::$app->general->allowUpdateDelete($model)) {
-    $this->params['menu'][] = Yii::$app->controls->update($model->product_group_code);
+    $this->params['menu'][] = Yii::$app->controls->update($model->product_code);
 }
 ?>
 <div class="panel panel-default panel-grid panel-main">
@@ -68,85 +68,89 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [
-                            'attribute' => 'product_name',
+                            'attribute' => 'product_code',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'product_name',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                             [
                             'attribute' => 'tax_code',
                             'value' => Yii::$app->general->getforeignkey($model->taxCode, 'tax_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
-                            'attribute' => 'ref_code',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
                     ],
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'ref_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                             [
                             'attribute' => 'is_dpu_product',
                             'value' => isset($model->is_dpu_product) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_dpu_product] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
-                            'attribute' => 'dpu_product_code',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
                     ],
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'dpu_product_code',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                             [
                             'attribute' => 'is_inhouse',
                             'value' => isset($model->is_inhouse) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inhouse] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'is_inclusive_tax',
                             'value' => isset($model->is_inclusive_tax) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_inclusive_tax] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'is_saleable',
                             'value' => isset($model->is_saleable) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_saleable] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'is_indent',
                             'value' => isset($model->is_indent) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_indent] : '',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'local_name',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
-                            'attribute' => 'product_desc',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
                     ],
                 ],
                     [
                     'columns' => [
+                            [
+                            'attribute' => 'product_desc',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
                             [
                             'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',
                             'value' => GeneralFunctions::getRecordStatus($model->is_active),
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
