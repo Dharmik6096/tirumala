@@ -103,6 +103,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['milk_type_code', 'shift_code', 'dcs_code', 'milk_type_code', 'qty'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
             [['milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'except' => ['importCsv', 'portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
             [['member', 'sample_no'], 'required', 'on' => ['importCsv']],
+            [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
             [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['sendsms', 'androidsync']],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync']],
             //[['sms_status'],'default','n'],
@@ -145,7 +146,6 @@ class TblMilkCollection extends \app\models\ChildModel {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
-            [['sample_no'], 'number', 'on' => ['importCsv']]
         ];
     }
 
@@ -363,15 +363,14 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $this->addError('bmc_code', Yii::t('app/validation', $this->getAttributeLabel('bmc_code') . ' is invalid'));
                 }
                 $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
-                $this->member_code = $this->dcs_code . str_pad($this->member, 4, '0', STR_PAD_LEFT);
-                $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'member_collection', 'PORTAL');
+                $this->member_code = $this->dcs_code . str_pad(substr($this->member, -4), 4, '0', STR_PAD_LEFT);
+                $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['member_collection_check']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['member_collection_check'] : '';
                 if (empty($this->memberCode) && !empty($this->member) && empty($config)) {
                     $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' invalid '));
                 }
                 $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
                 $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
                 $this->milk_quality_type_code = 1;
-                $this->member_code = $this->dcs_code . str_pad(substr($this->member_code, -4), 4, '0', STR_PAD_LEFT);
                 Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_collection, '', TRUE);
                 $this->mobile_no = Yii::$app->general->getforeignkey($this->memberCode, 'mobile_no');
                 $this->name = Yii::$app->general->getforeignkey($this->memberCode, 'member_name');
@@ -514,7 +513,6 @@ class TblMilkCollection extends \app\models\ChildModel {
         $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
         $sameMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_same_milk', 'VLC');
         $diffMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_other_milk', 'VLC');
-
         $oldMilktype = !empty($model->oldAttributes['milk_type_code']) ? $model->oldAttributes['milk_type_code'] : '';
         if ($approvalUpdate) {
             $oldMilktype = $modelData->old_milk_type_code;
@@ -613,12 +611,16 @@ class TblMilkCollection extends \app\models\ChildModel {
         }
     }
 
-    public function setChildTable(&$model, &$modelSave) {
-        $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'member_collection', 'PORTAL');
+    public function setChildTable(&$model, &$modelSave, &$errors) {
+        $config = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check'] : '';
         if (empty($model->memberCode) && !empty($model->member) && !empty($config)) {
             if ($config == 1) {
                 $memberModel = new TblMember();
+                $memberModel->member_code = $memberModel->getCode();
                 $this->setMemberModel($model, $memberModel);
+                if (!$memberModel->validate()) {
+                    $errors[] = $memberModel->getErrors();
+                }
                 array_push($modelSave, $memberModel);
             } elseif ($config == 2) {
                 $memberPrModel = new TblMemberProvisional();
@@ -627,6 +629,10 @@ class TblMilkCollection extends \app\models\ChildModel {
                 if (empty($existData)) {
                     $memberPrModel->pro_ex_member_code = $memberPrModel->ex_member_code;
                     $memberPrModel->provisional_member_code = Yii::$app->general->getPrimaryCode($memberPrModel);
+                    $memberPrModel->is_approved = 0;
+                    if (!$memberPrModel->validate()) {
+                        $errors[] = $memberPrModel->getErrors();
+                    }
                     array_push($modelSave, $memberPrModel);
                 }
                 $updateModel = TblProvisionalMilkCollection::find()->where(['dcs_code' => $model->dcs_code, 'member_code' => $model->member_code, 'sample_no' => $model->sample_no, 'date_time_of_collection' => $model->date_time_of_collection, 'shift_code' => $model->shift_code])->one();

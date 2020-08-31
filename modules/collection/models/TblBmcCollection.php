@@ -95,6 +95,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
             [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
+            [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
             [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync']],
             [['rtpl', 'amount'], 'trim'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
