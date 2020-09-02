@@ -306,17 +306,19 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             $main_mcc_code = $searchModel->mainBmcCode->mcc_plant_code;
             $mcc_codes = [];
             $master = [];
-            foreach ($bmc_code as $mapped_bmc_code) {
-                $model_bmc = new TblBmcGroupMapping();
-                $model_bmc->bmc_code = $id;
-                $model_bmc->p_bmc_code = $mapped_bmc_code;
-                $mcc_codes[] = $model_bmc->bmcCode->mcc_plant_code;
-                $master[] = $model_bmc;
-                $mainBmc = $model_bmc->mainBmcCode;
-                $groupBmc = $model_bmc->bmcCode;
-                $main_org_data = ['union_code' => $mainBmc->union_code, 'plant_code' => $mainBmc->plant_code, 'mcc_plant_code' => $mainBmc->mcc_plant_code, 'bmc_code' => $id];
-                $group_org_data = ['union_code' => $groupBmc->union_code, 'plant_code' => $groupBmc->plant_code, 'mcc_plant_code' => $groupBmc->mcc_plant_code, 'bmc_code' => $mapped_bmc_code];
-                Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data);
+            if(!empty($bmc_code)){
+                foreach ($bmc_code as $mapped_bmc_code) {
+                    $model_bmc = new TblBmcGroupMapping();
+                    $model_bmc->bmc_code = $id;
+                    $model_bmc->p_bmc_code = $mapped_bmc_code;
+                    $mcc_codes[] = $model_bmc->bmcCode->mcc_plant_code;
+                    $master[] = $model_bmc;
+                    $mainBmc = $model_bmc->mainBmcCode;
+                    $groupBmc = $model_bmc->bmcCode;
+                    $main_org_data = ['union_code' => $mainBmc->union_code, 'plant_code' => $mainBmc->plant_code, 'mcc_plant_code' => $mainBmc->mcc_plant_code, 'bmc_code' => $id];
+                    $group_org_data = ['union_code' => $groupBmc->union_code, 'plant_code' => $groupBmc->plant_code, 'mcc_plant_code' => $groupBmc->mcc_plant_code, 'bmc_code' => $mapped_bmc_code];
+                    Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data);
+                }
             }
             if (!empty($mcc_codes)) {
                 $searchMcc = new TblMccPlantGroupMappingSearch();

@@ -11,6 +11,8 @@ $model->to_shift = empty($model->to_shift) ? 2 : $model->to_shift;
 $date_picker_class = !empty($date_picker_class) ? $date_picker_class : 'col-sm-2';
 $shift_class = !empty($shift_class) ? $shift_class : 'col-sm-2';
 $mcc_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
+$bmc_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
+$dcs_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
 $common_class = 'padding-left-5 padding-right-5';
 $form = ActiveForm::begin([
             'action' => ['index'],
@@ -23,12 +25,12 @@ $form = ActiveForm::begin([
     </div> 
 <?php } ?>
 <?php if (isset($bmc_code) && $bmc_code) { ?>
-    <div class="col-sm-3 pb10 <?= $common_class ?>">
+    <div class="pb10 <?= $bmc_class . ' ' . $common_class ?>">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, $mcc_code, 'bmc_code', false, false, $bmc_code); ?>
     </div> 
 <?php } ?>
 <?php if (isset($dcs_code) && $dcs_code) { ?>
-    <div class="col-sm-3 pb10">
+    <div class="pb10 <?= $dcs_class . ' ' . $common_class ?>">
         <?= Yii::$app->dropdown->bmc_society($model, $form, $bmc_code, 'dcs_code', false); ?>         
     </div>
 <?php } ?>

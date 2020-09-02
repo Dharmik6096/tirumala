@@ -187,11 +187,11 @@ $refreshWidgets = json_encode($refreshWidgets);
                     <div class="col-sm-6 text-center widget-tab bmc-datewise"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
                     <div class="flt">
                         <div id="society-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise')]); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
                             <div id="union_datewise_container" class="cont"></div>
                         </div>
                         <div id="bmc-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise')]); ?>
+                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
                             <div id="bmc_union_datewise_container" class="cont"></div>
                         </div>
                     </div>
@@ -387,7 +387,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                 <div class="cal-header"><?= Yii::t('app', 'BMC Wise Data Receipt Status'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_cross_tab', ['model' => $model, 'id' => 'BmcWiseCrossTab', 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-6', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'range_id1' => 'cross_tab_dt1', 'range_id2' => 'cross_tab_dt2']); ?>
+                        <?= $this->render('_dashborad_filter_cross_tab', ['model' => $model, 'id' => 'BmcWiseCrossTab', 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-4', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'range_id1' => 'cross_tab_dt1', 'range_id2' => 'cross_tab_dt2']); ?>
                         <div id="BmcWiseCrossTab_container" class="cont milk-collection"></div>
                     </div>
                 </div>
@@ -401,7 +401,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                 <div class="cal-header"><?= Yii::t('app', 'Milk Collection'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'milk_coll_mcc', 'bmc_code' => 'milk_coll_bmc', 'dcs_code' => true, 'from_date_id' => 'milk_coll_from_date', 'to_date_id' => 'milk_coll_to_date']); ?>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'milk_coll_mcc', 'bmc_code' => 'milk_coll_bmc', 'dcs_code' => true, 'from_date_id' => 'milk_coll_from_date', 'to_date_id' => 'milk_coll_to_date', 'bmc_class' => 'col-sm-2', 'mcc_class' => 'col-sm-2', 'dcs_class' => 'col-sm-2', 'date_picker_class'=> 'col-sm-1', 'shift_class' => 'col-sm-1']); ?>
                         <div id="table_milk_collection_container"  class="milk-collection mt0 cont"></div>
                     </div>         
                 </div>
@@ -426,7 +426,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                 </div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'dipatch_vs_receipt', 'url' => $container_url, 'container' => 'dipatch_vs_receipt', 'hidden_from_date' => $search_date, 'hidden_to_date' => $search_date, 'union_code' => true, 'mcc_code' => 'dispatch_vs_receipt', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'mcc_class' => 'col-sm-6']); ?>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'dipatch_vs_receipt', 'url' => $container_url, 'container' => 'dipatch_vs_receipt', 'hidden_from_date' => $search_date, 'hidden_to_date' => $search_date, 'union_code' => true, 'mcc_code' => 'dispatch_vs_receipt', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'mcc_class' => 'col-sm-3']); ?>
                         <div id="dipatch_vs_receipt_container"  class="milk-collection mt0 cont div_height495"></div>
                     </div>         
                 </div>
@@ -437,7 +437,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                 <div class="cal-header"><?= Yii::t('app', 'BMC Collection Summary'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'bmc_collection_summary', 'url' => $container_url, 'container' => 'bmc_collection_summary', 'from_date' => true, 'to_date' => false, 'from_shift' => true, 'to_shift' => false, 'from_date_id' => 'bmc_collection_summary_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-5', 'shift_class' => 'col-sm-3']); ?>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'bmc_collection_summary', 'url' => $container_url, 'container' => 'bmc_collection_summary', 'from_date' => true, 'to_date' => false, 'from_shift' => true, 'to_shift' => false, 'from_date_id' => 'bmc_collection_summary_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-3', 'shift_class' => 'col-sm-3']); ?>
                         <div id="bmc_collection_summary_container"  class="milk-collection mt0 cont"></div>
                     </div>         
                 </div>

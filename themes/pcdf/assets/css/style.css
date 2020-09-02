@@ -751,7 +751,7 @@ form .checkbox > label{
 form .checkbox input[type="checkbox"] + label,
 form .checkbox input[type="checkbox"] + span{
     position: relative;
-    padding-left: 25px;
+    padding-left: 20px;
     font-size: 11px;
     font-weight: 400;
 }
@@ -764,8 +764,8 @@ form .checkbox input[type="checkbox"] + span:before{
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 2px;
-    height: 17px;
-    width: 17px;
+    height: 12px;
+    width: 12px;
 }
 form .checkbox input[type="checkbox"] + span + span {
     display: none !important;
@@ -782,11 +782,11 @@ form .checkbox input[type="checkbox"]:checked + label:after,
 form .checkbox input[type="checkbox"]:checked + span:after{
     position: absolute;
     left: 0;
-    top: 2px;
+    top: 0px;
     content: "\f00c";
     font-family: FontAwesome;
-    height: 17px;
-    width: 17px;
+    height: 12px;
+    width: 12px;
     text-align: center;
     font-size: 11px;
     color: rgb(58, 123, 213);
@@ -1111,7 +1111,7 @@ input[type="hidden"] + .help-block{
 }
 .bootbox-alert .modal-body,
 .bootbox-confirm .modal-body{
-    padding: 0 0 15px;
+    padding: 0 0 15px !important;
 }
 .bootbox-alert .bootbox-body .bg-danger,
 .bootbox-alert .bootbox-body .bg-info,
@@ -1392,7 +1392,7 @@ footer p{
     text-align: center;
 }
 .milk-collection{
-    margin: 15px 0;
+    margin: 5px 0;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0,0,0,0.15);
 }
@@ -1417,7 +1417,7 @@ footer p{
     width: 25%;
     border-right: 1px solid #ddd;
     border-collapse: collapse;
-    height: 40px;
+    height: 20px;
 }
 .milk-collection .table td:last-child ,.milk-collection .table > thead > tr > th:last-child{
     border-right: none;
@@ -1433,7 +1433,7 @@ footer p{
     height: 138px;
     display: table;
     width:100%;
-    margin: 15px 0;
+    margin: 5px 0;
 }
 .collection .tbl-cell{
     display: table-cell;
@@ -1458,10 +1458,11 @@ footer p{
 .flt{
     box-shadow: 2px 0 10px rgba(0,0,0,0.10);
     padding: 15px 0 0;
-    margin: 15px 0 0;
+    margin: 5px 0 0;
 }
 .flt form {
     display: table;
+    width: 100%;
 }
 .flt .help-block {
     display: none;
@@ -1573,7 +1574,7 @@ footer p{
     background-color: #ffffff;
     /*padding: 15px;*/
     box-shadow: 2px 0 10px rgba(0,0,0,0.10);
-    margin: 15px 0;
+    margin: 5px 0;
 }
 .fc-header-toolbar{
     background-color: rgb(58, 123, 213);
@@ -1825,6 +1826,8 @@ input[type="checkbox"][disabled] + label, input[type="radio"][disabled] + label 
 
 .filt {
     text-align: center;
+    margin-top: -16px;
+    margin-bottom: -12px;
 }
 
 .filt > div {
@@ -1917,13 +1920,13 @@ ul.orderable label.checked {
     display: block;
     color: #fff;
     font-size: 14px;
-    margin-bottom: -15px;
+    margin-bottom: -5px;
     padding-left: 16px;
     padding-top: 6px;
     padding-bottom: 6px;
     text-align: center;
     font-weight: 600;
-    margin-top: 15px;
+    margin-top: 5px;
     border-bottom: 1px solid #fff;
 }
 .ex-grid{
@@ -2200,7 +2203,11 @@ div.crystalstyle{
 
 .h450{
     max-height: 450px !important;
-    overflow-y: scroll
+    overflow: hidden;
+}
+
+.h450:hover{
+    overflow: auto;
 }
 
 .w100{
@@ -2278,7 +2285,8 @@ div.crystalstyle{
 
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-    padding:2px !important;
+    padding:4px !important;
+    vertical-align: bottom !important;
 }
 
 .panel  {
@@ -2590,7 +2598,7 @@ div.crystalstyle{
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
-    padding: 3px;
+    padding: 1px;
     height: 24px;
 }
 
@@ -2834,7 +2842,7 @@ input[type="checkbox"]{
 }
 
 .modal-footer{
-    padding: 3px !important;
+    padding: 10px !important;
 }
 
 ::-webkit-scrollbar {
@@ -2979,6 +2987,7 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .table-hover thead tr th,
 .table-hover thead tr th a{
     color: white !important;
+    padding-top: 7px !important;
 }
 .table-hover thead tr.filters.skip-export {
     background-color: #ffffff !important;
@@ -2990,3 +2999,19 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
     white-space: nowrap;
 }
 .table-hover tbody tr:nth-child(odd) {background-color: #f1f1f1 /*dfedff*/;}
+
+.cont{
+    margin: 5px !important;
+}
+
+.datepicker table tr td, .datepicker table tr th {
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: none;
+}
+
+.modal-body{
+    padding: 5px !important;
+}
