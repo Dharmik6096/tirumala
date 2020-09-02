@@ -66,6 +66,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Transporter'), 'url' => ['/transporter/tbl-transporter/index'], 'active' => ($cntrl == 'tbl-transporter')],
                 ['label' => Yii::t('app', 'Vehicle Master'), 'url' => ['/transporter/tbl-vehicle-master/index'], 'active' => ($cntrl == 'tbl-vehicle-master')],
                 ['label' => Yii::t('app', 'Vehicle Km Information'), 'url' => ['/transporter/tbl-vehicle-km-info/index'], 'active' => ($cntrl == 'tbl-vehicle-km-info')],
+                ['label' => Yii::t('app', 'Vehicle Extra Km'), 'url' => ['/transporter/tbl-vehicle-extra-km-daywise/index'], 'active' => ($cntrl == 'tbl-vehicle-extra-km-daywise')],
                 ['label' => Yii::t('app', 'Km Wise Rate'), 'url' => ['/transporter/tbl-km-wise-rate/index'], 'active' => ($cntrl == 'tbl-km-wise-rate')],
                 ['label' => Yii::t('app', 'Mobile Oil Rate'), 'url' => ['/transporter/tbl-mobile-oil-rate-master/index'], 'active' => ($cntrl == 'tbl-mobile-oil-rate-master')],
                 ['label' => Yii::t('app', 'Fuel Rate'), 'url' => ['/transporter/tbl-fuel-rate-master/index'], 'active' => ($cntrl == 'tbl-fuel-rate-master')],

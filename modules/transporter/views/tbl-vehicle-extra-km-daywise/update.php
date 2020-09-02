@@ -1,5 +1,7 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Transporters');
+$this->title = Yii::$app->label->title('edit', 'Vehicle Extra KM');
+
+use yii\web\View;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -7,9 +9,7 @@ $this->title = Yii::$app->label->title('create', 'Transporters');
         <?=
         $this->render('_form', [
             'model' => $model,
-            'type' => 'create',
-            'bankDetails' => $bankDetails,
-            'contactDetails' => $contactDetails
+            'type' => 'edit',
         ])
         ?>
     </div>

@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Transporters');
+$this->title = Yii::$app->label->title('create', 'Vehicle Extra KM');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -8,8 +8,6 @@ $this->title = Yii::$app->label->title('create', 'Transporters');
         $this->render('_form', [
             'model' => $model,
             'type' => 'create',
-            'bankDetails' => $bankDetails,
-            'contactDetails' => $contactDetails
         ])
         ?>
     </div>

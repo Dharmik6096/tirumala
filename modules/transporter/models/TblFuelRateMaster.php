@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_fuel_rate_master".
@@ -38,16 +39,22 @@ class TblFuelRateMaster extends \app\models\ChildModel {
             [['fuel_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'fuel_type_code');
                 }, 'on' => 'importCsv'],
-            [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
-            [['union_code', 'wef_date', 'plant_code', 'mcc_plant_code', 'fuel_type_code', 'rate'], 'required'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['wef_date', 'bmc_code', 'fuel_type_code', 'rate', 'bmc_code'], 'required'],
+            [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['importCsv']],
+            [['wef_date', 'created_at', 'updated_at', 'bmc_code'], 'safe'],
             [['union_code', 'created_by', 'updated_by'], 'string'],
             [['fuel_type_code'], 'integer'],
             [['rate'], 'number', 'min' => 1],
-            [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
-            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
             [['fuel_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblFuelTypeMaster::className(), 'targetAttribute' => ['fuel_type_code' => 'fuel_type_code'], 'on' => 'importCsv'],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
             [['fuel_type_code'], 'wefValidate', 'skipOnError' => true, 'on' => ['create', 'importCsv']],
+            [['bmc_code'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
@@ -79,14 +86,16 @@ class TblFuelRateMaster extends \app\models\ChildModel {
     }
 
     public function wefValidate($attribute, $params) {
-        $wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
-        $data = $this->find()
-                ->where(['mcc_plant_code' => $this->mcc_plant_code, 'fuel_type_code' => $this->fuel_type_code])
-                ->andWhere(['>=', 'wef_date', $wef_date])
-                ->orderBy('wef_date desc')
-                ->one();
-        if (!empty($data)) {
-            $this->addError('wef_date', "Please select Wef Date greater than '" . Yii::$app->controls->view_date($data->wef_date) . "'");
+        if (empty($this->getErrors())) {
+            $wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
+            $data = $this->find()
+                    ->where(['bmc_code' => $this->bmc_code, 'fuel_type_code' => $this->fuel_type_code])
+                    ->andWhere(['>=', 'wef_date', $wef_date])
+                    ->orderBy('wef_date desc')
+                    ->one();
+            if (!empty($data)) {
+                $this->addError('wef_date', "Please select Wef Date greater than '" . Yii::$app->controls->view_date($data->wef_date) . "'");
+            }
         }
     }
 
@@ -99,10 +108,27 @@ class TblFuelRateMaster extends \app\models\ChildModel {
     }
 
     public function setImport($attribute, $params) {
-        $plant = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
-        $union = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
-        $this->plant_code = $plant;
-        $this->union_code = $union;
+        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

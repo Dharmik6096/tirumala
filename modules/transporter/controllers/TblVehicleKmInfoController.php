@@ -13,11 +13,14 @@ use app\modules\transporter\models\TblVehicleKmInfoHistory;
 use app\components\Model;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
+use yii\helpers\Json;
 
 /**
  * TblVehicleKmInfoController implements the CRUD actions for TblVehicleKmInfo model.
  */
 class TblVehicleKmInfoController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['route-list'];
 
     /**
      * Lists all TblVehicleKmInfo models.
@@ -51,55 +54,18 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblVehicleKmInfo();
-
-        $searchModel = new \app\modules\transporter\models\TblVehicleMasterSearch();
-
-        $searchModel->scenario = 'km_info_create';
-        $dataProvider = $searchModel->searchVehicle(Yii::$app->request->queryParams);
-        $count = count($dataProvider->models);
-        $models[0] = new TblVehicleKmInfo();
-        for ($i = 0; $i < $count; $i++) {
-            $models[$i] = new TblVehicleKmInfo();
-        }
         $this->viewFile = 'create';
-        if (Yii::$app->request->post()) {
-            $data = Yii::$app->request->post();
-            $this->model->load(Yii::$app->request->post());
-            $modelAttributesLoaded = Model::createMultiple(TblVehicleKmInfo::classname());
-            Model::loadMultiple($modelAttributesLoaded, Yii::$app->request->post());
-            $validate = ArrayHelper::merge(
-                            ActiveForm::validateMultiple($modelAttributesLoaded), ActiveForm::validate($this->model)
-            );
-            if (!$validate) {
-                $main_model = [];
-                $exist_data_model = [];
-                foreach ($data['TblVehicleKmInfo'] as $id => $values) {
-                    if ($values['route_code'] != '' && ($values['morning_kms'] != '' || $values['evening_kms'] != '' || $values['extra_kms'] != '' || $values['total_kms'] != '')) {
-                        $model = new TblVehicleKmInfo();
-                        $wef_date = Yii::$app->formatter->asDate($values['wef_date'], DATE_FORMAT);
-                        foreach ($values as $model_keys => $model_values) {
-                            $model->$model_keys = $model_values;
-                            $model->wef_date = $wef_date;
-                        }
-                        $exist_data = $this->model->existData($model);
-                        foreach ($exist_data as $exist) {
-                            $exist_data_model[] = $exist;
-                        }
-                        $main_model[] = $model;
-                    }
-                }
-                $transaction = $this->generalModel->saveTransaction($main_model, $exist_data_model, ['Vehicle KM Information', 'create']);
-                if ($transaction !== FALSE) {
-                    return $this->{$transaction}();
-                }
+
+        if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $this->model->wef_date = $this->model->wef_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
+
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Vehicle Km Information', 'create']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
             }
-            $models = $modelAttributesLoaded;
         }
-        return $this->render('create', [
-                    'model' => $models,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-        ]);
+        return $this->customRender();
     }
 
     /**
@@ -111,12 +77,12 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        $this->model->scenario = 'update';
         if (Yii::$app->request->post()) {
             $historyModel = new TblVehicleKmInfoHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
-            $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $this->model->wef_date = $this->model->wef_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Km Wise Rate', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -150,6 +116,23 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionRouteList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $mccs = new TblVehicleKmInfo();
+                $data = $mccs->getdateWiseVehicleRouteList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

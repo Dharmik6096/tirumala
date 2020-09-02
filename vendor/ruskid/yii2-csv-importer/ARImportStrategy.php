@@ -186,6 +186,10 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                         $where[$val] = $model->$val;
                     }
                     $existData = $model::find()->where($where)->one();
+//                    echo "<pre>";
+//                    print_r($existData);
+//                    echo "</pre>";
+//                    die;
                     if (!empty($existData) && !empty($excludeField)) {
                         $excludes = [];
                         $exclude = explode(',', $excludeField);
@@ -227,10 +231,11 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                         $model->addError($model->is_active, $nm . ' must have 0 or 1 value');
                     }
                 }
+                $errors = [];
                 if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
-                    $model->setChildTable($model, $modelList);
+                    $model->setChildTable($model, $modelList, $errors);
                 }
-                if (empty($model->getErrors()) && $model->validate()) {
+                if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
                     $modelList[] = $model;
 
                     foreach ($modelList as $modelRow) {
@@ -251,6 +256,11 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     $message = '';
                     foreach ($model->getErrors() as $errorkey => $value) {
                         $message .= $value[0] . '<br>';
+                    }
+                    foreach ($errors as $array) {
+                        foreach ($array as $errorkey => $value) {
+                            $message .= $value[0] . '<br>';
+                        }
                     }
                     return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message/* ,'error'=>$errors */];
                 }

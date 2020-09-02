@@ -65,7 +65,7 @@ class TblVerification extends \yii\db\ActiveRecord {
         $detail = [
             'tbl-member' => ['model' => 'TblMember', 'field' => 'member_code', 'verify_field' => 'bank_account_no'],
             'tbl-dcs' => ['model' => 'TblBankDetails', 'field' => 'detail_code', 'verify_field' => 'bank_account_no'],
-            'tbl-transporter' => ['model' => 'TblTransporter', 'field' => 'transporter_code', 'verify_field' => 'bank_account_no'],
+            'tbl-transporter' => ['model' => 'TblTransporter', 'field' => 'detail_code', 'verify_field' => 'bank_account_no'],
         ];
         return isset($detail[$flag]) ? $detail[$flag] : FALSE;
     }

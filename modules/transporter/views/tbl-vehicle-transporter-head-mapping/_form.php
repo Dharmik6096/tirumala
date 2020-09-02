@@ -28,15 +28,14 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('billing_type'), $readonly, 'billing_type', false); ?>
     <div class="col-sm-3"> 
         <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code'), '', $readonly); ?>
     </div>
     <div class="col-sm-3"> 
         <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletransporterheadmapping-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
     </div>
-    <div class="col-sm-3 default_hide"> 
-        <?= Yii::$app->dropdown->depend_dropdown('route_code', $model, $form, 'tblvehicletransporterheadmapping-vehicle_code', 'form-group col-sm-4', $model->getAttributeLabel('route_code'), '', $readonly); ?>
+    <div class="col-sm-3"> 
+        <?= Yii::$app->dropdown->routeVehicleDateWise($model, $form, 'tblvehicletransporterheadmapping-vehicle_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE, $readonly); ?> 
     </div>
     <div class="col-sm-3">
         <?php //Yii::$app->dropdown->depend_dropdown('transporter_payment_head_code', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_payment_head_code'), '', $readonly); ?>
@@ -67,24 +66,24 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
-    $(document).ready(function(){
-        $('.default_hide').hide();
-        hide();
-    });
-    $(document).on('change', '#tblvehicletransporterheadmapping-billing_type', function() {  
-        hide();
-    });
-        function hide(){
-            var bill = $('#tblvehicletransporterheadmapping-billing_type').val();
-            if(bill == '0'){
-                 $('.default_hide').show();
-            }else{
-                 $('.default_hide').hide();
-                $('#tblvehicletransporterheadmapping-route_code').val('');
-                $('#tblvehicletransporterheadmapping-route_code').trigger('change');
-                $('#tblvehicletransporterheadmapping-route_code').trigger('select2:select');
-            }
-        }
+//    $(document).ready(function(){
+//        $('.default_hide').hide();
+//        hide();
+//    });
+//    $(document).on('change', '#tblvehicletransporterheadmapping-billing_type', function() {  
+//        hide();
+//    });
+//        function hide(){
+//            var bill = $('#tblvehicletransporterheadmapping-billing_type').val();
+//            if(bill == '0'){
+//                 $('.default_hide').show();
+//            }else{
+//                 $('.default_hide').hide();
+//                $('#tblvehicletransporterheadmapping-route_code').val('');
+//                $('#tblvehicletransporterheadmapping-route_code').trigger('change');
+//                $('#tblvehicletransporterheadmapping-route_code').trigger('select2:select');
+//            }
+//        }
 ";
 $this->registerJs($script, View::POS_END, 'create-asset-transaction');
 ?>

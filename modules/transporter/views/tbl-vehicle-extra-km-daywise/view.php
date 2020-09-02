@@ -19,13 +19,13 @@ $this->title = Yii::$app->label->title('view', 'Vehicle KM Information');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'vehicle_code',
-                            'value' => $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name,
+                            'attribute' => 'union_code',
+                            'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'route_code',
-                            'value' => isset($model->routeCode) ? $model->routeCode->route_name : '',
+                            'attribute' => 'vehicle_code',
+                            'value' => $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -38,34 +38,8 @@ $this->title = Yii::$app->label->title('view', 'Vehicle KM Information');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'wef_date',
+                            'attribute' => 'date',
                             'value' => Yii::$app->controls->view_date($model->wef_date),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                
-                
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'morning_kms',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'evening_kms',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'extra_kms',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'total_kms',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -82,7 +56,7 @@ $this->title = Yii::$app->label->title('view', 'Vehicle KM Information');
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],

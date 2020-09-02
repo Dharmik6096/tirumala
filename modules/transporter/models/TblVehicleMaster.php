@@ -52,21 +52,50 @@ class TblVehicleMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'union_code', 'fuel_type_code', 'parsing_no'], 'required'],
+            [['pollution_certificate'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+                }, 'on' => 'importCsv'],
+            [['insurance'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+                }, 'on' => 'importCsv'],
+            [['billing_method'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'billing_method');
+                }, 'on' => 'importCsv'],
+            [['fuel_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'fuel_type_code');
+                }, 'on' => 'importCsv'],
+            [['vehicle_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
+                }, 'on' => 'importCsv'],
+            [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required'],
+            [['union_code'], 'required', 'except' => ['importCsv']],
             [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by'], 'string'],
             [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer'],
-            [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code'], 'safe'],
-            [['rent', 'average'], 'number', 'min' => 1],
+            [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code', 'billing_method'], 'safe'],
+            [['rent', 'average'], 'number', 'min' => 0],
             [['driver_contact_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['driver_name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['registration_no', 'driving_license_number', 'rc_book_no'], function ($attribute, $params) {
-            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['parsing_no', 'rc_book_no'], 'unique'],
+            [['is_active'], 'default', 'value' => 1],
+            [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'on' => ['importCsv']],
+            [['vehicle_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleType::className(), 'targetAttribute' => ['vehicle_type_code' => 'vehicle_type_code'], 'on' => ['importCsv']],
+            [['fuel_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblFuelTypeMaster::className(), 'targetAttribute' => ['fuel_type_code' => 'fuel_type_code'], 'on' => ['importCsv']],
+            [['capacity_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblCapacity::className(), 'targetAttribute' => ['capacity_code' => 'capacity_code'], 'on' => ['importCsv']],
+            [['wef_date', 'expiry_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date', 'expiry_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date', 'expiry_date'], 'convertDate', 'on' => ['importCsv']],
+            [['transporter_code'], 'importFieldSet', 'on' => ['importCsv']],
+//            [['parsing_no'], function ($attribute, $params) {
+//                    Yii::$app->general->validVehicleNumber($this, $attribute, $params);
+//                }],
+//            [['parsing_no'], 'string', 'min' => 8, 'max' => 11],
         ];
     }
 
@@ -100,6 +129,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'fuel_type_code' => Yii::t('app', 'Fuel Type'),
             'is_active' => Yii::t('app', 'Is Active'),
+            'billing_method' => Yii::t('app', 'Billing Type'),
         ];
     }
 
@@ -197,6 +227,33 @@ class TblVehicleMaster extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+        try {
+            $this->expiry_date = Yii::$app->controls->view_date($this->expiry_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->expiry_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+            $this->expiry_date = !empty($this->expiry_date) ? Yii::$app->controls->view_date($this->expiry_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function importFieldSet($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->union_code = Yii::$app->general->getforeignkey($this->transporter, 'union_code');
+            $this->parsing_no = strtoupper($this->parsing_no);
+        }
     }
 
 }

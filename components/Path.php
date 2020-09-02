@@ -47,7 +47,7 @@ class Path extends Component {
             'BankImport', 'DcsImport', 'SubCenterImport', 'BranchImport', 'TransporterImport', 'MccPlantImport', 'PlantImport', 'UnionImport', 'BmcImport',
             'TblMccPlant', 'TblMccPlantHistory', 'TblPlant', 'TblPlantHistory', 'TblPlantProductGroup', 'TblPlantProductGroupHistory', 'TblPlantProductGroupDetails', 'TblPlantProductGroupDetailsHistory',
             'TblRoutes', 'TblRoutesHistory', 'TblRoutesLocl', 'TblRoutesSearch', 'TblRouteMappingSources', 'TblRouteMappingSourcesHistory', 'TblRouteMapping', 'TblRouteMappingHistory',
-            'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch', 'TblTransporterHistory',
+            'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch',
             'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory', 'TblSocietyCodes', 'TblMccMilkType', 'TblBmcMilkType', 'TblMccMilkTypeHistory', 'TblBmcMilkTypeHistory',
             'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory'
         ],
@@ -72,7 +72,7 @@ class Path extends Component {
         ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy', 'DispatchImportStrategy', 'DpuIncentiveImportStrategy', 'DcsImportUpdateStrategy', 'DpuPasswordImportStrategy', 'BillHeadDetailImportStrategy', 'AssetDetailImportStrategy'],
         '\\app\modules\general\models\\' => ['TblBloodgroup', 'TblGender', 'TblQualification', 'TblBmcType', 'TblReligion', 'TblSchemeType', 'TblOrganisationType', 'TblRelationship', 'TblSocietyVendor', 'TblDpuIncentiveMaster', 'TblDpuIncentiveMasterHistory', 'TblDepartment', 'TblCollectionIncentiveDeductionHistory'],
         '\\app\modules\email\models\\' => ['TblEmailRuleMaster', 'TblEmailProcessMaster'],
-        '\\app\modules\transporter\models\\' => ['TblTransporter', 'TblFuelTypeMaster', 'TblVehicleMaster', 'TblBillingType', 'TblTransporterPaymentHead'],
+        '\\app\modules\transporter\models\\' => ['TblTransporter', 'TblFuelTypeMaster', 'TblVehicleMaster', 'TblBillingType', 'TblTransporterPaymentHead', 'TblVehicleMasterHistory', 'TblVehicleKmInfo', 'TblVehicleExtraKmDaywise', 'TblFuelRateMaster', 'TblTransporterHistory', 'TblKmWiseRate'],
         '\\app\modules\creamy\models\\' =>
         ['TblDpuProductDemandCreamy', 'TblMACAlibrationCreamy', 'TblMACAlibrationChangeCreamy', 'TblMACleaningCreamy', 'CollectionFarmerLocalSaleCreamy', 'MasterfarmerCreamy', 'TblDcsPortalCreamy', 'MastervillageCreamy', 'CollectionvillageCreamy', 'TblDpuShiftEndSummaryCreamy', 'TblMASerialNoCreamy'],
         '\\app\modules\syncutility\models\\' => ['TblSentbox', 'TblInbox', 'TblSyncLog', 'TblSentboxClone'],

@@ -73,13 +73,16 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'average')->textInput() ?>
     </div>
-    <div class="col-sm-3 mt25">
-        <?= Yii::$app->controls->active($model, $form); ?>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('billing_method', $model, $form, 'form-group', $model->getAttributeLabel('billing_method'), false, 'billing_method', false); ?>
     </div>
+    <!--<div class="col-sm-3 mt25">-->
+        <!--<? Yii::$app->controls->active($model, $form); ?>-->
+    <!--</div>-->
     <div class="col-sm-12">
-            <p class="form-subtitle">Driver Details</p>
-            <hr class="hr10">
-        </div>
+        <p class="form-subtitle">Driver Details</p>
+        <hr class="hr10">
+    </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'driver_name')->textInput() ?>
     </div>

@@ -21,24 +21,17 @@ $form = ActiveForm::begin([
     <div class="col-sm-3" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblfuelratemaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicleextrakmdaywise-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter', 'transporter_code', $readonly); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblfuelratemaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, '', $readonly); ?>
-    </div>  
+        <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code', 'Vehicle', $readonly); ?>
+    </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblfuelratemaster-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $readonly); ?>
-    </div>  
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdown('fuel_type_code', $model, $form, 'form-group col-sm-3', 'Fuel Type', $readonly); ?>
+        <?= Yii::$app->controls->date($model, $form, 'date', '', false, false, $readonly); ?>
     </div>
     <div class="col-sm-3 number-validate">
-        <?= $form->field($model, 'rate')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, '', $readonly); ?>
+        <?= $form->field($model, 'extra_kms')->textInput() ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -51,5 +44,3 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
-
-

@@ -36,7 +36,8 @@ class TblTransporterPaymentHead extends \app\models\ChildModel {
             [['type', 'is_active'], 'integer'],
             [['created_at', 'updated_at', 'union_code', 'is_default'], 'safe'],
             [['transporter_payment_head', 'type'], 'required'],
-            [['is_default'], 'default', 'value' => 0]
+            [['is_default'], 'default', 'value' => 0],
+            [['is_active'], 'default', 'value' => 1]
         ];
     }
 

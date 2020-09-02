@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vehicle KM Information'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vehicle Extra KM'));
 $this->params['menu'][] = Yii::$app->controls->add('Vehicle KM Info');
 $this->params['menu'][] = Yii::$app->controls->import('vehicle-extra-km', $this);
 ?>

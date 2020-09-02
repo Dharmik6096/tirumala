@@ -38,8 +38,8 @@ $this->params['menu'][] = Yii::$app->controls->update($model->fuel_rate_code);
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'fuel_type_code',
-                            'value' => isset($model->fuelType) ? $model->fuelType->fuel_type : '',
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -47,13 +47,22 @@ $this->params['menu'][] = Yii::$app->controls->update($model->fuel_rate_code);
                 [
                     'columns' => [
                         [
-                            'attribute' => 'rate',
+                            'attribute' => 'fuel_type_code',
+                            'value' => isset($model->fuelType) ? $model->fuelType->fuel_type : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
+                            'attribute' => 'rate',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'wef_date',
                             'value' => Yii::$app->controls->view_date($model->wef_date),
-                            'valueColOptions' => ['style' => 'width:30%']
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
@@ -69,7 +78,7 @@ $this->params['menu'][] = Yii::$app->controls->update($model->fuel_rate_code);
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],

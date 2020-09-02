@@ -56,6 +56,11 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
         }
 
         // grid filtering conditions
+
+        if (!empty($this->wef_date))
+            $query->andFilterWhere(['and', ['>=', 'tbl_vehicle_km_info.wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 00:00:00.000'], ['<=', 'tbl_vehicle_km_info.wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 23:59:59.000']]);
+
+
         $query->andFilterWhere([
             'tbl_vehicle_km_info.vehicle_code' => $this->vehicle_code,
             'tbl_vehicle_km_info.is_active' => $this->is_active,
@@ -67,8 +72,7 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.morning_kms', $this->morning_kms])
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.evening_kms', $this->evening_kms])
                 ->andFilterWhere(['like', 'tbl_vehicle_km_info.extra_kms', $this->extra_kms])
-                ->andFilterWhere(['like', 'tbl_vehicle_km_info.total_kms', $this->total_kms])
-                ->andFilterWhere(['like', 'tbl_vehicle_km_info.wef_date', ($this->wef_date == '') ? '' : Yii::$app->formatter->asDate($this->wef_date, 'php:Y-m-d')]);
+                ->andFilterWhere(['like', 'tbl_vehicle_km_info.total_kms', $this->total_kms]);
 
 
         return $dataProvider;

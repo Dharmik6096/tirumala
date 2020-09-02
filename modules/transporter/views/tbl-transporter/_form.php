@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\helpers\Url;
 
 $disable_ifsc = !empty($model->ifsc) && !empty($model->bank_code) ? true : false;
-$readonly=$type=='create'?FALSE:TRUE;
+$readonly = $type == 'create' ? FALSE : TRUE;
 $nameWarning = 0;
 $codeWarning = 0;
 if (!empty($_POST)) {
@@ -29,7 +29,7 @@ $form = ActiveForm::begin([
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row">
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union',$readonly); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= $form->field($model, 'transporter_name')->textInput() ?>
@@ -49,16 +49,16 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'address')->textarea() ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbltransporter-union_code,tbltransporter-state_code', 'district_code', 'District',FALSE,$readonly); ?>
+        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbltransporter-union_code,tbltransporter-state_code', 'district_code', 'District', FALSE, $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbltransporter-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code', $readonly); ?>
     </div>
     <div class="col-sm-3"> 
-        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbltransporter-sub_district_code', 'form-group col-sm-4', 'Village','',$readonly); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbltransporter-sub_district_code', 'form-group col-sm-4', 'Village', '', $readonly); ?>
     </div>
     <div class="col-sm-3">  
-        <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbltransporter-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbltransporter-village_code', 'form-group col-sm-4', 'Hamlet', '', $readonly); ?>
     </div>
     <div class="col-sm-3">  
         <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
@@ -67,40 +67,32 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'phone_no')->textInput() ?>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12">
-        <p class="form-subtitle">Contact Details</p>
-        <hr class="hr10">
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'contact_person')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'local_contact_person')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'mobile_no')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'email')->textInput() ?>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-12">
-        <p class="form-subtitle">Bank Details</p>
-        <hr class="hr10">
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->bankdepended($model, $form, 'tbltransporter-district_code', 'bank_code', 'Bank'); ?>
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tbltransporter-bank_code', '', 'Branch', 'branch_code'); ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'bank_account_no')->textInput() ?>
-    </div>
-    <div class="col-sm-3">
-        <!--<? = $form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc]) ?>-->
-        <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
-    </div>
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-12">
+            <p class="form-subtitle">Contact Details</p>
+            <hr class="hr10">
+        </div>
+        <?=
+        $this->render('../../../details/views/tbl-contact-details/_form', [
+            'model' => $contactDetails,
+            'form' => $form
+        ])
+        ?>
+
+        <div class="clearfix"></div>
+
+        <div class="col-sm-12">
+            <p class="form-subtitle">Bank Details</p>
+            <hr class="hr10">
+        </div>
+        <?=
+        $this->render('../../../details/views/tbl-bank-details/_form', [
+            'model' => $bankDetails,
+            'form' => $form,
+            'dist_field' => 'tbltransporter-district_code'
+        ])
+        ?>
+    <?php } ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'gstin')->textInput() ?>
     </div>
@@ -128,9 +120,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
     </div>
-    <div class="col-sm-3 mt25">
-        <?= Yii::$app->controls->active($model, $form); ?>
-    </div>
+    <!--    <div class="col-sm-3 mt25">
+            <? Yii::$app->controls->active($model, $form); ?>
+        </div>-->
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

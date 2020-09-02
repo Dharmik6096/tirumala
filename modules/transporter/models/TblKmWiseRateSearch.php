@@ -60,11 +60,12 @@ class TblKmWiseRateSearch extends TblKmWiseRate {
         $query->andFilterWhere([
             'transporter_code' => $this->transporter_code,
             'vehicle_code' => $this->vehicle_code,
-            'rate' => $this->rate,
-            'from_km' => $this->from_km,
-            'to_km' => $this->to_km,
             'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
         ]);
+        $query->andFilterWhere(['like', 'rate', $this->rate])
+                ->andFilterWhere(['like', 'from_km', $this->from_km])
+                ->andFilterWhere(['like', 'to_km', $this->to_km]);
+
         $query->orderBy('wef_date DESC, transporter_code DESC,vehicle_code DESC,from_km ASC');
         return $dataProvider;
     }
