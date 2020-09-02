@@ -18,7 +18,6 @@ $this->title = Yii::t('app', $title);
                         'class' => 'save-form',
                     ],
                     'validateOnBlur' => false,
-                    'validateOnEnter' => false,
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => false,
                     'validateOnSubmit' => false,

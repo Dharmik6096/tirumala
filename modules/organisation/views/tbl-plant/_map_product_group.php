@@ -22,7 +22,6 @@ $this->title = Yii::t('app', $title);
                         'tbldcs-is_bmc' => 'form-group col-sm-3'
                     ],
                     'validateOnBlur' => false,
-                    'validateOnEnter' => false,
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => false,
                     'validateOnSubmit' => false,
