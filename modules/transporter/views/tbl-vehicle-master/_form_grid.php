@@ -57,14 +57,14 @@ $grid_option = [
             $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Km Wise Rate', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-road"></i>', ['/transporter/tbl-km-wise-rate/create', 'vehicle_code' => $model->vehicle_code], $options);
         },
-        'mobile-oil-rate' => function ($url, $model) {
-            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Mobile Oil Rate', 'class' => ''];
-            return GhostHtml::a('<i class="fa fa-mobile"></i>', ['/transporter/tbl-mobile-oil-rate-master/create', 'vehicle_code' => $model->vehicle_code], $options);
-        },
-        'vehicle-billing-type' => function ($url, $model) {
-            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Billing Type', 'class' => ''];
-            return GhostHtml::a('<i class="fa fa-money"></i>', ['/transporter/tbl-vehicle-billing-type/create', 'vehicle_code' => $model->vehicle_code], $options);
-        },
+//        'mobile-oil-rate' => function ($url, $model) {
+//            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Mobile Oil Rate', 'class' => ''];
+//            return GhostHtml::a('<i class="fa fa-mobile"></i>', ['/transporter/tbl-mobile-oil-rate-master/create', 'vehicle_code' => $model->vehicle_code], $options);
+//        },
+//        'vehicle-billing-type' => function ($url, $model) {
+//            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Billing Type', 'class' => ''];
+//            return GhostHtml::a('<i class="fa fa-money"></i>', ['/transporter/tbl-vehicle-billing-type/create', 'vehicle_code' => $model->vehicle_code], $options);
+//        },
         'transporter-payment-head' => function ($url, $model) {
             $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Transporter Payment Head', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-truck"></i>', ['/transporter/tbl-vehicle-transporter-head-mapping/create', 'vehicle_code' => $model->vehicle_code], $options);

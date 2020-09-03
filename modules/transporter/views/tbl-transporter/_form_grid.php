@@ -19,7 +19,7 @@ $attribute = [
     ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
-    ['attribute' => 'phone_no'],
+    ['attribute' => 'phone_no', 'visible' => false],
     ['attribute' => 'contact_person', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->defaultContactDetail, 'firstname');
         }, 'visible' => true, 'filter' => false],
