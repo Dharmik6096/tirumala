@@ -94,66 +94,66 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_code);
                         ],
                     ],
                 ],
-                [
-                    'group' => true,
-                    'label' => 'Contact Details',
-                    'rowOptions' => ['class' => 'bg-default']
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'contact_person',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'local_contact_person',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'mobile_no',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'email',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'group' => true,
-                    'label' => 'Bank Details',
-                    'rowOptions' => ['class' => 'bg-default']
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'bank_code',
-                            'value' => isset($model->bankCode) ? $model->bankCode->bank_name:'',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'branch_code',
-                            'value' => isset($model->branchCode) ? $model->branchCode->branch_name:'',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'bank_account_no',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'ifsc',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
+//                [
+//                    'group' => true,
+//                    'label' => 'Contact Details',
+//                    'rowOptions' => ['class' => 'bg-default']
+//                ],
+//                [
+//                    'columns' => [
+//                        [
+//                            'attribute' => 'contact_person',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                        [
+//                            'attribute' => 'local_contact_person',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                    ],
+//                ],
+//                [
+//                    'columns' => [
+//                        [
+//                            'attribute' => 'mobile_no',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                        [
+//                            'attribute' => 'email',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                    ],
+//                ],
+//                [
+//                    'group' => true,
+//                    'label' => 'Bank Details',
+//                    'rowOptions' => ['class' => 'bg-default']
+//                ],
+//                [
+//                    'columns' => [
+//                        [
+//                            'attribute' => 'bank_code',
+//                            'value' => isset($model->bankCode) ? $model->bankCode->bank_name:'',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                        [
+//                            'attribute' => 'branch_code',
+//                            'value' => isset($model->branchCode) ? $model->branchCode->branch_name:'',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                    ],
+//                ],
+//                [
+//                    'columns' => [
+//                        [
+//                            'attribute' => 'bank_account_no',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                        [
+//                            'attribute' => 'ifsc',
+//                            'valueColOptions' => ['style' => 'width:30%']
+//                        ],
+//                    ],
+//                ],
                 [
                     'columns' => [
                         [
@@ -226,7 +226,7 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_code);
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],
@@ -234,4 +234,25 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_code);
             ?>
         </div>
     </div>
+    <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div>
+    <div class="form-grid">
+        <?=
+        $this->render('../../../details/views/tbl-bank-details/_bank_details', [
+            'model' => $model,
+            'dataProvider' => $bdataProvider,
+            'searchModel' => $bsearchModel,
+        ])
+        ?>
+    </div>
+
+    <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
+    <div class="form-grid">
+        <?=
+        $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+            'model' => $model,
+            'dataProvider' => $cdataProvider,
+            'searchModel' => $csearchModel,
+        ])
+        ?>
+    </div>        
 </div>

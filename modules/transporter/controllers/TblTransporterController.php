@@ -44,8 +44,18 @@ class TblTransporterController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $bsearchModel = new TblBankDetailsSearch();
+        $bsearchModel->module_name = 'transporter';
+        $bsearchModel->module_code = $id;
+        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
+        $csearchModel = new TblContactDetailsSearch();
+        $csearchModel->module_name = 'transporter';
+        $csearchModel->module_code = $id;
+        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
+                    'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
         ]);
     }
 
