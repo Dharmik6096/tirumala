@@ -147,7 +147,7 @@ if ($model->isNewRecord) {
             <h4 class="theme-box-heading">Contact Details</h4>
         </div>
 
-        <div class="col-sm-4">
+        <div class="col-sm-4 padding_left_right_0">
             <div class="row">
                 <div class="col-sm-12">
                     <?= $form->field($model, 'address')->textArea(['maxlength' => true]) ?>

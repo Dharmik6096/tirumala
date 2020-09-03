@@ -92,9 +92,8 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
     <?php if ($type == 'create') { ?>
-        <div class="col-sm-12">
-            <p class="form-subtitle">Contact Details</p>
-            <hr class="hr10">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Contact Details</h4>
         </div>
         <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
@@ -105,9 +104,8 @@ $form = ActiveForm::begin([
 
         <div class="clearfix"></div>
 
-        <div class="col-sm-12">
-            <p class="form-subtitle">Bank Details</p>
-            <hr class="hr10">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Bank Details</h4>
         </div>
         <?=
         $this->render('../../../details/views/tbl-bank-details/_form', [

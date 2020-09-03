@@ -2287,8 +2287,8 @@ div.crystalstyle{
 
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-    padding:1px !important;
-    vertical-align: bottom !important;
+    padding: 0px !important;
+    vertical-align: middle !important;
 }
 
 .panel  {
@@ -3061,6 +3061,9 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
     background:none;
 }
 
+.theme_form{
+    
+}
 .padding_left_right_0{
     padding-left: 0px;
     padding-right: 0px;
