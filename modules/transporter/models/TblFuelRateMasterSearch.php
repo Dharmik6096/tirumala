@@ -50,7 +50,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster {
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_fuel_rate_master', 'tbl_fuel_rate_master');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_fuel_rate_master', 'tbl_fuel_rate_master', 'tbl_fuel_rate_master');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
