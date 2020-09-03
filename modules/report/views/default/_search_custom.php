@@ -30,17 +30,17 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
             <div class="row margin_0">
 
                 <div class="modal-body">
-                    <div class="col-sm-6 padding-right-5">
+                    <div class="col-sm-3 padding-right-5">
                         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
                     </div>
                     <?php if (isset($bmc_filter)) { ?>
-                        <div class="col-sm-6 padding-right-5">
+                        <div class="col-sm-3 padding-right-5">
                             <?= Yii::$app->dropdown->union_plant($model, $form, $field_class . '-union_code', 'plant_code'); ?>
                         </div>      
-                        <div class="col-sm-6 padding-right-5">
+                        <div class="col-sm-3 padding-right-5">
                             <?= Yii::$app->dropdown->plant_mcc($model, $form, $field_class . '-plant_code', 'mcc_code'); ?>
                         </div>      
-                        <div class="col-sm-6 padding-right-5">
+                        <div class="col-sm-3 padding-right-5">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, $field_class . '-mcc_code', 'bmc_code'); ?>
                         </div>
                     <?php } ?>
@@ -50,11 +50,11 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
                             <?= Yii::$app->controls->date($model, $form, 'max_date')->label(false); ?>
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
                         <?= $form->field($model, 'shift')->dropDownList($shifts)->label(false); ?>
                     </div> 
                     <?php if (!isset($shift_cnt)) { ?>
-                        <div class="col-sm-6 padding-left-0 padding-right-5">
+                        <div class="col-sm-3 padding-left-0 padding-right-5">
                             <div class="form-group">
                                 <div class="form-group">
                                     <?= Html::input('number', 'shift_no', $shift_no, ['class' => 'form-control', 'min' => 0]) ?>

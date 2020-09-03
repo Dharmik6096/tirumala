@@ -10,7 +10,7 @@ if ($popup != 'allow_popup') {
                     <button type="button" class="close" data-dismiss="modal">×</button>
                     <h4 class="modal-title" id="modal-title"><?= $title; ?></h4>
                 </div>
-                <div class="modal-body" id="modal-body">
+                <div class="modal-body rm_padding" id="modal-body">
                     <div class="milk-collection hide_overflow h450">
                         <div class="table-responsive hide_overflow hide_toolbar_only hide_filters_only">
                             <?php

@@ -30,24 +30,24 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
             <div class="row margin_0">
 
                 <div class="modal-body">
-                    <div class="col-sm-6 padding-right-5">
+                    <div class="col-sm-3 padding-right-5">
                         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
                     </div>
                     <?php if (!empty($orgFilter)) { ?>
-                        <div class="col-sm-6 padding-right-5">
+                        <div class="col-sm-3 padding-right-5">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkcollectionsearch-union_code', 'plant_code'); ?>
                         </div>
-                        <div class="col-sm-6 padding-right-5">
+                        <div class="col-sm-3 padding-right-5">
                             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkcollectionsearch-plant_code', 'mcc_code'); ?>
                         </div>      
-                        <div class="col-sm-6 padding-right-5">
+                        <div class="col-sm-3 padding-right-5">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollectionsearch-mcc_code', 'bmc_code'); ?>
                         </div>
-                        <div class="col-sm-6 padding-right-5">
+                        <div class="col-sm-3 padding-right-5">
                             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollectionsearch-bmc_code', 'dcs_code'); ?> 
                         </div>
                     <?php } else { ?>
-                        <div class="col-sm-6 padding-left-0 padding-right-5">
+                        <div class="col-sm-3 padding-left-0 padding-right-5">
                             <?= Yii::$app->dropdown->depend_dropdown('dcs', $model, $form, 'tblmilkcollectionsearch-union_code'); ?>
                         </div>
                     <?php } ?>
@@ -57,7 +57,7 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
                         </div>
                     </div>
                     <?php if (!empty($shiftFilter)) { ?>
-                        <div class="col-sm-6 padding-left-0 padding-right-5">
+                        <div class="col-sm-3 padding-left-0 padding-right-5">
                             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
                         </div>   
                     <?php } ?>

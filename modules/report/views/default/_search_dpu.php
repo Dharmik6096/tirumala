@@ -31,11 +31,11 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
             <div class="row margin_0">
 
                 <div class="modal-body">
-                    <div class="col-sm-6 padding-right-5">
+                    <div class="col-sm-3 padding-right-5">
                         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
                     </div>
                     <?php if (!empty($vondorFilter)) { ?>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?php echo Yii::$app->dropdown->dropdownStatic('vendor', $model, $form, 'form-group', false); ?>
                         </div>   
                     <?php } ?>
@@ -54,12 +54,12 @@ $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
                     <?php } ?>
 
                     <?php if (!empty($shiftFilter)) { ?>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
                         </div>   
                     <?php } ?>
                     <?php if (!empty($milkFilter)) { ?>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', false, false, 'milk_type_code'); ?>
                         </div>   
                     <?php } ?>

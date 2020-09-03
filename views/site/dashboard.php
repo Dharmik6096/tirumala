@@ -401,7 +401,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                 <div class="cal-header"><?= Yii::t('app', 'Milk Collection'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'milk_coll_mcc', 'bmc_code' => 'milk_coll_bmc', 'dcs_code' => true, 'from_date_id' => 'milk_coll_from_date', 'to_date_id' => 'milk_coll_to_date', 'bmc_class' => 'col-sm-2', 'mcc_class' => 'col-sm-2', 'dcs_class' => 'col-sm-2', 'date_picker_class'=> 'col-sm-1', 'shift_class' => 'col-sm-1']); ?>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'milk_coll_mcc', 'bmc_code' => 'milk_coll_bmc', 'dcs_code' => true, 'from_date_id' => 'milk_coll_from_date', 'to_date_id' => 'milk_coll_to_date', 'bmc_class' => 'col-sm-1', 'mcc_class' => 'col-sm-1', 'dcs_class' => 'col-sm-1', 'date_picker_class'=> 'col-sm-1', 'shift_class' => 'col-sm-1']); ?>
                         <div id="table_milk_collection_container"  class="milk-collection mt0 cont"></div>
                     </div>         
                 </div>
@@ -412,7 +412,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                 <div class="cal-header"><?= Yii::t('app', 'Collection Status Manual vs Auto'); ?></div>
                 <div class="flt">
                     <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'manual_vs_auto_collection', 'url' => $container_url, 'container' => 'manual_vs_auto_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'coll_status_mcc', 'bmc_code' => 'coll_status_bmc', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-4']); ?>
+                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'manual_vs_auto_collection', 'url' => $container_url, 'container' => 'manual_vs_auto_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'coll_status_mcc', 'bmc_code' => 'coll_status_bmc', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-2', 'mcc_class' => 'col-sm-2', 'bmc_class' => 'col-sm-2']); ?>
                         <div id="manual_vs_auto_collection_container"  class="milk-collection mt0 cont"></div>
                     </div>         
                 </div>

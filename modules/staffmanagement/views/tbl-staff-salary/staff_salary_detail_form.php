@@ -23,7 +23,6 @@ $form = ActiveForm::begin(['options' => [
         ]]);
 ?>
 <div class="row theme-box ">
-<div class="col-sm-12">
     <div class="col-sm-5 ">
         <div class="table-responsive col-sm-12 hide_help_block padding_10_0 view-subtitle2" id='checkHasSubLedgerField'>
         <div class="col-sm-12 theme-box-heading">
@@ -142,7 +141,6 @@ $form = ActiveForm::begin(['options' => [
             </table>
         </div>
     </div>
-</div>
 </div>
 <div class="clearfix"></div>
 <div class="col-sm-12 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

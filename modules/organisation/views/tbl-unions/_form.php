@@ -39,7 +39,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Company Details</h4>
         </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?> 
-    <div class="col-sm-12 padding-0">
+    <div class="col-sm-12 padding_left_right_0 padding-0">
         <div class="col-sm-4">
             <?= $form->field($model, 'union_code_ex')->textInput(['maxlength' => true, 'readOnly' => $disable]) ?>
         </div>
@@ -101,7 +101,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
         <h4 class="theme-box-heading">Address Details</h4>
     </div>
-    <div class="col-sm-8">
+    <div class="col-sm-8 padding_left_right_0">
         <div class="row">
             <div class="col-sm-6 <?//= $checkChild; ?>">
                 <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
