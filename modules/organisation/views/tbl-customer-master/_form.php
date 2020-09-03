@@ -90,6 +90,33 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblcustomermaster-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('hamlet_code'), 'hamlet_code', FALSE); ?>
         </div>
     </div>
+    <div class="clearfix"></div>
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-12">
+            <p class="form-subtitle">Contact Details</p>
+            <hr class="hr10">
+        </div>
+        <?=
+        $this->render('../../../details/views/tbl-contact-details/_form', [
+            'model' => $contactDetails,
+            'form' => $form
+        ])
+        ?>
+
+        <div class="clearfix"></div>
+
+        <div class="col-sm-12">
+            <p class="form-subtitle">Bank Details</p>
+            <hr class="hr10">
+        </div>
+        <?=
+        $this->render('../../../details/views/tbl-bank-details/_form', [
+            'model' => $bankDetails,
+            'form' => $form,
+            'dist_field' => 'tblcustomermaster-district_code'
+        ])
+        ?>
+    <?php } ?>
 
 </div>
 <div class="row">

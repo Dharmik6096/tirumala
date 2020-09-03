@@ -21,7 +21,7 @@ use app\modules\assetmanagement\models\TblAssetTransactionHistory;
  */
 class TblAssetSetController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['org-aap-code-list', 'get-dcs-data', 'union-sap-code-list','set-detail'];
+    public $freeAccessActions = ['org-sap-code-list', 'get-dcs-data', 'union-sap-code-list','set-detail'];
 
     /**
      * Lists all TblAssetSet models.

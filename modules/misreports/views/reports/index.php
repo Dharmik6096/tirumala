@@ -52,11 +52,11 @@ if (isset($data['url1'])) {
                             <?php
                             $form = ActiveForm::begin(['options' => [
                                             'id' => 'report-form',
-                                            'field-class' => 'form-group col-sm-6   '
+                                            'field-class' => 'form-group col-sm-6'
                                         ],
                                         'method' => 'get',
                                         'validateOnBlur' => FALSE,
-                                        
+                                        'validateOnEnter' => TRUE,
                                         'validateOnChange' => FALSE,
                                         'enableClientValidation' => true,
                                         'validateOnSubmit' => true,
@@ -74,17 +74,17 @@ if (isset($data['url1'])) {
 
                                         if (isset($value_array[1]) && $value_array[1] == 'string') {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6">
                                                 <?php
-                                                echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-3 padding-left-5 padding-right-5', false);
+                                                echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-6 padding-left-5 padding-right-5', false);
                                                 ?>
                                             </div>    
                                             <?php
                                             if (isset($value_array[2])) {
                                                 ?>
-                                                <div class="col-sm-3 shift">
+                                                <div class="col-sm-6 shift">
                                                     <?php
-                                                    echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value_array[2]), false, $value_array[2]);
+                                                    echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-6 form-group', $model->getAttributeLabel($value_array[2]), false, $value_array[2]);
                                                     ?>
                                                 </div>    
                                                 <?php
@@ -92,22 +92,22 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('union_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6">
                                                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
                                             </div>   <?php
                                         }
                                         if (in_array($value, array('plant_code'))) {
                                             ?>
-                                            <div class="col-sm-3 val_plant_code">
-                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodelold-union_code', 'plant_code', 'Plant'); ?>
+                                            <div class="col-sm-6 val_plant_code">
+                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
-                                            <div class="col-sm-3 val_mcc_code">
+                                            <div class="col-sm-6 val_mcc_code">
                                                 <?php
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
-                                                    Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodelold-union_code', $value, $model->getAttributeLabel('mcc_code'));
+                                                    Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'));
                                                 } else {
-                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodelold-plant_code', $value, 'MCC');
+                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC');
                                                 }
                                                 ?>                
                                             </div>
@@ -115,50 +115,50 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('bmc_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodelold-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+                                            <div class="col-sm-6 val_bmc_code">
+                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('dcs_code'))) {
                                             ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodelold-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+                                            <div class="col-sm-6 val_dcs_code">
+                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
                                             </div>
                                             <?php
                                         }
                                         if (isset($value_array[1]) && $value_array[1] == 'txt') {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6">
                                                 <?= $form->field($model, $value_array[0])->textInput(['maxlength' => true]) ?>
                                             </div>    
                                             <?php
                                         }
                                         if (in_array($value, array('customer_code'))) {
                                             ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodelold-bmc_code', 'customer_code', Yii::t('app', 'Name')); ?>
+                                            <div class="col-sm-6 val_dcs_code">
+                                                <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-bmc_code', 'customer_code', Yii::t('app', 'Name')); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('customer_type'))) {
                                             ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->customer_type($model, $form, 'reportsmodelold-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->customer_type($model, $form, 'reportsmodel-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('vendor_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodelold-bmc_code,reportsmodelold-customer_type', 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodel-bmc_code,reportsmodel-customer_type', 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('payment_cycle_code'))) {
 
                                             if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {
-                                                echo Html::hiddenInput('customer_type', $value_array[2], ['id' => 'reportsmodelold-customer_type']);
+                                                echo Html::hiddenInput('customer_type', $value_array[2], ['id' => 'reportsmodel-customer_type']);
                                                 $where = json_encode(['data_lock_member' => 1]);
                                             } else {
                                                 $where = json_encode(['data_lock_bmc' => 1]);
@@ -166,15 +166,15 @@ if (isset($data['url1'])) {
                                             echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                                             echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                                             ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodelold-union_code,reportsmodelold-bmc_code,reportsmodelold-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('member_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodelold-dcs_code', '', $model->getAttributeLabel('member')); ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'reportsmodel-dcs_code', '', $model->getAttributeLabel('member')); ?>
                                             </div>
                                             <?php
                                         }
@@ -182,7 +182,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-6">
                                                     <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel('p_organization_type'), false, 'p_organization_type') ?> 
                                                 </div>
                                                 <?php
@@ -193,7 +193,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-6">
                                                     <?= Yii::$app->dropdown->dropdownStatic($value_array[2], $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                                 </div>
                                                 <?php
@@ -202,31 +202,62 @@ if (isset($data['url1'])) {
                                         if (in_array($value, array('p_purchase_rate_code'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
-                                                <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodelold-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));  ?>
-                                                    <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodelold-union_code,reportsmodelold-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
+                                                <div class="col-sm-6 val_dcs_code">
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));  ?>
+                                                    <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
                                             }
                                         }
                                         if (in_array($value, array('member_type'))) {
                                             ?>
-                                            <div class="col-sm-3 val_dcs_code">
+                                            <div class="col-sm-6 val_dcs_code">
                                                 <?= Yii::$app->dropdown->dropdown('member-type', $model, $form, '', $model->getAttributeLabel($value), false, 'member_type'); ?>
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('route_code'))) {
                                             ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodelold-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
+                                            <div class="col-sm-6 val_dcs_code">
+                                                <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('store_location_type'))) {
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), FALSE, 'store_location_type'); ?>
+
+                                            </div>
+
+                                            <?php
+                                        }
+                                        if (in_array($value, array('asset_code'))) {
+                                            $depends = 'reportsmodel-' . $value_array[1];
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?php
+                                                echo Yii::$app->dropdown->depend_dropdown('union_asset', $model, $form, $depends, 'form-group col-sm-6 padding-right-5 padding-left-5', $model->getAttributeLabel('asset_code'), $value);
+                                                ?>
+                                            </div>
+
+                                            <?php
+                                        }
+                                        if (in_array($value, array('sap_code'))) {
+                                            $depends = 'reportsmodel-' . $value_array[1] . ',' . 'reportsmodel-' . $value_array[2] . ',' . 'reportsmodel-' . $value_array[3] . ',' . 'reportsmodel-' . $value_array[4];
+                                            ?>
+                                            <div class="col-sm-6">
+                                                <?php echo Yii::$app->dropdown->org_sap_code($model, $form, $depends, 'sap_code', $model->getAttributeLabel('sap_code')); ?>
                                             </div>
                                             <?php
                                         }
                                     }
 
                                     if (isset($data['report_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
+                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList($data['report_type']);
+                                    }
+                                    if (!isset($data['output_type'])) {
+                                        echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-6']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                     }
                                     ?>
 
@@ -312,7 +343,43 @@ if (isset($data['url1'])) {
 $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
-});";
+});
+
+    $(document).ready(function(){  
+        if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
+            hideFields();
+            $(document).on('change','#reportsmodel-store_location_type', function() {
+                hideFields();
+            });
+        }
+    });
+    function hideFields(){
+        var locat_type =  $('#reportsmodel-store_location_type option:selected').text();
+        $('.val_plant_code').hide();
+        $('.val_mcc_code').hide();
+        $('.val_bmc_code').hide();
+        $('.val_dcs_code').hide();
+        $('.val_plant_code select').val('');
+        $('.val_plant_code select').trigger('change');
+        $('.val_plant_code select').trigger('select2:select');
+  
+        if(locat_type == 'PLANT'){
+            $('.val_plant_code').show();
+        }else if(locat_type =='BMC'){
+            $('.val_plant_code').show();
+            $('.val_mcc_code').show();
+            $('.val_bmc_code').show();
+        }
+        else if(locat_type =='DCS' || locat_type == 'Warehouse'){
+            $('.val_plant_code').show();
+            $('.val_mcc_code').show();
+            $('.val_bmc_code').show();
+            $('.val_dcs_code').show();
+        }
+       
+    }
+
+";
 
 if ($defaultToggle) {
     $script .= "

@@ -165,5 +165,11 @@ return [
     'last_request' => 'Last Request',
     'app_version' => 'App Version',
     'is_app_block' => 'Is App Block',
-    'device_name' => 'Device Name'
+    'device_name' => 'Device Name',
+    'Dcs Code' => 'TMCC Code',
+    'Dcs Name' => 'TMCC Name',
+    'Dcs Code Ex' => 'TMCC Code Ex',
+    'Dcs Count' => 'TMCC Count',
+    'Total Dcs' => 'Total TMCC',
+    'DCS Register' => 'TMCC Register',
 ];

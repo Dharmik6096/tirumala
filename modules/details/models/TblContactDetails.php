@@ -40,14 +40,14 @@ class TblContactDetails extends \app\models\ChildModel {
             [['detail_code', 'mobile_no'], 'integer'],
             [['mobile_no'], 'CheckDuplicate'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
-            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active'], 'safe'],
         ];

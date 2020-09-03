@@ -34,7 +34,8 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'ref_code')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', 'Unit', false, 'unit_code'); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('unit', $model, $form, 'tblproductgroup-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('unit_code')); ?>
+        <?php // Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', 'Unit', false, 'unit_code'); ?>
     </div>  
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>

@@ -133,4 +133,9 @@ return [
     'Company Configuration ' => 'Union Configuration',
     'Company Wise Collection vs Dispatch' => 'Union Wise Collection vs Dispatch',
     'DCS Register' => 'Society Register',
+    'Dcs Code' => 'Society Code',
+    'Dcs Name' => 'Society Name',
+    'Dcs Code Ex' => 'Society Code Ex',
+    'Dcs Count' => 'Society Count',
+    'Total Dcs' => 'Total Society',
 ];

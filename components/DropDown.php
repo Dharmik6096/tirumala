@@ -382,6 +382,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/staffmanagement/tbl-staff-leave-master/leave-type', Yii::t('app', 'Select Leave Type'), $multiple, '', $readonly);
     }
 
+    public function org_sap_code($model, $form, $depends, $name = 'sap_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-set/org-sap-code-list', Yii::t('app', 'Select SAP Code'), $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -449,7 +454,7 @@ class DropDown extends Component {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
-        $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
+        $field_value = !empty($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         $control_name = ($name == '') ? $data['name'] : $name;
         $depends = explode(',', $depends);
         $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
@@ -580,7 +585,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1098,6 +1103,8 @@ class DropDown extends Component {
             'asset_code' => ['name' => 'asset_code', 'fields' => 'asset_code,asset_name,local_name', 'prompt' => Yii::t('app', 'Select Asset'), 'model' => 'TblAssetMaster', 'depend' => 'asset_group_code'],
             'customer_code' => ['name' => 'customer_code', 'fields' => 'customer_code,customer_name,local_name', 'prompt' => Yii::t('app', 'Select Customer'), 'model' => 'TblCustomerMaster', 'depend' => 'customer_type'],
             'store_location_code' => ['name' => 'store_location_code', 'fields' => 'store_location_code,store_location_name,local_name', 'prompt' => Yii::t('app', 'Store Location'), 'model' => 'TblStoreLocation', 'depend' => 'union_code'],
+            'unit' => ['name' => 'unit_code', 'fields' => 'unit_code,unit_name,local_name', 'prompt' => 'Select Unit', 'model' => 'TblUnits', 'depend' => 'union_code'],
+            'tax_group' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name,', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
@@ -1178,7 +1185,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

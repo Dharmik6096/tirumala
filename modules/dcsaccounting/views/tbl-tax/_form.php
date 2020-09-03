@@ -25,7 +25,8 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>    
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('tax_group_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('tax_group_code')); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('tax_group', $model, $form, 'tbltax-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('tax_group_code')); ?>
+        <?php // Yii::$app->dropdown->dropdown('tax_group_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('tax_group_code')); ?>
     </div>  
     <div class="col-sm-2">
         <?= $form->field($model, 'tax_name')->textInput() ?>
