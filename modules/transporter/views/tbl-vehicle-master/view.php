@@ -176,25 +176,25 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                         ],
                     ],
-                    [
-                        'group' => true,
-                        'label' => 'Billing Details',
-                        'rowOptions' => ['class' => 'bg-default']
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'billing_type',
-                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->billingType->billing_type : '',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                            [
-                                'attribute' => 'remarks',
-                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->remarks : '',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                        ],
-                    ],
+//                    [
+//                        'group' => true,
+//                        'label' => 'Billing Details',
+//                        'rowOptions' => ['class' => 'bg-default']
+//                    ],
+//                    [
+//                        'columns' => [
+//                            [
+//                                'attribute' => 'billing_type',
+//                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->billingType->billing_type : '',
+//                                'valueColOptions' => ['style' => 'width:30%'],
+//                            ],
+//                            [
+//                                'attribute' => 'remarks',
+//                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->remarks : '',
+//                                'valueColOptions' => ['style' => 'width:30%'],
+//                            ],
+//                        ],
+//                    ],
                 ];
 
 // View file rendering the widget
