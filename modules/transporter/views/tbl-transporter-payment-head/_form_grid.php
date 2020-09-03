@@ -26,9 +26,9 @@ $attribute = [
 $grid_option = [
     'id' => 'transporter-payment-head-list',
     'attributes' => $attribute,
-    'active_column' => true,
+    'active_column' => FALSE,
     'actions' => [
-        'view' => true,
+//        'view' => true,
         'update' => true,
 //        'delete' => ['option' => 'transporter_name,transporter_code,tbl-transporter/delete'],
     ]

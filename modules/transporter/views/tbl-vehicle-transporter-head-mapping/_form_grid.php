@@ -6,9 +6,9 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true],
-    ['attribute' => 'billing_type', 'value' => function($model) {
-            return isset($model->billing_type) ? Yii::$app->dropdown->getRecords('transporter_type')['data'][$model->billing_type] : '';
-        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('transporter_type', $searchModel, 'billing_type'),],
+//    ['attribute' => 'billing_type', 'value' => function($model) {
+//            return isset($model->billing_type) ? Yii::$app->dropdown->getRecords('transporter_type')['data'][$model->billing_type] : '';
+//        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('transporter_type', $searchModel, 'billing_type'),],
     ['attribute' => 'transporter_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
         },
