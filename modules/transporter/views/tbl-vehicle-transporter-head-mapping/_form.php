@@ -34,16 +34,16 @@ $form = ActiveForm::begin([
     <div class="col-sm-3"> 
         <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicletransporterheadmapping-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
     </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, '', $readonly); ?>
+    </div>
     <div class="col-sm-3"> 
-        <?= Yii::$app->dropdown->routeVehicleDateWise($model, $form, 'tblvehicletransporterheadmapping-vehicle_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE, $readonly); ?> 
+        <?= Yii::$app->dropdown->routeVehicleDateWise($model, $form, 'tblvehicletransporterheadmapping-vehicle_code,tblvehicletransporterheadmapping-wef_date', 'route_code', $model->getAttributeLabel('route_code'), FALSE, $readonly); ?> 
     </div>
     <div class="col-sm-3">
         <?php //Yii::$app->dropdown->depend_dropdown('transporter_payment_head_code', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_payment_head_code'), '', $readonly); ?>
         <?= Yii::$app->dropdown->payment_head($model, $form, 'tblvehicletransporterheadmapping-union_code', 'transporter_payment_head_code', $model->getAttributeLabel('transporter_payment_head_code'), FALSE, $readonly); ?> 
 
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, '', $readonly); ?>
     </div>
     <div class="col-sm-3 number-validate">
         <?= $form->field($model, 'amount')->textInput() ?>

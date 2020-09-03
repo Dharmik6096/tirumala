@@ -12,6 +12,8 @@ use app\modules\transporter\models\TblVehicleTransporterHeadMapping;
  */
 class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMapping {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +21,7 @@ class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMa
         return [
             [['vehicle_transporter_head_mapping_code', 'transporter_payment_head_code', 'is_active'], 'safe'],
             [['vehicle_code', 'remarks', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['amount', 'transporter_code', 'billing_type', 'route_code'], 'safe'],
+            [['amount', 'transporter_code', 'billing_type', 'route_code', 'from_date', 'to_date'], 'safe'],
             [['amount'], 'number'],
         ];
     }
@@ -56,7 +58,15 @@ class TblVehicleTransporterHeadMappingSearch extends TblVehicleTransporterHeadMa
             // $query->where('0=1');
             return $dataProvider;
         }
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(wef_date as date)', $from_date]);
+        }
 
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(wef_date as date)', $to_date]);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_vehicle_transporter_head_mapping.transporter_payment_head_code' => $this->transporter_payment_head_code,

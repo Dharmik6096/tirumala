@@ -122,9 +122,9 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0])) {
+            if (!empty($parents[0]) && !empty($parents[1])) {
                 $mccs = new TblVehicleKmInfo();
-                $data = $mccs->getdateWiseVehicleRouteList($parents[0]);
+                $data = $mccs->getdateWiseVehicleRouteList($parents[0],$parents[1]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

@@ -48,7 +48,8 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
             [['shift_code'], 'integer', 'on' => ['importCsv']],
-            [['route_code', 'vehicle_code', 'transporter_code', 'wef_date', 'morning_kms', 'evening_kms', 'wef_date', 'shift_code'], 'required'],
+            [['route_code', 'vehicle_code', 'wef_date', 'morning_kms', 'evening_kms', 'wef_date', 'shift_code'], 'required'],
+            [['transporter_code'], 'required', 'except' => ['importCsv']],
             [['union_code', 'total_kms'], 'required', 'except' => ['importCsv']],
             [['data_lock'], 'default', 'value' => 0],
             [['is_active'], 'default', 'value' => 1],
@@ -66,7 +67,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
                         Yii::$app->general->validateVehiclePayment($this);
                     }
                 }, 'skipOnEmpty' => false],
-            [['transporter_code'], 'importFieldSet', 'on' => ['importCsv']],
+            [['vehicle_code'], 'importFieldSet', 'on' => ['importCsv']],
             [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'on' => ['importCsv']],
             [['vehicle_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['vehicle_code' => 'vehicle_code'], 'on' => ['importCsv']],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
@@ -195,6 +196,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
 
     public function importFieldSet($attribute, $params) {
         if (empty($this->getErrors())) {
+            $this->transporter_code = Yii::$app->general->getforeignkey($this->vehicle, 'transporter_code');
             $this->union_code = Yii::$app->general->getforeignkey($this->transporterCode, 'union_code');
             $this->total_kms = $this->morning_kms + $this->evening_kms;
         }
@@ -215,11 +217,11 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
         }
     }
 
-    public function getdateWiseVehicleRouteList($vehicle) {
+    public function getdateWiseVehicleRouteList($vehicle,$date) {
         $data = $this->find()
                         ->select(['route_code'])
                         ->where(['vehicle_code' => $vehicle])
-                        ->andFilterWhere(['<=', 'wef_date', date('Y-m-d')])
+                        ->andFilterWhere(['<=', 'wef_date', date('Y-m-d', strtotime($date))])
                         ->groupBy('route_code')->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function($data) {
                     return Yii::$app->general->getforeignkey($data->routeCode, 'route_name');

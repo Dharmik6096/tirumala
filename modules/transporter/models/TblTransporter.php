@@ -70,7 +70,8 @@ class TblTransporter extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['transporter_name', 'address', 'union_code', 'hamlet_code', 'contact_person', 'mobile_no'], 'required'],
+            [['transporter_name', 'address', 'union_code', 'hamlet_code'], 'required'],
+            [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
             [['transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'string'],
             [['registration_no'], 'unique', 'skipOnEmpty' => true],

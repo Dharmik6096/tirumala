@@ -2,13 +2,10 @@
 
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
+
 ?>
-<div class="grid-search">
-    <?php
-    echo $this->render('_search', ['model' => $searchModel]);
-    ?>
-</div>
 <?php
+
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
 //    ['attribute' => 'transporter_code'],
@@ -23,12 +20,24 @@ $attribute = [
     ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
     ['attribute' => 'phone_no'],
-    ['attribute' => 'contact_person', 'visible' => false, 'filter' => false],
+    ['attribute' => 'contact_person', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->defaultContactDetail, 'firstname');
+        }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'mobile_no', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->defaultContactDetail, 'mobile_no');
+        }, 'visible' => true, 'filter' => false],
+//    ['attribute' => 'contact_person', 'filter' => false],
     ['attribute' => 'local_contact_person', 'visible' => false, 'filter' => false],
-    ['attribute' => 'mobile_no', 'visible' => false, 'filter' => false],
+//    ['attribute' => 'mobile_no', 'filter' => false],
     ['attribute' => 'email', 'visible' => false, 'filter' => false],
-    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
+//    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'visible' => false, 'filter' => false],
+//    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'bank_code', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->defaultBankDetail, ['bankCode'], 'bank_name');
+        }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'branch_code', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->defaultBankDetail, ['branchCode'], 'branch_name');
+        }, 'visible' => true, 'filter' => false],
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
     ['attribute' => 'gstin', 'visible' => false, 'filter' => false],

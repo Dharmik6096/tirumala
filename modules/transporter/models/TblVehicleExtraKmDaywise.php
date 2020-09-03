@@ -5,6 +5,7 @@ namespace app\modules\transporter\models;
 use Yii;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\organisation\models\TblVehicleMaster;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_vehicle_extra_km_daywise".
@@ -46,13 +47,13 @@ class TblVehicleExtraKmDaywise extends \app\models\ChildModel {
             [['date', 'created_at', 'updated_at'], 'safe'],
             [['extra_kms'], 'number', 'min' => 0],
             [['originating_type'], 'integer'],
-            [['vehicle_code', 'transporter_code', 'date', 'extra_kms'], 'required'],
+            [['vehicle_code', 'date', 'extra_kms'], 'required'],
+            [['transporter_code'], 'required', 'except' => ['importCsv']],
             [['union_code'], 'required', 'except' => ['importCsv']],
             [['date'], 'convertDateDot', 'on' => ['importCsv']],
             [['date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['date'], 'convertDate', 'on' => ['importCsv']],
-            [['transporter_code'], 'importFieldSet', 'on' => ['importCsv']],
-            [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'on' => ['importCsv']],
+            [['vehicle_code'], 'importFieldSet', 'on' => ['importCsv']],
             [['vehicle_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['vehicle_code' => 'vehicle_code'], 'on' => ['importCsv']],
             [['date'], 'unique', 'targetAttribute' => ['date', 'vehicle_code', 'transporter_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
@@ -87,6 +88,9 @@ class TblVehicleExtraKmDaywise extends \app\models\ChildModel {
     public function getTransporterCode() {
         return $this->hasOne(TblTransporter::className(), ['transporter_code' => 'transporter_code']);
     }
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
 
     public function getVehicle() {
         return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
@@ -94,6 +98,7 @@ class TblVehicleExtraKmDaywise extends \app\models\ChildModel {
 
     public function importFieldSet($attribute, $params) {
         if (empty($this->getErrors())) {
+            $this->transporter_code = Yii::$app->general->getforeignkey($this->vehicle, 'transporter_code');
             $this->union_code = Yii::$app->general->getforeignkey($this->transporterCode, 'union_code');
         }
     }

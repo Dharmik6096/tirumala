@@ -2,15 +2,17 @@
 
 namespace app\modules\transporter\models;
 
+use app\modules\transporter\models\TblFuelRateMaster;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\transporter\models\TblFuelRateMaster;
 
 /**
  * TblFuelRateMasterSearch represents the model behind the search form about `app\modules\transporter\models\TblFuelRateMaster`.
  */
 class TblFuelRateMasterSearch extends TblFuelRateMaster {
+
+    public $from_date, $to_date;
 
     /**
      * @inheritdoc
@@ -19,7 +21,7 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster {
         return [
             [['fuel_type_code'], 'safe'],
             [['rate'], 'number'],
-            [['wef_date', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+            [['wef_date', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -56,6 +58,16 @@ class TblFuelRateMasterSearch extends TblFuelRateMaster {
         }
 
         // grid filtering conditions
+
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(wef_date as date)', $from_date]);
+        }
+
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(wef_date as date)', $to_date]);
+        }
         $query->andFilterWhere([
             'rate' => $this->rate,
             'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,

@@ -76,8 +76,6 @@ class TblTransporterController extends \app\controllers\ChildController {
             $this->contactDetails->setModel('transporter', $this->model->transporter_code);
             $master[] = $this->contactDetails;
 //            var_dump($_POST);exit;
-            $this->model->agreement_from_date = !empty($this->model->agreement_from_date) ? Yii::$app->formatter->asDate($this->model->agreement_from_date, DATE_FORMAT) : '';
-            $this->model->agreement_to_date = !empty($this->model->agreement_to_date) ? Yii::$app->formatter->asDate($this->model->agreement_to_date, DATE_FORMAT) : '';
             $master[] = $this->model;
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'transporter_name', $this->model->transporter_name);

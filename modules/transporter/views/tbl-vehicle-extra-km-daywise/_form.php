@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicleextrakmdaywise-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter', 'transporter_code', $readonly); ?>
     </div>
     <div class="col-sm-3">
-        <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code', 'Vehicle', $readonly); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tblvehicleextrakmdaywise-transporter_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('vehicle_code'), 'vehicle_code', $readonly); ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'date', '', false, false, $readonly); ?>

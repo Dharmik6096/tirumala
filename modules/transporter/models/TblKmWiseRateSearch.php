@@ -12,6 +12,8 @@ use app\modules\transporter\models\TblKmWiseRate;
  */
 class TblKmWiseRateSearch extends TblKmWiseRate {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +21,7 @@ class TblKmWiseRateSearch extends TblKmWiseRate {
         return [
             [['km_code'], 'integer'],
             [['rate', 'from_km', 'to_km'], 'number'],
-            [['wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'vehicle_code', 'transporter_code'], 'safe'],
+            [['wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'vehicle_code', 'transporter_code', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -62,6 +64,15 @@ class TblKmWiseRateSearch extends TblKmWiseRate {
             'vehicle_code' => $this->vehicle_code,
             'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
         ]);
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(wef_date as date)', $from_date]);
+        }
+
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(wef_date as date)', $to_date]);
+        }
         $query->andFilterWhere(['like', 'rate', $this->rate])
                 ->andFilterWhere(['like', 'from_km', $this->from_km])
                 ->andFilterWhere(['like', 'to_km', $this->to_km]);
