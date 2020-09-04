@@ -15,6 +15,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
             <?= $this->title; ?>
         </div>
         <div class="panel-body">
+            <div>
             <?php
             $attribute = [
                 ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],

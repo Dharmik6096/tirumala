@@ -580,6 +580,8 @@ th, th a{
 }
 .kv-grid-toolbar .dropdown-menu > li .checkbox {
     padding: 0 15px;
+    margin-bottom: 2px;
+    margin-top: 2px;
 }
 .seq-cell{
     vertical-align: bottom !important;
@@ -2287,7 +2289,7 @@ div.crystalstyle{
 
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-    padding: 0px !important;
+    padding: 1px !important;
     vertical-align: middle !important;
 }
 
@@ -2323,6 +2325,7 @@ div.crystalstyle{
     background: #fff;
     border: 1px solid;
     min-width: 200px;
+    float: inherit;
 }
 
 #menu_buttons ul.dropdown-menu{
@@ -3067,4 +3070,21 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .padding_left_right_0{
     padding-left: 0px;
     padding-right: 0px;
+}
+
+.dynagrid-column-label {
+    padding: 2px 0;
+    margin: 5px 0 5px 0;
+}
+
+.sortable li {
+    padding: 2px;
+}
+
+.kv-grid-toolbar .dropdown-menu{
+    padding: 2px 0;
+}
+
+.kv-grid-toolbar .dropdown-menu .divider {
+    margin: 1px 0;
 }
