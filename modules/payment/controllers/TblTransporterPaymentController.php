@@ -21,7 +21,7 @@ use yii\base\Model;
  */
 class TblTransporterPaymentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['payment-detail-primary', 'datewise-bmc-list'];
+    public $freeAccessActions = ['payment-detail-primary', 'datewise-bmc-list', 'payment-adjust-primary'];
 
     /**
      * @inheritdoc
