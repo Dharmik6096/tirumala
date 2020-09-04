@@ -72,16 +72,16 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'transporter_code:f_union_code', 'from_date', 'to_date'],
             ],
             'TblVehicleKmInfoSearch' => [
-                'filter' => ['transporter_code', 'vehicle_code:transporter_code', 'route', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'route', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
             'TblKmWiseRateSearch' => [
-                'filter' => ['transporter_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code','vehicle_code:transporter_code', 'from_date', 'to_date'],
             ],
             'TblMobileOilRateMasterSearch' => [
                 'filter' => ['vehicle_code'],
             ],
             'TblVehicleTransporterHeadMappingSearch' => [
-                'filter' => ['transporter_code', 'vehicle_code:transporter_code', 'transporter_payment_head_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code','vehicle_code:transporter_code', 'transporter_payment_head_code', 'from_date', 'to_date'],
             ],
             'TblBmcDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
@@ -270,7 +270,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
             'TblVehicleExtraKmDaywiseSearch' => [
-                'filter' => ['transporter_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
             ],
             'TblTransporterSearch' => [
                 'filter' => ['f_union_code'],

@@ -58,7 +58,7 @@ class TblVehicleKmInfoSearch extends TblVehicleKmInfo {
         }
 
         // grid filtering conditions
-
+        Yii::$app->general->filterByOrg($query, $this);
         if (!empty($this->wef_date))
             $query->andFilterWhere(['and', ['>=', 'tbl_vehicle_km_info.wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 00:00:00.000'], ['<=', 'tbl_vehicle_km_info.wef_date', date('Y-m-d', strtotime($this->wef_date)) . ' 23:59:59.000']]);
 

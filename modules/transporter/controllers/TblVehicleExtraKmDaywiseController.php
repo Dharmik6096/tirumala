@@ -50,6 +50,7 @@ class TblVehicleExtraKmDaywiseController extends \app\controllers\ChildControlle
         $this->viewFile = 'create';
 
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->date = !empty($this->model->date) ? date('Y-m-d', strtotime($this->model->date)) : '';
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Vehicle Extra Km', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -72,6 +73,7 @@ class TblVehicleExtraKmDaywiseController extends \app\controllers\ChildControlle
             $historyModel = new TblVehicleExtraKmDaywiseHistory();
             Yii::$app->operation->history($this->model, $historyModel, 'UPDATE');
             $this->model->load(Yii::$app->request->post());
+            $this->model->date = !empty($this->model->date) ? date('Y-m-d', strtotime($this->model->date)) : '';
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Vehicle Extra Km', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();

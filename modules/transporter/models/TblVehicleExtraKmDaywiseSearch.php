@@ -56,6 +56,7 @@ class TblVehicleExtraKmDaywiseSearch extends TblVehicleExtraKmDaywise {
             // $query->where('0=1');
             return $dataProvider;
         }
+        Yii::$app->general->filterByOrg($query, $this);
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -77,8 +78,8 @@ class TblVehicleExtraKmDaywiseSearch extends TblVehicleExtraKmDaywise {
         $query->andFilterWhere(['like', 'vehicle_code', $this->vehicle_code])
                 ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'union_code', $this->union_code]);
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+//                ->andFilterWhere(['like', 'union_code', $this->union_code]);
 
         return $dataProvider;
     }
