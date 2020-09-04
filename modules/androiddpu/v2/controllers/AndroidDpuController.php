@@ -74,6 +74,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $andoidIdDetailModel->imei_no = $data['imei'];
                         $andoidIdDetailModel->mobile_no = $content['mobile_no'];
                         $andoidIdDetailModel->version_no = !empty($content['version_no']) ? $content['version_no'] : NULL;
+                        $andoidIdDetailModel->d2d_request = !empty($data['d2d_request']) ? $data['d2d_request'] : 0;
                         $andoidIdDetailModelData = $andoidIdDetailModel->getActiveCount();
 //                        if (!empty($andoidIdDetailModelData)) {
 //                            $res_data['message'] = 'Mobile Number already registered.';
@@ -192,24 +193,36 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $union_code = $orgDetail['union_code'];
                 $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
-                    $file = $org_type . '_' . $org_code . '_' . date('Y.m.d_H.i.s');
-                    $fileName = $file . '.db';
-                    $id_model->db_path = '/installation-identity/' . $file . '.db';
-                    $FolderPath = Yii::$app->basePath . '/installation-identity/';
-                    //                $zipfolder = Yii::$app->basePath . '/installation-identity/' . $file;
-                    if (!is_dir($FolderPath)) {
-                        $oldmask = umask(0);
-                        mkdir($FolderPath, 0777, TRUE);
-                        umask($oldmask);
+                    if (empty($id_model['d2d_request'])) {
+                        $file = $org_type . '_' . $org_code . '_' . date('Y.m.d_H.i.s');
+                        $fileName = $file . '.db';
+                        $id_model->db_path = '/installation-identity/' . $file . '.db';
+                        $FolderPath = Yii::$app->basePath . '/installation-identity/';
+                        //                $zipfolder = Yii::$app->basePath . '/installation-identity/' . $file;
+                        if (!is_dir($FolderPath)) {
+                            $oldmask = umask(0);
+                            mkdir($FolderPath, 0777, TRUE);
+                            umask($oldmask);
+                        }
+                        copy($FolderPath . $db_file, $FolderPath . $fileName);
+                        \Yii::$app->sqlite->_path = $FolderPath;
+                        \Yii::$app->sqlite->_organisation_code = $org_code;
+                        \Yii::$app->sqlite->_organisation_type = $org_type;
                     }
-                    copy($FolderPath . $db_file, $FolderPath . $fileName);
-                    \Yii::$app->sqlite->_path = $FolderPath;
-                    \Yii::$app->sqlite->_organisation_code = $org_code;
-                    \Yii::$app->sqlite->_organisation_type = $org_type;
-
                     $transaction = $this->generalModel->saveTransaction([$id_model], ['app initialization', 'create']);
+                    $response = false;
                     if ($transaction == 'customRedirect') {
-                        $response = \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code);
+                        $response = false;
+                        if (!empty($id_model['d2d_request'])) {
+                            $res_data['orgDetails']['union_code'] = str_replace("'", "", $orgDetail['union_code']);
+                            $res_data['orgDetails']['plant_code'] = str_replace("'", "", $orgDetail['plant_code']);
+                            $res_data['orgDetails']['mcc_plant_code'] = str_replace("'", "", $orgDetail['mcc_plant_code']);
+                            $res_data['orgDetails']['bmc_code'] = str_replace("'", "", $orgDetail['bmc_code']);
+                            $res_data['orgDetails']['dcs_code'] = str_replace("'", "", $orgDetail['dcs_code']);
+                        } else {
+                            $response = \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code);
+                        }
+
                         if ($response) {
                             $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
                         } else {
@@ -318,9 +331,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['collectionConfig']['inc_deduction'] = "";
                     }
                     $animalType = [];
+                    $milkTypeRate = [];
                     foreach ($MappedMilkType as $milktype) {
                         $min_fat = $min_snf = $min_clr = $max_fat = $max_snf = $max_clr = 0.0;
                         $milktype->app_type = $org_type;
+                        $rate = isset($milktype->rtpl) && !empty($milktype->rtpl) ? $milktype->rtpl : 0;
                         $rate_range = $milktype->rateChartRange;
                         if (!empty($rate_range)) {
                             $min_fat = $rate_range->min_fat;
@@ -340,6 +355,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                             'min_clr' => $min_clr,
                             'max_clr' => $max_clr
                         ];
+                        $milkTypeRate[] = [
+                            'milk_type_code' => $milktype->milk_type_code,
+                            'milk_type_name' => $milktype->milkTypeCode->animal_type_name,
+                            'rtpl' => $rate
+                        ];
                     }
                     $IncentiveDeduction = [];
                     foreach ($collectionIncentive as $incentive) {
@@ -354,6 +374,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         ];
                     }
                     $res_data['collectionConfig']['allowedMilkType'] = $animalType;
+                    $res_data['collectionConfig']['milkTypeRate'] = $milkTypeRate;
                     $res_data['collectionConfig']['collectionIncentiveDeduction'] = $IncentiveDeduction;
 
                     $model = new TblUnionConfigResult();
