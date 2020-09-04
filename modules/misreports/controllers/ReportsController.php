@@ -1194,7 +1194,7 @@ class ReportsController extends \app\controllers\ChildController {
 //        header("Content-Disposition: attachment; filename={$fileName}");
 //        header("Pragma: no-cache");
 //        header("Expires: 0");
-        $collOutput = $this->output;
+        $Output = $this->output;
         $schema_insert = '';
         echo "<table border='1'>";
         echo "<tr>";
@@ -1202,17 +1202,18 @@ class ReportsController extends \app\controllers\ChildController {
             echo "<td>" . $a . "</td>";
         }
         echo "</tr>";
-        foreach ($collOutput as $row) {
+        foreach ($Output as $row) {
             echo "<tr>";
             foreach ($labelArray as $a) {
                 $dispData = '';
                 if (isset($row[$a]) && $row[$a] != '' && $row[$a] != null) {
                     $dispData = $row[$a];
                 }
-                if (is_numeric($dispData) && (float) $dispData <= 100000000) {
-                    echo "<td>" . $dispData . "</td>";
+                $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+                if (is_numeric($value) && (float) $value <= 100000000) {
+                    echo "<td>" . $value . "</td>";
                 } else {
-                    echo "<td style=\"mso-number-format:'\@'\">" . $dispData . "</td>";
+                    echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
                 }
             }
             echo "</tr>";
