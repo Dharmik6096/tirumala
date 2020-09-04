@@ -1034,7 +1034,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_master_register',
                 'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
-                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -1210,7 +1210,7 @@ class ReportsController extends \app\controllers\ChildController {
                     $dispData = $row[$a];
                 }
                 $value = $dispData;
-                if (!empty($this->data['to_decrypt'])) {
+                if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
                     $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
                 }
                 if (is_numeric($value) && (float) $value <= 100000000) {
