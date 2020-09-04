@@ -279,7 +279,7 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $value;
     }
 
-    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC) {
+    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1) {
         $query = $this->find()->select(['bmc_code', 'bmc_name'])->where(['is_active' => 1]);
         if (!empty($plantCode))
             $query->andWhere(['mcc_plant_code' => $plantCode]);

@@ -51,7 +51,7 @@ use app\modules\details\models\TblBankDetails;
 class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
-    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $mobile_nos, $department, $ifsc, $bank_account_no;
+    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no;
 
     /**
      * @inheritdoc
@@ -66,7 +66,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
-            [['customer_name', 'address', 'customer_type', 'customer_code_ex', 'route_code', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
+            [['customer_name', 'address', 'customer_type', 'route_code', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
             [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type'], 'safe'],
@@ -74,24 +74,37 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
             [['customer_code_ex'], function ($attribute, $params) {
-                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                }, 'skipOnEmpty' => false,],
-            ['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
+            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+        }, 'skipOnEmpty' => false,],
+            //['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
             [['bmc_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
-                }, 'on' => ['importCsv']],
+            Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+        }, 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
             [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
-                }, 'on' => ['importCsv']],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
+        }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
             [['x_col1'], 'default', 'value' => '1#1'],
+            [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no','ref_code','customer_code_ex'], 'safe'],
+            [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+            [['mobile_no'], function ($attribute, $params) {
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+            [['ifsc'], 'trim', 'on' => ['importCsv']],
+            [['email'], 'email', 'on' => ['importCsv']],
+            [['mobile_no', 'contact_person'], 'required', 'on' => ['importCsv']],
+            [['customer_code'], function ($attribute, $params) {
+            Yii::$app->general->vaildateKeyCodes($this, 'tbl_customer_master', 'customer_code_ex', 'customer_code');
+        }, 'skipOnEmpty' => false, 'on' => ['update', 'importCsv']],
         ];
     }
 
@@ -133,6 +146,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'route_code' => Yii::t('app', 'Route'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -165,8 +179,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function getCode() {
-        $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,4))) AS customer_code"])->where(['union_code' => $this->union_code])->one();
-        return $this->union_code . str_pad((int) $data['customer_code'] + 1, 4, '0', STR_PAD_LEFT);
+        return Yii::$app->general->setKeyPattern($this, 'tbl_customer_master', 'customer_code_ex', 4);
+        // $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,4))) AS customer_code"])->where(['union_code' => $this->union_code])->one();
+        // return $this->union_code . str_pad((int) $data['customer_code'] + 1, 4, '0', STR_PAD_LEFT);
     }
 
     public function getCodeEx() {
@@ -363,7 +378,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $defaultBankDetail = $existData->defaultBankDetail;
             $defaultContactDetail = $existData->defaultContactDetail;
         }
-      
+
         if (empty($defaultBankDetail) || $defaultBankDetail->bank_account_no != $model->bank_account_no) {
             if (!empty($defaultBankDetail)) {
                 $defaultBankDetail->is_default = 0;
@@ -373,7 +388,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $model->setbankDetails($model, $modelList, $errors);
         }
 
-        if (empty($defaultContactDetail) || $defaultContactDetail->mobile_no != $model->mobile_nos) {
+        if (empty($defaultContactDetail) || $defaultContactDetail->mobile_no != $model->mobile_no) {
             if (!empty($defaultContactDetail)) {
                 $defaultContactDetail->is_default = 0;
                 $defaultContactDetail->is_active = 0;
@@ -403,7 +418,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function setContactDetails($model, &$saveModel, &$errors) {
-        if (!empty($model->mobile_nos)) {
+        if (!empty($model->mobile_no)) {
             $contact_model = new TblContactDetails();
             $contact_model->setModel('customer', $model->customer_code);
             $contact_model->department = $model->department;
@@ -414,7 +429,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $contact_model->surname = $model->surname;
             $contact_model->local_lastname = $model->local_middlename;
             $contact_model->local_surname = $model->local_surname;
-            $contact_model->mobile_no = $model->mobile_nos;
+            $contact_model->mobile_no = $model->mobile_no;
             $contact_model->email = $model->email;
             if (!$contact_model->validate()) {
                 $errors[] = $contact_model->getErrors();

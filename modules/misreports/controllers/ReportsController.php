@@ -451,6 +451,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCustomerMaster() {
+        $this->report = 'CustomerMaster';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -564,7 +569,7 @@ class ReportsController extends \app\controllers\ChildController {
 
     private function getLabels($l) {
         $label = [
-            //101
+//101
             'MemberDailyCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_collection_day_wise_report',
@@ -1021,7 +1026,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'DCS Register',
                 'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No'],
                 'removeExportType' => ['CSV'],
-                'output_type' => FALSE
+                'extention' => 'xlsx',
+//                'output_type' => FALSE
             ],
             'MemberMaster' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
@@ -1030,7 +1036,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Member Register',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
                 'removeExportType' => ['CSV'],
-                'output_type' => FALSE
+                'extention' => 'xlsx',
+//                'output_type' => FALSE
             ],
             'SapStatusReport' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1156,48 +1163,102 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'LocationWiseAssetMovement',
                 'title' => '906 - Location Wise Asset Movement',
             ],
+            'CustomerMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_customer_master_register',
+                'scenario' => 'CustomerMaster',
+                'title' => 'Customer Master Register',
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+//                'output_type' => FALSE
+            ],
         ];
         return $label[$l];
     }
 
     public function downloadData() {
+        $extention = !empty($this->data['extention']) ? $this->data['extention'] : 'xls';
         $header = [
-            'mime' => '	application/vnd.ms-excel',
-            'extension' => 'xls',
+            'mime' => 'application/ms-excel',
+            'extension' => $extention,
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
 
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
-                //    we want to set these values (default is A1)
-        );
-        $sheet->fromArray(
-                $this->output, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
-                //    we want to set these values (default is A1)
-        );
+        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
         $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
+//        header('Content-Type: text/plain');
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        ob_end_clean();
-        $objWriter->save('php://output');
+//        header("Content-Type: application/xls");
+//        header("Content-Disposition: attachment; filename={$fileName}");
+//        header("Pragma: no-cache");
+//        header("Expires: 0");
+        $Output = $this->output;
+        $schema_insert = '';
+        echo "<table border='1'>";
+        echo "<tr>";
+        foreach ($labelArray as $a) {
+            echo "<td>" . $a . "</td>";
+        }
+        echo "</tr>";
+        foreach ($Output as $row) {
+            echo "<tr>";
+            foreach ($labelArray as $a) {
+                $dispData = '';
+                if (isset($row[$a]) && $row[$a] != '' && $row[$a] != null) {
+                    $dispData = $row[$a];
+                }
+                $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+                if (is_numeric($value) && (float) $value <= 100000000) {
+                    echo "<td>" . $value . "</td>";
+                } else {
+                    echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
+                }
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
         exit();
+
+
+//        $header = [
+//            'mime' => '	application/vnd.ms-excel',
+//            'extension' => 'xls',
+//            'writer' => 'Excel2007',
+//        ];
+//        $objPHPExcel = new PHPExcel();
+//        $sheet = $objPHPExcel->getActiveSheet();
+//        /* $objPHPExcel->getDefaultStyle()
+//          ->getNumberFormat()
+//          ->setFormatCode(
+//          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//          ); */
+//        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+//        /* $file_header = array_map(function($file_header) {
+//          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+//          }, array_values($file_header)); */
+//
+//        $sheet->fromArray(
+//                $file_header, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A1'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $sheet->fromArray(
+//                $this->output, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A2'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+//        header('Content-Disposition: attachment;filename=' . $fileName);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        ob_end_clean();
+//        $objWriter->save('php://output');
+//        exit();
     }
 
 }

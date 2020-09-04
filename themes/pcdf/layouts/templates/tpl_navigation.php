@@ -370,6 +370,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/reports/dcs-master']],
                         ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/reports/member-master']],
+                        ['label' => Yii::t('app', 'Customer Master Register'), 'url' => ['/misreports/reports/customer-master']],
                     ]
                 ],
                 [

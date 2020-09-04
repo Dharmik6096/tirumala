@@ -716,7 +716,7 @@ class TblDcs extends ChildModel {
                 return $value;
             }
 
-            public function getBMCDCS($plantCode = [], $RLS = 'TRUE', $dateFilter) {
+            public function getBMCDCS($plantCode = [], $RLS = 'TRUE', $dateFilter = NULL) {
                 $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
                 if (!empty($plantCode))
                     $query->andWhere(['bmc_code' => $plantCode]);

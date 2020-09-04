@@ -40,9 +40,21 @@ $form = ActiveForm::begin([
     <div class="col-sm-3 ">
         <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), $readonly); ?>
     </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'customer_code_ex')->textInput() ?>
-    </div>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-3"> 
+                <?= $form->field($model, 'customer_code_ex')->textInput() ?>
+            </div>
+        <?php } ?>
+        <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-3 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput() ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'customer_name')->textInput() ?>
     </div>
