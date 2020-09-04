@@ -1209,7 +1209,10 @@ class ReportsController extends \app\controllers\ChildController {
                 if (isset($row[$a]) && $row[$a] != '' && $row[$a] != null) {
                     $dispData = $row[$a];
                 }
-                $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+                $value = $dispData;
+                if (!empty($this->data['to_decrypt'])) {
+                    $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+                }
                 if (is_numeric($value) && (float) $value <= 100000000) {
                     echo "<td>" . $value . "</td>";
                 } else {
