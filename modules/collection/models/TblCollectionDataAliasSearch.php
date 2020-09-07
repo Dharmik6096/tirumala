@@ -48,6 +48,7 @@ class TblCollectionDataAliasSearch extends TblCollectionDataAlias {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => FALSE,
         ]);
 
         $this->load($params);

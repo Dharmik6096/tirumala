@@ -456,6 +456,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionRegister() {
+        $this->report = 'MilkCollectionRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcCollectionRegister() {
+        $this->report = 'BmcCollectionRegister';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1170,7 +1180,22 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Customer Master Register',
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
-//                'output_type' => FALSE
+            ],
+            'MilkCollectionRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_milk_collection_register',
+                'scenario' => 'MilkCollectionRegister',
+                'title' => 'Milk Collection Register',
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+            ],
+            'BmcCollectionRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_collection_register',
+                'scenario' => 'BmcCollectionRegister',
+                'title' => 'BMC Collection Register',
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
             ],
         ];
         return $label[$l];
