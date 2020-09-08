@@ -155,6 +155,13 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('main_customer_type'))) {
+                                            ?>
+                                            <div class="col-sm-6 ">
+                                                <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type')); ?>
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('payment_cycle_code'))) {
 
                                             if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {

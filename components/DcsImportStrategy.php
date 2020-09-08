@@ -108,6 +108,7 @@ class DcsImportStrategy extends ARImportStrategy {
                             $this->setAttributes($this->configs, $model, $row, $excludes);
                         } else {
                             $model->dcs_code = $model->getCode();
+                            $model->valid_from = date('Y-m-d');
                         }
                     }
                     if ($model->hasAttribute('is_active')) {
