@@ -3,6 +3,7 @@
 namespace app\modules\bkgprocess\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "bipl_ftp_collection".
@@ -116,6 +117,10 @@ class BiplFtpCollection extends \app\models\ChildModel {
             'dop_milksamplenum' => Yii::t('app', 'Dop Milksamplenum'),
             'dop_milksamplestatus' => Yii::t('app', 'Dop Milksamplestatus'),
         ];
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['ref_code' => 'cp_code']);
     }
 
 }
