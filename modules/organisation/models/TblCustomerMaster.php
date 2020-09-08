@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblRouteMapping;
 use app\modules\organisation\models\TblBranch;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblBankDetails;
+use app\modules\general\models\TblDepartment;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -74,37 +75,48 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['customer_code_ex'], function ($attribute, $params) {
-            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-        }, 'skipOnEmpty' => false,],
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
             //['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
             [['bmc_code'], function ($attribute, $params) {
-            Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
-        }, 'on' => ['importCsv']],
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
             [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
-        }, 'on' => ['importCsv']],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
+                }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
             [['x_col1'], 'default', 'value' => '1#1'],
-            [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no','ref_code','customer_code_ex'], 'safe'],
+            [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex'], 'safe'],
             [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
             [['ifsc'], 'trim', 'on' => ['importCsv']],
             [['email'], 'email', 'on' => ['importCsv']],
             [['mobile_no', 'contact_person'], 'required', 'on' => ['importCsv']],
             [['customer_code'], function ($attribute, $params) {
-            Yii::$app->general->vaildateKeyCodes($this, 'tbl_customer_master', 'customer_code_ex', 'customer_code');
-        }, 'skipOnEmpty' => false, 'on' => ['update', 'importCsv']],
+                    Yii::$app->general->vaildateKeyCodes($this, 'tbl_customer_master', 'customer_code_ex', 'customer_code');
+                }, 'skipOnEmpty' => false, 'on' => ['update', 'importCsv']],
+            [['same_milk_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+                }, 'on' => ['importCsv']],
+            [['diff_milk_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+                }, 'on' => ['importCsv']],
+            [['department'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'department');
+                }, 'on' => ['importCsv']],
+            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
+            [['bmc_code'], 'setXcol', 'on' => ['importCsv']]
         ];
     }
 
@@ -436,6 +448,12 @@ class TblCustomerMaster extends \app\models\ChildModel {
             }
             array_push($saveModel, $contact_model);
         }
+    }
+
+    public function setXcol($attribute, $params) {
+        $same = empty($this->same_milk_type) ? 0 : $this->same_milk_type;
+        $different = empty($this->diff_milk_type) ? 0 : $this->diff_milk_type;
+        $this->x_col1 = $same . '#' . $different;
     }
 
 }
