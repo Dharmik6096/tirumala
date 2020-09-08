@@ -230,7 +230,7 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv', 'createDcs']],
             [['dcs_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'createDcs']],
             [['department', 'middle_name', 'surname', 'local_middlename', 'local_surname', 'bank_code', 'origination_type'], 'safe'],
-                    [['milk_type_code'], function ($attribute, $params) {
+            [['milk_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
                 }, 'on' => 'importCsv'],
             [['milk_type_code'], 'integer', 'on' => ['importCsv']],
@@ -240,7 +240,7 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
             [['ifsc'], 'setBankDetail', 'on' => ['importCsv']],
-                    [['dcs_type_code'], function ($attribute, $params) {
+            [['dcs_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
                 }, 'on' => 'importCsv'],
             [['dcs_type_code'], 'integer'],
@@ -248,9 +248,9 @@ class TblDcs extends ChildModel {
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['credit_sale_allow'], 'default', 'value' => 0],
             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
-//                    [['dcs_code'], function ($attribute, $params) {
-//                    ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
-//                }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
+            [['dcs_code'], function ($attribute, $params) {
+                    ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
+                }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
             [['dcs_code'], function ($attribute, $params) {
                     ($this->vendor == 'BIPL' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs']],
