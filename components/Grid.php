@@ -251,7 +251,7 @@ class Grid extends Widget {
                 $bind_script = FALSE;
                 $kyc_script = FALSE;
                 $message = '';
-                if (in_array($table_name, array('tbl_bank_details', 'tbl_member', 'tbl_transporter'))) {
+                if (in_array($table_name, array('tbl_bank_details', 'tbl_member'))) {
                     $bind_script = TRUE;
                     $grid_option['actions']['verify-bank-detail'] = function($url, $model) {
                         if ($model->is_active == 1 && !empty($model->bank_account_no)) {

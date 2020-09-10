@@ -5,7 +5,7 @@ use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Vehicle KM Information');
-$this->params['menu'][] = Yii::$app->controls->update($model->km_info_code);
+//$this->params['menu'][] = Yii::$app->controls->update($model->km_info_code);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

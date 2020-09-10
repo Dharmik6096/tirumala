@@ -21,7 +21,7 @@ use app\modules\bkgprocess\models\TblOrgFileLog;
 
 class BiplSchedulerController extends ChildController {
 
-    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder'];
+    public $freeAccessActions = ['generate-master-data', 'download-files', 'process-bipl-files', 'upload-collection-files', 'upload-master-files', 'upload-error-files', 'create-ftp-folder', 'process-collection-data'];
     public $errorPath = '';
 
     public function init() {
@@ -223,6 +223,11 @@ class BiplSchedulerController extends ChildController {
             $model->updateFileStatus($ids);
             $this->upload_files($modelData, TRUE);
         }
+    }
+
+    public function actionProcessCollectionData() {
+        $sp_name = 'DB_JOB_BIPL_Milk_Collection';
+        \Yii::$app->general->getSpData($sp_name, [], TRUE);
     }
 
     private function upload_files($data, $create_dir = FALSE) {

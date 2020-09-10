@@ -27,6 +27,7 @@ $attribute = [
         }, 'filter' => Yii::$app->dropdown->dropdownfilter('customer_type', $searchModel, 'customer_type', Yii::t('app', 'Select'))],
     ['attribute' => 'customer_code'],
     ['attribute' => 'customer_code_ex'],
+    ['attribute' => 'ref_code'],
     ['attribute' => 'customer_name'],
     ['attribute' => 'local_name', 'filter' => FALSE],
     ['attribute' => 'gst_no',],
@@ -46,13 +47,13 @@ $grid_option = [
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-customer-master/bank-details', 'id' => $model->customer_code], $options);
         },
-        'contact-details' => function ($url, $model) {
+                'contact-details' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
         },
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

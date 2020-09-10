@@ -25,23 +25,45 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Customer Details</h4>
         </div>
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
-        </div>
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblcustomermaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), false, '', $readonly); ?>  
-        </div>
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcustomermaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
-        </div>
-        <div class="col-sm-4">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcustomermaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
-        </div>
-        <div class="col-sm-4 DCS">
-            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermaster-plant_code,tblcustomermaster-mcc_plant_code,tblcustomermaster-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
-        </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+    </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblcustomermaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), false, '', $readonly); ?>  
+    </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcustomermaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
+    </div>
+    <div class="col-sm-4">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcustomermaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
+    </div>
+    <div class="col-sm-4 DCS">
+        <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermaster-plant_code,tblcustomermaster-mcc_plant_code,tblcustomermaster-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+    </div>
+    <!-- <div class="clearfix"></div> -->
+    <div class="col-sm-4 ">
+        <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
+    </div>
+    <?php
+    $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
+    if (!empty($keyPattern)) {
+        ?>
+        <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
+            <div class="col-sm-4"> 
+                <?= $form->field($model, 'customer_code_ex')->textInput() ?>
+            </div>
+        <?php } ?>
+        <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
+            <div class="col-sm-4 number-validate">  
+                <?= $form->field($model, 'ref_code')->textInput() ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
+    <div class="col-sm-4">
+        <?= $form->field($model, 'customer_name')->textInput() ?>
+    </div>
 
-        <div class="col-sm-4 ">
+        <!-- <div class="col-sm-4 ">
             <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
         </div>
         <div class="col-sm-4">
@@ -49,7 +71,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'customer_name')->textInput() ?>
-        </div>
+        </div> -->
 
         <div class="col-sm-4">
             <?= $form->field($model, 'local_name')->textInput() ?>

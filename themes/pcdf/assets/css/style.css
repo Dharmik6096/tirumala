@@ -3098,3 +3098,8 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
 }
+
+.popup-100-60{
+    width: calc(100% - 60px) !important;
+    margin: 30px auto !important;
+}

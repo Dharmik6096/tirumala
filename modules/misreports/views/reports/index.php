@@ -155,6 +155,13 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('main_customer_type'))) {
+                                            ?>
+                                            <div class="col-sm-6 ">
+                                                <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type')); ?>
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('payment_cycle_code'))) {
 
                                             if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {
@@ -306,26 +313,29 @@ if (isset($data['url1'])) {
             } else if (!empty($result) && !(isset($data['download_only']))) {
                 $attr = [];
                 foreach ($result[0] as $att => $value) {
+                    $checkAttr = explode('##', $att);
                     $attr_arr = [];
                     $format = 'raw';
                     if (in_array($att, ['Quantity', 'FAT', 'CLR', 'SNF'])) {
                         $format = ['decimal', 2];
                     }
 //                    $attr_arr['attribute'] = $att;
-                    $attr_arr = [];
-                    if (!empty($data['to_decrypt'])) {
-                        $attr_arr['value'] = function($model) use ($att) {
-                            return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
-                        };
-                    }
+                    if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
+                        $attr_arr = [];
+                        if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
+                            $attr_arr['value'] = function($model) use ($att) {
+                                return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
+                            };
+                        }
 
-                    $str = ucwords(str_replace('_', ' ', $att));
-                    $attr_arr['attribute'] = $att;
-                    $attr_arr['label'] = Yii::t('app', $str);
-                    $attr_arr['format'] = $format;
-                    $attr_arr['filter'] = false;
-                    $attr[] = $attr_arr;
+                        $str = ucwords(str_replace('_', ' ', $att));
+                        $attr_arr['attribute'] = $att;
+                        $attr_arr['label'] = Yii::t('app', $str);
+                        $attr_arr['format'] = $format;
+                        $attr_arr['filter'] = false;
+                        $attr[] = $attr_arr;
 //                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
+                    }
                 }
                 $grid_option = [
                     'id' => 'mis-report-list',

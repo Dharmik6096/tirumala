@@ -1,12 +1,9 @@
 <?php
 
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
+
 ?>
-<div class="grid-search">
-    <?php
-    echo $this->render('_search', ['model' => $searchModel]);
-    ?>
-</div>
 <?php
 
 $attribute = [
@@ -22,13 +19,25 @@ $attribute = [
     ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
-    ['attribute' => 'phone_no'],
-    ['attribute' => 'contact_person', 'visible' => false, 'filter' => false],
+    ['attribute' => 'phone_no', 'visible' => false],
+    ['attribute' => 'contact_person', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->defaultContactDetail, 'firstname');
+        }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'mobile_no', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->defaultContactDetail, 'mobile_no');
+        }, 'visible' => true, 'filter' => false],
+//    ['attribute' => 'contact_person', 'filter' => false],
     ['attribute' => 'local_contact_person', 'visible' => false, 'filter' => false],
-    ['attribute' => 'mobile_no', 'visible' => false, 'filter' => false],
+//    ['attribute' => 'mobile_no', 'filter' => false],
     ['attribute' => 'email', 'visible' => false, 'filter' => false],
-    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
+//    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'visible' => false, 'filter' => false],
+//    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'visible' => false, 'filter' => false],
+    ['attribute' => 'bank_code', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->defaultBankDetail, ['bankCode'], 'bank_name');
+        }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'branch_code', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->defaultBankDetail, ['branchCode'], 'branch_name');
+        }, 'visible' => true, 'filter' => false],
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
     ['attribute' => 'gstin', 'visible' => false, 'filter' => false],
@@ -38,7 +47,7 @@ $attribute = [
     ['attribute' => 'agreement_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'declaration', 'visible' => false, 'filter' => false],
     ['attribute' => 'security_cheque_no', 'visible' => false, 'filter' => false],
-    ['attribute' => 'security_amount', 'format' => Yii::$app->general->CurrencyFormat(),'visible' => false, 'filter' => false],
+    ['attribute' => 'security_amount', 'format' => Yii::$app->general->CurrencyFormat(), 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [
@@ -49,6 +58,16 @@ $grid_option = [
         'view' => true,
         'update' => true,
 //        'delete' => ['option' => 'transporter_name,transporter_code,tbl-transporter/delete'],
+        'bank-details' => function ($url, $model) {
+            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-name' => $model->transporter_name, 'data-val' => $model->transporter_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-university"></i>', ['/transporter/tbl-transporter/bank-details', 'id' => $model->transporter_code], $options);
+        },
+        'contact-details' => function ($url, $model) {
+            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-name' => $model->transporter_name, 'data-val' => $model->transporter_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/transporter/tbl-transporter/contact-details', 'id' => $model->transporter_code], $options);
+        },
     ]
 ];
 

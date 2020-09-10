@@ -39,7 +39,7 @@ class TblKmWiseRateHistory extends \yii\db\ActiveRecord
             [['km_code'], 'safe'],
             [['rate', 'from_km', 'to_km'], 'safe'],
             [['wef_date', 'created_at', 'updated_at', 'history_created_at','vehicle_code'], 'safe'],
-            [['created_by', 'updated_by', 'operation_type'], 'safe'],
+            [['created_by', 'updated_by', 'operation_type','transporter_code','union_code'], 'safe'],
         ];
     }
 

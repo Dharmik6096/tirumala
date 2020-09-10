@@ -5,14 +5,6 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
-//$model->is_plant=$model->isNewRecord?0:$model->is_plant;
-//$nameWarning = 0;
-//$codeWarning = 0;
-//if (!empty($_POST)) {
-//    $nameWarning = $_POST['warning'];
-//    $codeWarning = $_POST['code_warning'];
-//}
-$list = array('0' => 'No', '1' => 'Yes');
 ?>
 
 <?php
@@ -29,14 +21,24 @@ $form = ActiveForm::begin([
     <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
+
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('fuel_type_code', $model, $form, 'form-group col-sm-2', 'Fuel Type',$readonly); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblfuelratemaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $readonly); ?>
     </div>
     <div class="col-sm-2">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblfuelratemaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, '', $readonly); ?>
+    </div>  
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblfuelratemaster-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $readonly); ?>
+    </div>  
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('fuel_type_code', $model, $form, 'form-group col-sm-2', 'Fuel Type', $readonly); ?>
+    </div>
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'rate')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d'),$readonly); ?>
+        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, '', $readonly); ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

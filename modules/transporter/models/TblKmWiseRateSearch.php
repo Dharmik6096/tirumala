@@ -10,25 +10,25 @@ use app\modules\transporter\models\TblKmWiseRate;
 /**
  * TblKmWiseRateSearch represents the model behind the search form about `app\modules\transporter\models\TblKmWiseRate`.
  */
-class TblKmWiseRateSearch extends TblKmWiseRate
-{
+class TblKmWiseRateSearch extends TblKmWiseRate {
+
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['km_code'], 'integer'],
             [['rate', 'from_km', 'to_km'], 'number'],
-            [['wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by','vehicle_code'], 'safe'],
+            [['wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'vehicle_code', 'transporter_code', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +40,7 @@ class TblKmWiseRateSearch extends TblKmWiseRate
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblKmWiseRate::find();
 
         // add conditions that should always apply here
@@ -51,6 +50,7 @@ class TblKmWiseRateSearch extends TblKmWiseRate
         ]);
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -60,14 +60,25 @@ class TblKmWiseRateSearch extends TblKmWiseRate
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'tbl_km_wise_rate.vehicle_code' => $this->vehicle_code,
-            'tbl_km_wise_rate.km_code' => $this->km_code,
-            'tbl_km_wise_rate.rate' => $this->rate,
-            'tbl_km_wise_rate.from_km' => $this->from_km,
-            'tbl_km_wise_rate.to_km' => $this->to_km,
-            'tbl_km_wise_rate.wef_date' => $this->wef_date,
+            'transporter_code' => $this->transporter_code,
+            'vehicle_code' => $this->vehicle_code,
+            'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
         ]);
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(wef_date as date)', $from_date]);
+        }
 
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(wef_date as date)', $to_date]);
+        }
+        $query->andFilterWhere(['like', 'rate', $this->rate])
+                ->andFilterWhere(['like', 'from_km', $this->from_km])
+                ->andFilterWhere(['like', 'to_km', $this->to_km]);
+
+        $query->orderBy('wef_date DESC, transporter_code DESC,vehicle_code DESC,from_km ASC');
         return $dataProvider;
     }
+
 }

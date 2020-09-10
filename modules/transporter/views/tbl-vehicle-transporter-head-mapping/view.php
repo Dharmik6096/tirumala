@@ -19,13 +19,40 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_transporte
                 [
                     'columns' => [
                         [
-                            'attribute' => 'vehicle_code',
-                            'value' => $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name,
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
                             'attribute' => 'transporter_payment_head_code',
                             'value' => $model->transporterPaymentHead->transporter_payment_head,
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'billing_type',
+                            'value' => isset($model->billing_type) ? Yii::$app->dropdown->getRecords('transporter_type')['data'][$model->billing_type] : 'N/A',
+                        ],
+                        [
+                            'attribute' => 'transporter_code',
+                            'value' => Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'vehicle_code',
+                            'value' => $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name,
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'route_code',
+                            'value' => Yii::$app->general->getforeignkey($model->routeCode, 'route_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -40,6 +67,14 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_transporte
                         [
                             'attribute' => 'amount',
                             'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'remarks',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],

@@ -995,7 +995,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1318,6 +1318,8 @@ class GeneralFunctions extends Component {
         foreach ($data as $key => $value) {
             if (!preg_match('/^[0-9]*$/', $model->$attribute)) {
                 if (strstr(strtoupper($model->$attribute), strtoupper($value))) {
+                    $records = $key;
+                } elseif (in_array($key, array($model->$attribute))) {
                     $records = $key;
                 }
             } elseif (in_array($key, array($model->$attribute))) {
@@ -1800,6 +1802,17 @@ class GeneralFunctions extends Component {
             $model->addError('bmc_code', Yii::t('app/validation', Yii::t('app', 'BMC') . ' Is Invalid.'));
             return false;
         }
+    }
+
+    function validVehicleNumber($model, $attribute, $params) {
+//        $pattern = "/^[A-Z]{2}[ -][0-9]{1,2}(?: [A-Z])?(?: [A-Z]*)? [0-9]{4}$/";--MP 09 AB 1234
+//        $pattern = "/^[A-Z]{2}-[0-9]{2}-{1}[A-Z]{1,3}-{1}[0-9]{4}$/"; //--MP-09-AB-1234
+        $pattern = "/^[A-Z]{2}[0-9]{2}[A-Z]{0,3}[0-9]{4}$/"; //--GJ10AB1111,GJ101111,GJ10ABC1111,GJ10A1111
+        if (!preg_match($pattern, $model->$attribute)) {
+            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' is must be like GJ10AB1111'));
+            return false;
+        }
+        return TRUE;
     }
 
 }

@@ -9,38 +9,23 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\transporter\models\TblVehicleTransporterHeadMappingHistory;
+
 /**
  * TblVehicleTransporterHeadMappingController implements the CRUD actions for TblVehicleTransporterHeadMapping model.
  */
-class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildController
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblVehicleTransporterHeadMapping models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblVehicleTransporterHeadMappingSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -49,10 +34,9 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -61,22 +45,23 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($vehicle_code = '')
-    {
+    public function actionCreate($vehicle_code = '', $tr_code = '') {
         $this->model = new TblVehicleTransporterHeadMapping();
         $this->model->scenario = 'create';
         $this->model->vehicle_code = $vehicle_code;
+        $this->model->transporter_code = $tr_code;
         $this->viewFile = 'create';
 
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->billing_type = 0;
             $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Vehicle Transporter Head', 'create']);
             if ($transaction == 'customRender') {
                 return $this->{$transaction}();
-            }else{
-                if($vehicle_code != ''){
+            } else {
+                if ($vehicle_code != '') {
                     return $this->redirect(['/transporter/tbl-vehicle-master/index']);
-                }else{
+                } else {
                     return $this->redirect(['/transporter/tbl-vehicle-transporter-head-mapping/index']);
                 }
             }
@@ -90,9 +75,8 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
-        
+    public function actionUpdate($id) {
+
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
@@ -100,13 +84,12 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Vehicle Trasnporter Head', 'edit']);
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Vehicle Transporter Head', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
         }
         return $this->customRender();
-        
     }
 
     /**
@@ -115,8 +98,7 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -129,12 +111,12 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
      * @return TblVehicleTransporterHeadMapping the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblVehicleTransporterHeadMapping::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

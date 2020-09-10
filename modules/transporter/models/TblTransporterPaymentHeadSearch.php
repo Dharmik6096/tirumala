@@ -10,15 +10,14 @@ use app\modules\transporter\models\TblTransporterPaymentHead;
 /**
  * TblTransporterPaymentHeadSearch represents the model behind the search form about `app\modules\transporter\models\TblTransporterPaymentHead`.
  */
-class TblTransporterPaymentHeadSearch extends TblTransporterPaymentHead
-{
+class TblTransporterPaymentHeadSearch extends TblTransporterPaymentHead {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['transporter_payment_head_code', 'type', 'is_active'], 'integer'],
+            [['transporter_payment_head_code', 'type', 'is_active', 'union_code'], 'safe'],
             [['transporter_payment_head', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
         ];
     }
@@ -26,8 +25,7 @@ class TblTransporterPaymentHeadSearch extends TblTransporterPaymentHead
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblTransporterPaymentHeadSearch extends TblTransporterPaymentHead
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblTransporterPaymentHead::find();
 
         // add conditions that should always apply here
@@ -50,6 +47,7 @@ class TblTransporterPaymentHeadSearch extends TblTransporterPaymentHead
         ]);
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -62,14 +60,11 @@ class TblTransporterPaymentHeadSearch extends TblTransporterPaymentHead
             'transporter_payment_head_code' => $this->transporter_payment_head_code,
             'type' => $this->type,
             'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'transporter_payment_head', $this->transporter_payment_head])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+        $query->andFilterWhere(['like', 'transporter_payment_head', $this->transporter_payment_head]);
 
         return $dataProvider;
     }
+
 }

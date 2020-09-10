@@ -35,7 +35,7 @@ class TblDcsMilkTypeHistory extends \yii\db\ActiveRecord
     {
         return [
             [['created_at','created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at','is_active'], 'safe'],
-            [['milk_type_code','operation_type','dcs_code'], 'safe'],
+            [['milk_type_code','operation_type','dcs_code', 'rtpl'], 'safe'],
 //            [['history_created_at', 'created_at', 'updated_at', 'is_active'], 'safe'],
 //            [['milk_type_code'], 'integer'],
 //            [['operation_type'], 'string', 'max' => 10],

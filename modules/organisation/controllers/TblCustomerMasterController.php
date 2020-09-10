@@ -88,9 +88,11 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                 $this->contactDetails->setModel('customer', $this->model->customer_code);
                 array_push($mapList, $this->contactDetails);
             }
-            $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Customer Master', 'create']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
+            if (empty($this->model->getErrors())) {
+                $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Customer Master', 'create']);
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
             }
         }
         return $this->customRender();

@@ -10,25 +10,23 @@ use app\modules\payment\models\TblTransporterPayment;
 /**
  * TblTransporterPaymentSearch represents the model behind the search form about `app\modules\payment\models\TblTransporterPayment`.
  */
-class TblTransporterPaymentSearch extends TblTransporterPayment
-{
+class TblTransporterPaymentSearch extends TblTransporterPayment {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['transporter_payment_code', 'total_vehicle', 'no_of_days'], 'integer'],
-            [['transporter_code', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code'], 'safe'],
-            [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'total_amount', 'total_deduction', 'final_amount', 'adjust_amount', 'net_amount'], 'number'],
+            [['transporter_payment_code', 'transporter_type', 'is_verified'], 'integer'],
+            [['union_code', 'transporter_code', 'from_date', 'to_date', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'payment_date', 'status', 'disburse_date', 'utr_no', 'reference_no', 'route_code', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bill_no', 'fixed_rent', 'fuel_consumption', 'vehicle_average', 'fuel_rate', 'vehicle_code', 'fixed_amount', 'route_name'], 'safe'],
+            [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'no_of_days', 'total_kms', 'avg_rate', 'total_qty', 'total_amount', 'total_deduction', 'total_addition', 'net_amount', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_amount', 'final_amount', 'disburse_amount'], 'number'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +38,7 @@ class TblTransporterPaymentSearch extends TblTransporterPayment
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblTransporterPayment::find();
 
         // add conditions that should always apply here
@@ -51,51 +48,46 @@ class TblTransporterPaymentSearch extends TblTransporterPayment
         ]);
 
         $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+        $query->joinWith(['transporterCode', 'routeCode', 'vehicleCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_transporter_payment', 'tbl_transporter_payment', 'tbl_transporter_payment');
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $query->andWhere(['or',
+                ['between', 'tbl_transporter_payment.from_date', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))],
+                ['between', 'tbl_transporter_payment.to_date', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))]]);
         }
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'transporter_payment_code' => $this->transporter_payment_code,
-            'total_vehicle' => $this->total_vehicle,
-            'coll_qty' => $this->coll_qty,
-            'coll_kg_fat' => $this->coll_kg_fat,
-            'coll_kg_snf' => $this->coll_kg_snf,
-            'disp_qty' => $this->disp_qty,
-            'disp_kg_fat' => $this->disp_kg_fat,
-            'disp_kg_snf' => $this->disp_kg_snf,
-            'rec_qty' => $this->rec_qty,
-            'rec_kg_fat' => $this->rec_kg_fat,
-            'rec_kg_snf' => $this->rec_kg_snf,
-            'cd_qty_diff' => $this->cd_qty_diff,
-            'cd_kg_fat_diff' => $this->cd_kg_fat_diff,
-            'cd_kg_snf_diff' => $this->cd_kg_snf_diff,
-            'rd_qty_diff' => $this->rd_qty_diff,
-            'rd_kg_fat_diff' => $this->rd_kg_fat_diff,
-            'rd_kg_snf_diff' => $this->rd_kg_snf_diff,
-            'no_of_days' => $this->no_of_days,
-            'total_amount' => $this->total_amount,
-            'total_deduction' => $this->total_deduction,
-            'final_amount' => $this->final_amount,
-            'adjust_amount' => $this->adjust_amount,
-            'net_amount' => $this->net_amount,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'from_date' => $this->from_date,
-            'to_date' => $this->to_date,
-            'bmc_code' => $this->bmc_code,
-            'union_code' => $this->union_code,
+            'tbl_transporter_payment.transporter_type' => $this->transporter_type,
         ]);
 
-        $query->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
+        $query->andFilterWhere(['like', 'tbl_transporter.transporter_name', $this->transporter_code])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.adjust_remark', $this->adjust_remark])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.status', $this->status])
+                ->andFilterWhere(['like', 'tbl_route_mapping.ref_code', $this->route_code])
+                ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_name])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.payment_date', ($this->payment_date == '') ? '' : Yii::$app->formatter->asDate($this->payment_date, 'php:Y-m-d')])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.no_of_days', $this->no_of_days])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.total_kms', $this->total_kms])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.total_amount', $this->total_amount])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.total_deduction', $this->total_deduction])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.total_addition', $this->total_addition])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.net_amount', $this->net_amount])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.adjust_amount', $this->adjust_amount])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.final_amount', $this->final_amount])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.total_qty', $this->total_qty])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.rec_kg_fat', $this->rec_kg_fat])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.rec_kg_snf', $this->rec_kg_snf])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.bill_no', $this->bill_no])
+                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->vehicle_code])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.fixed_rent', $this->fixed_rent])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.fuel_consumption', $this->fuel_consumption])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.vehicle_average', $this->vehicle_average])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.fuel_rate', $this->fuel_rate])
+                ->andFilterWhere(['like', 'tbl_transporter_payment.fixed_amount', $this->fixed_amount])
 
+        ;
         return $dataProvider;
     }
+
 }

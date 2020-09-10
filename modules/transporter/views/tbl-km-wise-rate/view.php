@@ -19,9 +19,24 @@ $this->params['menu'][] = Yii::$app->controls->update($model->km_code);
                 [
                     'columns' => [
                         [
-                            'attribute' => 'vehicle',
-                            'value' => $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name,
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                        
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'transporter_code',
+                            'value' => Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'vehicle_code',
+                            'value' => $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name,
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
