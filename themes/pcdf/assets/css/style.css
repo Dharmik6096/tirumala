@@ -3088,3 +3088,13 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .kv-grid-toolbar .dropdown-menu .divider {
     margin: 1px 0;
 }
+
+#loginModal .modal-body {
+    position: relative;
+    padding: 6px;
+}
+
+.input-group.input-daterange .input-group-addon {
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
