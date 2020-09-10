@@ -20,6 +20,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\configuration\models\TblUnionConfigResult;
 use yii\helpers\ArrayHelper;
 use app\modules\usermanagement\models\TblAmcsAppMenuMapping;
+use app\modules\configuration\models\TblMilkCollectionConfig;
 
 /**
  * Default controller for the `vendorapi` module
@@ -214,11 +215,16 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     if ($transaction == 'customRedirect') {
                         $response = false;
                         if (!empty($id_model['d2d_request'])) {
+                            $model = new TblDcs();
+                            $model->dcs_code = $org_code;
+                            $detail_type = 'society';
+                            $model_data = $model->getData();
                             $res_data['orgDetails']['union_code'] = str_replace("'", "", $orgDetail['union_code']);
                             $res_data['orgDetails']['plant_code'] = str_replace("'", "", $orgDetail['plant_code']);
                             $res_data['orgDetails']['mcc_plant_code'] = str_replace("'", "", $orgDetail['mcc_plant_code']);
                             $res_data['orgDetails']['bmc_code'] = str_replace("'", "", $orgDetail['bmc_code']);
                             $res_data['orgDetails']['dcs_code'] = str_replace("'", "", $orgDetail['dcs_code']);
+                            $res_data['dcsInfo'] = $model_data;
                         } else {
                             $response = \Yii::$app->sqlite->createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code);
                         }
@@ -376,7 +382,25 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $res_data['collectionConfig']['allowedMilkType'] = $animalType;
                     $res_data['collectionConfig']['milkTypeRate'] = $milkTypeRate;
                     $res_data['collectionConfig']['collectionIncentiveDeduction'] = $IncentiveDeduction;
+                    $qualityParamConfig = [];
+                    $fat = 6.5;
+                    $snf = 9.0;
+                    $lrClr = 0;
+                    $lr2Clr = 0;
 
+                    $collConfigModel = new TblMilkCollectionConfig();
+                    $collConfigModel->union_code = $union_code;
+                    $collConfigModelData = $collConfigModel->getData();
+                    if (!empty($configData)) {
+                        $lrClr = $collConfigModelData->lr1_for_clr;
+                        $lr2Clr = $collConfigModelData->lr2_for_clr;
+                    }
+                    $clr = ($snf - ($fat * $lrClr) - $lr2Clr) * 4;
+                    $clr = $clr < 0 ? 0 : round($clr, 1);
+                    $qualityParamConfig['fat'] = $fat;
+                    $qualityParamConfig['snf'] = $snf;
+                    $qualityParamConfig['clr'] = $clr;
+                    $res_data['collectionConfig']['qualityParam'] = $qualityParamConfig;
                     $model = new TblUnionConfigResult();
                     $model->union_code = $model_data->union_code;
                     $model->config_for = $org_type;
