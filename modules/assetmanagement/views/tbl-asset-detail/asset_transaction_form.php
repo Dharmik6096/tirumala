@@ -73,7 +73,7 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
             <div class="col-sm-2">
                 <?= $form->field($model, 'in_ward', ['checkboxTemplate' => "<div class='checkbox mt25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div> 
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
             <!--</div>-->

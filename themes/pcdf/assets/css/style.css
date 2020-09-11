@@ -285,7 +285,7 @@ ul{
     border-bottom: 4px solid transparent;
     position: absolute;
     right: 15px;
-    top: 9px;
+    top: 6px;
 }
 .list-group-item , .list-group-item:last-child, .list-group-item:first-child
 {
@@ -784,8 +784,8 @@ form .checkbox input[type="checkbox"]:focus + span:before{
 form .checkbox input[type="checkbox"]:checked + label:after,
 form .checkbox input[type="checkbox"]:checked + span:after{
     position: absolute;
-    left: 0;
-    top: 0px;
+    left: 1px;
+    top: 1px;
     content: "\f00c";
     font-family: FontAwesome;
     height: 12px;
@@ -2881,7 +2881,7 @@ select[multiple]{
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
-    padding: 3px;
+    padding: 1px;
     overflow: auto;
 }
 

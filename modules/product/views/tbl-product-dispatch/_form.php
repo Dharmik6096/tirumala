@@ -17,7 +17,7 @@ $this->title = Yii::t('app', $title);
 ?>
 
 <div class="tbl-product-dispatch-form">
-    <div class="grid-search large-search hidden-print">
+    <div class="large-search hidden-print">
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     </div>

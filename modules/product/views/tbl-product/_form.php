@@ -66,10 +66,10 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_saleable', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-2 mt15">
+    <div class="col-sm-2">
         <?= $form->field($model, 'is_indent', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-    </div>    
-    <div class="col-sm-2 mt15">
+    </div>
+    <div class="col-sm-2">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>   
     <div class="clearfix"></div>

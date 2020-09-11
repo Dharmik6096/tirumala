@@ -23,20 +23,18 @@ echo $form->errorSummary($model);
     //Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); 
     Html::hiddenInput('transporter_type', 0, ['id' => 'tbltransporterpayment-transporter_type']);
     ?>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', '', '', false, false); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'to_date', '', '', false, false); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?php
         echo Yii::$app->dropdown->datewise_bmc_list($model, $form, 'tbltransporterpayment-union_code,tbltransporterpayment-transporter_type,tbltransporterpayment-from_date,tbltransporterpayment-to_date', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, '', FALSE, TRUE);
         ?>
     </div>
-</div>
-<div class="row">
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save('Next', $model); ?>                
         </div>
