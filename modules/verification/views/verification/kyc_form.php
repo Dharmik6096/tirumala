@@ -25,9 +25,15 @@ $form = ActiveForm::begin(['options' => [
                 <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'KYC Details'); ?></h4>
             </div>
-            <div class="modal-body">            
-                <div class="panel-heading" id="header"><?php echo Yii::t('app', 'KYC Details'); ?></div>
-                <div class="panel-body">
+            <div class="modal-body ">
+                <div class="padding_left_0 padding_right_0 clearfix">
+                    <div class="col-md-12 padding_10_0 theme-box theme_border_right">
+                        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                            <h4 class="theme-box-heading" id="header"><?php echo Yii::t('app', 'KYC Details'); ?> </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body theme_border_left theme_border_right theme_border_bottom">
                     <div class="panel-subheading">
                         <?= Html::activeHiddenInput($model, 'module_id'); ?>
                         <?= Html::activeHiddenInput($model, 'module_name'); ?>
@@ -60,7 +66,7 @@ $form = ActiveForm::begin(['options' => [
                         </div>
                     </div>       
                 </div>
-                <div class="footer">
+                <div class="footer padding_top_20">
                     <button type="button" class="btn btn-default btn-raised close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                     <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-default']); ?>
                 </div>
