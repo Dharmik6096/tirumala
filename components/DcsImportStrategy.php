@@ -177,6 +177,11 @@ class DcsImportStrategy extends ARImportStrategy {
                                     array_push($modelList, $defaultBankDetail);
                                 }
                                 $model->setbankDetails($model, $modelList, $errors);
+                            } elseif (!empty($defaultBankDetail)) {
+                                $defaultBankDetail->ifsc = $model->ifsc;
+                                $defaultBankDetail->bank_code = $model->bank_code;
+                                $defaultBankDetail->branch_code = $model->branch_code;
+                                array_push($modelList, $defaultBankDetail);
                             }
                             if (empty($defaultContactDetail) || $defaultContactDetail->mobile_no != $model->mobile_no) {
                                 if (!empty($defaultContactDetail)) {
@@ -185,6 +190,16 @@ class DcsImportStrategy extends ARImportStrategy {
                                     array_push($modelList, $defaultContactDetail);
                                 }
                                 $model->setContactDetails($model, $modelList, $errors);
+                            } elseif (!empty($defaultContactDetail)) {
+                                $defaultContactDetail->department = $model->department;
+                                $defaultContactDetail->contact_person = $model->contact_person;
+                                $defaultContactDetail->firstname = $model->contact_person;
+                                $defaultContactDetail->local_contact_person = $model->local_contact_person;
+                                $defaultContactDetail->lastname = $model->middle_name;
+                                $defaultContactDetail->surname = $model->surname;
+                                $defaultContactDetail->local_lastname = $model->local_middlename;
+                                $defaultContactDetail->local_surname = $model->local_surname;
+                                array_push($modelList, $defaultContactDetail);
                             }
                         }
                         $modelMilk = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1, 'milk_type_code' => $model->milk_type_code])->one();

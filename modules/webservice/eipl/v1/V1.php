@@ -614,29 +614,25 @@ class V1 extends \yii\base\Module {
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_wise_summary',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true,
-                'rls_param_array' => ['union']
+                'blank_org_to_zero' => true
             ],
             'report/member-wise-product-wise-date-wise' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_wise_product_wise_date_wise',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true,
-                'rls_param_array' => ['union']
+                'blank_org_to_zero' => true
             ],
             'report/member-wise-payment-cycle-wise-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_wise_payment_cycle_wise_summary',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true,
-                'rls_param_array' => ['union']
+                'blank_org_to_zero' => true
             ],
             'report/member-wise-product-wise-payment-cycle-wise-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_wise_product_wise_payment_cycle_wise_summary',
                 'call_action' => TRUE,
-                'blank_org_to_zero' => true,
-                'rls_param_array' => ['union']
+                'blank_org_to_zero' => true
             ],
             'report/member-wise-no-of-payment-cycle' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#no_of_payment_cycle',
