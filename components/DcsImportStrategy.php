@@ -132,7 +132,7 @@ class DcsImportStrategy extends ARImportStrategy {
                             array_push($modelList, $vendorModel);
                         }
 
-                        array_push($modelList, $model);
+//                        array_push($modelList, $model);
 
                         if (!empty($existData) && ($oldVillage != $model->village_code)) {
                             $oldModel = TblDcsVillageMapping::find()->where(['dcs_code' => $model->dcs_code, 'village_code' => $oldVillage])->one();
@@ -203,8 +203,28 @@ class DcsImportStrategy extends ARImportStrategy {
                             }
                         }
                         $modelMilk = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1, 'milk_type_code' => $model->milk_type_code])->one();
-                        if (!empty($existData) && !empty($modelMilk)) {
-                            
+                        if (!empty($existData)) {
+                            $milkTypeArray = [];
+                            if (!empty($modelMilk)) {
+                                $milkTypeArray[] = $modelMilk;
+                            } else {
+                                $modelMilk = new TblDcsMilkType();
+                                $modelMilk->dcs_code = $model->dcs_code;
+                                $modelMilk->milk_type_code = $model->milk_type_code;
+                                $modelMilk->is_active = 1;
+                                $modelMilk->scenario = 'dcsImport';
+                                array_push($modelList, $modelMilk);
+                                $milkTypeArray[] = $modelMilk;
+
+                                $milkType = $modelMilk->find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1])->all();
+                                $milkTypeArray[] = $modelMilk;
+                                foreach ($milkType as $mt) {
+                                    $milkTypeArray[] = $mt;
+                                }
+                            }
+                            if ($existData->default_milk_type != 7) {
+                                $model->default_milk_type = $model->setDefaultMilkType($milkTypeArray);
+                            }
                         } else {
                             $modelMilk = new TblDcsMilkType();
                             $modelMilk->dcs_code = $model->dcs_code;
@@ -213,6 +233,7 @@ class DcsImportStrategy extends ARImportStrategy {
                             $modelMilk->scenario = 'dcsImport';
                             array_push($modelList, $modelMilk);
                         }
+                        $master[] = $model->save();
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
                         }

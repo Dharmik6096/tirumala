@@ -48,6 +48,7 @@ class TblDcsMilkType extends ChildModel {
             [['created_at', 'is_active', 'updated_at', 'created_by', 'updated_by'], 'safe'],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
+            [['is_active'], 'default', 'value' => 1]
         ];
     }
 
@@ -115,6 +116,24 @@ class TblDcsMilkType extends ChildModel {
 
     public function getRateChartRange() {
         return $this->hasOne(TblUnionRatechartRange::className(), ['animal_type_code' => 'milk_type_code'])->where(['union_code' => $this->dcsCode->union_code, 'config_for' => $this->app_type]);
+    }
+
+    public function setChildTable($model, &$modelSave) {
+        $dcsCode = TblDcs::findOne($model->dcs_code);
+        if (!empty($dcsCode) && $dcsCode->default_milk_type != 7) {
+            $dcsHistoryModel = new TblDcsHistory();
+            Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
+            $milkTypeArray = [];
+            $milkType = $model->find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1])->all();
+            $milkTypeArray[] = $model;
+            foreach ($milkType as $mt) {
+                $milkTypeArray[] = $mt;
+            }
+            $dcsCode->default_milk_type = $dcsCode->setDefaultMilkType($milkTypeArray);
+            $dcsCode->scenario = 'DcsMilkType';
+            array_push($modelSave, $dcsCode);
+            array_push($modelSave, $dcsHistoryModel);
+        }
     }
 
 }

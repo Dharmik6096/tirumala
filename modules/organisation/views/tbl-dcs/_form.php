@@ -6,6 +6,12 @@ use yii\web\View;
 use yii\helpers\Url;
 
 $milkType = $model->getMilkTypes();
+if (!empty($model->milk_type_code)) {
+    foreach ($model['milk_type_code'] as $key => $row) {
+        $selected[$row] = ['selected' => 'selected'];
+    }
+    $milkType['selected'] = $selected;
+}
 $nameWarning = 0;
 $codeWarning = 0;
 $readonly = $type == 'create' ? FALSE : TRUE;
@@ -85,7 +91,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
     </div>
-    <?php //Yii::$app->dropdown->ismilk($model, $form, 'milk_type_code', 'Milk Type');    ?>
+    <?php //Yii::$app->dropdown->ismilk($model, $form, 'milk_type_code', 'Milk Type');     ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'dcs_short_name')->textInput(['maxlength' => true]) ?>
     </div>
@@ -132,7 +138,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcs-union_code,tbldcs-state_code', 'district_code', 'District', FALSE); ?>
     </div>
     <!--    <div class="col-sm-3">
-    <?php //Yii::$app->dropdown->district($model, $form, 'tbldcs-state_code', 'district_code', 'District');  ?>
+    <?php //Yii::$app->dropdown->district($model, $form, 'tbldcs-state_code', 'district_code', 'District');   ?>
         </div>-->
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District', ''); ?>
@@ -146,7 +152,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcs-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
     </div>
-    <?php // }  ?>
+    <?php // }   ?>
     <div class="col-sm-3">
         <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
     </div>
@@ -173,10 +179,10 @@ $form = ActiveForm::begin([
     ?>
     <?php //Yii::$app->dropdown->depend_dropdown('route_code',$model, $form, 'tbldcs-union_code','form-group col-sm-2 padding-right-5 padding-left-0','Route');  ?>
     <!--    <div class="col-sm-3">
-    <?php //$form->field($model, 'tin_no')->textInput(['maxlength' => true]) ?>
+    <?php //$form->field($model, 'tin_no')->textInput(['maxlength' => true])  ?>
         </div>
         <div class="col-sm-3">
-    <?php //$form->field($model, 'service_tax')->textInput(['maxlength' => true]) ?>
+    <?php //$form->field($model, 'service_tax')->textInput(['maxlength' => true])  ?>
         </div>-->
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('dcs_type_code', $model, $form, 'form-group col-sm-3', Yii::t('app', 'Society Type')); ?>
@@ -256,7 +262,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'allow_multi_family_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <!--<div class="col-sm-3">-->
-    <?php // $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    <?php // $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();  ?>
     <!--</div>-->
     <div class="col-sm-2 mt25">
         <?= $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
@@ -267,12 +273,21 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt25">
         <?= $form->field($model, 'credit_sale_allow', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
+    <?php
+    if ($type == 'edit') {
+        $model->milk_type_auto = $model->default_milk_type == 7 ? 1 : 0;
+    }
+    ?>
 
-    <?php // if ($type == 'create') { ?>
+    <div class="col-sm-2 mt25">
+        <?= $form->field($model, 'milk_type_auto', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+
+    <?php // if ($type == 'create') {   ?>
     <!--        <div class="col-sm-3">
     <?= Yii::$app->controls->active($model, $form); ?>
             </div>-->
-    <?php // } ?>
+    <?php // }  ?>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
