@@ -532,10 +532,6 @@ h5 .badge{
 
 /*table*/
 .table-responsive{
-    overflow-y: hidden;
-    overflow-x: hidden !important;
-}
-.table-responsive:hover{
     overflow-y: auto;
     overflow-x: auto !important;
 }
@@ -2207,10 +2203,6 @@ div.crystalstyle{
 
 .h450{
     max-height: 450px !important;
-    overflow: hidden;
-}
-
-.h450:hover{
     overflow: auto;
 }
 

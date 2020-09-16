@@ -149,7 +149,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <div class="form-group">
                     <div class="checkbox app-check-all-mcc app-check-list-padding">
                         <?php $field_name_for_filter = 'f_mcc_code'?>
-                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onchange'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
+                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllMccList', 'class' => 'mcc-list-checkbox']) ?>
                             <label for="checkAllMccList"><?= Yii::t('app', 'Check ALL MCC') ?></label>
@@ -175,7 +175,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <div class="form-group">
                     <div class="checkbox app-check-all-bmc app-check-list-padding">
                         <?php $field_name_for_filter = 'f_bmc_code'?>
-                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onchange'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
+                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
                             <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL BMC') ?></label>
@@ -201,7 +201,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <div class="form-group">
                     <div class="checkbox app-check-all-route app-check-list-padding">
                     <?php $field_name_for_filter = 'f_route_code'?>
-                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onchange'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
+                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllRouteList', 'class' => 'route-list-checkbox']) ?>
                             <label for="checkAllRouteList"><?= Yii::t('app', 'Check ALL Route') ?></label>
@@ -228,7 +228,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <div class="form-group">
                     <div class="checkbox app-check-all app-check-list-padding">
                     <?php $field_name_for_filter = $main_field_name?>
-                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onchange'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
+                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAll', 'class' => 'route-checkbox']) ?>
                             <label for="checkAll">Check All <?= $title ?></label>
