@@ -34,7 +34,7 @@ $config = [
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'urlManager' => [
-            'class' => 'app\components\UrlManager',
+//            'class' => 'app\components\UrlManager',
             'showScriptName' => false,
             'enablePrettyUrl' => true,
             // 'enableStrictParsing' => true,
@@ -51,7 +51,7 @@ $config = [
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
                 'webservice/emilkprolite/v1' => 'webservice/emilkprolite/v1/request-master',
-                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
+//                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
             //  ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
         /* 'urlManager' => [
