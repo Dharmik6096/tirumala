@@ -1108,21 +1108,21 @@ class TblDcs extends ChildModel {
         }
         if (!empty($milkType)) {
             if (in_array(1, $milkType) && in_array(2, $milkType) && in_array(3, $milkType)) {
-                $defaultMilk = 6;
+                $defaultMilk = 7;
             } else if (in_array(1, $milkType)) {
-                $defaultMilk = 0;
+                $defaultMilk = 1;
                 if (in_array(2, $milkType)) {
-                    $defaultMilk = 3;
+                    $defaultMilk = 4;
                 } else if (in_array(3, $milkType)) {
-                    $defaultMilk = 5;
+                    $defaultMilk = 6;
                 }
             } else if (in_array(2, $milkType)) {
-                $defaultMilk = 1;
+                $defaultMilk = 2;
                 if (in_array(3, $milkType)) {
-                    $defaultMilk = 4;
+                    $defaultMilk = 5;
                 }
             } else if (in_array(3, $milkType)) {
-                $defaultMilk = 2;
+                $defaultMilk = 3;
             }
         }
         return $defaultMilk;

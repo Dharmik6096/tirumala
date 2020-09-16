@@ -222,7 +222,7 @@ class DcsImportStrategy extends ARImportStrategy {
                                     $milkTypeArray[] = $mt;
                                 }
                             }
-                            if ($existData->default_milk_type != 7) {
+                            if ($existData->default_milk_type != 8) {
                                 $model->default_milk_type = $model->setDefaultMilkType($milkTypeArray);
                             }
                         } else {

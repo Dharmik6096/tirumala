@@ -275,7 +275,7 @@ $form = ActiveForm::begin([
     </div>
     <?php
     if ($type == 'edit') {
-        $model->milk_type_auto = $model->default_milk_type == 7 ? 1 : 0;
+        $model->milk_type_auto = $model->default_milk_type == 8 ? 1 : 0;
     }
     ?>
 

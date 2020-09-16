@@ -120,7 +120,7 @@ class TblDcsMilkType extends ChildModel {
 
     public function setChildTable($model, &$modelSave) {
         $dcsCode = TblDcs::findOne($model->dcs_code);
-        if (!empty($dcsCode) && $dcsCode->default_milk_type != 7) {
+        if (!empty($dcsCode) && $dcsCode->default_milk_type != 8) {
             $dcsHistoryModel = new TblDcsHistory();
             Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
             $milkTypeArray = [];
