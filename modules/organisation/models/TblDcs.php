@@ -109,7 +109,7 @@ class TblDcs extends ChildModel {
     public $tmcc_code;
     public $is_sentbox;
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
-    public $department, $middle_name, $surname, $local_middlename, $local_surname;
+    public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto;
 
     /**
      * @inheritdoc
@@ -128,8 +128,8 @@ class TblDcs extends ChildModel {
             [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'ref_code'], 'required', 'on' => ['customImport']],
             [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
             [['milk_type_code'], 'required', 'on' => ['importCsv']],
-            [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-            [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+            [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
+            [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
             [['vendor'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
                 }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
@@ -137,7 +137,7 @@ class TblDcs extends ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type');
                     }
-                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
             [['same_milk_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
@@ -162,7 +162,7 @@ class TblDcs extends ChildModel {
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']],
-            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow'], 'safe'],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
 //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
@@ -257,7 +257,8 @@ class TblDcs extends ChildModel {
             [['dcs_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv']],
-            [['bmc_code'], 'setXcol', 'on' => ['importCsv']]
+            [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
+            [['default_milk_type'], 'default', 'value' => 7]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -1097,6 +1098,34 @@ class TblDcs extends ChildModel {
         $same = empty($this->same_milk_type) ? 0 : $this->same_milk_type;
         $different = empty($this->diff_milk_type) ? 0 : $this->diff_milk_type;
         $this->x_col1 = $same . '#' . $different;
+    }
+
+    public function setDefaultMilkType($modelDcsMilkType, $passKey = '') {
+        $Key = isset($passKey) && !empty($passKey) ? $passKey : 'milk_type_code';
+        $milkType = [];
+        foreach ($modelDcsMilkType as $type) {
+            $milkType[] = $type->$Key;
+        }
+        if (!empty($milkType)) {
+            if (in_array(1, $milkType) && in_array(2, $milkType) && in_array(3, $milkType)) {
+                $defaultMilk = 6;
+            } else if (in_array(1, $milkType)) {
+                $defaultMilk = 0;
+                if (in_array(2, $milkType)) {
+                    $defaultMilk = 3;
+                } else if (in_array(3, $milkType)) {
+                    $defaultMilk = 5;
+                }
+            } else if (in_array(2, $milkType)) {
+                $defaultMilk = 1;
+                if (in_array(3, $milkType)) {
+                    $defaultMilk = 4;
+                }
+            } else if (in_array(3, $milkType)) {
+                $defaultMilk = 2;
+            }
+        }
+        return $defaultMilk;
     }
 
 }

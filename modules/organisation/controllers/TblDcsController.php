@@ -35,6 +35,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
+use app\modules\globalmaster\models\TblAnimalType;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -153,6 +154,7 @@ class TblDcsController extends ChildController {
 
             //set milk type data
             $modelMilkType = $this->setMilk();
+            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 7 : $this->model->setDefaultMilkType($modelMilkType);
             if (!empty($modelMilkType))
                 $mapList = array_merge($mapList, $modelMilkType);
 
@@ -321,7 +323,8 @@ class TblDcsController extends ChildController {
                 $milkModel->is_active = $this->model->is_active;
                 array_push($mappingList, $milkModel);
             }
-
+            $milkTypeArray = TblAnimalType::find()->where(['animal_type_code' => $this->model->milk_type_code, 'is_active' => 1])->all();
+            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 7 : $this->model->setDefaultMilkType($milkTypeArray, 'animal_type_code');
             if ($_POST['warning'] == 0) {
                 $msg = $this->model->dcs_name . ' for Society';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $_POST['TblDcs']['dcs_name'], $msg);
