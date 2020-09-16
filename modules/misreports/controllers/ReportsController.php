@@ -456,6 +456,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTransporterMaster() {
+        $this->report = 'TransporterMaster';
+        return $this->actionIndex();
+    }
+
+    public function actionVehicleMaster() {
+        $this->report = 'VehicleMaster';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1171,6 +1181,23 @@ class ReportsController extends \app\controllers\ChildController {
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
+            ],
+            'TransporterMaster' => [
+                'param' => 'union_code,transporter_code:union_code',
+                'sp_name' => 'sp_mis_transporter_master_register',
+                'scenario' => '',
+                'title' => 'Transporter Master Register',
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No'],
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+            ],
+            'VehicleMaster' => [
+                'param' => 'union_code,transporter_code:union_code,vehicle_code:transporter_code',
+                'sp_name' => 'sp_mis_vehicle_master_register',
+                'scenario' => '',
+                'title' => 'Vehicle Master Register',
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
             ],
         ];
         return $label[$l];

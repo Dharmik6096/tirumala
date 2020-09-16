@@ -8,13 +8,13 @@ use kartik\grid\GridView;
 <?php
 
 $attribute = [
-    //'vehicle_code',
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'transporter_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->transporter, 'transporter_name');
         },
         'visible' => true, 'filter' => false],
+    'vehicle_code',
     ['attribute' => 'parsing_no'],
     ['attribute' => 'capacity_code',
         'value' => function($model) {
@@ -49,7 +49,7 @@ $attribute = [
 $grid_option = [
     'id' => 'vehicle-list',
     'attributes' => $attribute,
-    'active_column' => true,
+    'active_column' => FALSE,
     'actions' => [
         'view' => TRUE,
         'update' => true,

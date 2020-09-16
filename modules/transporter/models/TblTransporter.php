@@ -125,6 +125,9 @@ class TblTransporter extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
             ['security_amount', 'number', 'min' => 1],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
+            [['department'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'department');
+                }, 'on' => ['importCsv']],
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
             [['hamlet_code'], 'validateHamlet'],
         ];
@@ -256,7 +259,17 @@ class TblTransporter extends \app\models\ChildModel {
                 array_push($modelList, $defaultBankDetail);
             }
             $model->setbankDetails($model, $modelList, $errors);
+        } elseif (!empty($defaultBankDetail)) {
+            $defaultBankDetail->ifsc = $model->ifsc;
+            $defaultBankDetail->branch_code = Yii::$app->general->getforeignkey($model->ifscDetail, 'branch_code');
+            $defaultBankDetail->bank_code = Yii::$app->general->getforeignkey($model->ifscDetail, 'bank_code');
+            if (empty($defaultBankDetail->branch_code)) {
+                $this->addError('ifsc', Yii::t('app/validation', $this->getAttributeLabel('ifsc') . ' is Invalid.'));
+                return false;
+            }
+            array_push($modelList, $defaultBankDetail);
         }
+
         if (empty($defaultContactDetail) || $defaultContactDetail->mobile_no != $model->mobile_no) {
             if (!empty($defaultContactDetail)) {
                 $defaultContactDetail->is_default = 0;
@@ -264,6 +277,16 @@ class TblTransporter extends \app\models\ChildModel {
                 array_push($modelList, $defaultContactDetail);
             }
             $model->setContactDetails($model, $modelList, $errors);
+        } elseif (!empty($defaultContactDetail)) {
+            $defaultContactDetail->department = $model->department;
+            $defaultContactDetail->contact_person = $model->contact_person;
+            $defaultContactDetail->firstname = $model->contact_person;
+            $defaultContactDetail->local_contact_person = $model->local_contact_person;
+            $defaultContactDetail->lastname = $model->middle_name;
+            $defaultContactDetail->surname = $model->surname;
+            $defaultContactDetail->local_lastname = $model->local_middlename;
+            $defaultContactDetail->local_surname = $model->local_surname;
+            array_push($modelList, $defaultContactDetail);
         }
     }
 

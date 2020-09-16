@@ -251,6 +251,32 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('transporter_code'))) {
+                                            if (isset($value_array[1]) && $value_array[1] == 'union_code') {
+                                                ?>
+                                                <div class="col-sm-6">
+                                                    <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('transporter_code')); ?>
+                                                </div>
+                                            <?php } else { ?>
+                                                <div class="col-sm-6">
+                                                    <?= Yii::$app->dropdown->dropdown('transporter_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('transporter_code'), false, 'transporter_code'); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                        }
+                                        if (in_array($value, array('vehicle_code'))) {
+                                            if (isset($value_array[1]) && $value_array[1] == 'transporter_code') {
+                                                ?>
+                                                <div class="col-sm-6">
+                                                    <?= Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'reportsmodel-transporter_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code')); ?>
+                                                </div>
+                                            <?php } else { ?>
+                                                <div class="col-sm-6">
+                                                    <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_code', $model->getAttributeLabel('vehicle_code')); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {
