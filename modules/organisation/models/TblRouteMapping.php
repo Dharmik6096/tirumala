@@ -227,7 +227,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function getDestinationName($module, $code) {
-        switch ($module) {
+        switch (strtolower($module)) {
             case 'society':
                 $name = TblDcs::find()->select('dcs_name')->where(['dcs_code' => $code])->one();
                 $name = !empty($name->dcs_name) ? $name->dcs_name : 'N/A';
@@ -414,6 +414,7 @@ class TblRouteMapping extends \app\models\ChildModel {
             $plant = Yii::$app->general->getforeignkey($this->activePlantCode, 'plant_code');
             $mcc = Yii::$app->general->getforeignkey($this->activeMccCode, 'mcc_plant_code');
             $bmc = Yii::$app->general->getforeignkey($this->activeBmcCode, 'bmc_code');
+            $this->to_type = strtolower($this->to_type);
             $type_value = ['bmc', 'mcc', 'plant'];
             if (!in_array(strtolower($this->to_type), $type_value)) {
                 $this->addError($attribute, "Please Enter Valid To Type");

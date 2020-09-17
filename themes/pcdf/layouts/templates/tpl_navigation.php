@@ -609,7 +609,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Collection Files<b class="caret"></b></a>',
                     'items' => [
-//                        ['label' => 'BIPL Files Process', 'url' => ['/collection/tbl-processed-files/index']],
+                        ['label' => 'BIPL Files Process', 'url' => ['/bkgprocess/tbl-ftp-txn-log/bipl-pendrive-collection']],
                         ['label' => 'EIPL Files Process', 'url' => ['/eipl-packet/create'], 'visible' => true],
                         ['label' => 'EIPL Files Process - New', 'url' => ['/eipldpu/pendrive-import/create']],
                         ['label' => 'AMCS Files Process', 'url' => ['/syncutility/pendrive-import/create']],
