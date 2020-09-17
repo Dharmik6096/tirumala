@@ -184,7 +184,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
         //echo $route_type; echo $route_dest_type; exit;
 
-        $plant_quey = (new Query())->select(['plant_code AS code', 'name', new Expression(" 'Plant' as tname")])->from('tbl_plant p')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
+        $plant_quey = (new Query())->select(['plant_code AS code', 'name', new Expression(" 'Plant' as tname"), 'plant_code_ex as ex_code'])->from('tbl_plant p')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
         $mcc_query = (new Query())->select(['mcc_plant_code AS code', 'name', new Expression("'MCC' as tname"), 'mcc_plant_code_ex as ex_code'])->from('tbl_mcc_plant t')->where(['union_code' => $union_code, 'is_active' => 1]);
         $route_type = strtolower($route_type);
         switch (1) {
@@ -227,7 +227,7 @@ class TblRouteMapping extends \app\models\ChildModel {
     }
 
     public function getDestinationName($module, $code) {
-        switch ($module) {
+        switch (strtolower($module)) {
             case 'society':
                 $name = TblDcs::find()->select('dcs_name')->where(['dcs_code' => $code])->one();
                 $name = !empty($name->dcs_name) ? $name->dcs_name : 'N/A';
@@ -414,6 +414,7 @@ class TblRouteMapping extends \app\models\ChildModel {
             $plant = Yii::$app->general->getforeignkey($this->activePlantCode, 'plant_code');
             $mcc = Yii::$app->general->getforeignkey($this->activeMccCode, 'mcc_plant_code');
             $bmc = Yii::$app->general->getforeignkey($this->activeBmcCode, 'bmc_code');
+            $this->to_type = strtolower($this->to_type);
             $type_value = ['bmc', 'mcc', 'plant'];
             if (!in_array(strtolower($this->to_type), $type_value)) {
                 $this->addError($attribute, "Please Enter Valid To Type");
