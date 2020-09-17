@@ -1029,7 +1029,7 @@ class DropDown extends Component {
             'billing_method' => [
                 'name' => 'billing_method',
                 'prompt' => Yii::t('app', 'Billing Type'),
-                'data' => ['fix_rent_monthly_diesel_engine_oile' => Yii::t('app', 'Fix Rent Monthly Diesel Engine Oil'), 'fix_rent_daily_diesel_engine_oile' => Yii::t('app', 'Fix Rent Daily Diesel Engine Oil')],
+                'data' => ['fix_rent_monthly_diesel_engine_oile' => Yii::t('app', 'Fix Rent Monthly Engine Oil'), 'fix_rent_daily_diesel_engine_oile' => Yii::t('app', 'Fix Rent Daily Engine Oil')],
             ],
         ];
         return $records[$l];
