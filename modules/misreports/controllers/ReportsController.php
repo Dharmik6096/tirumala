@@ -463,7 +463,9 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollectionRegister() {
         $this->report = 'BmcCollectionRegister';
+        return $this->actionIndex();
     }
+
     public function actionTransporterMaster() {
         $this->report = 'TransporterMaster';
         return $this->actionIndex();
