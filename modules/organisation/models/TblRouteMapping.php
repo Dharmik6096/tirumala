@@ -184,7 +184,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
         //echo $route_type; echo $route_dest_type; exit;
 
-        $plant_quey = (new Query())->select(['plant_code AS code', 'name', new Expression(" 'Plant' as tname")])->from('tbl_plant p')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
+        $plant_quey = (new Query())->select(['plant_code AS code', 'name', new Expression(" 'Plant' as tname"), 'plant_code_ex as ex_code'])->from('tbl_plant p')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
         $mcc_query = (new Query())->select(['mcc_plant_code AS code', 'name', new Expression("'MCC' as tname"), 'mcc_plant_code_ex as ex_code'])->from('tbl_mcc_plant t')->where(['union_code' => $union_code, 'is_active' => 1]);
         $route_type = strtolower($route_type);
         switch (1) {
