@@ -8,7 +8,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
-//    ['attribute' => 'transporter_code'],
+    ['attribute' => 'transporter_code'],
     ['attribute' => 'transporter_name'],
     ['attribute' => 'local_name', 'filter' => false],
     ['attribute' => 'registration_no', 'visible' => false, 'filter' => false],

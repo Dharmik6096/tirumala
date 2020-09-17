@@ -463,6 +463,14 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollectionRegister() {
         $this->report = 'BmcCollectionRegister';
+    }
+    public function actionTransporterMaster() {
+        $this->report = 'TransporterMaster';
+        return $this->actionIndex();
+    }
+
+    public function actionVehicleMaster() {
+        $this->report = 'VehicleMaster';
         return $this->actionIndex();
     }
 
@@ -1194,6 +1202,23 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_collection_register',
                 'scenario' => 'BmcCollectionRegister',
                 'title' => 'BMC Collection Register',
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+            ],
+            'TransporterMaster' => [
+                'param' => 'union_code,transporter_code:union_code',
+                'sp_name' => 'sp_mis_transporter_master_register',
+                'scenario' => '',
+                'title' => 'Transporter Master Register',
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No'],
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+            ],
+            'VehicleMaster' => [
+                'param' => 'union_code,transporter_code:union_code,vehicle_code:transporter_code',
+                'sp_name' => 'sp_mis_vehicle_master_register',
+                'scenario' => '',
+                'title' => 'Vehicle Master Register',
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
             ],
