@@ -182,7 +182,6 @@ class TblMember extends ChildModel {
             //  [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
             //  [['ex_member_code'], 'setExMember'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['member_name'], 'setBeneficiary', 'on' => ['importCsv']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -552,10 +551,6 @@ class TblMember extends ChildModel {
     public function validateMember($dcs_code, $memberCode) {
         return $this->find()->where(['dcs_code' => $dcs_code, 'is_active' => 1])
                         ->andWhere(['or', ['member_code' => $memberCode], ['ex_member_code' => $memberCode]])->one();
-    }
-
-    public function setBeneficiary($attribute, $params) {
-        $this->beneficiary_name = !empty($this->beneficiary_name) ? $this->beneficiary_name : $this->member_name;
     }
 
 }
