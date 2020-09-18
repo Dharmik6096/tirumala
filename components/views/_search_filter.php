@@ -235,6 +235,14 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, $depend_str, 'form-group', FALSE); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('bank_code'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-6">
+                                            <?= Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
+                                        </div>
+                                    <?php } ?>
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
