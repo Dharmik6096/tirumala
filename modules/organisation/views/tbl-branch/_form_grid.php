@@ -1,6 +1,6 @@
-<div class="grid-search">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
+<!--<div class="grid-search">
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+</div>-->
 <?php
 $attribute = [
     ['attribute' => 'branch_code', 'value' => 'branch_code'],

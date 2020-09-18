@@ -180,6 +180,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
     }
 
     public function entry($model, $operation, $sentModel) {
+        $microtime = date("Y-m-d H:i:s.") . gettimeofday()["usec"];
         if (strpos($model->tableName(), 'local') || $model->tableName() == 'tbl_message_property') {
             $sentModel->language_code = $model->language_code;
         }
@@ -191,8 +192,8 @@ class TblSentbox extends \yii\db\ActiveRecord {
 //        $sentModel->processed = 0;
         //   $this->column_sequence = implode(',', $model->getTableSchema()->getColumnNames());
         $sentModel->sync_status = 'U';
-        $sentModel->sync_timestamp = date('Y-m-d H:i:s');
-        $sentModel->posting_timestamp = date('Y-m-d H:i:s');
+        $sentModel->sync_timestamp = $microtime;
+        $sentModel->posting_timestamp = $microtime;
 //        $sentModel->transmitted = 0;
 //        $sentModel->is_origin = 1;
         $sentModel->originating_org_id = Yii::$app->session->get('organizations_code');

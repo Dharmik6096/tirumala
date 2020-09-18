@@ -326,7 +326,8 @@ class BiplSchedulerController extends ChildController {
                 $ftp_path = explode('/', $row->file_path);
                 unset($ftp_path[count($ftp_path) - 1]);
                 $ftp_path = implode('/', $ftp_path);
-                if (strlen($upload_file_name) == 12 && file_exists($datafile)) {
+                $is_portal = (strpos($local_path, '/PORTALPDFILES') !== false);
+                if ((strlen($upload_file_name) == 12 || $is_portal) && file_exists($datafile)) {
                     $is_bdf = (strtoupper(substr($upload_file_name, -4)) == '.BDF') ? TRUE : FALSE;
                     if ($is_bdf) {
                         $convertFileName = explode('.', $upload_file_name);
@@ -385,7 +386,7 @@ class BiplSchedulerController extends ChildController {
                     $upload_log->file_status = 0;
                     $upload_log->status = 0;
                     if ($row->save(FALSE)) {
-                        $upload_log->save(FALSE);
+                        $is_portal ? '' : $upload_log->save(FALSE);
                     }
                     if (!empty($data[1])) {
                         $log_dir = Yii::$app->general->checkDirectory($this->errorPath);
@@ -440,7 +441,11 @@ class BiplSchedulerController extends ChildController {
                                     if (true) {
                                         $collectionModel = new BiplFtpCollection();
                                         $data['dop_milksamplenum'] = $i;
-                                        $data['process_type'] = (strpos($datafile, '/MDATFILE/') === false) ? 'Benny-online' : 'Benny-PD';
+                                        if (strpos($datafile, '/PORTALPDFILES/') === false) {
+                                            $data['process_type'] = (strpos($datafile, '/MDATFILE/') === false) ? 'Benny-online' : 'Benny-PD';
+                                        } else {
+                                            $data['process_type'] = 'Benny-PD-P';
+                                        }
                                         $i++;
                                     } else {
                                         $collectionModel = new BiplFtpDispatch();
@@ -451,6 +456,14 @@ class BiplSchedulerController extends ChildController {
                                     $collectionModel->rate = ($collectionModel->rate == 'NA') ? 0 : $collectionModel->rate;
                                     if (empty($collectionModel->cp_code)) {
                                         $collectionModel->cp_code = $cp_code;
+                                    }
+                                    if ($collectionModel->process_type == 'Benny-PD-P') {
+                                        $cp_code = $collectionModel->cp_code;
+                                        $dcs = $collectionModel->dcsCode;
+                                        $module_code = !empty($dcs) ? $dcs->dcs_code : NULL;
+                                        $row->module_code = $module_code;
+                                        $row->ref_code = $cp_code;
+                                        $row->file_status = 2;
                                     }
                                     $collectionModel->dcs_code = $module_code;
                                     if ($collectionModel->validate()) {
