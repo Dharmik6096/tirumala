@@ -59,6 +59,7 @@ $attribute = [
     ['attribute' => 'branch_name', 'value' => 'branch_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
+    ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'adhar_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'annual_income', 'visible' => false, 'filter' => false],

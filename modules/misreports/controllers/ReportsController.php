@@ -1184,7 +1184,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '906 - Location Wise Asset Movement',
             ],
             'CustomerMaster' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,main_customer_type,vendor_code',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,main_customer_type,vendor_code:main_customer_type',
                 'sp_name' => 'sp_mis_customer_master_register',
                 'scenario' => 'CustomerMaster',
                 'title' => 'Customer Master Register',
