@@ -129,7 +129,7 @@ $form = ActiveForm::begin([
                 <p class="form-subtitle">Bank   Details</p>
                 <hr class="hr10">
             </div>-->
-        <?php //Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-3','Bank');    ?>
+        <?php //Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-3','Bank');     ?>
         <?php
         // =
 //        $this->render('../../../details/views/tbl-bank-details/_form', [
@@ -156,6 +156,13 @@ $form = ActiveForm::begin([
 
 <?php ActiveForm::end(); ?>
 <?php
+$toType = '';
+$toDest = '';
+if (!empty($model->to_dest) && !empty($model->to_type)) {
+    $toType = $model->to_type;
+    $toDest = $model->to_dest;
+}
+
 $script = "
     $('#tblroutemapping-from_dest').on('change',function(){
             var str = $('#tblroutemapping-from_dest option:selected').text();
@@ -167,6 +174,26 @@ $script = "
             str=str.split('-');
             $('#tblroutemapping-to_type').val(str[1].toLowerCase());
     });
+    
+    var toType = '" . $toType . "';
+    var toDest = '" . $toDest . "';
+    $('#tblroutemapping-to_dest').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        if(toType != '' && toType != undefined && toType != null && toDest != '' && toDest != undefined && toDest != null) {
+            $('#tblroutemapping-to_dest > option').each(function(){
+                if($(this).val() == toDest) {
+                    var str = $(this).text();
+                    str=str.split('-');
+                    if(str[1].toLowerCase() == toType.toLowerCase()) {
+                        $(this).prop('selected', true);    
+                    } else {
+                        $(this).removeAttr('selected');
+                    }
+                } else {
+                    $(this).removeAttr('selected');
+                }
+            });
+        }
+    })
 ";
 $this->registerJs($script, View::POS_END, 'union-select');
 
