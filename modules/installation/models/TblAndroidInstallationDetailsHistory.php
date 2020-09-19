@@ -50,7 +50,7 @@ class TblAndroidInstallationDetailsHistory extends \yii\db\ActiveRecord {
         return [
             [['android_installation_details_id', 'otp_code', 'is_active', 'is_expired', 'sync_active', 'installation_type'], 'safe'],
             [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_by', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'history_created_by', 'operation_type'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at', 'password', 'password_date'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'password', 'password_date', 'd2d_request'], 'safe'],
         ];
     }
 
