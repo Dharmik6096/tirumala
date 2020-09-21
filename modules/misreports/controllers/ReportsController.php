@@ -451,6 +451,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSocietyCollectionData() {
+        $this->report = 'SocietyCollectionData';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -764,7 +769,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_dpu_gprs_data_reconciliation',
                 'scenario' => 'GprsDataReconciliation',
-                'title' => '208 - DPU-GPRS Data Reconciliation',
+                'title' => '908 - DPU-GPRS Data Reconciliation',
             ],
             //301
             'MemberWiseSummary' => [
@@ -1071,7 +1076,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_sap_rpt_cpmilk_member_collection',
                 'scenario' => 'CPReportSap',
                 'title' => '404 - SAP Data Export',
-                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC')],
                 'export_file_name' => 'Plant_Code_VMCC_from_date_from_shift',
             ],
             'CPRmrdReportSap' => [
@@ -1079,7 +1084,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_sap_rpt_cpmilk_rmrd_collection',
                 'scenario' => 'CPReportSap',
                 'title' => '404 - SAP Data Export',
-                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC')],
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
             ],
             'VendorPayment' => [
@@ -1155,6 +1160,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_location_wise_asset_movement_details',
                 'scenario' => 'LocationWiseAssetMovement',
                 'title' => '906 - Location Wise Asset Movement',
+            ],
+            'SocietyCollectionData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_society_collection_data',
+                'scenario' => 'SocietyCollectionData',
+                'title' => '907 - Society Collection Data',
             ],
         ];
         return $label[$l];
