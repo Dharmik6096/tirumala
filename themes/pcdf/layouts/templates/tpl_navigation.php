@@ -613,10 +613,10 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Collection Files<b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'BIPL Files Process', 'url' => ['/bkgprocess/tbl-ftp-txn-log/bipl-pendrive-collection']],
-                        ['label' => 'EIPL Files Process', 'url' => ['/eipl-packet/create'], 'visible' => true],
                         ['label' => 'EIPL Files Process - New', 'url' => ['/eipldpu/pendrive-import/create']],
                         ['label' => 'AMCS Files Process', 'url' => ['/syncutility/pendrive-import/create']],
-                        ['label' => 'Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
+                        ['label' => 'Import Files Detail', 'url' => ['/import/tbl-import-file-log/index']],
+                        ['label' => 'Pendrive Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
                     ]
                 ],
             ],
