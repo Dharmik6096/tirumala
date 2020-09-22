@@ -101,6 +101,10 @@ $attribute = [
     ['attribute' => 'error_desc', 'filter' => FALSE],
     ['attribute' => 'adt_param', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'adt_value', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'device_lat', 'filter' => FALSE],
+    ['attribute' => 'device_long', 'filter' => FALSE],
+    ['attribute' => 'mob_lat', 'filter' => FALSE],
+    ['attribute' => 'mob_long', 'filter' => FALSE],
 ];
 
 

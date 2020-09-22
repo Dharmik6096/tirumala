@@ -116,7 +116,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'department');
                 }, 'on' => ['importCsv']],
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
-            [['bmc_code'], 'setXcol', 'on' => ['importCsv']]
+            [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
+            [['bmc_code'], 'setExCode']
         ];
     }
 
@@ -473,6 +474,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $same = empty($this->same_milk_type) ? 0 : $this->same_milk_type;
         $different = empty($this->diff_milk_type) ? 0 : $this->diff_milk_type;
         $this->x_col1 = $same . '#' . $different;
+    }
+
+    public function setExCode($attribute, $params) {
+        $this->customer_code_ex = strtoupper($this->customer_code_ex);
     }
 
 }

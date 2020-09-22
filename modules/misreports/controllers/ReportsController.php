@@ -466,6 +466,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTransporterMaster() {
+        $this->report = 'TransporterMaster';
+        return $this->actionIndex();
+    }
+
+    public function actionVehicleMaster() {
+        $this->report = 'VehicleMaster';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1174,7 +1184,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '906 - Location Wise Asset Movement',
             ],
             'CustomerMaster' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,main_customer_type,vendor_code',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,main_customer_type,vendor_code:main_customer_type',
                 'sp_name' => 'sp_mis_customer_master_register',
                 'scenario' => 'CustomerMaster',
                 'title' => 'Customer Master Register',
@@ -1194,6 +1204,23 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_collection_register',
                 'scenario' => 'BmcCollectionRegister',
                 'title' => 'BMC Collection Register',
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+            ],
+            'TransporterMaster' => [
+                'param' => 'union_code,transporter_code:union_code',
+                'sp_name' => 'sp_mis_transporter_master_register',
+                'scenario' => '',
+                'title' => 'Transporter Master Register',
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No'],
+                'removeExportType' => ['CSV'],
+                'extention' => 'xlsx',
+            ],
+            'VehicleMaster' => [
+                'param' => 'union_code,transporter_code:union_code,vehicle_code:transporter_code',
+                'sp_name' => 'sp_mis_vehicle_master_register',
+                'scenario' => '',
+                'title' => 'Vehicle Master Register',
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
             ],

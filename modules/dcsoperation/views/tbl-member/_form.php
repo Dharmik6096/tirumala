@@ -222,6 +222,9 @@ if ($model->isNewRecord) {
         <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
     </div>
     <div class="col-sm-2">
+        <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
         <?= $form->field($model, 'pan_no')->textInput() ?>
     </div>
     <div class="col-sm-2">
@@ -310,6 +313,11 @@ $script = "
                                     //alert('Your data has not been submitted..Please try again');
                                 }
             });
+    });
+    
+    $('#tblmember-member_name').on('change',function(){
+       var name = $('#tblmember-member_name').val();
+       $('#tblmember-beneficiary_name').val(name);
     });
 ";
 $this->registerJs($script, View::POS_END, 'union');

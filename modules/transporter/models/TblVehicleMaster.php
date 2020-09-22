@@ -79,7 +79,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
             [['driver_name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['registration_no', 'driving_license_number', 'rc_book_no'], function ($attribute, $params) {
+            [['registration_no', 'driving_license_number', 'rc_book_no', 'parsing_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['parsing_no', 'rc_book_no'], 'unique'],

@@ -40,6 +40,11 @@ $vendor = ['EIPL' => 'EIPL', 'BIPL' => 'BIPL'];
 ($type == 'edit') ? $disabled = true : $disabled = false;
 //var_dump($bmc);exit;
 //$disable = !empty($model->bmc_code) ? TRUE : FALSE;
+$vendorDisable = $type == 'create' ? FALSE : TRUE;
+if ($type == 'edit') {
+    $vendorVal = Yii::$app->general->getforeignkey($model->societyVendors, 'vendor_code');
+    $vendorDisable = !empty($vendorVal) ? TRUE : FALSE;
+}
 ?>
 
 <?php

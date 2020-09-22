@@ -28,7 +28,7 @@ use Yii;
  * @property string $updated_by
  */
 class TblDpuInstallation extends ChildModel {
-    
+
     public $old_attachment;
 
     /**
@@ -45,12 +45,14 @@ class TblDpuInstallation extends ChildModel {
         return [
             [['inst_date', 'created_at', 'updated_at'], 'safe'],
             [['inst_date', 'inst_by', 'soc_secretary', 'secretary_mobile', 'simcard_company', 'dpu_sim_mobile'], 'required'],
-            [['secretary_mobile', 'dpu_sim_mobile'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => true],
+            [['secretary_mobile'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
             [['inst_by', 'remarks', 'attachment', 'dcs_code', 'union_code', 'soc_secretary', 'secretary_mobile', 'simcard_company', 'dpu_sim_mobile', 'created_by', 'updated_by'], 'string'],
             [['attachment'], 'file'],
             [['is_active'], 'integer'],
+            [['dpu_sim_mobile'], 'integer', 'min' => 1],
+            [['dpu_sim_mobile'], 'string', 'min' => 1, 'max' => 20]
         ];
     }
 
