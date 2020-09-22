@@ -396,16 +396,15 @@ echo GhostMenu::widget([
                         ],
                         [
                             'options' => ['class' => 'dropdown-submenu'],
-                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">RMRD Collection<b class="caret"></b></a>',
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">BMC Collection<b class="caret"></b></a>',
                             'items' => [
                                 ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
-                                ['label' => '202 -' . Yii::t('app', 'RMRD Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary']],
+                                ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary']],
                                 ['label' => '203 -' . Yii::t('app', 'Company Collection Detail'), 'url' => ['/misreports/reports/union-coll-date-shift-wise-summary']],
                                 ['label' => '204 -' . Yii::t('app', 'Company Wise Collection Vs Dispatch'), 'url' => ['/misreports/reports/union-wise-coll-vs-dispatch']],
                                 ['label' => '205 -' . Yii::t('app', 'Company Wise Collection Vs Recipt'), 'url' => ['/misreports/reports/union-wise-coll-vs-recipt']],
                                 ['label' => '206 -' . Yii::t('app', 'Company Wise Dispatch Vs Recipt'), 'url' => ['/misreports/reports/union-wise-dispatch-vs-recipt']],
                                 ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda']],
-                                ['label' => '208-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/misreports/reports/gprs-data-reconciliation']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -491,6 +490,8 @@ echo GhostMenu::widget([
                         ['label' => '904-' . Yii::t('app', 'Location Wise Asset Summary'), 'url' => ['/misreports/reports/location-wise-asset-summary']],
                         ['label' => '905-' . Yii::t('app', 'Location Wise Asset Detail'), 'url' => ['/misreports/reports/location-wise-asset-detail']],
                         ['label' => '906-' . Yii::t('app', 'Location Wise Asset Movement'), 'url' => ['/misreports/reports/location-wise-asset-movement']],
+                        ['label' => '907-' . Yii::t('app', 'Society Collection Data'), 'url' => ['/misreports/reports/society-collection-data']],
+                        ['label' => '908-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/misreports/reports/gprs-data-reconciliation']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
