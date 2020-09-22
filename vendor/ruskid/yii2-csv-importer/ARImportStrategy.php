@@ -41,6 +41,7 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
     ];
     public $saveChild = '';
     public $details;
+    public $file_path,$file_name;
 
     /**
      * @throws Exception

@@ -93,6 +93,8 @@ class importData extends \yii\base\Module {
             'store-location' => ['table_name' => 'tbl_store_location', 'fields' => 'union_code,store_location_name,local_name,store_location_type,reference_code,sloc_code', 'default_fields' => 'is_active:1', 'increment' => 1, 'scenario' => 'importCsv'],
             'asset-group' => ['table_name' => 'tbl_asset_group', 'fields' => 'union_code,asset_group_code,asset_group_name,local_name,reference_code', 'default_fields' => 'is_active:1'],
             'asset-detail' => ['import_class' => 'tbl_asset_transaction', 'import_main_class' => 'AssetDetailImportStrategy', 'table_name' => 'tbl_asset_detail', 'fields' => 'asset_code,sap_code,serial_number,qty,make,from_type,from_sloc,to_type,to_sloc,capacity,purchase_date,transaction_date,warranty_period,maintanance_duration_in_days,in_use', 'default_fields' => 'is_active:1', 'increment' => 1, 'scenario' => 'importCsv'],
+            'bmc-collection-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time', 'scenario' => 'bmc_collection'],
+            'milk-collection-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,dcs_code,member_code,date_time_of_collection,shift_code,sample_no,milk_type_code,qty,fat,snf,rtpl,amount', 'scenario' => 'milk_collection'],
         ];
         return $label[$l];
     }
