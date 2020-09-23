@@ -99,6 +99,8 @@ class importData extends \yii\base\Module {
             'fuel-rate' => ['table_name' => 'tbl_fuel_rate_master', 'fields' => 'bmc_code,fuel_type_code,rate,wef_date', 'scenario' => 'importCsv'],
             'transporter-master' => ['table_name' => 'tbl_transporter', 'fields' => 'union_code,transporter_code,transporter_name,local_name,registration_no,address,phone_no,gstin,beneficiary_name,hamlet_code,tds_per,pan_no,agreement_no,declaration,security_cheque_no,security_amount,contact_person,local_contact_person,middle_name,local_middlename,surname,local_surname,email,mobile_no,department,ifsc,bank_account_no', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv', 'update_key' => 'transporter_code', 'exclude_update' => 'transporter_code,union_code,hamlet_code', 'save_child' => true, 'historyClass' => 'TblTransporterHistory'],
             'km-wise-rate' => ['table_name' => 'tbl_km_wise_rate', 'fields' => 'union_code,parsing_no,rate,from_km,to_km,wef_date', 'scenario' => 'importCsv'],
+            'bmc-collection-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time', 'scenario' => 'bmc_collection'],
+            'milk-collection-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,dcs_code,member_code,date_time_of_collection,shift_code,sample_no,milk_type_code,qty,fat,snf,rtpl,amount', 'scenario' => 'milk_collection'],
         ];
         return $label[$l];
     }

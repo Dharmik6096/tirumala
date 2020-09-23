@@ -140,7 +140,9 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => $scenario,
                 'updateField' => !empty($data['update_field']) ? $data['update_field'] : '',
                 'saveChild' => !empty($data['save_child']) ? $data['save_child'] : 0,
-                'details' => $data
+                'details' => $data,
+                'file_path' => Yii::$app->basePath . '/web/import/' . trim($fileName),
+                'file_name' => trim($fileName)
             ]));
 
             return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg']];
