@@ -52,7 +52,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['customer_type'], 'default', 'value' => 'DCS'],
             [['bmc_code', 'shift_code', 'sample_no', 'milk_type_code', 'date_time_of_collection', 'fat', 'snf', 'qty'], 'required'],
             [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection']],
-            [['customer_code', 'bmc_silos_info_code', 'milk_quality_type_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection']],
+            [['customer_code', 'milk_quality_type_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection']],
             [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid'], 'safe'],
             [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
             [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime'], 'safe'],
