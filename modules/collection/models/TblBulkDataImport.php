@@ -49,9 +49,10 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['customer_type'], 'default', 'value' => 'DCS'],
             [['bmc_code', 'shift_code', 'sample_no', 'milk_type_code', 'date_time_of_collection', 'fat', 'snf', 'qty'], 'required'],
             [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection']],
-            [['customer_type', 'customer_code', 'bmc_silos_info_code', 'milk_quality_type_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection']],
+            [['customer_code', 'milk_quality_type_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection']],
             [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid'], 'safe'],
             [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
             [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime'], 'safe'],
@@ -60,7 +61,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             ['milk_type_code', 'in', 'range' => ['C', 'B', 'M'], 'on' => ['bmc_collection', 'milk_collection']],
             ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain'], 'on' => ['bmc_collection', 'milk_collection']],
             [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
-            [['date_time_of_collection'], 'date', 'format' => 'php:d-m-Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01-12-2018'), 'on' => ['bmc_collection', 'milk_collection']],
+            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection']],
             [['collection_type'], function ($attribute, $params) {
             Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
         }],
