@@ -51,6 +51,7 @@ class ReportsModel extends Model {
             [['union_code', 'date'], 'required', 'on' => ['LocationWiseAssetSummary', 'LocationWiseAssetMovement']],
             [['asset_code', 'store_location_type'], 'default', 'value' => 0, 'on' => ['LocationWiseAssetDetail', 'LocationWiseAssetSummary', 'LocationWiseAssetMovement']],
             [['union_code', 'from_date', 'to_date'], 'required', 'on' => 'LocationWiseAssetDetail'],
+            [['from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['BMCAutomationReport']],
         ];
     }
 
