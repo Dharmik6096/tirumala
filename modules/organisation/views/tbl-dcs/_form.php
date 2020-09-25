@@ -330,6 +330,18 @@ $script = "
                                 }
             });
     });
+    milktypedisabled();
+    $('#tbldcs-milk_type_auto').click(function(){
+        milktypedisabled();
+    });
+    
+    function milktypedisabled(){
+        if($('#tbldcs-milk_type_auto').is(':checked')) {
+            $('#tbldcs-milk_type_code').parent('div').addClass('disabled');
+        } else {
+            $('#tbldcs-milk_type_code').parent('div').removeClass('disabled');
+        }
+    }
 ";
 $this->registerJs($script, View::POS_END, 'union-select');
 
