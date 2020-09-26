@@ -16,6 +16,7 @@ use app\modules\organisation\models\TblDcsMilkType;
 use app\modules\general\models\TblSocietyVendor;
 use app\modules\organisation\models\TblDcsHistory;
 use app\modules\organisation\models\TblDcsVillageMappingHistory;
+use app\modules\organisation\models\TblDcsMilkTypeHistory;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -202,37 +203,34 @@ class DcsImportStrategy extends ARImportStrategy {
                                 array_push($modelList, $defaultContactDetail);
                             }
                         }
-                        $modelMilk = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1, 'milk_type_code' => $model->milk_type_code])->one();
-                        if (!empty($existData)) {
-                            $milkTypeArray = [];
-                            if (!empty($modelMilk)) {
-                                $milkTypeArray[] = $modelMilk;
-                            } else {
-                                $modelMilk = new TblDcsMilkType();
-                                $modelMilk->dcs_code = $model->dcs_code;
-                                $modelMilk->milk_type_code = $model->milk_type_code;
-                                $modelMilk->is_active = 1;
-                                $modelMilk->scenario = 'dcsImport';
-                                array_push($modelList, $modelMilk);
-                                $milkTypeArray[] = $modelMilk;
-
-                                $milkType = $modelMilk->find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1])->all();
-                                $milkTypeArray[] = $modelMilk;
-                                foreach ($milkType as $mt) {
-                                    $milkTypeArray[] = $mt;
-                                }
-                            }
-                            if ($existData->default_milk_type != 8) {
-                                $model->default_milk_type = $model->setDefaultMilkType($milkTypeArray);
-                            }
+                        $existmilkType = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'is_active' => 1])->all();
+                        if (in_array($model->milk_type_code, [7, 8])) {
+                            $milkTypeCode = [1, 2, 3];
+                            $existArray = \yii\helpers\ArrayHelper::map($existmilkType, 'milk_type_code', 'milk_type_code');
+                            $toRevoke = array_diff($existArray, $milkTypeCode);
+                            $toAssign = array_diff($milkTypeCode, $existArray);
                         } else {
+                            $milkTypeCode = $model->setMilkType($model->milk_type_code);
+                            $existArray = \yii\helpers\ArrayHelper::map($existmilkType, 'milk_type_code', 'milk_type_code');
+                            $toRevoke = array_diff($existArray, $milkTypeCode);
+                            $toAssign = array_diff($milkTypeCode, $existArray);
+                        }
+                        foreach ($toRevoke as $value) {
+                            $milkoldModel = TblDcsMilkType::find()->where(['dcs_code' => $model->dcs_code, 'milk_type_code' => $value])->one();
+                            $milkHistory = new TblDcsMilkTypeHistory();
+                            Yii::$app->operation->history($milkoldModel, $milkHistory, DELETE);
+                            array_push($modelList, $milkHistory);
+                            array_push($deleteModel, $milkoldModel);
+                        }
+                        foreach ($toAssign as $value) {
                             $modelMilk = new TblDcsMilkType();
                             $modelMilk->dcs_code = $model->dcs_code;
-                            $modelMilk->milk_type_code = $model->milk_type_code;
+                            $modelMilk->milk_type_code = $value;
                             $modelMilk->is_active = 1;
                             $modelMilk->scenario = 'dcsImport';
                             array_push($modelList, $modelMilk);
                         }
+                        $model->default_milk_type = $model->milk_type_code;
                         $master[] = $model->save();
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();

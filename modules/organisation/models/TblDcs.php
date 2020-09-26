@@ -128,7 +128,12 @@ class TblDcs extends ChildModel {
             [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'ref_code'], 'required', 'on' => ['customImport']],
             [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
             [['milk_type_code'], 'required', 'on' => ['importCsv']],
-            [['dcs_code', 'milk_type_code', 'is_bmc', 'destination_type', 'valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
+            [['dcs_code', 'is_bmc', 'destination_type', 'valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
+            [['milk_type_code'], 'required', 'when' => function ($model) {
+                    return empty($model->milk_type_auto);
+                },
+                'whenClient' => "function (attribute, value) { return !$('#tbldcs-milk_type_auto').is(':checked') }"
+            ],
             [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
             [['vendor'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
@@ -230,11 +235,11 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv', 'createDcs']],
             [['dcs_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'createDcs']],
             [['department', 'middle_name', 'surname', 'local_middlename', 'local_surname', 'bank_code', 'origination_type'], 'safe'],
-            [['milk_type_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
-                }, 'on' => 'importCsv'],
             [['milk_type_code'], 'integer', 'on' => ['importCsv']],
-            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
+            [['milk_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'default_milk_type');
+                }, 'on' => 'importCsv'],
+//            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
             [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
@@ -258,7 +263,7 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv']],
             [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
-            [['default_milk_type'], 'default', 'value' => 7]
+            [['default_milk_type'], 'default', 'value' => 8],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -1126,6 +1131,25 @@ class TblDcs extends ChildModel {
             }
         }
         return $defaultMilk;
+    }
+
+    public function setMilkType($defaultMilk) {
+        if (!empty($defaultMilk)) {
+            if (in_array($defaultMilk, [6])) {
+                $modelMilkType = [1, 3];
+            } else if (in_array($defaultMilk, [5])) {
+                $modelMilkType = [2, 3];
+            } else if (in_array($defaultMilk, [4])) {
+                $modelMilkType = [1, 2];
+            } else if (in_array($defaultMilk, [3])) {
+                $modelMilkType = [3];
+            } else if (in_array($defaultMilk, [2])) {
+                $modelMilkType = [2];
+            } else if (in_array($defaultMilk, [1])) {
+                $modelMilkType = [1];
+            }
+        }
+        return $modelMilkType;
     }
 
 }

@@ -479,6 +479,19 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBmcAutomationReport() {
+        $this->report = 'BMCAutomationReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BMCAutomationDayWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'BMCAutomationConsolidated';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1232,6 +1245,27 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_society_collection_data',
                 'scenario' => 'SocietyCollectionData',
                 'title' => '907 - Society Collection Data',
+            ],
+            'BMCAutomationReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_autmation_date_shift_wise',
+                'scenario' => 'BMCAutomationReport',
+                'title' => '208 - BMC Automation Report',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BMCAutomationDayWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_autmation_date_wise',
+                'scenario' => 'BMCAutomationReport',
+                'title' => '208 - BMC Automation Report',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BMCAutomationConsolidated' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_autmation_consolidation',
+                'scenario' => 'BMCAutomationReport',
+                'title' => '208 - BMC Automation Report',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
         ];
         return $label[$l];

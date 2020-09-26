@@ -433,7 +433,12 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'credit_sale_allow',
                                 'format' => 'html',
                                 'value' => $model->credit_sale_allow == 1 ? 'Yes' : 'No',
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'default_milk_type',
+                                'value' => Yii::$app->general->getStaticDropdownVal('default_milk_type', $model, 'default_milk_type'),
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],

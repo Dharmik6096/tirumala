@@ -302,6 +302,9 @@ class TblDcsController extends ChildController {
 
             // $this->model->milk_type_code = $this->model->milk_type_code[0];
             //milk type
+            if (!empty($this->model->milk_type_auto)) {
+                $this->model->milk_type_code = [1, 2, 3];
+            }
             $milkType = TblDcsMilkType::find()->where(['dcs_code' => $this->model->dcs_code, 'is_active' => 1])->all();
             $returnedArray = \yii\helpers\ArrayHelper::map($milkType, 'milk_type_code', 'milk_type_code');
 
@@ -525,6 +528,9 @@ class TblDcsController extends ChildController {
 
     private function setMilk() {
         $milkArray = $this->model->milk_type_code;
+        if ($this->model->milk_type_auto == 1) {
+            $milkArray = ["1", "2", "3"];
+        }
         $list = [];
         foreach ($milkArray as $row) {
             $modelMilk = new TblDcsMilkType();
