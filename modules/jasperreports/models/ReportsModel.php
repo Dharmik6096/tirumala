@@ -75,8 +75,10 @@ class ReportsModel extends Model {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date');
                 }, 'skipOnEmpty' => false],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => 'BMCPayment'],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment', 'VendorMilkBill']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment', 'MemberMilkBill']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill']],
             [['union_code'], 'required', 'on' => ['StaffSalary']]
         ];
     }
