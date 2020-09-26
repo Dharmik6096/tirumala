@@ -261,6 +261,7 @@ $script = "
 
     $('#tblmember-bank_code').on('change',function(){
         $('#tblmember-ifsc').val('');
+        $('#tblmember-bank_account_no').val('');
 //        $('#tblmember-ifsc').prop('readonly', false);
     });
     $('#tblmember-branch_code').on('change',function(){
