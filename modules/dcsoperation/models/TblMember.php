@@ -122,7 +122,7 @@ class TblMember extends ChildModel {
             [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync']],
             [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name'], 'safe'],
             [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync']],
-            [['member_name', 'father_name', 'surname', 'nominee_name', 'beneficiary_name'], function ($attribute, $params) {
+            [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
             [['mobile_no'], function ($attribute, $params) {
@@ -182,6 +182,9 @@ class TblMember extends ChildModel {
             //  [['member_code'], 'refCodeGenerate', 'except' => ['importLimitedCsv', 'deactivate', 'saveCreamyData']],
             //  [['ex_member_code'], 'setExMember'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['beneficiary_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateBeneficiary($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
