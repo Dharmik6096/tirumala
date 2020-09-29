@@ -644,11 +644,11 @@ class TblBmcCollection extends \app\models\ChildModel {
             $returnModel = $returnModel->one();
         }
         if (($approval && $flag == 1 && !empty($returnModel))) {
-            $modelData->addError('customer_code', "Record is Already Exist In Approval.");
+            $modelData->addError('milk_type_code', "Record is Already Exist In Approval.");
             return FALSE;
         }
         if (!$approval && !empty($returnModel)) {
-            $modelData->addError('customer_code', "Record is Already Exist.");
+            $modelData->addError('milk_type_code', "Record is Already Exist.");
             return FALSE;
         }
     }
