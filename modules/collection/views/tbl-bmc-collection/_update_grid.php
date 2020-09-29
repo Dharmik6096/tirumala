@@ -100,6 +100,12 @@ $form = ActiveForm::begin([
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
+        ['attribute' => 'bmc_silos_info_code',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
+            },
+        ],
     ];
 
     $grid_option = [
