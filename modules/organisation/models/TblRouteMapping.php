@@ -98,7 +98,10 @@ class TblRouteMapping extends \app\models\ChildModel {
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['union_code'], 'importData', 'on' => ['importCsv']],
             [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
-            [['mobile_no', 'firstname'], 'required', 'on' => ['importCsv']]
+            [['mobile_no', 'firstname'], 'required', 'on' => ['importCsv']],
+            [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
         ];
     }
 

@@ -115,10 +115,10 @@ class TblMemberProvisional extends ChildModel {
             [['is_active'], 'default', 'value' => '1'],
             [['is_approved'], 'default', 'value' => '0','on'=>'importCsv'],
             [['member_type_code'], 'default', 'value' => '1'],
-            [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'ex_member_code','member_name','mobile_no'], 'required'],
+            [['dcs_code','bmc_code','mcc_plant_code','plant_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'ex_member_code','member_name'], 'required'],
             [['gender_code','caste_category_code'], 'required', 'on' => ['EIPLAMCS_TEST']],
             [['bmc_code','mcc_plant_code','plant_code'],'required', 'except' => ['importCsv']],
-            [['dcs_code', 'hamlet_code', 'ex_member_code', 'mobile_no'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+            [['dcs_code', 'hamlet_code', 'ex_member_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
             [['member_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'union_code'], 'required', 'except' => ['importCsv','importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],
 
             [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],

@@ -27,7 +27,11 @@ class CustomValidation extends Component {
                 'TblPlant' => [],
                 'TblMccPlant' => [],
                 'TblDcsBmc' => [],
-                'TblDcs' => [],
+                'TblDcs' => [
+                    'default' => [
+                        [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                    ]
+                ],
                 'TblContactDetails' => [
                     'dcs-create' => [],
                     'dcs-import' => [],
@@ -56,6 +60,7 @@ class CustomValidation extends Component {
                     [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
                     [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
                     [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
+                    [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                 ],
                 'TblContactDetails' => [
                     [['firstname', 'mobile_no'], 'required'],
@@ -64,11 +69,27 @@ class CustomValidation extends Component {
                 'TblMember' => [
                     [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
                     [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
-                    [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'mobile_no'], 'required', 'on' => ['ApprovalMember']],
+                    [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
                 ],
                 'TblBranch' => [
                     [['hamlet_code'], 'required'],
                     [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
+                ],
+            ],
+            'NIFPL' => [
+                'TblDcs' => [
+                    'default' => [
+                        [['dcs_type_code'], 'required'],
+                    ]
+                ],
+                'TblContactDetails' => [
+                    'dcs-create' => [
+                        [['firstname'], 'required'],
+                    ],
+                    'dcs-import' => [],
+                    'default' => [
+                        [['firstname'], 'required'],
+                    ],
                 ],
             ],
         ];
