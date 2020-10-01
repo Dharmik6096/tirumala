@@ -301,10 +301,22 @@ $form = ActiveForm::begin([
                 </div>-->
         <?php // }  ?>
         <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
-        <div class="clearfix"></div>
+        <!-- <div class="clearfix"></div> -->
+        <?php // if ($type == 'create') {    ?>
+        <?php if ($type == 'create') { ?>
+            <div class="col-sm-2 mt10">
+                <?= $form->field($model, 'auto_member_create', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
+        <?php } ?>
     </div>
 
-<div class="row">
+    <?php // if ($type == 'create') { ?>
+    <!--        <div class="col-sm-3">
+    <?= Yii::$app->controls->active($model, $form); ?>
+            </div>-->
+    <?php // }   ?>
+    <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
+    <div class="row">
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
