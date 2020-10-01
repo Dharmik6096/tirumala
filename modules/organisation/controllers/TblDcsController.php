@@ -35,6 +35,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -174,6 +175,25 @@ class TblDcsController extends ChildController {
             }
             if ($validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
+                $member = [];
+                if (!empty($this->model->auto_member_create)) {
+                    for ($x = 1; $x <= 100; $x += 1) {
+                        $memberModel = new TblMember();
+                        $memberModel->attributes = $this->model->attributes;
+                        $memberModel->ex_member_code = str_pad($x, 4, '0', STR_PAD_LEFT);
+                        $memberModel->member_code = $this->model->dcs_code . $memberModel->ex_member_code;
+                        $memberModel->ref_code = $memberModel->member_code;
+                        $memberModel->animal_type_code = 1;
+                        $memberModel->address = $this->model->dcs_name;
+                        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+                        $memberModel->member_type_code = '1';
+                        $memberModel->member_name = 'No Name';
+                        $memberModel->gender_code = 1;
+                        $memberModel->caste_category_code = 1;
+                        $memberModel->member_type_code = 1;
+                        array_push($mapList, $memberModel);
+                    }
+                }
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
