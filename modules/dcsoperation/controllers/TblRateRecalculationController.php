@@ -218,7 +218,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 if ($rtype == 'custom') {
                     foreach ($data as $code) {
                         $c = explode('###', $code);
-                        $sp_params = [$searchModel->bmc_code, $c[1], $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $searchModel->recalc_for, $c[0], $c[4]];
+                        $sp_params = [$searchModel->bmc_code, $c[1], (string) $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $searchModel->recalc_for, (string) $c[0], $c[4]];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }
@@ -228,7 +228,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         $to_shift = Yii::$app->general->getshift($searchModel->to_shift);
                         $fdate = date('Y-m-d H:i:s', strtotime($searchModel->from_date . ' ' . $from_shift));
                         $tdate = date('Y-m-d H:i:s', strtotime($searchModel->to_date . ' ' . $to_shift));
-                        $codes = !empty($code['customer_code']) ? $code['customer_code'] : $code;
+                        $codes = (string) (!empty($code['customer_code']) ? $code['customer_code'] : $code);
                         $type = (strtolower($searchModel->recalc_for) == 'member') ? 'DCS' : (!empty($code['customer_type']) ? $code['customer_type'] : $searchModel->customer_type);
                         $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $type];
                         $sp = 'sp_Portal_Process_Recalculation';
