@@ -450,6 +450,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'LocationWiseAssetMovement';
         return $this->actionIndex();
     }
+
     public function actionCustomerMaster() {
         $this->report = 'CustomerMaster';
         return $this->actionIndex();
@@ -472,8 +473,9 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVehicleMaster() {
         $this->report = 'VehicleMaster';
-         return $this->actionIndex();
+        return $this->actionIndex();
     }
+
     public function actionSocietyCollectionData() {
         $this->report = 'SocietyCollectionData';
         return $this->actionIndex();
@@ -1239,7 +1241,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Vehicle Master Register',
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
-            ],            
+            ],
             'SocietyCollectionData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'sp_mis_society_collection_data',
@@ -1308,7 +1310,7 @@ class ReportsController extends \app\controllers\ChildController {
                 if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
                     $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
                 }
-                if (is_numeric($value) && (float) $value <= 100000000) {
+                if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
                     echo "<td>" . $value . "</td>";
                 } else {
                     echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
