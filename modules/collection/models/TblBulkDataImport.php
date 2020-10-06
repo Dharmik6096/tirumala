@@ -57,9 +57,9 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
             [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime'], 'safe'],
             [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no'], 'number'],
-            ['shift_code', 'in', 'range' => ['M', 'E'], 'on' => ['bmc_collection', 'milk_collection']],
-            ['milk_type_code', 'in', 'range' => ['C', 'B', 'M'], 'on' => ['bmc_collection', 'milk_collection']],
-            ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain'], 'on' => ['bmc_collection', 'milk_collection']],
+            ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection']],
+            ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection']],
+            ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain', 'good', 'curd', 'sour', 'drain'], 'on' => ['bmc_collection', 'milk_collection']],
             [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
             [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection']],
             [['collection_type'], function ($attribute, $params) {
