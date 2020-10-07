@@ -10,7 +10,7 @@ $button = Yii::$app->label->button('create');
 $this->title = Yii::t('app', $title);
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading">Plant Product Groups <?= $modelPlant->name ?></div>
+    <div class="panel-heading">Plant Product Groups > <?= $modelPlant->name ?></div>
     <div class="panel-body padding_10_0 theme-box view-subtitle">
         <?php
         $form = ActiveForm::begin(['options' => [

@@ -13,7 +13,7 @@ use yii\base\Model;
  */
 class Dashboard extends Model
 {
-    public $union_code;
+    public $union_code, $widget_type;
     public $date, $from_date, $to_date, $from_date2, $to_date2, $qlt_param, $shift, $from_date3, $to_date3, $from_shift, $to_shift, $plant_code, $bmc_code, $mcc_code, $dcs_code, $hidden_from_date, $hidden_to_date;
     //public $rememberMe = true;
 

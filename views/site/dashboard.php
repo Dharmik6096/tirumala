@@ -1,6 +1,7 @@
 <?php
 $this->title = 'Dashboard';
 
+use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
@@ -98,15 +99,15 @@ $refreshWidgets = [
 $allowWidgets = $refreshWidgets;
 $refreshWidgets = json_encode($refreshWidgets);
 ?>
-<div class="panel-group row panel-fixed" id="filter">
+<div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
     <div class="panel panel-default min_h_0">
-        <div class="panel-heading text-center">
+        <!-- <div class="panel-heading text-center">
             <h4 class="panel-title">
-                <?= Yii::t('app', 'Data for PCDF') . ' ' ?> (<?= Yii::$app->controls->view_date($date) ?>)
+                <?php // Yii::t('app', 'Data for PCDF') . ' ' ?> (<?php // Yii::$app->controls->view_date($date) ?>)
                 <a data-toggle="collapse" href="#collapse1" class="setting"><i class="fa fa-gear"></i></a>
                 <a class="member-mobile-info pull-right"><i class="fa fa-mobile"></i></a>
             </h4>
-        </div>
+        </div> -->
         <div id="collapse1" class="panel-collapse collapse">
             <div class="panel-body">
                 <?php
@@ -115,15 +116,34 @@ $refreshWidgets = json_encode($refreshWidgets);
                             'method' => 'post',
                 ]);
                 ?>
-                <div class="filt">
-                    <div class="">
-                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
-                    </div>
-                    <div class="">
-                        <?= Yii::$app->controls->date($model, $form, 'date'); ?>
-                    </div>
-                    <div class="filt-btn">
-                        <?= Yii::$app->controls->search(); ?>
+                <div class="dashboard_filter_form">
+                    <!-- <h4 class="panel-title">
+                        <?php // Yii::t('app', 'Data for PCDF') . ' ' ?> (<?php //Yii::$app->controls->view_date($date) ?>)
+                    </h4> -->
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <?= Yii::$app->controls->date($model, $form, 'date','',true,false,false,false); ?>
+                        </div>
+                        <?= Html::activeHiddenInput($model, 'widget_type', ['id'=>'hidden_widget_type']) ?>
+                        <div class="col-sm-6">
+                            <div class="switch-field">
+                                <input type="radio" id="radio-farmer" class="radio_widgit_type" name="widget_type" value="farmer" checked/>
+                                    <label for="radio-farmer">Farmer</label>
+                                <input type="radio" id="radio-rmrd" class="radio_widgit_type" name="widget_type" value="rmrd" />
+                                    <label for="radio-rmrd">RMRD</label>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-sm-6">
+                            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', false); ?>
+                        </div>
+                        <div class="col-sm-6">
+                            <?php echo Html::hiddenInput('load_all', true, ['id' => 'load_all']); ?>
+                            <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false,false,false);?>
+                        </div>
+                        <div class="col-sm-12 filt_btn">
+                            <?= Yii::$app->controls->search(); ?>
+                        </div>
                     </div>
                 </div>
                 <?php ActiveForm::end(); ?>
@@ -476,6 +496,83 @@ $refreshWidgets = json_encode($refreshWidgets);
 </div>
 <div id="crossTabDetails"></div>
 <div id="chartToTable"></div>
+
+<div class="row farmer_rmrd_block">
+    <div class="col-sm-3">
+        <div class="collection">
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'Union') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_union">3/13</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="collection">                                
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'MCC') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_mcc">16/46</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="collection">
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'DCS') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_dcs">53/873</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="collection">
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'Farmer') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_farmer">619/27101</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="collection">
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'Quantity') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_quantity">443171.57</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="collection">
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'FATKG') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_fatkg">16992.56</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="collection">
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'SNFKG') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_snfkg">23316.76</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="collection">
+            <div class="tbl-cell">
+                <p class="block_title"><?= Yii::t('app', 'Amount') ?></p>
+                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="block_value" id="farmer_rmrd_block_amount">9205400.28</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <?php
 $script = "  
 
@@ -918,8 +1015,8 @@ function setPopupTable(id,cntr,url,type,diff_sp_name = '', title = ''){
 }
 
 function setHtmlData(id,cntr,url){
-    $('#pageloader').show();
-    $('#loadercontent').show();
+    // $('#pageloader').show();
+    // $('#loadercontent').show();
     var datastring = $('#'+id).serialize();
     var sp_name = id;
     var union= $('#dashboard-union_code').val();
@@ -931,12 +1028,12 @@ function setHtmlData(id,cntr,url){
         success: function(data) {
 //            console.log(id+'_container');
             $('#'+id+'_container').html(data);
-            $('#loadercontent').hide();
-            $('#pageloader').hide();
+            // $('#loadercontent').hide();
+            // $('#pageloader').hide();
         },
         error:function(data){
-            $('#loadercontent').hide();
-            $('#pageloader').hide();
+            // $('#loadercontent').hide();
+            // $('#pageloader').hide();
         }
     });
 }
@@ -998,5 +1095,10 @@ $(document).on('click','.member-mobile-info',function(e){
         $('#loadercontent').hide();
         $('#pageloader').hide();
 });
+
+$('.radio_widgit_type').on('change',function() {
+    $('#hidden_widget_type').val($('input[name=widget_type]:checked', '.switch-field').val());
+});
+
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');

@@ -481,7 +481,7 @@ h5 .badge{
 .panel-main .panel-body .grid-search .btn, 
 .panel-main .panel-body .grid-search-padding .form-group,
 .panel-main .panel-body .grid-search-padding .btn{
-    margin: 5px 0;
+    margin: 7px 0;
 }
 .panel-main .panel-body .grid-search .help-block{
     height: auto;
@@ -761,7 +761,7 @@ form .checkbox input[type="checkbox"] + span:before{
     content: "";
     background-color: #fff;
     border: 1px solid #c3b8b8;
-    border-radius: 2px;
+    border-radius: 0px;
     padding-left: 5px;
     height: 13px;
     width: 13px;
@@ -789,6 +789,7 @@ form .checkbox input[type="checkbox"]:checked + span:after{
     text-align: center;
     font-size: 11px;
     color: rgb(58, 123, 213);
+    border-radius: 0px;
 }
 
 .checkbox label.disabled{
@@ -888,7 +889,7 @@ input[type="hidden"] + .help-block{
     padding: 5px 10px;
     color: rgb(58, 123, 213);
     font-size: 13px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 .error-summary p{
     color: #607188;
@@ -1197,7 +1198,7 @@ input[type="hidden"] + .help-block{
 .modal-msg{
     background-color: #f5f5f5;
     padding: 15px;
-    margin: 5px 0 15px;
+    margin: 5px 0 8px;
     border-left: 2px solid #60718f;
 }
 .modal-msg h4{
@@ -1307,7 +1308,7 @@ footer p{
     background: transparent;
     box-shadow: none;
     -webkit-box-shadow: none;
-    padding-top: 30px;
+    /* padding-top: 30px; */
 }
 .panel-dashboard .panel-body{
     padding: 0;
@@ -2281,7 +2282,7 @@ div.crystalstyle{
 
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-    padding: 1px !important;
+    padding: 2px 1px 0px !important;
     vertical-align: middle !important;
 }
 
@@ -2301,7 +2302,7 @@ div.crystalstyle{
     position: absolute;
     top: 73px;
     z-index: 9;
-    right: 25px;
+    right: 13px;
     padding: 6px 30px;
 }
 
@@ -2581,6 +2582,7 @@ div.crystalstyle{
 .panel .panel-body .input-group-addon {
     height: 24px !important;
     border-radius: 0px;
+    padding: 4px;
     /* max-width: 280px !important; */
 }
 .panel .panel-body .multiple select{
@@ -2595,8 +2597,12 @@ div.crystalstyle{
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 11px !important;
-    padding: 1px;
+    padding: 4px;
     height: 24px;
+}
+
+.panel .panel-body select{
+    padding: 1px !important;
 }
 
 .panel .panel-body .dashboard_controls .form-control{
@@ -2673,7 +2679,7 @@ div.crystalstyle{
 }
 
 .filt-btn .btn{
-    margin-top: 15px !important;
+    margin-top: 12px !important;
 }
 
 .table-bordered{
@@ -2801,7 +2807,7 @@ td.action-cell{
 }
 
 .padding_top_20{
-    padding-top: 20px;
+    padding-top: 22px;
 }
 
 .padding_left_10{
@@ -2991,7 +2997,7 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .table-hover thead tr th,
 .table-hover thead tr th a{
     color: white !important;
-    padding-top: 6px !important;
+    padding-top: 4px !important;
 }
 .table-hover thead tr.filters.skip-export {
     background-color: #ffffff !important;
@@ -3094,4 +3100,134 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .popup-100-60{
     width: calc(100% - 60px) !important;
     margin: 30px auto !important;
+}
+
+.kv-child-table-row th:nth-child(1) {
+    border-left: 0px !important 
+}
+
+.panel-body {
+    padding: 0px !important;
+}
+
+.table > thead > tr.filters > th, .table > tbody > tr.filters > th, .table > tfoot > tr.filters > th, .table > thead > tr.filters > td, .table > tbody > tr.filters > td, .table > tfoot > tr.filters > td {
+    padding: 1px !important;
+    vertical-align: middle !important;
+}
+
+.filt .dashboard_date{
+    padding: 15px;
+    position: relative;
+    width: 240px !important;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: left;
+}
+
+.modal-body {
+    padding: 5px !important;
+}
+
+.sortable{
+    border-radius: 0px !important;
+}
+
+.sortable li .alert,
+.sortable .alert{
+    border-radius: 0px !important;
+}
+
+.sortable-hidden .icon-hidden-column, .sortable-visible .icon-visible-column {
+    padding: 0px 0px 0px 4px;
+}
+
+input[type="checkbox"]:before{
+    border-radius: 0px !important;
+}
+
+input[type="checkbox"]:after{
+    border-radius: 0px !important;
+}
+
+.dashboard_set_icon{
+    padding-left: 16px;
+    padding-top: 12px;
+    font-size: 18px;
+    color: #fff;
+    padding-right: 12px;
+}
+
+.dashboard_set_filter{
+    width: 25% !important;
+    right: 0;
+}
+.dashboard_set_filter {
+    position: fixed;
+    z-index: 9999 !important;
+    box-shadow: -2px 1px 7px 2px rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.dashboard_filter_form{
+    margin-bottom: 0px !important;
+    padding-top: 5px;
+}
+
+
+.switch-field {
+	display: flex;
+}
+
+.switch-field input {
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	border: 0;
+}
+
+.switch-field label {
+	background-color: #fff;
+	color: #9e9b9b;
+	font-size: 12px;
+	line-height: 1;
+	text-align: center;
+	margin-right: -1px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+    transition: all 0.1s ease-in-out;
+    width: 50%;
+    padding: 5px 0px;
+}
+
+.switch-field label:hover {
+	cursor: pointer;
+}
+
+.switch-field input:checked + label {
+    background-color: #3a7bd5;
+    color: #fff;
+	box-shadow: none;
+}
+
+.dashboard_filter_form .row {
+    padding: 5px;
+}
+
+.filt_btn{
+    text-align: right !important;
+}
+
+.datepicker{
+    z-index: 10000 !important;
+}
+
+.farmer_rmrd_block .collection{
+    height: 95px !important;
+}
+
+.farmer_rmrd_block .collection .block_title {
+    font-weight: 600;
+}
+
+.farmer_rmrd_block .collection .block_value {
+    color: rgb(58, 123, 213);
 }

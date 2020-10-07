@@ -32,7 +32,7 @@ $form = ActiveForm::begin([
 </div>
 
     <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
-<div class="col-sm-2 ml35">
+<div class="col-sm-2">
 <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
 </div>
 <?php ActiveForm::end(); ?>

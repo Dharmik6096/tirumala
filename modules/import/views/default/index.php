@@ -123,7 +123,8 @@ $appendId = !empty($appendId) ? $appendId : '';
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
                                     if($("#file_name' . $appendId . '").val()==""){
-                                        bootbox.alert("Please select file.");
+                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-times\'></i></div><span>Please select file.</span></div></div>");
+                                            // message: "<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-exclamation\'></i><span>Please select file.</span></div></div></div>",
                                     }else{
                                         $("#importModal' . $appendId . '").modal("toggle");
                                         $("#import-form' . $appendId . '")[0].reset();

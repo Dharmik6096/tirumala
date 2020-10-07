@@ -19,21 +19,6 @@ $form = ActiveForm::begin([
             'id' => $id
         ]);
 ?>
-<?php if (isset($mcc_code) && $mcc_code) { ?> 
-    <div class="pb10 <?= $mcc_class . ' ' . $common_class ?>">
-        <?= Yii::$app->dropdown->mccDropDown($model, $form, 'mcc_code', false, false, $mcc_code); ?>
-    </div> 
-<?php } ?>
-<?php if (isset($bmc_code) && $bmc_code) { ?>
-    <div class="pb10 <?= $bmc_class . ' ' . $common_class ?>">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, $mcc_code, 'bmc_code', false, false, $bmc_code); ?>
-    </div> 
-<?php } ?>
-<?php if (isset($dcs_code) && $dcs_code) { ?>
-    <div class="pb10 <?= $dcs_class . ' ' . $common_class ?>">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, $bmc_code, 'dcs_code', false); ?>         
-    </div>
-<?php } ?>
 <?php if (isset($from_date) && $from_date) { ?>
     <div class="<?= $date_picker_class . ' ' . $common_class ?> pb10">
         <?php
@@ -63,6 +48,21 @@ $form = ActiveForm::begin([
         ?>
     </div>  
 <?php } ?>
+<?php if (isset($mcc_code) && $mcc_code) { ?> 
+    <div class="pb10 <?= $mcc_class . ' ' . $common_class ?>">
+        <?= Yii::$app->dropdown->mccDropDown($model, $form, 'mcc_code', false, false, $mcc_code); ?>
+    </div> 
+<?php } ?>
+<?php if (isset($bmc_code) && $bmc_code) { ?>
+    <div class="pb10 <?= $bmc_class . ' ' . $common_class ?>">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, $mcc_code, 'bmc_code', false, false, $bmc_code); ?>
+    </div> 
+<?php } ?>
+<?php if (isset($dcs_code) && $dcs_code) { ?>
+    <div class="pb10 <?= $dcs_class . ' ' . $common_class ?>">
+        <?= Yii::$app->dropdown->bmc_society($model, $form, $bmc_code, 'dcs_code', false); ?>         
+    </div>
+<?php } ?>
 <?php if (isset($hidden_from_date) && $hidden_from_date) { ?>
     <?php
     echo Html::activeHiddenInput($model, 'hidden_from_date', ['value' => $hidden_from_date]);
@@ -73,7 +73,7 @@ $form = ActiveForm::begin([
     echo Html::activeHiddenInput($model, 'hidden_to_date', ['value' => $hidden_to_date]);
     ?>  
 <?php } ?>
-<div class="col-sm-2 pb10 <?= $common_class ?>">
+<div class="col-sm-3 pb10 <?= $common_class ?>">
     <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
 </div>
 <?php

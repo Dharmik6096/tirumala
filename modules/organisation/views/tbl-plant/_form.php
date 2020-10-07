@@ -91,9 +91,8 @@ $form = ActiveForm::begin([
     <div class="col-sm-2"> 
         <?= $form->field($model, 'description')->textarea() ?>
     </div>
-</div>
-<div class="clearfix"></div>
     <?php if ($type == 'create') { ?>
+<div class="clearfix"></div>
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Contact Details</h4>
         </div>
@@ -103,14 +102,15 @@ $form = ActiveForm::begin([
             'form' => $form
         ])
         ?>
+        <div class="clearfix"></div>
     <?php } ?>
 
-    <div class="clearfix"></div>
 
     <div class="col-sm-2">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>
+</div>
 </div>
 <div class="row">
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

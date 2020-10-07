@@ -127,6 +127,8 @@ class SiteController extends Controller {
 
         $this->layout = "@app/themes/pcdf/layouts/dashboardLayout.php";
         $model = new Dashboard();
+        // var_dump(Yii::$app->request->post());
+        // die;
         if (!empty(Yii::$app->request->post('Dashboard')['union_code'])) {
             $union_str = Yii::$app->request->post('Dashboard')['union_code'];
             $model->union_code = Yii::$app->request->post('Dashboard')['union_code'];
