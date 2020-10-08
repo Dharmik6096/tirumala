@@ -494,6 +494,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberPaymentDrafted() {
+        $this->report = 'MemberPaymentWithBank';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberPaymentWoBank';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1268,6 +1278,21 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'BMCAutomationReport',
                 'title' => '208 - BMC Automation Report',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberPaymentWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_drafted_with_bank',
+                'scenario' => 'MemberPaymentDrafted',
+                'title' => '611 - Member Payment(Drafted)',
+                'to_decrypt' => ['Account No', 'IFSC'],
+                'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
+            ],
+            'MemberPaymentWoBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_drafted_wo_bank',
+                'scenario' => 'MemberPaymentDrafted',
+                'title' => '611 - Member Payment(Drafted)',
+                'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
             ],
         ];
         return $label[$l];
