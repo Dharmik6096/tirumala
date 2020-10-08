@@ -1838,7 +1838,7 @@ class GeneralFunctions extends Component {
 
     public function validateBeneficiary($model, $attribute, $params) {
         if (!empty($model->$attribute))
-            if (!preg_match('/^[a-zA-Z]+(\s{1}+[a-zA-Z]+)*$/', $model->$attribute)) {
+            if (!preg_match('/^[a-zA-Z]+(\s[a-zA-Z]+)?$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' Is Invalid'));
                 return false;
             }

@@ -96,7 +96,8 @@ $refreshWidgets = [
 'piechart_member_app',
 'calender',
 'dashboard_farmer_rmrd_blocks',
-'dashboard_farmer_rmrd_avg'];
+'dashboard_farmer_rmrd_avg',
+'dashboard_farmer_status'];
 
 $allowWidgets = $refreshWidgets;
 $refreshWidgets = json_encode($refreshWidgets);
@@ -106,14 +107,12 @@ $widget_type = !empty($model->widget_type)?$model->widget_type:'';
 if($widget_type == 'farmer'){
     $class_cols = "col-sm-3";
     $display = "";
-    $table_heading1 = Yii::t('app', 'perfar');
-    $table_heading2 = Yii::t('app', 'perDCS');
+    $display_rmrd = "disp_none";
 }
 if($widget_type == 'rmrd'){
     $class_cols = "col-sm-4";
     $display = "disp_none";
-    $table_heading1 = Yii::t('app', 'perMcc');
-    $table_heading2 = Yii::t('app', 'perSoc');
+    $display_rmrd = "";
 }
 ?>
 <div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
@@ -528,73 +527,111 @@ if($widget_type == 'rmrd'){
 <div class="row farmer_rmrd_block">
     <div class="<?=$class_cols?>">
         <div class="collection">
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'Union') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">            
                 <h4 class="block_value" id="farmer_rmrd_block_union">0/0</h4>
             </div>
         </div>
     </div>
     <div class="<?=$class_cols?>">
         <div class="collection">                                
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'MCC') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
                 <h4 class="block_value" id="farmer_rmrd_block_mcc">0/0</h4>
             </div>
         </div>
     </div>
     <div class="<?=$class_cols?>">
         <div class="collection">
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'DCS') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
                 <h4 class="block_value" id="farmer_rmrd_block_dcs">0/0</h4>
             </div>
         </div>
     </div>
     <div class="<?=$class_cols.' '.$display?>">
         <div class="collection">
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'Farmer') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
                 <h4 class="block_value" id="farmer_rmrd_block_farmer">0/0</h4>
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="<?=$class_cols?>">
         <div class="collection">
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'Quantity') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
                 <h4 class="block_value" id="farmer_rmrd_block_quantity">0.0</h4>
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="<?=$class_cols?>">
         <div class="collection">
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'FATKG') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
                 <h4 class="block_value" id="farmer_rmrd_block_fatkg">0.0</h4>
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="<?=$class_cols?>">
         <div class="collection">
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'SNFKG') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
                 <h4 class="block_value" id="farmer_rmrd_block_snfkg">0.0</h4>
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="<?=$class_cols?>">
         <div class="collection">
-            <div class="tbl-cell">
+            <div class="col-sm-6 background_half_block">
                 <p class="block_title"><?= Yii::t('app', 'Amount') ?></p>
-                <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
                 <h4 class="block_value" id="farmer_rmrd_block_amount">0.0</h4>
+            </div>
+        </div>
+    </div>
+    <div class="<?=$class_cols.' '.$display_rmrd?>">
+        <div class="collection">
+            <div class="col-sm-6 background_half_block">
+                <p class="block_title"><?= Yii::t('app', 'Bulk Vendor') ?></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
+                <h4 class="block_value" id="farmer_rmrd_block_blk_vendor">0/0</h4>
+            </div>
+        </div>
+    </div>
+    <div class="<?=$class_cols.' '.$display_rmrd?>">
+        <div class="collection ">
+            <div class="col-sm-6 background_half_block">
+                <p class="block_title"><?= Yii::t('app', 'VLCC Vendor') ?></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6 background_half_two_block">
+                <h4 class="block_value" id="farmer_rmrd_block_vlcc_vendor">0/0</h4>
             </div>
         </div>
     </div>
@@ -602,44 +639,81 @@ if($widget_type == 'rmrd'){
 
 
 <div class="table-responsive dashboard_tbl farmer_rmrd_tbl h450">
-    <div id="farmer_rmrd_tbl_container" class="cont milk-collection">
+    <div id="farmer_rmrd_tbl_container" class="cont milk-collection disp_none">
         <div class="table-responsive dashboard_tbl h450">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th><?= Yii::t('app', 'Data') ?></th>
-                        <th><?= $table_heading1?></th>
-                        <th><?= $table_heading2 ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Qty') ?></th>
-                        <td>N/A</td>
-                        <td>N/A</td>
                     </tr>
                     <tr>
                         <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg FAT') ?></th>
-                        <td>N/A</td>
-                        <td>N/A</td>
                     </tr>
                     <tr>
                         <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg SNF') ?></th>
-                        <td>N/A</td>
-                        <td>N/A</td>
                     </tr>
                     <tr>
                         <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Rate') ?></th>
-                        <td>N/A</td>
-                        <td>N/A</td>
                     </tr>
                     <tr>
                         <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Amount') ?></th>
-                        <td>N/A</td>
-                        <td>N/A</td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="row dashboard_farmer_status">
+    <div class="col-sm-6">
+        <div class="collection background_light">
+            <div class="col-sm-6">
+                <p class="block_title">Active <?= Yii::t('app', 'DCS') ?></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6">            
+                <h4 class="block_value" id="dashboard_farmer_status_active_dcs">0</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="collection background_dark">                                
+            <div class="col-sm-6">
+                <p class="block_title">Installed <?= Yii::t('app', 'DCS') ?></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6">
+                <h4 class="block_value" id="dashboard_farmer_status_installed_dcs">0</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="collection background_dark">
+            <div class="col-sm-6">
+                <p class="block_title">Online <?= Yii::t('app', 'DCS') ?></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6">
+                <h4 class="block_value" id="dashboard_farmer_status_online_dcs">0</h4>
+                <p class="block_other_value">M:<span id="dashboard_farmer_status_online_dcs_m">0</span>|E:<span id="dashboard_farmer_status_online_dcs_e">0</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="collection background_light">
+            <div class="col-sm-6">
+                <p class="block_title">Offline <?= Yii::t('app', 'DCS') ?></p>
+                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            </div>
+            <div class="col-sm-6">
+                <h4 class="block_value" id="dashboard_farmer_status_offline_dcs">0</h4>
+            </div>
         </div>
     </div>
 </div>
@@ -675,6 +749,7 @@ $script = "
                 'piechart_member_app',
                 'calender',
                 'dashboard_farmer_rmrd_blocks',
+                'dashboard_farmer_status',
                 'dashboard_farmer_rmrd_avg'].indexOf(value) == -1) 
                 {
                     setChartWidgets(value);
@@ -739,6 +814,8 @@ $script = "
                             $('#farmer_rmrd_block_mcc').text(obj1.res.pourerMcc+'/'+obj1.res.totalMcc);
                             $('#farmer_rmrd_block_dcs').text(obj1.res.pourerDcs+'/'+obj1.res.totalDcs);
                             $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'/'+obj1.res.totalMember);
+                            $('#farmer_rmrd_block_blk_vendor').text(obj1.res.pourerBulkVen+'/'+obj1.res.totalBulkVen);
+                            $('#farmer_rmrd_block_vlcc_vendor').text(obj1.res.pourerVlccVen+'/'+obj1.res.totalVlccVen);
                             $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty);
                             $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
                             $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
@@ -778,12 +855,45 @@ $script = "
                                 }else{
                                     i = 0; 
                                 }
-                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgQty);
-                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgFat);
-                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgSnf);
-                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgRate);
-                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgAmount);
+                                $('#farmer_rmrd_tbl_container table thead tr:last').append('<th>'+obj1.res[key].colType+'</th>')
+                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgQty+'</td>');
+                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgFat+'</td>');
+                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgSnf+'</td>');
+                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgRate+'</td>');
+                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgAmount+'</td>');
+                                $('#farmer_rmrd_tbl_container').removeClass('disp_none');
                             });
+                        }
+                    },
+                    error:function(data){
+                        //alert('Your data has not been submitted.Please try again');
+                    }
+                });
+            }
+            else if(['dashboard_farmer_status'].indexOf(value) == 0){
+                var blockDataString = $('#collapse1 form').serialize();
+                var id= 'dashboard_farmer_status';
+                var union= $('#dashboard-union_code').val();
+                var mcc= $('#dashboard-mcc_code').val();
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
+                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+                    success: function(data) {
+                        var obj1 = data;
+                        if (obj1.status == 'success')
+                        {
+                            for (var key in obj1.res){
+                                if(obj1.res[key] == null){
+                                    obj1.res[key] = 0;
+                                }
+                            }
+                            $('#dashboard_farmer_status_active_dcs').text(obj1.res.activeDcs);
+                            $('#dashboard_farmer_status_installed_dcs').text(obj1.res.installedDcs);
+                            $('#dashboard_farmer_status_online_dcs').text(obj1.res.onlineDcs);
+                            $('#dashboard_farmer_status_offline_dcs').text(obj1.res.offlineDcs);
+                            $('#dashboard_farmer_status_online_dcs_e').text(obj1.res.onlineDcsE);
+                            $('#dashboard_farmer_status_online_dcs_m').text(obj1.res.onlineDcsM);
                         }
                     },
                     error:function(data){
@@ -971,7 +1081,7 @@ $script = "
                             var vals=[];
                             var color='3a7bd5';
                             var suf='';
-                            console.log(chart +'--'+id);
+                            // console.log(chart +'--'+id);
                             while( chart.series.length > 0 ) {
                                 chart.series[0].remove( false );
                             }

@@ -3221,16 +3221,30 @@ input[type="checkbox"]:after{
     z-index: 10000 !important;
 }
 
-.farmer_rmrd_block .collection{
-    height: 95px !important;
+.farmer_rmrd_block .collection,
+.dashboard_farmer_status .collection{
+    height: 97px !important;
 }
 
-.farmer_rmrd_block .collection .block_title {
+.farmer_rmrd_block .collection .block_title,
+.dashboard_farmer_status .collection .block_title{
     font-weight: 600;
+    font-size: 14px;
 }
 
-.farmer_rmrd_block .collection .block_value {
-    color: rgb(58, 123, 213);
+.farmer_rmrd_block .collection .block_title,
+.farmer_rmrd_block .collection .block_other_info,
+.dashboard_farmer_status .collection .block_title,
+.dashboard_farmer_status .collection .block_other_info{
+    text-align: left;
+}
+
+.farmer_rmrd_block .collection .block_value,
+.dashboard_farmer_status .collection .block_value{
+    /* color: rgb(58, 123, 213); */
+    text-align: right;
+    font-size: 20px;
+    padding: 12px 0px;
 }
 
 .dashboard_tbl_heading{
@@ -3248,4 +3262,52 @@ input[type="checkbox"]:after{
     color: #fff;
     padding: 4px;
     margin: 0 0 5px;
+}
+
+.block_other_value{
+    text-align: right;
+}
+
+.background_light{
+    background-color: #17b0ef;
+}
+
+.background_dark{
+    background-color: #3a7bd5;
+}
+
+.background_light h4,
+.background_dark h4,
+.background_light p,
+.background_dark p,
+.background_half_block p,
+.background_half_two_block p{
+    color: #fff !important;
+}
+
+.farmer_rmrd_block .collection {
+    padding: 0px !important;
+}
+
+.background_half_block,
+.background_half_two_block{
+    background: #17b0ef;
+    color: #fff;
+    width: 50%;
+    height: 100%;
+    text-align: center;
+    padding-top: 27px;
+}
+
+.background_half_two_block{
+    background: #fff;
+    color: #17b0ef;
+}
+.farmer_rmrd_block .background_half_two_block .block_title,
+.farmer_rmrd_block .background_half_two_block .block_other_info,
+.farmer_rmrd_block .background_half_two_block .block_value,
+.farmer_rmrd_block .background_half_block .block_title,
+.farmer_rmrd_block .background_half_block .block_other_info,
+.farmer_rmrd_block .background_half_block .block_value{
+    text-align: center !important;
 }
