@@ -127,8 +127,6 @@ class SiteController extends Controller {
 
         $this->layout = "@app/themes/pcdf/layouts/dashboardLayout.php";
         $model = new Dashboard();
-        // var_dump(Yii::$app->request->post());
-        // die;
         if (!empty(Yii::$app->request->post('Dashboard')['union_code'])) {
             $union_str = Yii::$app->request->post('Dashboard')['union_code'];
             $model->union_code = Yii::$app->request->post('Dashboard')['union_code'];
@@ -153,7 +151,8 @@ class SiteController extends Controller {
             $end_date = $today_date;
             $start_date = date('Y-m-d', strtotime("-1 months", strtotime($today_date)));
         }
-
+        $model->widget_type = Yii::$app->request->post('Dashboard')['widget_type'];
+        $model->mcc_code = Yii::$app->request->post('Dashboard')['mcc_code'];
         $model->date = $end_date;
         $plant_str = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
         $mcc_str = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
@@ -172,7 +171,10 @@ class SiteController extends Controller {
         $monthly_milk_collection = $this->getWidgetDetails('sp_Portal_dashboard_monthly_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $start_date, $end_date);
         $dashboard_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $member_mobile_detail = $this->getMemberMobileDetail('sp_Portal_dashboard_piechart_member_app', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code);
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail]);
+        $dashboard_farmer_rmrd_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
+        
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -776,6 +778,10 @@ class SiteController extends Controller {
             $dcs_str = Yii::$app->session->get('Dcs');
             $dcs_str = ',' . $dcs_str . ',';
         }
+        $widget_type = '';
+        if (!empty(Yii::$app->request->post('widget_type'))) {
+            $widget_type = Yii::$app->request->post('widget_type');
+        }
         $array = [
             'fed_union' => [
                 'name' => 'sp_dashboard_fed_union',
@@ -852,6 +858,14 @@ class SiteController extends Controller {
             'piechart_member_app' => [
                 'name' => 'sp_Portal_dashboard_piechart_member_app',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+            ],
+            'dashboard_farmer_rmrd_blocks' => [
+                'name' => 'sp_portal_dashboard_farmer_rmrd_blocks',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type='.$widget_type,
+            ],
+            'dashboard_farmer_rmrd_avg' => [
+                'name' => 'sp_portal_dashboard_farmer_rmrd_avg',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type='.$widget_type,
             ],
         ];
         return $array[$sp];
@@ -1869,6 +1883,21 @@ class SiteController extends Controller {
         $results = $this->getSpResult($sp);
         $res = [];
         foreach ($results[0] as $key => $value) {
+            $res[$key] = $value;
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $res];        
+    }
+
+    public function actionLoadDashboardFarmerRmrdData() {
+        $sp = Yii::$app->request->post('sp');
+        $results = $this->getSpResult($sp);
+        $res = [];
+        $array_result = $results[0];
+        if(count($results) > 1){
+            $array_result = $results;
+        }
+        foreach ($array_result as $key => $value) {
             $res[$key] = $value;
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

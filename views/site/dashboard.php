@@ -94,10 +94,27 @@ $refreshWidgets = [
 'monthly_milk_collection',
 'dashboard_blocks',
 'piechart_member_app',
-'calender'];
+'calender',
+'dashboard_farmer_rmrd_blocks',
+'dashboard_farmer_rmrd_avg'];
 
 $allowWidgets = $refreshWidgets;
 $refreshWidgets = json_encode($refreshWidgets);
+
+$widget_type = !empty($model->widget_type)?$model->widget_type:'';
+
+if($widget_type == 'farmer'){
+    $class_cols = "col-sm-3";
+    $display = "";
+    $table_heading1 = Yii::t('app', 'perfar');
+    $table_heading2 = Yii::t('app', 'perDCS');
+}
+if($widget_type == 'rmrd'){
+    $class_cols = "col-sm-4";
+    $display = "disp_none";
+    $table_heading1 = Yii::t('app', 'perMcc');
+    $table_heading2 = Yii::t('app', 'perSoc');
+}
 ?>
 <div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
     <div class="panel panel-default min_h_0">
@@ -127,7 +144,7 @@ $refreshWidgets = json_encode($refreshWidgets);
                         <?= Html::activeHiddenInput($model, 'widget_type', ['id'=>'hidden_widget_type']) ?>
                         <div class="col-sm-6">
                             <div class="switch-field">
-                                <input type="radio" id="radio-farmer" class="radio_widgit_type" name="widget_type" value="farmer" checked/>
+                                <input type="radio" id="radio-farmer" class="radio_widgit_type" name="widget_type" value="farmer"/>
                                     <label for="radio-farmer">Farmer</label>
                                 <input type="radio" id="radio-rmrd" class="radio_widgit_type" name="widget_type" value="rmrd" />
                                     <label for="radio-rmrd">RMRD</label>
@@ -188,31 +205,42 @@ $refreshWidgets = json_encode($refreshWidgets);
                     </div>
                 </div>
             <?php } else { ?>
-                <div class="col-sm-6 widget-tabbing">
-                    <div class="col-sm-6 text-center widget-tab society-compare active"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
-                    <div class="col-sm-6 text-center widget-tab bmc-compare"><?= Yii::t('app', 'BMC Milk Collection'); ?></div>
-                    <div class="flt">
-                        <div id="society-compare">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
-                            <div id="union_comparison_container" class="cont"></div>
-                        </div>
-                        <div id="bmc-compare">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'bmc_union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2', 'table_popup' => true, 'table_class' => 'bmc_union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection')]); ?>
-                            <div id="bmc_union_comparison_container" class="cont"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center widget-tab society-compare active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
+                        <div class="flt">
+                            <div id="society-compare">
+                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
+                                <div id="union_comparison_container" class="cont"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-6 widget-tabbing">
-                    <div class="col-sm-6 text-center widget-tab society-datewise active"><?= Yii::t('app', 'Society Milk Collection - Date Wise'); ?></div>
-                    <div class="col-sm-6 text-center widget-tab bmc-datewise"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
-                    <div class="flt">
-                        <div id="society-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
-                            <div id="union_datewise_container" class="cont"></div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center widget-tab bmc-compare active dashboard_widget_heading"><?= Yii::t('app', 'BMC Milk Collection'); ?></div>
+                        <div class="flt">
+                            <div id="bmc-compare">
+                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'bmc_union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2', 'table_popup' => true, 'table_class' => 'bmc_union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection')]); ?>
+                                <div id="bmc_union_comparison_container" class="cont"></div>
+                            </div>
                         </div>
-                        <div id="bmc-datewise">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
-                            <div id="bmc_union_datewise_container" class="cont"></div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center society-datewise active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection - Date Wise'); ?></div>
+                        <div class="flt">
+                            <div id="society-datewise">
+                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
+                                <div id="union_datewise_container" class="cont"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center bmc-datewise active dashboard_widget_heading"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
+                        <div class="flt">
+                            <div id="bmc-datewise">
+                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
+                                <div id="bmc_union_datewise_container" class="cont"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -498,39 +526,39 @@ $refreshWidgets = json_encode($refreshWidgets);
 <div id="chartToTable"></div>
 
 <div class="row farmer_rmrd_block">
-    <div class="col-sm-3">
+    <div class="<?=$class_cols?>">
         <div class="collection">
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'Union') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_union">3/13</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_union">0/0</h4>
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="<?=$class_cols?>">
         <div class="collection">                                
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'MCC') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_mcc">16/46</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_mcc">0/0</h4>
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="<?=$class_cols?>">
         <div class="collection">
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'DCS') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_dcs">53/873</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_dcs">0/0</h4>
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="<?=$class_cols.' '.$display?>">
         <div class="collection">
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'Farmer') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_farmer">619/27101</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_farmer">0/0</h4>
             </div>
         </div>
     </div>
@@ -539,7 +567,7 @@ $refreshWidgets = json_encode($refreshWidgets);
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'Quantity') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_quantity">443171.57</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_quantity">0.0</h4>
             </div>
         </div>
     </div>
@@ -548,7 +576,7 @@ $refreshWidgets = json_encode($refreshWidgets);
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'FATKG') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_fatkg">16992.56</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_fatkg">0.0</h4>
             </div>
         </div>
     </div>
@@ -557,7 +585,7 @@ $refreshWidgets = json_encode($refreshWidgets);
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'SNFKG') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_snfkg">23316.76</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_snfkg">0.0</h4>
             </div>
         </div>
     </div>
@@ -566,8 +594,52 @@ $refreshWidgets = json_encode($refreshWidgets);
             <div class="tbl-cell">
                 <p class="block_title"><?= Yii::t('app', 'Amount') ?></p>
                 <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="block_value" id="farmer_rmrd_block_amount">9205400.28</h4>
+                <h4 class="block_value" id="farmer_rmrd_block_amount">0.0</h4>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="table-responsive dashboard_tbl farmer_rmrd_tbl h450">
+    <div id="farmer_rmrd_tbl_container" class="cont milk-collection">
+        <div class="table-responsive dashboard_tbl h450">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><?= Yii::t('app', 'Data') ?></th>
+                        <th><?= $table_heading1?></th>
+                        <th><?= $table_heading2 ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Qty') ?></th>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg FAT') ?></th>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg SNF') ?></th>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Rate') ?></th>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Amount') ?></th>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -577,6 +649,14 @@ $refreshWidgets = json_encode($refreshWidgets);
 $script = "  
 
     $(window).load(function(){
+        if('".$widget_type."' == '' || '".$widget_type."' == 'farmer'){
+            $('#hidden_widget_type').val('farmer');
+            $('#radio-farmer').prop('checked', true);
+        }
+        else{
+            $('#hidden_widget_type').val('".$widget_type."');
+            $('#radio-rmrd').prop('checked', true);
+        }
         var position = '';
         var widgets = '" . $refreshWidgets . "';
         var widget = $.parseJSON(widgets);
@@ -593,7 +673,9 @@ $script = "
                 'monthly_milk_collection',
                 'dashboard_blocks',
                 'piechart_member_app',
-                'calender'].indexOf(value) == -1) 
+                'calender',
+                'dashboard_farmer_rmrd_blocks',
+                'dashboard_farmer_rmrd_avg'].indexOf(value) == -1) 
                 {
                     setChartWidgets(value);
                 }
@@ -631,6 +713,81 @@ $script = "
                     },
                     error:function(data){
                         //alert('Your data has not been submitted..Please try again');
+                    }
+                });
+            }
+            else if(['dashboard_farmer_rmrd_blocks'].indexOf(value) == 0){
+                var blockDataString = $('#collapse1 form').serialize();
+                var id= 'dashboard_farmer_rmrd_blocks';
+                var union= $('#dashboard-union_code').val();
+                var mcc= $('#dashboard-mcc_code').val();
+                var widget_type= $('#hidden_widget_type').val();
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
+                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc+'&widget_type='+widget_type,
+                    success: function(data) {
+                        var obj1 = data;
+                        if (obj1.status == 'success')
+                        {
+                            for (var key in obj1.res){
+                                if(obj1.res[key] == null){
+                                    obj1.res[key] = 0;
+                                }
+                            }
+                            $('#farmer_rmrd_block_union').text(obj1.res.pourerUnion+'/'+obj1.res.totalUnion);
+                            $('#farmer_rmrd_block_mcc').text(obj1.res.pourerMcc+'/'+obj1.res.totalMcc);
+                            $('#farmer_rmrd_block_dcs').text(obj1.res.pourerDcs+'/'+obj1.res.totalDcs);
+                            $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'/'+obj1.res.totalMember);
+                            $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty);
+                            $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
+                            $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
+                            $('#farmer_rmrd_block_amount').text(obj1.res.amount);
+                        }
+                    },
+                    error:function(data){
+                        //alert('Your data has not been submitted.Please try again');
+                    }
+                });
+            }
+            else if(['dashboard_farmer_rmrd_avg'].indexOf(value) == 0){
+                var blockDataString = $('#collapse1 form').serialize();
+                var id= 'dashboard_farmer_rmrd_avg';
+                var union= $('#dashboard-union_code').val();
+                var mcc= $('#dashboard-mcc_code').val();
+                var widget_type= $('#hidden_widget_type').val();
+                $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
+                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc+'&widget_type='+widget_type,
+                    success: function(data) {
+                        var obj1 = data;
+                        if (obj1.status == 'success')
+                        {
+                            for (var key in obj1.res){
+                                if(obj1.res[key] == null){
+                                    obj1.res[key] = 0;
+                                }
+                            }
+                            var table = $('#farmer_rmrd_tbl_container table tbody');
+                            var i = 0;
+                            Object.keys(obj1.res).forEach(function (key){
+                                var j = 0;
+                                if(obj1.res[key].colType == 'dcs'){
+                                    i = 1;
+                                }else{
+                                    i = 0; 
+                                }
+                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgQty);
+                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgFat);
+                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgSnf);
+                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgRate);
+                                table.find('tr:eq('+ j++ +')').find('td:eq('+i+')').text(obj1.res[key].avgAmount);
+                            });
+                        }
+                    },
+                    error:function(data){
+                        //alert('Your data has not been submitted.Please try again');
                     }
                 });
             }
@@ -932,35 +1089,35 @@ var chartModal = $('#chartModal').modal({
             ]
         });
     }
-$('#bmc-compare').hide();
-$('.society-compare').on('click',function() {
-    $('#society-compare').show();
-    $(this).addClass('active');
-    $('#bmc-compare').hide();
-    $('.bmc-compare').removeClass('active');
-});
-$('.bmc-compare').on('click',function() {
-    $('#bmc-compare').show();
-    $(this).addClass('active');
-    $('#society-compare').hide();
-    $('.society-compare').removeClass('active');
-});
+// $('#bmc-compare').hide();
+// $('.society-compare').on('click',function() {
+//     $('#society-compare').show();
+//     $(this).addClass('active');
+//     $('#bmc-compare').hide();
+//     $('.bmc-compare').removeClass('active');
+// });
+// $('.bmc-compare').on('click',function() {
+//     $('#bmc-compare').show();
+//     $(this).addClass('active');
+//     $('#society-compare').hide();
+//     $('.society-compare').removeClass('active');
+// });
 
 
         
-$('#bmc-datewise').hide();
-$('.society-datewise').on('click',function() {
-    $('#society-datewise').show();
-    $(this).addClass('active');
-    $('#bmc-datewise').hide();
-    $('.bmc-datewise').removeClass('active');
-});
-$('.bmc-datewise').on('click',function() {
-    $('#bmc-datewise').show();
-    $(this).addClass('active');
-    $('#society-datewise').hide();
-    $('.society-datewise').removeClass('active');
-});
+// $('#bmc-datewise').hide();
+// $('.society-datewise').on('click',function() {
+//     $('#society-datewise').show();
+//     $(this).addClass('active');
+//     $('#bmc-datewise').hide();
+//     $('.bmc-datewise').removeClass('active');
+// });
+// $('.bmc-datewise').on('click',function() {
+//     $('#bmc-datewise').show();
+//     $(this).addClass('active');
+//     $('#society-datewise').hide();
+//     $('.society-datewise').removeClass('active');
+// });
 $(document).ready(function(){
     $(document).on('click','.cross-tab-modal',function(e){
         $('#pageloader').show();

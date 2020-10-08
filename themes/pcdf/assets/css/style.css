@@ -2223,9 +2223,10 @@ div.crystalstyle{
 .widget_table_popup .widget_table_popup_icon{
     max-width: 20px;
     position: absolute;
-    right: 30px;
+    right: 15px;
     cursor: pointer;
-    color: rgb(58, 123, 213)
+    color:#fff;
+    top: 7px;
 }
 
 .hide_toolbar_only .kv-panel-before{
@@ -3230,4 +3231,21 @@ input[type="checkbox"]:after{
 
 .farmer_rmrd_block .collection .block_value {
     color: rgb(58, 123, 213);
+}
+
+.dashboard_tbl_heading{
+    background-color: #3a7bd5;
+    color: #fff;
+    width: 10%;
+}
+
+#farmer_rmrd_tbl_container .table-responsive{
+    overflow: hidden !important;
+}
+
+.dashboard_widget_heading{
+    background: #3a7bd5;
+    color: #fff;
+    padding: 4px;
+    margin: 0 0 5px;
 }
