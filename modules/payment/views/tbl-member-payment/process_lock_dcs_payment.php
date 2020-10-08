@@ -105,8 +105,8 @@ $tot_amt = array_sum(array_map(function($array) {
                         <?php foreach ($dataProvider->getModels() as $data) { ?>
                             <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
                         <?php } ?>
-                        <?= Html::button(Yii::t('app', 'Adjust'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
-                        <?= Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
+                        <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
+                        <?php //Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
                         <?php // Yii::$app->controls->save('Next', $model); ?>
                     <?php } ?>
                     <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?>        

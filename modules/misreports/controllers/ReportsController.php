@@ -450,6 +450,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'LocationWiseAssetMovement';
         return $this->actionIndex();
     }
+
     public function actionCustomerMaster() {
         $this->report = 'CustomerMaster';
         return $this->actionIndex();
@@ -472,8 +473,9 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionVehicleMaster() {
         $this->report = 'VehicleMaster';
-         return $this->actionIndex();
+        return $this->actionIndex();
     }
+
     public function actionSocietyCollectionData() {
         $this->report = 'SocietyCollectionData';
         return $this->actionIndex();
@@ -487,6 +489,16 @@ class ReportsController extends \app\controllers\ChildController {
             }
             if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
                 $this->report = 'BMCAutomationConsolidated';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPaymentDrafted() {
+        $this->report = 'MemberPaymentWithBank';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberPaymentWoBank';
             }
         }
         return $this->actionIndex();
@@ -1239,7 +1251,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Vehicle Master Register',
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
-            ],            
+            ],
             'SocietyCollectionData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'sp_mis_society_collection_data',
@@ -1266,6 +1278,21 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'BMCAutomationReport',
                 'title' => '208 - BMC Automation Report',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberPaymentWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_drafted_with_bank',
+                'scenario' => 'MemberPaymentDrafted',
+                'title' => '611 - Member Payment(Drafted)',
+                'to_decrypt' => ['Account No', 'IFSC'],
+                'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
+            ],
+            'MemberPaymentWoBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_drafted_wo_bank',
+                'scenario' => 'MemberPaymentDrafted',
+                'title' => '611 - Member Payment(Drafted)',
+                'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
             ],
         ];
         return $label[$l];
@@ -1308,7 +1335,7 @@ class ReportsController extends \app\controllers\ChildController {
                 if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
                     $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
                 }
-                if (is_numeric($value) && (float) $value <= 100000000) {
+                if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
                     echo "<td>" . $value . "</td>";
                 } else {
                     echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";

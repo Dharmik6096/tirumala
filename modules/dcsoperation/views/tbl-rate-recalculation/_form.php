@@ -39,7 +39,9 @@ if (!empty($rec_data) && $rtype == 'forced') {
     <div class="form-group">
         <?php if (!empty($rec_data)) { ?>
             <span class="btn_show">
-                <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+                <?php
+                echo Html::button(Yii::t('app', 'SAVE'), ['class' => 'btn btn-primary', 'id' => 'recalculation']);
+                ?>
             </span>
             <?= Yii::$app->controls->reset(); ?>
         <?php } ?>
@@ -53,9 +55,9 @@ if (!empty($rec_data) && $rtype == 'forced') {
             ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                'visible' => $rtype == 'forced' ? false : true,
+//                'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['value' => $model['code']];
+                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
                 }],
             ['attribute' => 'type', 'filter' => false],
             ['attribute' => 'code', 'filter' => false],
@@ -72,7 +74,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
+                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
                 }],
             ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
@@ -169,6 +171,16 @@ $script = "
                 });
         }
     }
+    
+    $('#recalculation').click(function() {
+        var len = $('input[class=\"checkbox-recalculation kv-row-checkbox\"]:checked').length;
+            if(len == 0){
+             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select at least one Collection.</span></div></div>');
+                return false;
+            } else {
+            $('#recalculation-form').submit();
+            }
+    });
 ";
 $this->registerJs($script, View::POS_END, 'rate-recalculation-script');
 ?>
