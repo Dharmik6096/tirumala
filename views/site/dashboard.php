@@ -104,15 +104,16 @@ $refreshWidgets = json_encode($refreshWidgets);
 
 $widget_type = !empty($model->widget_type)?$model->widget_type:'';
 
+$class_cols="col-sm-3";
+$display = "";
+$display_rmrd = "";
 if($widget_type == 'farmer'){
     $class_cols = "col-sm-3";
-    $display = "";
     $display_rmrd = "disp_none";
 }
 if($widget_type == 'rmrd'){
     $class_cols = "col-sm-4";
     $display = "disp_none";
-    $display_rmrd = "";
 }
 ?>
 <div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
