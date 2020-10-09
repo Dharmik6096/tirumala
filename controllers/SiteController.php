@@ -151,8 +151,11 @@ class SiteController extends Controller {
             $end_date = $today_date;
             $start_date = date('Y-m-d', strtotime("-1 months", strtotime($today_date)));
         }
-        $model->widget_type = Yii::$app->request->post('Dashboard')['widget_type'];
-        $model->mcc_code = Yii::$app->request->post('Dashboard')['mcc_code'];
+
+        $model->widget_type = isset(Yii::$app->request->post('Dashboard')['widget_type']) ? Yii::$app->request->post('Dashboard')['widget_type'] : 'farmer';
+        $model->mcc_code = isset(Yii::$app->request->post('Dashboard')['mcc_code']) ? Yii::$app->request->post('Dashboard')['mcc_code'] : '';
+        // var_dump(Yii::$app->request->post('Dashboard'));die;
+        $model->widgets = isset(Yii::$app->request->post('Dashboard')['widgets'])?Yii::$app->request->post('Dashboard')['widgets']:[];
         $model->date = $end_date;
         $plant_str = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
         $mcc_str = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;

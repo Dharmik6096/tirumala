@@ -3311,3 +3311,10 @@ input[type="checkbox"]:after{
 .farmer_rmrd_block .background_half_block .block_value{
     text-align: center !important;
 }
+
+/* .farmer_rmrd_block .col-sm-3,
+.farmer_rmrd_block .col-sm-4,
+.dashboard_farmer_status .col-sm-3,
+.dashboard_farmer_status .col-sm-6{
+    padding: 0px;
+} */
