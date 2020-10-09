@@ -2311,7 +2311,7 @@ div.crystalstyle{
     position: absolute;
     top: 102px;
     z-index: 9;
-    right: 25px;
+    right: 14px;
 }
 
 #menu_buttons ul {
@@ -2732,6 +2732,7 @@ td.action-cell{
 
 .dropdown-menu{
     font-size: 11px !important;
+    margin:0px !important;
 }
 
 .sortable{
@@ -3310,6 +3311,12 @@ input[type="checkbox"]:after{
 .farmer_rmrd_block .background_half_block .block_other_info,
 .farmer_rmrd_block .background_half_block .block_value{
     text-align: center !important;
+}
+.widgets_checkbox{
+    background: #05cbfc;
+    border: 1px solid;
+    padding: 3px 0 0 6px;
+    margin: 0px !important;
 }
 
 /* .farmer_rmrd_block .col-sm-3,

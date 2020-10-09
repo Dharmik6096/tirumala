@@ -1,7 +1,6 @@
 <?php
 $this->title = 'Dashboard';
 
-use kartik\sortable\Sortable;
 use Symfony\Component\Console\Input\Input;
 use yii\helpers\Html;
 use yii\web\View;
@@ -86,6 +85,7 @@ $refreshWidgets = [
 'bmc_union_comparison',
 'bmc_union_datewise',
 'milk_coll_widget',
+'BmcWiseCrossTab',
 'bmc_coll_widget',
 'bmc_dispatch_widget',
 'reconciliation_chart_widget',
@@ -101,9 +101,12 @@ $refreshWidgets = [
 'dashboard_farmer_rmrd_avg',
 'dashboard_farmer_status'];
 
-$allWidgets = $refreshWidgets;
-$selected_widgets = isset($model->widgets) ? $model->widgets : [];
-$refreshWidgets = json_encode($refreshWidgets);
+$selected_widgets = !empty($model->widgets) ? $model->widgets : [];
+$unselected_widgets = array_diff($refreshWidgets, $selected_widgets);
+$allWidgets = $selected_widgets;
+$allWidgets = array_merge($allWidgets,$unselected_widgets);
+
+$lazy_loading_widgets = json_encode($selected_widgets);
 
 $widget_type = !empty($model->widget_type)?$model->widget_type:'';
 
@@ -161,19 +164,19 @@ if($widget_type == 'rmrd'){
                             <?php echo Html::hiddenInput('load_all', true, ['id' => 'load_all']); ?>
                             <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false,false,false);?>
                         </div>
+                        <div class="clearfix"></div>
                         <?php
-
-                            $checkboxes =  $form->field($model, 'widgets[]')->checkboxList(
+                        echo $form->field($model, 'widgets[]')->checkboxList(
                                     $allWidgets, [
                                 'id' => 'widgets-list',
-                                'class' => 'row',
-                                'item' =>
+                                'class' => 'row sortable',
+                                'item' => 
                                 function ($index, $label, $name, $checked, $value) use ($allWidgets, $selected_widgets, $model) {
                     //                var_dump(count($map_model));exit;
                                     $checked = in_array($label, $selected_widgets);
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
                                     // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
+                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
                                                 'value' => $label,
                                                 'label' => '<label for="' . $label . '">' . $label . '</label>',
                                                 'labelOptions' => [
@@ -185,16 +188,7 @@ if($widget_type == 'rmrd'){
                                 },
                                             ]
                                     )->label(false);
-
-                                echo Sortable::widget([
-                                    'type' => Sortable::TYPE_LIST,
-                                    'items' => function() use ($checkboxes){
-                                        foreach ($checkboxes as $key => $value) {
-                                            ['content' => $value];
-                                        }
-                                    }
-                                ]); 
-                                    ?>
+                                ?>
                         <div class="col-sm-12 filt_btn">
                             <?= Yii::$app->controls->search(); ?>
                         </div>
@@ -209,7 +203,6 @@ if($widget_type == 'rmrd'){
     <div class="panel-body">
         <div class="row">
             <?php if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
-                <?php if(in_array('fed_union',$selected_widgets)){?>
                     <div class="col-sm-6">
                         <div class="flt">
                             <?=
@@ -222,8 +215,6 @@ if($widget_type == 'rmrd'){
                             <div id="fed_union_container" class="cont"></div>
                         </div>
                     </div>
-                <?php
-                } if(in_array('fed_comparison',$selected_widgets)){?>
                     <div class="col-sm-6">
                         <div class="flt">
                             <?=
@@ -237,8 +228,6 @@ if($widget_type == 'rmrd'){
                             <div id="fed_comparison_container" class="cont"></div>
                         </div>
                     </div>
-                <?php } 
-                if(in_array('fed_datewise',$selected_widgets)){?>
                     <div class="clearfix"></div>
                     <div class="col-sm-12">
                         <div class="flt">
@@ -246,20 +235,17 @@ if($widget_type == 'rmrd'){
                             <div id="fed_datewise_container" class="cont"></div>
                         </div>
                     </div>
-            <?php } } else { ?>
+            <?php } else { ?>
                 <div class="row">
-                    <?php if(in_array('union_comparison',$selected_widgets)){?>
-                        <div class="col-sm-6">
-                            <div class="col-sm-12 text-center widget-tab society-compare active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
-                            <div class="flt">
-                                <div id="society-compare">
-                                    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
-                                    <div id="union_comparison_container" class="cont"></div>
-                                </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center widget-tab society-compare active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
+                        <div class="flt">
+                            <div id="society-compare">
+                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
+                                <div id="union_comparison_container" class="cont"></div>
                             </div>
                         </div>
-                    <?php } 
-                    if(in_array('bmc_union_comparison',$selected_widgets)){?>
+                    </div>
                     <div class="col-sm-6">
                         <div class="col-sm-12 text-center widget-tab bmc-compare active dashboard_widget_heading"><?= Yii::t('app', 'BMC Milk Collection'); ?></div>
                         <div class="flt">
@@ -269,277 +255,35 @@ if($widget_type == 'rmrd'){
                             </div>
                         </div>
                     </div>
-                    <?php } 
-                    if(in_array('union_datewise',$selected_widgets)){?>
-                        <div class="col-sm-6">
-                            <div class="col-sm-12 text-center society-datewise active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection - Date Wise'); ?></div>
-                            <div class="flt">
-                                <div id="society-datewise">
-                                    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
-                                    <div id="union_datewise_container" class="cont"></div>
-                                </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center society-datewise active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection - Date Wise'); ?></div>
+                        <div class="flt">
+                            <div id="society-datewise">
+                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
+                                <div id="union_datewise_container" class="cont"></div>
                             </div>
                         </div>
-                    <?php } 
-                    if(in_array('bmc_union_datewise',$selected_widgets)){?>
-                        <div class="col-sm-6">
-                            <div class="col-sm-12 text-center bmc-datewise active dashboard_widget_heading"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
-                            <div class="flt">
-                                <div id="bmc-datewise">
-                                    <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
-                                    <div id="bmc_union_datewise_container" class="cont"></div>
-                                </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center bmc-datewise active dashboard_widget_heading"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
+                        <div class="flt">
+                            <div id="bmc-datewise">
+                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
+                                <div id="bmc_union_datewise_container" class="cont"></div>
                             </div>
                         </div>
-                    <?php } ?>
+                    </div>
                 </div>
             <?php } ?>
         </div>
-        <!-- <div class="clearfix mt25"></div>       -->
-        <div class="row">
-            <div class="col-sm-6">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'milk_coll_widget_container', 'diff_sp_name' => 'milk_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'milk_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Milk Collection')]); ?>
-                <div id="milk_coll_widget_container" class="cont">
-                    <!-- <div class="milk_coll_widget_container">
-                        <div id="milk_coll_widget_container" class="cont chart_type widget_two_bar_chart"></div>
-                        <div id="milk_coll_widget_container_table" class="cont table_type table-responsive widget_two_table_data">
-                            <table cellpadding="1" cellspacing="1" class="table milk_coll_widget_container">
-                                <thead>
+        <?php
+            if (!empty($selected_widgets)) {
+                foreach ($selected_widgets as $key => $value) {
+                    echo $this->render('widget_dashboard_'.$value, ['model' => $model, 'date' => $date, 'table_url'=> $table_url, 'container_url'=>$container_url,'class_cols' => $class_cols,'display' => $display,'display_rmrd' => $display_rmrd]);
+                }
+            }
+        ?>
 
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> -->
-                </div>
-                <!-- <div id="container5" class="cont"></div> -->
-            </div>
-            <div class="col-sm-6">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'bmc_coll_widget_container', 'diff_sp_name' => 'bmc_coll_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_coll_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Collection')]); ?>
-                <div id="bmc_coll_widget_container" class="cont">
-                    <!-- <div class="bmc_coll_widget_container">
-                        <div id="bmc_coll_widget_container" class="cont chart_type widget_two_bar_chart"></div>
-                        <div id="bmc_coll_widget_container_table" class="cont table_type table-responsive widget_two_table_data">
-                            <table cellpadding="1" cellspacing="1" class="table bmc_coll_widget_container">
-                                <thead>
-
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> -->
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'bmc_dispatch_widget_container', 'diff_sp_name' => 'bmc_dispatch_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'bmc_dispatch_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Dispatch')]); ?>
-                <div id="bmc_dispatch_widget_container" class="cont">
-                    <!-- <div class="bmc_dispatch_widget_container">
-                        <div id="bmc_dispatch_widget_container" class="cont chart_type widget_two_bar_chart"></div>
-                        <div id="bmc_dispatch_widget_container_table" class="cont table_type table-responsive widget_two_table_data">
-                            <table cellpadding="1" cellspacing="1" class="table bmc_dispatch_widget_container">
-                                <thead>
-
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> -->
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="milk-collection">
-                    <div class="table-responsive dashboard_tbl">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th colspan="4">Monthly Milk Collection</th> 
-                                </tr>
-                            </thead>
-                            <thead>
-                                <tr>
-                                    <th><?= Yii::t('app', 'Union') ?></th>
-                                    <th>Villages</th>
-                                    <th>No of Pourers</th>
-                                    <th>Monthly Milk Collection(ltr)</th>
-                                </tr>
-                            </thead>
-                            <?php
-                            if (!empty($monthly_milk_collection)) {
-                                foreach ($monthly_milk_collection as $milk_collection) {
-                                    ?>
-                                    <tr>
-                                        <td><?= $milk_collection['union_name'] ?></td>
-                                        <td><?= $milk_collection['dcs_name'] ?></td>
-                                        <td><?= $milk_collection['Member_Count'] ?></td>
-                                        <td><?= $milk_collection['Qty'] ?></td>
-                                    </tr>
-                                    <?php
-                                }
-                            } else {
-                                ?>
-                                <tr><td colspan="4">Data not available.</td></tr>
-                            <?php } ?>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p><?= Yii::t('app', 'No. of Societies') ?></p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4 id="no_of_societies"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0 ?></h4>
-                        <p><b>M:</b> <span id="no_of_societies_M"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_M'] : 0 ?></span> | <b>E:</b> <span id="no_of_societies_E"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count_E'] : 0 ?></span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="collection">                                
-                    <div class="tbl-cell">
-                        <p>No. of Pourers</p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4 id="no_of_pourers"><?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Total_Member'] : 0 ?></h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p><?= Yii::t('app', 'Collection vs Installed') ?></p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h4 id="collection_vs_installed"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Install_Count'] : 0) ?></h4></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p><?= Yii::t('app', 'Collection vs Dispatch') ?></p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h4 id="collection_vs_dispatch"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_Count'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) ?></h4></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p><?= Yii::t('app', 'Dispatch vs Receipt') ?></p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h3 id="dispatch_vs_receipt"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p>Total Milk Collection(ltr)</p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3 id="total_milk_collection_ltr"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_avg_snf'] . '</span>' : 0 ?></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p>Total Milk Dispatch(ltr)</p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h3 id="total_milk_dispatch_ltr"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['UnionDisQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['UnionDisQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['union_dis_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['union_dis_avg_snf'] . '</span>' : 0 ?></h3>
-                        <p><b>M:</b> <span id="total_milk_dispatch_M"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['Dcs_DisQty_M']) ? $dashboard_blocks[0]['Dcs_DisQty_M'] : 0 ?></span> | <b>E:</b><span id="total_milk_dispatch_E"> <?= !empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_E'] : 0 ?></span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <p>Total BMC Collection(ltr)</p>
-                        <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <h4 id="total_bmc_collection_ltr"><?= !empty($dashboard_blocks) && !empty($dashboard_blocks[0]['BmcQty']) ? '<span title=\'Quantity\'>' . $dashboard_blocks[0]['BmcQty'] . '</span>/<span title=\'Avg. FAT\'>' . $dashboard_blocks[0]['bmc_avg_fat'] . '</span>/<span title=\'Avg. SNF\'>' . $dashboard_blocks[0]['bmc_avg_snf'] . '</span>' : 0 ?></h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">            
-            <div class="col-sm-12">
-                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'w0', 'type' => 'column', 'title' => '', 'url' => '', 'container' => 'reconciliation_chart_widget_container', 'diff_sp_name' => 'reconciliation_chart_widget', 'table_pop_up_only' => true, 'table_popup' => true, 'table_class' => 'reconciliation_chart_widget', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Reconciliation Chart')]); ?>
-                <div id="reconciliation_chart_widget_container" class="cont"></div>
-            </div>            
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="cal-header">Avg. FAT, Avg. SNF and Qty for</div>
-                <div id="calendar"></div>
-            </div>
-            <div class="col-sm-6">
-                <div class="cal-header"><?= Yii::t('app', 'BMC Wise Data Receipt Status'); ?></div>
-                <div class="flt">
-                    <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_cross_tab', ['model' => $model, 'id' => 'BmcWiseCrossTab', 'container' => 'BmcWiseCrossTab', 'date_range' => true, 'date_range_class' => 'col-sm-4', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'range_id1' => 'cross_tab_dt1', 'range_id2' => 'cross_tab_dt2']); ?>
-                        <div id="BmcWiseCrossTab_container" class="cont milk-collection"></div>
-                    </div>
-                </div>
-            </div>
-            <!--            <div class="col-sm-6">
-                            <div id="map_div"></div>
-                        </div>-->
-        </div>
-        <div class="row">            
-            <div class="col-sm-12">
-                <div class="cal-header"><?= Yii::t('app', 'Milk Collection'); ?></div>
-                <div class="flt">
-                    <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'table_milk_collection', 'url' => $container_url, 'container' => 'table_milk_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'milk_coll_mcc', 'bmc_code' => 'milk_coll_bmc', 'dcs_code' => true, 'from_date_id' => 'milk_coll_from_date', 'to_date_id' => 'milk_coll_to_date', 'bmc_class' => 'col-sm-1', 'mcc_class' => 'col-sm-1', 'dcs_class' => 'col-sm-1', 'date_picker_class'=> 'col-sm-1', 'shift_class' => 'col-sm-1']); ?>
-                        <div id="table_milk_collection_container"  class="milk-collection mt0 cont"></div>
-                    </div>         
-                </div>
-            </div>
-        </div>
-        <div class="row">            
-            <div class="col-sm-6">
-                <div class="cal-header"><?= Yii::t('app', 'Collection Status Manual vs Auto'); ?></div>
-                <div class="flt">
-                    <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'manual_vs_auto_collection', 'url' => $container_url, 'container' => 'manual_vs_auto_collection', 'from_date' => true, 'to_date' => true, 'from_shift' => true, 'to_shift' => true, 'union_code' => true, 'plant_code' => true, 'mcc_code' => 'coll_status_mcc', 'bmc_code' => 'coll_status_bmc', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-2', 'mcc_class' => 'col-sm-2', 'bmc_class' => 'col-sm-2']); ?>
-                        <div id="manual_vs_auto_collection_container"  class="milk-collection mt0 cont"></div>
-                    </div>         
-                </div>
-            </div>         
-            <div class="col-sm-6">
-                <div class="cal-header">
-                    <?php
-                    $search_date = Yii::$app->controls->view_date($date);
-                    echo $search_date . ' ' . Yii::t('app', 'Dispatch vs Receipt');
-                    ?>
-                </div>
-                <div class="flt">
-                    <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'dipatch_vs_receipt', 'url' => $container_url, 'container' => 'dipatch_vs_receipt', 'hidden_from_date' => $search_date, 'hidden_to_date' => $search_date, 'union_code' => true, 'mcc_code' => 'dispatch_vs_receipt', 'from_date_id' => 'coll_status_from_date', 'to_date_id' => 'coll_status_to_date', 'mcc_class' => 'col-sm-3']); ?>
-                        <div id="dipatch_vs_receipt_container"  class="milk-collection mt0 cont div_height495"></div>
-                    </div>         
-                </div>
-            </div>
-        </div>
-        <div class="row">            
-            <div class="col-sm-6">
-                <div class="cal-header"><?= Yii::t('app', 'BMC Collection Summary'); ?></div>
-                <div class="flt">
-                    <div id="society-compare">
-                        <?= $this->render('_dashborad_filter_rls', ['model' => $model, 'id' => 'bmc_collection_summary', 'url' => $container_url, 'container' => 'bmc_collection_summary', 'from_date' => true, 'to_date' => false, 'from_shift' => true, 'to_shift' => false, 'from_date_id' => 'bmc_collection_summary_from_date', 'to_date_id' => 'coll_status_to_date', 'date_picker_class' => 'col-sm-3', 'shift_class' => 'col-sm-3']); ?>
-                        <div id="bmc_collection_summary_container"  class="milk-collection mt0 cont"></div>
-                    </div>         
-                </div>
-            </div>         
-        </div>
     </div>
 </div>
 <div id="chartModal" class="modal fade" role="dialog">
@@ -574,204 +318,9 @@ if($widget_type == 'rmrd'){
 <div id="crossTabDetails"></div>
 <div id="chartToTable"></div>
 
-<div class="row farmer_rmrd_block">
-    <div class="<?=$class_cols?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'Union') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">            
-                <h4 class="block_value" id="farmer_rmrd_block_union">0/0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols?>">
-        <div class="collection">                                
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'MCC') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_mcc">0/0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'DCS') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_dcs">0/0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols.' '.$display_rmrd?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'Bulk Vendor') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_blk_vendor">0/0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols.' '.$display_rmrd?>">
-        <div class="collection ">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'VLCC Vendor') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_vlcc_vendor">0/0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols.' '.$display?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'Farmer') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_farmer">0/0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'Quantity') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_quantity">0.0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'FATKG') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_fatkg">0.0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'SNFKG') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_snfkg">0.0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="<?=$class_cols?>">
-        <div class="collection">
-            <div class="col-sm-6 background_half_block">
-                <p class="block_title"><?= Yii::t('app', 'Amount') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6 background_half_two_block">
-                <h4 class="block_value" id="farmer_rmrd_block_amount">0.0</h4>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="table-responsive dashboard_tbl farmer_rmrd_tbl h450">
-    <div id="farmer_rmrd_tbl_container" class="cont milk-collection disp_none">
-        <div class="table-responsive dashboard_tbl h450">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th><?= Yii::t('app', 'Data') ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Qty') ?></th>
-                    </tr>
-                    <tr>
-                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg FAT') ?></th>
-                    </tr>
-                    <tr>
-                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg SNF') ?></th>
-                    </tr>
-                    <tr>
-                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Rate') ?></th>
-                    </tr>
-                    <tr>
-                        <th class="dashboard_tbl_heading"><?= Yii::t('app', 'Avg Amount') ?></th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-<div class="row dashboard_farmer_status <?= $display_rmrd?>">
-    <div class="col-sm-6">
-        <div class="collection background_light">
-            <div class="col-sm-6">
-                <p class="block_title">Active <?= Yii::t('app', 'DCS') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6">            
-                <h4 class="block_value" id="dashboard_farmer_status_active_dcs">0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        <div class="collection background_dark">                                
-            <div class="col-sm-6">
-                <p class="block_title">Installed <?= Yii::t('app', 'DCS') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6">
-                <h4 class="block_value" id="dashboard_farmer_status_installed_dcs">0</h4>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        <div class="collection background_dark">
-            <div class="col-sm-6">
-                <p class="block_title">Online <?= Yii::t('app', 'DCS') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6">
-                <h4 class="block_value" id="dashboard_farmer_status_online_dcs">0</h4>
-                <p class="block_other_value">M:<span id="dashboard_farmer_status_online_dcs_m">0</span>|E:<span id="dashboard_farmer_status_online_dcs_e">0</span></p>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        <div class="collection background_light">
-            <div class="col-sm-6">
-                <p class="block_title">Offline <?= Yii::t('app', 'DCS') ?></p>
-                <p class="block_other_info"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            </div>
-            <div class="col-sm-6">
-                <h4 class="block_value" id="dashboard_farmer_status_offline_dcs">0</h4>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <?php
 $script = "  
-
+$( '.sortable' ).sortable();
     $(window).load(function(){
         if('".$widget_type."' == '' || '".$widget_type."' == 'farmer'){
             $('#hidden_widget_type').val('farmer');
@@ -782,7 +331,7 @@ $script = "
             $('#radio-rmrd').prop('checked', true);
         }
         var position = '';
-        var widgets = '" . $refreshWidgets . "';
+        var widgets = '" . $lazy_loading_widgets . "';
         var widget = $.parseJSON(widgets);
         $.each(widget, function(index, value) {
             var datastring = $('form#'+value).serialize();
@@ -800,7 +349,7 @@ $script = "
                 'calender',
                 'dashboard_farmer_rmrd_blocks',
                 'dashboard_farmer_status',
-                'dashboard_farmer_rmrd_avg'].indexOf(value) == -1) 
+                'dashboard_farmer_rmrd_avg','BmcWiseCrossTab'].indexOf(value) == -1) 
                 {
                     setChartWidgets(value);
                 }
