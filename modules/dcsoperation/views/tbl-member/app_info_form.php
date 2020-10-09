@@ -39,35 +39,37 @@ $form = ActiveForm::begin(['options' => [
                         <div class="col-md-12 padding-left-0"><b><?= Yii::t('app', 'Device Name') ?>:</b> <?= !empty($appInfo) ? $appInfo->device_detail : 'N/A' ?></div>
                     </div> 
                     <div class="clearfix"></div>
-                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-top-10 clearfix">
-                        <h5 class="theme-box-heading"><?php echo Yii::t('app', 'Notification Detail'); ?></h5>
-                    </div>
-                    <table  class="table table-bordered table-striped table-main table-language">
-                        <thead>
-                            <tr>
-                                <th><?= Yii::t('app', 'Tittle') ?></th>
-                                <th><?= Yii::t('app', 'Message') ?></th>
-                                <th><?= Yii::t('app', 'Datetime') ?></th>
-                                <th><?= Yii::t('app', 'Status') ?></th>
-                            </tr> 
-                        </thead>
-                        <?php
-                        if (!empty($alertInfo)) {
-                            $i = 0;
-                            foreach ($alertInfo as $alertData) {
-                                ?>
+                    <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                            <h4 class="theme-box-heading"><?= Yii::t('app', 'Notofication Details') ?></h4>
+                        </div>
+                        <table  class="table table-bordered table-responsive table-hover table-striped table-main table-language">
+                            <thead>
                                 <tr>
-                                    <td><?= $alertData->header_info ?></td>
-                                    <td><?= $alertData->message ?></td>
-                                    <td><?= Yii::$app->controls->view_datetime($alertData->entry_datetime) ?></td>
-                                    <td><?= $alertData->send_status == 2 ? 'Delivered' : ($alertData->send_status == 3 ? 'Failed' : 'Pending') ?></td>
-                                </tr>
-                                <?php
-                                $i++;
+                                    <th><?= Yii::t('app', 'Tittle') ?></th>
+                                    <th><?= Yii::t('app', 'Message') ?></th>
+                                    <th><?= Yii::t('app', 'Datetime') ?></th>
+                                    <th><?= Yii::t('app', 'Status') ?></th>
+                                </tr> 
+                            </thead>
+                            <?php
+                            if (!empty($alertInfo)) {
+                                $i = 0;
+                                foreach ($alertInfo as $alertData) {
+                                    ?>
+                                    <tr>
+                                        <td><?= $alertData->header_info ?></td>
+                                        <td><?= $alertData->message ?></td>
+                                        <td><?= Yii::$app->controls->view_datetime($alertData->entry_datetime) ?></td>
+                                        <td><?= $alertData->send_status == 2 ? 'Delivered' : ($alertData->send_status == 3 ? 'Failed' : 'Pending') ?></td>
+                                    </tr>
+                                    <?php
+                                    $i++;
+                                }
                             }
-                        }
-                        ?>
-                    </table>
+                            ?>
+                        </table>
+                    </div>
                 </div>
 
                 </br>

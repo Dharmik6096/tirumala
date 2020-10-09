@@ -481,7 +481,7 @@ h5 .badge{
 .panel-main .panel-body .grid-search .btn, 
 .panel-main .panel-body .grid-search-padding .form-group,
 .panel-main .panel-body .grid-search-padding .btn{
-    margin: 7px 0;
+    margin: 5px 0;
 }
 .panel-main .panel-body .grid-search .help-block{
     height: auto;
@@ -1081,16 +1081,19 @@ input[type="hidden"] + .help-block{
 }
 /*alerts*/
 @media(min-width: 768px){
+    .bootbox .modal-dialog,
     .bootbox-alert .modal-dialog,
     .bootbox-confirm .modal-dialog,
     .modal-sm{
         width: 350px;
     }
 }
+.bootbox .modal-content,
 .bootbox-alert .modal-content,
 .bootbox-confirm .modal-content{
     border-radius: 0;
 }
+.bootbox .bootbox-close-button,
 .bootbox-alert .bootbox-close-button,
 .bootbox-confirm .bootbox-close-button,
 .modal .close{
@@ -1109,10 +1112,18 @@ input[type="hidden"] + .help-block{
     padding-left: 6px;
     padding-right: 6px;
 }
+.bootbox .bootbox-body{
+    text-align: center;
+}
+.bootbox .modal-body,
 .bootbox-alert .modal-body,
 .bootbox-confirm .modal-body{
     padding: 0 0 10px !important;
 }
+
+.bootbox .bootbox-body .bg-danger,
+.bootbox .bootbox-body .bg-info,
+.bootbox .bootbox-body .bg-success,
 .bootbox-alert .bootbox-body .bg-danger,
 .bootbox-alert .bootbox-body .bg-info,
 .bootbox-alert .bootbox-body .bg-success,
@@ -1122,6 +1133,7 @@ input[type="hidden"] + .help-block{
     padding: 9px;
     margin-bottom: 10px;
 }
+.bootbox .bootbox-body i,
 .bootbox-alert .bootbox-body i,
 .bootbox-confirm .bootbox-body i{
     font-size: 25px;
@@ -1132,6 +1144,14 @@ input[type="hidden"] + .help-block{
     /* line-height: 46px; */
     border-radius: 50%;
 }
+.bootbox .bootbox-body span{
+    display: block;
+    padding: 0px 15px;
+    text-align: left;
+}
+/* .bootbox .bootbox-body .row .col-sm-12:not(.bootbox-confirm):not(.bootbox-alert){
+    padding: 0px;
+} */
 .bootbox-alert .bootbox-body span,
 .bootbox-confirm .bootbox-body span{
     display: block;
@@ -1143,6 +1163,7 @@ input[type="hidden"] + .help-block{
     border-top: 0;
     text-align: center;
 }
+.bootbox .btn,
 .bootbox-alert .modal-footer .btn,
 .bootbox-confirm .modal-footer .btn{
     margin: 0 4px;
@@ -2034,7 +2055,7 @@ ul.orderable label.checked {
     margin: 0;
 }
 .wd60{
-    width: 60px;
+    /* width: 60px; */
 }
 .kyc-box{
     min-height: 100px;
@@ -2309,7 +2330,7 @@ div.crystalstyle{
 
 #menu_buttons {
     position: absolute;
-    top: 102px;
+    top: 105px;
     z-index: 9;
     right: 14px;
 }
@@ -2999,7 +3020,8 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .table-hover thead tr th,
 .table-hover thead tr th a{
     color: white !important;
-    padding-top: 4px !important;
+    padding: 6px 0 2px !important;
+    text-align: center;
 }
 .table-hover thead tr.filters.skip-export {
     background-color: #ffffff !important;

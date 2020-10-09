@@ -273,7 +273,7 @@ class Grid extends Widget {
                                     $id = $flag . ',' . $model->{$details['field']};
                                     $VURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '1']);
                                     $RURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '2']);
-                                    $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify bank details ?' . $name . '<br/> Bank : ' . $bank . '<br/> Branch : ' . $branch . '<br/> Acc. No. : ' . $model->bank_account_no . '<br/> IFSC : ' . $model->ifsc . '</span></div></div > ';
+                                    $message = '<div class = \"row\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify bank details ?' . $name . '<br/> Bank : ' . $bank . '<br/> Branch : ' . $branch . '<br/> Acc. No. : ' . $model->bank_account_no . '<br/> IFSC : ' . $model->ifsc . '</span></div>';
                                     $options = ['data-name' => $model->bank_account_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Bank Detail',
                                         'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
                                     return GhostHtml::a('<i class="fa fa-bank"></i>', $VURL, $options);
@@ -309,7 +309,7 @@ class Grid extends Widget {
                                     $id = $flag . ',' . $model->{$details['field']};
                                     $VURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '1']);
                                     $RURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '2']);
-                                    $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify Contact details ?' . $name . '<br/> Mobile No. : ' . $model->mobile_no . '</span></div></div > ';
+                                    $message = '<div class=\'row\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to verify Contact details ?' . $name . '<br/> Mobile No. : ' . $model->mobile_no . '</span></div>';
                                     $options = ['data-name' => $model->mobile_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Contact Detail',
                                         'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
                                     return GhostHtml::a('<i class="fa fa-phone-square"></i>', $VURL, $options);

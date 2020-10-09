@@ -22,7 +22,6 @@ $form = ActiveForm::begin([
             'fieldConfig' => [
         ]]);
 ?>
-<h5 class="panel-subtitle"></h5>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-2">

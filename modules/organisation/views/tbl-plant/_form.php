@@ -106,7 +106,7 @@ $form = ActiveForm::begin([
     <?php } ?>
 
 
-    <div class="col-sm-2">
+    <div class="col-sm-2 mt10">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>
