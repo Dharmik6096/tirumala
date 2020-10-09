@@ -67,7 +67,7 @@ $action = Url::to(['update-transit-loss']);
     Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['#'], false);
     ?>
 </div>
-<div class="panel-footer" >
+<div class="col-sm-2 mt10" >
     <?php
     if (!empty($dataProvider->getModels())) {
         echo Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust']);

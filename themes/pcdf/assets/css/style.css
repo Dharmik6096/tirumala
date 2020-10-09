@@ -3358,3 +3358,14 @@ input[type="checkbox"]:after{
 .dropdown-menu > li > a {
     padding: 2px 6px !important;
 }
+
+.label_heading{
+    color: #3a7bd5;
+}
+.pt5{
+    padding-top: 5px;
+}
+
+.pt5 .kv-panel-before{
+    padding-top: 0px !important;
+}

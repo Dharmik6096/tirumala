@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 ?>
 
-<div class="">
+<div class="pt5">
 <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 

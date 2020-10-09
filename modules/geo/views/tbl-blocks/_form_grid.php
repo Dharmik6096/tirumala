@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
-<div class="grid-search">
+<div class="pt5">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 

@@ -9,7 +9,7 @@ use yii\helpers\Url;
 $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', 'DPU Passwords');
 ?>
-<div class="grid-search">
+<div class="">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 <?php
@@ -66,7 +66,7 @@ $form = ActiveForm::begin(['options' => [
         </tbody>
     </table>
 </div>
-<div class="shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+<div class="col-sm-2 mt10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <?php
     if (!empty($dataProvider->getModels())) {
         echo Yii::$app->controls->save($button, $model[0]);

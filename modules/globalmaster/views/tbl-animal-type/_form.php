@@ -22,10 +22,10 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'short_name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="col-sm-2 mt15">
+    <div class="col-sm-1 mt15">
         <?= $form->field($model, 'is_milch', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-2 mt15">
+    <div class="col-sm-1 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     

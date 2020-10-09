@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code','Union'); ?>
     </div>
 
     <div class="col-sm-2">

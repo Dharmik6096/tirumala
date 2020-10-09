@@ -58,7 +58,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'email_body')->textarea(['rows' => 6]) ?>
         </div>
     
-        <div class="col-sm-2 mt25">
+        <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->active($model, $form); ?>
         </div>
     </div>

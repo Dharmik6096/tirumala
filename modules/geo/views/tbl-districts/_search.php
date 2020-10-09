@@ -11,7 +11,7 @@ $form = ActiveForm::begin([
             'method' => 'get',
         ]);
 ?>
-<div class="col-sm-3">
+<div class="col-sm-2">
     <?php Yii::$app->dropdown->state($model, $form, 'state_code', false); ?>
 </div>
 <div class="col-sm-2">
