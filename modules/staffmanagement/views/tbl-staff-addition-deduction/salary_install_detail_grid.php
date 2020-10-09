@@ -24,7 +24,6 @@ $form = ActiveForm::begin(['options' => [
         ]);
 ?>
 <div class="panel-subheading">
-    <h5 class="panel-subtitle"></h5>
     <div class="row">
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-main table-language">

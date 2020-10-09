@@ -34,7 +34,7 @@ $form = ActiveForm::begin(['options' => [
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                     <h4 class="theme-box-heading">Head load</h4>
                 </div>
-                    <div class="col-sm-12" id="union">
+                    <div class="col-sm-2" id="union">
                         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $disabled); ?>
                     </div>
                     <?php //Yii::$app->dropdown->dropdown('criteria_type_code', $model, $form, 'form-group col-sm-3', 'Criteria Type', $disabled); ?>
@@ -93,7 +93,7 @@ $form = ActiveForm::begin(['options' => [
     </div>
     </div>
 </div>
-<div class=" shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+<div class=" shortcut-main padding_top_20" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <?= Yii::$app->controls->save($button, $model); ?>
     <?= Html::button(Yii::t('app', 'reset'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+r', 'onClick' => 'window.location.reload();']); ?>
     <?= Yii::$app->controls->cancel($model, 'tbl-head-load/index'); ?>

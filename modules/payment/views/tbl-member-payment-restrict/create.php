@@ -29,10 +29,10 @@ $defaultToggle = true;
         <?php echo $form->errorSummary($saveModel); ?>
         <div class="panel-body set_checkbox padding_top_0 tbl_border">
 
-            <div class="grid-search search-filter padding_left_0 padding_right_0 searchBtnReport text-right beforeGridLoad">
+            <div class="search-filter padding_left_0 padding_right_0 searchBtnReport text-right beforeGridLoad">
                 <?php if (!empty($model)) { ?>
 
-                    <div class="col-sm-2 padding-left-0 text-left">
+                    <div class="col-sm-2 text-left">
                         <?= Yii::$app->controls->date($searchModel, $form, 'wef_date', 'form-group col-sm-2', false); ?>
                     </div>
                 <?php } ?>
@@ -50,72 +50,78 @@ $defaultToggle = true;
                             $first_table = ceil($disp_table);
                             $second_table = $first_table * 2;
                             ?>                                
-                            <div class="col-sm-3 set_overflow padding_10_0 theme-box view-subtitle2">
-                                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                                    <h4 class="theme-box-heading">Societies</h4>
-                                </div>
-                                <table class="table table-bordered table-striped table-main table-language table-rate">
-                                    <thead>
-                                        <tr>
-                                            <th width='17%' height='25' class='center-align center_text'><?= Html::checkbox('allowCashCheckAll', false, ['id' => 'allowCashCheckAll', 'class' => 'checkbox checkboxHeight', 'label' => '']) ?></th>
-                                            <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php for ($i = 0; $i < $first_table; $i++) { ?>
+                            <div class="col-sm-4 set_overflow">
+                                <div class="whole_border">
+                                    <div class="col-sm-12 col-md-12 padding_10_0 theme-box padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                                        <h4 class="theme-box-heading">Societies</h4>
+                                    </div>
+                                    <table class="table table-bordered table-striped table-main table-language table-rate">
+                                        <thead>
                                             <tr>
-                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
-                                                <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
+                                                <th width='17%' height='25' class='center-align center_text'><?= Html::checkbox('allowCashCheckAll', false, ['id' => 'allowCashCheckAll', 'class' => 'checkbox checkboxHeight', 'label' => '']) ?></th>
+                                                <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
                                             </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            <?php for ($i = 0; $i < $first_table; $i++) { ?>
+                                                <tr>
+                                                    <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
+                                                    <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="col-sm-3 set_overflow padding_10_0 theme-box view-subtitle2">
-                                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                                    <h4 class="theme-box-heading">Societies</h4>
-                                </div>
-                                <table class="table table-bordered table-striped table-main table-language table-rate">
-                                    <thead>
-                                        <tr>
-                                            <th width='17%' height='25'></th>
-                                            <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        for ($i = $first_table; $i < $second_table; $i++) {
-                                            ?>
+                            <div class="col-sm-4 set_overflow">
+                                <div class="whole_border">
+                                    <div class="col-sm-12 col-md-12 padding_10_0 theme-box padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                                        <h4 class="theme-box-heading">Societies</h4>
+                                    </div>
+                                    <table class="table table-bordered table-striped table-main table-language table-rate">
+                                        <thead>
                                             <tr>
-                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
-                                                <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
+                                                <th width='17%' height='25'></th>
+                                                <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
                                             </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for ($i = $first_table; $i < $second_table; $i++) {
+                                                ?>
+                                                <tr>
+                                                    <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
+                                                    <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="col-sm-3 set_overflow padding_10_0 theme-box view-subtitle2">
-                                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                                    <h4 class="theme-box-heading">Societies</h4>
-                                </div>
-                                <table class="table table-bordered table-striped table-main table-language table-rate">
-                                    <thead>
-                                        <tr>
-                                            <th width='17%' height='25'></th>
-                                            <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        for ($i = $second_table; $i < $count; $i++) {
-                                            ?>
+                            <div class="col-sm-4 set_overflow">
+                                <div class="whole_border">
+                                    <div class="col-sm-12 col-md-12 padding_10_0 theme-box padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                                        <h4 class="theme-box-heading">Societies</h4>
+                                    </div>
+                                    <table class="table table-bordered table-striped table-main table-language table-rate">
+                                        <thead>
                                             <tr>
-                                                <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
-                                                <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
+                                                <th width='17%' height='25'></th>
+                                                <th width='60%' height='25'><?php echo $model[0]->getAttributeLabel('dcs_name') ?></th>
                                             </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for ($i = $second_table; $i < $count; $i++) {
+                                                ?>
+                                                <tr>
+                                                    <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
+                                                    <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <?php
                         } else {

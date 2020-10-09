@@ -80,7 +80,7 @@ $this->title = Yii::$app->label->title('view', Yii::$app->general->getUserName($
             ])
             ?>
         </div>
-        <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="true">
+        <div class="col-sm-12 shortcut-main padding_top_20" shortcut="true" display_shortcut="false" hilight_shortcut="true">
             <div class="form-group">
                 <?= GhostHtml::a(UserManagementModule::t('back', 'edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']) ?>
                 <?php

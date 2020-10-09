@@ -69,7 +69,7 @@ $form = ActiveForm::begin(['options' => [
             <?= Html::activeHiddenInput($staffModel, 'staff_installment_code'); ?> 
             <?= $form->field($staffModel, 'amount', ['options' => ['class' => 'form-group col-sm-1']])->textInput() ?>
         </div>
-    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 mt10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <?php
         $url = ($type == 'create') ? ['salary-installment'] : ['salary-installment'];
         AjaxSubmitButton::begin([

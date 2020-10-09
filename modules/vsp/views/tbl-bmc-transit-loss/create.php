@@ -6,7 +6,7 @@ $this->title = Yii::$app->label->title('create', 'Transit Loss');
         <?= $this->title; ?>           
     </div>
     <div class="panel-body">
-        <div class="grid-search large-search hidden-print">
+        <div class="large-search hidden-print">
             <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
         </div>
         <div class="clearfix"></div>

@@ -8,7 +8,7 @@ use kartik\grid\GridView;
 
 $action = Url::to(['update-transit-loss']);
 ?>
-<div class="grid-search no-effect" >
+<div class="no-effect" >
     <?php
     $form = ActiveForm::begin([
                 'id' => 'transit-loss-update',
