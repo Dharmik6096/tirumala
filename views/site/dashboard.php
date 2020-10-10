@@ -417,7 +417,7 @@ $( '.sortable' ).sortable();
                             $('#no_of_pourers').text(obj1.res.Total_Member); 
                             $('#collection_vs_installed').text(obj1.res.Dcs_Count+'/'+obj1.res.Install_Count);
                             $('#collection_vs_dispatch').text(obj1.res.Dcs_Count+'/'+obj1.res.Dcs_DisQty_total);
-                            $('#dispatch_vs_receipt').text(obj1.res.Dcs_DisQty_total+'/'+obj1.res.bmc_dcs_Count);
+                            $('#dispatch_vs_receipt_block').text(obj1.res.Dcs_DisQty_total+'/'+obj1.res.bmc_dcs_Count);
                             $('#total_milk_collection_ltr').text(obj1.res.UnionQty+'/'+obj1.res.union_avg_fat+'/'+obj1.res.union_avg_snf);
                             $('#total_milk_dispatch_ltr').text(obj1.res.UnionDisQty+'/'+obj1.res.union_dis_avg_fat+'/'+obj1.res.union_dis_avg_snf);
                             $('#total_milk_dispatch_M').text(obj1.res.Dcs_DisQty_M);

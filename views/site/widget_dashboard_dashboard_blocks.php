@@ -41,7 +41,7 @@
                     <div class="tbl-cell">
                         <p><?= Yii::t('app', 'Dispatch vs Receipt') ?></p>
                         <p><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                        <p><h3 id="dispatch_vs_receipt"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
+                        <p><h3 id="dispatch_vs_receipt_block"><?= (!empty($dashboard_blocks) ? $dashboard_blocks[0]['Dcs_DisQty_total'] : 0) . '/' . (!empty($dashboard_blocks) ? $dashboard_blocks[0]['bmc_dcs_Count'] : 0) ?></h3></p>
                     </div>
                 </div>
             </div>
