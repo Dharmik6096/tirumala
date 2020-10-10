@@ -995,7 +995,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1806,6 +1806,14 @@ class GeneralFunctions extends Component {
             $model->addError('bmc_code', Yii::t('app/validation', Yii::t('app', 'BMC') . ' Is Invalid.'));
             return false;
         }
+    }
+
+    public function validateBeneficiary($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[a-zA-Z]+(\s{1}+[a-zA-Z]+)*$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' Is Invalid'));
+                return false;
+            }
     }
 
 }
