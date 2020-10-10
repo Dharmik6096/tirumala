@@ -1,6 +1,6 @@
 
 
-<div class="pt5">
+<div class="">
     <?php
 //hide state dropdown
     echo $this->render('_search', ['model' => $searchModel]);

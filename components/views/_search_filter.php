@@ -236,7 +236,7 @@ if (!empty($filter_data)) {
                                         $depend_str = $field_class . '-f_dcs_code';
                                         $f_cnt++;
                                         ?>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, $depend_str, 'form-group', FALSE); ?>
                                         </div>
                                     <?php } ?>
@@ -244,7 +244,7 @@ if (!empty($filter_data)) {
                                     if (in_array($value, array('route'))) {
                                         $f_cnt++;
                                         ?>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdown('route_code', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', FALSE); ?>
                                         </div>
                                     <?php } ?>
@@ -252,7 +252,7 @@ if (!empty($filter_data)) {
                                     if (in_array($value, array('bank_code'))) {
                                         $f_cnt++;
                                         ?>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
 
                                         </div>

@@ -1,4 +1,4 @@
-<div class="row">
+<div class="col-sm-12">
             <div class="col-sm-3">
                 <div class="collection">
                     <div class="tbl-cell">

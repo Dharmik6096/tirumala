@@ -94,7 +94,8 @@ $attribute = [
         'attribute' => 'group_code',
         'filter' => ArrayHelper::map(AuthItemGroup::find()->asArray()->all(), 'code', 'name'),
         'value' => function(Permission $model) {
-            return $model->group_code ? $model->group->name : '';
+            // return $model->group_code ? $model->group->name : '';
+            return $model->group_code ? Yii::$app->general->getforeignkey($model->group,'name') : '';
         },
     ],
 ];

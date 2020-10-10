@@ -278,6 +278,9 @@ class SearchFilter {
             'TblBranchSearch' => [
                 'filter' => ['bank_code'],
             ],
+            'TblVillagesSearch' => [
+                'filter' => ['state','district'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

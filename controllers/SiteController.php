@@ -47,6 +47,8 @@ use app\modules\creamy\models\TblDcsPortalCreamy;
 use app\models\TblDbConfig;
 use app\modules\syncutility\models\TblInbox;
 use app\models\GeneralModel;
+use app\models\TblDashboardUserWidgets;
+use app\models\TblDashboardWidgets;
 use app\modules\webservice\eipl\models\TblDpuCollectionHoData;
 use app\modules\syncutility\models\TblSyncLog;
 use app\modules\syncutility\models\TblSentbox;
@@ -154,8 +156,38 @@ class SiteController extends Controller {
 
         $model->widget_type = isset(Yii::$app->request->post('Dashboard')['widget_type']) ? Yii::$app->request->post('Dashboard')['widget_type'] : 'farmer';
         $model->mcc_code = isset(Yii::$app->request->post('Dashboard')['mcc_code']) ? Yii::$app->request->post('Dashboard')['mcc_code'] : '';
-        // var_dump(Yii::$app->request->post('Dashboard'));die;
-        $model->widgets = isset(Yii::$app->request->post('Dashboard')['widgets'])?Yii::$app->request->post('Dashboard')['widgets']:[];
+        $dashboardUserWidgets = new TblDashboardUserWidgets();
+        if (Yii::$app->request->post()) {
+            $dashboardUserWidgets = !empty($dashboardUserWidgets->getDashboardUserWidgets()) ? $dashboardUserWidgets->getDashboardUserWidgets() :$dashboardUserWidgets;
+            $rmrd_widget_position = json_encode(Yii::$app->request->post('Dashboard')['rmrd_widgets']);
+            $farmer_widget_position = json_encode(Yii::$app->request->post('Dashboard')['farmer_widgets']);
+            if(!empty($dashboardUserWidgets)){
+                $dashboardUserWidgets->user_id = Yii::$app->session->get('UserCode');
+            }
+            $dashboardUserWidgets->position_farmer = $farmer_widget_position;
+            $dashboardUserWidgets->position_rmrd = $rmrd_widget_position;
+            $dashboardUserWidgets->save();
+        }
+        $dashboardWidgets = new TblDashboardWidgets();
+        $widgets = $dashboardWidgets->getDashboardWidgets();
+        $farmerWidgets = [];
+        $rmrdWidgets = [];
+        // $dashboardUserWidgets = new TblDashboardUserWidgets();
+        foreach ($widgets as $key => $value) {
+            if($value->widget_type == 'farmer')
+                $farmerWidgets[] = $value->widget_id;
+            if($value->widget_type == 'rmrd')
+                $rmrdWidgets[] = $value->widget_id;
+        }
+
+        $userWidgets = $dashboardUserWidgets->getDashboardUserWidgets();
+        $userRmrdWidgets = [];
+        $userFarmerWidgets = [];
+        if(!empty($userWidgets)){
+            $userFarmerWidgets = json_decode($userWidgets->position_farmer);
+            $userRmrdWidgets = json_decode($userWidgets->position_rmrd);
+        }
+        
         $model->date = $end_date;
         $plant_str = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
         $mcc_str = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
@@ -177,7 +209,7 @@ class SiteController extends Controller {
         $dashboard_farmer_rmrd_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_status=[];
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg,'dashboard_farmer_status'=>$dashboard_farmer_status]);
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg,'dashboard_farmer_status'=>$dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets,'rmrdWidgets'=>$rmrdWidgets,'userRmrdWidgets'=>$userRmrdWidgets,'userFarmerWidgets'=>$userFarmerWidgets]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {

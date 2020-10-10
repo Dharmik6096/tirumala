@@ -76,43 +76,35 @@ $mobile_app_block = array_sum(array_map(function($item) {
             return $item['mobile_app_block'];
         }, $member_mobile_detail));
 
-$refreshWidgets = [
-'fed_union',
-'fed_comparison',
-'fed_datewise',
-'union_comparison',
-'union_datewise',
-'bmc_union_comparison',
-'bmc_union_datewise',
-'milk_coll_widget',
-'BmcWiseCrossTab',
-'bmc_coll_widget',
-'bmc_dispatch_widget',
-'reconciliation_chart_widget',
-'table_milk_collection',
-'manual_vs_auto_collection',
-'dipatch_vs_receipt',
-'bmc_collection_summary',
-'monthly_milk_collection',
-'dashboard_blocks',
-'piechart_member_app',
-'calender',
-'dashboard_farmer_rmrd_blocks',
-'dashboard_farmer_rmrd_avg',
-'dashboard_farmer_status'];
-
-$selected_widgets = !empty($model->widgets) ? $model->widgets : [];
-$unselected_widgets = array_diff($refreshWidgets, $selected_widgets);
-$allWidgets = $selected_widgets;
-$allWidgets = array_merge($allWidgets,$unselected_widgets);
-
-$lazy_loading_widgets = json_encode($selected_widgets);
-
-$widget_type = !empty($model->widget_type)?$model->widget_type:'';
+// $refreshWidgets = [
+// 'fed_union',
+// 'fed_comparison',
+// 'fed_datewise',
+// 'union_comparison',
+// 'union_datewise',
+// 'bmc_union_comparison',
+// 'bmc_union_datewise',
+// 'milk_coll_widget',
+// 'BmcWiseCrossTab',
+// 'bmc_coll_widget',
+// 'bmc_dispatch_widget',
+// 'reconciliation_chart_widget',
+// 'table_milk_collection',
+// 'manual_vs_auto_collection',
+// 'dipatch_vs_receipt',
+// 'bmc_collection_summary',
+// 'monthly_milk_collection',
+// 'dashboard_blocks',
+// 'piechart_member_app',
+// 'calender',
+// 'dashboard_farmer_rmrd_blocks',
+// 'dashboard_farmer_rmrd_avg',
+// 'dashboard_farmer_status'];
 
 $class_cols="col-sm-3";
 $display = "";
 $display_rmrd = "disp_none";
+$widget_type = !empty($model->widget_type)?$model->widget_type:'';
 if($widget_type == 'farmer'){
     $class_cols = "col-sm-3";
 }
@@ -121,6 +113,24 @@ if($widget_type == 'rmrd'){
     $display = "disp_none";
     $display_rmrd = "";
 }
+
+$farmer_selected_widgets = !empty($userFarmerWidgets)?$userFarmerWidgets:[];
+$farmer_unselected_widgets = array_diff(!empty($farmerWidgets)?$farmerWidgets:[], $farmer_selected_widgets);
+$allFarmerWidgets = array_merge($farmer_selected_widgets,$farmer_unselected_widgets);
+
+$rmrd_selected_widgets = !empty($userRmrdWidgets)?$userRmrdWidgets:[];
+$rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets)?$rmrdWidgets:[], $rmrd_selected_widgets);
+$allRmrdWidgets = array_merge($rmrd_selected_widgets,$rmrd_unselected_widgets);
+
+if($widget_type == 'farmer')
+    $lazy_loading_widgets = json_encode($farmer_selected_widgets);
+
+if($widget_type == 'rmrd')
+    $lazy_loading_widgets = json_encode($rmrd_selected_widgets);
+
+// var_dump($widget_type);
+// var_dump($lazy_loading_widgets);die;
+
 ?>
 <div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
     <div class="panel panel-default min_h_0">
@@ -166,29 +176,54 @@ if($widget_type == 'rmrd'){
                         </div>
                         <div class="clearfix"></div>
                         <?php
-                        echo $form->field($model, 'widgets[]')->checkboxList(
-                                    $allWidgets, [
-                                'id' => 'widgets-list',
+                        echo $form->field($model, 'rmrd_widgets[]')->checkboxList(
+                                    $allRmrdWidgets, [
+                                'id' => 'rmrd_widgets_list',
                                 'class' => 'row sortable',
                                 'item' => 
-                                function ($index, $label, $name, $checked, $value) use ($allWidgets, $selected_widgets, $model) {
+                                function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model) {
                     //                var_dump(count($map_model));exit;
-                                    $checked = in_array($label, $selected_widgets);
+                                    $checked = in_array($label, $rmrd_selected_widgets);
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
                                     // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
                                     return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
                                                 'value' => $label,
-                                                'label' => '<label for="' . $label . '">' . $label . '</label>',
+                                                'id' => 'rmrd_'.$label,
+                                                'label' => '<label for="rmrd_' . $label . '">' .ucwords(str_replace("_", " ", $label)). '</label>',
                                                 'labelOptions' => [
                                                     'class' => 'widgets-text' //. $disabled,
                                                 ],
                                                 'class' => 'widgets-checkbox',
-                                                'id' => $label,
                                             ]) . "</div></div>";
                                 },
                                             ]
                                     )->label(false);
                                 ?>
+                            
+                            <?php
+                                echo $form->field($model, 'farmer_widgets[]')->checkboxList(
+                                    $allFarmerWidgets, [
+                                'id' => 'farmer_widgets_list',
+                                'class' => 'row sortable',
+                                'item' => 
+                                function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model) {
+                    //                var_dump(count($map_model));exit;
+                                    $checked = in_array($label, $farmer_selected_widgets);
+                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                                'value' => $label,
+                                                'id' => 'farmer_'.$label,
+                                                'label' => '<label for="farmer_' . $label . '">' .ucwords(str_replace("_", " ", $label)). '</label>',
+                                                'labelOptions' => [
+                                                    'class' => 'widgets-text' //. $disabled,
+                                                ],
+                                                'class' => 'widgets-checkbox',
+                                            ]) . "</div></div>";
+                                },
+                                            ]
+                                    )->label(false);
+                            ?>
                         <div class="col-sm-12 filt_btn">
                             <?= Yii::$app->controls->search(); ?>
                         </div>
@@ -277,6 +312,7 @@ if($widget_type == 'rmrd'){
             <?php } ?>
         </div>
         <?php
+            $selected_widgets = $widget_type =='farmer'? $farmer_selected_widgets : $rmrd_selected_widgets;
             if (!empty($selected_widgets)) {
                 foreach ($selected_widgets as $key => $value) {
                     echo $this->render('widget_dashboard_'.$value, ['model' => $model, 'date' => $date, 'table_url'=> $table_url, 'container_url'=>$container_url,'class_cols' => $class_cols,'display' => $display,'display_rmrd' => $display_rmrd]);
@@ -325,10 +361,14 @@ $( '.sortable' ).sortable();
         if('".$widget_type."' == '' || '".$widget_type."' == 'farmer'){
             $('#hidden_widget_type').val('farmer');
             $('#radio-farmer').prop('checked', true);
+            $('#rmrd_widgets_list').hide();
+            $('#farmer_widgets_list').show();
         }
         else{
             $('#hidden_widget_type').val('".$widget_type."');
             $('#radio-rmrd').prop('checked', true);
+            $('#rmrd_widgets_list').show();
+            $('#farmer_widgets_list').hide();
         }
         var position = '';
         var widgets = '" . $lazy_loading_widgets . "';
@@ -964,7 +1004,18 @@ $(document).on('click','.member-mobile-info',function(e){
 
 $('.radio_widgit_type').on('change',function() {
     $('#hidden_widget_type').val($('input[name=widget_type]:checked', '.switch-field').val());
+
+    if($('input[name=widget_type]:checked', '.switch-field').val() == 'farmer'){
+        $('#rmrd_widgets_list').hide();
+        $('#farmer_widgets_list').show();
+    }
+
+    if($('input[name=widget_type]:checked', '.switch-field').val() == 'rmrd'){
+        $('#farmer_widgets_list').hide();
+        $('#rmrd_widgets_list').show();
+    }
 });
 
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');
+?>
