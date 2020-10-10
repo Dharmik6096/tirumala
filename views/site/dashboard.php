@@ -224,8 +224,13 @@ if($widget_type == 'rmrd')
                                             ]
                                     )->label(false);
                             ?>
-                        <div class="col-sm-12 filt_btn">
-                            <?= Yii::$app->controls->search(); ?>
+                        <div class="col-sm-12 pt5">
+                            <div class="col-sm-2">
+                                <a class="member-mobile-info pull-Left"><i class="fa fa-mobile fa-2x"></i></a>
+                            </div>
+                            <div class="col-sm-10 filt_btn">
+                                <?= Yii::$app->controls->search(); ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -720,7 +725,7 @@ $( '.sortable' ).sortable();
                             var vals=[];
                             var color='3a7bd5';
                             var suf='';
-                            console.log(chart +'--'+id);
+                            // console.log(chart +'--'+id);
                             while( chart.series.length > 0 ) {
                                 chart.series[0].remove( false );
                             }

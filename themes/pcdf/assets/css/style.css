@@ -3377,3 +3377,7 @@ input[type="checkbox"]:after{
 .field-farmer_widgets_list .help-block{
     display: none;
 }
+
+.modal-open .modal {
+    z-index: 9999 !important;
+}
