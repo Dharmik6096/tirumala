@@ -267,7 +267,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt25">
         <?= $form->field($model, 'credit_sale_allow', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-2 mt25">
+            <?= $form->field($model, 'auto_member_create', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+    <?php } ?>
     <?php // if ($type == 'create') { ?>
     <!--        <div class="col-sm-3">
     <?= Yii::$app->controls->active($model, $form); ?>
