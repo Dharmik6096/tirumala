@@ -49,7 +49,7 @@ $action = Url::to(['update-transit-loss']);
         ['attribute' => 'loss_applied_to',
             'format' => 'raw',
             'contentOptions' => function($model) {
-                return ['class' => 'text-center div_margin_0'];
+                return ['class' => 'table_radio text-center div_margin_0'];
             },
             'value' => function ($model, $key, $index) use ($form) {
                 return Html::activeHiddenInput($model, 'transit_loss_code[' . $index . ']', ['value' => $model->transit_loss_code]) . $form->field($model, 'loss_applied_to[' . $index . ']')->inline()->radioList([1 => 'VSP', 2 => 'TPT'], ['value' => $model->loss_applied_to])->label(false);

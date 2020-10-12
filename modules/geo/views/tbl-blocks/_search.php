@@ -11,7 +11,7 @@ $form = ActiveForm::begin([
         ]);
 ?>
 
-<div class="col-sm-8 pt5">
+<div class="col-sm-8 pt5 padding_left_0">
 <div class="col-sm-2">
     <?php Yii::$app->dropdown->state($model, $form, 'state', false); ?>
 </div>
