@@ -9,20 +9,20 @@ use yii\helpers\Url;
     <table class="table table-striped">
         <thead>
             <tr>
-                <th><?= Yii::t('app', 'BMC Code') ?></th>
-                <th class="w100"><?= Yii::t('app', 'Date') ?></th>
-                <th clas="max_w35"><?= Yii::t('app', 'Shift') ?></th>
-                <th><?= Yii::t('app', 'DCS Count') ?></th>
-                <th><?= Yii::t('app', 'Completed') ?></th>
-                <th><?= Yii::t('app', 'Pending') ?></th>
-                <th><?= Yii::t('app', 'No Collection') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'BMC Code') ?></th>
+                <th class="w100 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Date') ?></th>
+                <th class="max_w35 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Shift') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'DCS Count') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Completed') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Pending') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'No Collection') ?></th>
             </tr>
         </thead>
         <?php
         if (!empty($output)) {
             foreach ($output as $data) {
                 $date = $data['dtdate'] . ' ';
-                $date.= $data['Shift'] == 'E' ? '18:00:00' : '06:00:00';
+                $date .= $data['Shift'] == 'E' ? '18:00:00' : '06:00:00';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'cross-tab-modal', 'data-p_date' => $date, 'data-bmc_name' => $data['bmc_name'], 'data-shift' => $data['Shift'], 'data-union_Code' => $union_code, 'data-p_bmc_code' => $data['bmc_code']];
                 ?>
                 <tr>

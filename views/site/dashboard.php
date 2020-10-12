@@ -102,43 +102,42 @@ $mobile_app_block = array_sum(array_map(function($item) {
 // 'dashboard_farmer_rmrd_avg',
 // 'dashboard_farmer_status'];
 
-$class_cols="col-sm-3";
+$class_cols = "col-sm-3";
 $display = "";
 $display_rmrd = "disp_none";
-$widget_type = !empty($model->widget_type)?$model->widget_type:'';
-if($widget_type == 'farmer'){
+$widget_type = !empty($model->widget_type) ? $model->widget_type : '';
+if ($widget_type == 'farmer') {
     $class_cols = "col-sm-3";
 }
-if($widget_type == 'rmrd'){
+if ($widget_type == 'rmrd') {
     $class_cols = "col-sm-4";
     $display = "disp_none";
     $display_rmrd = "";
 }
 
-$farmer_selected_widgets = !empty($userFarmerWidgets)?$userFarmerWidgets:[];
-$farmer_unselected_widgets = array_diff(!empty($farmerWidgets)?$farmerWidgets:[], $farmer_selected_widgets);
-$allFarmerWidgets = array_merge($farmer_selected_widgets,$farmer_unselected_widgets);
+$farmer_selected_widgets = !empty($userFarmerWidgets) ? $userFarmerWidgets : [];
+$farmer_unselected_widgets = array_diff(!empty($farmerWidgets) ? $farmerWidgets : [], $farmer_selected_widgets);
+$allFarmerWidgets = array_merge($farmer_selected_widgets, $farmer_unselected_widgets);
 
-$rmrd_selected_widgets = !empty($userRmrdWidgets)?$userRmrdWidgets:[];
-$rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets)?$rmrdWidgets:[], $rmrd_selected_widgets);
-$allRmrdWidgets = array_merge($rmrd_selected_widgets,$rmrd_unselected_widgets);
+$rmrd_selected_widgets = !empty($userRmrdWidgets) ? $userRmrdWidgets : [];
+$rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets) ? $rmrdWidgets : [], $rmrd_selected_widgets);
+$allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 
-if($widget_type == 'farmer')
+if ($widget_type == 'farmer')
     $lazy_loading_widgets = json_encode($farmer_selected_widgets);
 
-if($widget_type == 'rmrd')
+if ($widget_type == 'rmrd')
     $lazy_loading_widgets = json_encode($rmrd_selected_widgets);
 
 // var_dump($widget_type);
 // var_dump($lazy_loading_widgets);die;
 $dashboard_widget = new TblDashboardWidgets();
-
 ?>
 <div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
     <div class="panel panel-default min_h_0">
         <!-- <div class="panel-heading text-center">
             <h4 class="panel-title">
-                <?php // Yii::t('app', 'Data for PCDF') . ' ' ?> (<?php // Yii::$app->controls->view_date($date) ?>)
+        <?php // Yii::t('app', 'Data for PCDF') . ' '  ?> (<?php // Yii::$app->controls->view_date($date)  ?>)
                 <a data-toggle="collapse" href="#collapse1" class="setting"><i class="fa fa-gear"></i></a>
                 <a class="member-mobile-info pull-right"><i class="fa fa-mobile"></i></a>
             </h4>
@@ -153,19 +152,19 @@ $dashboard_widget = new TblDashboardWidgets();
                 ?>
                 <div class="dashboard_filter_form">
                     <!-- <h4 class="panel-title">
-                        <?php // Yii::t('app', 'Data for PCDF') . ' ' ?> (<?php //Yii::$app->controls->view_date($date) ?>)
+                    <?php // Yii::t('app', 'Data for PCDF') . ' '  ?> (<?php //Yii::$app->controls->view_date($date)  ?>)
                     </h4> -->
                     <div class="row">
                         <div class="col-sm-6">
-                            <?= Yii::$app->controls->date($model, $form, 'date','',true,false,false,false); ?>
+                            <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
-                        <?= Html::activeHiddenInput($model, 'widget_type', ['id'=>'hidden_widget_type']) ?>
+                        <?= Html::activeHiddenInput($model, 'widget_type', ['id' => 'hidden_widget_type']) ?>
                         <div class="col-sm-6">
                             <div class="switch-field">
                                 <input type="radio" id="radio-farmer" class="radio_widgit_type" name="widget_type" value="farmer"/>
-                                    <label for="radio-farmer">Farmer</label>
+                                <label for="radio-farmer">Farmer</label>
                                 <input type="radio" id="radio-rmrd" class="radio_widgit_type" name="widget_type" value="rmrd" />
-                                    <label for="radio-rmrd">RMRD</label>
+                                <label for="radio-rmrd">RMRD</label>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -174,58 +173,58 @@ $dashboard_widget = new TblDashboardWidgets();
                         </div>
                         <div class="col-sm-6">
                             <?php echo Html::hiddenInput('load_all', true, ['id' => 'load_all']); ?>
-                            <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false,false,false);?>
+                            <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false, false, false); ?>
                         </div>
                         <div class="clearfix"></div>
                         <?php
                         echo $form->field($model, 'rmrd_widgets[]')->checkboxList(
-                                    $allRmrdWidgets, [
-                                'id' => 'rmrd_widgets_list',
-                                'class' => 'row sortable',
-                                'item' => 
-                                function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
-                    //                var_dump(count($map_model));exit;
-                                    $checked = in_array($label, $rmrd_selected_widgets);
-                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                                'value' => $label,
-                                                'id' => 'rmrd_'.$label,
-                                                'label' => '<label for="rmrd_' . $label . '">' .$dashboard_widget->getWidgetLabel($label,'rmrd'). '</label>',
-                                                'labelOptions' => [
-                                                    'class' => 'widgets-text' //. $disabled,
-                                                ],
-                                                'class' => 'widgets-checkbox',
-                                            ]) . "</div></div>";
-                                },
-                                            ]
-                                    )->label(false);
-                                ?>
-                            
-                            <?php
-                                echo $form->field($model, 'farmer_widgets[]')->checkboxList(
-                                    $allFarmerWidgets, [
-                                'id' => 'farmer_widgets_list',
-                                'class' => 'row sortable',
-                                'item' => 
-                                function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
-                    //                var_dump(count($map_model));exit;
-                                    $checked = in_array($label, $farmer_selected_widgets);
-                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                                'value' => $label,
-                                                'id' => 'farmer_'.$label,
-                                                'label' => '<label for="farmer_' . $label . '">' .$dashboard_widget->getWidgetLabel($label,'farmer').'</label>',
-                                                'labelOptions' => [
-                                                    'class' => 'widgets-text' //. $disabled,
-                                                ],
-                                                'class' => 'widgets-checkbox',
-                                            ]) . "</div></div>";
-                                },
-                                            ]
-                                    )->label(false);
-                            ?>
+                                $allRmrdWidgets, [
+                            'id' => 'rmrd_widgets_list',
+                            'class' => 'row sortable',
+                            'item' =>
+                            function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
+                                //                var_dump(count($map_model));exit;
+                                $checked = in_array($label, $rmrd_selected_widgets);
+                                // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                            'value' => $label,
+                                            'id' => 'rmrd_' . $label,
+                                            'label' => '<label for="rmrd_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'rmrd') . '</label>',
+                                            'labelOptions' => [
+                                                'class' => 'widgets-text' //. $disabled,
+                                            ],
+                                            'class' => 'widgets-checkbox',
+                                        ]) . "</div></div>";
+                            },
+                                ]
+                        )->label(false);
+                        ?>
+
+                        <?php
+                        echo $form->field($model, 'farmer_widgets[]')->checkboxList(
+                                $allFarmerWidgets, [
+                            'id' => 'farmer_widgets_list',
+                            'class' => 'row sortable',
+                            'item' =>
+                            function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
+                                //                var_dump(count($map_model));exit;
+                                $checked = in_array($label, $farmer_selected_widgets);
+                                // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                            'value' => $label,
+                                            'id' => 'farmer_' . $label,
+                                            'label' => '<label for="farmer_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'farmer') . '</label>',
+                                            'labelOptions' => [
+                                                'class' => 'widgets-text' //. $disabled,
+                                            ],
+                                            'class' => 'widgets-checkbox',
+                                        ]) . "</div></div>";
+                            },
+                                ]
+                        )->label(false);
+                        ?>
                         <div class="col-sm-12 pt5">
                             <div class="col-sm-2">
                                 <a class="member-mobile-info pull-Left"><i class="fa fa-mobile fa-2x"></i></a>
@@ -242,57 +241,57 @@ $dashboard_widget = new TblDashboardWidgets();
     </div>
 </div>
 <div class="panel panel-default panel-main panel-dashboard">
-    <div class="panel-body">
+    <div class="panel-body dashboard_section">
         <div class="row">
-            <?php //if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
-                    <!-- <div class="col-sm-6">
-                        <div class="flt">
-                            <?php
-                            // $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
-                            //     'url' => $chart_url, 'container' => 'fed_union_container',
-                            //     'date_range' => false, 'range2' => false,
-                            //     'range_id1' => 'dt1',
-                            //     'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
-                            ?>
-                            <div id="fed_union_container" class="cont"></div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="flt">
-                            <?php
-                            // $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_comparison',
-                            //     'url' => $chart_url, 'container' => 'fed_comparison_container',
-                            //     'date_range' => true, 'range2' => true,
-                            //     'range_id1' => 'comp1', 'range_id2' => 'comp2',
-                            //     'shift' => false, 'type' => 'column',
-                            //     'title' => 'Compare Milk Collection']);
-                            ?>
-                            <div id="fed_comparison_container" class="cont"></div>
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="col-sm-12">
-                        <div class="flt">
-                            <?php //$this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'fed_datewise_container', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
-                            <div id="fed_datewise_container" class="cont"></div>
-                        </div>
-                    </div> -->
-            <?php //} else { ?> 
-                <div class="row">
-                    
-
-                    
-                    
+            <?php //if (Yii::$app->session->get('organizations_type') !== 'UNION') {  ?>
+            <!-- <div class="col-sm-6">
+                <div class="flt">
+            <?php
+            // $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
+            //     'url' => $chart_url, 'container' => 'fed_union_container',
+            //     'date_range' => false, 'range2' => false,
+            //     'range_id1' => 'dt1',
+            //     'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
+            ?>
+                    <div id="fed_union_container" class="cont"></div>
                 </div>
-            <?php //} ?>
+            </div>
+            <div class="col-sm-6">
+                <div class="flt">
+            <?php
+            // $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_comparison',
+            //     'url' => $chart_url, 'container' => 'fed_comparison_container',
+            //     'date_range' => true, 'range2' => true,
+            //     'range_id1' => 'comp1', 'range_id2' => 'comp2',
+            //     'shift' => false, 'type' => 'column',
+            //     'title' => 'Compare Milk Collection']);
+            ?>
+                    <div id="fed_comparison_container" class="cont"></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-sm-12">
+                <div class="flt">
+            <?php //$this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'fed_datewise_container', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']);  ?>
+                    <div id="fed_datewise_container" class="cont"></div>
+                </div>
+            </div> -->
+            <?php //} else {  ?> 
+            <div class="row">
+
+
+
+
+            </div>
+            <?php //}  ?>
         </div>
         <?php
-            $selected_widgets = $widget_type =='farmer'? $farmer_selected_widgets : $rmrd_selected_widgets;
-            if (!empty($selected_widgets)) {
-                foreach ($selected_widgets as $key => $value) {
-                    echo $this->render('widget_dashboard_'.$value, ['model' => $model, 'date' => $date, 'table_url'=> $table_url, 'container_url'=>$container_url,'class_cols' => $class_cols,'display' => $display,'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
-                }
+        $selected_widgets = $widget_type == 'farmer' ? $farmer_selected_widgets : $rmrd_selected_widgets;
+        if (!empty($selected_widgets)) {
+            foreach ($selected_widgets as $key => $value) {
+                echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
             }
+        }
         ?>
 
     </div>
@@ -300,9 +299,9 @@ $dashboard_widget = new TblDashboardWidgets();
 <div id="chartModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-content dashboardWidhetModalPopup">
+            <div class="modal-header dashboardWidgetHeader">
+                <button type="button" class="close  color_fff opacity_one" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title" id='cal_modal-title'></h4>
             </div>
             <div class="modal-body" id='calendar_details'>
@@ -333,14 +332,14 @@ $dashboard_widget = new TblDashboardWidgets();
 $script = "  
 $( '.sortable' ).sortable();
     $(window).load(function(){
-        if('".$widget_type."' == '' || '".$widget_type."' == 'farmer'){
+        if('" . $widget_type . "' == '' || '" . $widget_type . "' == 'farmer'){
             $('#hidden_widget_type').val('farmer');
             $('#radio-farmer').prop('checked', true);
             $('#rmrd_widgets_list').hide();
             $('#farmer_widgets_list').show();
         }
         else{
-            $('#hidden_widget_type').val('".$widget_type."');
+            $('#hidden_widget_type').val('" . $widget_type . "');
             $('#radio-rmrd').prop('checked', true);
             $('#rmrd_widgets_list').show();
             $('#farmer_widgets_list').hide();
@@ -462,16 +461,42 @@ $( '.sortable' ).sortable();
                             }
                             var table = $('#farmer_rmrd_tbl_container table tbody');
                             var i = 0;
+                            console.log(obj1.res);
+                            var htmlData = '';
+                            htmlData = htmlData + '<tbody>';
                             Object.keys(obj1.res).forEach(function (key){
-                                var j = 0;
-                                $('#farmer_rmrd_tbl_container table thead tr:last').append('<th>'+obj1.res[key].colType.replace(/(^|_)./g, s => s.toUpperCase()).replace('_',' ')+'</th>')
-                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgQty+'</td>');
-                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgFat+'</td>');
-                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgSnf+'</td>');
-                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgRate+'</td>');
-                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgAmount+'</td>');
-                                $('#farmer_rmrd_tbl_container').removeClass('disp_none');
+                                htmlData = htmlData + '<tr>';
+                                htmlData = htmlData + '<td class=\'dashboardWidgetHeader color_fff\' rowspan=\'2\'>AVG/';
+                                htmlData = htmlData + obj1.res[key].colType;
+                                htmlData = htmlData + '</td>';
+                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'FAT') . "</td>';
+                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'SNF') . "</td>';
+                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'QTY') . "</td>';
+                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'Rate') . "</td>';
+                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'Amount') . "</td>';
+                                htmlData = htmlData + '</tr>';
+                                htmlData = htmlData + '<tr>';
+                                htmlData = htmlData + '<td>'+obj1.res[key].avgFat+'</td>';
+                                htmlData = htmlData + '<td>'+obj1.res[key].avgSnf+'</td>';
+                                htmlData = htmlData + '<td>'+obj1.res[key].avgQty+'</td>';
+                                htmlData = htmlData + '<td>'+obj1.res[key].avgRate+'</td>';
+                                htmlData = htmlData + '<td>'+obj1.res[key].avgAmount+'</td>';
+                                htmlData = htmlData + '</tr>';
                             });
+                            htmlData = htmlData + '</tbody>';
+                            
+                            $('#farmer_rmrd_tbl_container').removeClass('disp_none');
+                            $('.farmerRmrdAvgData').html(htmlData);
+//                            Object.keys(obj1.res).forEach(function (key){
+//                                var j = 0;
+//                                $('#farmer_rmrd_tbl_container table thead tr:last').append('<th>'+obj1.res[key].colType.replace(/(^|_)./g, s => s.toUpperCase()).replace('_',' ')+'</th>')
+//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgQty+'</td>');
+//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgFat+'</td>');
+//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgSnf+'</td>');
+//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgRate+'</td>');
+//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgAmount+'</td>');
+//                                $('#farmer_rmrd_tbl_container').removeClass('disp_none');
+//                            });
                         }
                     },
                     error:function(data){
@@ -602,10 +627,10 @@ $( '.sortable' ).sortable();
         // console.log(set_widget_id+'_container');
     }
 //new code
-    barChart('bmc_dispatch_widget_container','".Yii::$app->controls->view_date($date)." BMC Dispatch',[],[]);
-    barChart('milk_coll_widget_container','".Yii::$app->controls->view_date($date)." Milk Collection',[],[]);
-    barChart('bmc_coll_widget_container','".Yii::$app->controls->view_date($date)." BMC Collection',[],[]);
-    barChart('reconciliation_chart_widget_container','".Yii::$app->controls->view_date($date)." Reconciliation Chart',[],[]);
+    barChart('bmc_dispatch_widget_container','" . Yii::$app->controls->view_date($date) . " BMC Dispatch',[],[]);
+    barChart('milk_coll_widget_container','" . Yii::$app->controls->view_date($date) . " Milk Collection',[],[]);
+    barChart('bmc_coll_widget_container','" . Yii::$app->controls->view_date($date) . " BMC Collection',[],[]);
+    barChart('reconciliation_chart_widget_container','" . Yii::$app->controls->view_date($date) . " Reconciliation Chart',[],[]);
     // barChart('collection_farmer_container','',[],[]);
     function barChart(cont,text,xdata,ydata){
         var bar_chart = $('#'+cont);

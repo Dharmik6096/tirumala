@@ -1,5 +1,5 @@
 <div class="col-sm-6">
-    <div class="cal-header">
+    <div class="cal-header dashboardWidgetHeader">
         <?php
         $search_date = Yii::$app->controls->view_date($date);
         echo $search_date . ' ' . Yii::t('app', 'Dispatch vs Receipt');

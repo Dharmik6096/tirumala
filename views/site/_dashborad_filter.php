@@ -37,46 +37,46 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
 } else {
     ?>
     <div class="dashboard_controls">
-    <?php
-    $form = ActiveForm::begin([
-                'action' => ['index'],
-                'id' => $id
-    ]);
-    ?>
-    <div class="<?= $date_range_class ?>">
-        <?php if ($date_range) { ?>
-            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date', 'to_date', $id1, $id2); ?>
-        <?php } else { ?>
-            <?= Yii::$app->controls->date($model, $form, 'date', 'form-group col-sm-2', true, false, false, false, $id1); ?>
+        <?php
+        $form = ActiveForm::begin([
+                    'action' => ['index'],
+                    'id' => $id
+        ]);
+        ?>
+        <div class="<?= $date_range_class ?>">
+            <?php if ($date_range) { ?>
+                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date', 'to_date', $id1, $id2); ?>
+            <?php } else { ?>
+                <?= Yii::$app->controls->date($model, $form, 'date', 'form-group col-sm-2', true, false, false, false, $id1); ?>
+            <?php } ?>
+        </div>
+
+        <?php if ($range2) { ?>
+            <div class="col-sm-4">
+                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date2', 'to_date2', $id3, $id4); ?>
+            </div>
         <?php } ?>
-    </div>
 
-    <?php if ($range2) { ?>
-        <div class="col-sm-4">
-            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date2', 'to_date2', $id3, $id4); ?>
-        </div>
-    <?php } ?>
-
-    <?php if ($shift) { ?>
+        <?php if ($shift) { ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
+            </div>
+        <?php } ?>
+        <?php if (empty($hide_param)) { ?>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); ?>
+            </div>
+        <?php } ?>
+        <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);   ?>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'shift'); ?>
+            <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
         </div>
-    <?php } ?>
-    <?php if (empty($hide_param)) { ?>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); ?>
-        </div>
-    <?php } ?>
-    <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);   ?>
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
-    </div>
-    <?php if (isset($table_popup) && $table_popup) { ?>
-        <div class="widget_table_popup"><i class="fa fa-plus widget_table_popup_icon <?= $table_class ?>"></i></div>
-    <?php } ?>
-    <?php
-    ActiveForm::end();
-    ?>
+        <?php if (isset($table_popup) && $table_popup) { ?>
+            <div class="widget_table_popup"><i class="fa fa-plus widget_table_popup_icon <?= $table_class ?>"></i></div>
+            <?php } ?>
+            <?php
+            ActiveForm::end();
+            ?>
     </div>
     <?php
 }

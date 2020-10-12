@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
 <?php } ?>
 <!--<div class="clearfix"></div>-->
 <?php if (isset($from_shift) && $from_shift) { ?>
-    <div class="<?=$shift_class?> shift pb10 <?= $common_class ?>">
+    <div class="<?= $shift_class ?> shift pb10 <?= $common_class ?>">
         <?php
         echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'from_shift');
         ?>
@@ -42,7 +42,7 @@ $form = ActiveForm::begin([
     </div>
 <?php } ?>
 <?php if (isset($to_shift) && $to_shift) { ?>
-    <div class="<?=$shift_class?> shift <?= $common_class ?>">
+    <div class="<?= $shift_class ?> shift <?= $common_class ?>">
         <?php
         echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'to_shift');
         ?>
@@ -74,7 +74,7 @@ $form = ActiveForm::begin([
     ?>  
 <?php } ?>
 <div class="col-sm-3 pb10 <?= $common_class ?>">
-    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
+    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
 </div>
 <?php
 ActiveForm::end();

@@ -4,15 +4,15 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th colspan="4">Monthly Milk Collection</th> 
+                        <th colspan="4" class="dashboardWidgetHeader">Monthly Milk Collection</th> 
                     </tr>
                 </thead>
                 <thead>
                     <tr>
-                        <th><?= Yii::t('app', 'Union') ?></th>
-                        <th>Villages</th>
-                        <th>No of Pourers</th>
-                        <th>Monthly Milk Collection(ltr)</th>
+                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union') ?></th>
+                        <th class="dashboardWidgetDetailPortion">Villages</th>
+                        <th class="dashboardWidgetDetailPortion">No of Pourers</th>
+                        <th class="dashboardWidgetDetailPortion">Monthly Milk Collection(ltr)</th>
                     </tr>
                 </thead>
                 <?php

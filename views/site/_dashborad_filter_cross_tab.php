@@ -18,24 +18,24 @@ $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
 //Yii::$app->controls->view_date($date);
 ?>
 <div class="dashboard_controls">
-<?php
-$form = ActiveForm::begin([
-            'action' => ['index'],
-            'id' => $id
-        ]);
-?>
-<div class="<?= $date_range_class ?>">
-    <?php if ($date_range) { ?>
-        <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date3', 'to_date3', $id1, $id2); ?>
-    <?php } ?>
-<?= Html::activeHiddenInput($model, 'union_code'); ?>
-</div>
+    <?php
+    $form = ActiveForm::begin([
+                'action' => ['index'],
+                'id' => $id
+    ]);
+    ?>
+    <div class="<?= $date_range_class ?>">
+        <?php if ($date_range) { ?>
+            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date3', 'to_date3', $id1, $id2); ?>
+        <?php } ?>
+        <?= Html::activeHiddenInput($model, 'union_code'); ?>
+    </div>
 
     <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
-<div class="col-sm-2">
-<?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id); ?>
-</div>
-<?php ActiveForm::end(); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
+    </div>
+    <?php ActiveForm::end(); ?>
 </div>
 <?php
 $script = "
