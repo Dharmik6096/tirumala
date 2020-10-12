@@ -45,7 +45,7 @@ class TblDcsMilkType extends ChildModel {
                 }, 'skipOnEmpty' => false, 'except' => 'dcsImport'],
             [['dcs_code'], 'validateDcs', 'except' => 'dcsImport'],
             [['milk_type_code'], 'integer'],
-            [['created_at', 'is_active', 'updated_at', 'created_by', 'updated_by'], 'safe'],
+            [['created_at', 'is_active', 'updated_at', 'created_by', 'updated_by', 'rtpl'], 'safe'],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code']],
         ];
