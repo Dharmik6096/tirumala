@@ -5,7 +5,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th><?= Yii::t('app', 'Data') ?></th>
+                            <th><?= Yii::t('app', 'Average') ?></th>
                         </tr>
                     </thead>
                     <tbody>

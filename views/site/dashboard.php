@@ -464,12 +464,7 @@ $( '.sortable' ).sortable();
                             var i = 0;
                             Object.keys(obj1.res).forEach(function (key){
                                 var j = 0;
-                                if(obj1.res[key].colType == 'dcs'){
-                                    i = 1;
-                                }else{
-                                    i = 0; 
-                                }
-                                $('#farmer_rmrd_tbl_container table thead tr:last').append('<th>'+obj1.res[key].colType+'</th>')
+                                $('#farmer_rmrd_tbl_container table thead tr:last').append('<th>'+obj1.res[key].colType.replace(/(^|_)./g, s => s.toUpperCase()).replace('_',' ')+'</th>')
                                 table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgQty+'</td>');
                                 table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgFat+'</td>');
                                 table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgSnf+'</td>');
