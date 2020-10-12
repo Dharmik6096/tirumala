@@ -1944,8 +1944,8 @@ ul.orderable label.checked {
     font-size: 14px;
     margin-bottom: -5px;
     padding-left: 16px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     text-align: center;
     font-weight: 600;
     margin-top: 5px;
@@ -2306,6 +2306,7 @@ div.crystalstyle{
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
     padding: 2px 4px 0px !important;
     vertical-align: middle !important;
+    white-space: nowrap;
 }
 
 .panel  {
