@@ -1,6 +1,7 @@
 <?php
 $this->title = 'Dashboard';
 
+use app\models\TblDashboardWidgets;
 use Symfony\Component\Console\Input\Input;
 use yii\helpers\Html;
 use yii\web\View;
@@ -130,6 +131,7 @@ if($widget_type == 'rmrd')
 
 // var_dump($widget_type);
 // var_dump($lazy_loading_widgets);die;
+$dashboard_widget = new TblDashboardWidgets();
 
 ?>
 <div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
@@ -181,7 +183,7 @@ if($widget_type == 'rmrd')
                                 'id' => 'rmrd_widgets_list',
                                 'class' => 'row sortable',
                                 'item' => 
-                                function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model) {
+                                function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
                     //                var_dump(count($map_model));exit;
                                     $checked = in_array($label, $rmrd_selected_widgets);
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
@@ -189,7 +191,7 @@ if($widget_type == 'rmrd')
                                     return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
                                                 'value' => $label,
                                                 'id' => 'rmrd_'.$label,
-                                                'label' => '<label for="rmrd_' . $label . '">' .ucwords(str_replace("_", " ", $label)). '</label>',
+                                                'label' => '<label for="rmrd_' . $label . '">' .$dashboard_widget->getWidgetLabel($label,'rmrd'). '</label>',
                                                 'labelOptions' => [
                                                     'class' => 'widgets-text' //. $disabled,
                                                 ],
@@ -206,7 +208,7 @@ if($widget_type == 'rmrd')
                                 'id' => 'farmer_widgets_list',
                                 'class' => 'row sortable',
                                 'item' => 
-                                function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model) {
+                                function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
                     //                var_dump(count($map_model));exit;
                                     $checked = in_array($label, $farmer_selected_widgets);
                                     // $check = $model->getDistrictUsed($allowWidgets, $label);
@@ -214,7 +216,7 @@ if($widget_type == 'rmrd')
                                     return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
                                                 'value' => $label,
                                                 'id' => 'farmer_'.$label,
-                                                'label' => '<label for="farmer_' . $label . '">' .ucwords(str_replace("_", " ", $label)). '</label>',
+                                                'label' => '<label for="farmer_' . $label . '">' .$dashboard_widget->getWidgetLabel($label,'farmer').'</label>',
                                                 'labelOptions' => [
                                                     'class' => 'widgets-text' //. $disabled,
                                                 ],

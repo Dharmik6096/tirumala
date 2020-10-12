@@ -15,6 +15,7 @@ use Yii;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
+ * @property string widget_label
  */
 class TblDashboardWidgets extends \yii\db\ActiveRecord
 {
@@ -35,7 +36,7 @@ class TblDashboardWidgets extends \yii\db\ActiveRecord
             [['widget_id', 'widget_type', 'is_active'], 'required'],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['widget_id'], 'string', 'max' => 255],
+            [['widget_id','widget_label'], 'string', 'max' => 255],
             [['widget_type'], 'string', 'max' => 10],
             [['created_by', 'updated_by'], 'string', 'max' => 20],
         ];
@@ -55,10 +56,16 @@ class TblDashboardWidgets extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
+            'widget_label' => 'Label',
         ];
     }
 
     public function getDashboardWidgets(){
         return $this->find()->all();
+    }
+
+    public function getWidgetLabel($id,$type='') {
+        $data = $this->find()->where(['widget_id' => $id, 'widget_type' => $type])->one();
+        return $data->widget_label;
     }
 }
