@@ -242,28 +242,28 @@ if($widget_type == 'rmrd')
 <div class="panel panel-default panel-main panel-dashboard">
     <div class="panel-body">
         <div class="row">
-            <?php if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
-                    <div class="col-sm-6">
+            <?php //if (Yii::$app->session->get('organizations_type') !== 'UNION') { ?>
+                    <!-- <div class="col-sm-6">
                         <div class="flt">
-                            <?=
-                            $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
-                                'url' => $chart_url, 'container' => 'fed_union_container',
-                                'date_range' => false, 'range2' => false,
-                                'range_id1' => 'dt1',
-                                'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
+                            <?php
+                            // $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_union',
+                            //     'url' => $chart_url, 'container' => 'fed_union_container',
+                            //     'date_range' => false, 'range2' => false,
+                            //     'range_id1' => 'dt1',
+                            //     'shift' => true, 'type' => 'column', 'title' => Yii::t('app', 'Unionwise Milk Collection')]);
                             ?>
                             <div id="fed_union_container" class="cont"></div>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="flt">
-                            <?=
-                            $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_comparison',
-                                'url' => $chart_url, 'container' => 'fed_comparison_container',
-                                'date_range' => true, 'range2' => true,
-                                'range_id1' => 'comp1', 'range_id2' => 'comp2',
-                                'shift' => false, 'type' => 'column',
-                                'title' => 'Compare Milk Collection']);
+                            <?php
+                            // $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_comparison',
+                            //     'url' => $chart_url, 'container' => 'fed_comparison_container',
+                            //     'date_range' => true, 'range2' => true,
+                            //     'range_id1' => 'comp1', 'range_id2' => 'comp2',
+                            //     'shift' => false, 'type' => 'column',
+                            //     'title' => 'Compare Milk Collection']);
                             ?>
                             <div id="fed_comparison_container" class="cont"></div>
                         </div>
@@ -271,56 +271,24 @@ if($widget_type == 'rmrd')
                     <div class="clearfix"></div>
                     <div class="col-sm-12">
                         <div class="flt">
-                            <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'fed_datewise_container', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
+                            <?php //$this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'fed_datewise_container', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']); ?>
                             <div id="fed_datewise_container" class="cont"></div>
                         </div>
-                    </div>
-            <?php } else { ?>
+                    </div> -->
+            <?php //} else { ?> 
                 <div class="row">
-                    <div class="col-sm-6">
-                        <div class="col-sm-12 text-center widget-tab society-compare active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection'); ?></div>
-                        <div class="flt">
-                            <div id="society-compare">
-                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_comparison', 'url' => $chart_url, 'container' => 'union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection')]); ?>
-                                <div id="union_comparison_container" class="cont"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="col-sm-12 text-center widget-tab bmc-compare active dashboard_widget_heading"><?= Yii::t('app', 'BMC Milk Collection'); ?></div>
-                        <div class="flt">
-                            <div id="bmc-compare">
-                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_comparison', 'url' => $chart_url, 'container' => 'bmc_union_comparison_container', 'date_range' => true, 'range2' => true, 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_from_Date', 'range_id2' => 'bmc_to_Date', 'range_id3' => 'bmc_from_Date_2', 'range_id4' => 'bmc_to_Date_2', 'table_popup' => true, 'table_class' => 'bmc_union_comparison_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection')]); ?>
-                                <div id="bmc_union_comparison_container" class="cont"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="col-sm-12 text-center society-datewise active dashboard_widget_heading"><?= Yii::t('app', 'Society Milk Collection - Date Wise'); ?></div>
-                        <div class="flt">
-                            <div id="society-datewise">
-                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'union_datewise', 'url' => $chart_url, 'container' => 'union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'table_popup' => true, 'table_class' => 'union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'Society Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
-                                <div id="union_datewise_container" class="cont"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="col-sm-12 text-center bmc-datewise active dashboard_widget_heading"><?= Yii::t('app', 'BMC Milk Collection - Date Wise'); ?></div>
-                        <div class="flt">
-                            <div id="bmc-datewise">
-                                <?= $this->render('_dashborad_filter', ['model' => $model, 'id' => 'bmc_union_datewise', 'url' => $chart_url, 'container' => 'bmc_union_datewise_container', 'date_range' => true, 'range2' => false, 'range_id1' => 'comp1', 'range_id2' => 'comp2', 'shift' => false, 'type' => 'column', 'title' => '', 'range_id1' => 'bmc_date_wise_from_Date', 'range_id2' => 'bmc_date_wise_to_Date', 'table_popup' => true, 'table_class' => 'bmc_union_datewise_data', 'table_url' => $table_url, 'popup_title' => Yii::t('app', 'BMC Milk Collection - Date Wise'), 'date_range_class'=>'col-sm-4']); ?>
-                                <div id="bmc_union_datewise_container" class="cont"></div>
-                            </div>
-                        </div>
-                    </div>
+                    
+
+                    
+                    
                 </div>
-            <?php } ?>
+            <?php //} ?>
         </div>
         <?php
             $selected_widgets = $widget_type =='farmer'? $farmer_selected_widgets : $rmrd_selected_widgets;
             if (!empty($selected_widgets)) {
                 foreach ($selected_widgets as $key => $value) {
-                    echo $this->render('widget_dashboard_'.$value, ['model' => $model, 'date' => $date, 'table_url'=> $table_url, 'container_url'=>$container_url,'class_cols' => $class_cols,'display' => $display,'display_rmrd' => $display_rmrd]);
+                    echo $this->render('widget_dashboard_'.$value, ['model' => $model, 'date' => $date, 'table_url'=> $table_url, 'container_url'=>$container_url,'class_cols' => $class_cols,'display' => $display,'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
                 }
             }
         ?>
