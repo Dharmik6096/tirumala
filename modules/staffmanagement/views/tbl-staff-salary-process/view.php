@@ -146,7 +146,7 @@ $this->title = Yii::$app->label->title('view', 'Staff Salary Process');
                 ?>
             </div>
         </div>
-        <div class="row theme_border_left theme_border_right theme_border_bottom">
+        <div class="row">
             <div class="col-md-12 padding_10_0 theme-box view-subtitle">
                 <div class="col-sm-12 col-md-12 margin-bottom-10 padding_left_0 padding_right_0 clearfix">
                     <h4 class="theme-box-heading"><?= Yii::t('app', 'Head Wise Details') ?></h4>

@@ -89,6 +89,7 @@ class CustomValidation extends Component {
                     'dcs-import' => [],
                     'default' => [
                         [['firstname'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
                     ],
                 ],
             ],

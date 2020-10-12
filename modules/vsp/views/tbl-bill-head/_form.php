@@ -75,7 +75,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
-    <div class="col-sm-2 h90">
+    <div class="col-sm-2 mt10">
         <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
     </div>
     <div class="col-sm-2" id="defaultbill">

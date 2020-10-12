@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\web\View;
 use kartik\grid\GridView;
 ?>
-<div class="grid-search clearfix large-search">
+<div class="pt5 clearfix large-search">
     <?php echo $this->render('_recalculation_search', ['searchModel' => $searchModel, 'model' => $model, 'rtype' => $rtype]); ?>
 </div>
 <?php
@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
 <?php
 if (!empty($rec_data) && $rtype == 'forced') {
     ?>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tblraterecalculationsearch-union_code,tblraterecalculationsearch-recalc_for', 'rate_code', $model->getAttributeLabel('rate_code')); ?>
     </div>
 <?php } ?>
@@ -36,18 +36,6 @@ if (!empty($rec_data) && $rtype == 'forced') {
 
 <!--<span class="hide-grid-settings kv-panel-before"></span>-->
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-    <div class="form-group">
-        <?php if (!empty($rec_data)) { ?>
-            <span class="btn_show">
-                <?php
-                echo Html::button(Yii::t('app', 'SAVE'), ['class' => 'btn btn-primary', 'id' => 'recalculation']);
-                ?>
-            </span>
-            <?= Yii::$app->controls->reset(); ?>
-        <?php } ?>
-    </div>
-
-
 
     <?php
     if ($rtype == 'forced') {
@@ -107,6 +95,18 @@ if (!empty($rec_data) && $rtype == 'forced') {
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
     }
     ?>
+
+<div class="form-group pt5">
+        <?php if (!empty($rec_data)) { ?>
+            <span class="btn_show">
+                <?php
+                echo Html::button(Yii::t('app', 'SAVE'), ['class' => 'btn btn-primary', 'id' => 'recalculation']);
+                ?>
+            </span>
+            <?= Yii::$app->controls->reset(); ?>
+        <?php } ?>
+    </div>
+
     <?php ActiveForm::end(); ?>
 </div>
 <?php

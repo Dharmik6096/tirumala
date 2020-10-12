@@ -53,6 +53,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'address')->textarea() ?>
         </div>
         <div class="col-sm-4">
+            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+        </div>
+        <div class="col-sm-4">
             <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbltransporter-union_code,tbltransporter-state_code', 'district_code', 'District', FALSE, $readonly); ?>
         </div>
         <div class="col-sm-4">
@@ -117,7 +120,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'security_cheque_no')->textInput() ?>
     </div>
-    
+    <div class="col-sm-2">
+        <?= $form->field($model, 'security_amount')->textInput() ?>
+    </div>
     <!--    <div class="col-sm-3 mt25">
             <? Yii::$app->controls->active($model, $form); ?>
         </div>-->

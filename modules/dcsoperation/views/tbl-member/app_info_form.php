@@ -39,7 +39,7 @@ $form = ActiveForm::begin(['options' => [
                         <div class="col-md-12 padding-left-0"><b><?= Yii::t('app', 'Device Name') ?>:</b> <?= !empty($appInfo) ? $appInfo->device_detail : 'N/A' ?></div>
                     </div> 
                     <div class="clearfix"></div>
-                    <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                    <div class="col-md-12 padding_10_0 theme-box">
                         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                             <h4 class="theme-box-heading"><?= Yii::t('app', 'Notofication Details') ?></h4>
                         </div>

@@ -13,6 +13,7 @@ $defaultToggle = true;
 <div class="panel panel-default panel-main">
 
     <div class="panel-heading"><?= Html::encode($this->title) ?></div>
+    <div class="panel-body">
     <div class="padding-0">
         <?php echo $this->render('_search', ['model' => $searchModel]); ?> 
         <?php
@@ -88,12 +89,13 @@ $defaultToggle = true;
                                         <tbody>
                                             <?php
                                             for ($i = $first_table; $i < $second_table; $i++) {
+                                                if(isset($model[$i])){
                                                 ?>
                                                 <tr>
                                                     <td class='center-align center_text'><?= $form->field($saveModel[$i], '[' . $i . ']dcs_code')->checkbox(['class' => 'allow-cash-checkbox checkboxHeight', 'value' => $model[$i]->dcs_code], false)->label(false); ?></td>
                                                     <td><?= $model[$i]->dcs_name . '(' . $model[$i]->dcs_code_ex . ')'; ?><?= Html::activeHiddenInput($saveModel[$i], '[' . $i . ']wef_date', ['class' => 'setWefDate']) ?></td>
                                                 </tr>
-                                            <?php } ?>
+                                        <?php } }?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -147,6 +149,7 @@ $defaultToggle = true;
         </div>
         <?php ActiveForm::end(); ?>
 
+    </div>
     </div>
 </div>
 

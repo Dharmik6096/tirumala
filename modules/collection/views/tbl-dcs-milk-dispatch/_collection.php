@@ -58,20 +58,20 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Dispatch Collection Details</h4>
         </div>
         <?= $form->field($model, 'dcs_code')->hiddenInput()->label(FALSE) ?>
-        <div class="col-sm-3 rtpl_validate create_fields reset_field">
+        <div class="col-sm-1 rtpl_validate create_fields reset_field">
             <?= $form->field($model, 'dcs')->textInput()->label(Yii::t('app', 'Code')) ?>
         </div>
-        <div class="col-sm-3 create_fields reset_field">
+        <div class="col-sm-1 create_fields reset_field">
             <?= $form->field($model, 'name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
         </div>
-        <div class="col-sm-3 rtpl_validate create_fields">
+        <div class="col-sm-1 rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $txModel, $form, '', 'Milk Type', $readonly); ?>
         </div>
 
-        <div class="col-sm-3 rtpl_validate create_fields">
+        <div class="col-sm-1 rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txModel, $form, '', $txModel->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
         </div>
-        <div class="clearfix"></div>
+        <!-- <div class="clearfix"></div> -->
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'dispatch_qty')->textInput() ?>
         </div>
@@ -88,7 +88,7 @@ $form = ActiveForm::begin([
             <?= $form->field($txModel, 'rtpl')->textInput(['readOnly' => true]) ?>
             <?= $form->field($txModel, 'purchase_rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
         </div>
-        <div class="col-sm-2 reset_field">
+        <div class="col-sm-1 reset_field">
             <?= $form->field($txModel, 'total_amount')->textInput(['readOnly' => true]) ?>
         </div>
 

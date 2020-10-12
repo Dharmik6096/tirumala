@@ -704,6 +704,7 @@ label{
     color: #607188;
     box-shadow: none;
     transition: all 0.3s ease;
+    padding: 4px 4px;
 }
 textarea.form-control,
 select[multiple]{
@@ -3368,7 +3369,6 @@ input[type="checkbox"]:after{
 }
 .pt5{
     padding-top: 5px;
-    padding-left: 0px !important;
 }
 
 .field-rmrd_widgets_list,
@@ -3500,4 +3500,14 @@ input[type="checkbox"]:after{
 
 .farmerRmrdAvgData.table td{
     width: auto !important
+}
+
+.table-rate input[type="radio"], 
+.table-rate input[type="checkbox"] {
+        margin: 2px 5px 2px 2px;
+        height: auto !important;
+}
+
+.table_radio input[type="radio"]{
+    height: 10px !important;
 }

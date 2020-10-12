@@ -112,6 +112,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'route_name', $this->model->route_name);
+            
             if ($validate == 1 && empty($this->model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapping, ['Route Mapping', 'create']);
                 if ($transaction !== FALSE) {
