@@ -29,7 +29,9 @@ $this->title = Yii::t('app', $title);
                     //'labelOptions' => [ 'class' => false],
         ]]);
         ?>
-        <h5 class="panel-subtitle"><?php echo Yii::t('app', $title); ?></h5>
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+            <h4 class="theme-box-heading"><?php echo Yii::t('app', $title) ?></h4>
+        </div>
         <?php echo $form->errorSummary($model); ?>
         <div class="row">
             <div class="col-sm-6">

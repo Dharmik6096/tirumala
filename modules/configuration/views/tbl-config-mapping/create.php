@@ -12,6 +12,7 @@ $defaultToggle = true;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= Html::encode($this->title) ?></div>
+    <div class="panel-body">
     <div class="padding-0">
         <?php echo $this->render('_search', ['searchModel' => $searchModel, 'model' => $model]); ?>
         <?php
@@ -137,6 +138,7 @@ $defaultToggle = true;
             <?php } ?>
         </div>
         <?php ActiveForm::end(); ?>
+    </div>
     </div>
 </div>
 <?php

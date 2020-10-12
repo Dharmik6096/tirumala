@@ -33,7 +33,7 @@ $defaultToggle = true;
                 <?php // echo $form->errorSummary($model); ?>
                 <div class="row margin_0">
                     <div class="modal-body">
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
                         </div>
                         <div class="col-sm-3 "style="display: none">
