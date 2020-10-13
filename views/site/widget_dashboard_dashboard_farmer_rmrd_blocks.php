@@ -4,7 +4,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
 <div class="col-sm-12 farmer_rmrd_block">
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'Union') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -15,7 +15,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'MCC') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -26,7 +26,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'DCS') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -37,7 +37,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display_rmrd ?> ">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display_rmrd ?> ">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'Bulk Vendor') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -48,7 +48,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     </div>
 
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display_rmrd ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display_rmrd ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'VLCC Vendor') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -58,7 +58,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
     </div>
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'Farmer') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -68,7 +68,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'farmer.png' ?>"> </div>
     </div>
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'Quantity') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -78,7 +78,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'scale.png' ?>"> </div>
     </div>
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'FATKG') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -88,7 +88,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'totalcount.png' ?>"> </div>
     </div>
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'SNFKG') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
@@ -98,7 +98,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'totalcount.png' ?>"> </div>
     </div>
 
-    <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header"><?= Yii::t('app', 'Amount') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>

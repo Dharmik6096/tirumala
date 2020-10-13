@@ -3511,3 +3511,7 @@ input[type="checkbox"]:after{
 .table_radio input[type="radio"]{
     height: 10px !important;
 }
+
+.div_dash_block.col-sm-4 {
+    width: calc(33% - 6px)
+}
