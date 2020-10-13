@@ -387,10 +387,11 @@ $( '.sortable' ).sortable();
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_blocks';
                 var union= $('#dashboard-union_code').val();
+                var mcc= $('#dashboard-mcc_code').val();
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/site/load-dashboard-block-data']) . "',
-                    data: blockDataString+'&sp='+id+'&union='+union,
+                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
                     success: function(data) {
                         var obj1 = data;
                         if (obj1.status == 'success')
@@ -565,11 +566,12 @@ $( '.sortable' ).sortable();
                 var b = $('#calendar').fullCalendar('getDate');
                 var m=b.format('Y-MM');
                 var union= $('#dashboard-union_code').val();
+                var mcc= $('#dashboard-mcc_code').val();
                         $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['/site/load-month-data']) . "',
-                                data: 'm='+m+'&union='+union,
+                                data: 'm='+m+'&union='+union+'&mcc='+mcc,
                                 success: function(data) {
 
                                     var obj1 = data;
@@ -592,12 +594,13 @@ $( '.sortable' ).sortable();
                 dayClick: function(date, jsEvent, view) {
                 var dt=date.format();
                 var union= $('#dashboard-union_code').val();
+                var mcc= $('#dashboard-mcc_code').val();
                     $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
                     $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['/site/load-dcs-data']) . "',
-                                data: 'dt='+dt+'&union='+union,
+                                data: 'dt='+dt+'&union='+union+'&mcc='+mcc,
                                 success: function(data) {
 
                                     var obj1 = data;
@@ -719,10 +722,11 @@ $( '.sortable' ).sortable();
                 var datastring = $('#'+id).serialize();
             }
             var union= $('#dashboard-union_code').val();
+            var mcc= $('#dashboard-mcc_code').val();
             $.ajax({
                          type: 'post',
                          url: url,
-                         data: datastring+'&sp='+id+'&union='+union,
+                         data: datastring+'&sp='+id+'&union='+union+'&mcc='+mcc,
                          success: function(data) {
                         
                             var index=$('#'+cntr).data('highcharts-chart');
@@ -913,10 +917,11 @@ function setPopupTable(id,cntr,url,type,diff_sp_name = '', title = ''){
         sp_name = diff_sp_name;
     }
     var union= $('#dashboard-union_code').val();
+    var mcc= $('#dashboard-mcc_code').val();
     $.ajax({
         type: 'post',
         url: url,
-        data: datastring+'&sp='+sp_name+'&union='+union+'&title='+title,
+        data: datastring+'&sp='+sp_name+'&union='+union+'&title='+title+'&mcc='+mcc,
         success: function(data) {
             $('#chartToTable').html(data);
             $('#chartToTableModal').modal('toggle'); 
@@ -936,11 +941,12 @@ function setHtmlData(id,cntr,url){
     var datastring = $('#'+id).serialize();
     var sp_name = id;
     var union= $('#dashboard-union_code').val();
+    var mcc= $('#dashboard-mcc_code').val();
     var popup = 'allow_popup';
     $.ajax({
         type: 'post',
         url: url,
-        data: datastring+'&sp='+sp_name+'&union='+union+'&popup='+popup,
+        data: datastring+'&sp='+sp_name+'&union='+union+'&popup='+popup+'&mcc='+mcc,
         success: function(data) {
 //            console.log(id+'_container');
             $('#'+id+'_container').html(data);

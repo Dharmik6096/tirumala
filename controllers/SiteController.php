@@ -58,7 +58,7 @@ use app\modules\syncutility\models\TblInboxConstraint;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data'];
 
     public function init() {
         parent::init();
@@ -253,25 +253,26 @@ class SiteController extends Controller {
         return $results;
     }
 
-    private function callDashboardCalSp($union_str, $month) {
-        if (empty($union_str)) {
-            if (!empty(Yii::$app->request->post('union'))) {
-                $union_str = Yii::$app->request->post('union');
-            } else {
-                $unionModel = new TblUnions();
-                $union = $unionModel->getActiveUnions();
-                $union_ary = ArrayHelper::getColumn($union, 'union_code');
-                $union_str = implode(',', $union_ary);
-            }
-        }
+    private function callDashboardCalSp($rlsData, $month) {
         $month_start = date("$month-01");
         $month_end = date("Y-m-t", strtotime($month_start));
-        $query = \Yii::$app->db->createCommand("{CALL sp_Portal_Dashboard_Cal_Day(:union_code,:startdate,:enddate)}")
-                ->bindValue(':union_code', ',' . $union_str . ',')
-                ->bindValue(':startdate', $month_start)
-                ->bindValue(':enddate', $month_end);
+        $sp_param = [];
+        $sp_name = 'sp_Portal_Dashboard_Cal_Day_new';
+        $sp_param[] = !empty($rlsData['union']) ? ',' . $rlsData['union'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['plant']) ? ',' . $rlsData['plant'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['mcc']) ? ',' . $rlsData['mcc'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['bmc']) ? ',' . $rlsData['bmc'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['dcs']) ? ',' . $rlsData['dcs'] . ',' : 0;
+        $sp_param[] = $month_start; //date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+        $sp_param[] = $month_end; //date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
 
-        $results = $query->queryAll();
+//        $query = \Yii::$app->db->createCommand("{CALL sp_Portal_Dashboard_Cal_Day(:union_code,:startdate,:enddate)}")
+//                ->bindValue(':union_code', ',' . $union_str . ',')
+//                ->bindValue(':startdate', $month_start)
+//                ->bindValue(':enddate', $month_end);
+//
+//        $results = $query->queryAll();
         return $results;
     }
 
@@ -474,26 +475,24 @@ class SiteController extends Controller {
 
     public function actionLoadDcsData() {
 
-        if (!empty(Yii::$app->request->post('union'))) {
-            $union_str = Yii::$app->request->post('union');
-        } else {
-            $unionModel = new TblUnions();
-            $union = $unionModel->getActiveUnions();
-            $union_ary = ArrayHelper::getColumn($union, 'union_code');
-            $union_str = implode(',', $union_ary);
-        }
-        $dcs_str = NULL;
-        if (!empty(Yii::$app->session->get('Dcs'))) {
-            $dcs_str = Yii::$app->session->get('Dcs');
-            $dcs_str = ',' . $dcs_str . ',';
-        }
+        $rlsData = $this->setRlsData();
         if (isset($_POST['dt'])) {
-            $query = \Yii::$app->db->createCommand("{CALL sp_Portal_Dashboard_Cal(:union_code,:startdate,:enddate,:dcs_code)}")
-                    ->bindValue(':union_code', ',' . $union_str . ',')
-                    ->bindValue(':startdate', $_POST['dt'])
-                    ->bindValue(':enddate', $_POST['dt'])
-                    ->bindValue(':dcs_code', $dcs_str);
-            $results = $query->queryAll();
+            $sp_param = [];
+            $sp_name = 'sp_Portal_Dashboard_Cal_new';
+            $sp_param[] = !empty($rlsData['union']) ? ',' . $rlsData['union'] . ',' : 0;
+            $sp_param[] = !empty($rlsData['plant']) ? ',' . $rlsData['plant'] . ',' : 0;
+            $sp_param[] = !empty($rlsData['mcc']) ? ',' . $rlsData['mcc'] . ',' : 0;
+            $sp_param[] = !empty($rlsData['bmc']) ? ',' . $rlsData['bmc'] . ',' : 0;
+            $sp_param[] = !empty($rlsData['dcs']) ? ',' . $rlsData['dcs'] . ',' : 0;
+            $sp_param[] = $_POST['dt']; //date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+            $sp_param[] = $_POST['dt']; //date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+            $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+//            $query = \Yii::$app->db->createCommand("{CALL sp_Portal_Dashboard_Cal(:union_code,:startdate,:enddate,:dcs_code)}")
+//                    ->bindValue(':union_code', ',' . $union_str . ',')
+//                    ->bindValue(':startdate', $_POST['dt'])
+//                    ->bindValue(':enddate', $_POST['dt'])
+//                    ->bindValue(':dcs_code', $dcs_str);
+//            $results = $query->queryAll();
             if (!empty($results)) {
                 $results = array_values($results);
                 //$results=(object)$results;
@@ -508,9 +507,12 @@ class SiteController extends Controller {
 
     public function actionLoadMonthData() {
         if (!empty(Yii::$app->request->post('m'))) {
-            $union_str = Yii::$app->request->post('union');
+//            $union_str = Yii::$app->request->post('union');
+//            $mcc_str = Yii::$app->request->post('mcc');
             $month = Yii::$app->request->post('m');
-            $results = $this->callDashboardCalSp($union_str, $month);
+            $rlsData = $this->setRlsData();
+
+            $results = $this->callDashboardCalSp($rlsData, $month);
             if (!empty($results)) {
                 if (!empty($results)) {
                     foreach ($results as $res) {
@@ -814,7 +816,8 @@ class SiteController extends Controller {
 //        $mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : (!empty(Yii::$app->request->post['mcc_code']) ? ',' . Yii::$app->request->post['mcc_code'] . ',' : 0);
 //        $bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : (!empty(Yii::$app->request->post['bmc_code']) ? ',' . Yii::$app->request->post['bmc_code'] . ',' : 0);
 //        $dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : (!empty(Yii::$app->request->post['dcs_code']) ? ',' . Yii::$app->request->post['dcs_code'] . ',' : 0);
-        $mcc_code = (!empty($post['mcc_code']) && $post['mcc_code'] != 0) ? $post['mcc_code'] : (!empty(Yii::$app->session->get('MCC')) ? Yii::$app->session->get('MCC') : 0);
+        $mcc_code = (!empty(Yii::$app->request->post('mcc')) && Yii::$app->request->post('mcc') != 0) ? Yii::$app->request->post('mcc') : 0;
+        $mcc_code = (empty($mcc_code) && !empty($post['mcc_code']) && $post['mcc_code'] != 0) ? $post['mcc_code'] : (!empty(Yii::$app->session->get('MCC')) ? Yii::$app->session->get('MCC') : 0);
         $bmc_code = (!empty($post['bmc_code']) && $post['bmc_code'] != 0) ? $post['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? Yii::$app->session->get('BMC') : 0);
         $dcs_code = (!empty($post['dcs_code']) && $post['dcs_code'] != 0) ? $post['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? Yii::$app->session->get('Dcs') : 0);
         $union_str = '-' . $union_str . '-';
@@ -1951,6 +1954,54 @@ class SiteController extends Controller {
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $res];
+    }
+
+    public function setRlsData() {
+        $union_str = 0;
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union_str = Yii::$app->request->post('union');
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+            $union_str = ',' . $union_str . ',';
+        } else {
+            $unionModel = new TblUnions();
+            $union = $unionModel->getActiveUnions();
+            $union_ary = ArrayHelper::getColumn($union, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+
+        $plant_str = 0;
+        if (!empty(Yii::$app->session->get('Plant'))) {
+            $plant_str = Yii::$app->session->get('Plant');
+            $plant_str = $plant_str;
+        }
+        $mcc_str = Yii::$app->request->post('mcc');
+        if (empty($mcc_str)) {
+            if (!empty(Yii::$app->session->get('MCC'))) {
+                $mcc_str = Yii::$app->session->get('MCC');
+                $mcc_str = $mcc_str;
+            } else {
+                $mcc_str = 0;
+            }
+        }
+        $bmc_str = 0;
+        if (!empty(Yii::$app->session->get('BMC'))) {
+            $bmc_str = Yii::$app->session->get('BMC');
+            $bmc_str = $bmc_str;
+        }
+
+        $dcs_str = 0;
+        if (!empty(Yii::$app->session->get('Dcs'))) {
+            $dcs_str = Yii::$app->session->get('Dcs');
+            $dcs_str = $dcs_str;
+        }
+        $rls = [];
+        $rls['union'] = $union_str;
+        $rls['plant'] = $plant_str;
+        $rls['mcc'] = $mcc_str;
+        $rls['bmc'] = $bmc_str;
+        $rls['dcs'] = $dcs_str;
+        return $rls;
     }
 
 }
