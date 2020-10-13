@@ -14,6 +14,7 @@ $mcc_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
 $bmc_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
 $dcs_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
 $common_class = 'padding-left-5 padding-right-5';
+$hideBtnClass = !empty($hideBtnClass) ? $hideBtnClass : '';
 $form = ActiveForm::begin([
             'action' => ['index'],
             'id' => $id
@@ -73,7 +74,7 @@ $form = ActiveForm::begin([
     echo Html::activeHiddenInput($model, 'hidden_to_date', ['value' => $hidden_to_date]);
     ?>  
 <?php } ?>
-<div class="col-sm-3 pb10 <?= $common_class ?>">
+<div class="col-sm-3 pb10 <?= $common_class . ' ' . $hideBtnClass ?>">
     <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
 </div>
 <?php
