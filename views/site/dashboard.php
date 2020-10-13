@@ -185,17 +185,23 @@ $dashboard_widget = new TblDashboardWidgets();
                             function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
                                 //                var_dump(count($map_model));exit;
                                 $checked = in_array($label, $rmrd_selected_widgets);
-                                // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                            'value' => $label,
-                                            'id' => 'rmrd_' . $label,
-                                            'label' => '<label for="rmrd_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'rmrd') . '</label>',
-                                            'labelOptions' => [
-                                                'class' => 'widgets-text' //. $disabled,
-                                            ],
-                                            'class' => 'widgets-checkbox',
-                                        ]) . "</div></div>";
+                                $dispLabel = '';
+                                $dispLabel = $dashboard_widget->getWidgetLabel($label, 'rmrd');
+                                if (empty($dispLabel)) {
+                                    return '';
+                                } else {
+                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                                'value' => $label,
+                                                'id' => 'rmrd_' . $label,
+                                                'label' => '<label for="rmrd_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'rmrd') . '</label>',
+                                                'labelOptions' => [
+                                                    'class' => 'widgets-text' //. $disabled,
+                                                ],
+                                                'class' => 'widgets-checkbox',
+                                            ]) . "</div></div>";
+                                }
                             },
                                 ]
                         )->label(false);
@@ -210,17 +216,23 @@ $dashboard_widget = new TblDashboardWidgets();
                             function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
                                 //                var_dump(count($map_model));exit;
                                 $checked = in_array($label, $farmer_selected_widgets);
-                                // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                            'value' => $label,
-                                            'id' => 'farmer_' . $label,
-                                            'label' => '<label for="farmer_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'farmer') . '</label>',
-                                            'labelOptions' => [
-                                                'class' => 'widgets-text' //. $disabled,
-                                            ],
-                                            'class' => 'widgets-checkbox',
-                                        ]) . "</div></div>";
+                                $dispLabel = '';
+                                $dispLabel = $dashboard_widget->getWidgetLabel($label, 'farmer');
+                                if (empty($dispLabel)) {
+                                    return '';
+                                } else {
+                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                                'value' => $label,
+                                                'id' => 'farmer_' . $label,
+                                                'label' => '<label for="farmer_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'farmer') . '</label>',
+                                                'labelOptions' => [
+                                                    'class' => 'widgets-text' //. $disabled,
+                                                ],
+                                                'class' => 'widgets-checkbox',
+                                            ]) . "</div></div>";
+                                }
                             },
                                 ]
                         )->label(false);
@@ -287,9 +299,12 @@ $dashboard_widget = new TblDashboardWidgets();
         </div>
         <?php
         $selected_widgets = $widget_type == 'farmer' ? $farmer_selected_widgets : $rmrd_selected_widgets;
+        $all_widgets = $widget_type == 'farmer' ? $farmerWidgets : $rmrdWidgets;
         if (!empty($selected_widgets)) {
             foreach ($selected_widgets as $key => $value) {
-                echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
+                if (in_array($value, $all_widgets)) {
+                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
+                }
             }
         }
         ?>
