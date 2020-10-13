@@ -8,7 +8,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
         <div class="div_dash_block_content">
             <p class="dash_block_header">Active <?= Yii::t('app', 'DCS') ?></p>
             <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            <h4 class="dash_block_value block_value" id="farmer_rmrd_block_fatkg">0</h4>
+            <h4 class="dash_block_value block_value" id="dashboard_farmer_status_active_dcs">0</h4>
         </div>
         <div class="div_dash_block_icon"> <img
                 src="<?= $imageIconPath . 'active_dcs.png' ?>"> </div>
