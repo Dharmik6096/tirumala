@@ -3504,8 +3504,8 @@ input[type="checkbox"]:after{
 
 .table-rate input[type="radio"], 
 .table-rate input[type="checkbox"] {
-        margin: 2px 5px 2px 2px;
-        height: auto !important;
+    margin: 2px 5px 2px 2px;
+    height: auto !important;
 }
 
 .table_radio input[type="radio"]{
@@ -3514,4 +3514,8 @@ input[type="checkbox"]:after{
 
 .div_dash_block.col-sm-4 {
     width: calc(33% - 6px)
+}
+
+.panel .panel-body .dashboard_controls .form-control {
+    padding : 0px 4px !important;
 }
