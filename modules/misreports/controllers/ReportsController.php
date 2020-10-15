@@ -458,6 +458,33 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollectionRegister() {
         $this->report = 'BmcCollectionRegister';
+    }
+
+    public function actionSocietyCollectionData() {
+        $this->report = 'SocietyCollectionData';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcAutomationReport() {
+        $this->report = 'BMCAutomationReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BMCAutomationDayWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'BMCAutomationConsolidated';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPaymentDrafted() {
+        $this->report = 'MemberPaymentWithBank';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberPaymentWoBank';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -774,7 +801,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_dpu_gprs_data_reconciliation',
                 'scenario' => 'GprsDataReconciliation',
-                'title' => '208 - DPU-GPRS Data Reconciliation',
+                'title' => '908 - DPU-GPRS Data Reconciliation',
             ],
             //301
             'MemberWiseSummary' => [
@@ -1081,7 +1108,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_sap_rpt_cpmilk_member_collection',
                 'scenario' => 'CPReportSap',
                 'title' => '404 - SAP Data Export',
-                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC')],
                 'export_file_name' => 'Plant_Code_VMCC_from_date_from_shift',
             ],
             'CPRmrdReportSap' => [
@@ -1089,7 +1116,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_sap_rpt_cpmilk_rmrd_collection',
                 'scenario' => 'CPReportSap',
                 'title' => '404 - SAP Data Export',
-                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'BMC')],
                 'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
             ],
             'VendorPayment' => [
@@ -1179,6 +1206,48 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'BmcCollectionRegister',
                 'title' => 'BMC Collection Register',
                 'removeExportType' => ['CSV'],
+            ],
+            'SocietyCollectionData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_society_collection_data',
+                'scenario' => 'SocietyCollectionData',
+                'title' => '907 - Society Collection Data',
+            ],
+            'BMCAutomationReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_autmation_date_shift_wise',
+                'scenario' => 'BMCAutomationReport',
+                'title' => '208 - BMC Automation Report',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BMCAutomationDayWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_autmation_date_wise',
+                'scenario' => 'BMCAutomationReport',
+                'title' => '208 - BMC Automation Report',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'BMCAutomationConsolidated' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_autmation_consolidation',
+                'scenario' => 'BMCAutomationReport',
+                'title' => '208 - BMC Automation Report',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberPaymentWithBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_drafted_with_bank',
+                'scenario' => 'MemberPaymentDrafted',
+                'title' => '611 - Member Payment(Drafted)',
+                'to_decrypt' => ['Account No', 'IFSC'],
+                'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
+            ],
+            'MemberPaymentWoBank' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_payment_drafted_wo_bank',
+                'scenario' => 'MemberPaymentDrafted',
+                'title' => '611 - Member Payment(Drafted)',
+                'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
             ],
         ];
         return $label[$l];
