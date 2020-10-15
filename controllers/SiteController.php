@@ -919,6 +919,11 @@ class SiteController extends Controller {
                 'name' => 'sp_portal_dashboard_farmer_status',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
+            'tbl_collc_count_summary' => [
+                'name' => 'sp_portal_tbl_collc_count_summary',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+
         ];
         return $array[$sp];
     }
@@ -2018,6 +2023,24 @@ class SiteController extends Controller {
         //     $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
         // }
         return $this->renderAjax('hit_count_tab', ['output' => $output, 'union_code' => $union]);
+    }
+
+    public function actionSetCollectionCountSummary() {
+        $output = [];
+        $union = '';
+        $sp = Yii::$app->request->post('sp');
+        // $results = $this->getSpResult($sp);
+        // if (!empty($_POST)) {
+        //     $data = $_POST;
+        //     $sp_param = [];
+        //     $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
+        //     $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+        //     $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+        //     $sp_param[] = $data['union'];
+        //     $union = $data['union'];
+        //     $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        // }
+        return $this->renderAjax('collc_count_summary_tab', ['output' => $output, 'union_code' => $union]);
     }
 
 }
