@@ -1619,6 +1619,7 @@ footer p{
     border-color: #fff;
     color: #fff;
     font-weight: 500;
+    background: linear-gradient(to top, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;
 }
 .fc td{
     border-color: #eee;
