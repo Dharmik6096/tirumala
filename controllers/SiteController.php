@@ -2012,16 +2012,24 @@ class SiteController extends Controller {
     public function actionSetHitCountTab() {
         $output = [];
         $union = '';
-        // if (!empty($_POST)) {
-        //     $data = $_POST;
-        //     $sp_param = [];
-        //     $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
-        //     $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
-        //     $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
-        //     $sp_param[] = $data['union'];
-        //     $union = $data['union'];
-        //     $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        // }
+        $sp_name = 'sp_portal_dashboard_no_of_hits';
+        if (!empty($_POST)) {
+            $data = $_POST;
+            $sp_param = [];
+            $sp_param[] = empty($data['union'])?'0':$data['union'];
+            $sp_param[] = empty($data['plant'])?'0':$data['plant'];
+            $sp_param[] = empty($data['mcc'])?'0':$data['mcc'];
+            $sp_param[] = empty($data['bmc'])?'0':$data['bmc'];
+            $sp_param[] = empty($data['dcs'])?'0':$data['dcs'];
+            $sp_param[] = date('Y-m-d', strtotime($data['from_date_current']));
+            $sp_param[] = date('Y-m-d', strtotime($data['to_date_current']));
+            $sp_param[] = empty($data['hit_current'])?'0':$data['hit_current'];
+            $sp_param[] = date('Y-m-d', strtotime($data['from_date_previous']));
+            $sp_param[] = date('Y-m-d', strtotime($data['to_date_previous']));
+            $sp_param[] = empty($data['hit_previous'])?'0':$data['hit_previous'];
+            $union = $data['union'];
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
         return $this->renderAjax('hit_count_tab', ['output' => $output, 'union_code' => $union]);
     }
 

@@ -298,17 +298,25 @@ $dashboard_widget = new TblDashboardWidgets();
             <?php //}  ?>
         </div>
 
-        <div class="col-sm-12 ">
+        <div class="col-sm-12 margin-bottom-10">
             <div class="col-sm-12 ">
                 <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                    <span class="searchFilterHeader"><?= Yii::t('app', 'Date') ?>: </span>
-                    <span class="searchFilterValue"><?= Yii::$app->controls->view_date($date) ?>, </span>
-                    <span class="searchFilterHeader"><?= Yii::t('app', 'Type') ?>: </span>
-                    <span class="searchFilterValue"><?= $widget_type == 'farmer' ? Yii::t('app', 'Farmer') : Yii::t('app', 'RMRD') ?>, </span>
-                    <span class="searchFilterHeader"><?= Yii::t('app', 'Union') ?>: </span>
-                    <span class="searchFilterValue"><?= $model->getUnionCode('union_name') ?>, </span>
-                    <span class="searchFilterHeader"><?= Yii::t('app', 'MCC') ?>: </span>
-                    <span class="searchFilterValue"><?= $model->getMccPlantCode('name') ?></span>
+                    <td>
+                        <span class="searchFilterHeader"><?= Yii::t('app', 'Date') ?>: </span>
+                        <span class="searchFilterValue"><?= Yii::$app->controls->view_date($date) ?>, </span>
+                    </td>
+                    <td>
+                        <span class="searchFilterHeader"><?= Yii::t('app', 'Type') ?>: </span>
+                        <span class="searchFilterValue"><?= $widget_type == 'farmer' ? Yii::t('app', 'Farmer') : Yii::t('app', 'RMRD') ?>, </span>
+                    </td>
+                    <td>
+                        <span class="searchFilterHeader"><?= Yii::t('app', 'Union') ?>: </span>
+                        <span class="searchFilterValue"><?= $model->getUnionCode('union_name') ?>, </span>
+                    </td>
+                    <td>
+                        <span class="searchFilterHeader"><?= Yii::t('app', 'MCC') ?>: </span>
+                        <span class="searchFilterValue"><?= $model->getMccPlantCode('name') ?></span>
+                    </td>
                 </span>
             </div>
         </div>

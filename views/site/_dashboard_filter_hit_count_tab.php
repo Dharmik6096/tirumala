@@ -9,11 +9,11 @@ use yii\helpers\Url;
 /* @var $model app\modules\organisation\models\TblDcsSearch */
 /* @var $form yii\widgets\ActiveForm */
 $quality_params = ['1' => 'Qty', '2' => 'FAT/SNF', '3' => 'FatKg/SNFKg'];
-$model->from_date4 = empty($model->from_date4) ? Yii::$app->controls->view_date(date('Y-m-d')) : $model->from_date4;
-$model->to_date4 = empty($model->to_date4) ? Yii::$app->controls->view_date(date('Y-m-d')) : $model->to_date4;
+$model->from_date4 = empty($model->from_date4) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->from_date4;
+$model->to_date4 = empty($model->to_date4) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->to_date4;
 
-$model->from_date5 = empty($model->from_date5) ? Yii::$app->controls->view_date(date('Y-m-d')) : $model->from_date5;
-$model->to_date5 = empty($model->to_date5) ? Yii::$app->controls->view_date(date('Y-m-d')) : $model->to_date5;
+$model->from_date5 = empty($model->from_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->from_date5;
+$model->to_date5 = empty($model->to_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->to_date5;
 
 $range_1_id_from = !empty($hit_range_1_from) ? $hit_range_1_from : false;
 $range_1_id_to = !empty($hit_range_1_to) ? $hit_range_1_to : false;
@@ -76,11 +76,12 @@ $script = "
             var hit_previous = $('#dashboard-previous_hit').val();
             var hit_current = $('#dashboard-current_hit').val();
             var union = $('#dashboard-union_code').val();
+            var mcc= $('#dashboard-mcc_code').val();
             if(from_date_previous != '' && to_date_previous != '' && union != '' && from_date_current != '' && to_date_current != ''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['set-hit-count-tab']) . "',
-                    data: {'from_date_previous' : from_date_previous, 'to_date_previous' : to_date_previous, 'from_date_current' : from_date_current, 'to_date_current' : to_date_current, 'union' : union, 'hit_previous': hit_previous, 'hit_current': hit_current} ,
+                    data: {'from_date_previous' : from_date_previous, 'to_date_previous' : to_date_previous, 'from_date_current' : from_date_current, 'to_date_current' : to_date_current, 'union' : union, 'mcc':mcc, 'hit_previous': hit_previous, 'hit_current': hit_current} ,
                     success: function(data) {                                        
                         $('#" . $id . "_container').html(data);
                     },
