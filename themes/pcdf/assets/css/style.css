@@ -3519,3 +3519,15 @@ input[type="checkbox"]:after{
 .panel .panel-body .dashboard_controls .form-control {
     padding : 0px 4px !important;
 }
+
+.pt10 {
+    padding-top: 10px;
+}
+
+.border_right_white{
+    border-right: 1px solid #fff;
+}
+
+.border_right_theme_color{
+    border-right: 1px solid #3a7bd5;
+}

@@ -1,0 +1,53 @@
+<?php
+
+use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\web\View;
+use yii\helpers\Url;
+?>
+
+<div class="table-responsive dashboard_tbl h450">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union') ?></th>
+                <th class="w100 dashboardWidgetDetailPortion"><?= Yii::t('app', 'BMC') ?></th>
+                <th class="max_w35 dashboardWidgetDetailPortion"><?= Yii::t('app', 'DCS') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Previous Count') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Current Count') ?></th>
+            </tr>
+        </thead>
+        <tr>
+            <td>Namaste</td>
+            <td>Rasulabad</td>
+            <td>Global One</td>
+            <td>5</td>
+            <td>6</td>
+        </tr>
+        <?php
+        // if (!empty($output)) {
+        //     foreach ($output as $data) {
+        //         $date = $data['dtdate'] . ' ';
+        //         $date .= $data['Shift'] == 'E' ? '18:00:00' : '06:00:00';
+        //         $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'cross-tab-modal', 'data-p_date' => $date, 'data-bmc_name' => $data['bmc_name'], 'data-shift' => $data['Shift'], 'data-union_Code' => $union_code, 'data-p_bmc_code' => $data['bmc_code']];
+                ?>
+                <!-- <tr>
+                    <td><?php //$data['bmc_code'] ?></td>
+                    <td><?php //Yii::$app->controls->view_date($data['dtdate']) ?></td>
+                    <td><?php //$data['Shift'] ?></td>
+                    <td><?php //$data['DCS_Count'] ?></td>
+                    <?php //$options['data-p_type'] = 'Completed'; ?>
+                    <td><?php //GhostHtml::a_alert($data['Completed'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Completed'], $options); ?></td>
+                    <?php //$options['data-p_type'] = 'Pending'; ?>
+                    <td><?php //GhostHtml::a_alert($data['Pending'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Pending'], $options); ?></td>
+                    <?php //$options['data-p_type'] = 'No_Collection'; ?>
+                    <td><?php //GhostHtml::a_alert($data['No_Collection'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Pending'], $options); ?></td>
+                </tr> -->
+                <?php
+        //     }
+        // } else {
+            ?>
+            <!-- <tr><td colspan="7">No Data Available.</td></tr> -->
+        <?php //}
+        ?>
+    </table>
+</div>

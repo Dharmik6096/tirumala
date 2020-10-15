@@ -2003,5 +2003,21 @@ class SiteController extends Controller {
         $rls['dcs'] = $dcs_str;
         return $rls;
     }
+    
+    public function actionSetHitCountTab() {
+        $output = [];
+        $union = '';
+        // if (!empty($_POST)) {
+        //     $data = $_POST;
+        //     $sp_param = [];
+        //     $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
+        //     $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+        //     $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+        //     $sp_param[] = $data['union'];
+        //     $union = $data['union'];
+        //     $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        // }
+        return $this->renderAjax('hit_count_tab', ['output' => $output, 'union_code' => $union]);
+    }
 
 }
