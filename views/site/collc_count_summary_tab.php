@@ -23,45 +23,30 @@ use yii\helpers\Url;
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Quantity Difference') ?></th>
             </tr>
         </thead>
-        <tr>
-            <td>02003</td>
-            <td>15-10-2020</td>
-            <td>M</td>
-            <td>78</td>
-            <td>37</td>
-            <td>27</td>
-            <td>0</td>
-            <td>10</td>
-            <td>1306.33</td>
-            <td>1875.90</td>
-            <td>51</td>
-            <td>-569.57</td>
-        </tr>
         <?php
-        // if (!empty($output)) {
-        //     foreach ($output as $data) {
-        //         $date = $data['dtdate'] . ' ';
-        //         $date .= $data['Shift'] == 'E' ? '18:00:00' : '06:00:00';
-        //         $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'cross-tab-modal', 'data-p_date' => $date, 'data-bmc_name' => $data['bmc_name'], 'data-shift' => $data['Shift'], 'data-union_Code' => $union_code, 'data-p_bmc_code' => $data['bmc_code']];
+        if (!empty($output)) {
+            foreach ($output as $data) {
                 ?>
-                <!-- <tr>
-                    <td><?php //$data['bmc_code'] ?></td>
-                    <td><?php //Yii::$app->controls->view_date($data['dtdate']) ?></td>
-                    <td><?php //$data['Shift'] ?></td>
-                    <td><?php //$data['DCS_Count'] ?></td>
-                    <?php //$options['data-p_type'] = 'Completed'; ?>
-                    <td><?php //GhostHtml::a_alert($data['Completed'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Completed'], $options); ?></td>
-                    <?php //$options['data-p_type'] = 'Pending'; ?>
-                    <td><?php //GhostHtml::a_alert($data['Pending'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Pending'], $options); ?></td>
-                    <?php //$options['data-p_type'] = 'No_Collection'; ?>
-                    <td><?php //GhostHtml::a_alert($data['No_Collection'], ['/site/bmc-cross-tab-details', 'p_date' => $data['dtdate'], 'shift' => $data['Shift'], 'union_Code' => $union_code, 'p_bmc_code' => $data['bmc_code'], 'p_type' => 'Pending'], $options); ?></td>
-                </tr> -->
+                <tr>
+                    <td><?= $data['mcc_code'] ?></td>
+                    <td><?= $data['date'] ?></td>
+                    <td><?= $data['shift_name'] ?></td>
+                    <td><?= $data['total_mpp'] ?></td>
+                    <td><?= $data['total_online'] ?></td>
+                    <td><?= $data['total_manual'] ?></td>
+                    <td><?= $data['total_pendrive'] ?></td>
+                    <td><?= $data['total_farmer_qty'] ?></td>
+                    <td><?= $data['total_rmrd_qty'] ?></td>
+                    <td><?= $data['rmrd_count'] ?></td>
+                    <td><?= $data['qty_diff'] ?></td>
+                    <td><?= $data['active_mpp'] ?></td>
+                </tr> 
                 <?php
-        //     }
-        // } else {
+            }
+        } else {
             ?>
-            <!-- <tr><td colspan="7">No Data Available.</td></tr> -->
-        <?php //}
+            <tr><td colspan="7">No Data Available.</td></tr>
+        <?php }
         ?>
     </table>
 </div>

@@ -920,7 +920,7 @@ class SiteController extends Controller {
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
             'tbl_collc_count_summary' => [
-                'name' => 'sp_portal_tbl_collc_count_summary',
+                'name' => 'sp_portal_dashboard_collection_count_summary',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
 
@@ -2037,17 +2037,7 @@ class SiteController extends Controller {
         $output = [];
         $union = '';
         $sp = Yii::$app->request->post('sp');
-        // $results = $this->getSpResult($sp);
-        // if (!empty($_POST)) {
-        //     $data = $_POST;
-        //     $sp_param = [];
-        //     $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
-        //     $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
-        //     $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
-        //     $sp_param[] = $data['union'];
-        //     $union = $data['union'];
-        //     $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-        // }
+        $output = $this->getSpResult($sp);
         return $this->renderAjax('collc_count_summary_tab', ['output' => $output, 'union_code' => $union]);
     }
 
