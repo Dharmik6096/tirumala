@@ -297,6 +297,21 @@ $dashboard_widget = new TblDashboardWidgets();
             </div>
             <?php //}  ?>
         </div>
+
+        <div class="col-sm-12 ">
+            <div class="col-sm-12 ">
+                <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
+                    <span class="searchFilterHeader"><?= Yii::t('app', 'Date') ?>: </span>
+                    <span class="searchFilterValue"><?= Yii::$app->controls->view_date($date) ?>, </span>
+                    <span class="searchFilterHeader"><?= Yii::t('app', 'Type') ?>: </span>
+                    <span class="searchFilterValue"><?= $widget_type == 'farmer' ? Yii::t('app', 'Farmer') : Yii::t('app', 'RMRD') ?>, </span>
+                    <span class="searchFilterHeader"><?= Yii::t('app', 'Union') ?>: </span>
+                    <span class="searchFilterValue"><?= $model->getUnionCode('union_name') ?>, </span>
+                    <span class="searchFilterHeader"><?= Yii::t('app', 'MCC') ?>: </span>
+                    <span class="searchFilterValue"><?= $model->getMccPlantCode('name') ?></span>
+                </span>
+            </div>
+        </div>
         <?php
         $selected_widgets = $widget_type == 'farmer' ? $farmer_selected_widgets : $rmrd_selected_widgets;
         $all_widgets = $widget_type == 'farmer' ? $farmerWidgets : $rmrdWidgets;
