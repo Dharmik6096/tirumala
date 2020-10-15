@@ -227,9 +227,10 @@ ul{
 }
 /*main menu*/
 .menu-wrap{
-    background: -moz-linear-gradient(to right, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%);
-    background: -webkit-linear-gradient(to right, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%);
-    background: linear-gradient(to right, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;
+    /*    background: -moz-linear-gradient(to right, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%);
+        background: -webkit-linear-gradient(to right, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%);
+        background: linear-gradient(to right, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;*/
+    background: #3B3E47;
     -webkit-box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1);
 }
@@ -246,7 +247,7 @@ ul{
 }
 .navbar .dropdown-menu li > a:hover, .navbar.navbar-default .dropdown-menu li > a:hover, .navbar .dropdown-menu li > a:focus, .navbar.navbar-default .dropdown-menu li > a:focus{
     color: #fff;
-    background: rgba(58, 123, 213, 0.8);
+    background: rgba(59,62,71, 0.8);
 }
 .dropdown-menu{
     border-radius: 2px;
@@ -3448,7 +3449,7 @@ input[type="checkbox"]:after{
 
 .dash_block_value {
     margin-top: 12px;
-    color: #fff
+    color: #000
 }
 
 
@@ -3460,7 +3461,7 @@ input[type="checkbox"]:after{
 .dashboardWidgetDetailPortion,
 .dashboardWidhetModalPopup table th{
     /*background: linear-gradient(to top, rgba(0, 210, 255,0.5) 0%, rgba(58, 123, 213,0.8) 100%) !important;*/
-    background: linear-gradient(to top, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;
+    background: linear-gradient(to right top, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;
 }
 
 .dashboardWidgetHeader {
@@ -3576,3 +3577,9 @@ input[type="checkbox"]:after{
     color: #efefef
 }
 
+
+
+.dashboardWidgetDetailPortion:nth-child(even){
+    /*background: linear-gradient(to top, rgba(0, 210, 255,0.5) 0%, rgba(58, 123, 213,0.8) 100%) !important;*/
+    background: linear-gradient(to left bottom, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;
+}
