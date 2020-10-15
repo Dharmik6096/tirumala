@@ -44,6 +44,7 @@ use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\configuration\models\TblConfigMapping;
 use app\modules\payment\models\TblPaymentCycleApplicability;
+use yii\db\Query;
 
 class GeneralFunctions extends Component {
 
@@ -995,7 +996,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1602,7 +1603,27 @@ class GeneralFunctions extends Component {
                 $ref_code = ($keyPattern['ref_code_length'] > 0 ) ? str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT) : '';
                 $model->ref_code = '';
                 foreach ($prefix_seq as $pre) {
-                    $model->ref_code .= $model->{$pre};
+                    $pre_info = explode(':', $pre);
+                    if (isset($pre_info[1])) {
+                        $t_info = explode('#', $pre_info[0]);
+                        $table_name = $t_info[0];
+                        $where_key = $t_info[1];
+                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                        $append_field = $pre_info[1];
+                        $query = new Query();
+                        $res = $query->select($append_field)
+                                        ->from($table_name)
+                                        ->where([$where_key => $model->{$where_val}])->one();
+                        if (!empty($res)) {
+                            $model->ref_code .= $res[$append_field];
+                        } else {
+                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                            $model->addError('ref_code', $message);
+                            return;
+                        }
+                    } else {
+                        $model->ref_code .= $model->{$pre};
+                    }
                 }
                 $model->ref_code .= $ref_code;
             }
