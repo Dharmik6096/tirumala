@@ -20,6 +20,9 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\configuration\models\TblUnionRatechartRange;
+use app\modules\dcsoperation\models\TblMemberProvisional;
+use app\modules\collection\models\TblProvisionalMilkCollection;
+use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -85,63 +88,64 @@ class TblMilkCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['milk_type_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
-                }, 'on' => 'importCsv'],
-                [['shift_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
-                }, 'on' => 'importCsv'],
-                [['fat', 'snf', 'bmc_code'], 'required', 'except' => ['create']],
-                [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['create', 'importCsv']],
-                [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
-                [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
-                [['rtpl', 'amount'], 'trim'],
-                [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag'], 'string', 'except' => ['sendsms', 'androidsync']],
-                [['milk_type_code', 'shift_code', 'dcs_code', 'milk_type_code', 'qty'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
-                [['milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'except' => ['importCsv', 'portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
-                [['member'], 'required', 'on' => ['importCsv']],
-                [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['sendsms', 'androidsync']],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync']],
+            [['milk_type_code'], function ($attribute, $params) {
+            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+        }, 'on' => 'importCsv'],
+            [['shift_code'], function ($attribute, $params) {
+            Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+        }, 'on' => 'importCsv'],
+            [['fat', 'snf', 'bmc_code'], 'required', 'except' => ['create']],
+            [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['create', 'importCsv']],
+            [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+            [['milk_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+            [['rtpl', 'amount'], 'trim'],
+            [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag'], 'string', 'except' => ['sendsms', 'androidsync']],
+            [['milk_type_code', 'shift_code', 'dcs_code', 'milk_type_code', 'qty'], 'required', 'except' => ['portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
+            [['milk_quality_type_code', 'amount', 'rtpl', 'member_code'], 'required', 'except' => ['importCsv', 'portal_data_post', 'post_sap_data', 'sendsms', 'androidsync']],
+            [['member', 'sample_no'], 'required', 'on' => ['importCsv']],
+            [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
+            [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['sendsms', 'androidsync']],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync']],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
             [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long'], 'safe'],
-                [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync']],
-                [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv']],
-                [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
+            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync']],
+            [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv']],
+            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
             //  [['member_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMember::className(), 'targetAttribute' => ['member_code' => 'member_code']],
             // [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code'], 'except' => ['sendsms']],
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
 //            [['milk_collection_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkCollection::className(), 'targetAttribute' => ['milk_collection_code' => 'milk_collection_code']],
             [['fat', 'snf', 'clr', 'water', 'qty'], 'default', 'value' => '0'],
-                [['rtpl', 'amount'], 'default', 'value' => '0', 'except' => ['importCsv']],
-                [['is_approved'], 'default', 'value' => '1'],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code'], 'safe'],
-                [['member_code', 'dcs_code', 'name', 'mobile_no', 'milk_type_code', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'sample_no', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'ack', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'created_at', 'created_by', 'updated_at', 'updated_by', 'route_code', 'bmc_code', 'converted_qty', 'is_approved', 'data_post_id', 'resp_status', 'resp_desc', 'picked_datetime', 'ftp_txn_file_name', 'tag_1', 'tag_2', 'ftp_txn_log_id', 'error_desc', 'originating_type', 'last_edited_type', 'remarks', 'sync_status', 'union_code', 'plant_code', 'mcc_plant_code', 'version_no', 'originating_org_code', 'originating_org_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'converted_qty_mode', 'incentive', 'deduction', 'total_amount', 'is_provisional'], 'safe'],
-                [['dcs_code'], 'setUuid', 'on' => ['androidsync']],
-                [['bmc_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
-                }, 'on' => ['importCsv']],
-                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-                [['snf', 'rtpl'], 'double', 'min' => 0, 'on' => ['importCsv']],
-                [['fat', 'qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['importCsv']],
-                [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
-                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
-                [['dcs_code'], 'unique', 'targetAttribute' => ['member_code', 'dcs_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
-                    return empty($this->getErrors());
-                }, 'on' => ['importCsv']],
-                [['dcs_code'], 'pastDateValidate', 'on' => 'importCsv'],
-                [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
-                ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
-                [['tag_1'], 'default', 'value' => 'X'],
-                [['adt_param', 'adt_value'], 'safe'],
-                [['member_code'], 'validateUnique', 'on' => ['create']],
-                [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
-                [['bmc_code'], function ($attribute, $params) {
-                    if (empty($this->getErrors())) {
-                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
-                    }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
+            [['rtpl', 'amount'], 'default', 'value' => '0', 'except' => ['importCsv']],
+            [['is_approved'], 'default', 'value' => '1'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code'], 'safe'],
+            [['member_code', 'dcs_code', 'name', 'mobile_no', 'milk_type_code', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'sample_no', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'ack', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'created_at', 'created_by', 'updated_at', 'updated_by', 'route_code', 'bmc_code', 'converted_qty', 'is_approved', 'data_post_id', 'resp_status', 'resp_desc', 'picked_datetime', 'ftp_txn_file_name', 'tag_1', 'tag_2', 'ftp_txn_log_id', 'error_desc', 'originating_type', 'last_edited_type', 'remarks', 'sync_status', 'union_code', 'plant_code', 'mcc_plant_code', 'version_no', 'originating_org_code', 'originating_org_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'converted_qty_mode', 'incentive', 'deduction', 'total_amount', 'is_provisional'], 'safe'],
+            [['dcs_code'], 'setUuid', 'on' => ['androidsync']],
+            [['bmc_code'], function ($attribute, $params) {
+            Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+        }, 'on' => ['importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['snf', 'rtpl'], 'double', 'min' => 0, 'on' => ['importCsv']],
+            [['fat', 'qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
+//            [['dcs_code'], 'unique', 'targetAttribute' => ['member_code', 'dcs_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+//                    return empty($this->getErrors());
+//                }, 'on' => ['importCsv']],
+            [['dcs_code'], 'pastDateValidate', 'on' => 'importCsv'],
+            [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
+            ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
+            [['tag_1'], 'default', 'value' => 'X'],
+            [['adt_param', 'adt_value'], 'safe'],
+            [['member_code'], 'validateUnique', 'on' => ['create']],
+            [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
+            [['bmc_code'], function ($attribute, $params) {
+            if (empty($this->getErrors())) {
+                Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
+            }
+        }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
         ];
     }
 
@@ -362,16 +366,15 @@ class TblMilkCollection extends \app\models\ChildModel {
                 if (!empty($this->bmc_code) && ($this->bmc_code != $bmc)) {
                     $this->addError('bmc_code', Yii::t('app/validation', $this->getAttributeLabel('bmc_code') . ' is invalid'));
                 }
-                $this->member_code = $this->dcs_code . str_pad($this->member, 4, '0', STR_PAD_LEFT);
-                if (empty($this->memberCode) && !empty($this->member)) {
+                $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+                $this->member_code = $this->dcs_code . str_pad(substr($this->member, -4), 4, '0', STR_PAD_LEFT);
+                $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['member_collection_check']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['member_collection_check'] : '';
+                if (empty($this->memberCode) && !empty($this->member) && empty($config)) {
                     $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' invalid '));
                 }
-
-                $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
                 $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
                 $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
                 $this->milk_quality_type_code = 1;
-                $this->member_code = $this->dcs_code . str_pad(substr($this->member_code, -4), 4, '0', STR_PAD_LEFT);
                 Yii::$app->general->validateDeactivateDcs($this, $this->date_time_of_collection, '', TRUE);
                 $this->mobile_no = Yii::$app->general->getforeignkey($this->memberCode, 'mobile_no');
                 $this->name = Yii::$app->general->getforeignkey($this->memberCode, 'member_name');
@@ -388,10 +391,11 @@ class TblMilkCollection extends \app\models\ChildModel {
                 $this->qty_auto = 0;
                 $this->sms_status = 'n';
                 $this->route_code = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
-                $this->sample_no = $this->getSampleNo();
+//                $this->sample_no = $this->getSampleNo();
                 $this->last_edited_type = 'P';
                 $this->own_mcc_plant_code = $this->mcc_plant_code;
                 $this->own_bmc_code = $this->bmc_code;
+//                $this->milkTypeWiseUnique($this, $this, FALSE, FALSE);
                 Yii::$app->general->validateRateRange($this);
                 //set rtpl,rate_code and amount
                 if (empty($this->getErrors()) && $this->amount === '' && $this->rtpl === '') {
@@ -471,11 +475,8 @@ class TblMilkCollection extends \app\models\ChildModel {
         Yii::$app->general->validateRateRange($this);
 
         $ApprovalModel = new TblCollectionDataAlias();
-        $approvalTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection'])->one();
-        $mainTableData = $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])->one();
-        if (($flag == 1 && !empty($approvalTableData)) || !empty($mainTableData)) {
-            $this->addError($attribute, "Milk Collection Already Exists.");
-        }
+        $this->milkTypeWiseUnique($ApprovalModel, $this, TRUE);
+        $this->milkTypeWiseUnique($this, $this);
     }
 
     public function validateUpdate($attribute, $params) {
@@ -487,16 +488,8 @@ class TblMilkCollection extends \app\models\ChildModel {
             if ($flag == 1 && !empty($existTableData)) {
                 $this->addError($attribute, "Record is Already Exist For Approval");
             }
-            $approvalTableData = $ApprovalModel->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection'])->one();
-            $mainTableData = $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'cast(date_time_of_collection as date)' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'shift_code' => $this->shift_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf])
-//                    ->andWhere(['!=', 'milk_type_code', $oldMilktype])
-                    ->one();
-            if ($flag == 1 && !empty($approvalTableData)) {
-                $this->addError($attribute, "Record is Already Exist In Approval");
-            }
-            if (!empty($mainTableData)) {
-                $this->addError($attribute, "Record is Already Exist");
-            }
+            $this->milkTypeWiseUnique($ApprovalModel, $this, TRUE);
+            $this->milkTypeWiseUnique($this, $this, FALSE, TRUE);
             Yii::$app->general->validateRateRange($this);
         }
     }
@@ -518,6 +511,172 @@ class TblMilkCollection extends \app\models\ChildModel {
         $model->own_mcc_plant_code = $model->mcc_plant_code;
         $model->own_bmc_code = $model->bmc_code;
         $model->sample_no = $model->getSampleNo();
+    }
+
+    public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
+        $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
+        $sameMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_same_milk', 'VLC');
+        $diffMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_other_milk', 'VLC');
+        $oldMilktype = !empty($model->oldAttributes['milk_type_code']) ? $model->oldAttributes['milk_type_code'] : '';
+        if ($approvalUpdate) {
+            $oldMilktype = $modelData->old_milk_type_code;
+        }
+        if ($sameMilkType != 1 && $diffMilkType != 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $modelData->dcs_code,
+                'member_code' => $modelData->member_code,
+                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                'shift_code' => $modelData->shift_code]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
+            }
+            if ($update || $importUpdate) {
+                $returnModel->andWhere(['!=', 'milk_collection_code', $modelData->milk_collection_code]);
+            }
+            if ($approvalUpdate) {
+                $returnModel = $returnModel->count();
+                if ($returnModel > 1) {
+                    $modelData->addError('milk_type_code', "Record is Already Exist.");
+                    return FALSE;
+                } else {
+                    $returnModel = '';
+                }
+            } else {
+                $returnModel = $returnModel->one();
+            }
+        } else if ($sameMilkType != 1 && $diffMilkType == 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $modelData->dcs_code,
+                'member_code' => $modelData->member_code,
+                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                'shift_code' => $modelData->shift_code,
+                'milk_type_code' => $modelData->milk_type_code]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
+            }
+            if ($update || $approvalUpdate || $importUpdate) {
+                $returnModel->andWhere(['!=', 'milk_type_code', $oldMilktype]);
+            }
+            $returnModel = $returnModel->one();
+            if ((!empty($returnModel))) {
+                $modelData->addError('milk_type_code', "Milk Type Must Not Same.");
+                return FALSE;
+            }
+        } else if ($sameMilkType == 1 && $diffMilkType != 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $modelData->dcs_code,
+                        'member_code' => $modelData->member_code,
+                        'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                        'shift_code' => $modelData->shift_code])
+                    ->andWhere(['!=', 'milk_type_code', $modelData->milk_type_code]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
+            }
+            $returnModel = $returnModel->one();
+            if (!empty($returnModel)) {
+                $modelData->addError('milk_type_code', "Milk Type Must Same.");
+                return FALSE;
+            }
+            if (empty($returnModel)) {
+                $returnModel = $model->find()->where([
+                    'dcs_code' => $modelData->dcs_code,
+                    'member_code' => $modelData->member_code,
+                    'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                    'shift_code' => $modelData->shift_code,
+                    'milk_type_code' => $modelData->milk_type_code,
+                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+                if ($approval) {
+                    $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
+                }
+                if ($importUpdate) {
+                    $returnModel->andWhere(['!=', 'milk_collection_code', $modelData->milk_collection_code]);
+                }
+                $returnModel = $returnModel->one();
+            }
+        } else if ($sameMilkType == 1 && $diffMilkType == 1) {
+            $returnModel = $model->find()->where(['dcs_code' => $modelData->dcs_code,
+                'member_code' => $modelData->member_code,
+                'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
+                'milk_type_code' => $modelData->milk_type_code,
+                'shift_code' => $modelData->shift_code,
+                'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+            if ($approval) {
+                $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
+            }
+            if ($importUpdate) {
+                $returnModel->andWhere(['!=', 'milk_collection_code', $modelData->milk_collection_code]);
+            }
+            $returnModel = $returnModel->one();
+        }
+        if (($approval && $flag == 1 && !empty($returnModel))) {
+            $modelData->addError('milk_type_code', "Record is Already Exist In Approval.");
+            return FALSE;
+        }
+        if (!$approval && !empty($returnModel)) {
+            $modelData->addError('milk_type_code', "Record is Already Exist.");
+            return FALSE;
+        }
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$errors) {
+        $config = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check'] : '';
+        if (empty($model->memberCode) && !empty($model->member) && !empty($config)) {
+            if ($config == 1) {
+                $memberModel = new TblMember();
+                $memberModel->member_code = $memberModel->getCode();
+                $this->setMemberModel($model, $memberModel);
+                if (!$memberModel->validate()) {
+                    $errors[] = $memberModel->getErrors();
+                }
+                array_push($modelSave, $memberModel);
+            } elseif ($config == 2) {
+                $memberPrModel = new TblMemberProvisional();
+                $this->setMemberModel($model, $memberPrModel);
+                $existData = $memberPrModel::find()->where(['member_code' => $memberPrModel->member_code])->one();
+                if (empty($existData)) {
+                    $memberPrModel->pro_ex_member_code = $memberPrModel->ex_member_code;
+                    $memberPrModel->provisional_member_code = Yii::$app->general->getPrimaryCode($memberPrModel);
+                    $memberPrModel->is_approved = 0;
+                    if (!$memberPrModel->validate()) {
+                        $errors[] = $memberPrModel->getErrors();
+                    }
+                    array_push($modelSave, $memberPrModel);
+                }
+                $updateModel = TblProvisionalMilkCollection::find()->where(['dcs_code' => $model->dcs_code, 'member_code' => $model->member_code, 'sample_no' => $model->sample_no, 'date_time_of_collection' => $model->date_time_of_collection, 'shift_code' => $model->shift_code])->one();
+                if (!empty($updateModel)) {
+                    $HistoryModel = new TblProvisionalMilkCollectionHistory();
+                    Yii::$app->operation->history($updateModel, $HistoryModel, UPDATE);
+                    array_push($modelSave, $HistoryModel);
+                } else {
+                    $updateModel = new TblProvisionalMilkCollection();
+//                    $updateModel->provisional_milk_collection_code = Yii::$app->general->getCodeAutoIncrement($updateModel);
+                }
+                $updateModel->attributes = $model->attributes;
+                $updateModel->send_status = 0;
+                $model = $updateModel;
+            }
+        } else {
+            $existData = $model::find()->where(['dcs_code' => $model->dcs_code, 'member_code' => $model->member_code, 'sample_no' => $model->sample_no, 'date_time_of_collection' => $model->date_time_of_collection, 'shift_code' => $model->shift_code])->one();
+            if (!empty($existData)) {
+                $model->milkTypeWiseUnique($model, $model, FALSE, FALSE, FALSE, TRUE);
+            } else {
+//                $model->sample_no = $this->getSampleNo();
+                $model->milkTypeWiseUnique($model, $model, FALSE, FALSE);
+            }
+        }
+    }
+
+    public function setMemberModel($model, &$memberModel) {
+        $memberModel->attributes = $model->attributes;
+        $memberModel->scenario = 'collection';
+        $memberModel->ex_member_code = str_pad($model->member, 4, '0', STR_PAD_LEFT);
+        $memberModel->animal_type_code = $model->milk_type_code;
+        $memberModel->address = 'No Address';
+        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+        $memberModel->member_type_code = '1';
+        $memberModel->member_name = 'No Name';
+        $memberModel->state_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'state_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'state_code') : NULL;
+        $memberModel->district_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'district_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'district_code') : NULL;
+        $memberModel->sub_district_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'sub_district_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'sub_district_code') : NULL;
+        $memberModel->hamlet_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'hamlet_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'hamlet_code') : NULL;
+        $memberModel->village_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'village_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'village_code') : NULL;
     }
 
 }

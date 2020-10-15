@@ -106,7 +106,7 @@ class TblMember extends ChildModel {
             [['is_download'], 'default', 'value' => '0'],
             [['is_active'], 'default', 'value' => '1'],
             [['member_type_code'], 'default', 'value' => '1'],
-            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
+            [['dcs_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
             [['member_code', 'state_code', 'union_code'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
             [['dcs_code', 'ex_member_code', 'member_name'], 'required', 'on' => ['ApprovalMember']],
             [['member_name'], 'required', 'except' => ['customImport', 'saveCreamyData', 'post_sap_data', 'androidsync']],

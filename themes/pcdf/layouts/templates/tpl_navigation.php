@@ -372,6 +372,8 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/reports/dcs-master']],
                         ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/reports/member-master']],
+                        ['label' => Yii::t('app', 'Milk Collection Register'), 'url' => ['/misreports/reports/milk-collection-register']],
+                        ['label' => Yii::t('app', 'BMC Collection Register'), 'url' => ['/misreports/reports/bmc-collection-register']],
                     ]
                 ],
                 [
@@ -609,10 +611,10 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Collection Files<b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'BIPL Files Process', 'url' => ['/bkgprocess/tbl-ftp-txn-log/bipl-pendrive-collection']],
-                        ['label' => 'EIPL Files Process', 'url' => ['/eipl-packet/create'], 'visible' => true],
                         ['label' => 'EIPL Files Process - New', 'url' => ['/eipldpu/pendrive-import/create']],
                         ['label' => 'AMCS Files Process', 'url' => ['/syncutility/pendrive-import/create']],
-                        ['label' => 'Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
+                        ['label' => 'Import Files Detail', 'url' => ['/import/tbl-import-file-log/index']],
+                        ['label' => 'Pendrive Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
                     ]
                 ],
             ],

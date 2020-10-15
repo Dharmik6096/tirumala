@@ -38,3 +38,5 @@ vendor\kartik-v\bootstrap-tabs-x\.github
 installation-identity/error.txt
 installation-identity/*
 web/PDS/**
+web/bulkdata/**
+web/collection-data/**
