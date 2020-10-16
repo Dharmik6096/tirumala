@@ -411,7 +411,7 @@ $( '.sortable' ).sortable();
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_blocks';
                 var union= $('#dashboard-union_code').val();
-                var mcc= $('#dashboard-mcc_code').val();
+                var mcc= '".$model->mcc_code."';
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/site/load-dashboard-block-data']) . "',
@@ -448,7 +448,7 @@ $( '.sortable' ).sortable();
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_farmer_rmrd_blocks';
                 var union= $('#dashboard-union_code').val();
-                var mcc= $('#dashboard-mcc_code').val();
+                var mcc= '".$model->mcc_code."';
                 var widget_type= $('#hidden_widget_type').val();
                 $.ajax({
                     type: 'post',
@@ -484,7 +484,7 @@ $( '.sortable' ).sortable();
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_farmer_rmrd_avg';
                 var union= $('#dashboard-union_code').val();
-                var mcc= $('#dashboard-mcc_code').val();
+                var mcc= '".$model->mcc_code."';
                 var widget_type= $('#hidden_widget_type').val();
                 $.ajax({
                     type: 'post',
@@ -548,7 +548,7 @@ $( '.sortable' ).sortable();
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_farmer_status';
                 var union= $('#dashboard-union_code').val();
-                var mcc= $('#dashboard-mcc_code').val();
+                var mcc= '".$model->mcc_code."';
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
@@ -590,8 +590,8 @@ $( '.sortable' ).sortable();
                 var b = $('#calendar').fullCalendar('getDate');
                 var m=b.format('Y-MM');
                 var union= $('#dashboard-union_code').val();
-                var mcc= $('#dashboard-mcc_code').val();
-                        $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                var mcc= '".$model->mcc_code."';
+                        // $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['/site/load-month-data']) . "',
@@ -618,7 +618,7 @@ $( '.sortable' ).sortable();
                 dayClick: function(date, jsEvent, view) {
                 var dt=date.format();
                 var union= $('#dashboard-union_code').val();
-                var mcc= $('#dashboard-mcc_code').val();
+                var mcc= '".$model->mcc_code."';
                     $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
                     $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $.ajax({
@@ -746,7 +746,7 @@ $( '.sortable' ).sortable();
                 var datastring = $('#'+id).serialize();
             }
             var union= $('#dashboard-union_code').val();
-            var mcc= $('#dashboard-mcc_code').val();
+            var mcc= '".$model->mcc_code."';
             $.ajax({
                          type: 'post',
                          url: url,
@@ -941,7 +941,7 @@ function setPopupTable(id,cntr,url,type,diff_sp_name = '', title = ''){
         sp_name = diff_sp_name;
     }
     var union= $('#dashboard-union_code').val();
-    var mcc= $('#dashboard-mcc_code').val();
+    var mcc= '".$model->mcc_code."';
     $.ajax({
         type: 'post',
         url: url,
@@ -965,7 +965,7 @@ function setHtmlData(id,cntr,url){
     var datastring = $('#'+id).serialize();
     var sp_name = id;
     var union= $('#dashboard-union_code').val();
-    var mcc= $('#dashboard-mcc_code').val();
+    var mcc= '".$model->mcc_code."';
     var popup = 'allow_popup';
     $.ajax({
         type: 'post',
