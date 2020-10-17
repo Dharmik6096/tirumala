@@ -58,7 +58,7 @@ use app\modules\syncutility\models\TblInboxConstraint;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab'];
 
     public function init() {
         parent::init();
@@ -923,7 +923,6 @@ class SiteController extends Controller {
                 'name' => 'sp_portal_dashboard_collection_count_summary',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
-
         ];
         return $array[$sp];
     }
@@ -2008,7 +2007,7 @@ class SiteController extends Controller {
         $rls['dcs'] = $dcs_str;
         return $rls;
     }
-    
+
     public function actionSetHitCountTab() {
         $output = [];
         $union = '';
@@ -2016,17 +2015,17 @@ class SiteController extends Controller {
         if (!empty($_POST)) {
             $data = $_POST;
             $sp_param = [];
-            $sp_param[] = empty($data['union'])?'0':$data['union'];
-            $sp_param[] = empty($data['plant'])?'0':$data['plant'];
-            $sp_param[] = empty($data['mcc'])?'0':$data['mcc'];
-            $sp_param[] = empty($data['bmc'])?'0':$data['bmc'];
-            $sp_param[] = empty($data['dcs'])?'0':$data['dcs'];
+            $sp_param[] = empty($data['union']) ? '0' : $data['union'];
+            $sp_param[] = empty($data['plant']) ? '0' : $data['plant'];
+            $sp_param[] = empty($data['mcc']) ? '0' : $data['mcc'];
+            $sp_param[] = empty($data['bmc']) ? '0' : $data['bmc'];
+            $sp_param[] = empty($data['dcs']) ? '0' : $data['dcs'];
             $sp_param[] = date('Y-m-d', strtotime($data['from_date_current']));
             $sp_param[] = date('Y-m-d', strtotime($data['to_date_current']));
-            $sp_param[] = empty($data['hit_current'])?'0':$data['hit_current'];
+            $sp_param[] = empty($data['hit_current']) ? '0' : $data['hit_current'];
             $sp_param[] = date('Y-m-d', strtotime($data['from_date_previous']));
             $sp_param[] = date('Y-m-d', strtotime($data['to_date_previous']));
-            $sp_param[] = empty($data['hit_previous'])?'0':$data['hit_previous'];
+            $sp_param[] = empty($data['hit_previous']) ? '0' : $data['hit_previous'];
             $union = $data['union'];
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
         }

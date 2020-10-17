@@ -983,9 +983,9 @@ function setHtmlData(id,cntr,url){
     var datastring = $('#'+id).serialize();
     var sp_name = id;
     var union= '" . $unionCode . "';
-    var union= $('#dashboard-union_code').val();
+//    var union= $('#dashboard-union_code').val();
     var mcc= '" . $mccCode . "';
-    var mcc= $('#dashboard-mcc_code').val();
+//    var mcc= $('#dashboard-mcc_code').val();
     var popup = 'allow_popup';
     $.ajax({
         type: 'post',
