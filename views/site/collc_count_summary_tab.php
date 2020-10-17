@@ -45,7 +45,7 @@ use yii\helpers\Url;
             }
         } else {
             ?>
-            <tr><td colspan="7">No Data Available.</td></tr>
+            <tr><td colspan="12">No Data Available.</td></tr>
         <?php }
         ?>
     </table>
