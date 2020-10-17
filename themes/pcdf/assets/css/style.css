@@ -2110,7 +2110,7 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 }
 
 .navbar-brand img {
-    height: 50px;
+    max-height: 50px;
     max-width: 77px;
 }
 
@@ -3431,8 +3431,8 @@ input[type="checkbox"]:after{
     /*height: 30px;*/
     /*    padding-top: 10px;
         opacity: 0.2;*/
-    height: 75px;
-    padding-top: 10px;
+    height: 80px;
+    padding-top: 5px;
     opacity: 0.7;
 }
 
@@ -3565,6 +3565,7 @@ input[type="checkbox"]:after{
     color: #fff;
     text-align: center;
     padding-top: 2px;
+    padding: 7px 0px 5px;
 }
 
 .searchFilterHeader {
@@ -3581,5 +3582,5 @@ input[type="checkbox"]:after{
 
 .dashboardWidgetDetailPortion:nth-child(even){
     /*background: linear-gradient(to top, rgba(0, 210, 255,0.5) 0%, rgba(58, 123, 213,0.8) 100%) !important;*/
-    background: linear-gradient(to left bottom, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;
+    background: linear-gradient(to left top, rgba(181,68,68,0.9) 0%, rgb(121, 0, 0) 70%) !important;
 }
