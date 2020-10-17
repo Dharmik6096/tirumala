@@ -22,6 +22,10 @@ $range_2_id_from = !empty($hit_range_2_from) ? $hit_range_2_from : false;
 $range_2_id_to = !empty($hit_range_2_to) ? $hit_range_2_to : false;
 
 $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
+
+
+$unionCode = !empty($model->union_code) ? $model->union_code : '';
+$mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
 //Yii::$app->controls->view_date($date);
 ?>
 <div class="dashboard_controls pt10">
@@ -39,7 +43,7 @@ $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
             <?php } ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'previous_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text',['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
+            <?= $form->field($model, 'previous_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
         </div>
     </div>
     <div class="col-sm-6">
@@ -49,7 +53,7 @@ $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
             <?php } ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'current_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text',['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
+            <?= $form->field($model, 'current_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
         </div>
     </div>
     <?= Html::activeHiddenInput($model, 'union_code'); ?>
@@ -75,9 +79,11 @@ $script = "
             var to_date_current = $('#hit_range_2_to').val();
             var hit_previous = $('#dashboard-previous_hit').val();
             var hit_current = $('#dashboard-current_hit').val();
-            var union = $('#dashboard-union_code').val();
-            var mcc= $('#dashboard-mcc_code').val();
-            if(from_date_previous != '' && to_date_previous != '' && union != '' && from_date_current != '' && to_date_current != ''){
+            var union= '" . $unionCode . "';
+//            var union = $('#dashboard-union_code').val();
+            var mcc= '" . $mccCode . "';
+//            var mcc= $('#dashboard-mcc_code').val();
+            if(from_date_previous != '' && to_date_previous != '' && from_date_current != '' && to_date_current != '' && hit_previous != '' && hit_current != ''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['set-hit-count-tab']) . "',
