@@ -15,75 +15,93 @@ $bmc_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
 $dcs_class = !empty($mcc_class) ? $mcc_class : 'col-sm-3';
 $common_class = 'padding-left-5 padding-right-5';
 $hideBtnClass = !empty($hideBtnClass) ? $hideBtnClass : '';
-$form = ActiveForm::begin([
-            'action' => ['index'],
-            'id' => $id
-        ]);
 ?>
-<?php if (isset($from_date) && $from_date) { ?>
-    <div class="<?= $date_picker_class . ' ' . $common_class ?> pb10">
-        <?php
-        echo Yii::$app->controls->date($model, $form, 'from_date', 'form-group ' . $date_picker_class . ' pb10', false, false, false, false, $from_date_id);
-        ?>
-    </div> 
-<?php } ?>
-<!--<div class="clearfix"></div>-->
-<?php if (isset($from_shift) && $from_shift) { ?>
-    <div class="<?= $shift_class ?> shift pb10 <?= $common_class ?>">
-        <?php
-        echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'from_shift');
-        ?>
-    </div> 
-<?php } ?>
-<?php if (isset($to_date) && $to_date) { ?>
-    <div class="<?= $date_picker_class . ' ' . $common_class ?> pb10">
-        <?php
-        echo Yii::$app->controls->date($model, $form, 'to_date', 'form-group ' . $date_picker_class . ' pb10', false, false, false, false, $to_date_id);
-        ?>
+<div class="modal fade" id="modal_<?= $table_class ?>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title"><?= $popup_title ?></h4>
+                </div>
+                <div class="modal-body dashboard_controls">
+                    <?php
+                    $form = ActiveForm::begin([
+                                'action' => ['index'],
+                                'id' => $id
+                            ]);
+                    ?>
+                    <?php if (isset($from_date) && $from_date) { ?>
+                        <div class="<?= $date_picker_class . ' ' . $common_class ?> ">
+                            <?php
+                            echo Yii::$app->controls->date($model, $form, 'from_date', 'form-group ' . $date_picker_class . ' ', false, false, false, false, $from_date_id);
+                            ?>
+                        </div> 
+                    <?php } ?>
+                    <!--<div class="clearfix"></div>-->
+                    <?php if (isset($from_shift) && $from_shift) { ?>
+                        <div class="<?= $shift_class ?> shift  <?= $common_class ?>">
+                            <?php
+                            echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'from_shift');
+                            ?>
+                        </div> 
+                    <?php } ?>
+                    <?php if (isset($to_date) && $to_date) { ?>
+                        <div class="<?= $date_picker_class . ' ' . $common_class ?> ">
+                            <?php
+                            echo Yii::$app->controls->date($model, $form, 'to_date', 'form-group ' . $date_picker_class . ' ', false, false, false, false, $to_date_id);
+                            ?>
+                        </div>
+                    <?php } ?>
+                    <?php if (isset($to_shift) && $to_shift) { ?>
+                        <div class="<?= $shift_class ?> shift <?= $common_class ?>">
+                            <?php
+                            echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'to_shift');
+                            ?>
+                        </div>  
+                    <?php } ?>
+                    <?php if (isset($mcc_code) && $mcc_code) { ?> 
+                        <div class=" <?= $mcc_class . ' ' . $common_class ?>">
+                            <?= Yii::$app->dropdown->mccDropDown($model, $form, 'mcc_code', false, false, $mcc_code); ?>
+                        </div> 
+                    <?php } ?>
+                    <?php if (isset($bmc_code) && $bmc_code) { ?>
+                        <div class=" <?= $bmc_class . ' ' . $common_class ?>">
+                            <?= Yii::$app->dropdown->mcc_bmc($model, $form, $mcc_code, 'bmc_code', false, false, $bmc_code); ?>
+                        </div> 
+                    <?php } ?>
+                    <?php if (isset($dcs_code) && $dcs_code) { ?>
+                        <div class=" <?= $dcs_class . ' ' . $common_class ?>">
+                            <?= Yii::$app->dropdown->bmc_society($model, $form, $bmc_code, 'dcs_code', false); ?>         
+                        </div>
+                    <?php } ?>
+                    <?php if (isset($hidden_from_date) && $hidden_from_date) { ?>
+                        <?php
+                        echo Html::activeHiddenInput($model, 'hidden_from_date', ['value' => $hidden_from_date]);
+                        ?>  
+                    <?php } ?>
+                    <?php if (isset($hidden_to_date) && $hidden_to_date) { ?>
+                        <?php
+                        echo Html::activeHiddenInput($model, 'hidden_to_date', ['value' => $hidden_to_date]);
+                        ?>  
+                    <?php } ?>
+                    <div class="col-sm-3 pt5 <?= $common_class . ' ' . $hideBtnClass ?>">
+                        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
+                    </div>
+                    <?php
+                    ActiveForm::end();
+                    ?>
+                </div>
+            </div>
+        </div>
     </div>
-<?php } ?>
-<?php if (isset($to_shift) && $to_shift) { ?>
-    <div class="<?= $shift_class ?> shift <?= $common_class ?>">
-        <?php
-        echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'to_shift');
-        ?>
-    </div>  
-<?php } ?>
-<?php if (isset($mcc_code) && $mcc_code) { ?> 
-    <div class="pb10 <?= $mcc_class . ' ' . $common_class ?>">
-        <?= Yii::$app->dropdown->mccDropDown($model, $form, 'mcc_code', false, false, $mcc_code); ?>
-    </div> 
-<?php } ?>
-<?php if (isset($bmc_code) && $bmc_code) { ?>
-    <div class="pb10 <?= $bmc_class . ' ' . $common_class ?>">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, $mcc_code, 'bmc_code', false, false, $bmc_code); ?>
-    </div> 
-<?php } ?>
-<?php if (isset($dcs_code) && $dcs_code) { ?>
-    <div class="pb10 <?= $dcs_class . ' ' . $common_class ?>">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, $bmc_code, 'dcs_code', false); ?>         
-    </div>
-<?php } ?>
-<?php if (isset($hidden_from_date) && $hidden_from_date) { ?>
-    <?php
-    echo Html::activeHiddenInput($model, 'hidden_from_date', ['value' => $hidden_from_date]);
-    ?>  
-<?php } ?>
-<?php if (isset($hidden_to_date) && $hidden_to_date) { ?>
-    <?php
-    echo Html::activeHiddenInput($model, 'hidden_to_date', ['value' => $hidden_to_date]);
-    ?>  
-<?php } ?>
-<div class="col-sm-3 pb10 <?= $common_class . ' ' . $hideBtnClass ?>">
-    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
-</div>
-<?php
-ActiveForm::end();
-?>
-
+    <button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 
 <?php
 $script = "
+    $('.dashboardSearchButton').on('click',function(e) {
+        $('#modal_$table_class').modal('hide');
+    });
+    
     setHtmlData('{$id}','{$container}','{$url}');  
     $('.{$id}').on('click',function(e) {
         e.preventDefault();
