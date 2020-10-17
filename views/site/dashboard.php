@@ -132,6 +132,8 @@ if ($widget_type == 'rmrd')
 // var_dump($widget_type);
 // var_dump($lazy_loading_widgets);die;
 $dashboard_widget = new TblDashboardWidgets();
+$unionCode = !empty($model->union_code) ? $model->union_code : '';
+$mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
 ?>
 <div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
     <div class="panel panel-default min_h_0">
@@ -410,8 +412,10 @@ $( '.sortable' ).sortable();
             else if(['dashboard_blocks'].indexOf(value) == 0){
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_blocks';
-                var union= $('#dashboard-union_code').val();
-                var mcc= '".$model->mcc_code."';
+                var union= '" . $unionCode . "';
+//                var union= $('#dashboard-union_code').val();
+                var mcc= '" . $mccCode . "';
+//                var mcc= $('#dashboard-mcc_code').val();
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/site/load-dashboard-block-data']) . "',
@@ -447,8 +451,10 @@ $( '.sortable' ).sortable();
             else if(['dashboard_farmer_rmrd_blocks'].indexOf(value) == 0){
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_farmer_rmrd_blocks';
-                var union= $('#dashboard-union_code').val();
-                var mcc= '".$model->mcc_code."';
+                var union= '" . $unionCode . "';
+//                var union= $('#dashboard-union_code').val();
+                var mcc= '" . $mccCode . "';
+//                var mcc= $('#dashboard-mcc_code').val();
                 var widget_type= $('#hidden_widget_type').val();
                 $.ajax({
                     type: 'post',
@@ -483,8 +489,10 @@ $( '.sortable' ).sortable();
             else if(['dashboard_farmer_rmrd_avg'].indexOf(value) == 0){
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_farmer_rmrd_avg';
-                var union= $('#dashboard-union_code').val();
-                var mcc= '".$model->mcc_code."';
+                var union= '" . $unionCode . "';
+//                var union= $('#dashboard-union_code').val();
+                var mcc= '" . $mccCode . "';
+//                var mcc= $('#dashboard-mcc_code').val();
                 var widget_type= $('#hidden_widget_type').val();
                 $.ajax({
                     type: 'post',
@@ -547,8 +555,10 @@ $( '.sortable' ).sortable();
             else if(['dashboard_farmer_status'].indexOf(value) == 0){
                 var blockDataString = $('#collapse1 form').serialize();
                 var id= 'dashboard_farmer_status';
-                var union= $('#dashboard-union_code').val();
-                var mcc= '".$model->mcc_code."';
+                var union= '" . $unionCode . "';
+//                var union= $('#dashboard-union_code').val();
+                var mcc= '" . $mccCode . "';
+//                var mcc= $('#dashboard-mcc_code').val();
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
@@ -589,9 +599,11 @@ $( '.sortable' ).sortable();
                 viewRender: function (view, element) {
                 var b = $('#calendar').fullCalendar('getDate');
                 var m=b.format('Y-MM');
-                var union= $('#dashboard-union_code').val();
-                var mcc= '".$model->mcc_code."';
-                        // $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                var union= '" . $unionCode . "';
+//                var union= $('#dashboard-union_code').val();
+                var mcc= '" . $mccCode . "';
+//                var mcc= $('#dashboard-mcc_code').val();
+                        $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['/site/load-month-data']) . "',
@@ -617,8 +629,10 @@ $( '.sortable' ).sortable();
                 },
                 dayClick: function(date, jsEvent, view) {
                 var dt=date.format();
-                var union= $('#dashboard-union_code').val();
-                var mcc= '".$model->mcc_code."';
+                var union= '" . $unionCode . "';
+//                var union= $('#dashboard-union_code').val();
+                var mcc= '" . $mccCode . "';
+//                var mcc= $('#dashboard-mcc_code').val();
                     $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
                     $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $.ajax({
@@ -670,7 +684,7 @@ $( '.sortable' ).sortable();
     }
 //new code
     barChart('bmc_dispatch_widget_container','" . Yii::$app->controls->view_date($date) . " BMC Dispatch',[],[]);
-    barChart('milk_coll_widget_container','" . Yii::$app->controls->view_date($date) . " Milk Collection',[],[]);
+    barChart('milk_coll_widget_container','" . Yii::$app->controls->view_date($date) . " Milk Collection (Top 5)',[],[]);
     barChart('bmc_coll_widget_container','" . Yii::$app->controls->view_date($date) . " BMC Collection',[],[]);
     barChart('reconciliation_chart_widget_container','" . Yii::$app->controls->view_date($date) . " Reconciliation Chart',[],[]);
     // barChart('collection_farmer_container','',[],[]);
@@ -726,7 +740,7 @@ $( '.sortable' ).sortable();
                     series: [{
                                 name: 'QTY(ltr)',
                             type: 'column',
-                            color: '#3a7bd5',
+                            color: '#790000',
                             yAxis: 1,
                                 data: ydata,
                             tooltip: {
@@ -745,8 +759,10 @@ $( '.sortable' ).sortable();
             }else{
                 var datastring = $('#'+id).serialize();
             }
-            var union= $('#dashboard-union_code').val();
-            var mcc= '".$model->mcc_code."';
+            var union= '" . $unionCode . "';
+//            var union= $('#dashboard-union_code').val();
+            var mcc= '" . $mccCode . "';
+//            var mcc= $('#dashboard-mcc_code').val();
             $.ajax({
                          type: 'post',
                          url: url,
@@ -756,7 +772,7 @@ $( '.sortable' ).sortable();
                             var index=$('#'+cntr).data('highcharts-chart');
                             var chart=Highcharts.charts[index];
                             var vals=[];
-                            var color='3a7bd5';
+                            var color='790000';
                             var suf='';
                             // console.log(chart +'--'+id);
                             while( chart.series.length > 0 ) {
@@ -865,7 +881,7 @@ var chartModal = $('#chartModal').modal({
                 {
                     name: '" . Yii::t('app', 'DPU Farmer') . "',                     
                     type: 'spline',
-                    color: '#3a7bd5',
+                    color: '#790000',
                     data: dc,
                 },{
                     name: '" . Yii::t('app', 'Collection Farmer') . "',                     
@@ -940,8 +956,10 @@ function setPopupTable(id,cntr,url,type,diff_sp_name = '', title = ''){
     if(diff_sp_name != ''){
         sp_name = diff_sp_name;
     }
-    var union= $('#dashboard-union_code').val();
-    var mcc= '".$model->mcc_code."';
+    var union= '" . $unionCode . "';
+//    var union= $('#dashboard-union_code').val();
+    var mcc= '" . $mccCode . "';
+//    var mcc= $('#dashboard-mcc_code').val();
     $.ajax({
         type: 'post',
         url: url,
@@ -964,8 +982,10 @@ function setHtmlData(id,cntr,url){
     // $('#loadercontent').show();
     var datastring = $('#'+id).serialize();
     var sp_name = id;
+    var union= '" . $unionCode . "';
     var union= $('#dashboard-union_code').val();
-    var mcc= '".$model->mcc_code."';
+    var mcc= '" . $mccCode . "';
+    var mcc= $('#dashboard-mcc_code').val();
     var popup = 'allow_popup';
     $.ajax({
         type: 'post',
