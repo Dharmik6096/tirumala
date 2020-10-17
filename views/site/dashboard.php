@@ -588,6 +588,16 @@ $( '.sortable' ).sortable();
             else if(['calender'].indexOf(value) == 0){
                 //calendar widget
                 $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'year,month,basicWeek,basicDay'
+                },
+                allDayDefault: false,
+                selectable: true,
+                selectHelper: true,
+                editable: true,
+                eventLimit: true,
                 dayRender: function(date, cell) {
                     var d=date.format('YYYY-MM-DD');
                     if(d in cal_data)
@@ -603,7 +613,8 @@ $( '.sortable' ).sortable();
 //                var union= $('#dashboard-union_code').val();
                 var mcc= '" . $mccCode . "';
 //                var mcc= $('#dashboard-mcc_code').val();
-                        $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                    $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                    $('.fc-view-container').addClass('disp_none');
                     $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['/site/load-month-data']) . "',
@@ -613,20 +624,32 @@ $( '.sortable' ).sortable();
                                     var obj1 = data;
                                     if (obj1.status == 'success')
                                     {
-                                    cal_data=obj1.res;                                                   
+                                        cal_data=obj1.res;                                                   
                                     }
                                     let cview = $('#calendar').fullCalendar('getView');  
+                                    if(cview.name == 'year'){
+                                        setYearData(cal_data);
+                                        $('.fc-scroller.fc-day-grid-container').addClass('disp_none');
+                                        $('.fc-row .fc-widget-header').addClass('disp_none');
+                                        $('.fc-view-container').removeClass('disp_none');
+                                    }
+                                    else{
+                                        $('.fc-row .fc-widget-header').removeClass('disp_none');
+                                        $('.fc-scroller.fc-day-grid-container').removeClass('disp_none');
+                                        $('.fc-view-container').removeClass('disp_none');
+                                    }
                                     cview.unrenderDates();
                                     cview.renderDates();
                                     $(window).trigger('resize'); 
-                                    
-
                                 },
                                 error:function(data){
                                             //alert('Your data has not been submitted..Please try again');
                                         }
                     });
                 },
+                // eventAfterAllRender: function(view){
+                //     console.log(cal_data);
+                // },
                 dayClick: function(date, jsEvent, view) {
                 var dt=date.format();
                 var union= '" . $unionCode . "';
@@ -676,6 +699,15 @@ $( '.sortable' ).sortable();
             }
         });
     });
+
+function setYearData(cal_data){
+    for (var key in cal_data) {
+        if (cal_data.hasOwnProperty(key)) {
+            var k = key.replace(/-/g, '');
+            $('#'+k).append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">Avg FAT :'+cal_data[key][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\"> Avg SNF:'+cal_data[key][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">Qty(ltr)'+cal_data[key][2]+'</span></div>');
+        }
+    }
+}
 
     function setChartWidgets(set_widget_id){
         drawChart(set_widget_id,set_widget_id+'_container','{$chart_url}','column');   

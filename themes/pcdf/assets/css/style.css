@@ -3588,3 +3588,34 @@ input[type="checkbox"]:after{
     color: #fff;
     border-radius: 15px !important;
 }
+
+
+td.fc-year-month-border.fc-first{
+    display: none;
+}
+
+td.fc-year-month-separator{
+    display: none;
+}
+
+td.fc-month-view.fc-year-monthly-td.fc-widget-content{
+    width:33.3%;
+    border: 2px solid #930000;
+    height: 77px;
+}
+
+.fc-year-monthly-name{
+    font-size: 16px;
+    text-align: right;
+    font-weight: 400;
+}
+.fc-row.fc-week.fc-widget-content.fc-rigid {
+    height: 70px !important;
+    text-align: right;
+}
+.fc-scroller.fc-day-grid-container{
+    height: auto !important;
+}
+.fc-day-header {
+    background: #930000;
+}
