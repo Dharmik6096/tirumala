@@ -654,7 +654,7 @@ $( '.sortable' ).sortable();
                 var dt=date.format();
                 var union= '" . $unionCode . "';
 //                var union= $('#dashboard-union_code').val();
-                var mcc= '" . $mccCode . "';
+                    var mcc= '" . $mccCode . "';
 //                var mcc= $('#dashboard-mcc_code').val();
                     $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
                     $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
@@ -699,15 +699,6 @@ $( '.sortable' ).sortable();
             }
         });
     });
-
-function setYearData(cal_data){
-    for (var key in cal_data) {
-        if (cal_data.hasOwnProperty(key)) {
-            var k = key.replace(/-/g, '');
-            $('#'+k).append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">Avg FAT :'+cal_data[key][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\"> Avg SNF:'+cal_data[key][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">Qty(ltr)'+cal_data[key][2]+'</span></div>');
-        }
-    }
-}
 
     function setChartWidgets(set_widget_id){
         drawChart(set_widget_id,set_widget_id+'_container','{$chart_url}','column');   
@@ -1107,6 +1098,70 @@ $('.radio_widgit_type').on('change',function() {
         $('#rmrd_widgets_list').show();
     }
 });
+
+function setYearData(cal_data){
+    for (var key in cal_data) {
+        if (cal_data.hasOwnProperty(key)) {
+            var k = key.replace(/-/g, '');
+            $('#'+k).append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">Avg FAT :'+cal_data[key][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\"> Avg SNF:'+cal_data[key][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">Qty(ltr)'+cal_data[key][2]+'</span></div>');
+        }
+    }
+}
+
+// $(document).on('click','.fc-year-monthly-td',function(e){
+//     // $('#pieChartModal').modal('toggle'); 
+//     var month = $(this).children('.fc-year-monthly-name').attr('id');
+//     var addition = '-';
+//     month = [month.slice(0, 4), addition, month.slice(4)].join('');
+
+//     console.log(month);
+//     var html='<div class=\"milk-collection\">'+
+//             '<div class=\"table-responsive dashboard_tbl\"><table class=\"table table-striped\">'+
+//             '<thead><tr><th>Union</th><th>Villages</th><th>Avg FAT</th><th>Avg SNF</th><th>Milk Collection (ltr)</th></tr></thead>';
+//     html=html+'</table></div></div>';
+//     $('#calendar_details').html(html);
+//     // var union= '" . $unionCode . "';
+//     // var mcc= '" . $mccCode . "';
+
+//     // $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
+//     // $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+//     // $.ajax({
+//     //             type: 'post',
+//     //             url: '" . Url::to(['/site/load-dcs-data']) . "',
+//     //             data: 'dt='+dt+'&union='+union+'&mcc='+mcc,
+//     //             success: function(data) {
+
+//     //                 var obj1 = data;
+//     //                 if (obj1.status == 'success')
+//     //                 {
+                    
+//     //                     var html='<div class=\"milk-collection\">'+
+//     //                     '<div class=\"table-responsive dashboard_tbl\"><table class=\"table table-striped\">'+
+//     //                     '<thead><tr><th>Union</th><th>Villages</th><th>Avg FAT</th><th>Avg SNF</th><th>Milk Collection (ltr)</th></tr></thead>';
+//     //                 $.each(obj1.res, function(index, value) {
+//     //                     html=html+'<tr>'+
+//     //                         '<td>'+value.union_name+'</td>'+
+//     //                         '<td>'+value.dcs_name+'</td>'+
+//     //                         '<td>'+value.AvgFAT+'</td>'+
+//     //                         '<td>'+value.AvgSNF+'</td>'+
+//     //                         '<td>'+value.total_qty+'</td>'+
+//     //                     '</tr>';
+//     //                     });
+                        
+//     //                 html=html+'</table></div></div>';
+//     //                 $('#calendar_details').html(html);
+//     //                 }
+//     //                 else{
+//     //                     $('#calendar_details').html('Data not available.');
+//     //                 }
+
+//     //             },
+//     //             error:function(data){
+//     //                         //alert('Your data has not been submitted..Please try again');
+//     //                     }
+//     // });
+//     chartModal.modal('show');
+// });
 
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');
