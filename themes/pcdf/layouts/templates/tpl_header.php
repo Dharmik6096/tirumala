@@ -24,8 +24,10 @@ if (!empty($eipl_code)) {
             <a class="navbar-brand" href="<?= Url::to(['/site/dashboard']) ?>"><img src="<?= $logo ?>" alt='<?= Yii::t('app', 'Company Logo') ?>' class="logo img-responsive"/></a>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
-        <?php if(Url::home().'site' == Yii::$app->request->url || Url::home().'site/index' == Yii::$app->request->url){?><span class="pull-right dashboard_set_icon"><a data-toggle="collapse" href="#collapse1"><i class="fa fa-cog faa-spin animated faa-slow"></i></a></span><?php }?>
-            <?php require_once('tpl_navigation.php'); ?>
+            <?php if (false && (Url::home() . 'site' == Yii::$app->request->url || Url::home() . 'site/index' == Yii::$app->request->url)) { ?>
+                <span class="pull-right dashboard_set_icon"><a data-toggle="collapse" href="#collapse1"><i class="fa fa-cog faa-spin animated faa-slow"></i></a></span>
+                    <?php } ?>
+                    <?php require_once('tpl_navigation.php'); ?>
         </div>
     </div>
 </div>

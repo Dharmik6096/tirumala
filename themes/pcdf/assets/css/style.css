@@ -3561,7 +3561,7 @@ input[type="checkbox"]:after{
 }*/
 
 .searchFilterArea  {
-    width: 100%;
+    width: calc(100% - 50px);
     color: #fff;
     text-align: center;
     padding-top: 2px;
@@ -3589,4 +3589,34 @@ input[type="checkbox"]:after{
     background: linear-gradient(rgb(140, 0, 0) 0%, rgba(181,68,68,0.9) 50%, rgba(181,68,68,0.9) 50%,rgb(140, 0, 0) 95%) !important;
     color: #fff;
     border-radius: 15px !important;
+}
+
+.dashboard_search_filter{
+    width: calc(100% + 16px);
+    margin-left: -8px;
+    background: #eee;
+    height: 30px;
+    margin-bottom: 0px;
+    margin-top: -16px;
+    position: fixed;
+    z-index: 99;
+}
+
+.dashboardWidgetSearchIcon a {
+    color: #fff !important;
+}
+.dashboardWidgetSearchIcon {
+    width: 50px;
+    float: right;
+    height: 30px;
+    /*text-align: center*/
+}
+
+.dashboardWidgetSearchIcon i {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+.dashboard_set_filter  {
+    margin-top: 15px !important
 }
