@@ -9,6 +9,7 @@ use yii\helpers\Url;
     <table class="table table-striped">
         <thead>
             <tr>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC Code') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC') ?></th>
                 <th class="w100 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Date') ?></th>
                 <th class="max_w35 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Shift') ?></th>
@@ -29,8 +30,10 @@ use yii\helpers\Url;
                 ?>
                 <tr>
                     <td><?= $data['mcc_code'] ?></td>
+                    <td><?= $data['mcc_name'] ?></td>
                     <td><?= $data['date'] ?></td>
                     <td><?= $data['shift_name'] ?></td>
+                    <td><?= $data['active_mpp'] ?></td>
                     <td><?= $data['total_mpp'] ?></td>
                     <td><?= $data['total_online'] ?></td>
                     <td><?= $data['total_manual'] ?></td>
@@ -39,7 +42,6 @@ use yii\helpers\Url;
                     <td><?= $data['total_rmrd_qty'] ?></td>
                     <td><?= $data['rmrd_count'] ?></td>
                     <td><?= $data['qty_diff'] ?></td>
-                    <td><?= $data['active_mpp'] ?></td>
                 </tr> 
                 <?php
             }
