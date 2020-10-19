@@ -3641,10 +3641,11 @@ td.fc-year-month-separator{
 
 td.fc-month-view.fc-year-monthly-td.fc-widget-content{
     width:33.3%;
-    border: 2px solid #930000;
-    height: 93px;
+    /* border: 2px solid #930000; */
+    height: 116px;
     cursor: pointer;
     pointer-events: none;
+    padding: 6px 8px 0px 0px;
 }
 
 .fc-year-monthly-name{

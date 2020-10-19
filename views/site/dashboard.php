@@ -124,7 +124,6 @@ $rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets) ? $rmrdWidgets : [], 
 $allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 
 if ($widget_type == 'farmer')
-    $farmer_selected_widgets [] = 'month_calendar';
     $lazy_loading_widgets = json_encode($farmer_selected_widgets);
 
 if ($widget_type == 'rmrd')
@@ -333,11 +332,6 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
             }
         }
         ?>
-
-        <div class="col-md-6">
-            <div class="cal-header  dashboardWidgetHeader">Month Avg. FAT, Avg. SNF and Qty for</div>
-            <div id="month_calendar"></div>
-        </div>
 
 
     </div>
@@ -682,6 +676,7 @@ $( '.sortable' ).sortable();
             });
             }
             else if(['month_calendar'].indexOf(value) == 0){
+                // $('#month_calendar .fc-today-button').html('Current Year');
                 //calendar widget
                 $('#month_calendar').fullCalendar({
                 defaultView: 'year',
@@ -693,15 +688,15 @@ $( '.sortable' ).sortable();
                 defaultDate: moment('" . $date . "'),
                 viewRender: function (view, element) {
                 var b = $('#month_calendar').fullCalendar('getDate');
-                var m=b.format('Y-MM');
+                var y=b.format('Y');
                 var union= '" . $unionCode . "';
                 var mcc= '" . $mccCode . "';
                     // $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $('#month_calendar .fc-view-container').addClass('disp_none');
                     $.ajax({
                                 type: 'post',
-                                url: '" . Url::to(['/site/load-month-data']) . "',
-                                data: 'm='+m+'&union='+union+'&mcc='+mcc,
+                                url: '" . Url::to(['/site/load-year-data']) . "',
+                                data: 'y='+y+'&union='+union+'&mcc='+mcc,
                                 success: function(data) {
 
                                     var obj1 = data;
@@ -1138,7 +1133,7 @@ function setYearData(cal_data){
     for (var key in cal_data) {
         if (cal_data.hasOwnProperty(key)) {
             var k = key.replace(/-/g, '');
-            $('#'+k).append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">Avg FAT :'+cal_data[key][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\"> Avg SNF:'+cal_data[key][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">Qty(ltr)'+cal_data[key][2]+'</span></div>');
+            $('#'+k).append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">Avg FAT: '+cal_data[key][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\">Avg SNF: '+cal_data[key][1]+'</span><!--<span class=\"label text-success\" title=\"Kg FAT\">Kg FAT: '+cal_data[key][2]+'</span><span class=\"label text-danger\" title=\"kg SNF\">kg SNF: '+cal_data[key][3]+'</span>--><span class=\"label text-info\" title=\"Qty(ltr)\">Qty(ltr): '+cal_data[key][4]+'</span></div>');
         }
     }
 }

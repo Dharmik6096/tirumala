@@ -58,7 +58,7 @@ use app\modules\syncutility\models\TblInboxConstraint;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data'];
 
     public function init() {
         parent::init();
@@ -521,9 +521,6 @@ class SiteController extends Controller {
                 } else {
                     $cal_data = [];
                 }
-                // $cal_data['2019-01'] = ['12', '5.5', '23'];
-                // $cal_data['2020-10'] = ['10', '4.5', '13'];
-                // $cal_data['2020-12'] = ['18', '5.7', '29'];
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
                 return ['status' => 'success', 'res' => $cal_data];
             }
@@ -2041,6 +2038,48 @@ class SiteController extends Controller {
         $sp = Yii::$app->request->post('sp');
         $output = $this->getSpResult($sp);
         return $this->renderAjax('collc_count_summary_tab', ['output' => $output, 'union_code' => $union]);
+    }
+
+
+    public function actionLoadYearData() {
+        if (!empty(Yii::$app->request->post('y'))) {
+//            $union_str = Yii::$app->request->post('union');
+//            $mcc_str = Yii::$app->request->post('mcc');
+            $year = Yii::$app->request->post('y');
+            $rlsData = $this->setRlsData();
+
+            $results = $this->callDashboardYearCalSp($rlsData, $year);
+            if (!empty($results)) {
+                if (!empty($results)) {
+                    foreach ($results as $res) {
+                        $cal_data[$res['dt']] = [$res['AvgFAT'], $res['AvgSNF'],$res['KgFAT'], $res['KgSNF'], $res['Qty']];
+                    }
+                } else {
+                    $cal_data = [];
+                }
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ['status' => 'success', 'res' => $cal_data];
+            }
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return Json::encode(['status' => 'failure', 'res' => '']);
+        return;
+    }
+
+    private function callDashboardYearCalSp($rlsData, $year) {
+        $year_start = date("$year-01-01");
+        $year_end = date("$year-12-31");
+        $sp_param = [];
+        $sp_name = 'sp_Portal_Dashboard_Cal_month';
+        $sp_param[] = !empty($rlsData['union']) ? ',' . $rlsData['union'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['plant']) ? ',' . $rlsData['plant'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['mcc']) ? ',' . $rlsData['mcc'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['bmc']) ? ',' . $rlsData['bmc'] . ',' : 0;
+        $sp_param[] = !empty($rlsData['dcs']) ? ',' . $rlsData['dcs'] . ',' : 0;
+        $sp_param[] = $year_start; //date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+        $sp_param[] = $year_end; //date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        return $results;
     }
 
 }
