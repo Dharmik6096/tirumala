@@ -69,7 +69,7 @@ class Path extends Component {
         '\\app\modules\hardwareconfigutation\models\\' =>
         ['TblDeviceManufacturer', 'TblInterfacingDevice', 'TblInterfacingDeviceHistory',],
         '\\app\components\\' =>
-        ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy', 'DispatchImportStrategy', 'DpuIncentiveImportStrategy', 'DcsImportUpdateStrategy', 'DpuPasswordImportStrategy', 'BillHeadDetailImportStrategy', 'AssetDetailImportStrategy','BulkImportStrategy'],
+        ['DcsImportStrategy', 'SubCenterImportStrategy', 'MemberImportStrategy', 'CommonImportStrategy', 'DispatchImportStrategy', 'DpuIncentiveImportStrategy', 'DcsImportUpdateStrategy', 'DpuPasswordImportStrategy', 'BillHeadDetailImportStrategy', 'AssetDetailImportStrategy', 'BulkImportStrategy', 'BackGroundDataImportStrategy'],
         '\\app\modules\general\models\\' => ['TblBloodgroup', 'TblGender', 'TblQualification', 'TblBmcType', 'TblReligion', 'TblSchemeType', 'TblOrganisationType', 'TblRelationship', 'TblSocietyVendor', 'TblDpuIncentiveMaster', 'TblDpuIncentiveMasterHistory', 'TblDepartment', 'TblCollectionIncentiveDeductionHistory'],
         '\\app\modules\email\models\\' => ['TblEmailRuleMaster', 'TblEmailProcessMaster'],
         '\\app\modules\transporter\models\\' => ['TblTransporter', 'TblFuelTypeMaster', 'TblVehicleMaster', 'TblBillingType', 'TblTransporterPaymentHead'],
@@ -87,6 +87,7 @@ class Path extends Component {
         '\\app\modules\tankermovement\models\\' => ['TblQtyDiffType', 'TblConfigTxnResult', 'TblBmcDispatchInspection', 'TblBmcMilkDispatch', 'TblBmcMilkDispatchTxn', 'TblBmcDispatchStock', 'TblVehicleTrip', 'TblPreCollectionCheck', 'TblMilkVehicleEntry', 'TblMilkVehicleEntryTransaction'],
         '\\app\modules\assetmanagement\models\\' => ['TblAssetDetail', 'TblStoreLocation', 'TblAssetGroup', 'TblAssetMaster', 'TblAssetMasterHistory', 'TblAssetGroupHistory', 'TblAssetDetailHistory', 'TblStoreLocationHistory', 'TblStoreLocationType', 'TblAssetTransaction', 'TblAssetTransactionHistory', 'TblAssetSet', 'TblAssetSetHistory'],
         '\\app\modules\complaint\models\\' => ['TblComplainProduct'],
+        '\\app\modules\import\models\\' => ['BulkDataImport'],
     ];
 
     public function get($model) {

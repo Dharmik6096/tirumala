@@ -14,6 +14,8 @@ use ruskid\csvimporter\CSVReader;
 use \app\modules\collection\models\TblBulkDataImport;
 use yii\helpers\Url;
 use PHPExcel;
+use app\modules\import\models\BulkDataImport;
+use app\modules\import\controllers\DefaultController;
 
 class SchedulerController extends ChildController {
 
@@ -55,7 +57,7 @@ class SchedulerController extends ChildController {
                             $data[$value] = !empty($data[$value]) ? date('Y-m-d', strtotime($data[$value])) : date('Y-m-d');
                             if (isset($value_array[2])) {
                                 $shift = !empty($data[$value_array[2]]) ? \Yii::$app->general->getshift($data[$value_array[2]]) : '00:00:00';
-                                $data[$value] .=' ' . $shift . '.000';
+                                $data[$value] .= ' ' . $shift . '.000';
                             }
                         }
                         $controls[$value] = !isset($data[$value]) ? '0' : $data[$value];
@@ -327,6 +329,81 @@ class SchedulerController extends ChildController {
                     $row->response_datetime = date('Y-m-d H:i:s');
                     $row->save(FALSE);
                 }
+            } catch (\Throwable $ex) {
+                $row->status = 3;
+                $row->response_msg = 'Unable to read file.';
+                $row->response_datetime = date('Y-m-d H:i:s');
+                $row->save(FALSE);
+                var_dump($ex->getMessage());
+            }
+        }
+    }
+
+    public function actionBulkDataImportFiles() {
+        $model = new TblImportFileLog();
+        $model->status = 0;
+        $modelData = $model->getPickRecords([], 10);
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->log_id;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            $this->bulk_files_data($modelData);
+        }
+    }
+
+    private function bulk_files_data($modelData) {
+        foreach ($modelData as $row) {
+            try {
+                $error_lines = [];
+                $success = 0;
+                $total_cnt = 0;
+                $data = \app\modules\import\importData::getLabels($row->file_type);
+                $table = (!empty($data['import_class'])) ? $data['import_class'] : $data['table_name'];
+                $modelName = str_replace('_', ' ', $table);
+                $modelName = str_replace(' ', '', ucwords($modelName));
+                $className = Yii::$app->path->getModel($modelName);
+                $import = new DefaultController('', '');
+                $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/member/');
+
+                $filePath = NULL;
+                $error_lines = [];
+                if (!empty($values['allData']['error_lines'])) {
+                    $column_header = explode(',', $data['fields']);
+                    $error_lines = $values['allData']['error_lines'];
+                    $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
+                    if (Yii::$app->general->checkDirectory($path)) {
+                        $absoluteBaseUrl = Url::base(true);
+                        $objPHPExcel = new PHPExcel();
+                        $sheet = $objPHPExcel->getActiveSheet();
+                        $sheet->fromArray(
+                                $column_header, // The data to set
+                                NULL, // Array values with this value will not be set
+                                'A1'         // Top left coordinate of the worksheet range where
+                                //    we want to set these values (default is A1)
+                        );
+                        $sheet->fromArray(
+                                $error_lines, // The data to set
+                                NULL, // Array values with this value will not be set
+                                'A2'         // Top left coordinate of the worksheet range where
+                                //    we want to set these values (default is A1)
+                        );
+                        $filePath = $path . 'error_' . $row->file_name;
+                        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter->save($filePath);
+                        copy($row->file_path, $path . $row->file_name);
+                        unlink($row->file_path);
+                        $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
+                    }
+                }
+                $row->total_count = !empty($values['allData']['total_cnt']) ? $values['allData']['total_cnt'] : $total_cnt;
+                $row->error_count = count($error_lines);
+                $row->success_count = $row->total_count - $row->error_count;
+                $row->status = 2;
+                $row->response_datetime = date('Y-m-d H:i:s');
+                $row->response_msg = 'File Processed';
+                $row->error_file_path = $filePath;
+                $row->save(FALSE);
             } catch (\Throwable $ex) {
                 $row->status = 3;
                 $row->response_msg = 'Unable to read file.';

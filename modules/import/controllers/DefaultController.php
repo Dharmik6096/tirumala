@@ -55,7 +55,7 @@ class DefaultController extends \app\controllers\ChildController {
         echo (Json::encode($result));
     }
 
-    public function importCsv($fileName, $className, $data, $mappingFlag = 0, $flag) {
+    public function importCsv($fileName, $className, $data, $mappingFlag = 0, $flag, $filepath = '/web/import/') {
 
         try {
 
@@ -103,7 +103,7 @@ class DefaultController extends \app\controllers\ChildController {
                 }
             }
             $importer->setData(new CSVReader([
-                'filename' => Yii::$app->basePath . '/web/import/' . trim($fileName),
+                'filename' => Yii::$app->basePath . $filepath . trim($fileName),
                 'fgetcsvOptions' => [
                     'delimiter' => ';'
                 ]
@@ -144,8 +144,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'file_path' => Yii::$app->basePath . '/web/import/' . trim($fileName),
                 'file_name' => trim($fileName)
             ]));
-
-            return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg']];
+          
+            return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg'], 'allData' => $primaryKeys];
         } catch (UserException $e) {
             return ['status' => 'error', 'msg' => $e->getMessage()];
         }
