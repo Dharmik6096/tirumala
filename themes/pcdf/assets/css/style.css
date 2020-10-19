@@ -3603,6 +3603,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
     border: 2px solid #930000;
     height: 93px;
     cursor: pointer;
+    pointer-events: none;
 }
 
 .fc-year-monthly-name{

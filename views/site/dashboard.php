@@ -124,6 +124,7 @@ $rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets) ? $rmrdWidgets : [], 
 $allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 
 if ($widget_type == 'farmer')
+    $farmer_selected_widgets [] = 'month_calendar';
     $lazy_loading_widgets = json_encode($farmer_selected_widgets);
 
 if ($widget_type == 'rmrd')
@@ -334,6 +335,11 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
         }
         ?>
 
+        <div class="col-md-6">
+            <div class="cal-header  dashboardWidgetHeader">Month Avg. FAT, Avg. SNF and Qty for</div>
+            <div id="month_calendar"></div>
+        </div>
+
 
     </div>
 </div>
@@ -404,7 +410,7 @@ $( '.sortable' ).sortable();
                 'calender',
                 'dashboard_farmer_rmrd_blocks',
                 'dashboard_farmer_status',
-                'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary'].indexOf(value) == -1) 
+                'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar'].indexOf(value) == -1) 
                 {
                     setChartWidgets(value);
                 }
@@ -588,16 +594,6 @@ $( '.sortable' ).sortable();
             else if(['calender'].indexOf(value) == 0){
                 //calendar widget
                 $('#calendar').fullCalendar({
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'year,month,basicWeek,basicDay'
-                },
-                allDayDefault: false,
-                selectable: true,
-                selectHelper: true,
-                editable: true,
-                eventLimit: true,
                 dayRender: function(date, cell) {
                     var d=date.format('YYYY-MM-DD');
                     if(d in cal_data)
@@ -613,8 +609,8 @@ $( '.sortable' ).sortable();
 //                var union= $('#dashboard-union_code').val();
                 var mcc= '" . $mccCode . "';
 //                var mcc= $('#dashboard-mcc_code').val();
-                    $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
-                    $('.fc-view-container').addClass('disp_none');
+                    $('#calendar .fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                    // $('.fc-view-container').addClass('disp_none');
                     $.ajax({
                                 type: 'post',
                                 url: '" . Url::to(['/site/load-month-data']) . "',
@@ -627,17 +623,6 @@ $( '.sortable' ).sortable();
                                         cal_data=obj1.res;                                                   
                                     }
                                     let cview = $('#calendar').fullCalendar('getView');  
-                                    if(cview.name == 'year'){
-                                        setYearData(cal_data);
-                                        $('.fc-scroller.fc-day-grid-container').addClass('disp_none');
-                                        $('.fc-row .fc-widget-header').addClass('disp_none');
-                                        $('.fc-view-container').removeClass('disp_none');
-                                    }
-                                    else{
-                                        $('.fc-row .fc-widget-header').removeClass('disp_none');
-                                        $('.fc-scroller.fc-day-grid-container').removeClass('disp_none');
-                                        $('.fc-view-container').removeClass('disp_none');
-                                    }
                                     cview.unrenderDates();
                                     cview.renderDates();
                                     $(window).trigger('resize'); 
@@ -694,6 +679,57 @@ $( '.sortable' ).sortable();
                                         }
                     });
                     chartModal.modal('show');
+                }
+            });
+            }
+            else if(['month_calendar'].indexOf(value) == 0){
+                //calendar widget
+                $('#month_calendar').fullCalendar({
+                defaultView: 'year',
+                allDayDefault: false,
+                selectable: true,
+                selectHelper: true,
+                editable: true,
+                eventLimit: true,
+                defaultDate: moment('" . $date . "'),
+                viewRender: function (view, element) {
+                var b = $('#month_calendar').fullCalendar('getDate');
+                var m=b.format('Y-MM');
+                var union= '" . $unionCode . "';
+                var mcc= '" . $mccCode . "';
+                    // $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                    $('#month_calendar .fc-view-container').addClass('disp_none');
+                    $.ajax({
+                                type: 'post',
+                                url: '" . Url::to(['/site/load-month-data']) . "',
+                                data: 'm='+m+'&union='+union+'&mcc='+mcc,
+                                success: function(data) {
+
+                                    var obj1 = data;
+                                    if (obj1.status == 'success')
+                                    {
+                                        cal_data=obj1.res;                                                   
+                                    }
+                                    let cview = $('#month_calendar').fullCalendar('getView');  
+                                    if(cview.name == 'year'){
+                                        setYearData(cal_data);
+                                        $('#month_calendar .fc-scroller.fc-day-grid-container').addClass('disp_none');
+                                        $('#month_calendar .fc-row .fc-widget-header').addClass('disp_none');
+                                        $('#month_calendar .fc-view-container').removeClass('disp_none');
+                                    }
+                                    else{
+                                        $('#month_calendar .fc-row .fc-widget-header').removeClass('disp_none');
+                                        $('#month_calendar .fc-scroller.fc-day-grid-container').removeClass('disp_none');
+                                        $('#month_calendar .fc-view-container').removeClass('disp_none');
+                                    }
+                                    cview.unrenderDates();
+                                    cview.renderDates();
+                                    $(window).trigger('resize'); 
+                                },
+                                error:function(data){
+                                            //alert('Your data has not been submitted..Please try again');
+                                        }
+                    });
                 }
             });
             }

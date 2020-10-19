@@ -521,7 +521,7 @@ class SiteController extends Controller {
                 } else {
                     $cal_data = [];
                 }
-                // $cal_data['2020-01'] = ['12', '5.5', '23'];
+                // $cal_data['2019-01'] = ['12', '5.5', '23'];
                 // $cal_data['2020-10'] = ['10', '4.5', '13'];
                 // $cal_data['2020-12'] = ['18', '5.7', '29'];
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
