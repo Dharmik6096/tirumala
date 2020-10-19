@@ -84,7 +84,7 @@ $hideBtnClass = !empty($hideBtnClass) ? $hideBtnClass : '';
                         echo Html::activeHiddenInput($model, 'hidden_to_date', ['value' => $hidden_to_date]);
                         ?>  
                     <?php } ?>
-                    <div class="col-sm-3 pt5 <?= $common_class . ' ' . $hideBtnClass ?>">
+                    <div class="col-sm-3 pt5 dashboard_modal_footer <?= $common_class . ' ' . $hideBtnClass ?>">
                         <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
                     </div>
                     <?php
