@@ -22,43 +22,60 @@ $range_2_id_from = !empty($hit_range_2_from) ? $hit_range_2_from : false;
 $range_2_id_to = !empty($hit_range_2_to) ? $hit_range_2_to : false;
 
 $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
+
+
+$unionCode = !empty($model->union_code) ? $model->union_code : '';
+$mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
 //Yii::$app->controls->view_date($date);
 ?>
-<div class="dashboard_controls pt10">
-    <?php
-    $form = ActiveForm::begin([
-                'action' => ['index'],
-                'id' => $id
-    ]);
-    ?>
-    <div class="clearfix"></div>
-    <div class="col-sm-6">
-        <div class="<?= $date_range_class ?>">
-            <?php if ($date_range) { ?>
-                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date4', 'to_date4', $range_1_id_from, $range_1_id_to); ?>
-            <?php } ?>
-        </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'previous_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text',['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
+<div class="modal fade" id="modal_<?= $table_class ?>" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title"><?= $popup_title ?></h4>
+                </div>
+                <h1 class="col-sm-6 cal-header dashboardWidgetHeader border_right_white"><?= Yii::t('app', 'Previous'); ?></h1>
+                <h1 class="col-sm-6 cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Current'); ?></h1>
+                <div class="modal-body dashboard_controls">
+                    <?php
+                    $form = ActiveForm::begin([
+                                'action' => ['index'],
+                                'id' => $id
+                    ]);
+                    ?>
+                    <div class="clearfix pt10"></div>
+                    <div class="col-sm-6">
+                        <div class="<?= $date_range_class ?>">
+                            <?php if ($date_range) { ?>
+                                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date4', 'to_date4', $range_1_id_from, $range_1_id_to); ?>
+                            <?php } ?>
+                        </div>
+                        <div class="col-sm-4">
+                            <?= $form->field($model, 'previous_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="<?= $date_range_class ?>">
+                            <?php if ($date_range) { ?>
+                                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date5', 'to_date5', $range_2_id_from, $range_2_id_to); ?>
+                            <?php } ?>
+                        </div>
+                        <div class="col-sm-4">
+                            <?= $form->field($model, 'current_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
+                        </div>
+                    </div>
+                    <?= Html::activeHiddenInput($model, 'union_code'); ?>
+                    <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
+                    <div class="col-sm-3 pt5">
+                        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6">
-        <div class="<?= $date_range_class ?>">
-            <?php if ($date_range) { ?>
-                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date5', 'to_date5', $range_2_id_from, $range_2_id_to); ?>
-            <?php } ?>
-        </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'current_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text',['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
-        </div>
-    </div>
-    <?= Html::activeHiddenInput($model, 'union_code'); ?>
-    <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
-    <div class="col-sm-3 pt5">
-        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
-    </div>
-    <?php ActiveForm::end(); ?>
-</div>
+    <button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 <?php
 $script = "
     $(document).ready(function () {
@@ -66,6 +83,10 @@ $script = "
         $('.{$id}').on('click',function(e) {
             e.preventDefault(); 
             setCrossTab();
+        });
+
+        $('.dashboardSearchButton').on('click',function(e) {
+            $('#modal_$table_class').modal('hide');
         });
         
         function setCrossTab(){  
@@ -75,9 +96,11 @@ $script = "
             var to_date_current = $('#hit_range_2_to').val();
             var hit_previous = $('#dashboard-previous_hit').val();
             var hit_current = $('#dashboard-current_hit').val();
-            var union = $('#dashboard-union_code').val();
-            var mcc= $('#dashboard-mcc_code').val();
-            if(from_date_previous != '' && to_date_previous != '' && union != '' && from_date_current != '' && to_date_current != ''){
+            var union= '" . $unionCode . "';
+//            var union = $('#dashboard-union_code').val();
+            var mcc= '" . $mccCode . "';
+//            var mcc= $('#dashboard-mcc_code').val();
+            if(from_date_previous != '' && to_date_previous != '' && from_date_current != '' && to_date_current != '' && hit_previous != '' && hit_current != ''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['set-hit-count-tab']) . "',

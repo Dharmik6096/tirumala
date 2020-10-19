@@ -136,7 +136,28 @@ $dashboard_widget = new TblDashboardWidgets();
 $unionCode = !empty($model->union_code) ? $model->union_code : '';
 $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
 ?>
-<div class="panel-group row panel-fixed dashboard_set_filter" id="filter">
+
+<div class="col-sm-12 margin-bottom-10 padding_left_right_0 dashboard_search_filter">
+    <div class="col-sm-12 padding_left_right_0">
+        <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
+            <span class="searchFilterHeader"><?= Yii::t('app', 'Date') ?>: </span>
+            <span class="searchFilterValue"><?= Yii::$app->controls->view_date($date) ?>, </span>
+            <span class="searchFilterHeader"><?= Yii::t('app', 'Type') ?>: </span>
+            <span class="searchFilterValue"><?= $widget_type == 'farmer' ? Yii::t('app', 'Farmer') : Yii::t('app', 'RMRD') ?>, </span>
+            <span class="searchFilterHeader"><?= Yii::t('app', 'Union') ?>: </span>
+            <span class="searchFilterValue"><?= $model->getUnionCode('union_name') ?>, </span>
+            <span class="searchFilterHeader"><?= Yii::t('app', 'MCC') ?>: </span>
+            <span class="searchFilterValue"><?= $model->getMccPlantCode('name') ?></span>
+        </span>
+        <span class="dashboardWidgetSearchIcon dashboardWidgetHeader">
+            <a data-toggle="collapse" href="#collapse1" class="color_fff">
+                <i class="fa fa-cog faa-spin animated faa-slow"></i>
+            </a>
+        </span>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="panel-group row panel-fixed dashboard_set_filter mt15" id="filter">
     <div class="panel panel-default min_h_0">
         <!-- <div class="panel-heading text-center">
             <h4 class="panel-title">
@@ -255,7 +276,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
         </div>
     </div>
 </div>
-<div class="panel panel-default panel-main panel-dashboard">
+<div class="panel panel-default panel-main panel-dashboard mt20">
     <div class="panel-body dashboard_section">
         <div class="row">
             <?php //if (Yii::$app->session->get('organizations_type') !== 'UNION') {  ?>
@@ -301,28 +322,6 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
             <?php //}  ?>
         </div>
 
-        <div class="col-sm-12 margin-bottom-10">
-            <div class="col-sm-12 ">
-                <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                    <td>
-                        <span class="searchFilterHeader"><?= Yii::t('app', 'Date') ?>: </span>
-                        <span class="searchFilterValue"><?= Yii::$app->controls->view_date($date) ?>, </span>
-                    </td>
-                    <td>
-                        <span class="searchFilterHeader"><?= Yii::t('app', 'Type') ?>: </span>
-                        <span class="searchFilterValue"><?= $widget_type == 'farmer' ? Yii::t('app', 'Farmer') : Yii::t('app', 'RMRD') ?>, </span>
-                    </td>
-                    <td>
-                        <span class="searchFilterHeader"><?= Yii::t('app', 'Union') ?>: </span>
-                        <span class="searchFilterValue"><?= $model->getUnionCode('union_name') ?>, </span>
-                    </td>
-                    <td>
-                        <span class="searchFilterHeader"><?= Yii::t('app', 'MCC') ?>: </span>
-                        <span class="searchFilterValue"><?= $model->getMccPlantCode('name') ?></span>
-                    </td>
-                </span>
-            </div>
-        </div>
         <?php
         $selected_widgets = $widget_type == 'farmer' ? $farmer_selected_widgets : $rmrd_selected_widgets;
         $all_widgets = $widget_type == 'farmer' ? $farmerWidgets : $rmrdWidgets;
@@ -1042,9 +1041,9 @@ function setHtmlData(id,cntr,url){
     var datastring = $('#'+id).serialize();
     var sp_name = id;
     var union= '" . $unionCode . "';
-    var union= $('#dashboard-union_code').val();
+//    var union= $('#dashboard-union_code').val();
     var mcc= '" . $mccCode . "';
-    var mcc= $('#dashboard-mcc_code').val();
+//    var mcc= $('#dashboard-mcc_code').val();
     var popup = 'allow_popup';
     $.ajax({
         type: 'post',

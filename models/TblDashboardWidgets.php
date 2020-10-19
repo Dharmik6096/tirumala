@@ -15,7 +15,8 @@ use Yii;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
- * @property string widget_label
+ * @property string $widget_label
+ * @property string $sequence_no
  */
 class TblDashboardWidgets extends \yii\db\ActiveRecord {
 
@@ -33,7 +34,7 @@ class TblDashboardWidgets extends \yii\db\ActiveRecord {
         return [
                 [['widget_id', 'widget_type', 'is_active'], 'required'],
                 [['is_active'], 'integer'],
-                [['created_at', 'updated_at'], 'safe'],
+                [['created_at', 'updated_at', 'sequence_no'], 'safe'],
                 [['widget_id', 'widget_label'], 'string', 'max' => 255],
                 [['widget_type'], 'string', 'max' => 10],
                 [['created_by', 'updated_by'], 'string', 'max' => 20],
@@ -60,6 +61,7 @@ class TblDashboardWidgets extends \yii\db\ActiveRecord {
     public function getDashboardWidgets() {
         return $this->find()
                         ->where(['is_active' => 1])
+                        ->orderBy('sequence_no asc')
                         ->all();
     }
 
