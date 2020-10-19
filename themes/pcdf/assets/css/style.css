@@ -3632,10 +3632,14 @@ input[type="checkbox"]:after{
 }
 
 .dashboard_modal_footer{
-    float: right;
+    /*float: right;*/
     text-align: right;
     width: calc(100% + 10px);
     border-top: 1px solid #ccc;
-    margin: 18px -5px -6px;
+    margin: 18px -5px -10px;
     padding-right: 10px;
+}
+
+.pl_0 {
+    padding-left: 0 !important;
 }
