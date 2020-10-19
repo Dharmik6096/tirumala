@@ -3675,3 +3675,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 .pl_0 {
     padding-left: 0 !important;
 }
+
+.fc-year-main-table {
+    margin-top: 1px !important
+}
