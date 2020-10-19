@@ -676,7 +676,6 @@ $( '.sortable' ).sortable();
             });
             }
             else if(['month_calendar'].indexOf(value) == 0){
-                // $('#month_calendar .fc-today-button').html('Current Year');
                 //calendar widget
                 $('#month_calendar').fullCalendar({
                 defaultView: 'year',
@@ -691,6 +690,7 @@ $( '.sortable' ).sortable();
                 var y=b.format('Y');
                 var union= '" . $unionCode . "';
                 var mcc= '" . $mccCode . "';
+                    $('#month_calendar .fc-today-button').html('Current Year');
                     // $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
                     $('#month_calendar .fc-view-container').addClass('disp_none');
                     $.ajax({
