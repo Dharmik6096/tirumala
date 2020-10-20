@@ -42,8 +42,10 @@ class TblImportFileLog extends \app\models\ChildModel {
     public function rules() {
         return [
             [['file_type', 'file_name', 'file_path', 'union_code', 'created_by', 'updated_by', 'response_msg', 'error_file_path'], 'safe'],
-            [['total_count', 'success_count', 'error_count', 'status'], 'safe'],
+            [['total_count', 'success_count', 'error_count', 'status', 'process_type'], 'safe'],
             [['created_at', 'updated_at', 'pick_datetime', 'response_datetime'], 'safe'],
+            [['process_type'], 'default', 'value' => 'background', 'on' => ['member']],
+            [['process_type'], 'default', 'value' => 'SP', 'on' => ['bmc_collection', 'milk_collection']],
         ];
     }
 
@@ -89,7 +91,7 @@ class TblImportFileLog extends \app\models\ChildModel {
         $query->orderBy(['log_id' => SORT_ASC]);
 
         $pendingDataQuery = $this->find()
-                ->where([ 'status' => 1])
+                ->where(['status' => 1])
                 ->andWhere(['<', 'tbl_import_file_log.pick_datetime', $datetime])
                 ->orderBy(['log_id' => SORT_ASC])
                 ->limit(5);

@@ -48,7 +48,7 @@ class TblImportFileLogSearch extends TblImportFileLog {
 
         $this->load($params);
         $query->where(['union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-
+        $query->andWhere(['created_by' => Yii::$app->session->get('UserCode')]);
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -71,7 +71,6 @@ class TblImportFileLogSearch extends TblImportFileLog {
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'response_msg', $this->response_msg])
                 ->andFilterWhere(['like', 'error_file_path', $this->error_file_path]);
-
         return $dataProvider;
     }
 

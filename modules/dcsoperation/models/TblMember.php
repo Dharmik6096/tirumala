@@ -455,15 +455,15 @@ class TblMember extends ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $model = new TblMemberDownload();
-        $model->dcs_code = $this->dcs_code;
-        $data = $model->getRecord();
-        if (!empty($data)) {
-            $model = $data;
-        }
-        $model->is_download = 1;
-        $model->upload_datetime = date('Y-m-d H:i:s');
-        $model->save();
+//        $model = new TblMemberDownload();
+//        $model->dcs_code = $this->dcs_code;
+//        $data = $model->getRecord();
+//        if (!empty($data)) {
+//            $model = $data;
+//        }
+//        $model->is_download = 1;
+//        $model->upload_datetime = date('Y-m-d H:i:s');
+//        $model->save();
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {

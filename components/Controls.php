@@ -53,11 +53,11 @@ class Controls extends Component {
         echo Html::resetButton(Yii::t('app', 'reset'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+r']);
     }
 
-    public function cancel($model = '', $action = 'index', $params = null) {
+    public function cancel($model = '', $action = 'index', $params = null, $backArrow = false) {
         // if (!$model->isNewRecord) {
         $label = 'cancel';
         $class = 'btn btn-danger apply-shortcut';
-        if (Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'rate-chart') {
+        if (Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'rate-chart' || $backArrow) {
             $class = 'btn btn-primary apply-shortcut';
             $label = '<i class="fa fa-arrow-left"></i>';
             $tooltip = 'Back To List';

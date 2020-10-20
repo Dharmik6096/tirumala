@@ -4,14 +4,14 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'member'));
 if (Yii::$app->general->checkAccess('/dcsoperation//tbl-member/update')) {
     $this->params['menu'][] = Yii::$app->controls->add('member');
-    $this->params['menu'][] = Yii::$app->controls->import('member', $this);
+    $this->params['menu'][] = Yii::$app->controls->import('member-bulk', $this);
 //    $this->params['menu'][] = Yii::$app->controls->import('member_limited', $this,'Import Limited Data');
     $this->params['menu'][] = GhostHtml::a('<i class="fa fa fa-close"></i>' . Yii::t('app', 'Member Deactivation'), ['/dcsoperation/tbl-member-deactive/index'], ['class' => 'btn btn-danger btn-block']);
 }
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
-        <?= $this->title; ?>
+<?= $this->title; ?>
     </div>
     <div class="panel-body hide-grid-export">
         <?=
