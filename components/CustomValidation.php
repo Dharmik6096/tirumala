@@ -53,12 +53,12 @@ class CustomValidation extends Component {
                 'TblBranch' => [],
                 'BackGroundDataImport' => [
                     'default' => [
-                        [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
+                        [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'on' => ['member']],
                         [['bank_account_no'], 'required', 'when' => function ($model) {
                                 return !empty($model->branch_code);
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
-                        }", 'on' => ['importCsv']],
+                        }", 'on' => ['member']],
                     ],
                 ],
             ],
