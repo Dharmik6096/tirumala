@@ -9,8 +9,20 @@ use yii\helpers\Url;
     <table class="table table-striped">
         <thead>
             <tr>
-                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC Code') ?></th>
-                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC') ?></th>
+                <?php
+                    if($widget_for == 'mcc'){
+                        ?>
+                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC Code') ?></th>
+                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC') ?></th>
+                        <?php
+                    }
+                    else{
+                        ?>
+                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union Code') ?></th>
+                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union') ?></th>
+                        <?php
+                    }
+                ?>
                 <th class="w100 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Date') ?></th>
                 <th class="max_w35 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Shift') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Active MPP') ?></th>

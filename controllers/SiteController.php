@@ -58,7 +58,7 @@ use app\modules\syncutility\models\TblInboxConstraint;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary'];
 
     public function init() {
         parent::init();
@@ -2035,9 +2035,24 @@ class SiteController extends Controller {
     public function actionSetCollectionCountSummary() {
         $output = [];
         $union = '';
-        $sp = Yii::$app->request->post('sp');
-        $output = $this->getSpResult($sp);
-        return $this->renderAjax('collc_count_summary_tab', ['output' => $output, 'union_code' => $union]);
+        $widget_for = '';
+        $sp = 'sp_portal_dashboard_collection_count_summary';
+        if (!empty($_POST)) {
+            $data = $_POST;
+            $sp_param = [];
+            $sp_param[] = empty($data['union']) ? '0' : $data['union'];
+            $sp_param[] = empty($data['plant']) ? '0' : $data['plant'];
+            $sp_param[] = empty($data['mcc']) ? '0' : $data['mcc'];
+            $sp_param[] = empty($data['bmc']) ? '0' : $data['bmc'];
+            $sp_param[] = empty($data['dcs']) ? '0' : $data['dcs'];
+            $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
+            $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+            $sp_param[] = empty($data['widget_for']) ? '' : $data['widget_for'];
+            $union = $data['union'];
+            $widget_for = $data['widget_for'];
+            $output = \Yii::$app->general->getSpData($sp, $sp_param);
+        }
+        return $this->renderAjax('collc_count_summary_tab', ['output' => $output, 'union_code' => $union, 'widget_for' => $widget_for]);
     }
 
 
