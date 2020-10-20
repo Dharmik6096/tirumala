@@ -2536,3 +2536,34 @@ div.crystalstyle{
 .hide-grid-export .grid-search.search-filter {
     width: calc(100% - 102px) !important;
 }
+
+#map {
+    height: calc(100vh - 155px);
+}
+
+.map_info_content p{
+    margin-bottom: 0px !important;
+}
+
+.map_info_content .map_marker_content .marker_header{
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.map_info_content .map_marker_content {
+    font-family: sans-serif;
+}
+
+
+.mfp-no-margins img.mfp-img {
+    padding: 0;
+}
+/* position of shadow behind the image */
+.mfp-no-margins .mfp-figure:after {
+    top: 0;
+    bottom: 0;
+}
+/* padding for main container */
+.mfp-no-margins .mfp-container {
+    padding: 0;
+}
