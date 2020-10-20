@@ -40,9 +40,27 @@ class CustomValidation extends Component {
                         [['mobile_no'], 'required', 'on' => 'additional'],
                     ],
                 ],
-                'TblMember' => [],
+                'TblMember' => [
+                    'default' => [
+                        [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
+                        [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                    ],
+                ],
                 'TblBranch' => [],
-                'BackGroundDataImport' => [],
+                'BackGroundDataImport' => [
+                    'default' => [
+                        [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
+                        [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                    ],
+                ],
             ],
             'EIPLCOMMON' => [
                 'TblPlant' => [

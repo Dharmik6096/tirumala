@@ -17,6 +17,8 @@ use app\modules\organisation\models\TblBanks;
 
 class MemberImport extends TblMember {
 
+    public $import_union_code, $import_eipl_code;
+
     public function rules() {
         $main_rules = [
             [['is_download'], 'default', 'value' => '0'],
@@ -106,9 +108,7 @@ class MemberImport extends TblMember {
                   [['member_class'], 'validateClass'],
                  */
         ];
-        $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
-        $eiplcode = Yii::$app->general->getClientCode($this->union_code);
-        $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type, $eiplcode);
+        $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type, $this->import_eipl_code);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }
@@ -132,8 +132,7 @@ class MemberImport extends TblMember {
         } else {
             $dcs_data = $this->dcsCode;
             $this->union_code = $dcs_data->union_code;
-            $unions = explode(',', Yii::$app->session->get('Unions'));
-            if (!(in_array($this->union_code, $unions))) {
+            if ($this->union_code != $this->import_union_code) {
                 $this->addError($attribute, Yii::t('app/validation', 'Society Code is invalid for Mapped Union.'));
                 return false;
             }
@@ -141,7 +140,7 @@ class MemberImport extends TblMember {
             $this->district_code = $dcs_data->district_code;
             $this->sub_district_code = $dcs_data->sub_district_code;
             $this->village_code = $dcs_data->village_code;
-            $this->federation_code = Yii::$app->session->get('Federations');
+            $this->federation_code = Yii::$app->general->getforeignkey($this->unionCode, 'federation_code');
             if (empty($this->no_of_buffalo) && empty($this->no_of_cow_cross) && empty($this->no_of_cow_ind))
                 $this->total_animals = $this->no_of_buffalo = $this->no_of_cow_cross = $this->no_of_cow_ind = 0;
         }

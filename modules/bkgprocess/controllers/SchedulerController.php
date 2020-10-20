@@ -352,6 +352,9 @@ class SchedulerController extends ChildController {
             $modelName = str_replace('_', ' ', $table);
             $modelName = str_replace(' ', '', ucwords($modelName));
             $className = Yii::$app->path->getModel($modelName);
+            $eiplcode = Yii::$app->general->getClientCode($row->union_code);
+            $data['import_union_code'] = $row->union_code;
+            $data['import_eipl_code'] = $eiplcode;
             $import = new DefaultController('', '');
             $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
             $filePath = NULL;

@@ -454,7 +454,7 @@ class TblMember extends ChildModel {
         return $flag;
     }
 
-//    public function afterSave($insert, $changedAttributes) {
+    public function afterSave($insert, $changedAttributes) {
 //        $model = new TblMemberDownload();
 //        $model->dcs_code = $this->dcs_code;
 //        $data = $model->getRecord();
@@ -464,18 +464,18 @@ class TblMember extends ChildModel {
 //        $model->is_download = 1;
 //        $model->upload_datetime = date('Y-m-d H:i:s');
 //        $model->save();
-//        $sentboxArray = [];
-//        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
-//        foreach ($sentboxArray as $sent) {
-//            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-//            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-//            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-//                if (!($sentbox->setSentbox($this, $flag))) {
-//                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
-//                }
-//            }
-//        }
-//    }
+        $sentboxArray = [];
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
 
     public function getKycInfo() {
         $data = $this->find()->where(['member_code' => $this->member_code])->one();
