@@ -164,7 +164,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                         $trans->rollback();
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
-                            $message .= $value[0] . '<br/>';
+                            $message .= $value[0] . '-';
                         }
                         $row['response_message'] = $message;
                         $error_lines[] = $row;
@@ -174,12 +174,12 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                     $trans->rollback();
                     $message = '';
                     foreach ($model->getErrors() as $errorkey => $value) {
-                        $message .= $value[0] . '<br>';
+                        $message .= $value[0] . '-';
                     }
 
                     foreach ($errors as $array) {
                         foreach ($array as $errorkey => $value) {
-                            $message .= $value[0] . '<br>';
+                            $message .= $value[0] . '-';
                         }
                     }
                     $row['response_message'] = $message;

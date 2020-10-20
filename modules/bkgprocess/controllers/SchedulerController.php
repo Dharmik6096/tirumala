@@ -14,8 +14,8 @@ use ruskid\csvimporter\CSVReader;
 use \app\modules\collection\models\TblBulkDataImport;
 use yii\helpers\Url;
 use PHPExcel;
-use app\modules\import\models\BulkDataImport;
 use app\modules\import\controllers\DefaultController;
+use app\modules\import\importData;
 
 class SchedulerController extends ChildController {
 
@@ -228,149 +228,73 @@ class SchedulerController extends ChildController {
                 return $e->log_id;
             }, $modelData);
             $update = $model->updateFileStatus($ids);
-            $this->process_files_data($modelData);
-        }
-    }
-
-    private function process_files_data($modelData) {
-        foreach ($modelData as $row) {
-            try {
-                $flag = '';
-                if ($row->file_type == 'bmc_collection') {
-                    $flag = 'bmc-collection-bulk';
-                    $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
-                } else if ($row->file_type == 'milk_collection') {
-                    $flag = 'milk-collection-bulk';
-                    $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
-                }
-                if (!empty($flag)) {
-                    $error_lines = [];
-                    $success = 0;
-                    $total_cnt = 0;
-                    $command = Yii::$app->getDb()->createCommand('SELECT NEWID() as id')->queryOne();
-                    $uuid = $command['id'];
-                    $importer = new CSVImporter();
-                    $importer->setData(new CSVReader([
-                        'filename' => $row->file_path,
-                        'fgetcsvOptions' => [
-                            'delimiter' => ';'
-                        ]
-                    ]));
-                    $config = \app\modules\import\importData::getLabels($flag);
-                    $header = explode(',', $config['fields']);
-                    $fileData = $importer->getData();
-                    unset($fileData[0]);
-                    foreach ($fileData as $line) {
-                        $total_cnt++;
-                        $data = array_combine($header, $line);
-                        $model = new TblBulkDataImport();
-                        $model->attributes = $data;
-                        $model->uuid = $uuid;
-                        $model->union_code = $row->union_code;
-                        $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
-                        $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
-                        $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
-                        if ($model->save()) {
-                            $success++;
-                        } else {
-                            $data['response_msg'] = 'File Record error.';
-                            $error_lines[] = $data;
-                        }
-                    }
-                    $sp_param = [];
-                    $sp_param[] = $uuid;
-                    $sp_param[] = $row->created_by;
-                    $sp_param[] = $row->union_code;
-                    $sp_result = [];
-                    if ($success > 0) {
-                        \Yii::$app->general->getSpData($sp_name, $sp_param, TRUE);
-                        $sp_result = \Yii::$app->general->getSpData($sp_name . '_ErrorList', [$uuid]);
-                    }
-                    $error_lines = array_merge($sp_result, $error_lines);
-                    $filePath = NULL;
-                    if (!empty($error_lines)) {
-                        $column_header = array_keys($error_lines[0]);
-                        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
-                        if (Yii::$app->general->checkDirectory($path)) {
-                            $absoluteBaseUrl = Url::base(true);
-                            $objPHPExcel = new PHPExcel();
-                            $sheet = $objPHPExcel->getActiveSheet();
-                            $sheet->fromArray(
-                                    $column_header, // The data to set
-                                    NULL, // Array values with this value will not be set
-                                    'A1'         // Top left coordinate of the worksheet range where
-                                    //    we want to set these values (default is A1)
-                            );
-                            $sheet->fromArray(
-                                    $error_lines, // The data to set
-                                    NULL, // Array values with this value will not be set
-                                    'A2'         // Top left coordinate of the worksheet range where
-                                    //    we want to set these values (default is A1)
-                            );
-                            $filePath = $path . 'error_' . $row->file_name;
-                            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-                            $objWriter->save($filePath);
-                            copy($row->file_path, $path . $row->file_name);
-                            unlink($row->file_path);
-                            $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
-                        }
-                    }
-                    $row->total_count = $total_cnt;
-                    $row->error_count = count($error_lines);
-                    $row->success_count = $row->total_count - $row->error_count;
-                    $row->status = 2;
-                    $row->response_datetime = date('Y-m-d H:i:s');
-                    $row->response_msg = 'File Processed';
-                    $row->error_file_path = $filePath;
-                    $row->save(FALSE);
+            foreach ($modelData as $row) {
+                if (strtolower($row->process_type) == 'background') {
+                    $this->bulk_files_data($row);
                 } else {
-                    $row->status = 3;
-                    $row->response_msg = 'Import Config Missing.';
-                    $row->response_datetime = date('Y-m-d H:i:s');
-                    $row->save(FALSE);
+                    $this->process_files_data($row);
                 }
-            } catch (\Throwable $ex) {
-                $row->status = 3;
-                $row->response_msg = 'Unable to read file.';
-                $row->response_datetime = date('Y-m-d H:i:s');
-                $row->save(FALSE);
-                var_dump($ex->getMessage());
             }
         }
     }
 
-    public function actionBulkDataImportFiles() {
-        $model = new TblImportFileLog();
-        $model->status = 0;
-        $modelData = $model->getPickRecords([], 10);
-        if (!empty($modelData)) {
-            $ids = array_map(function($e) {
-                return $e->log_id;
-            }, $modelData);
-            $update = $model->updateFileStatus($ids);
-            $this->bulk_files_data($modelData);
-        }
-    }
-
-    private function bulk_files_data($modelData) {
-        foreach ($modelData as $row) {
-            try {
+    private function process_files_data($row) {
+        try {
+            $flag = '';
+            if ($row->file_type == 'bmc_collection') {
+                $flag = 'bmc-collection-bulk';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'milk_collection') {
+                $flag = 'milk-collection-bulk';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            }
+            if (!empty($flag)) {
                 $error_lines = [];
                 $success = 0;
                 $total_cnt = 0;
-                $data = \app\modules\import\importData::getLabels($row->file_type);
-                $table = (!empty($data['import_class'])) ? $data['import_class'] : $data['table_name'];
-                $modelName = str_replace('_', ' ', $table);
-                $modelName = str_replace(' ', '', ucwords($modelName));
-                $className = Yii::$app->path->getModel($modelName);
-                $import = new DefaultController('', '');
-                $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/member/');
-
+                $command = Yii::$app->getDb()->createCommand('SELECT NEWID() as id')->queryOne();
+                $uuid = $command['id'];
+                $importer = new CSVImporter();
+                $importer->setData(new CSVReader([
+                    'filename' => $row->file_path,
+                    'fgetcsvOptions' => [
+                        'delimiter' => ';'
+                    ]
+                ]));
+                $config = importData::getLabels($flag);
+                $header = explode(',', $config['fields']);
+                $fileData = $importer->getData();
+                unset($fileData[0]);
+                foreach ($fileData as $line) {
+                    $total_cnt++;
+                    $data = array_combine($header, $line);
+                    $model = new TblBulkDataImport();
+                    $model->attributes = $data;
+                    $model->uuid = $uuid;
+                    $model->union_code = $row->union_code;
+                    $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                    $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
+                    $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
+                    if ($model->save()) {
+                        $success++;
+                    } else {
+                        $data['response_msg'] = 'File Record error.';
+                        $error_lines[] = $data;
+                    }
+                }
+                $sp_param = [];
+                $sp_param[] = $uuid;
+                $sp_param[] = $row->created_by;
+                $sp_param[] = $row->union_code;
+                $sp_result = [];
+                if ($success > 0) {
+                    \Yii::$app->general->getSpData($sp_name, $sp_param, TRUE);
+                    $sp_result = \Yii::$app->general->getSpData($sp_name . '_ErrorList', [$uuid]);
+                }
+                $error_lines = array_merge($sp_result, $error_lines);
                 $filePath = NULL;
-                $error_lines = [];
-                if (!empty($values['allData']['error_lines'])) {
-                    $column_header = explode(',', $data['fields']);
-                    $error_lines = $values['allData']['error_lines'];
+                if (!empty($error_lines)) {
+                    $column_header = array_keys($error_lines[0]);
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                     if (Yii::$app->general->checkDirectory($path)) {
                         $absoluteBaseUrl = Url::base(true);
@@ -396,7 +320,7 @@ class SchedulerController extends ChildController {
                         $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
                     }
                 }
-                $row->total_count = !empty($values['allData']['total_cnt']) ? $values['allData']['total_cnt'] : $total_cnt;
+                $row->total_count = $total_cnt;
                 $row->error_count = count($error_lines);
                 $row->success_count = $row->total_count - $row->error_count;
                 $row->status = 2;
@@ -404,13 +328,77 @@ class SchedulerController extends ChildController {
                 $row->response_msg = 'File Processed';
                 $row->error_file_path = $filePath;
                 $row->save(FALSE);
-            } catch (\Throwable $ex) {
+            } else {
                 $row->status = 3;
-                $row->response_msg = 'Unable to read file.';
+                $row->response_msg = 'Import Config Missing.';
                 $row->response_datetime = date('Y-m-d H:i:s');
                 $row->save(FALSE);
-                var_dump($ex->getMessage());
             }
+        } catch (\Throwable $ex) {
+            $row->status = 3;
+            $row->response_msg = 'Unable to read file.';
+            $row->response_datetime = date('Y-m-d H:i:s');
+            $row->save(FALSE);
+            var_dump($ex->getMessage());
+        }
+    }
+
+    private function bulk_files_data($row) {
+        try {
+            $error_lines = [];
+            $total_cnt = 0;
+            $data = importData::getLabels($row->file_type);
+            $table = (!empty($data['import_class'])) ? $data['import_class'] : $data['table_name'];
+            $modelName = str_replace('_', ' ', $table);
+            $modelName = str_replace(' ', '', ucwords($modelName));
+            $className = Yii::$app->path->getModel($modelName);
+            $import = new DefaultController('', '');
+            $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
+            $filePath = NULL;
+            $error_lines = [];
+            if (!empty($values['allData']['error_lines'])) {
+                $column_header = explode(',', $data['fields']);
+                $column_header[] = 'response_msg';
+                $error_lines = $values['allData']['error_lines'];
+                $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
+                if (Yii::$app->general->checkDirectory($path)) {
+                    $absoluteBaseUrl = Url::base(true);
+                    $objPHPExcel = new PHPExcel();
+                    $sheet = $objPHPExcel->getActiveSheet();
+                    $sheet->fromArray(
+                            $column_header, // The data to set
+                            NULL, // Array values with this value will not be set
+                            'A1'         // Top left coordinate of the worksheet range where
+                            //    we want to set these values (default is A1)
+                    );
+                    $sheet->fromArray(
+                            $error_lines, // The data to set
+                            NULL, // Array values with this value will not be set
+                            'A2'         // Top left coordinate of the worksheet range where
+                            //    we want to set these values (default is A1)
+                    );
+                    $filePath = $path . 'error_' . $row->file_name;
+                    $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                    $objWriter->save($filePath);
+                    copy($row->file_path, $path . $row->file_name);
+                    unlink($row->file_path);
+                    $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
+                }
+            }
+            $row->total_count = !empty($values['allData']['total_cnt']) ? $values['allData']['total_cnt'] : $total_cnt;
+            $row->error_count = count($error_lines);
+            $row->success_count = $row->total_count - $row->error_count;
+            $row->status = 2;
+            $row->response_datetime = date('Y-m-d H:i:s');
+            $row->response_msg = 'File Processed';
+            $row->error_file_path = $filePath;
+            $row->save(FALSE);
+        } catch (\Throwable $ex) {
+            $row->status = 3;
+            $row->response_msg = 'Unable to read file.';
+            $row->response_datetime = date('Y-m-d H:i:s');
+            $row->save(FALSE);
+            var_dump($ex->getMessage());
         }
     }
 
