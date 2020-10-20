@@ -36,13 +36,13 @@ if (empty($latLongArray)) {
 }
 $infoArray = json_encode($infoArray);
 $latLongArray = json_encode($latLongArray);
-$asset_path = Url::to(['/themes/pcdf/assets/']);
+$asset_path = Yii::$app->general->base64url_decode(Url::to(['/themes/pcdf/assets/']));
 ?>
 
-<link rel="stylesheet" href="<?= $asset_path . '/css/' ?>leaflet.css" />
-<link rel="stylesheet" href="<?= $asset_path . '/css/' ?>Control.FullScreen.css" />
-<script src="<?= $asset_path . '/js/' ?>leaflet.js"></script>
-<script src="<?= $asset_path . '/js/' ?>Control.FullScreen.js"></script>
+<link rel="stylesheet" href="<?= '/themes/pcdf/assets//css/' ?>leaflet.css" />
+<link rel="stylesheet" href="<?= '/themes/pcdf/assets//css/' ?>Control.FullScreen.css" />
+<script src="<?= '/themes/pcdf/assets//js/' ?>leaflet.js"></script>
+<script src="<?= '/themes/pcdf/assets//js/' ?>Control.FullScreen.js"></script>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">
@@ -63,10 +63,10 @@ $asset_path = Url::to(['/themes/pcdf/assets/']);
 
 <?php
 $script = "
-var asset_path = '" . $asset_path . "';
+var asset_path = '/themes/pcdf/assets/';
 var locations = '" . $latLongArray . "';
 var locations=$.parseJSON(locations);
-var gmap = L.map('map').setView([locations[0][1], locations[0][2]], 6);
+var gmap = L.map('map').setView(26.4471054,80.1982971, 12);
 
 var LeafIcon = L.Icon.extend({
     options: {
@@ -82,7 +82,8 @@ var greenIcon = new LeafIcon({
     shadowUrl: asset_path + '/images/marker-shadow.png'
 })
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    maxZoom: 18,
+	minZoom: 10,
+    maxZoom: 40,
     attribution: '',
     id: 'mapbox.streets'
 }).addTo(gmap);
