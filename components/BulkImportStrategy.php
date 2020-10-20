@@ -47,6 +47,7 @@ class BulkImportStrategy extends \ruskid\csvimporter\ARImportStrategy {
                     $file_path = $path . $this->file_name;
                     if (copy($this->file_path, $file_path)) {
                         $model = new TblImportFileLog();
+                        $model->scenario = $this->scenario;
                         $model->file_type = $this->scenario;
                         $model->file_name = $this->file_name;
                         $model->file_path = $file_path;

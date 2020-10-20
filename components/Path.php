@@ -87,7 +87,7 @@ class Path extends Component {
         '\\app\modules\tankermovement\models\\' => ['TblQtyDiffType', 'TblConfigTxnResult', 'TblBmcDispatchInspection', 'TblBmcMilkDispatch', 'TblBmcMilkDispatchTxn', 'TblBmcDispatchStock', 'TblVehicleTrip', 'TblPreCollectionCheck', 'TblMilkVehicleEntry', 'TblMilkVehicleEntryTransaction'],
         '\\app\modules\assetmanagement\models\\' => ['TblAssetDetail', 'TblStoreLocation', 'TblAssetGroup', 'TblAssetMaster', 'TblAssetMasterHistory', 'TblAssetGroupHistory', 'TblAssetDetailHistory', 'TblStoreLocationHistory', 'TblStoreLocationType', 'TblAssetTransaction', 'TblAssetTransactionHistory', 'TblAssetSet', 'TblAssetSetHistory'],
         '\\app\modules\complaint\models\\' => ['TblComplainProduct'],
-        '\\app\modules\import\models\\' => ['BulkDataImport'],
+        '\\app\modules\import\models\\' => ['BackGroundDataImport'],
     ];
 
     public function get($model) {

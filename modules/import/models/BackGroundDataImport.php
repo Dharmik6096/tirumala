@@ -3,9 +3,11 @@
 namespace app\modules\import\models;
 
 use yii\base\Model;
+use Yii;
 
-class BulkDataImport extends Model {
+class BackGroundDataImport extends Model {
 
+    public $form_validation_type = 'default';
     public $dcs_code, $ex_member_code, $ref_code, $member_name, $local_name, $father_name, $local_father_name, $surname, $local_surname, $nominee_name, $local_nominee_name, $nominee_relation, $dob, $bloodgroup_code, $gender_code, $qualification_code, $caste_category_code, $religion_code, $total_land, $animal_type_code, $no_of_buffalo, $no_of_cow_cross, $no_of_cow_ind, $member_type_code, $branch_code, $bank_account_no, $beneficiary_name, $mobile_no, $email, $address, $local_address, $pincode, $pan_no, $adhar_no, $annual_income, $hamlet_code, $voter_id, $member_class, $registration_date, $max_allowed_qty;
 
     function __construct() {
@@ -16,9 +18,13 @@ class BulkDataImport extends Model {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['dcs_code', 'address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'on' => ['member']],
+        $main_rules = [
+            [['dcs_code', 'member_name'], 'required', 'on' => ['member']],
+            [['dob', 'registration_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true, 'on' => ['member']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     public function attributeLabels() {

@@ -6,9 +6,9 @@ use yii\base\Component;
 
 class CustomValidation extends Component {
 
-    public function getRules($model, $form) {
+    public function getRules($model, $form, $eiplcode = '') {
         $rules = $this->processRulesArray();
-        $client_code = \Yii::$app->session->get('eiplCode');
+        $client_code = !empty($eiplcode) ? $eiplcode : \Yii::$app->session->get('eiplCode');
         $client_rules = isset($rules[$client_code]) ? $rules[$client_code] : [];
         $client_rules = isset($client_rules[$model]) ? $client_rules : [];
         if (!empty($client_rules)) {
@@ -42,6 +42,7 @@ class CustomValidation extends Component {
                 ],
                 'TblMember' => [],
                 'TblBranch' => [],
+                'BackGroundDataImport' => [],
             ],
             'EIPLCOMMON' => [
                 'TblPlant' => [
@@ -81,6 +82,9 @@ class CustomValidation extends Component {
                     [['hamlet_code'], 'required'],
                     [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
                 ],
+                'BackGroundDataImport' => [
+                    [['address', 'hamlet_code', 'gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'on' => ['member']],
+                ],
             ],
             'NIFPL' => [
                 'TblDcs' => [
@@ -107,6 +111,7 @@ class CustomValidation extends Component {
                         [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
                     ]
                 ],
+                'BackGroundDataImport' => [],
             ],
         ];
     }

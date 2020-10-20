@@ -996,7 +996,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1835,6 +1835,12 @@ class GeneralFunctions extends Component {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' Is Invalid'));
                 return false;
             }
+    }
+
+    public function getClientCode($union) {
+        $model = new TblUnions();
+        $data = $model->find()->where(['union_code' => $union])->one();
+        return !empty($data) ? $data->eipl_code : '';
     }
 
 }
