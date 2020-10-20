@@ -10,18 +10,18 @@ use yii\helpers\Url;
         <thead>
             <tr>
                 <?php
-                    if($widget_for == 'mcc'){
-                        ?>
-                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC Code') ?></th>
-                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC') ?></th>
-                        <?php
-                    }
-                    else{
-                        ?>
-                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union Code') ?></th>
-                        <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union') ?></th>
-                        <?php
-                    }
+                if ($widget_for == 'mcc') {
+                    ?>
+                    <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union') ?></th>
+                    <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC Code') ?></th>
+                    <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'MCC') ?></th>
+                    <?php
+                } else {
+                    ?>
+                    <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union Code') ?></th>
+                    <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Union') ?></th>
+                    <?php
+                }
                 ?>
                 <th class="w100 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Date') ?></th>
                 <th class="max_w35 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Shift') ?></th>
@@ -41,8 +41,19 @@ use yii\helpers\Url;
             foreach ($output as $data) {
                 ?>
                 <tr>
-                    <td><?= $data['mcc_code'] ?></td>
-                    <td><?= $data['mcc_name'] ?></td>
+                    <?php
+                    if ($widget_for == 'mcc') {
+                        ?>
+                        <td><?= $data['union_name'] ?></td>
+                        <td><?= $data['mcc_code'] ?></td>
+                        <td><?= $data['mcc_name'] ?></td>
+                    <?php } else {
+                        ?>
+                        <td><?= $data['union_code'] ?></td>
+                        <td><?= $data['union_name'] ?></td>
+                        <?php
+                    }
+                    ?>
                     <td><?= $data['date'] ?></td>
                     <td><?= $data['shift_name'] ?></td>
                     <td><?= $data['active_mpp'] ?></td>
