@@ -9,11 +9,14 @@ use yii\helpers\Url;
 /* @var $model app\modules\organisation\models\TblDcsSearch */
 /* @var $form yii\widgets\ActiveForm */
 $quality_params = ['1' => 'Qty', '2' => 'FAT/SNF', '3' => 'FatKg/SNFKg'];
-$model->from_date4 = empty($model->from_date4) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->from_date4;
-$model->to_date4 = empty($model->to_date4) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->to_date4;
+$model->from_date4 = empty($model->from_date4) ? Yii::$app->controls->view_date(date('Y-m-d', strtotime('-13 days'))) : $model->from_date4;
+$model->to_date4 = empty($model->to_date4) ? Yii::$app->controls->view_date(date('Y-m-d', strtotime('-6 days'))) : $model->to_date4;
 
-$model->from_date5 = empty($model->from_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->from_date5;
-$model->to_date5 = empty($model->to_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->to_date5;
+$model->from_date5 = empty($model->from_date5) ? Yii::$app->controls->view_date(date('Y-m-d', strtotime('-6 days'))) : $model->from_date5;
+$model->to_date5 = empty($model->to_date5) ? Yii::$app->controls->view_date(date('Y-m-d')) : $model->to_date5;
+
+//$model->from_date5 = empty($model->from_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->from_date5;
+//$model->to_date5 = empty($model->to_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->to_date5;
 
 $range_1_id_from = !empty($hit_range_1_from) ? $hit_range_1_from : false;
 $range_1_id_to = !empty($hit_range_1_to) ? $hit_range_1_to : false;
@@ -29,53 +32,53 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
 //Yii::$app->controls->view_date($date);
 ?>
 <div class="modal fade" id="modal_<?= $table_class ?>" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h4 class="modal-title"><?= $popup_title ?></h4>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title"><?= $popup_title ?></h4>
+            </div>
+            <h1 class="col-sm-6 cal-header dashboardWidgetHeader border_right_white"><?= Yii::t('app', 'Previous'); ?></h1>
+            <h1 class="col-sm-6 cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Current'); ?></h1>
+            <div class="modal-body dashboard_controls">
+                <?php
+                $form = ActiveForm::begin([
+                            'action' => ['index'],
+                            'id' => $id
+                ]);
+                ?>
+                <div class="clearfix pt10"></div>
+                <div class="col-sm-6">
+                    <div class="<?= $date_range_class ?>">
+                        <?php if ($date_range) { ?>
+                            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date4', 'to_date4', $range_1_id_from, $range_1_id_to); ?>
+                        <?php } ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'previous_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
+                    </div>
                 </div>
-                <h1 class="col-sm-6 cal-header dashboardWidgetHeader border_right_white"><?= Yii::t('app', 'Previous'); ?></h1>
-                <h1 class="col-sm-6 cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Current'); ?></h1>
-                <div class="modal-body dashboard_controls">
-                    <?php
-                    $form = ActiveForm::begin([
-                                'action' => ['index'],
-                                'id' => $id
-                    ]);
-                    ?>
-                    <div class="clearfix pt10"></div>
-                    <div class="col-sm-6">
-                        <div class="<?= $date_range_class ?>">
-                            <?php if ($date_range) { ?>
-                                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date4', 'to_date4', $range_1_id_from, $range_1_id_to); ?>
-                            <?php } ?>
-                        </div>
-                        <div class="col-sm-4">
-                            <?= $form->field($model, 'previous_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
-                        </div>
+                <div class="col-sm-6">
+                    <div class="<?= $date_range_class ?>">
+                        <?php if ($date_range) { ?>
+                            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date5', 'to_date5', $range_2_id_from, $range_2_id_to); ?>
+                        <?php } ?>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="<?= $date_range_class ?>">
-                            <?php if ($date_range) { ?>
-                                <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date5', 'to_date5', $range_2_id_from, $range_2_id_to); ?>
-                            <?php } ?>
-                        </div>
-                        <div class="col-sm-4">
-                            <?= $form->field($model, 'current_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
-                        </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'current_hit', ['options' => ['class' => 'form-group']])->textInput(['class' => 'form-control'])->input('text', ['placeholder' => Yii::t('app', 'No. of Hits')])->label(false) ?>
                     </div>
-                    <?= Html::activeHiddenInput($model, 'union_code'); ?>
-                    <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
-                    <div class="col-sm-3 pt5 dashboard_modal_footer">
-                        <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
+                <?= Html::activeHiddenInput($model, 'union_code'); ?>
+                <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
+                <div class="col-sm-3 pt5 dashboard_modal_footer">
+                    <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
+                </div>
+                <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
-    <button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
+</div>
+<button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 <?php
 $script = "
     $(document).ready(function () {

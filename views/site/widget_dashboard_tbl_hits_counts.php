@@ -2,7 +2,7 @@
     <div class="cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Periodic Online Data Comparision'); ?></div>
     <div class="flt">
         <div id="society-compare" class="pl_0">
-            <?= $this->render('_dashboard_filter_hit_count_tab', ['model' => $model, 'id' => 'tbl_hits_counts', 'container' => 'tbl_hits_counts', 'date_range' => true, 'date_range_class' => 'col-sm-8', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'hit_range_1_from' => 'hit_range_1_from', 'hit_range_1_to' => 'hit_range_1_to', 'hit_range_2_from' => 'hit_range_2_from', 'hit_range_2_to' => 'hit_range_2_to', 'date' => $date, 'table_class' => 'tbl_hits_counts', 'popup_title' => Yii::t('app', 'Previous and Current Counts')]); ?>
+            <?= $this->render('_dashboard_filter_hit_count_tab', ['model' => $model, 'id' => 'tbl_hits_counts', 'container' => 'tbl_hits_counts', 'date_range' => true, 'date_range_class' => 'col-sm-8', 'from_date' => date('d-m-Y'), 'to_date' => date('d-m-Y'), 'range2' => false, 'shift' => false, 'type' => 'column', 'hide_param' => 'test', 'title' => '', 'hit_range_1_from' => 'hit_range_1_from', 'hit_range_1_to' => 'hit_range_1_to', 'hit_range_2_from' => 'hit_range_2_from', 'hit_range_2_to' => 'hit_range_2_to', 'date' => $date, 'table_class' => 'tbl_hits_counts', 'popup_title' => Yii::t('app', 'Periodic Online Data Comparision')]); ?>
 
             <div class="table-responsive dashboard_tbl h450 cont milk-collection">
                 <table class="table table-striped">
