@@ -40,10 +40,12 @@ $infoArray = json_encode($infoArray);
 $latLongArray = json_encode($latLongArray);
 $asset_path = Yii::$app->general->base64url_decode(Url::to(['/themes/pcdf/assets/']));
 $mapIcon = $this->theme->getUrl('/assets/images/map_marker.png');
+$googleMapKey = Yii::$app->params['google_map_api_key'];
+//AIzaSyAMTTxu_z6hetI1B83CmW30vGv6dibQWLU
 ?>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMTTxu_z6hetI1B83CmW30vGv6dibQWLU&callback=initMap&libraries=&v=weekly"
+    src="https://maps.googleapis.com/maps/api/js?key=<?= $googleMapKey ?>&callback=initMap&libraries=&v=weekly"
     defer
 ></script>
 <!--<link rel="stylesheet" href="<?= '/themes/pcdf/assets/css/' ?>leaflet.css" />
