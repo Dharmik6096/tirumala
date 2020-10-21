@@ -227,7 +227,7 @@ class SchedulerController extends ChildController {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-//            $update = $model->updateFileStatus($ids);
+            $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
