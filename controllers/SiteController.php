@@ -1321,16 +1321,29 @@ class SiteController extends Controller {
     public function actionSetCrossTab() {
         $output = [];
         $union = '';
-        if (!empty($_POST)) {
-            $data = $_POST;
-            $sp_param = [];
-            $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
-            $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
-            $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
-            $sp_param[] = $data['union'];
-            $union = $data['union'];
-            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+//        if (!empty($_POST)) {
+        $data = $_POST;
+        $union = $data['union'];
+
+        $union_str = 0;
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union_str = Yii::$app->request->post('union');
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+            $union_str = ',' . $union_str . ',';
+        } else {
+            $unionModel = new TblUnions();
+            $union = $unionModel->getActiveUnions();
+            $union_ary = ArrayHelper::getColumn($union, 'union_code');
+            $union_str = implode(',', $union_ary);
         }
+        $sp_param = [];
+        $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
+        $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+        $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+        $sp_param[] = $union_str;//$data['union'];
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+//        }
         return $this->renderAjax('bmc_cross_tab', ['output' => $output, 'union_code' => $union]);
     }
 
@@ -2055,7 +2068,6 @@ class SiteController extends Controller {
         return $this->renderAjax('collc_count_summary_tab', ['output' => $output, 'union_code' => $union, 'widget_for' => $widget_for]);
     }
 
-
     public function actionLoadYearData() {
         if (!empty(Yii::$app->request->post('y'))) {
 //            $union_str = Yii::$app->request->post('union');
@@ -2067,7 +2079,7 @@ class SiteController extends Controller {
             if (!empty($results)) {
                 if (!empty($results)) {
                     foreach ($results as $res) {
-                        $cal_data[$res['dt']] = [$res['AvgFAT'], $res['AvgSNF'],$res['KgFAT'], $res['KgSNF'], $res['Qty']];
+                        $cal_data[$res['dt']] = [$res['AvgFAT'], $res['AvgSNF'], $res['KgFAT'], $res['KgSNF'], $res['Qty']];
                     }
                 } else {
                     $cal_data = [];
