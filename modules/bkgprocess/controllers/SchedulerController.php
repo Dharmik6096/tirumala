@@ -317,7 +317,7 @@ class SchedulerController extends ChildController {
                         $objWriter->save($filePath);
                         copy($row->file_path, $path . $row->file_name);
                         unlink($row->file_path);
-                        $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
+                        $filePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
                     }
                 }
                 $row->total_count = $total_cnt;
@@ -344,67 +344,67 @@ class SchedulerController extends ChildController {
     }
 
     private function bulk_files_data($row) {
-//        try {
-        $error_lines = [];
-        $total_cnt = 0;
-        $data = importData::getLabels($row->file_type);
-        $table = (!empty($data['import_class'])) ? $data['import_class'] : $data['table_name'];
-        $modelName = str_replace('_', ' ', $table);
-        $modelName = str_replace(' ', '', ucwords($modelName));
-        $className = Yii::$app->path->getModel($modelName);
-        $eiplcode = Yii::$app->general->getClientCode($row->union_code);
-        $unionKeyPattern = Yii::$app->general->getUnionKeyPattern($row->union_code);
-        $data['import_union_code'] = $row->union_code;
-        $data['import_eipl_code'] = $eiplcode;
-        $data['import_key_pattern'] = $unionKeyPattern;
-        $import = new DefaultController('', '');
-        $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
-        $filePath = NULL;
-        $error_lines = [];
-        if (!empty($values['allData']['error_lines'])) {
-            $column_header = explode(',', $data['fields']);
-            $column_header[] = 'response_msg';
-            $error_lines = $values['allData']['error_lines'];
-            $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
-            if (Yii::$app->general->checkDirectory($path)) {
-                $absoluteBaseUrl = Url::base(true);
-                $objPHPExcel = new PHPExcel();
-                $sheet = $objPHPExcel->getActiveSheet();
-                $sheet->fromArray(
-                        $column_header, // The data to set
-                        NULL, // Array values with this value will not be set
-                        'A1'         // Top left coordinate of the worksheet range where
-                        //    we want to set these values (default is A1)
-                );
-                $sheet->fromArray(
-                        $error_lines, // The data to set
-                        NULL, // Array values with this value will not be set
-                        'A2'         // Top left coordinate of the worksheet range where
-                        //    we want to set these values (default is A1)
-                );
-                $filePath = $path . 'error_' . $row->file_name;
-                $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-                $objWriter->save($filePath);
-                copy($row->file_path, $path . $row->file_name);
-                unlink($row->file_path);
-                $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
+        try {
+            $error_lines = [];
+            $total_cnt = 0;
+            $data = importData::getLabels($row->file_type);
+            $table = (!empty($data['import_class'])) ? $data['import_class'] : $data['table_name'];
+            $modelName = str_replace('_', ' ', $table);
+            $modelName = str_replace(' ', '', ucwords($modelName));
+            $className = Yii::$app->path->getModel($modelName);
+            $eiplcode = Yii::$app->general->getClientCode($row->union_code);
+            $unionKeyPattern = Yii::$app->general->getUnionKeyPattern($row->union_code);
+            $data['import_union_code'] = $row->union_code;
+            $data['import_eipl_code'] = $eiplcode;
+            $data['import_key_pattern'] = $unionKeyPattern;
+            $import = new DefaultController('', '');
+            $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
+            $filePath = NULL;
+            $error_lines = [];
+            if (!empty($values['allData']['error_lines'])) {
+                $column_header = explode(',', $data['fields']);
+                $column_header[] = 'response_msg';
+                $error_lines = $values['allData']['error_lines'];
+                $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
+                if (Yii::$app->general->checkDirectory($path)) {
+                    $absoluteBaseUrl = Url::base(true);
+                    $objPHPExcel = new PHPExcel();
+                    $sheet = $objPHPExcel->getActiveSheet();
+                    $sheet->fromArray(
+                            $column_header, // The data to set
+                            NULL, // Array values with this value will not be set
+                            'A1'         // Top left coordinate of the worksheet range where
+                            //    we want to set these values (default is A1)
+                    );
+                    $sheet->fromArray(
+                            $error_lines, // The data to set
+                            NULL, // Array values with this value will not be set
+                            'A2'         // Top left coordinate of the worksheet range where
+                            //    we want to set these values (default is A1)
+                    );
+                    $filePath = $path . 'error_' . $row->file_name;
+                    $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                    $objWriter->save($filePath);
+                    copy($row->file_path, $path . $row->file_name);
+                    unlink($row->file_path);
+                    $filePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
+                }
             }
+            $row->total_count = !empty($values['allData']['total_cnt']) ? $values['allData']['total_cnt'] : $total_cnt;
+            $row->error_count = count($error_lines);
+            $row->success_count = $row->total_count - $row->error_count;
+            $row->status = 2;
+            $row->response_datetime = date('Y-m-d H:i:s');
+            $row->response_msg = 'File Processed';
+            $row->error_file_path = $filePath;
+            $row->save(FALSE);
+        } catch (\Throwable $ex) {
+            $row->status = 3;
+            $row->response_msg = 'Unable to read file.';
+            $row->response_datetime = date('Y-m-d H:i:s');
+            $row->save(FALSE);
+            var_dump($ex->getMessage());
         }
-        $row->total_count = !empty($values['allData']['total_cnt']) ? $values['allData']['total_cnt'] : $total_cnt;
-        $row->error_count = count($error_lines);
-        $row->success_count = $row->total_count - $row->error_count;
-        $row->status = 2;
-        $row->response_datetime = date('Y-m-d H:i:s');
-        $row->response_msg = 'File Processed';
-        $row->error_file_path = $filePath;
-        $row->save(FALSE);
-//        } catch (\Throwable $ex) {
-//            $row->status = 3;
-//            $row->response_msg = 'Unable to read file.';
-//            $row->response_datetime = date('Y-m-d H:i:s');
-//            $row->save(FALSE);
-//            var_dump($ex->getMessage());
-//        }
     }
 
 }
