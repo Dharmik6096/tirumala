@@ -89,7 +89,7 @@ use app\modules\syncutility\models\TblSentbox;
  */
 class TblMember extends ChildModel {
 
-    public $cnt, $reference_code, $max_allowed_qty;
+    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern;
 
     /**
      * @inheritdoc
@@ -352,7 +352,8 @@ class TblMember extends ChildModel {
     }
 
     public function getCode() {
-        Yii::$app->general->setKeyPattern($this, 'tbl_member', 'ex_member_code');
+        $keyPattern = !empty($this->import_key_pattern) ? $this->import_key_pattern['tbl_member'] : '';
+        Yii::$app->general->setKeyPattern($this, 'tbl_member', 'ex_member_code', 3, $keyPattern);
         return $this->dcs_code . $this->ex_member_code;
     }
 
