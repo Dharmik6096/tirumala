@@ -1563,8 +1563,8 @@ class GeneralFunctions extends Component {
         return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
     }
 
-    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
-        $keyPattern = $this->getKeyPattern($table_name);
+    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '') {
+        $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
             $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];

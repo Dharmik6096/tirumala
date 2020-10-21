@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
@@ -23,7 +24,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->created_at);
         }],
-                    'created_by',
+    'created_by',
     [
         'attribute' => 'pick_datetime',
         'value' => function($model) {
@@ -40,15 +41,15 @@ $attribute = [
         'format' => 'raw',
         'value' => function($model) {
             if (!empty($model->error_file_path)) {
-                return Html::a('<i class="fa fa-download"><i/>', $model->error_file_path, ['target' => '_blank']);
+                $absoluteBaseUrl = Url::base(true);
+                return Html::a('<i class="fa fa-download"><i/>', $absoluteBaseUrl . $model->error_file_path, ['target' => '_blank']);
             }
         }],
-        
-        ];
-        $grid_option = [
-            'id' => 'import-file-list',
-            'active_column' => false,
-            'attributes' => $attribute,
-        ];
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+];
+$grid_option = [
+    'id' => 'import-file-list',
+    'active_column' => false,
+    'attributes' => $attribute,
+];
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

@@ -227,7 +227,7 @@ class SchedulerController extends ChildController {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-            $update = $model->updateFileStatus($ids);
+//            $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
@@ -317,7 +317,7 @@ class SchedulerController extends ChildController {
                         $objWriter->save($filePath);
                         copy($row->file_path, $path . $row->file_name);
                         unlink($row->file_path);
-                        $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
+                        $filePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
                     }
                 }
                 $row->total_count = $total_cnt;
@@ -353,8 +353,10 @@ class SchedulerController extends ChildController {
             $modelName = str_replace(' ', '', ucwords($modelName));
             $className = Yii::$app->path->getModel($modelName);
             $eiplcode = Yii::$app->general->getClientCode($row->union_code);
+            $unionKeyPattern = Yii::$app->general->getUnionKeyPattern($row->union_code);
             $data['import_union_code'] = $row->union_code;
             $data['import_eipl_code'] = $eiplcode;
+            $data['import_key_pattern'] = $unionKeyPattern;
             $import = new DefaultController('', '');
             $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
             $filePath = NULL;
@@ -385,7 +387,7 @@ class SchedulerController extends ChildController {
                     $objWriter->save($filePath);
                     copy($row->file_path, $path . $row->file_name);
                     unlink($row->file_path);
-                    $filePath = $absoluteBaseUrl . '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
+                    $filePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
                 }
             }
             $row->total_count = !empty($values['allData']['total_cnt']) ? $values['allData']['total_cnt'] : $total_cnt;

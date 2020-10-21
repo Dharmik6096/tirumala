@@ -98,6 +98,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                 $primaryKey = $model->tableSchema->primaryKey[0];
                 $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
                 $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
+                $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
                 $error = ActiveForm::validate($model);
 
                 $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
@@ -152,6 +153,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                 $errors = [];
                 $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
                 $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
+                $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
                 if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
                     $model->setChildTable($model, $modelList, $errors);
                 }
