@@ -20,6 +20,7 @@ use yii\widgets\ActiveForm;
 use yii\base\Model;
 use app\modules\collection\models\TblMilkCollectionHistory;
 use app\modules\organisation\models\TblUnions;
+use app\modules\collection\models\OnlineCollectionModel;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -194,7 +195,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $detail_model = new TblPurchaseRateDetails();
             $detail_model->rate_type_code = $model_data->rate_app_code;
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-            $rate_type = $detail_model->rateTypeCode->rate_type;
+            $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
             $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
 
             if (!empty($detail_data)) {
@@ -453,6 +454,16 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     }
 
     public function actionOnlineCollection() {
+        $defaultToggle = true;
+        $model = new OnlineCollectionModel();
+        $model->load(Yii::$app->request->queryParams);
+        if (!empty($model->search_date)) {
+            $defaultToggle = false;
+        }
+
+        $model->search_date = !empty($model->search_date) ? $model->search_date : date('Y-m-d');
+        $model->from_time = !empty($model->from_time) ? $model->from_time : '05:00';
+        $model->to_time = !empty($model->to_time) ? $model->to_time : '22:00';
         $union_str = '0';
         if (!empty(Yii::$app->session->get('Unions'))) {
             $union_str = Yii::$app->session->get('Unions');
@@ -497,12 +508,14 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $sp_param[] = $mcc_str; //empty($data['mcc']) ? '0' : $data['mcc'];
         $sp_param[] = $bmc_str; //empty($data['bmc']) ? '0' : $data['bmc'];
         $sp_param[] = $dcs_str; //empty($data['dcs']) ? '0' : $data['dcs'];
-        $sp_param[] = date('Y-m-d H:i:s');
-        $sp_param[] = date('Y-m-d H:i:s');
+        $sp_param[] = date('Y-m-d', strtotime($model->search_date)) . ' ' . $model->from_time; //date('Y-m-d H:i:s');
+        $sp_param[] = date('Y-m-d', strtotime($model->search_date)) . ' ' . $model->to_time; //date('Y-m-d H:i:s');
         $sp_name = 'sp_portal_online_collection';
         $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
         return $this->render('online_collection', [
-                    'onlineData' => $output
+                    'onlineData' => $output,
+                    'model' => $model,
+                    'defaultToggle' => $defaultToggle
         ]);
     }
 
