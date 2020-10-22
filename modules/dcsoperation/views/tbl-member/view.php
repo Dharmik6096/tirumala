@@ -184,7 +184,11 @@ if ($model->is_active == 1) {
                         [
                             'attribute' => 'reference_code',
                             'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code,
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'x_col3',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

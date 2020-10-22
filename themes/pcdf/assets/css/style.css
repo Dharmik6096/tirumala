@@ -3806,3 +3806,50 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     background: #7A231C !important;
     border-radius: 0px !important;
 }
+
+#map {
+    height: calc(100vh - 155px);
+}
+
+.map_info_content p{
+    margin-bottom: 0px !important;
+}
+
+.map_info_content .map_marker_content .marker_header{
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.map_info_content .map_marker_content {
+    font-family: sans-serif;
+}
+
+
+.mfp-no-margins img.mfp-img {
+    padding: 0;
+}
+/* position of shadow behind the image */
+.mfp-no-margins .mfp-figure:after {
+    top: 0;
+    bottom: 0;
+}
+/* padding for main container */
+.mfp-no-margins .mfp-container {
+    padding: 0;
+}
+.headerIcon {
+    width: 40px !important;
+    padding: 7px !important;
+    height: auto !important;
+    float: right;
+    right: 80px;
+    margin-top: -3px !important;
+    border-radius: 3px !important;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
+}
+.headerIcon:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23) !important
+}
+.mr-85 {
+    margin-right: -85px !important
+}
