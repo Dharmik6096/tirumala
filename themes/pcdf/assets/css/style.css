@@ -3801,3 +3801,8 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     opacity: 0.9 !important
 }
   /*122, 35, 28*/
+
+.panel .panel-body .btn.dashboardSearchButton, .modal .modal-body .btn.dashboardSearchButton {
+    background: #7A231C !important;
+    border-radius: 0px !important;
+}
