@@ -199,6 +199,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                         $importedPks[] = $model->primaryKey;
                     }
                 } catch (\Throwable $ex) {
+                    $trans->rollback();
                     $row['response_message'] = 'Exception';
                     $error_lines[] = $row;
                 }
