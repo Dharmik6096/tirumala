@@ -1235,7 +1235,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'MemberPaymentWithBank' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_payment_drafted_with_bank',
                 'scenario' => 'MemberPaymentDrafted',
                 'title' => '611 - Member Payment(Drafted)',
@@ -1243,7 +1243,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
             ],
             'MemberPaymentWoBank' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_member_payment_drafted_wo_bank',
                 'scenario' => 'MemberPaymentDrafted',
                 'title' => '611 - Member Payment(Drafted)',
