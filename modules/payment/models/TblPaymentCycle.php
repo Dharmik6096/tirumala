@@ -48,6 +48,7 @@ class TblPaymentCycle extends \app\models\ChildModel {
                 [['interval_value', 'is_active', 'originating_type'], 'safe'],
                 [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
                 [['to_date'], 'customValidate'],
+                [['from_date','to_date'], 'unique', 'targetAttribute' => ['from_date', 'to_date', 'union_code'], 'message'=>'Payemnt cycle already exist for same time period'],
         ];
     }
 
