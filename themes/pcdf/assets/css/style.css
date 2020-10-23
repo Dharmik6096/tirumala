@@ -3542,7 +3542,7 @@ input[type="checkbox"]:after{
     position: fixed;
     transition: all 0.3s ease;
     background: #fff;
-    height: 85px;
+    height: 75px;
     width: 100px;
     border-radius: 0px 0px 100% 0px;
     /*padding-top: 10px;*/
