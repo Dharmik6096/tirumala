@@ -2656,7 +2656,7 @@ div.crystalstyle{
 
 .help-block{
     height: 10px !important;
-    font-size: 10px !important;
+    font-size: 8.5px !important;
     margin-top: 0;
 }
 
@@ -3839,12 +3839,13 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 .headerIcon {
     width: 40px !important;
-    padding: 7px !important;
+    padding: 6px !important;
     height: auto !important;
     float: right;
     right: 80px;
-    margin-top: -3px !important;
-    border-radius: 3px !important;
+    margin-top: -5px !important;
+    /* border-radius: 3px !important; */
+    margin-right: -6px !important;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
 }
 .headerIcon:hover {
