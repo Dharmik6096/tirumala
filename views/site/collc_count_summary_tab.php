@@ -25,14 +25,14 @@ use yii\helpers\Url;
                 ?>
                 <th class="w100 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Date') ?></th>
                 <th class="max_w35 dashboardWidgetDetailPortion"><?= Yii::t('app', 'Shift') ?></th>
-                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Active MPP') ?></th>
-                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Total MPP') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Active DCS') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Total DCS') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Total Online') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Total Manual') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Total Pendrive') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Farmer Quantity') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'RMRD Quantity') ?></th>
-                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'RMRD MPP Count') ?></th>
+                <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'RMRD DCS Count') ?></th>
                 <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', 'Quantity Difference') ?></th>
             </tr>
         </thead>

@@ -58,7 +58,7 @@ class Dashboard extends Model {
         if (!empty($data)) {
             return $data->$field;
         } else {
-            return '';
+            return !empty($this->union_code) ? '' : Yii::t('app', 'All');
         }
     }
 
@@ -69,6 +69,7 @@ class Dashboard extends Model {
         if (!empty($data)) {
             return $data->$field;
         } else {
+            return !empty($this->mcc_code) ? '' : Yii::t('app', 'All');
             return '';
         }
     }
