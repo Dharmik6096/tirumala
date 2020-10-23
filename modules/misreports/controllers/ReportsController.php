@@ -488,6 +488,57 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCollectionPendriveFile() {
+        $this->report = 'CollectionPendriveFile';
+        $model = new ReportsModel();
+        $this->data = $this->getLabels($this->report);
+        if (!empty($this->data['scenario'])) {
+            $model->scenario = $this->data['scenario'];
+        }
+        if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
+            if (empty($model->dcs_code)) {
+                $model->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+            }
+            $controls = [];
+            $param = explode(',', $this->data['param']);
+            foreach ($param as $key => $value) {
+                $value_array = explode(':', $value);
+                $value = $value_array[0];
+                if (isset($value_array[1]) && $value_array[1] == 'string') {
+                    $model->{$value} = !empty($model->{$value}) ? date('Y-m-d', strtotime($model->{$value})) : date('Y-m-d');
+                    if (isset($value_array[2])) {
+                        $shift = !empty($model->{$value_array[2]}) ? \Yii::$app->general->getshift($model->{$value_array[2]}) : '00:00:00';
+                        $model->{$value} .= ' ' . $shift . '.000';
+                    }
+                }
+                $controls[$value] = $model->{$value};
+            }
+            $sp_name = $this->data['sp_name'];
+            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+            $this->output = $output;
+            if (empty($this->output)) {
+                $this->output = Yii::t('app', 'No Data Available.');
+            } else {
+                $content = '';
+                foreach ($this->output as $dataline) {
+                    if (!empty($dataline['Dataline'])) {
+                        $content .= $dataline['Dataline'] . PHP_EOL;
+                    }
+                }
+                $file_name = substr($model->date, 8, 2) . substr($model->date, 5, 2) . substr($model->date, 2, 2) . (($model->shift == '1') ? 'M' : 'E') . '.EIP';
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Description: File Transfer');
+                header('Content-Disposition: attachment; filename=' . $file_name);
+                header('Content-Length: ' . strlen($content));
+                header('Content-Type: text/plain');
+                echo $content;
+                exit();
+            }
+        }
+        return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1248,6 +1299,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberPaymentDrafted',
                 'title' => '611 - Member Payment(Drafted)',
                 'report_type' => [Yii::t('app', 'With Bank Detail'), Yii::t('app', 'W/O Bank Detail')],
+            ],
+            'CollectionPendriveFile' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,dcs_code:route_code,date:string:shift',
+                'sp_name' => 'sp_mis_collection_pendrive_file_format',
+                'scenario' => 'CollectionPendriveFile',
+                'title' => 'Collection Pendrive File',
+                'output_type' => ''
             ],
         ];
         return $label[$l];
