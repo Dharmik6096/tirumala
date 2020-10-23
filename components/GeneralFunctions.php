@@ -599,19 +599,21 @@ class GeneralFunctions extends Component {
     }
 
     public function checkDirectory($path, $permission = '0755') {
+
         if (file_exists($path)) {
             if (!is_dir($path)) { //if file is already present, but it's not a dir
-                if (mkdir($path, $permission, true) == false) {
+                if (mkdir($path, 0777, true) == false) {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
             }
         } else { //no file exists with this name
-            if (mkdir($path, $permission, true) == false) {
+            if (mkdir($path, 0777, true) == false) {
                 die('Failed to create folders...' . $path);
                 return false;
             }
         }
+        chmod($path, 0777);
         return true;
     }
 
