@@ -80,7 +80,6 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
                                         ],
                                         'method' => 'get',
                                         'validateOnBlur' => FALSE,
-                                        'validateOnEnter' => TRUE,
                                         'validateOnChange' => FALSE,
                                         'enableClientValidation' => true,
                                         'validateOnSubmit' => true,
@@ -90,7 +89,7 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
 
                                 <div class="modal-body">
 
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-3">
                                         <?php
                                         echo Yii::$app->controls->date($model, $form, 'search_date', 'form-group col-sm-6 padding-left-5 padding-right-5', false);
                                         ?>
