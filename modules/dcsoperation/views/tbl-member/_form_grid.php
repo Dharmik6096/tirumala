@@ -70,6 +70,7 @@ $attribute = [
     ['attribute' => 'member_class', 'value' => function($model) {
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
+    ['attribute' => 'x_col3', 'filter' => false],
 ];
 
 $grid_option = [
