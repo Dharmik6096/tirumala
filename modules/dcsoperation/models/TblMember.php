@@ -89,7 +89,7 @@ use app\modules\syncutility\models\TblSentbox;
  */
 class TblMember extends ChildModel {
 
-    public $cnt, $reference_code, $max_allowed_qty;
+    public $cnt, $reference_code, $max_allowed_qty, $import_key_pattern;
 
     /**
      * @inheritdoc
@@ -352,7 +352,8 @@ class TblMember extends ChildModel {
     }
 
     public function getCode() {
-        Yii::$app->general->setKeyPattern($this, 'tbl_member', 'ex_member_code');
+        $keyPattern = !empty($this->import_key_pattern) ? $this->import_key_pattern['tbl_member'] : '';
+        Yii::$app->general->setKeyPattern($this, 'tbl_member', 'ex_member_code', 3, $keyPattern);
         return $this->dcs_code . $this->ex_member_code;
     }
 
@@ -455,15 +456,15 @@ class TblMember extends ChildModel {
     }
 
     public function afterSave($insert, $changedAttributes) {
-        $model = new TblMemberDownload();
-        $model->dcs_code = $this->dcs_code;
-        $data = $model->getRecord();
-        if (!empty($data)) {
-            $model = $data;
-        }
-        $model->is_download = 1;
-        $model->upload_datetime = date('Y-m-d H:i:s');
-        $model->save();
+//        $model = new TblMemberDownload();
+//        $model->dcs_code = $this->dcs_code;
+//        $data = $model->getRecord();
+//        if (!empty($data)) {
+//            $model = $data;
+//        }
+//        $model->is_download = 1;
+//        $model->upload_datetime = date('Y-m-d H:i:s');
+//        $model->save();
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
