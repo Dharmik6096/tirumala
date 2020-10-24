@@ -508,7 +508,7 @@ $( '.sortable' ).sortable();
                             }
                             var table = $('#farmer_rmrd_tbl_container table tbody');
                             var i = 0;
-                            console.log(obj1.res);
+//                            console.log(obj1.res);
                             var htmlData = '';
                             htmlData = htmlData + '<tbody>';
                             Object.keys(obj1.res).forEach(function (key){
@@ -1137,6 +1137,48 @@ function setYearData(cal_data){
         }
     }
 }
+
+$(document).on('click', '.downloadDashboardExcel', function(){
+    var idVal = $(this).attr('data-val');
+    var titleVal = $(this).attr('data-title');
+    fnExcelReport(idVal);
+});
+
+function fnExcelReport(idVal, titleVal = 'download')
+{
+    //bgcolor=\'#87AFC6\'
+    var tab_text='<table border=\'2px\'><tr>';
+    var textRange; var j=0;
+    tab = document.getElementById(idVal); // id of table
+
+    for(j = 0 ; j < tab.rows.length ; j++) 
+    {     
+        tab_text=tab_text+tab.rows[j].innerHTML+'</tr>';
+        //tab_text=tab_text+'</tr>';
+    }
+
+    tab_text=tab_text+'</table>';
+    tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, '');//remove if u want links in your table
+    tab_text= tab_text.replace(/<img[^>]*>/gi,''); // remove if u want images in your table
+    tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ''); // reomves input params
+
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf('MSIE '); 
+
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+    {
+        txtArea1.document.open('txt/html','replace');
+        txtArea1.document.write(tab_text);
+        txtArea1.document.close();
+        txtArea1.focus(); 
+        sa=txtArea1.document.execCommand('SaveAs',true,titleVal+'.xls');
+    }  else {
+        //other browser not tested on IE 11
+        sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text), '_blank');  
+    }
+    return (sa);
+}
+
 
 // $(document).on('click','.fc-year-monthly-td',function(e){
 //     // $('#pieChartModal').modal('toggle'); 

@@ -3801,3 +3801,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     opacity: 0.9 !important
 }
   /*122, 35, 28*/
+  
+.right_30 {
+    right: 30px !important
+}

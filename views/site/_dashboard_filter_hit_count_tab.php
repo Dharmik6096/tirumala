@@ -14,7 +14,8 @@ $model->to_date4 = empty($model->to_date4) ? Yii::$app->controls->view_date(date
 
 $model->from_date5 = empty($model->from_date5) ? Yii::$app->controls->view_date(date('Y-m-d', strtotime('-6 days'))) : $model->from_date5;
 $model->to_date5 = empty($model->to_date5) ? Yii::$app->controls->view_date(date('Y-m-d')) : $model->to_date5;
-
+//$model->previous_hit = !empty($model->previous_hit) ? $model->previous_hit : 16;
+//$model->previous_hit = !empty($model->previous_hit) ? $model->previous_hit : 14;
 //$model->from_date5 = empty($model->from_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->from_date5;
 //$model->to_date5 = empty($model->to_date5) ? (empty($date) ? Yii::$app->controls->view_date(date('Y-m-d')) : Yii::$app->controls->view_date($date)) : $model->to_date5;
 
@@ -78,6 +79,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
         </div>
     </div>
 </div>
+<button type="button" class="widget_table_search_btn downloadDashboardExcel right_30" data-val="periodicTable" data-title="periodic_online_data_comparision"><i class="fa fa-download"></i></button>
 <button type="button" class="widget_table_search_btn" data-toggle="modal" data-target="#modal_<?= $table_class ?>"><i class="fa fa-search"></i></button>
 <?php
 $script = "
