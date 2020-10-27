@@ -248,6 +248,7 @@ class TblDcs extends ChildModel {
             [['dcs_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv']],
+            [['data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe']
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

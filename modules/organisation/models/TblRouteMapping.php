@@ -102,6 +102,7 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe']
         ];
     }
 
