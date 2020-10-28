@@ -79,7 +79,7 @@ class TblTaxDetailController extends \app\controllers\ChildController {
                 $sum = 0;
                 $depend_data = $dependModel->getDepends($d->tax_detail_code);
                 foreach ($depend_data as $depend) {
-                    $sum += $calculation;
+                    $sum += $value;
                 }
                 $calculation = $sum * $d->percentage / 100;
             }
@@ -149,7 +149,7 @@ class TblTaxDetailController extends \app\controllers\ChildController {
             $i = 1;
             foreach ($post as $key => $value) {
                 $depends = new TblTaxDepends();
-                $depends->tax_depends_code = Yii::$app->general->getCodeAutoIncrement($this->model, $i);
+                $depends->tax_depends_code = Yii::$app->general->getCodeAutoIncrement($depends, $i);
                 $depends->tax_detail_code = $tax_detail_id->tax_detail_code;
                 $depends->union_code = $tax_detail_id->union_code;
                 $depends->is_active = $is_active;
