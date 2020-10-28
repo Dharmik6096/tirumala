@@ -441,10 +441,10 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $model->application_type = $org_type;
                     $menu_mapping = $model->getMenuMapping();
                     $res_data['menu_mapping'] = implode(',', $menu_mapping);
-                    $res_data['is_surveyor'] = 0;
+                    $res_data['is_surveyor'] = '0';
                     $contact_data = Yii::$app->general->getDefaultContactDetail($org_code, $detailType);
                     if (!empty($contact_data)) {
-                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? 1 : 0;
+                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? '1' : '0';
                     }
                 }
             }
