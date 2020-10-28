@@ -489,6 +489,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionData() {
+        $this->report = 'MilkCollectionData';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcCollectionData() {
+        $this->report = 'BmcCollectionData';
+        return $this->actionIndex();
+    }
+
+    public function actionShiftWiseAutoManual() {
+        $this->report = 'ShiftWiseAutoManual';
+        return $this->actionIndex();
+    }
+
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
         $model = new ReportsModel();
@@ -1192,7 +1207,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'DCS Wise'), Yii::t('app', 'Member Wise')],
             ],
             'VendorBankPayment' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,payment_cycle_code,bank_type:static:bank_type',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,payment_cycle_code:type_check,bank_type:static:bank_type',
                 'sp_name' => 'sp_mis_vendor_bank_payment',
                 'scenario' => 'VendorBankPayment',
                 'title' => '606 - Vendor Bank Payment',
@@ -1216,7 +1231,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '901 - Rate Applicability Details',
             ],
             'RateAcknowledgement' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,rate_type:static:rate_type,p_organization_type:static:p_organization_type,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,rate_type:static:rate_type,customer_type,vendor_code,p_organization_type:static:p_organization_type,p_date:string',
                 'sp_name' => 'sp_mis_rate_download_acknowledgement',
                 'scenario' => 'RateAcknowledgement',
                 'title' => '902 - Rate Acknowledgement',
@@ -1307,6 +1322,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CollectionPendriveFile',
                 'title' => 'Collection Pendrive File',
                 'output_type' => ''
+            ],
+            'MilkCollectionData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_milk_collection_list',
+                'scenario' => 'MilkCollectionData',
+                'title' => '108 - Milk Collection Data',
+            ],
+            'BmcCollectionData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_collection_list',
+                'scenario' => 'BmcCollectionData',
+                'title' => '209 - BMC Collection Data',
+            ],
+            'ShiftWiseAutoManual' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_society_raw_data',
+                'scenario' => '',
+                'title' => '909 - Shift Wise Auto Manual',
             ],
         ];
         return $label[$l];

@@ -37,7 +37,7 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['p_customer_code', 'p_staff_member_code'], 'default', 'value' => 0],
+            [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code'], 'default', 'value' => '0'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionSummary'],
@@ -77,7 +77,8 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => 'BMCPayment'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment', 'MemberMilkBill']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill']],
             [['union_code'], 'required', 'on' => ['StaffSalary']]
         ];
     }

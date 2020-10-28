@@ -431,13 +431,15 @@ $defaultToggle = true;
     $this->registerJs($script, View::POS_END, 'shift');
     ?>
     <?php
-    $script = "$('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+    $script = "
+        if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData' || '" . $report . "'=='RmrdMilkCollection'){
+        $('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_member_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
             if('" . $model->p_member_code . "'=='0'){
         $('#reportsmodel-p_member_code').val(0);      
     }
 });
-
+}
 if('" . $report . "'=='ConsolidatedMilkCollectionAllshiftData' || '" . $report . "'=='RmrdMilkCollection'){
 $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
     //$('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
@@ -544,7 +546,7 @@ if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCo
         }
     });
 }
-if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ShiftReportNameWise' || '" . $report . "'=='SocietyWiseMemberRegister' || '" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='BmcCollection' || '" . $report . "'=='GprsDataReconciliation' || '" . $report . "'=='ActualBmcCollection' || '" . $report . "'=='MemberMilkBill'){
+if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='ConsolidatedMilkCollectionDateShift' || '" . $report . "'=='ShiftReportNameWise' || '" . $report . "'=='SocietyWiseMemberRegister' || '" . $report . "'=='UnionWiseMemberRegister' || '" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='RmrdMilkCollection' || '" . $report . "'=='BmcSummaryReport' || '" . $report . "'=='VariationMilkTypeDateWise' || '" . $report . "'=='VariationMilkTypeVillageWise' || '" . $report . "'=='VariationDateWise' || '" . $report . "'=='VariationVillageWise' || '" . $report . "'=='VariationPercentageWise' || '" . $report . "'=='DifferenceReport' || '" . $report . "'=='DifferenceReportDateWise' || '" . $report . "'=='DifferenceReportVillageWise' || '" . $report . "'=='BmcCollection' || '" . $report . "'=='GprsDataReconciliation' || '" . $report . "'=='ActualBmcCollection'){
     $('#reportsmodel-p_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_dcs_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_dcs_code . "'=='0'){
@@ -557,7 +559,7 @@ if('" . $report . "'=='ConsolidatedMilkCollectionDate' || '" . $report . "'=='Co
     });
 }
 
-if('" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='SocietyDetails' || '" . $report . "'=='MemberMilkBill'){
+if('" . $report . "'=='MemberWisePaymentRegister' || '" . $report . "'=='MemberPaymentHeldup' || '" . $report . "'=='MemberClassificationRegister' || '" . $report . "'=='SocietyDetails'){
     $('#reportsmodel-p_member_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         if($('#reportsmodel-p_dcs_code').val()=='0'){ 
             $('#reportsmodel-p_member_code').prop('disabled',false);

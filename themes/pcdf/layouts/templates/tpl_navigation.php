@@ -391,6 +391,7 @@ echo GhostMenu::widget([
                                 ['label' => '105 -' . Yii::t('app', 'Member Wise Monthly Collection'), 'url' => ['/misreports/reports/member-wise-monthly-collection']],
                                 ['label' => '106 -' . Yii::t('app', 'Member Manual Milk Entry'), 'url' => ['/misreports/reports/manual-milk-entry-member-date-shift-wise']],
                                 ['label' => '107 -' . Yii::t('app', 'Society Manual Milk Entry'), 'url' => ['/misreports/reports/manual-milk-entry-society-date-shift-wise']],
+                                ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
                             ]
                         ],
                         [
@@ -405,6 +406,7 @@ echo GhostMenu::widget([
                                 ['label' => '206 -' . Yii::t('app', 'Company Wise Dispatch Vs Recipt'), 'url' => ['/misreports/reports/union-wise-dispatch-vs-recipt']],
                                 ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda']],
                                 ['label' => '208 -' . Yii::t('app', 'BMC Autmation Report'), 'url' => ['/misreports/reports/bmc-automation-report']],
+                                ['label' => '209 -' . Yii::t('app', 'BMC Collection Data'), 'url' => ['/misreports/reports/bmc-collection-data']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -493,6 +495,7 @@ echo GhostMenu::widget([
                         ['label' => '906-' . Yii::t('app', 'Location Wise Asset Movement'), 'url' => ['/misreports/reports/location-wise-asset-movement']],
                         ['label' => '907-' . Yii::t('app', 'Society Collection Data'), 'url' => ['/misreports/reports/society-collection-data']],
                         ['label' => '908-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/misreports/reports/gprs-data-reconciliation']],
+                        ['label' => '909-' . Yii::t('app', 'Shift Wise Auto Manual'), 'url' => ['/misreports/reports/shift-wise-auto-manual']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
