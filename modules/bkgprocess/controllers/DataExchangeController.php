@@ -71,9 +71,9 @@ class DataExchangeController extends ChildController {
                 $postData = [];
                 $postData['params'] = $body;
                 $postData = json_encode($postData);
-                echo "<pre>";
-                print_r($postData);
-                echo "</pre>";
+//                echo "<pre>";
+//                print_r($postData);
+//                echo "</pre>";
                 $api = new WebApi();
                 $api->serverUrl = $value['request_url'];
                 $api->authentication = FALSE;
@@ -85,7 +85,7 @@ class DataExchangeController extends ChildController {
 //                $api->header_info[] = $key . ': ' . $value;
 //            }
 
-//                $response = $api->ExchangeData();
+                $response = $api->ExchangeData();
                 $responseData = [];//json_decode(json_encode($response), true);
                 foreach ($responseData as $resp_data) {
                     foreach ($resp_data as $resp) {
