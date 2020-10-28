@@ -249,6 +249,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $model = new TblAndroidInstallationDetails();
             $id_model = $model->getActiveData($data);
             if (!empty($id_model)) {
+                $mobileNo = !empty($id_model->mobile_no) ? $id_model->mobile_no : '';
+                $detailType = '';
                 $res_data['config'] = [];
                 $res_data['collectionConfig'] = [];
                 $res_data['rate'] = [];
@@ -274,6 +276,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
                     if ($org_type == 'VLC') {
+                        $detailType = 'society';
                         $mcc_bmc_config = FALSE;
                         $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
                         if (!empty($current_rate_detail)) {
@@ -306,9 +309,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $MappedMilkType = $model_data->tblDcsMilkType;
                         $collectionIncentive = $model_data->collectionIncentive;
                     } else if ($org_type == 'BMC') {
+                        $detailType = 'bmc';
                         $MappedMilkType = $model_data->tblBmcMilkType;
                         $collectionIncentive = [];
                     } else if ($org_type == 'MCC') {
+                        $detailType = 'mccPlant';
                         $MappedMilkType = $model_data->tblMccMilkType;
                         $collectionIncentive = [];
                     }
@@ -436,6 +441,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $model->application_type = $org_type;
                     $menu_mapping = $model->getMenuMapping();
                     $res_data['menu_mapping'] = implode(',', $menu_mapping);
+                    $res_data['is_surveyor'] = 0;
+                    $contact_data = Yii::$app->general->getDefaultContactDetail($org_code, $detailType);
+                    if (!empty($contact_data)) {
+                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? 1 : 0;
+                    }
                 }
             }
         }
