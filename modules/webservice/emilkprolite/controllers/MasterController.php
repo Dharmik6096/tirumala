@@ -22,17 +22,22 @@ class MasterController extends ActiveController {
     public $modelClass = 'app\modules\webservice\models';
     public $layout = false;
     protected $generalModel, $eiplResponseCode;
-    public $response = [
-        'status' => '',
-        'message' => [],
-        'data' => '',
-    ];
+//    public $response = [
+//        'status' => '',
+//        'message' => [],
+//        'data' => '',
+//    ];
     public $post_data = [];
     public $apply_camel_case = true;
 
     public function init() {
         parent::init();
         $this->generalModel = new GeneralModel();
+        $this->response = [
+            'status' => '',
+            'message' => [],
+            'data' => '',
+        ];
 //        $this->response = new EiplResponse();
 //        $this->eiplResponseCode = new EiplResponseCode();
 //        $this->response->setStatusCode($this->eiplResponseCode->statusSuccess);

@@ -25,10 +25,15 @@ class MasterController extends ActiveController {
 
     public $modelClass = 'app\modules\webservice\models';
     public $layout = false;
-    protected $generalModel, $response, $eiplResponseCode;
+    protected $generalModel, $eiplResponseCode;
 
     public function init() {
         parent::init();
+        $this->response = [
+            'status' => '',
+            'message' => [],
+            'data' => '',
+        ];
         $this->generalModel = new GeneralModel();
         $this->response = new EiplResponse();
         $this->eiplResponseCode = new EiplResponseCode();
