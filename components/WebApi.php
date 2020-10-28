@@ -55,10 +55,6 @@ class WebApi {
 
     public function PHPCURL() {
         $url = $this->serverUrl . $this->apiurl;
-        echo "<pre>";
-        print_r($url);
-        echo "</pre>";
-        die;
         $data = $this->body;
         $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
         $header = array_merge($main_header, $this->header_info);
@@ -70,10 +66,53 @@ class WebApi {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         if ($this->return_actual) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		   }		// Skip SSL Verification
+        }  // Skip SSL Verification
         curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
         $result = curl_exec($ch);
         curl_close($ch);
+        $res = json_decode($result);
+        $log_model = new TblPortalDataPostLog();
+        $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;
+        $log_model->vendor_code = $this->vendor_code;
+        $log_model->url = $url;
+        $log_model->request = $data;
+        $log_model->response = $result;
+        $log_model->save();
+        if ($this->return_actual) {
+            return $result;
+        }
+        return $res;
+    }
+
+    public function ExchangeData() {
+        if ($this->authentication) {
+            $this->body = array_merge($this->authentication, $this->body);
+        }
+        return $this->ExchangeDataCurl();
+        //  return $this->GuzzleCURL();
+    }
+
+    public function ExchangeDataCurl() {
+        $url = $this->serverUrl . $this->apiurl;
+        $data = $this->body;
+        $main_header = array("Content-Type: application/json", "Content-length: " . strlen($data));
+        $header = array_merge($main_header, $this->header_info);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        if ($this->return_actual) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        }  // Skip SSL Verification
+        //  curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
+        $result = curl_exec($ch);
+        curl_close($ch);
+//        var_dump($result);
+//        die;
         $res = json_decode($result);
         $log_model = new TblPortalDataPostLog();
         $log_model->status = (isset($res->msg) && $res->msg == 'Success!') ? 1 : 0;

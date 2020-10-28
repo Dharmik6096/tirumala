@@ -49,7 +49,7 @@ class DataExchangeController extends ChildController {
                 $currentDate = strtotime(date('Y-m-d H:i:s'));
                 $futureDate = $currentDate + (60 * $value['interval']);
                 $formatDate = date("Y-m-d H:i:s", $futureDate);
-                $value->updateAll(['last_execution' => date('Y-m-d H:i:s'), 'next_execution' => $formatDate], ['data_exchange_code' => $value['data_exchange_code']]);
+//                $value->updateAll(['last_execution' => date('Y-m-d H:i:s'), 'next_execution' => $formatDate], ['data_exchange_code' => $value['data_exchange_code']]);
 
                 $modelName = $value['tbl_name'];
                 $model_name = Yii::$app->path->define($modelName);
@@ -57,7 +57,7 @@ class DataExchangeController extends ChildController {
                 $modelKey = $value['update_key'];
                 $updateKey = $value['update_key_with'];
                 $update_ids = array_column($output, $updateKey);
-                $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
+//                $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
 
                 $postData = !empty($output) ? true : false;
                 if (!empty($json_array_key)) {
@@ -65,11 +65,15 @@ class DataExchangeController extends ChildController {
                 } else {
                     $body = !empty($output[0]) ? $output[0] : [];
                 }
-                $body['code'] = 'EIPLMDPL';
+                if (!empty(Yii::$app->params['data_exchange_vendor_code'])) {
+                    $body['code'] = Yii::$app->params['data_exchange_vendor_code'];
+                }
                 $postData = [];
                 $postData['params'] = $body;
                 $postData = json_encode($postData);
-
+                echo "<pre>";
+                print_r($postData);
+                echo "</pre>";
                 $api = new WebApi();
                 $api->serverUrl = $value['request_url'];
                 $api->authentication = FALSE;
@@ -81,8 +85,8 @@ class DataExchangeController extends ChildController {
 //                $api->header_info[] = $key . ': ' . $value;
 //            }
 
-                $response = $api->POSTDATA();
-
+//                $response = $api->ExchangeData();
+                $responseData = [];//json_decode(json_encode($response), true);
                 foreach ($responseData as $resp_data) {
                     foreach ($resp_data as $resp) {
                         $rv = array_filter($resp, 'is_array');
