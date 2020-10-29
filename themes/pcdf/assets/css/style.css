@@ -1838,7 +1838,7 @@ input[type="checkbox"][disabled] + label, input[type="radio"][disabled] + label 
 }
 
 #filter {
-    width: 100%;
+    width: 99%;
     margin-top: -20px;
     position: fixed;
     z-index: 9;
@@ -3163,6 +3163,7 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 
 .sortable{
     border-radius: 0px !important;
+    padding: 5px;
 }
 
 .sortable li .alert,
@@ -3563,9 +3564,9 @@ input[type="checkbox"]:after{
 .searchFilterArea  {
     width: calc(100% - 50px);
     color: #fff;
+    right: -270px;
     text-align: center;
-    padding-top: 2px;
-    padding: 7px 0px 5px;
+    padding-top: 8px;
 }
 
 .searchFilterHeader {
@@ -3710,7 +3711,8 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 
 .searchFilterArea.dashboardWidgetHeader {
     color: #222 !important;
-    background: transparent !important
+    background: transparent !important;
+    float: right;
 }
 
 .searchFilterValue {
@@ -3857,4 +3859,47 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 .mr-85 {
     margin-right: -85px !important
+}
+
+.widget_table_setting_btn{
+    max-width: 20px;
+    position: absolute;
+    cursor: pointer;
+    color: #7a231c;
+    top: -5px;
+    background: transparent;
+    border: none !important;
+    box-shadow: none;
+    font-size: 25px !important;
+}
+
+.pie_chart_icon i{
+    margin-left: -29px;
+    font-size: 29px !important;
+    color: #7a231c;
+    top: -3px;
+    position: absolute;
+    cursor: pointer;
+}
+
+.widget_filter_margin{
+    margin: 0px 23px 0px -48px;
+}
+
+.mt34 {
+    margin-top: 34px;
+}
+
+#modal_widget_selection{
+    width: 51%;
+    float: right;
+    margin-top: -14px;
+}
+
+.right_reverse_max{
+    right: -482px;
+}
+
+.right_reverse_min{
+    right: -270px;
 }

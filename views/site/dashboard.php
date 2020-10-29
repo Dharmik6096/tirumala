@@ -136,146 +136,121 @@ $unionCode = !empty($model->union_code) ? $model->union_code : '';
 $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
 ?>
 
-<div class="col-sm-12 margin-bottom-10 padding_left_right_0 dashboard_search_filter">
-    <div class="col-sm-12 padding_left_right_0">
-        <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-            <span class="searchFilterHeader"><?= Yii::t('app', 'Date') ?>: </span>
-            <span class="searchFilterValue"><?= Yii::$app->controls->view_date($date) ?> </span>
-            <span class="searchFilterHeader"><?= Yii::t('app', 'Type') ?>: </span>
-            <span class="searchFilterValue"><?= $widget_type == 'farmer' ? Yii::t('app', 'Farmer') : Yii::t('app', 'RMRD') ?> </span>
-            <span class="searchFilterHeader"><?= Yii::t('app', 'Union') ?>: </span>
-            <span class="searchFilterValue"><?= $model->getUnionCode('union_name') ?> </span>
-            <span class="searchFilterHeader"><?= Yii::t('app', 'MCC') ?>: </span>
-            <span class="searchFilterValue"><?= $model->getMccPlantCode('name') ?></span>
-        </span>
-        <span class="dashboardWidgetSearchIcon dashboardWidgetHeader">
-            <a data-toggle="collapse" href="#collapse1" class="color_fff">
-                <i class="fa fa-cog faa-spin animated faa-slow"></i>
-            </a>
-        </span>
-    </div>
-</div>
-<div class="clearfix"></div>
-<div class="panel-group row panel-fixed dashboard_set_filter mt15" id="filter">
-    <div class="panel panel-default min_h_0">
-        <!-- <div class="panel-heading text-center">
-            <h4 class="panel-title">
-        <?php // Yii::t('app', 'Data for PCDF') . ' '  ?> (<?php // Yii::$app->controls->view_date($date)  ?>)
-                <a data-toggle="collapse" href="#collapse1" class="setting"><i class="fa fa-gear"></i></a>
-                <a class="member-mobile-info pull-right"><i class="fa fa-mobile"></i></a>
-            </h4>
-        </div> -->
-        <div id="collapse1" class="panel-collapse collapse">
-            <div class="panel-body">
-                <?php
-                $form = ActiveForm::begin([
-                            'action' => ['index'],
-                            'method' => 'post',
-                ]);
-                ?>
-                <div class="dashboard_filter_form">
-                    <!-- <h4 class="panel-title">
-                    <?php // Yii::t('app', 'Data for PCDF') . ' '  ?> (<?php //Yii::$app->controls->view_date($date)  ?>)
-                    </h4> -->
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
-                        </div>
-                        <?= Html::activeHiddenInput($model, 'widget_type', ['id' => 'hidden_widget_type']) ?>
-                        <div class="col-sm-6">
-                            <div class="switch-field">
-                                <input type="radio" id="radio-farmer" class="radio_widgit_type" name="widget_type" value="farmer"/>
-                                <label for="radio-farmer">Farmer</label>
-                                <input type="radio" id="radio-rmrd" class="radio_widgit_type" name="widget_type" value="rmrd" />
-                                <label for="radio-rmrd">RMRD</label>
+<div class="panel-group row panel-fixed dashboard_search_filter" id="filter">
+        <div class="panel panel-default min_h_0">
+            <div id="collapse1" >
+                <div class="panel-body">
+                <div class="col-sm-12 padding_left_right_0">
+                    <?php
+                        $form = ActiveForm::begin([
+                                    'action' => ['index'],
+                                    'method' => 'post',
+                        ]);
+                    ?>
+                    <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date') ?>: </span> -->
+                            <div class="col-sm-2 searchFilterHeader">
+                                <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                             </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="col-sm-6">
-                            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', false); ?>
-                        </div>
-                        <div class="col-sm-6">
-                            <?php echo Html::hiddenInput('load_all', true, ['id' => 'load_all']); ?>
-                            <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false, false, false); ?>
-                        </div>
-                        <div class="clearfix"></div>
+                            <?= Html::activeHiddenInput($model, 'widget_type', ['id' => 'hidden_widget_type']) ?>
+                            <div class="col-sm-2 searchFilterHeader">
+                                <div class="switch-field">
+                                    <input type="radio" id="radio-farmer" class="radio_widgit_type" name="widget_type" value="farmer"/>
+                                    <label for="radio-farmer">Farmer</label>
+                                    <input type="radio" id="radio-rmrd" class="radio_widgit_type" name="widget_type" value="rmrd" />
+                                    <label for="radio-rmrd">RMRD</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 searchFilterHeader">
+                                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', false); ?>
+                            </div>
+                            <div class="col-sm-2 searchFilterHeader">
+                                <?php echo Html::hiddenInput('load_all', true, ['id' => 'load_all']); ?>
+                                <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false, false, false); ?>
+                            </div>
+                            <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
+                                <button type="button" class="widget_table_setting_btn" data-toggle="collapse" data-target="#modal_widget_selection"><i class="fa fa-cog faa-spin animated faa-slow"></i></button>
+                            </div>
+                            <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
+                                <?= Yii::$app->controls->search(); ?>
+                            </div>
+                            <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
+                                <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile"></i></a>
+                            </div>
+                    </span>
+
+                    <div class="collapse" id="modal_widget_selection">
                         <?php
-                        echo $form->field($model, 'rmrd_widgets[]')->checkboxList(
-                                $allRmrdWidgets, [
-                            'id' => 'rmrd_widgets_list',
-                            'class' => 'row sortable',
-                            'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
-                                //                var_dump(count($map_model));exit;
-                                $checked = in_array($label, $rmrd_selected_widgets);
-                                $dispLabel = '';
-                                $dispLabel = $dashboard_widget->getWidgetLabel($label, 'rmrd');
-                                if (empty($dispLabel)) {
-                                    return '';
-                                } else {
-                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                                'value' => $label,
-                                                'id' => 'rmrd_' . $label,
-                                                'label' => '<label for="rmrd_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'rmrd') . '</label>',
-                                                'labelOptions' => [
-                                                    'class' => 'widgets-text' //. $disabled,
-                                                ],
-                                                'class' => 'widgets-checkbox',
-                                            ]) . "</div></div>";
-                                }
-                            },
-                                ]
-                        )->label(false);
+                            echo $form->field($model, 'rmrd_widgets[]')->checkboxList(
+                                    $allRmrdWidgets, [
+                                'id' => 'rmrd_widgets_list',
+                                'class' => 'row sortable',
+                                'item' =>
+                                function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
+                                    //                var_dump(count($map_model));exit;
+                                    $checked = in_array($label, $rmrd_selected_widgets);
+                                    $dispLabel = '';
+                                    $dispLabel = $dashboard_widget->getWidgetLabel($label, 'rmrd');
+                                    if (empty($dispLabel)) {
+                                        return '';
+                                    } else {
+                                        // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                        // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                        return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                                    'value' => $label,
+                                                    'id' => 'rmrd_' . $label,
+                                                    'label' => '<label for="rmrd_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'rmrd') . '</label>',
+                                                    'labelOptions' => [
+                                                        'class' => 'widgets-text' //. $disabled,
+                                                    ],
+                                                    'class' => 'widgets-checkbox',
+                                                ]) . "</div></div>";
+                                    }
+                                },
+                                    ]
+                            )->label(false);
                         ?>
 
                         <?php
-                        echo $form->field($model, 'farmer_widgets[]')->checkboxList(
-                                $allFarmerWidgets, [
-                            'id' => 'farmer_widgets_list',
-                            'class' => 'row sortable',
-                            'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
-                                //                var_dump(count($map_model));exit;
-                                $checked = in_array($label, $farmer_selected_widgets);
-                                $dispLabel = '';
-                                $dispLabel = $dashboard_widget->getWidgetLabel($label, 'farmer');
-                                if (empty($dispLabel)) {
-                                    return '';
-                                } else {
-                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                                'value' => $label,
-                                                'id' => 'farmer_' . $label,
-                                                'label' => '<label for="farmer_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'farmer') . '</label>',
-                                                'labelOptions' => [
-                                                    'class' => 'widgets-text' //. $disabled,
-                                                ],
-                                                'class' => 'widgets-checkbox',
-                                            ]) . "</div></div>";
-                                }
-                            },
-                                ]
-                        )->label(false);
+                            echo $form->field($model, 'farmer_widgets[]')->checkboxList(
+                                    $allFarmerWidgets, [
+                                'id' => 'farmer_widgets_list',
+                                'class' => 'row sortable',
+                                'item' =>
+                                function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
+                                    //                var_dump(count($map_model));exit;
+                                    $checked = in_array($label, $farmer_selected_widgets);
+                                    $dispLabel = '';
+                                    $dispLabel = $dashboard_widget->getWidgetLabel($label, 'farmer');
+                                    if (empty($dispLabel)) {
+                                        return '';
+                                    } else {
+                                        // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                        // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                        return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                                    'value' => $label,
+                                                    'id' => 'farmer_' . $label,
+                                                    'label' => '<label for="farmer_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'farmer') . '</label>',
+                                                    'labelOptions' => [
+                                                        'class' => 'widgets-text' //. $disabled,
+                                                    ],
+                                                    'class' => 'widgets-checkbox',
+                                                ]) . "</div></div>";
+                                    }
+                                },
+                                    ]
+                            )->label(false);
                         ?>
-                        <div class="col-sm-12 pt5">
-                            <div class="col-sm-2">
-                                <a class="member-mobile-info pull-Left"><i class="fa fa-mobile fa-2x"></i></a>
-                            </div>
-                            <div class="col-sm-10 filt_btn">
-                                <?= Yii::$app->controls->search(); ?>
-                            </div>
                         </div>
-                    </div>
+                    <?php ActiveForm::end(); ?>
                 </div>
-                <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
 </div>
-<div class="panel panel-default panel-main panel-dashboard mt20">
+<div class="clearfix"></div>
+
+<div class="panel panel-default panel-main panel-dashboard mt34">
     <div class="panel-body dashboard_section">
         <div class="row">
             <?php //if (Yii::$app->session->get('organizations_type') !== 'UNION') {  ?>
