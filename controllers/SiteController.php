@@ -1342,10 +1342,15 @@ class SiteController extends Controller {
             $union_str = implode(',', $union_ary);
         }
         $sp_param = [];
-        $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
+        $rlsData = $this->setRlsData();
+        $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise_new';
         $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
         $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
         $sp_param[] = $union_str; //$data['union'];
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = empty($rlsData['mcc']) ? '0' : $rlsData['mcc'];
+        $sp_param[] = empty($rlsData['bmc']) ? '0' : $rlsData['bmc'];
+        $sp_param[] = empty($rlsData['dcs']) ? '0' : $rlsData['dcs'];
         $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 //        }
         return $this->renderAjax('bmc_cross_tab', ['output' => $output, 'union_code' => $union]);
