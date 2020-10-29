@@ -24,7 +24,7 @@ class BranchImport extends TblBranch {
 
     public function validateHamlet($attribute, $params) {
         if (!empty($this->hamlet_code)) {
-
+            $isNational = Yii::$app->general->getforeignkey($this->bankCode, 'nationalized_bank');
             $hamlet = Yii::$app->general->validateActiveRelation($this, 'TblHamlets', 'hamlet_code', 'hamlet_code', $this->getAttributeLabel($attribute), 'dcs', 'village_code');
             if ($hamlet['msg'] != '') {
                 $this->addError($attribute, Yii::t('app/validation', $hamlet['msg']));
@@ -52,7 +52,7 @@ class BranchImport extends TblBranch {
                             $this->district_code = $subDistricts['model']->district_code;
                             $mapping = new TblBanksDistrictsMapping();
                             $map = $mapping->getRecord($this->bank_code, $this->district_code);
-                            if (!$map) {
+                            if (!$map && !$isNational) {
                                 $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " '" . $this->hamlet_code . "'" . ' is invalid.'));
                                 return false;
                             } else {

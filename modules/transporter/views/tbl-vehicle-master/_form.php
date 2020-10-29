@@ -102,6 +102,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
 </div>
+</div>
 <div class="row">
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

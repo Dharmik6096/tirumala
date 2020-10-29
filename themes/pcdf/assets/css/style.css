@@ -215,7 +215,7 @@ ul{
     background-color: rgb(122, 35, 28);
 }
 .bg-info{
-    background-color: #607188;
+    background-color: #7a231c;
 }
 .bg-success{
     background-color: rgb(122, 35, 28);
@@ -2631,6 +2631,10 @@ div.crystalstyle{
 .panel .panel-body select{
     padding: 1px !important;
 }
+.popup-100-60{
+    width: calc(100% - 60px) !important;
+    margin: 30px auto !important;
+}
 
 .panel .panel-body .dashboard_controls .form-control{
     height: 26px !important;
@@ -3902,4 +3906,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 
 .right_reverse_min{
     right: -270px;
+}
+.padding_top_10{
+    padding-top: 10px;
 }

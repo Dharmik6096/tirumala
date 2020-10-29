@@ -17,6 +17,12 @@ use app\modules\webservice\components\EiplResponse;
 use app\modules\webservice\components\EiplResponseCode;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\organisation\models\TblRouteMapping;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * Default controller for the `restservices` module
@@ -118,20 +124,31 @@ class MasterController extends ActiveController {
                 $union[] = $value['organization_code'];
             } else if ($value['organization_type'] == 'BMC') {
                 $bmc[] = $value['organization_code'];
+                $this->setBmcUpperData($union, $plant, $mcc, $value['organization_code']);
             } else if ($value['organization_type'] == 'MCC') {
                 $mcc[] = $value['organization_code'];
+                $this->setMccUpperData($union, $plant, $value['organization_code']);
             } else if ($value['organization_type'] == 'PLANT') {
                 $plant[] = $value['organization_code'];
+                $this->setPlantUpperData($union, $value['organization_code']);
             } else if ($value['organization_type'] == 'DCS') {
                 $dcs[] = $value['organization_code'];
+                $this->setDcsUpperData($union, $plant, $mcc, $bmc, $value['organization_code']);
             } else if ($value['organization_type'] == 'MEMBER') {
                 $member[] = $value['organization_code'];
+                $model = new TblMember();
+                $modelData = $model->findOne($value['organization_code']);
+                if (!empty($modelData->dcs_code) && !in_array($modelData->dcs_code, $dcs)) {
+                    $dcs[] = $modelData->dcs_code;
+                    $this->setDcsUpperData($union, $plant, $mcc, $bmc, $modelData->dcs_code);
+                }
             } else if ($value['organization_type'] == 'ROUTE') {
                 $model = new TblRouteMapping();
                 $model->route_code = $value['organization_code'];
                 $model->from_type = 'society';
                 foreach ($model->tblRouteMappingSources as $detail) {
                     $dcs[] = $detail->from_dest;
+                    $this->setDcsUpperData($union, $plant, $mcc, $bmc, $detail->from_dest);
                 }
             }
         }
@@ -146,6 +163,56 @@ class MasterController extends ActiveController {
         $data['department'] = Yii::$app->eiplapp->identity->department;
         $data['login_type'] = Yii::$app->eiplapp->identity->login_type;
         return $data;
+    }
+
+    public function setDcsUpperData(&$union, &$plant, &$mcc, &$bmc, $dcs) {
+        $model = new TblDcs();
+        $modelData = $model->findOne($dcs);
+        if (!empty($modelData->union_code) && !in_array($modelData->union_code, $union)) {
+            $union[] = $modelData->union_code;
+        }
+        if (!empty($modelData->plant_code) && !in_array($modelData->plant_code, $plant)) {
+            $plant[] = $modelData->plant_code;
+        }
+        if (!empty($modelData->mcc_plant_code) && !in_array($modelData->mcc_plant_code, $mcc)) {
+            $mcc[] = $modelData->mcc_plant_code;
+        }
+        if (!empty($modelData->bmc_code) && !in_array($modelData->bmc_code, $bmc)) {
+            $bmc[] = $modelData->bmc_code;
+        }
+    }
+
+    public function setBmcUpperData(&$union, &$plant, &$mcc, $bmc) {
+        $model = new TblDcsBmc();
+        $modelData = $model->findOne($bmc);
+        if (!empty($modelData->union_code) && !in_array($modelData->union_code, $union)) {
+            $union[] = $modelData->union_code;
+        }
+        if (!empty($modelData->plant_code) && !in_array($modelData->plant_code, $plant)) {
+            $plant[] = $modelData->plant_code;
+        }
+        if (!empty($modelData->mcc_plant_code) && !in_array($modelData->mcc_plant_code, $mcc)) {
+            $mcc[] = $modelData->mcc_plant_code;
+        }
+    }
+
+    public function setMccUpperData(&$union, &$plant, $mcc) {
+        $model = new TblMccPlant();
+        $modelData = $model->findOne($mcc);
+        if (!empty($modelData->union_code) && !in_array($modelData->union_code, $union)) {
+            $union[] = $modelData->union_code;
+        }
+        if (!empty($modelData->plant_code) && !in_array($modelData->plant_code, $plant)) {
+            $plant[] = $modelData->plant_code;
+        }
+    }
+
+    public function setPlantUpperData(&$union, $plant) {
+        $model = new TblPlant();
+        $modelData = $model->findOne($plant);
+        if (!empty($modelData->union_code) && !in_array($modelData->union_code, $union)) {
+            $union[] = $modelData->union_code;
+        }
     }
 
 }
