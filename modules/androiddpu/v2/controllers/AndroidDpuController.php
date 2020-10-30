@@ -67,7 +67,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $appOrgModel->mobile_no = $content['mobile_no'];
                         $appOrgModel->organization_type = 'DCS';
                         $appOrgModelData = $appOrgModel->getActiveData();
-                        if (count($appOrgModelData) == 1) {
+                        if (count($appOrgModelData) == 1 && $appOrgModelData[0]->organization_code == $code) {
                             $hasDetails = true;
                         }
                     }
