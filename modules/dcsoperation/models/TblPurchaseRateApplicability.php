@@ -60,7 +60,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             [['is_download'], 'default', 'value' => '1'],
             [['is_active'], 'default', 'value' => '1'],
             [['wef_date', 'shift_code'], 'required'],
-            [['rate_for', 'applicable_for', 'bmc_code'], 'required', 'on' => ['importCsv']],
+            [['rate_for', 'applicable_for', 'applicable_code', 'bmc_code'], 'required', 'on' => ['importCsv']],
             ['rate_for', 'in', 'range' => ['M', 'B', 'm', 'b'], 'on' => ['importCsv']],
             [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
@@ -426,13 +426,15 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
     public function validateCustomer($model) {
         if (empty($model->applicable_for) || strtoupper($model->applicable_for) == 'DCS') {
             $model->applicable_for = 'DCS';
-            $model->applicable_code = Yii::$app->general->getforeignkey($this->dcsRefCode, 'dcs_code');
+            $applicable_code = Yii::$app->general->getforeignkey($this->dcsRefCode, 'dcs_code');
         } else {
             $model->applicable_for = strtoupper($model->applicable_for);
-            $model->applicable_code = $this->validateCustomerCode($model);
+            $applicable_code = $this->validateCustomerCode($model);
         }
-        if (empty($model->applicable_code)) {
+        if (empty($applicable_code)) {
             $model->addError('applicable_code', Yii::t('app/validation', Yii::t('app', 'Applicable Code') . ' is invalid'));
+        } else {
+            $model->applicable_code = $applicable_code;
         }
     }
 
