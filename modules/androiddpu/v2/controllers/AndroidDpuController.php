@@ -467,7 +467,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $appOrgModel->mobile_no = $mobileNo;
                         $appOrgModel->organization_type = 'DCS';
                         $appOrgModelData = $appOrgModel->getActiveData();
-                        if (count($appOrgModelData) == 1) {
+                        if (count($appOrgModelData) == 1 && $appOrgModelData[0]->organization_code == $org_code) {
                             $loginUserData = $appOrgModelData[0];
                             $contactDetails = $loginUserData->tblContactDetails;
                             $res_data['is_surveyor'] = !empty($contactDetails) && !empty($contactDetails->department) && strtolower($contactDetails->department) == 'surveyor' ? '1' : '0';
