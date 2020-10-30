@@ -129,6 +129,16 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $model->is_active = 1;
             $model->sync_key = rand(1000, 9999);
             $model->sync_active = 1;
+
+            // Start: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
+            $org_code = !empty($data['organization_code']) ? $data['organization_code'] : '';
+            $org_type = !empty($data['organization_type']) ? $data['organization_type'] : '';
+            if (!empty($model->d2d_request) && $org_type == 'VLC') {
+                $dcsModel = new TblDcs();
+                $dcsModel->dcs_code = $org_code;
+                $dcsModel->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 1], ['dcs_code' => $dcsModel->dcs_code]);
+            }
+            // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
             $transaction = $this->generalModel->saveTransaction([$model], ['app verification', 'create']);
             if ($transaction !== 'customRedirect') {
                 return FALSE;
