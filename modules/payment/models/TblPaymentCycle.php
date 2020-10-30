@@ -42,12 +42,13 @@ class TblPaymentCycle extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
-                ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
-                [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
-                [['interval_value', 'is_active', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
-                [['to_date'], 'customValidate'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
+            ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
+            [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
+            [['interval_value', 'is_active', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
+            [['to_date'], 'customValidate'],
+            [['from_date', 'to_date'], 'unique', 'targetAttribute' => ['from_date', 'to_date', 'union_code'], 'message' => 'Payemnt cycle already exist for same time period'],
         ];
     }
 

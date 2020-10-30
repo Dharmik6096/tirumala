@@ -24,6 +24,8 @@ use yii\helpers\Json;
 use PHPExcel;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblDcsPurchaseRate;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateBased;
 
 /**
  * TblPurchaseRateController implements the CRUD actions for TblPurchaseRate model.
@@ -167,7 +169,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                 $result = 'success';
                 Yii::$app->response->format = trim(Response::FORMAT_JSON);
                 $url = \yii\helpers\Url::to(['tbl-purchase-rate-details/create-rate', 'id' => -1, 'method' => $this->model->rate_gen_method_code]);
-                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'wef_date' => $this->model->wef_date, 'shift' => $this->model->shift_applicability, 'description' => $this->model->description, 'shift_id' => $this->model->shift_id, 'union_code' => $this->model->union_code];
+                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'wef_date' => $this->model->wef_date, 'shift' => $this->model->shift_applicability, 'description' => $this->model->description, 'shift_id' => $this->model->shift_id, 'union_code' => $this->model->union_code, 'for_rmrd' => $this->model->for_rmrd];
             } else {
                 $file = [];
                 if ($_POST['file_name'] != '')
@@ -185,15 +187,31 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
     }
 
     public function uploadExcel($fileName, $purchaseRate) {
-
+        if ($purchaseRate->for_rmrd == 1) {
+            $dcsPurchaseRate = new TblDcsPurchaseRate();
+            $dcsPurchaseRate->attributes = $purchaseRate->attributes;
+            $dcsPurchaseRate->originating_org_code = Yii::$app->session->get('organizations_code');
+            $dcsPurchaseRate->originating_org_type = Yii::$app->session->get('organizations_type');
+            $dcsPurchaseRate->union_code = Yii::$app->session->get('organizations_code');
+            $dcsPurchaseRate->purchase_rate_code = $dcsPurchaseRate->getCode();
+            $dcsPurchaseRate->milk_purchase_rate_code = $purchaseRate->purchase_rate_code;
+        }
         $objPHPExcel = \PHPExcel_IOFactory::load(IMPORT_PATH . $fileName);
         $data = [];
+        $dcsdata = [];
         $rateTypeModel = new TblRateType();
         $milkTypeModel = new TblAnimalType();
         $i = 0;
         $cnt = 0;
         $purchaseModel = new TblPurchaseRateDetails();
         // $detailmaxID = $purchaseModel->getCode();
+
+        $dcspurchaseModel = new TblDcsPurchaseRateDetails();
+        $dcsdetailmaxID = $dcspurchaseModel->getCode();
+
+        $dcsPurchaseBasedModel = new TblDcsPurchaseRateBased();
+        $dcsbasemaxID = $dcsPurchaseBasedModel->getCode();
+
         $based = [];
         $baseCode = 0;
         $error = FALSE;
@@ -233,6 +251,19 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         $purchaseBasedModel->milk_quality_type_code = array_search('good', array_map('strtolower', $milkQuality->getActiveQualityType()));
 
                         $based[] = $purchaseBasedModel;
+                        if ($purchaseRate->for_rmrd == 1) {
+                            $dcspurchaseBasedModel = new TblDcsPurchaseRateBased();
+                            $dcspurchaseBasedModel->purchase_rate_code = $dcsPurchaseRate->purchase_rate_code;
+                            $dcspurchaseBasedModel->rate_based_code = ($dcsbasemaxID + $baseCode);
+                            $dcspurchaseBasedModel->milk_type_code = $milk_type_code;
+                            $dcspurchaseBasedModel->rate_type = $rate_type_code;
+                            $dcspurchaseBasedModel->quality_param_code = array_search($quality_param[0], $qualityModel->getParams());
+                            $dcspurchaseBasedModel->start_range = number_format((float) $worksheet->getCell('A2')->getValue(), 1);
+                            $dcspurchaseBasedModel->end_range = number_format((float) $worksheet->getCell('A' . $worksheet->getHighestRow())->getValue(), 1);
+                            $dcspurchaseBasedModel->milk_quality_type_code = 1;
+                            $dcspurchaseBasedModel->originating_type = 2;
+                            $based[] = $dcspurchaseBasedModel;
+                        }
                         $baseCode++;
                         if (count($quality_param) > 1) {
                             $h = new ReflectionClass($purchaseBasedModel->className());
@@ -244,6 +275,19 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                             $newModel->start_range = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
                             $newModel->end_range = number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
                             $based[] = $newModel;
+                            if ($purchaseRate->for_rmrd == 1) {
+                                $d = new ReflectionClass($dcspurchaseBasedModel->className());
+                                $newDcsModel = $d->newInstanceArgs();
+                                $attribute = $dcspurchaseBasedModel->attributes;
+                                $newDcsModel->setAttributes($attribute);
+//                            $newModel->rate_based_code = $purchaseBasedModel->purchase_rate_code . ($newModel->getCode() + $baseCode);
+                                $newDcsModel->rate_based_code = ($dcsbasemaxID + $baseCode);
+                                $newDcsModel->quality_param_code = array_search($quality_param[1], $qualityModel->getParams());
+                                $newDcsModel->start_range = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
+                                $newDcsModel->end_range = number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
+                                $newDcsModel->originating_type = 2;
+                                $based[] = $newDcsModel;
+                            }
                             $baseCode++;
                         }
                         for ($row = 2; $row <= $worksheet->getHighestRow(); $row ++) {
@@ -305,6 +349,21 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                                             \Yii::$app->user->identity->user_code,
                                             date('Y-m-d H:i:s')
                                         ];
+                                        if ($purchaseRate->for_rmrd == 1) {
+                                            $dcsdata [$i] [] = [
+                                                ($dcsdetailmaxID + $cnt),
+                                                $dcsPurchaseRate->purchase_rate_code,
+                                                $rate_type_code,
+                                                1,
+                                                $milk_type_code,
+                                                number_format((float) $worksheet->getCell('A' . $row)->getValue(), 2),
+                                                number_format((float) $worksheet->getCell($col . '1')->getValue(), 2),
+                                                number_format((float) $cell, 2),
+                                                \Yii::$app->session->get('organizations_code'),
+                                                \Yii::$app->session->get('organizations_type'),
+                                                2
+                                            ];
+                                        }
                                         $cnt ++;
                                         if (count($data [$i]) == 1000) {
                                             $i ++;
@@ -332,6 +391,9 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     $master[] = $purchaseRate->save();
+                    if ($purchaseRate->for_rmrd == 1) {
+                        $master[] = $dcsPurchaseRate->save();
+                    }
                     foreach ($based as $b) {
                         $b->scenario = 'excel';
                         $error = $b->save();
@@ -339,6 +401,9 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                     }
                     foreach ($data as $d) {
                         \Yii::$app->db->createCommand()->batchInsert('tbl_purchase_rate_details', ['purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'is_active', 'created_by', 'created_at'], $d)->execute();
+                    }
+                    foreach ($dcsdata as $d) {
+                        \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type'], $d)->execute();
                     }
                     if ($transaction->isActive && !in_array(FALSE, $master)) {
                         $transaction->commit();

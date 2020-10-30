@@ -83,7 +83,7 @@ class TblDcsPurchaseRateBased extends \app\models\ChildModel {
             [['ref_type'], 'RefTypeValidate', 'on' => 'manualForm'],
             [['start_range', 'end_range'], 'rangeValidate', 'on' => 'manualForm'],
             [['fixed_point'], 'fixedPointValidate', 'on' => 'manualForm'],
-            [['created_at', 'deleted_at', 'step', 'updated_at', 'kg_rate', 'is_active', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type', 'purchase_rate_code'], 'safe'],
+            [['created_at', 'deleted_at', 'step', 'updated_at', 'kg_rate', 'quality_param_code_name', 'formula_code', 'fixed_point', 'formula', 'rate_type', 'purchase_rate_code'], 'safe'],
             [['end_range', 'fixed_point', 'value', 'start_range'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"')],
             [['quality_param_code', 'milk_quality_type_code', 'milk_type_code'], 'integer'],
             [['deduction_type', 'ref_type'], 'string', 'max' => 50],

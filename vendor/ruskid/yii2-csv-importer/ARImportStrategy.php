@@ -41,7 +41,7 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
     ];
     public $saveChild = '';
     public $details;
-    public $file_path,$file_name;
+    public $file_path, $file_name;
 
     /**
      * @throws Exception
@@ -208,14 +208,14 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     } else {
                         if ($this->isIncrement == 1) {
                             $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
-                        } else if (method_exists($model, 'getCode')) {
+                        } else if ($this->isIncrement != 0 && method_exists($model, 'getCode')) {
                             $model->{$primaryKey} = $model->getCode();
                         }
                     }
                 } else {
                     if ($this->isIncrement == 1) {
                         $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
-                    } else if (method_exists($model, 'getCode')) {
+                    } else if ($this->isIncrement != 0 && method_exists($model, 'getCode')) {
                         $model->{$primaryKey} = $model->getCode();
                     }
                 }

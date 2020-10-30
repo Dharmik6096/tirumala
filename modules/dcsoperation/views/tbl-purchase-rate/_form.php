@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+//use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -41,7 +42,9 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', 'Shift Applicability'); ?>
     </div>
-
+    <div class="col-sm-3  mt25">
+        <?= $form->field($model, 'for_rmrd', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <div class="col-sm-6">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
@@ -72,7 +75,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                             //console.log(data);
                                     if (data.status == "success"){
                                             var purchaseRate = [];
-                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id};
+                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id,"for_rmrd":data.for_rmrd};
                                             localStorage.setItem("purchaseRate", JSON.stringify(purchaseRate));
                                             window.location="' . \Yii::$app->request->getHostInfo() . '"+data.url;
                                     }else{

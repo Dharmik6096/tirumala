@@ -11,6 +11,10 @@ use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\dcsoperation\models\TblPurchaseRateBased;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_purchase_rate_applicability".
@@ -42,7 +46,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
      * @inheritdoc
      */
     public $rate_gen_method_code, $rate_description;
-    public $rate_type, $reference_code, $dcs_name;
+    public $rate_type, $reference_code, $dcs_name, $rate_for, $applicable_for, $applicable_code, $bmc_code, $ex_code;
 
     public static function tableName() {
         return 'tbl_purchase_rate_applicability';
@@ -56,7 +60,23 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             [['is_download'], 'default', 'value' => '1'],
             [['is_active'], 'default', 'value' => '1'],
             [['wef_date', 'shift_code'], 'required'],
-            [['dcs_code'], 'required', 'message' => 'You must select atleast one society.'],
+            [['rate_for', 'applicable_for', 'bmc_code'], 'required', 'on' => ['importCsv']],
+            ['rate_for', 'in', 'range' => ['M', 'B', 'm', 'b'], 'on' => ['importCsv']],
+            [['shift_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+                }, 'on' => 'importCsv'],
+            [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
+            [['dcs_code'], 'required', 'message' => 'You must select atleast one society.', 'except' => ['importCsv']],
+            [['applicable_for'], function ($attribute, $params) {
+                    $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
+                }, 'on' => ['importCsv']],
+            [['applicable_for'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['applicable_for' => 'customer_type'], 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
             //[['purchase_rate_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -65,10 +85,13 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code', 'purchase_rate_code'], 'on' => ['stellapps']],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
-            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
             //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+            [['purchase_rate_code'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
@@ -334,6 +357,122 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$errors) {
+        $model->dcs_code = $model->applicable_code;
+        if (strtolower($model->rate_for == 'b')) {
+            $postData = $model;
+            $model = new TblDcsPurchaseRateApplicabitity();
+            $model->attributes = $postData->attributes;
+            $model->applicable_code = $postData->applicable_code;
+            $model->applicable_for = $postData->applicable_for;
+            $model->union_code = $postData->union_code;
+            $model->dcs_code = NULL;
+            $existData = $model->checkDuplicateData();
+            if (!empty($existData)) {
+                $model->addError('purchase_rate_code', Yii::t('app/validation', 'Applicability is already given'));
+                $errors[] = $model->getErrors();
+            }
+            if (!$model->validate()) {
+                $errors[] = $model->getErrors();
+            }
+        } else {
+            $existData = $model->checkDuplicateData();
+            if (!empty($existData)) {
+                $this->addError('purchase_rate_code', Yii::t('app/validation', 'Applicability is already given'));
+            }
+        }
+    }
+
+    public function setImport($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : '';
+            $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_code);
+            $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+
+            if ((strtolower($this->rate_for) == 'b' && empty($this->dcsPurchaseRate)) || empty($this->purchaseRateCode)) {
+                $this->addError($attribute, Yii::t('app/validation', 'Purchase Rate Code is invalid'));
+            }
+            if ((strtolower($this->rate_for) == 'm' && strtolower($this->applicable_for != 'dcs'))) {
+                $this->addError($attribute, Yii::t('app/validation', 'Applicable For is must be DCS'));
+            }
+            if (empty($this->customerType)) {
+                $this->addError($attribute, Yii::t('app/validation', 'Applicable For is invalid'));
+            } else {
+                $this->validateCustomer($this);
+                if (strtoupper($this->applicable_for) == 'DCS') {
+                    $this->dcs_code = $this->applicable_code;
+                }
+            }
+        }
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+            $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_code);
+        }
+    }
+
+    public function validateCustomer($model) {
+        if (empty($model->applicable_for) || strtoupper($model->applicable_for) == 'DCS') {
+            $model->applicable_for = 'DCS';
+            $model->applicable_code = Yii::$app->general->getforeignkey($this->dcsRefCode, 'dcs_code');
+        } else {
+            $model->applicable_for = strtoupper($model->applicable_for);
+            $model->applicable_code = $this->validateCustomerCode($model);
+        }
+        if (empty($model->applicable_code)) {
+            $model->addError('applicable_code', Yii::t('app/validation', Yii::t('app', 'Applicable Code') . ' is invalid'));
+        }
+    }
+
+    public function validateCustomerCode($model) {
+        if (strtolower($model->applicable_for) != 'dcs') {
+            $prefix = Yii::$app->general->getforeignkey($model->customerType, 'code_prefix');
+            $length = Yii::$app->general->getforeignkey($model->customerType, 'code_length');
+            $model->ex_code = $prefix . str_pad($model->applicable_code, $length, '0', STR_PAD_LEFT);
+            $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
+            return $data = empty($Code) ? '' : $Code;
+        }
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code'])->andOnCondition(['is_applicability' => 1]);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'applicable_for'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
+    }
+
+    public function getDcsRefCode() {
+        return $this->hasOne(TblDcs::className(), ['ref_code' => 'applicable_code', 'bmc_code' => 'bmc_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsPurchaseRate() {
+        return $this->hasOne(TblDcsPurchaseRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+    }
+
+    public function checkDuplicateData() {
+        $query = $this->find()->where(['dcs_code' => $this->dcs_code, 'wef_date' => $this->wef_date]);
+        return $query->all();
     }
 
 }

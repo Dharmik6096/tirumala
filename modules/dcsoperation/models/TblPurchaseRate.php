@@ -50,7 +50,7 @@ class TblPurchaseRate extends \app\models\ChildModel {
 //                    $data = $this->find()->where(['originating_org_code' => $model->originating_org_code, 'wef_date' => $model->wef_date, 'shift_applicability' => $model->shift_applicability])->andWhere(['<>', 'purchase_rate_code', $model->purchase_rate_code])->one();
 //                    return ($data) ? true : false;
 //                }, 'message' => Yii::t('app/validation', 'Purchase Rate is already created for inserted inputs.')],
-            [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code'], 'safe'],
+            [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code', 'for_rmrd'], 'safe'],
             [['shift_applicability'], 'integer'],
             [['description', 'originating_org_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -78,6 +78,7 @@ class TblPurchaseRate extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'shift_id' => Yii::t('app', 'Shift'),
             'reference_code' => Yii::t('app', 'SAP Rate ID'),
+            'for_rmrd' => Yii::t('app', 'For RMRD'),
         ];
     }
 
@@ -160,6 +161,7 @@ class TblPurchaseRate extends \app\models\ChildModel {
         $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_id);
         $this->is_active = 1;
         $this->is_default = 1;
+        $this->for_rmrd = $jsonData['for_rmrd'];
     }
 
     /**
