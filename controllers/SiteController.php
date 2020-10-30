@@ -1618,7 +1618,8 @@ class SiteController extends Controller {
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
-                                $transaction_data->error_log = (string) $transaction;
+                                $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
+//                                $transaction_data->error_log = (string) $transaction;
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                                 if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
                                     $inbox_constraint = new TblInboxConstraint();
