@@ -66,7 +66,7 @@ class TblDataExchangeConfig extends \app\models\ChildModel {
 
         $query = $this->find()
                 ->where(['is_active' => 1])
-//                ->andWhere(['<=', 'tbl_data_exchange_config.next_execution', date('Y-m-d H:i:s')])
+                ->andWhere(['<=', 'tbl_data_exchange_config.next_execution', date('Y-m-d H:i:s')])
                 ->limit($limit);
         $query->orderBy(['priority' => SORT_ASC]);
         return $query->all();
