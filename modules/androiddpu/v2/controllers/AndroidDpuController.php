@@ -21,6 +21,7 @@ use app\modules\configuration\models\TblUnionConfigResult;
 use yii\helpers\ArrayHelper;
 use app\modules\usermanagement\models\TblAmcsAppMenuMapping;
 use app\modules\configuration\models\TblMilkCollectionConfig;
+use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 
 /**
  * Default controller for the `vendorapi` module
@@ -57,7 +58,22 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 }
                 if (!empty($model_data)) {
                     $contact_data = Yii::$app->general->getDefaultContactDetail($code, $detail_type);
+                    // Start: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
+                    $hasDetails = false;
                     if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
+                        $hasDetails = true;
+                    } else if (!empty($data['d2d_request'])) {
+                        $appOrgModel = new TblAppOrganizationMapping();
+                        $appOrgModel->mobile_no = $content['mobile_no'];
+                        $appOrgModel->organization_type = 'DCS';
+                        $appOrgModelData = $appOrgModel->getActiveData();
+                        if (count($appOrgModelData) == 1 && $appOrgModelData[0]->organization_code == $code) {
+                            $hasDetails = true;
+                        }
+                    }
+                    if ($hasDetails) {
+                        // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
+//                  if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
                         $master = [];
                         $andoidIdModel = new TblAndroidInstallation();
                         $andoidIdModel->organization_code = $code;
@@ -113,6 +129,16 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $model->is_active = 1;
             $model->sync_key = rand(1000, 9999);
             $model->sync_active = 1;
+
+            // Start: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
+            $org_code = !empty($data['organization_code']) ? $data['organization_code'] : '';
+            $org_type = !empty($data['organization_type']) ? $data['organization_type'] : '';
+            if (!empty($model->d2d_request) && $org_type == 'VLC') {
+                $dcsModel = new TblDcs();
+                $dcsModel->dcs_code = $org_code;
+                $dcsModel->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 1], ['dcs_code' => $dcsModel->dcs_code]);
+            }
+            // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
             $transaction = $this->generalModel->saveTransaction([$model], ['app verification', 'create']);
             if ($transaction !== 'customRedirect') {
                 return FALSE;
@@ -249,6 +275,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $model = new TblAndroidInstallationDetails();
             $id_model = $model->getActiveData($data);
             if (!empty($id_model)) {
+                $mobileNo = !empty($id_model->mobile_no) ? $id_model->mobile_no : '';
+                $detailType = '';
                 $res_data['config'] = [];
                 $res_data['collectionConfig'] = [];
                 $res_data['rate'] = [];
@@ -274,6 +302,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
                     if ($org_type == 'VLC') {
+                        $detailType = 'society';
                         $mcc_bmc_config = FALSE;
                         $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
                         if (!empty($current_rate_detail)) {
@@ -306,9 +335,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $MappedMilkType = $model_data->tblDcsMilkType;
                         $collectionIncentive = $model_data->collectionIncentive;
                     } else if ($org_type == 'BMC') {
+                        $detailType = 'bmc';
                         $MappedMilkType = $model_data->tblBmcMilkType;
                         $collectionIncentive = [];
                     } else if ($org_type == 'MCC') {
+                        $detailType = 'mccPlant';
                         $MappedMilkType = $model_data->tblMccMilkType;
                         $collectionIncentive = [];
                     }
@@ -436,6 +467,26 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $model->application_type = $org_type;
                     $menu_mapping = $model->getMenuMapping();
                     $res_data['menu_mapping'] = implode(',', $menu_mapping);
+                    $res_data['is_surveyor'] = '0';
+                    $contact_data = Yii::$app->general->getDefaultContactDetail($org_code, $detailType);
+                    // Start: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
+                    if (!empty($contact_data) && $contact_data->mobile_no == $mobileNo) {
+                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? '1' : '0';
+                    } else if (!empty($id_model->d2d_request)) {
+                        $appOrgModel = new TblAppOrganizationMapping();
+                        $appOrgModel->mobile_no = $mobileNo;
+                        $appOrgModel->organization_type = 'DCS';
+                        $appOrgModelData = $appOrgModel->getActiveData();
+                        if (count($appOrgModelData) == 1 && $appOrgModelData[0]->organization_code == $org_code) {
+                            $loginUserData = $appOrgModelData[0];
+                            $contactDetails = $loginUserData->tblContactDetails;
+                            $res_data['is_surveyor'] = !empty($contactDetails) && !empty($contactDetails->department) && strtolower($contactDetails->department) == 'surveyor' ? '1' : '0';
+                        }
+                    }
+                    // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
+//                    if (!empty($contact_data)) {
+//                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? '1' : '0';
+//                    }
                 }
             }
         }
