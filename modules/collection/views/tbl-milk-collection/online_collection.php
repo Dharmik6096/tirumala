@@ -15,18 +15,29 @@ if (!empty($onlineData)) {
         $info = '<div class=\"map_info_content\">';
         $info .= '<p class=\"map_marker_content\"><span class=\"marker_header\">' . Yii::t('app', 'Member Code') . ':</span> ' . $data['member_code'] . '</p>';
         $info .= '<p class=\"map_marker_content\"><span class=\"marker_header\">' . Yii::t('app', 'Member Name') . ':</span> ' . $data['member_name'] . '</p>';
+
+//        $memberInfo = $info;
         $info .= '<p class=\"map_marker_content\"><span class=\"marker_header\">' . Yii::t('app', 'Date') . ':</span> ' . $data['date'] . '</p>';
 //        $info .= '<p class=\"map_marker_content\"><span class=\"marker_header\">' . Yii::t('app', 'Shift') . ':</span> ' . $data['shift'] . '</p>';
         $info .= '<p class=\"map_marker_content\"><span class=\"marker_header\">' . Yii::t('app', 'Quantity') . ':</span> ' . $data['Qty'] . '</p>';
-        $info .= '</div>';
-        $infoWindow[] = $info;
-        $infoArray[] = $infoWindow;
+//        $memberInfo .= '<p class=\"map_marker_content\"><span class=\"marker_header\">' . Yii::t('app', 'Quantity') . ':</span> ' . $data['Qty'] . '</p>';
+
         if (!empty($data['lat']) && !empty($data['long'])) {
+
+            $totalKm = Yii::$app->general->distanceCalculation($data['lat'], $data['long'], $data['member_lat'], $data['member_long']);
+            $info .= '<p class=\"map_marker_content\"><span class=\"marker_header\">' . Yii::t('app', 'Distance') . ':</span> ' . $totalKm . ' Km</p>';
+            $info .= '</div>';
+            $memberInfo = $info;
+            $infoWindow[] = $info;
+            $infoArray[] = $infoWindow;
             $array = [];
             $array[] = $info;
             $array[] = $data['lat'];
             $array[] = $data['long'];
             $array[] = $data['member_code'];
+            $array[] = $data['member_lat'];
+            $array[] = $data['member_long'];
+            $array[] = $memberInfo;
             $latLongArray[] = $array;
         }
     }
@@ -34,12 +45,14 @@ if (!empty($onlineData)) {
 
 
 if (empty($latLongArray)) {
-    $latLongArray[] = ['India', 20.5937, 78.9629, ''];
+    $latLongArray[] = ['India', 20.5937, 78.9629, '', 20.5937, 78.9629, ''];
 }
 $infoArray = json_encode($infoArray);
 $latLongArray = json_encode($latLongArray);
 $asset_path = Yii::$app->general->base64url_decode(Url::to(['/themes/pcdf/assets/']));
 $mapIcon = $this->theme->getUrl('/assets/images/map_marker.png');
+$farmerMapIcon = $this->theme->getUrl('/assets/images/map_marker_f.png');
+$completeMapIcon = $this->theme->getUrl('/assets/images/map_marker_complete.png');
 $googleMapKey = Yii::$app->params['google_map_api_key'];
 //AIzaSyAMTTxu_z6hetI1B83CmW30vGv6dibQWLU--//callback=initMap&
 ?>
@@ -148,37 +161,92 @@ $script = "
           center: new google.maps.LatLng(locations[0][1], locations[0][2]),
           zoom: 15
         });
+//          mapTypeId: 'terrain'
         var infoWindow = new google.maps.InfoWindow;
         
         $.each(locations, function(key, val) {
+             var flightPlanCoordinates = [
+                { lat: parseFloat(val[1]), lng: parseFloat(val[2]) },
+                { lat: parseFloat(val[4]), lng: parseFloat(val[5]) },
+              ];
+//            var pointPath = new google.maps.LatLng(parseFloat(val[1]),parseFloat(val[2]));
+//            var pointPathTwo = new google.maps.LatLng(parseFloat(val[4]),parseFloat(val[5]));
+//            console.log(google.maps.geometry.spherical.computeDistanceBetween(pointPath, pointPathTwo));
+            var dispMainIcon = '" . $mapIcon . "';
+            var setIcon = '" . $farmerMapIcon . "';
+            var infoWindowData = val[0]; // val[6]; use val[6] for differentiate farmer and collection
+            if(parseFloat(val[4]) == parseFloat(val[1]) && parseFloat(val[5]) == parseFloat(val[2])){
+                infoWindowData = val[0];
+                setIcon = '" . $completeMapIcon . "';
+                dispMainIcon = '" . $completeMapIcon . "';
+            }
+            var flightPath = new google.maps.Polyline({
+               path: flightPlanCoordinates,
+               geodesic: true,
+               strokeColor: '#357FD7',
+               strokeOpacity: 1.0,
+               strokeWeight: 2,
+            });
+            flightPath.setMap(map);
             var point = new google.maps.LatLng(
                   parseFloat(val[1]),
                   parseFloat(val[2]));
-            var infowincontent = document.createElement('div');
-            var strong = document.createElement('strong');
-            var name = 'test';
-            strong.textContent = name
-            infowincontent.appendChild(strong);
-            infowincontent.appendChild(document.createElement('br'));
-            
-            var address = 'addresss';
-            var text = document.createElement('text');
-              text.textContent = address
-              infowincontent.appendChild(text);
-
             var marker = new google.maps.Marker({
-                map: map,
-                position: point,
-                icon: '" . $mapIcon . "',
-                label:''
-              });
-//              val[3]
-//              console.log(infowincontent);
-//              console.log(val[0]);
-              marker.addListener('click', function() {
+                    map: map,
+                    position: point,
+                    icon: '" . $mapIcon . "',
+                    label:''
+                });
+            marker.addListener('click', function() {
                 infoWindow.setContent(val[0]);
                 infoWindow.open(map, marker);
-              });
+            });
+                
+            var pointF = new google.maps.LatLng(
+                  parseFloat(val[4]),
+                  parseFloat(val[5]));
+               
+            var markerF = new google.maps.Marker({
+                    map: map,
+                    position: pointF,
+                    icon: setIcon,
+                    label:''
+                });
+            markerF.addListener('click', function() {
+                infoWindow.setContent(infoWindowData);
+                infoWindow.open(map, markerF);
+            });
+
+                
+// use for display normal map
+//            var point = new google.maps.LatLng(
+//                  parseFloat(val[1]),
+//                  parseFloat(val[2]));
+//            var infowincontent = document.createElement('div');
+//            var strong = document.createElement('strong');
+//            var name = 'test';
+//            strong.textContent = name
+//            infowincontent.appendChild(strong);
+//            infowincontent.appendChild(document.createElement('br'));
+//            
+//            var address = 'addresss';
+//            var text = document.createElement('text');
+//              text.textContent = address
+//              infowincontent.appendChild(text);
+//
+//            var marker = new google.maps.Marker({
+//                map: map,
+//                position: point,
+//                icon: '" . $mapIcon . "',
+//                label:''
+//              });
+////              val[3]
+////              console.log(infowincontent);
+////              console.log(val[0]);
+//              marker.addListener('click', function() {
+//                infoWindow.setContent(val[0]);
+//                infoWindow.open(map, marker);
+//              });
 
         });
         
