@@ -365,18 +365,12 @@ $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
 });
-
+   
     $(document).ready(function(){  
         if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
             hideFields();
             $(document).on('change','#reportsmodel-store_location_type', function() {
                 hideFields();
-            });
-        }
-        if('" . $report . "'=='RateAcknowledgement'){
-            hideCustomer();
-            $(document).on('change','#reportsmodel-rate_type', function() {
-                hideCustomer();
             });
         }
     });
@@ -405,16 +399,24 @@ $('.mis_report_modal_toggle').on('click', function(){
         }
        
     }
+    
+    $('#reportsmodel-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) { 
+        if('" . $report . "'=='RateAcknowledgement'){
+            hideCustomer();
+        }
+    });
+    $(document).on('change','#reportsmodel-rate_type', function() {
+        hideCustomer();
+    });
+    
     function hideCustomer(){
         var rate_type =  $('#reportsmodel-rate_type option:selected').text();
         if(rate_type == 'MEMBER'){
             $('.cust_type').hide();
-//            $('.vendor').hide();
             $('.cust_type select').val('DCS');
             $('.cust_type select').trigger('change');
         }else {
             $('.cust_type').show();
-//            $('.vendor').show();
         }
     }
 
