@@ -310,7 +310,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                         $historyModel = new TblSocietyCodesHistory();
                         Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
                         $societyCodes->route_code = $modelRouteSource->route_code;
-                        $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + $i, 3, '0', STR_PAD_LEFT);
+//                        $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + $i, 3, '0', STR_PAD_LEFT);
 //                        $societyCodes->bmc_code = $modelRouteSource->getBmcCode();
                         $dcsCode = TblDcs::findOne($d[0]);
                         $dcsCode->scenario = 'routeMapping';
