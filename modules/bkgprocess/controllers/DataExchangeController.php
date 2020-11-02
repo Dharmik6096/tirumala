@@ -81,25 +81,18 @@ class DataExchangeController extends ChildController {
                 $responseData = json_decode(json_encode($response), true);
                 $loopData = [];
                 if (empty($json_array_key) && !empty($responseData['result'])) {
-                    $loopData = $responseData['result'];
+                    $loopData[] = $responseData['result'];
                 } else if (!empty($responseData['result']['data'])) {
-                    $loopData = !empty($responseData['result']['data']);
+                    $loopData = !empty($responseData['result']['data']) ? $responseData['result']['data'] : [];
                 }
                 if (!empty($loopData)) {
                     foreach ($loopData as $resp_data) {
                         $status = (isset($resp_data['status']) && (strtolower($resp_data['status']) == '200')) ? 2 : 3;
-                        $model = new $model_name();
+                        $resp_status = !empty($resp_data['status']) ? $resp_data['status'] : NULL;
+                        $resp_desc = !empty($resp_data['msg']) ? $resp_data['msg'] : NULL;
                         $updateValue = !empty($resp_data[$updateKey]) ? $resp_data[$updateKey] : '';
-                        $model = $model->find()->where([$modelKey => $updateValue])->one();
-
-                        if (!empty($model)) {
-                            $model->scenario = 'data_exchange';
-                            $model->data_post_status = $status;
-                            $model->resp_status = !empty($resp_data['status']) ? $resp_data['status'] : NULL;
-                            $model->resp_desc = !empty($resp_data['msg']) ? $resp_data['msg'] : NULL;
-                            $model->response_datetime = date('Y-m-d H:i:s');
-                            $model->save();
-                        }
+                        $model = new $model_name();
+                        $model->updateAll(['data_post_status' => $status, 'resp_status' => $resp_status, 'resp_desc' => $resp_desc, 'response_datetime' => date('Y-m-d H:i:s')], [$modelKey => $updateValue]);
                     }
                 }
             }

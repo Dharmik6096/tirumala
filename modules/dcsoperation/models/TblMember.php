@@ -186,7 +186,10 @@ class TblMember extends ChildModel {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
             [['x_col3'], 'default', 'value' => 15],
-            [['dcs_code'], 'setXcol3', 'on' => ['importCsv']]
+            [['dcs_code'], 'setXcol3', 'on' => ['importCsv']],
+            [['member_code'], function ($attribute, $params) {
+                    $this->data_post_status = 0;
+                }, 'skipOnEmpty' => false],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

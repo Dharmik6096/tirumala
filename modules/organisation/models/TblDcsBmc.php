@@ -87,7 +87,10 @@ class TblDcsBmc extends \app\models\ChildModel {
 //            [['bmc_code'], 'unique'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
-            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe']
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+            [['bmc_code'], function ($attribute, $params) {
+                    $this->data_post_status = 0;
+                }, 'skipOnEmpty' => false],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

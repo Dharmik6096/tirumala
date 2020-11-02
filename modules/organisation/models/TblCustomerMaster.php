@@ -92,7 +92,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
             [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
             [['x_col1'], 'default', 'value' => '1#1'],
-            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe']
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+            [['customer_code'], function ($attribute, $params) {
+                    $this->data_post_status = 0;
+                }, 'skipOnEmpty' => false],
         ];
     }
 

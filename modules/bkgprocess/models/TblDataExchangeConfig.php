@@ -35,9 +35,9 @@ class TblDataExchangeConfig extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'tbl_name', 'sp_name', 'json_key', 'update_key', 'update_key_with'], 'string'],
-                [['last_execution', 'next_execution'], 'safe'],
-                [['interval', 'priority', 'is_active'], 'integer'],
+            [['union_code', 'tbl_name', 'sp_name', 'json_key', 'update_key', 'update_key_with'], 'string'],
+            [['last_execution', 'next_execution'], 'safe'],
+            [['interval', 'priority', 'is_active'], 'integer'],
         ];
     }
 
@@ -62,21 +62,12 @@ class TblDataExchangeConfig extends \app\models\ChildModel {
     }
 
     public function getDataExchangeConfig($limit = 100) {
-        $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
-
         $query = $this->find()
                 ->where(['is_active' => 1])
                 ->andWhere(['<=', 'tbl_data_exchange_config.next_execution', date('Y-m-d H:i:s')])
                 ->limit($limit);
         $query->orderBy(['priority' => SORT_ASC]);
         return $query->all();
-//        $pendingDataQuery = $this->find()
-//                ->andWhere(['<', 'tbl_data_exchange_config.last_execution', $datetime])
-//                ->orderBy(['priority' => SORT_ASC])
-//                ->limit(5);
-//        return $unionQuery = (new ActiveQuery(TblDataExchangeConfig::className()))->from([
-//                    'pending_data' => $query->union($pendingDataQuery, TRUE)
-//                ])->all();
     }
 
 }

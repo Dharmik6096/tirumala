@@ -157,6 +157,9 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
             [['customer_code'], 'validateUnique', 'on' => ['create']],
             [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
+            [['milk_collection_code'], function ($attribute, $params) {
+                    $this->data_post_status = 0;
+                }, 'skipOnEmpty' => false],
         ];
     }
 
