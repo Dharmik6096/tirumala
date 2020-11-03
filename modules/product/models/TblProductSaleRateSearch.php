@@ -46,10 +46,9 @@ class TblProductSaleRateSearch extends TblProductSaleRate {
     public function search($params) {
         if (empty($this->product_code)) {
             // $query = TblProductPurchaseRate::find()->select(['tbl_product_purchase_rate.product_code','tbl_product_purchase_rate.union_code','tbl_product_purchase_rate.dcs_code']);
-            $subquery = TblProductSaleRate::find()->select(['max(wef_date) As wef_date', 'product_code', 'is_member_rate'])->groupBy(['product_code', 'union_code', 'is_member_rate']); //->all();
-
-            $query = TblProductSaleRate::find()->from(['u' => $subquery]);
-            $query->join('inner join', 'tbl_product_sale_rate', 'tbl_product_sale_rate.wef_date=u.wef_date and tbl_product_sale_rate.product_code=u.product_code and tbl_product_sale_rate.is_member_rate=u.is_member_rate');
+            $subquery = TblProductSaleRate::find()->select(['max_date = max(wef_date)', 'product_code', 'is_member_rate'])->groupBy(['product_code', 'union_code', 'is_member_rate']); //->all();
+            $query = TblProductSaleRate::find()->select(['tbl_product_sale_rate.product_sale_rate_code as product_sale_rate_code', 'tbl_product_sale_rate.union_code as union_code', 'tbl_product_sale_rate.product_code as product_code', 'tbl_product_sale_rate.sale_rate as sale_rate', 'tbl_product_sale_rate.wef_date as wef_date', 'tbl_product_sale_rate.is_member_rate as is_member_rate', 'tbl_product_sale_rate.commission as commission'])->from(['u' => $subquery]);
+            $query->join('inner join', 'tbl_product_sale_rate', 'tbl_product_sale_rate.wef_date=u.max_date and tbl_product_sale_rate.product_code=u.product_code and tbl_product_sale_rate.is_member_rate=u.is_member_rate');
             $query->orderBy('wef_date DESC');
 //                    ->leftJoin(['x' => $subquery], 'x.wef_date=tbl_product_sale_rate.wef_date and x.product_code = tbl_product_sale_rate.product_code'); //->where(['wef_date' => $subquery])->orderBy('wef_date DESC');
         } else {
