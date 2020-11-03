@@ -24,7 +24,7 @@ class TblProductSaleRateSearch extends TblProductSaleRate {
         return [
 //                [['is_active'], 'integer'],
 //            [['rate'], 'number'],
-            [['product_sale_rate_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'product_code', 'sale_rate', 'product_sale_rate_code_val', 'union_name', 'dcs_name', 'product_name', 'union_code', 'is_member_rate'], 'safe'],
+                [['product_sale_rate_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'product_code', 'sale_rate', 'product_sale_rate_code_val', 'union_name', 'dcs_name', 'product_name', 'union_code', 'is_member_rate'], 'safe'],
         ];
     }
 
@@ -46,9 +46,12 @@ class TblProductSaleRateSearch extends TblProductSaleRate {
     public function search($params) {
         if (empty($this->product_code)) {
             // $query = TblProductPurchaseRate::find()->select(['tbl_product_purchase_rate.product_code','tbl_product_purchase_rate.union_code','tbl_product_purchase_rate.dcs_code']);
-            $subquery = TblProductSaleRate::find()->select(['max(product_sale_rate_code) As product_sale_rate_code'])->groupBy(['product_code', 'union_code', 'is_member_rate'])->all();
+            $subquery = TblProductSaleRate::find()->select(['max(wef_date) As wef_date', 'product_code', 'is_member_rate'])->groupBy(['product_code', 'union_code', 'is_member_rate']); //->all();
 
-            $query = TblProductSaleRate::find()->where(['product_sale_rate_code' => $subquery])->orderBy('wef_date DESC');
+            $query = TblProductSaleRate::find()->from(['u' => $subquery]);
+            $query->join('inner join', 'tbl_product_sale_rate', 'tbl_product_sale_rate.wef_date=u.wef_date and tbl_product_sale_rate.product_code=u.product_code and tbl_product_sale_rate.is_member_rate=u.is_member_rate');
+            $query->orderBy('wef_date DESC');
+//                    ->leftJoin(['x' => $subquery], 'x.wef_date=tbl_product_sale_rate.wef_date and x.product_code = tbl_product_sale_rate.product_code'); //->where(['wef_date' => $subquery])->orderBy('wef_date DESC');
         } else {
             $query = TblProductSaleRate::find();
         }
