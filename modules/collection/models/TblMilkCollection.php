@@ -146,7 +146,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
-            [['milk_collection_code'], function ($attribute, $params) {
+            [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false],
         ];
