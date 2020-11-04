@@ -264,6 +264,10 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv']],
                 [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
                 [['default_milk_type'], 'default', 'value' => 8],
+                [['data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+                [['dcs_code'], function ($attribute, $params) {
+                    $this->data_post_status = 0;
+                }, 'skipOnEmpty' => false],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
