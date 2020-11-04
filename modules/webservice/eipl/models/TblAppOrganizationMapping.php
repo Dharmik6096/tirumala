@@ -4,6 +4,7 @@ namespace app\modules\webservice\eipl\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_app_organization_mapping".
@@ -33,10 +34,10 @@ class TblAppOrganizationMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['detail_code'], 'required'],
-            [['detail_code', 'is_active'], 'integer'],
-            [['mobile_no', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+                [['detail_code'], 'required'],
+                [['detail_code', 'is_active'], 'integer'],
+                [['mobile_no', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
+                [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -70,6 +71,16 @@ class TblAppOrganizationMapping extends \app\models\ChildModel {
         $list = $this->find()->select(['organization_code', 'organization_type'])->where(['mobile_no' => $this->mobile_no])->all();
         $data = ArrayHelper::map($list, 'organization_code', 'organization_code');
         return $data;
+    }
+
+    public function getActiveData() {
+        return $this->find()
+                        ->where(['mobile_no' => $this->mobile_no, 'organization_type' => $this->organization_type])
+                        ->all();
+    }
+
+    public function getTblContactDetails() {
+        return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'detail_code']);
     }
 
 }
