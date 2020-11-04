@@ -1114,7 +1114,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MemberMaster' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
-                'sp_name' => 'sp_mis_member_master_register',
+                'sp_name' => 'sp_mis_member_master_registerr',
                 'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],

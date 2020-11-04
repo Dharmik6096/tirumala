@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+//use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;
@@ -43,13 +44,15 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     <div class="col-sm-6">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
+    <div class="col-sm-3  mt25">
+        <?= $form->field($model, 'for_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>
 
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([
-
                 'label' => Yii::t('app', 'Next'),
                 'id' => 'submit',
                 'ajaxOptions' => [
@@ -68,7 +71,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                     'success' => new JsExpression('function(data){                             
                                     if (data.status == "success"){
                                             var purchaseRate = [];
-                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id};
+                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id,"for_member":data.for_member};
                                             localStorage.setItem("purchaseRate", JSON.stringify(purchaseRate));
                                             window.location="' . \Yii::$app->request->getHostInfo() . '"+data.url;
                                     }else{

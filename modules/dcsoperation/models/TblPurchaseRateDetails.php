@@ -6,7 +6,6 @@ use Yii;
 use app\models\GeneralModel;
 use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblAnimalType;
-use app\modules\dcsoperation\models\TblDcsPurchaseRateBased;
 
 /**
  * This is the model class for table "tbl_purchase_rate_auto".
@@ -133,9 +132,6 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         }
         $this->deleteAll(['milk_type_code' => $object->milk_type_code, 'purchase_rate_code' => $object->purchase_rate_code]);
         $generalModel = new GeneralModel;
-        if (!empty($save_array[0]->purchase_rate_code)) {
-            $this->setDcsPurchaseRate($save_array, $save_array[0]->purchase_rate_code);
-        }
         $transaction = $generalModel->saveTransaction($save_array, ['Purchase Rate', 'create']);
     }
 
@@ -209,7 +205,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
 
         $models = new TblPurchaseRateDetails();
         $models->purchase_rate_code = $object->purchase_rate_code;
-        // $models->code = $incrCode;
+       // $models->code = $incrCode;
         $models->milk_quality_type_code = $object->milk_quality_type_code;
         $models->milk_type_code = $object->milk_type_code;
         $models->fat = $fat;
@@ -288,7 +284,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                                 $rate = $this->calculateManual($lowfat, $lowsnf, $modelfat[$i]->quality_param_code, $modelsnf[$j]->quality_param_code, $QltyParam[0], $QltyParam[1]);
                                 $save_array[] = $this->saveData($modelfat[$i], $lowfat, $lowsnf, $rate, 0);
                                 $lowsnf = floatval(bcadd($lowsnf, 0.1, 1));
-                                // $key_value += 1;
+                               // $key_value += 1;
                             }
                         }
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
@@ -300,13 +296,12 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                         $rate = $this->calculateManual($lowfat, '', $modelfat[$i]->quality_param_code, '', $QltyParam[0], '');
                         $save_array[] = $this->saveData($modelfat[$i], $lowfat, 0, $rate, 0);
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
-                        // $key_value += 1;
+                       // $key_value += 1;
                     }
                 }
             }
             $this->deleteAll(['milk_type_code' => $modelfat[0]->milk_type_code, 'purchase_rate_code' => $modelfat[0]->purchase_rate_code]);
             $generalModel = new GeneralModel;
-            $this->setDcsPurchaseRate($save_array, $prCode);
             $transaction = $generalModel->saveTransaction($save_array, ['Purchase Rate', 'create']);
         }
     }
@@ -501,46 +496,6 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                         ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
                         ->andWhere($where)
                         ->one();
-    }
-
-    public function setDcsPurchaseRate(&$save_array, $prCode) {
-        $saveData = $save_array;
-        $mainData = TblPurchaseRate::find()->where(['purchase_rate_code' => $prCode])->one();
-        if (!empty($mainData) && $mainData->for_rmrd == 1) {
-            $dcsPurchaseRate = new TblDcsPurchaseRate();
-            $dcsPurchaseRate->attributes = $mainData->attributes;
-            $dcsPurchaseRate->originating_org_code = Yii::$app->session->get('organizations_code');
-            $dcsPurchaseRate->originating_org_type = Yii::$app->session->get('organizations_type');
-            $dcsPurchaseRate->union_code = Yii::$app->session->get('organizations_code');
-            $dcsPurchaseRate->purchase_rate_code = $dcsPurchaseRate->getCode();
-            $dcsPurchaseRate->milk_purchase_rate_code = $mainData->purchase_rate_code;
-            $save_array[] = $dcsPurchaseRate;
-
-            $basedData = TblPurchaseRateBased::find()->where(['purchase_rate_code' => $prCode])->all();
-            $i = 0;
-            foreach ($basedData as $rateData) {
-                $dcsRateBased = new TblDcsPurchaseRateBased();
-                $dcsRateBased->attributes = $rateData->attributes;
-                $dcsRateBased->purchase_rate_code = $dcsPurchaseRate->purchase_rate_code;
-                $dcsRateBased->rate_based_code = $dcsRateBased->getCode() + $i;
-                $dcsRateBased->milk_quality_type_code = 1;
-                $dcsRateBased->rate_type = $rateData->rate_type_code;
-                $dcsRateBased->deduction_type = (string) $rateData->deduction_type;
-                $dcsRateBased->ref_type = (string) $rateData->ref_type;
-                $save_array[] = $dcsRateBased;
-                $i++;
-            }
-            $j = 0;
-            foreach ($saveData as $rateDetail) {
-                $dcsRateDetails = new TblDcsPurchaseRateDetails();
-                $dcsRateDetails->attributes = $rateDetail->attributes;
-                $dcsRateDetails->purchase_rate_code = $dcsPurchaseRate->purchase_rate_code;
-                $dcsRateDetails->code = $dcsRateDetails->getCode() + $j;
-                $dcsRateDetails->milk_quality_type_code = 1;
-                $save_array[] = $dcsRateDetails;
-                $j++;
-            }
-        }
     }
 
 }

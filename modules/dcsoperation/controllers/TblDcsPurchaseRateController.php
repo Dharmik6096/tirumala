@@ -209,7 +209,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $error = FALSE;
         $errorarray = [];
         $ratearray = [];
-
+        $allowCopy = FALSE;
+        $rateClass = 0;
         $purchaseBasedModel = new TblDcsPurchaseRateBased();
         $basemaxID = $purchaseBasedModel->getCode();
 
@@ -227,7 +228,10 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $sheetTitle = strtolower($worksheet->getTitle());
             $sheetTitlearray = explode('-', $sheetTitle);
-            if (count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) {
+            $rateCatogory = ["1", "2", "3"];
+            if ((count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array($sheetTitlearray[2], $rateCatogory))) {
+                $allowCopy = strtolower($sheetTitlearray[1]) == 'good' ? TRUE : FALSE;
+                $rateClass = !empty($sheetTitlearray[2]) ? $sheetTitlearray[2] : 0;
                 $FormulaType = strtoupper($worksheet->getCell('A1')->getValue());
                 if (!isset($ratearray[$sheetTitlearray[0]])) {
                     $ratearray[$sheetTitlearray[0]] = $FormulaType;
@@ -364,6 +368,13 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     }
                     foreach ($data as $d) {
                         \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type'], $d)->execute();
+                    }
+                    if ($purchaseRate->for_member == 1 && $allowCopy) {
+                        $sp_param = [];
+                        $sp_name = 'DB_JOB_PORTAL_Member_Rate_chart';
+                        $sp_param[] = $purchaseRate->purchase_rate_code;
+                        $sp_param[] = $rateClass;
+                        \Yii::$app->general->getSpData($sp_name, $sp_param, TRUE);
                     }
                     if ($transaction->isActive && !in_array(FALSE, $master)) {
                         $transaction->commit();
