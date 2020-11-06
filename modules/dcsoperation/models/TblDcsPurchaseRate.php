@@ -142,7 +142,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
 
     public function getCode() {
         $data = $this->find()->select(["MAX(purchase_rate_code) as purchase_rate_code"])->one();
-        return ($data['purchase_rate_code'] + 1) < 2001 ? 2001 : $data['purchase_rate_code'];
+        return ($data['purchase_rate_code']) < 2001 ? 2001 : $data['purchase_rate_code'] + 1;
     }
 
     public function getRecord($id) {
