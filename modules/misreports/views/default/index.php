@@ -27,7 +27,7 @@ if (isset($data['url1'])) {
     $exportEvents = [];
     if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
-        $this->title = $model->mcc_code . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
+        $this->title = $model->getMccCode($model->mcc_code) . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
         $removeExportType = ['CSV'];
         $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);
