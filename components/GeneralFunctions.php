@@ -996,7 +996,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1379,14 +1379,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -1730,8 +1730,12 @@ class GeneralFunctions extends Component {
                 if (empty($model->{$ex_code_key})) {
                     $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
                 } else {
-                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
-                    if (strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
+                    $old_ex_code = $model->oldAttributes[$ex_code_key];
+                    $allow_update = ($old_ex_code === $model->{$ex_code_key}) ? FALSE : TRUE;
+                    if ($allow_update) {
+                        $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    }
+                    if ($allow_update && strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
                         $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' length must be ' . $keyPattern['ex_code_length'] . '.'));
                     } else {
                         $ex_cnt = $model->find()
