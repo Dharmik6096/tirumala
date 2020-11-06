@@ -49,6 +49,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
 
     public $route_code;
     public $organization;
+    public $import_union_code, $import_eipl_code, $import_key_pattern;
 
     /**
      * @inheritdoc

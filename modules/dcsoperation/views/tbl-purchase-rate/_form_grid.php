@@ -20,6 +20,7 @@ use yii\helpers\Html;
 $attribute = [
     ['attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code',],
     ['attribute' => 'reference_code', 'value' => 'reference_code',],
+    ['attribute' => 'dcs_purchase_rate_code'],
     [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
@@ -34,7 +35,7 @@ $attribute = [
     ['attribute' => 'shift_applicability', 'value' => 'shiftApplicability.shift',],
     ['attribute' => 'rate_gen_method_code', 'value' => 'rateMethod.method',],
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
-    'description'
+    'description',
 ];
 
 $grid_option = [

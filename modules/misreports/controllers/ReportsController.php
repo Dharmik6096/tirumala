@@ -540,6 +540,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
     }
 
+    public function actionRateMasterRegister() {
+        $this->report = 'RateMasterRegister';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1114,7 +1119,7 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             'MemberMaster' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
-                'sp_name' => 'sp_mis_member_master_registerr',
+                'sp_name' => 'sp_mis_member_master_register',
                 'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
                 'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
@@ -1307,6 +1312,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CollectionPendriveFile',
                 'title' => 'Collection Pendrive File',
                 'output_type' => ''
+            ],
+            'RateMasterRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_rate_master_register',
+                'scenario' => 'RateMasterRegister',
+                'title' => 'Rate Master Register',
+                'removeExportType' => ['CSV'],
             ],
         ];
         return $label[$l];
