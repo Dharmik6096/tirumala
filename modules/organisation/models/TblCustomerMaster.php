@@ -73,7 +73,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['is_active'], 'default', 'value' => 1],
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
-            [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
+            [['local_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['customer_code_ex'], function ($attribute, $params) {
