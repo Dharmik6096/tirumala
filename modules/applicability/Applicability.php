@@ -20,6 +20,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\dcsoperation\models\TblDcsPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRate;
 
 /**
  * applicability module definition class
@@ -275,18 +276,15 @@ class Applicability extends \yii\base\Module {
                                 return $this->customRender();
                             }
 
-                            if (!empty($appModel->purchaseRateCode->for_rmrd) && $appModel->purchaseRateCode->for_rmrd == 1) {
-                                $dcsRateModel = TblDcsPurchaseRate::find()->where(['milk_purchase_rate_code' => $appModel->purchase_rate_code])->one();
-                                if (!empty($dcsRateModel)) {
-                                    $dcsAppModel = new TblDcsPurchaseRateApplicabitity();
+                            if (!empty($appModel->purchaseRateCode->for_member) && $appModel->purchaseRateCode->for_member == 1) {
+                                $dcsRateModel = TblPurchaseRate::find()->where(['dcs_purchase_rate_code' => $appModel->purchase_rate_code])->one();
+                                if (!empty($dcsRateModel) && strtoupper($appModel->applicable_for) == 'DCS') {
+                                    $dcsAppModel = new TblPurchaseRateApplicability();
                                     $dcsAppModel->attributes = $appModel->attributes;
                                     $dcsAppModel->purchase_rate_code = $dcsRateModel->purchase_rate_code;
-                                    $dcsAppModel->applicable_code = $appModel->dcs_code;
+                                    $dcsAppModel->dcs_code = $appModel->applicable_code;
                                     $dcsAppModel->applicable_for = 'DCS';
-                                    $checkApp = $dcsAppModel->checkDuplicateData();
-                                    if (empty($checkApp)) {
-                                        $saveModel[] = $dcsAppModel->save();
-                                    }
+                                    $saveModel[] = $dcsAppModel->save();
                                 }
                             }
 

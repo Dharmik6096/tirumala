@@ -109,6 +109,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                         foreach ($findFields as $val) {
                             $where[$val] = $model->$val;
                         }
+
                         $existData = $model::find()->where($where)->one();
                         if (!empty($existData) && !empty($excludeField)) {
                             $excludes = [];
@@ -131,14 +132,14 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                         } else {
                             if ($this->isIncrement == 1) {
                                 $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
-                            } else if ($this->isIncrement != 0 && method_exists($model, 'getCode')) {
+                            } else if (!isset($this->details['restrict_getCode']) && method_exists($model, 'getCode')) {
                                 $model->{$primaryKey} = $model->getCode();
                             }
                         }
                     } else {
                         if ($this->isIncrement == 1) {
                             $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
-                        } else if ($this->isIncrement != 0 && method_exists($model, 'getCode')) {
+                        } else if (!isset($this->details['restrict_getCode']) && method_exists($model, 'getCode')) {
                             $model->{$primaryKey} = $model->getCode();
                         }
                     }

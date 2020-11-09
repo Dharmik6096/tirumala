@@ -225,12 +225,44 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $milkQuality = new TblMilkQualityType();
         $QualityType = array_values($milkQuality->getActiveQualityType());
 
+        $arraycnt = [];
+        $validSheet = TRUE;
+//        $checkRatogory = TRUE;
+//        $checkRatogoryVal = '';
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+            $sheetTitle = strtolower($worksheet->getTitle());
+            $sheetTitlearray = explode('-', $sheetTitle);
+            //check count of sheet name is same
+            if (empty($arraycnt)) {
+                $arraycnt[$sheetTitle] = count($sheetTitlearray);
+            } else if (in_array(count($sheetTitlearray), $arraycnt)) {
+                $arraycnt[$sheetTitle] = count($sheetTitlearray);
+            } else {
+                $validSheet = FALSE;
+            }
+            //check allow to copy member ratechart for milk qlty good
+            if (!empty($sheetTitlearray[1])) {
+                if (!$allowCopy && strtolower($sheetTitlearray[1] == 'good')) {
+                    $allowCopy = TRUE;
+                }
+            }
+            if (!empty($sheetTitlearray[2])) {
+                //check rate catogory is same
+//                if ($checkRatogory) {
+//                    $checkRatogoryVal = $sheetTitlearray[2];
+//                    $checkRatogory = FALSE;
+//                } else if ($sheetTitlearray[2] != $checkRatogoryVal) {
+//                    $validSheet = FALSE;
+//                }
+            }
+        }
+
+
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $sheetTitle = strtolower($worksheet->getTitle());
             $sheetTitlearray = explode('-', $sheetTitle);
             $rateCatogory = ["A", "B", "C"];
-            if ((count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
-                $allowCopy = strtolower($sheetTitlearray[1]) == 'good' ? TRUE : FALSE;
+            if (($validSheet) && (count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
                 $rateClass = !empty($sheetTitlearray[2]) ? strtoupper($sheetTitlearray[2]) : 0;
                 $FormulaType = strtoupper($worksheet->getCell('A1')->getValue());
                 if (!isset($ratearray[$sheetTitlearray[0]])) {
