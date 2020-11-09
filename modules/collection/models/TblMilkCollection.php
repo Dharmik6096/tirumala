@@ -148,7 +148,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
                 [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
         ];
     }
 

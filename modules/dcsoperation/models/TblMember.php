@@ -189,7 +189,7 @@ class TblMember extends ChildModel {
             [['dcs_code'], 'setXcol3', 'on' => ['importCsv']],
             [['member_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

@@ -105,7 +105,7 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
             [['route_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
         ];
     }
 
