@@ -735,14 +735,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_manual_milk_entry_member_date_shift_wise',
                 'scenario' => 'ManualMilkEntryMemberDateShiftWise',
-                'title' => '106 - Manual Milk Entry Member Date Shif wise',
+                'title' => '106 - Manual Milk Entry Member Date Shift Wise',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'ManualMilkEntryMemberDateWise' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_manual_milk_entry_member_date_wise',
                 'scenario' => 'ManualMilkEntryMemberDateShiftWise',
-                'title' => '106 - Manual Milk Entry Member Date wise',
+                'title' => '106 - Manual Milk Entry Member Date Wise',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'ManualMilkEntryMemberConsolidated' => [
@@ -834,13 +834,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_company_wise_collection_vs_receipt',
                 'scenario' => 'UnionWiseCollVsRecipt',
-                'title' => '205 - Company Wise Collection Vs Recipt',
+                'title' => '205 - Company Wise Collection Vs Receipt',
             ],
             'UnionWiseDispatchVsRecipt' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_company_wise_dispatch_vs_receipt',
                 'scenario' => 'UnionWiseDispatchVsRecipt',
-                'title' => '206 - Company Wise Dispatch Vs Recipt',
+                'title' => '206 - Company Wise Dispatch Vs Receipt',
             ],
             //207
             'SocietyWiseCda' => [
