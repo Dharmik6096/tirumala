@@ -547,7 +547,11 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
-        $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+        $appModel->fields = [
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
+                }],
+            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
@@ -555,6 +559,9 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
                 }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+                }],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
                 }],

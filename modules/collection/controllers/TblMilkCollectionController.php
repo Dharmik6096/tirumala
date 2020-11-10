@@ -189,6 +189,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $model = new TblPurchaseRateApplicability();
         $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
+        $data['rate_class'] = 0;
         $model_data = $model->getPurchaseRateApplicableData($data);
 
         if (!empty($model_data)) {

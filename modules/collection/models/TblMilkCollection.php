@@ -410,6 +410,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     $model = new TblPurchaseRateApplicability();
                     $model->dcs_code = $this->dcs_code;
                     $model->wef_date = $this->dt_date;
+                    $data['rate_class'] = 0;
                     $model_data = $model->getPurchaseRateApplicableData($data);
 
                     if (!empty($model_data)) {
