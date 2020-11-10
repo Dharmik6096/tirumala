@@ -227,47 +227,58 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
 
         $arraycnt = [];
         $validSheet = TRUE;
-//        $checkRatogory = TRUE;
-//        $checkRatogoryVal = '';
-        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-            $sheetTitle = strtolower($worksheet->getTitle());
-            $sheetTitlearray = explode('-', $sheetTitle);
-            //check count of sheet name is same
-            if (empty($arraycnt)) {
-                $arraycnt[$sheetTitle] = count($sheetTitlearray);
-            } else if (in_array(count($sheetTitlearray), $arraycnt)) {
-                $arraycnt[$sheetTitle] = count($sheetTitlearray);
-            } else {
-                $validSheet = FALSE;
-            }
-            //check allow to copy member ratechart for milk qlty good
-            if (!empty($sheetTitlearray[1])) {
-                if (!$allowCopy && strtolower($sheetTitlearray[1] == 'good')) {
-                    $allowCopy = TRUE;
-                }
-            }
-            if (!empty($sheetTitlearray[2])) {
-                //check rate catogory is same
-//                if ($checkRatogory) {
-//                    $checkRatogoryVal = $sheetTitlearray[2];
-//                    $checkRatogory = FALSE;
-//                } else if ($sheetTitlearray[2] != $checkRatogoryVal) {
-//                    $validSheet = FALSE;
-//                }
-            }
-        }
-
-
+        $arraySheet = [];
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $sheetTitle = strtolower($worksheet->getTitle());
             $sheetTitlearray = explode('-', $sheetTitle);
             $rateCatogory = ["A", "B", "C"];
-            if (($validSheet) && (count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
-                $rateClass = !empty($sheetTitlearray[2]) ? strtoupper($sheetTitlearray[2]) : 0;
+            if ((count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
+                //check allow to copy member ratechart for milk qlty good
+                if (!empty($sheetTitlearray[1])) {
+                    if (!$allowCopy && strtolower($sheetTitlearray[1] == 'good')) {
+                        $allowCopy = TRUE;
+                        $rateClass = !empty($sheetTitlearray[2]) ? (strtoupper($sheetTitlearray[2]) == 'A' ? 1 : (strtoupper($sheetTitlearray[2]) == 'B' ? 2 : (strtoupper($sheetTitlearray[2]) == 'C' ? 3 : 0))) : 0;
+                    }
+                }
+                //Rate Class A is must if rate class available
+                if (!empty($sheetTitlearray[2])) {
+                    $key = $sheetTitlearray[0] . '-' . $sheetTitlearray[1];
+
+                    if (!empty($arraySheet[$key])) {
+                        if (strtoupper($arraySheet[$key]) != 'A') {
+                            $arraySheet[$key] = $sheetTitlearray[2];
+                        }
+                    } else {
+                        $arraySheet[$key] = $sheetTitlearray[2];
+                    }
+                }
+
+                //Rate Class only allow for Good
+                if (!empty($sheetTitlearray[2]) && strtolower($sheetTitlearray[1] != 'good')) {
+                    $validSheet = FALSE;
+                }
+            } else {
+                $validSheet = FALSE;
+            }
+        }
+
+        foreach ($arraySheet as $class) {
+            if (strtoupper($class) != 'A') {
+                $validSheet = FALSE;
+            }
+        }
+
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+            $sheetTitle = strtolower($worksheet->getTitle());
+            $sheetTitlearray = explode('-', $sheetTitle);
+//            $rateCatogory = ["A", "B", "C"];
+//            if (($validSheet) && (count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
+            if ($validSheet) {
                 $FormulaType = strtoupper($worksheet->getCell('A1')->getValue());
                 if (!isset($ratearray[$sheetTitlearray[0]])) {
                     $ratearray[$sheetTitlearray[0]] = $FormulaType;
                 }
+                $rate_class = !empty($sheetTitlearray[2]) ? (strtoupper($sheetTitlearray[2]) == 'A' ? 1 : (strtoupper($sheetTitlearray[2]) == 'B' ? 2 : (strtoupper($sheetTitlearray[2]) == 'C' ? 3 : 0))) : 0;
                 if (in_array($FormulaType, array_map('strtoupper', $RateTypes)) && $FormulaType == $ratearray[$sheetTitlearray[0]]) {
                     $rate_type_code = array_search($FormulaType, array_map('strtoupper', $milkTypedata));
                     $milk_type_code = array_search($sheetTitlearray[0], array_map('strtolower', $animalTypedata));
@@ -287,6 +298,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                         $purchaseBasedModel->end_range = number_format((float) $worksheet->getCell('A' . $worksheet->getHighestRow())->getValue(), 1);
                         $purchaseBasedModel->milk_quality_type_code = $milk_quality_type_code;
                         $purchaseBasedModel->originating_type = 2;
+                        $purchaseBasedModel->rate_class = $rate_class;
                         $based[] = $purchaseBasedModel;
                         $baseCode++;
                         if (count($quality_param) > 1) {
@@ -300,6 +312,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                             $newModel->start_range = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
                             $newModel->end_range = number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
                             $newModel->originating_type = 2;
+                            $newModel->rate_class = $rate_class;
                             $based[] = $newModel;
                             $baseCode++;
                         }
@@ -365,7 +378,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                                             number_format((float) $cell, 2),
                                             \Yii::$app->session->get('organizations_code'),
                                             \Yii::$app->session->get('organizations_type'),
-                                            2
+                                            2,
+                                            $rate_class
                                         ];
                                         $cnt ++;
                                         if (count($data [$i]) == 1000) {
@@ -399,7 +413,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                         $master[] = $error;
                     }
                     foreach ($data as $d) {
-                        \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type'], $d)->execute();
+                        \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type', 'rate_class'], $d)->execute();
                     }
                     if ($purchaseRate->for_member == 1 && $allowCopy) {
                         $sp_param = [];

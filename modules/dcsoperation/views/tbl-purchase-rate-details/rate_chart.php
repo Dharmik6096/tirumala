@@ -23,6 +23,9 @@ $this->title = Yii::t('app', 'Rate Chart');
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', false); ?>
                     </div>
                     <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group padding-right-5', false, false, 'rate_class') ?> 
+                    </div>
+                    <div class="col-sm-2">
                         <?php //Yii::$app->controls->save('Submit', $model); ?>
                     </div>
                     <?php ActiveForm::end(); ?>
@@ -74,9 +77,12 @@ $this->title = Yii::t('app', 'Rate Chart');
 </div>
 <?php
 $script = "
-     $('#tblpurchaseratedetails-milk_type_code').on('change', function(e){
-    this.form.submit()
-  });
+    $('#tblpurchaseratedetails-milk_type_code').on('change', function(e){
+        this.form.submit()
+    });
+    $('#tblpurchaseratedetails-rate_class').on('change', function(e){
+        this.form.submit()
+    });
     $( document ).ready(function() {
         localStorage.removeItem('purchaseRate');
     });
