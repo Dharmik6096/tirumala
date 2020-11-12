@@ -59,7 +59,7 @@ class TblPlant extends \app\models\ChildModel {
             [['name'], function ($attribute, $params) {
             Yii::$app->general->validateName($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
-            [['local_name', 'local_cantact_person_name'], function ($attribute, $params) {
+            [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
             Yii::$app->general->vaildateLocalField($this, $attribute, $params);
         }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {

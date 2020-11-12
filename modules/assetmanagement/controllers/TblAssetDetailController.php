@@ -177,7 +177,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                 $data['is_serial_number'] = $asset_serial->is_serial_number;
             }
         }
-        echo Json::encode($data);
+        return Json::encode($data);
     }
 
     public function actionOutAssetTransation() {
@@ -459,7 +459,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         } else {
             $data['msg'] = Yii::t('app', 'Outward Quantity should be greater than 0');
         }
-        echo Json::encode($data);
+        return Json::encode($data);
     }
 
     public function actionGetSerialNo() {

@@ -281,11 +281,11 @@ class TblPlantController extends \app\controllers\ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionGetUnionPlant() {
@@ -296,7 +296,7 @@ class TblPlantController extends \app\controllers\ChildController {
             $model = new TblPlant();
             $plantList = $model->getPlantList($union, $RLS);
         }
-        echo Json::encode(['status' => 'success', 'data' => $plantList]);
+        return Json::encode(['status' => 'success', 'data' => $plantList]);
     }
 
 }

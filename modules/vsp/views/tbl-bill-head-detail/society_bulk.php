@@ -15,7 +15,7 @@ $this->title = Yii::$app->label->title('create', 'Head Wise Bulk Entry');
         <?php
         $form = ActiveForm::begin([
                     'validateOnBlur' => false,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,

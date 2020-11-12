@@ -5,6 +5,7 @@ namespace app\modules\misreports\models;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\base\Model;
+use app\modules\organisation\models\TblMccPlant;
 
 class ReportsModelOld extends Model {
 
@@ -82,6 +83,12 @@ class ReportsModelOld extends Model {
 
     public function search($params) {
         
+    }
+
+    public function getMccCode($mccCode) {
+        $mccModel = new TblMccPlant();
+        $mccData = $mccModel->find()->select('ref_code')->where(['mcc_plant_code' => $mccCode])->one();
+        return $mccData->ref_code;
     }
 
 }

@@ -53,7 +53,7 @@ $is_submit = FALSE;
         ]]);
         ?>
         <?php echo $form->errorSummary($model); ?>
-        <table class="table table-bordered table-striped table-main table-language">
+        <table class="table table-hover table-bordered table-striped table-main table-language">
             <thead>
                 <tr>
 <!--                            <th class="width5">Select</th>-->

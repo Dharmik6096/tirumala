@@ -20,7 +20,7 @@ $this->title = Yii::t('app', $title);
                             'id' => 'dispatch-without-form',
                             'field-class' => 'form-group col-sm-3'
                         ], 'validateOnBlur' => FALSE,
-                        'validateOnEnter' => TRUE,
+                        
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,
@@ -29,52 +29,61 @@ $this->title = Yii::t('app', $title);
             ]]);
             ?>
             <?php echo $form->errorSummary($model, ['id' => 'error-summary']); ?>
-            <div class="row" id="headdiv">
-                <?= $form->field($model, 'challan_date', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')]) ?>                      
+            <div class="row theme_border_left theme_border_right theme_border_bottom" id="headdiv">
+                <div class="col-md-12 padding_10_0 theme-box ">
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                        <h4 class="theme-box-heading">Dispatch Details</h4>
+                    </div>
+                    <?= $form->field($model, 'challan_date', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')]) ?>                      
 
-                <?= $form->field($model, 'reference_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'autofocus' => 'autofocus']) ?>      
-                <div class="col-sm-2" id="union">
-                    <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_no', $model->getAttributeLabel('vehicle_no'), false); ?>
-                </div>
-                <div class="col-sm-2" id="union">
-                    <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
-                </div>
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->union_plant($model, $form, 'tblproductdispatch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
-                </div> 
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblproductdispatch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
-                </div>  
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblproductdispatch-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
-                </div>
+                    <?= $form->field($model, 'reference_no', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['maxlength' => true, 'autofocus' => 'autofocus']) ?>      
+                    <div class="col-sm-2" id="union">
+                        <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_no', $model->getAttributeLabel('vehicle_no'), false); ?>
+                    </div>
+                    <div class="col-sm-2" id="union">
+                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                    </div>
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblproductdispatch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
+                    </div> 
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblproductdispatch-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
+                    </div>  
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblproductdispatch-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+                    </div>
 
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->all_routes($model, $form, 'tblproductdispatch-plant_code,tblproductdispatch-mcc_plant_code,tblproductdispatch-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
-                </div>  
-            </div>
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->all_routes($model, $form, 'tblproductdispatch-plant_code,tblproductdispatch-mcc_plant_code,tblproductdispatch-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+                    </div>  
+                </div>
             <div class="clearfix"></div>
-            <div class="row" id="trdiv">  
-                <div class="col-sm-2">
-                    <?= Yii::$app->dropdown->dropdownStatic('requisition_type', $model, $form, 'form-group', $model->getAttributeLabel('vendor_type'), false, 'vendor_type', false); ?>
-                </div>
-                <div class="col-sm-2">
-                    <?php echo Yii::$app->dropdown->route_dcs($model, $form, 'tblproductdispatch-route_code', 'dcs_code', Yii::t('app', 'DCS'), false, false); ?>
-                </div>
-                <div class="col-sm-2">
-                    <?php Yii::$app->dropdown->depend_dropdown('product', $transaction, $form, 'tblproductdispatch-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
-                </div>
-                <?= Html::hiddenInput('transaction_code', '0', ['id' => 'transaction_code']); ?>
-                <?= Html::hiddenInput('edit_tr', '0', ['id' => 'edit_tr']); ?>
-                <?= $form->field($transaction, 'dispatch_qty', ['options' => ['class' => 'form-group col-sm-2 number-validate']])->textInput(['class' => 'form-control number-validate']) ?>
-                <?= $form->field($transaction, 'rate', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
-                <?= $form->field($transaction, 'amount', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
-                <?= $form->field($transaction, 'discount_amount', ['options' => ['class' => 'form-group col-sm-2 number-validate']])->textInput() ?>
-                <?= Html::hiddenInput('dispatch_transaction', '', ['id' => 'dispatch_transaction']); ?>
-                <?= Html::hiddenInput('dispatch_master', '', ['id' => 'dispatch_master']); ?>
+            <div class="row" id="trdiv">
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                        <h4 class="theme-box-heading">Product Details</h4>
+                    </div>
+                <div class="col-sm-12">
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->dropdownStatic('requisition_type', $model, $form, 'form-group', $model->getAttributeLabel('vendor_type'), false, 'vendor_type', false); ?>
+                    </div>
+                    <div class="col-sm-2">
+                        <?php echo Yii::$app->dropdown->route_dcs($model, $form, 'tblproductdispatch-route_code', 'dcs_code', Yii::t('app', 'DCS'), false, false); ?>
+                    </div>
+                    <div class="col-sm-2">
+                        <?php Yii::$app->dropdown->depend_dropdown('product', $transaction, $form, 'tblproductdispatch-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+                    </div>
+                    <?= Html::hiddenInput('transaction_code', '0', ['id' => 'transaction_code']); ?>
+                    <?= Html::hiddenInput('edit_tr', '0', ['id' => 'edit_tr']); ?>
+                    <?= $form->field($transaction, 'dispatch_qty', ['options' => ['class' => 'form-group col-sm-1 number-validate']])->textInput(['class' => 'form-control number-validate']) ?>
+                    <?= $form->field($transaction, 'rate', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['readonly' => true]) ?>
+                    <?= $form->field($transaction, 'amount', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['readonly' => true]) ?>
+                    <?= $form->field($transaction, 'discount_amount', ['options' => ['class' => 'form-group col-sm-1 number-validate']])->textInput() ?>
+                    <?= Html::hiddenInput('dispatch_transaction', '', ['id' => 'dispatch_transaction']); ?>
+                    <?= Html::hiddenInput('dispatch_master', '', ['id' => 'dispatch_master']); ?>
 
-                <div class="col-sm-3">
-                    <?php echo Html::button(Yii::t('app', 'Add Product'), ['class' => 'mt25 btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'id' => 'addbutton']); ?>
+                    <div class="col-sm-2 padding_top_20">
+                        <?php echo Html::button(Yii::t('app', 'Add Product'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'id' => 'addbutton']); ?>
+                    </div>
                 </div>
             </div>
             <div class="ex-grid">

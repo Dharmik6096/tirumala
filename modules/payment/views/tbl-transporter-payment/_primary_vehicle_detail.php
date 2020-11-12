@@ -14,15 +14,19 @@ use kartik\grid\GridView;
                         'attribute' => 'from_date',
                         'label' => Yii::t('app', 'Period'),
                         'value' => Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date),
-                        'valueColOptions' => ['style' => 'width:20%']
+                        'valueColOptions' => ['style' => 'width:30%']
                     ],
                     [
                         'attribute' => 'bill_no',
-                        'valueColOptions' => ['style' => 'width:20%']
+                        'valueColOptions' => ['style' => 'width:30%']
                     ],
+                ],
+            ],
+            [
+                'columns' => [
                     [
                         'attribute' => 'billing_method',
-                        'valueColOptions' => ['style' => 'width:20%']
+                        'valueColOptions' => ['style' => 'width:80%']
                     ],
                 ],
             ],
@@ -127,8 +131,8 @@ use kartik\grid\GridView;
         ?>
     </div>
 </div>
-<div id="gridcontentvehicle" class='hide-grid-settings'>
-    <h5 class="panel-heading"><?= Yii::t('app', 'Date wise Payment Details') ?></h5>
+<div id="gridcontentvehicle" class='hide-grid-settings padding_top_10'>
+        <h4 class="theme-box-heading padding_top_10"><?= Yii::t('app', 'Date wise Payment Details') ?></h4>
     <?php
     $attribute = [
         [ 'attribute' => 'dispatch_date',
@@ -165,8 +169,8 @@ use kartik\grid\GridView;
     Yii::$app->grid->bind($vehicleDetail, $searchModel, $grid_option);
     ?>
 </div>
-<div id="gridcontenthead" class='hide-grid-settings'>
-    <h5 class="panel-heading"><?= Yii::t('app', 'Payment Head Details') ?></h5>
+<div id="gridcontenthead" class='hide-grid-settings padding_top_10'>
+    <h4 class="theme-box-heading"><?= Yii::t('app', 'Payment Head Details') ?></h4>
     <?php
     $attribute = [
         [ 'attribute' => 'transporter_payment_head_code', 'value' => function($model) {

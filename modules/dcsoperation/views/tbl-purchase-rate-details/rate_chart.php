@@ -16,7 +16,7 @@ $this->title = Yii::t('app', 'Rate Chart');
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-12">
-                <div class="grid-search large-search">
+                <div class="pt5 large-search">
                     <?php $form = ActiveForm::begin(); ?>
                     <?= Html::activeHiddenInput($model, 'purchase_rate_code', ['value' => $model->purchase_rate_code]); ?>
                     <div class="col-sm-2">
@@ -29,6 +29,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                 </div>
             </div>
             <div class="col-sm-12">
+                <div class="col-sm-12">
                 <div class="table-responsive table-rate-chart">
                     <table class="table table-bordered table-striped table-input" id="table">
                         <?php
@@ -67,6 +68,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                         <?php } ?>
 
                     </table>
+                    </div>
                 </div>
             </div>
         </div>

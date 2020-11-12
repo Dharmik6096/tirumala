@@ -38,8 +38,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-12">
-                <h5 class="panel-subtitle">Routes</h5>
+            <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                    <h4 class="theme-box-heading">Routes</h4>
+                </div>
                 <div class="btn-group pull-right">
                     <?=
                     Html::a(
@@ -59,7 +61,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     )
                     ?>
                 </div>
-            </div>
 
             <?= Html::beginForm(['set-child-routes', 'id' => $item->name]) ?>
 
@@ -121,6 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                     <?= Html::endForm() ?>
+                    </div>
                 </div>
             </div>
         </div>

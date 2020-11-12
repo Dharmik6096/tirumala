@@ -109,7 +109,10 @@ if (!isset($status))
             </div>
         </div>
 
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Complaint Activity</h5></div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Complaint Activity</h4>
+            </div>
         <div class="clearfix"></div>
         <?=
         $this->render('../../../complaint/views/tbl-complaint-activity/index', [
@@ -118,6 +121,6 @@ if (!isset($status))
             'searchModel' => $searchModel,
         ])
         ?>
-
+        </div>
     </div>
 </div>

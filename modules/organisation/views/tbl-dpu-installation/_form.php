@@ -25,30 +25,28 @@ file_exists($path.$model->attachment) ? $size = filesize($path.$model->attachmen
     <?= Html::activeHiddenInput($model, 'union_code') ?>
 
     <?= Html::activeHiddenInput($model, 'dcs_code') ?>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'inst_date'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'inst_by')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'simcard_company')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'dpu_sim_mobile')->textInput() ?>
     </div>
-    <div class="col-sm-3">
-        <div>
-            <?= $form->field($model, 'soc_secretary')->textInput() ?>
-        </div>
-        <div>
-            <?= $form->field($model, 'secretary_mobile')->textInput() ?>
-        </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'soc_secretary')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
+        <?= $form->field($model, 'secretary_mobile')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>
-    <div class="col-sm-3 mt35">
+    <div class="col-sm-2 mt35">
         <?= Yii::$app->controls->active($model, $form); ?>
     </div>
     <div class="clearfix"></div>

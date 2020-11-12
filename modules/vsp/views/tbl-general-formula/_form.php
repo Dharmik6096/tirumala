@@ -15,7 +15,7 @@ $form = ActiveForm::begin(['options' => [
                 'field-class' => 'form-group col-sm-3',
                 'id' => 'form-general-formula'
             ], 'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -29,8 +29,8 @@ $form = ActiveForm::begin(['options' => [
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE); ?>
             </div>
-            <?= $form->field($model, 'formula_name', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'formula', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true, 'readonly' => true]) ?>
+            <?= $form->field($model, 'formula_name', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'formula', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'readonly' => true]) ?>
         </div>
 
     </div>

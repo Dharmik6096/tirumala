@@ -19,7 +19,7 @@ use yii\bootstrap\ActiveForm;
                             ],
                             'method' => 'get',
                             'validateOnBlur' => FALSE,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
@@ -29,24 +29,24 @@ use yii\bootstrap\ActiveForm;
 
                     <div class="modal-body">
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblvsppaymentconfig-union_code', 'plant_code'); ?>
                         </div>
 
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblvsppaymentconfig-plant_code', 'mcc_plant_code'); ?>
                         </div>
 
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppaymentconfig-mcc_plant_code', 'bmc_code'); ?>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblvsppaymentconfig-bmc_code', 'dcs_code', FALSE); ?>
                         </div>
                     </div>

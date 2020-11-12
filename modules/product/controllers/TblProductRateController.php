@@ -236,7 +236,7 @@ class TblProductRateController extends \app\controllers\ChildController {
             $model->union_code = Yii::$app->request->post('union');
         }
         $model->product_code = Yii::$app->request->post('id');
-        echo Json::encode(['status' => 'success', 'date' => $model->getMinDate()]);
+        return Json::encode(['status' => 'success', 'date' => $model->getMinDate()]);
         return;
     }
 

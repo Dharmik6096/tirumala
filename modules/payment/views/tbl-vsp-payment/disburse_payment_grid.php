@@ -10,7 +10,7 @@ use kartik\grid\GridView;
 $action = Url::to(['confirm-payment']);
 $this->title = 'Process for Payment Disburse';
 ?>
-<div class="grid-search no-effect" >
+<div class="no-effect" >
     <?php
     $form = ActiveForm::begin([
                 'action' => $action,

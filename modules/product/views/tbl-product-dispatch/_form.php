@@ -17,7 +17,7 @@ $this->title = Yii::t('app', $title);
 ?>
 
 <div class="tbl-product-dispatch-form">
-    <div class="grid-search large-search hidden-print">
+    <div class="large-search hidden-print">
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     </div>
@@ -29,7 +29,7 @@ $this->title = Yii::t('app', $title);
                     'field-class' => 'col-sm-3'
                 ],
                 'validateOnBlur' => TRUE,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,
@@ -124,7 +124,7 @@ $this->title = Yii::t('app', $title);
         <?php
         //Yii::$app->controls->date($model, $form, 'date', 'form-group col-sm-3',false, FALSE, false); 
         ?>
-        <?= $form->field($model, 'challan_date', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')])->label('Date'); ?>                      
+        <?= $form->field($model, 'challan_date', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')])->label('Date'); ?>                      
         <?= Html::activeHiddenInput($model, 'route_code', ['value' => !empty(Yii::$app->request->queryParams['TblProductRequisitionSearch']) ? (!empty(Yii::$app->request->queryParams['TblProductRequisitionSearch']['route_code']) ? Yii::$app->request->queryParams['TblProductRequisitionSearch']['route_code'] : '') : '']) ?>
         <?= Html::activeHiddenInput($model, 'union_code', ['value' => $searchModel->union_code]) ?>
         <?= Html::activeHiddenInput($model, 'plant_code', ['value' => $searchModel->plant_code]) ?>
@@ -140,11 +140,11 @@ $this->title = Yii::t('app', $title);
         ?>
         <?php // Html::activeHiddenInput($model, 'dcs_code', ['value' => $dscCode]) ?>
         <?php // Html::activeHiddenInput($model, 'sub_center_code', ['value' => $subCenterCode]) ?>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->vehicle($model, $form, 'vehicle_no', $model->getAttributeLabel('vehicle_no'), false); ?>
         </div>
-        <?php // $form->field($model, 'vehicle_no', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true]) ?>                      
-        <?= $form->field($model, 'reference_no', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['maxlength' => true]) ?>            
+        <?php // $form->field($model, 'vehicle_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>                      
+        <?= $form->field($model, 'reference_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
         <?php // Html::hiddenInput('scheme_item', '', ['id' => 'scheme_item']); ?>
     </div>
 

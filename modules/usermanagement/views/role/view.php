@@ -38,25 +38,27 @@ $this->params['menu'][]=Yii::$app->controls->update($role->description);
         <?= Html::beginForm(['set-child-permissions', 'id' => $role->name]) ?>
         <div class="row">
             <?php foreach ($permissionsByGroup as $groupName => $permissions): ?>
-                <div class="col-sm-6">
-                    <h5 class="panel-subtitle"><?= $groupName ?></h5>
+                <div class="col-md-6 padding_10_0 theme-box view-subtitle">
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                        <h4 class="theme-box-heading"><?= $groupName ?></h4>
+                    </div>
+                    <div class="app-check-list-padding">
+                        <?php foreach ($permissions as $permission): ?>
+                            <div class="checkbox">
+                                <label>
+                                    <?php $isChecked = in_array($permission->name, ArrayHelper::map($currentPermissions, 'name', 'name')) ? 'checked' : '' ?>
+                                    <input type="checkbox" <?= $isChecked ?> name="child_permissions[]" id="<?= $permission->name ?>" value="<?= $permission->name ?>">
+                                    <span for="<?= $permission->name ?>"><?= $permission->description ?></span>
+                                </label>
 
-                    <?php foreach ($permissions as $permission): ?>
-                        <div class="checkbox">
-                            <label>
-                                <?php $isChecked = in_array($permission->name, ArrayHelper::map($currentPermissions, 'name', 'name')) ? 'checked' : '' ?>
-                                <input type="checkbox" <?= $isChecked ?> name="child_permissions[]" id="<?= $permission->name ?>" value="<?= $permission->name ?>">
-                                <span for="<?= $permission->name ?>"><?= $permission->description ?></span>
-                            </label>
-
-                            <?=
-                            GhostHtml::a(
-                                    '<i class="fa fa-pencil-square-o"></i>', ['/user-management/permission/view', 'id' => $permission->name], ['target' => '_blank', 'title' => 'Edit']
-                            )
-                            ?>
-                        </div>
-                    <?php endforeach ?>
-
+                                <?=
+                                GhostHtml::a(
+                                        '<i class="fa fa-pencil-square-o"></i>', ['/user-management/permission/view', 'id' => $permission->name], ['target' => '_blank', 'title' => 'Edit']
+                                )
+                                ?>
+                            </div>
+                        <?php endforeach ?>
+                    </div>
                 </div>
             <?php endforeach ?>
 

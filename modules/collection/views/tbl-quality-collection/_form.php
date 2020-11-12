@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
 
             'options' => ['id' => 'bmc-testing-data-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

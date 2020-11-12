@@ -11,7 +11,7 @@ $searchModel->to_date = !empty($searchModel->to_date) ? $searchModel->to_date : 
 $form = ActiveForm::begin([
             'method' => 'get',
             'validateOnBlur' => true,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

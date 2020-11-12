@@ -608,10 +608,10 @@ class TblDcsController extends ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo Json::encode(['output' => $out]);
+            return Json::encode(['output' => $out]);
             return;
         }
-        echo Json::encode(['output' => '']);
+        return Json::encode(['output' => '']);
     }
 
     public function actionImeiNumber() {
@@ -656,7 +656,7 @@ class TblDcsController extends ChildController {
             $model = new TblSocietyCodes();
             $imei = $model->getImi($_POST['id']);
         }
-        echo Json::encode(['code' => $imei]);
+        return Json::encode(['code' => $imei]);
     }
 
     public function actionLoadVendorSociety() {
@@ -673,10 +673,10 @@ class TblDcsController extends ChildController {
                     $list[] = ['id' => $society->dcs_code, 'name' => $society->dcsCode->dcs_name];
                 }
             }
-            echo Json::encode(['output' => $list]);
+            return Json::encode(['output' => $list]);
             return;
         }
-        echo Json::encode(['output' => '']);
+        return Json::encode(['output' => '']);
     }
 
     public function actionUpdateImeiNumberSociety() {
@@ -836,11 +836,10 @@ class TblDcsController extends ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
-                return;
+                return Json::encode(['output' => $out, 'selected' => '']);
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionGetBmcDcs() {
@@ -851,7 +850,7 @@ class TblDcsController extends ChildController {
             $model = new TblDcs();
             $mccList = $model->getBMCDCSList($palnt, $RLS);
         }
-        echo Json::encode(['status' => 'success', 'data' => $mccList]);
+        return Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
     public function actionRateList($id) {
@@ -898,11 +897,11 @@ class TblDcsController extends ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionPaymentCycleDcsList() {
@@ -917,11 +916,11 @@ class TblDcsController extends ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $val['dcs_code'], 'name' => $val['dcs_name']);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

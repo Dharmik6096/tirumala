@@ -23,105 +23,114 @@ $form = ActiveForm::begin([
 
 <div class="panel-body">
     <div class="panel-subheading">
-        <div class="row">
+        <div class="row theme_border_left theme_border_right theme_border_bottom">
+            <div class="col-md-6 padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"></h4>
+                </div>
 
-            <?= $form->field($model, 'can_per_ltr', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+                <?= $form->field($model, 'can_per_ltr', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
 
-            <?= $form->field($model, 'can_warning_per', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+                <?= $form->field($model, 'can_warning_per', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
 
-            <?= $form->field($model, 'ltr_to_kg', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
-            <div class='clearfix'></div>
-            <div class='col-sm-6'>
-                <p class="pull-left"><?= Yii::t('app', 'CLR Formula: (SNF -(FAT * ') ?></p>
-                <?= $form->field($model, 'lr1_for_clr', ['options' => ['class' => 'form-group pull-left mt-8 col-xs-6 col-md-2'], 'template' => '{input}{error}{hint}',])->textInput() ?>
-                <p class='pull-left'>) - </p>
-                <?= $form->field($model, 'lr2_for_clr', ['options' => ['class' => 'form-group pull-left mt-8 col-xs-6 col-md-2'], 'template' => '{input}{error}{hint}',])->textInput() ?>
-                <p class='pull-left'>) * 4</p>
+                <?= $form->field($model, 'ltr_to_kg', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+                <div class='col-sm-12 margin-top-10'>
+                    <p class="pull-left"><?= Yii::t('app', 'CLR Formula: (SNF -(FAT * ') ?></p>
+                    <?= $form->field($model, 'lr1_for_clr', ['options' => ['class' => 'form-group pull-left mt-8 col-xs-6 col-md-2'], 'template' => '{input}{error}{hint}',])->textInput() ?>
+                    <p class='pull-left'>) - </p>
+                    <?= $form->field($model, 'lr2_for_clr', ['options' => ['class' => 'form-group pull-left mt-8 col-xs-6 col-md-2'], 'template' => '{input}{error}{hint}',])->textInput() ?>
+                    <p class='pull-left'>) * 4</p>
+                </div>
+
+                <div class='clearfix'></div>
+                <?= Yii::$app->dropdown->dropdownStatic('default_snf', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('default_snf'), false, 'default_snf', false); ?>
+
+                <?= $form->field($model, 'default_snf_value', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
             </div>
 
-            <div class='clearfix'></div>
-            <?= Yii::$app->dropdown->dropdownStatic('default_snf', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_snf'), false, 'default_snf', false); ?>
+            <div class="col-md-6 padding_10_0 theme-box theme_border_left">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"></h4>
+                </div>
+                    <?= $form->field($model, 'variation_in_qty', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
 
-            <?= $form->field($model, 'default_snf_value', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
-            <div class='clearfix'></div>
+                    <?= $form->field($model, 'variation_in_qty_block', ['options' => ['class' => 'form-group col-sm-4 mt15'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
 
-            <div class='clearfix'></div>
-            <div class="col-sm-12">
-                <div class="row">
-                    <?= $form->field($model, 'variation_in_qty', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+                    <?= Yii::$app->dropdown->dropdownStatic('weight_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('weight_setting'), false, 'weight_setting', false); ?>
+                    <div class='clearfix'></div>
+                    <?= $form->field($model, 'variation_in_fat', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
 
-                    <?= $form->field($model, 'variation_in_qty_block', ['options' => ['class' => 'form-group col-sm-2 mt25'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                    <?= $form->field($model, 'variation_in_fat_block', ['options' => ['class' => 'form-group col-sm-4 mt15'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                    <?= Yii::$app->dropdown->dropdownStatic('quality_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('quality_setting'), false, 'quality_setting', false); ?>
 
-                    <?= Yii::$app->dropdown->dropdownStatic('weight_setting', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('weight_setting'), false, 'weight_setting', false); ?>
+                    <div class='clearfix'></div>
+                    <?= $form->field($model, 'variation_in_snf', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+
+                    <?= $form->field($model, 'variation_in_snf_block', ['options' => ['class' => 'form-group col-sm-4 mt15'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                    <?= Yii::$app->dropdown->dropdownStatic('dispatch_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('dispatch_setting'), false, 'dispatch_setting', false); ?>
+                    <div class='clearfix'></div>
+                    <?= $form->field($model, 'sample_milk_size', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+                    <?= Yii::$app->dropdown->dropdownStatic('collection_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('collection_mode'), false, 'collection_mode', false); ?>
+            </div>
+
+            <div class="col-md-6 padding_10_0 theme-box theme_border_right">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"></h4>
+                </div>
+                <?= $form->field($model, 'accept_milk', ['options' => ['class' => 'form-group col-sm-12'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+
+                <div class='clearfix'></div>
+                <div class='pull-left col-sm-4'>
+                    <?= Yii::t('app', 'Allow multiple entry for member collection ') ?>&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <?= $form->field($model, 'multi_entry_diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" style="margin-top:0;">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+
+                <?= $form->field($model, 'multi_entry_same_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <div class='clearfix'></div>
+                <?= $form->field($model, 'seperate_can', ['options' => ['class' => 'form-group col-sm-12'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <div class='clearfix'></div>
+                <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('collection_quantity_mode'), false, 'collection_quantity_mode', false); ?>
+
+                <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('bmc_collection_quantity_mode'), false, 'bmc_collection_quantity_mode', false); ?>
+
+                <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('local_milk_sale_quantity_mode'), false, 'local_milk_sale_quantity_mode', false); ?>
+
+                <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('sample_milk_quantity_mode'), false, 'sample_milk_quantity_mode', false); ?>
+
+                <div class='clearfix'></div>
+                <hr />
+            </div>
+
+            <div class="col-md-6 padding_10_0 theme-box">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"><?= Yii::t('app', 'Average Parameter Capture') ?></h4>
+                </div>
+                <p>&nbsp;</p>
+                <div class='col-sm-4'>
+                    <p><?= Yii::t('app', 'When machine out of order') ?></p>
+                    <?= Yii::$app->dropdown->dropdownStatic('based_on', $model, $form, 'form-group', $model->getAttributeLabel('based_on'), false, 'based_on', false); ?>
+
+                    <?= Yii::$app->dropdown->dropdownStatic('shift_type', $model, $form, 'form-group', $model->getAttributeLabel('shift_code'), false, 'shift_code', false); ?>
+
+                    <?= $form->field($model, 'no', ['options' => ['class' => 'form-group']])->textInput() ?>
+                </div>
+                <div class='col-sm-4'>
+                    <p><?= Yii::t('app', 'For Display Purpose') ?></p>
+                    <?= Yii::$app->dropdown->dropdownStatic('based_on', $model, $form, 'form-group', $model->getAttributeLabel('based_on_disp'), false, 'based_on_disp', false); ?>
+
+                    <?= Yii::$app->dropdown->dropdownStatic('shift_type', $model, $form, 'form-group', $model->getAttributeLabel('shift_code_disp'), false, 'shift_code_disp', false); ?>
+
+                    <?= $form->field($model, 'no_disp', ['options' => ['class' => 'form-group']])->textInput() ?>
+                </div>
+                <div class='col-sm-4'>
+                    <p><?= Yii::t('app', 'Local Milk Sale') ?></p>
+                    <?= Yii::$app->dropdown->dropdownStatic('based_on_local', $model, $form, 'form-group', $model->getAttributeLabel('based_on_local_sale'), false, 'based_on_local_sale', false); ?>
+
+                    <?= $form->field($model, 'no_disp_local_sale', ['options' => ['class' => 'form-group']])->textInput() ?>
+
+                    <?= $form->field($model, 'per_local_sale', ['options' => ['class' => 'form-group']])->textInput() ?>
                 </div>
             </div>
-            <div class='clearfix'></div>
-            <?= $form->field($model, 'variation_in_fat', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
-
-            <?= $form->field($model, 'variation_in_fat_block', ['options' => ['class' => 'form-group col-sm-2 mt25'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <?= Yii::$app->dropdown->dropdownStatic('quality_setting', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('quality_setting'), false, 'quality_setting', false); ?>
-
-            <div class='clearfix'></div>
-            <?= $form->field($model, 'variation_in_snf', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
-
-            <?= $form->field($model, 'variation_in_snf_block', ['options' => ['class' => 'form-group col-sm-2 mt25'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <?= Yii::$app->dropdown->dropdownStatic('dispatch_setting', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('dispatch_setting'), false, 'dispatch_setting', false); ?>
-            <div class='clearfix'></div>
-            <?= $form->field($model, 'sample_milk_size', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
-
-            <?= Yii::$app->dropdown->dropdownStatic('collection_mode', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('collection_mode'), false, 'collection_mode', false); ?>
-            <div class='clearfix'></div>
-            <?= $form->field($model, 'accept_milk', ['options' => ['class' => 'form-group col-sm-12'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-
-            <div class='clearfix'></div>
-            <div class='pull-left col-sm-4'>
-                <?= Yii::t('app', 'Allow multiple entry for member collection ') ?>&nbsp;&nbsp;&nbsp;&nbsp;
-            </div>
-            <?= $form->field($model, 'multi_entry_diff_milk_type', ['options' => ['class' => 'form-group col-sm-3'], 'checkboxTemplate' => '<div class="checkbox" style="margin-top:0;">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
-
-            <?= $form->field($model, 'multi_entry_same_milk_type', ['options' => ['class' => 'form-group col-sm-2'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <div class='clearfix'></div>
-            <?= $form->field($model, 'seperate_can', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <div class='clearfix'></div>
-            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('collection_quantity_mode'), false, 'collection_quantity_mode', false); ?>
-
-            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('bmc_collection_quantity_mode'), false, 'bmc_collection_quantity_mode', false); ?>
-
-            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('local_milk_sale_quantity_mode'), false, 'local_milk_sale_quantity_mode', false); ?>
-
-            <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('sample_milk_quantity_mode'), false, 'sample_milk_quantity_mode', false); ?>
-
-            <div class='clearfix'></div>
-            <hr />
-            <div class='col-sm-12'>
-                <p class='text-center'><?= Yii::t('app', 'Average Parameter Capture') ?></p>
-            </div>
-            <p>&nbsp;</p>
-            <div class='col-sm-4'>
-                <p><?= Yii::t('app', 'When machine out of order') ?></p>
-                <?= Yii::$app->dropdown->dropdownStatic('based_on', $model, $form, 'form-group', $model->getAttributeLabel('based_on'), false, 'based_on', false); ?>
-
-                <?= Yii::$app->dropdown->dropdownStatic('shift_type', $model, $form, 'form-group', $model->getAttributeLabel('shift_code'), false, 'shift_code', false); ?>
-
-                <?= $form->field($model, 'no', ['options' => ['class' => 'form-group']])->textInput() ?>
-            </div>
-            <div class='col-sm-4'>
-                <p><?= Yii::t('app', 'For Display Purpose') ?></p>
-                <?= Yii::$app->dropdown->dropdownStatic('based_on', $model, $form, 'form-group', $model->getAttributeLabel('based_on_disp'), false, 'based_on_disp', false); ?>
-
-                <?= Yii::$app->dropdown->dropdownStatic('shift_type', $model, $form, 'form-group', $model->getAttributeLabel('shift_code_disp'), false, 'shift_code_disp', false); ?>
-
-                <?= $form->field($model, 'no_disp', ['options' => ['class' => 'form-group']])->textInput() ?>
-            </div>
-            <div class='col-sm-4'>
-                <p><?= Yii::t('app', 'Local Milk Sale') ?></p>
-                <?= Yii::$app->dropdown->dropdownStatic('based_on_local', $model, $form, 'form-group', $model->getAttributeLabel('based_on_local_sale'), false, 'based_on_local_sale', false); ?>
-
-                <?= $form->field($model, 'no_disp_local_sale', ['options' => ['class' => 'form-group']])->textInput() ?>
-
-                <?= $form->field($model, 'per_local_sale', ['options' => ['class' => 'form-group']])->textInput() ?>
-            </div>
-            <div class='clearfix'></div>
         </div>
     </div>
 </div>

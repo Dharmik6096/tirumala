@@ -10,12 +10,11 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 <?php if (!empty($dataProvider->getModels())) {
     ?>
     <div class="showHideData">
-        <div class="grid-search no-effect" >
-            <div class="col-sm-6">
+        <div class=" no-effect" >
+            <div class="col-sm-6 ">
     <!--                <h5 class="modal-title mt10 pb5"><?php // echo Yii::t('app', 'RMRD'); ?></h5>  
                 <hr class="line-color margin_0">  -->
-                <div class="view-subtitle margin_0"><h5 class="pd5"><?= Yii::t('app', 'RMRD') ?></h5></div>
-                <hr class="line-color margin_0">
+                <div class="view-subtitle margin_0 theme-box-heading"><h5 class=""><?= Yii::t('app', 'RMRD') ?></h5></div>
                 <?php
                 $form = ActiveForm::begin([
                             'id' => 'widget-mapping-form',
@@ -28,7 +27,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
                 $attribute = [
                     ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_SUCCESS,
-                        'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+                        'headerOptions' => ['class' => 'skip-export '], 'contentOptions' => ['class' => 'skip-export kv-align-center'],
                         'checkboxOptions' => function($model) use ($selectedArray) {
                             return ['class' => 'checkbox', 'value' => $model['widget_id'], 'checked' => in_array($model['widget_id'], $selectedArray)];
                         }],
@@ -60,10 +59,9 @@ use webvimark\modules\UserManagement\components\GhostHtml;
                 DynaGrid::end();
                 ?>
             </div>
-            <div class="col-sm-6" >
+            <div class="col-sm-6 " >
                    <!--<h5 class="modal-title mt10"><?php // echo Yii::t('app', 'FARMER'); ?></h5>-->  
-                <div class="view-subtitle margin_0"><h5 class="pd5"><?= Yii::t('app', 'FARMER') ?></h5></div>
-                <hr class="line-color margin_0">
+                <div class="view-subtitle margin_0 theme-box-heading"><h5 class=""><?= Yii::t('app', 'FARMER') ?></h5></div>
                 <?php
                 $attributeOther = [
                     ['class' => 'kartik\grid\CheckboxColumn',
@@ -102,7 +100,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             </div>
         </div>
         <div class="clearfix"></div>
-        <div class="panel-footer" >
+        <div class="col-sm-2 mt10" >
             <?php
             echo GhostHtml::a(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], ['class' => 'btn btn-primary', 'id' => 'mapping-widget']);
             ?>

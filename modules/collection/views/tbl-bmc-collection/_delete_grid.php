@@ -77,7 +77,7 @@ $form = ActiveForm::begin([
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
     ?>
 </div>
-<div class="panel-footer" >
+<div class="col-sm-12 margin-top-10 form-group" >
     <?php
     if (!empty($dataProvider->getModels())) {
         echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary', 'id' => 'delete']);

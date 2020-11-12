@@ -12,6 +12,10 @@ $config = [
     'bootstrap' => ['log'],
     'timeZone' => 'Asia/Calcutta',
     // 'language'=>'gu',
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm' => '@vendor/npm-asset',
+    ],
     'components' => [
         'session' => ['name' => 'tirumala'],
         'general' => ['class' => 'app\components\GeneralFunctions'],

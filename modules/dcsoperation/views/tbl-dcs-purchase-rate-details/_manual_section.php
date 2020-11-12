@@ -10,7 +10,7 @@ $this->title = Yii::t('app', 'Milk Rate - Manually');
 <?php
 $form = ActiveForm::begin(['id' => 'dynamic-form',
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -18,68 +18,67 @@ $form = ActiveForm::begin(['id' => 'dynamic-form',
         ]]);
 ?>
 
-<div class="panel-subheading">
-    <h5 class="panel-subtitle"><?php echo Yii::t('app', 'Milk Rate - Manual'); ?></h5>
+<div class="row panel-subheading padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom">
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+        <h4 class="theme-box-heading"><?php echo Yii::t('app', $this->title); ?></h4>
+    </div>
 
     <?php
     echo $form->errorSummary($purchaseBasedModel);
     $qualityparam = $purchaseBasedModel->quality_param_code;
     ?>
 
-    <div class="row">
-        <div class="col-sm-3 change">
+
+        <div class="col-sm-2 change">
             <?= Yii::$app->dropdown->dropdown('rate_type_code', $purchaseBasedModel, $form, '', 'Rate Type', false, '[0]rate_type'); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $purchaseBasedModel, $form, '', 'Milk Quality Type', false, '[0]milk_quality_type_code'); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $purchaseBasedModel, $form, '', 'Milk Type', false, '[0]milk_type_code'); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]quality_param_code')->dropDownList([], ['prompt' => Yii::t('app','Select Quality Param')]); ?>
         </div>
-        <div class="clearfix"></div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]start_range')->textInput(['class' => 'form-control number-validate'])->label('Start') ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]end_range')->textInput(['class' => 'form-control number-validate'])->label('End') ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]kg_rate')->textInput(['class' => 'form-control number-validate']) ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]deduction_type')->dropDownList([0 => 'NA', 1 => 'Value Addition', 2 => 'Value Deduction', 3 => 'Percentage Addition', 4 => 'Percentage Deduction'], ['prompt' => Yii::t('app','Select Addition/Deduction Type')]); ?>
         </div>
-        <div class="clearfix"></div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]ref_type')->dropDownList([0 => 'NA', 1 => 'Fixed Point', 2 => 'Actual'], ['prompt' => Yii::t('app','Select Ref. Type')]); ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]fixed_point')->textInput(['class' => 'form-control number-validate']) ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]value')->textInput(['class' => 'form-control number-validate']) ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]step')->textInput(['class' => 'form-control qty-validate']) ?>
         </div>
-        <div class="clearfix"></div>
-        <div class="col-sm-6">
+        <div class="col-sm-2">
             <?= $form->field($purchaseBasedModel, '[0]formula_code')->dropDownList([]) ?>
         </div>
         <?= Html::hiddenInput('purchase_rate', '', ['id' => 'purchase_rate']); ?>
         <?= Html::hiddenInput('quality_param', $quality_param, ['id' => 'quality_param']); ?>
 
         <!--<div class="clearfix"></div>-->
-        <div class="col-sm-3 mt25 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?= Yii::$app->controls->save('SAVE', $purchaseBasedModel); ?>
             </div>
         </div>
     </div>
-</div>
+
 <?php ActiveForm::end(); ?>
 
 <div class="ex2-grid">

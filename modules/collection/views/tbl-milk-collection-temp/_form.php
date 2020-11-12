@@ -25,36 +25,41 @@ $form = ActiveForm::begin([
 
             'options' => ['id' => 'milk-coll-temp-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
-<div class="row">
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkcollectiontemp-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
-    </div> 
+<div class="row theme_border_left theme_border_right">
+    <div class="col-md-12 padding_10_0 theme-box ">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Manual Milk Collection</h4>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkcollectiontemp-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
+        </div> 
 
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkcollectiontemp-plant_code', 'mcc_code', $model->getAttributeLabel('mcc_code')); ?>
-    </div>      
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollectiontemp-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkcollectiontemp-plant_code', 'mcc_code', $model->getAttributeLabel('mcc_code')); ?>
+        </div>      
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollectiontemp-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollectiontemp-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>         
+        </div>  
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', 'form-group col-sm-2'); ?>
+        </div>
+        <div class="col-sm-2 shift rtpl_validate">
+            <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift'); ?>
+        </div>  
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollectiontemp-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>         
-    </div>  
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', 'form-group col-sm-2'); ?>
-    </div>
-    <div class="col-sm-2 shift rtpl_validate">
-        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, false, 'shift'); ?>
-    </div>  
     <div class="clearfix"></div>
     <div id="coll_form">
         <div class="col-sm-2">
@@ -69,20 +74,20 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', 'Milk Quality Type', false, 'milk_quality_type_code'); ?>
         </div>
         <div class="clearfix"></div>
-        <div class="col-sm-1 rtpl_validate">
+        <div class="col-sm-2 rtpl_validate">
             <?= $form->field($model, 'fat')->textInput() ?>
         </div>
-        <div class="col-sm-1 rtpl_validate">
+        <div class="col-sm-2 rtpl_validate">
             <?= $form->field($model, 'snf')->textInput() ?>
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <?= $form->field($model, 'clr')->textInput() ?>
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
             <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <?= $form->field($model, 'qty')->textInput() ?>
         </div>
         <div class="col-sm-2">
@@ -90,7 +95,9 @@ $form = ActiveForm::begin([
         </div>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+
+<div class="row">
+<div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([
@@ -158,7 +165,9 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
-<h5 class="panel-heading"><?= Yii::t('app', 'Manual Milk Collection Details') ?></h5>
+<div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+    <h4 class="theme-box-heading"><?= Yii::t('app', 'Manual Milk Collection Details') ?></h4>
+</div>
 <?php
 $attribute = [
     ['header' => 'Member Code', 'attribute' => 'member_code', 'value' => function($model) {
@@ -187,6 +196,7 @@ $grid_option = [
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['milk-coll-temp-grid']);
 ?>
+</div>
 <?php
 $script = "
     amount();

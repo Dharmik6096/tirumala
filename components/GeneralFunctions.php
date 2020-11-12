@@ -599,19 +599,21 @@ class GeneralFunctions extends Component {
     }
 
     public function checkDirectory($path, $permission = '0755') {
+
         if (file_exists($path)) {
             if (!is_dir($path)) { //if file is already present, but it's not a dir
-                if (mkdir($path, $permission, true) == false) {
+                if (mkdir($path, 0777, true) == false) {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
             }
         } else { //no file exists with this name
-            if (mkdir($path, $permission, true) == false) {
+            if (mkdir($path, 0777, true) == false) {
                 die('Failed to create folders...' . $path);
                 return false;
             }
         }
+        chmod($path, 0777);
         return true;
     }
 
@@ -996,7 +998,7 @@ class GeneralFunctions extends Component {
                 $dsn .= ';dbname=' . $model->db_name;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
-                $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
+                $dsn .=!empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
         }
         return $dsn;
@@ -1340,7 +1342,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false) {
+    public function getCustomer($model, $type, $exCode = false, $bmcCode = false) {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1354,12 +1356,6 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->dcsCode, 'bmc_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'bmc_code');
-            }
-        } else if ($refCode) {
-            if (strtolower($type) == 'dcs') {
-                $name = $this->getforeignkey($model->dcsCode, 'ref_code');
-            } else {
-                $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
             }
         } else {
             if (strtolower($type) == 'dcs') {
@@ -1732,8 +1728,12 @@ class GeneralFunctions extends Component {
                 if (empty($model->{$ex_code_key})) {
                     $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
                 } else {
-                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
-                    if (strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
+                    $old_ex_code = $model->oldAttributes[$ex_code_key];
+                    $allow_update = ($old_ex_code === $model->{$ex_code_key}) ? FALSE : TRUE;
+                    if ($allow_update) {
+                        $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    }
+                    if ($allow_update && strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
                         $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' length must be ' . $keyPattern['ex_code_length'] . '.'));
                     } else {
                         $ex_cnt = $model->find()
@@ -1844,7 +1844,7 @@ class GeneralFunctions extends Component {
 
     public function validateBeneficiary($model, $attribute, $params) {
         if (!empty($model->$attribute))
-            if (!preg_match('/^[a-zA-Z]+(\s{1}+[a-zA-Z]+)*$/', $model->$attribute)) {
+            if (!preg_match('/^[a-zA-Z]+(\s[a-zA-Z]+)?$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' Is Invalid'));
                 return false;
             }
@@ -1854,6 +1854,24 @@ class GeneralFunctions extends Component {
         $model = new TblUnions();
         $data = $model->find()->where(['union_code' => $union])->one();
         return !empty($data) ? $data->eipl_code : '';
+    }
+
+    function distanceCalculation($point1_lat, $point1_long, $point2_lat, $point2_long, $unit = 'km', $decimals = 2) {
+        // Calculate the distance in degrees
+        $degrees = rad2deg(acos((sin(deg2rad($point1_lat)) * sin(deg2rad($point2_lat))) + (cos(deg2rad($point1_lat)) * cos(deg2rad($point2_lat)) * cos(deg2rad($point1_long - $point2_long)))));
+
+        // Convert the distance in degrees to the chosen unit (kilometres, miles or nautical miles)
+        switch ($unit) {
+            case 'km':
+                $distance = $degrees * 111.13384; // 1 degree = 111.13384 km, based on the average diameter of the Earth (12,735 km)
+                break;
+            case 'mi':
+                $distance = $degrees * 69.05482; // 1 degree = 69.05482 miles, based on the average diameter of the Earth (7,913.1 miles)
+                break;
+            case 'nmi':
+                $distance = $degrees * 59.97662; // 1 degree = 59.97662 nautic miles, based on the average diameter of the Earth (6,876.3 nautical miles)
+        }
+        return round($distance, $decimals);
     }
 
 }

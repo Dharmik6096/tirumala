@@ -9,7 +9,7 @@ use yii\helpers\Url;
 $this->title = Yii::t('app', 'Delete Map Route Source');
 $action = Url::to(['bulk-delete']);
 ?>
-<div class="grid-search no-effect">
+<div class=" no-effect">
     <?php
     $form = ActiveForm::begin([
                 'id' => 'delete-map-route',

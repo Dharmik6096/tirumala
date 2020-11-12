@@ -34,23 +34,22 @@ $start_date = Yii::$app->controls->view_date($model->complaintCode->date);
         <? = Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblcomplaint-union_code', '', 'Society Name','',$disabled); ?>
     </div>-->
     <?= $form->field($model, 'complaint_code')->hiddenInput(['value'=>''])->label(false); ?>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'contact_person')->textInput() ?>
     </div> 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
        <?php echo $form->field($model, 'status')->dropdownList($status); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
        <?php echo $form->field($model, 'issue_type')->dropdownList($complaint_type, ['prompt'=>'Select Complaint Type']); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'date', '', '', $start_date); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>   
-    <div class="col-sm-3 mt25">
+    <div class="col-sm-2 mt10">
         <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div>
     <div class="clearfix"></div>

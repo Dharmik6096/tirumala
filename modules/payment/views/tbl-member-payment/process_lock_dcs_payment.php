@@ -36,7 +36,7 @@ $tot_amt = array_sum(array_map(function($array) {
                 $form = ActiveForm::begin([
                             'id' => 'member-wise-payment-summary-form',
                             'validateOnBlur' => false,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,

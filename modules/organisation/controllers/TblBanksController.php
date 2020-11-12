@@ -222,10 +222,10 @@ class TblBanksController extends \app\controllers\ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo Json::encode(['output' => $out]);
+            return Json::encode(['output' => $out]);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => $selected]);
+        return Json::encode(['output' => '', 'selected' => $selected]);
     }
 
     public function actionMapDistricts($id) {
@@ -296,11 +296,11 @@ class TblBanksController extends \app\controllers\ChildController {
                     $out[] = array('id' => $key,
                         'name' => $r);
                 }
-                echo Json::encode(['output' => $out]);
+                return Json::encode(['output' => $out]);
                 return;
             }
         }
-        echo Json::encode(['output' => '']);
+        return Json::encode(['output' => '']);
     }
 
 }

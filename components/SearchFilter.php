@@ -281,6 +281,9 @@ class SearchFilter {
             'TblPaymentCycleSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblVillagesSearch' => [
+                'filter' => ['state','district'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

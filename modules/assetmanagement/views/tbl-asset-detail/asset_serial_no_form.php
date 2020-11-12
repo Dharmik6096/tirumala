@@ -14,7 +14,7 @@ use yii\helpers\Url;
                     'class' => 'mt15'
                 ],
                 'validateOnBlur' => FALSE,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

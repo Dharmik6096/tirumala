@@ -20,7 +20,6 @@ $btn = $type == 'create' ? 'create' : 'update';
                     'field-class' => 'form-group col-sm-6'
                 ],
                 'validateOnBlur' => FALSE,
-                'validateOnEnter' => TRUE,
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,
@@ -29,7 +28,7 @@ $btn = $type == 'create' ? 'create' : 'update';
     <?php echo $form->errorSummary($model); ?>
     <div class="single_entry_area col-sm-12 padding-left-0 padding-right-0">
         <div class="col-sm-12 padding-left-0 padding-right-0">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', FALSE, $readonly); ?>
             </div>
             <?php
@@ -40,28 +39,28 @@ $btn = $type == 'create' ? 'create' : 'update';
                 $class_dcs = $model->store_location_type == 3 ? 'default_hide' : '';
             }
             ?>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('from_type'), $readonly, 'from_type'); ?>
             </div>
-            <div class="col-sm-3 from_warehouse from_plant from_hide <?= $class ?>">
+            <div class="col-sm-2 from_warehouse from_plant from_hide <?= $class ?>">
                 <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'tblassetset-from_type', '', $model->getAttributeLabel('from_dest'), 'from_dest', $readonly); ?>
             </div>
-            <div class="col-sm-3 from_bmc from_dcs default_hide from_hide">
+            <div class="col-sm-2 from_bmc from_dcs default_hide from_hide">
                 <?= Yii::$app->dropdown->union_plant($model, $form, 'tblassetset-union_code', 'from_plant', $model->getAttributeLabel('from_plant')); ?>
             </div>
-            <div class="col-sm-3 from_bmc from_dcs default_hide from_hide">
+            <div class="col-sm-2 from_bmc from_dcs default_hide from_hide">
                 <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblassetset-from_plant', 'from_mcc', $model->getAttributeLabel('from_mcc')); ?>
             </div>
-            <div class="col-sm-3 from_bmc from_dcs default_hide from_hide">
+            <div class="col-sm-2 from_bmc from_dcs default_hide from_hide">
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblassetset-from_mcc', 'from_bmc', $model->getAttributeLabel('from_bmc')); ?>
             </div>
-            <div class="col-sm-3 default_hide from_hide">
+            <div class="col-sm-2 default_hide from_hide">
                 <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassetset-from_bmc', 'from_dcs', $model->getAttributeLabel('from_dcs'), FALSE, '', FALSE, TRUE); ?>
             </div>
-            <div class="col-sm-3 from_bmc from_plant from_warehouse from_hide <?= $class ?>">
+            <div class="col-sm-2 from_bmc from_plant from_warehouse from_hide <?= $class ?>">
                 <?= $form->field($model, 'sap_code')->textInput() ?>
             </div>
-            <div class="col-sm-3 from_bmc from_plant from_warehouse from_hide <?= $class ?><?= $class_dcs ?>">
+            <div class="col-sm-2 from_bmc from_plant from_warehouse from_hide <?= $class ?><?= $class_dcs ?>">
                 <?= $form->field($model, 'status', ['checkboxTemplate' => "<div class='checkbox mt25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox()->label('In-Use'); ?>
             </div> 
         </div>

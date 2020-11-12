@@ -13,7 +13,7 @@ use yii\web\JsExpression;
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-member-form', 'class' => 'pull-left'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

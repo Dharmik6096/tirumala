@@ -112,6 +112,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'route_name', $this->model->route_name);
+            
             if ($validate == 1 && empty($this->model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapping, ['Route Mapping', 'create']);
                 if ($transaction !== FALSE) {
@@ -310,7 +311,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                         $historyModel = new TblSocietyCodesHistory();
                         Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
                         $societyCodes->route_code = $modelRouteSource->route_code;
-                        $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + $i, 3, '0', STR_PAD_LEFT);
+//                        $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + $i, 3, '0', STR_PAD_LEFT);
 //                        $societyCodes->bmc_code = $modelRouteSource->getBmcCode();
                         $dcsCode = TblDcs::findOne($d[0]);
                         $dcsCode->scenario = 'routeMapping';
@@ -371,11 +372,11 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionDeleteMapRoute() {

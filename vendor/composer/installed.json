@@ -385,54 +385,6 @@
         "installation-source": "dist"
     },
     {
-        "name": "bower-asset/jquery.inputmask",
-        "version": "3.2.7",
-        "version_normalized": "3.2.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/RobinHerbots/Inputmask.git",
-            "reference": "5a72c563b502b8e05958a524cdfffafe9987be38"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/RobinHerbots/Inputmask/zipball/5a72c563b502b8e05958a524cdfffafe9987be38",
-            "reference": "5a72c563b502b8e05958a524cdfffafe9987be38",
-            "shasum": ""
-        },
-        "require": {
-            "bower-asset/jquery": ">=1.7"
-        },
-        "type": "bower-asset-library",
-        "extra": {
-            "bower-asset-main": [
-                "./dist/inputmask/inputmask.js"
-            ],
-            "bower-asset-ignore": [
-                "**/*",
-                "!dist/*",
-                "!dist/inputmask/*",
-                "!dist/min/*",
-                "!dist/min/inputmask/*",
-                "!extra/bindings/*",
-                "!extra/dependencyLibs/*",
-                "!extra/phone-codes/*"
-            ]
-        },
-        "installation-source": "dist",
-        "license": [
-            "http://opensource.org/licenses/mit-license.php"
-        ],
-        "description": "jquery.inputmask is a jquery plugin which create an input mask.",
-        "keywords": [
-            "form",
-            "input",
-            "inputmask",
-            "jquery",
-            "mask",
-            "plugins"
-        ]
-    },
-    {
         "name": "bower-asset/punycode",
         "version": "v1.3.2",
         "version_normalized": "1.3.2.0",
@@ -529,17 +481,17 @@
     },
     {
         "name": "cebe/markdown",
-        "version": "1.1.1",
-        "version_normalized": "1.1.1.0",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/cebe/markdown.git",
-            "reference": "c30eb5e01fe021cc5bba2f9ee0eeef96d4931166"
+            "reference": "2b2461bed9e15305486319ee552bafca75d1cdaa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/cebe/markdown/zipball/c30eb5e01fe021cc5bba2f9ee0eeef96d4931166",
-            "reference": "c30eb5e01fe021cc5bba2f9ee0eeef96d4931166",
+            "url": "https://api.github.com/repos/cebe/markdown/zipball/2b2461bed9e15305486319ee552bafca75d1cdaa",
+            "reference": "2b2461bed9e15305486319ee552bafca75d1cdaa",
             "shasum": ""
         },
         "require": {
@@ -551,17 +503,17 @@
             "facebook/xhprof": "*@dev",
             "phpunit/phpunit": "4.1.*"
         },
-        "time": "2016-09-14T20:40:20+00:00",
+        "time": "2020-02-26T01:55:18+00:00",
         "bin": [
             "bin/markdown"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.1.x-dev"
+                "dev-master": "1.2.x-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "cebe\\markdown\\": ""
@@ -677,7 +629,8 @@
             "acceptance testing",
             "functional testing",
             "unit testing"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "codeception/specify",
@@ -861,23 +814,26 @@
     },
     {
         "name": "ezyang/htmlpurifier",
-        "version": "v4.8.0",
-        "version_normalized": "4.8.0.0",
+        "version": "v4.13.0",
+        "version_normalized": "4.13.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ezyang/htmlpurifier.git",
-            "reference": "d0c392f77d2f2a3dcf7fcb79e2a1e2b8804e75b2"
+            "reference": "08e27c97e4c6ed02f37c5b2b20488046c8d90d75"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/d0c392f77d2f2a3dcf7fcb79e2a1e2b8804e75b2",
-            "reference": "d0c392f77d2f2a3dcf7fcb79e2a1e2b8804e75b2",
+            "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/08e27c97e4c6ed02f37c5b2b20488046c8d90d75",
+            "reference": "08e27c97e4c6ed02f37c5b2b20488046c8d90d75",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2"
         },
-        "time": "2016-07-16T12:58:58+00:00",
+        "require-dev": {
+            "simpletest/simpletest": "dev-master#72de02a7b80c6bb8864ef9bf66d41d2f58f826bd"
+        },
+        "time": "2020-06-29T00:56:53+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -886,11 +842,14 @@
             },
             "files": [
                 "library/HTMLPurifier.composer.php"
+            ],
+            "exclude-from-classmap": [
+                "/library/HTMLPurifier/Language/"
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "LGPL"
+            "LGPL-2.1-or-later"
         ],
         "authors": [
             {
@@ -4021,7 +3980,8 @@
         "homepage": "https://github.com/sebastianbergmann/php-token-stream/",
         "keywords": [
             "tokenizer"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "phpunit/phpunit",
@@ -4166,7 +4126,8 @@
         "keywords": [
             "mock",
             "xunit"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "psr/http-message",
@@ -5512,6 +5473,154 @@
         ]
     },
     {
+        "name": "symfony/polyfill-php80",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/polyfill-php80.git",
+            "reference": "d87d5766cbf48d72388a9f6b85f280c8ad51f981"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/d87d5766cbf48d72388a9f6b85f280c8ad51f981",
+            "reference": "d87d5766cbf48d72388a9f6b85f280c8ad51f981",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.0.8"
+        },
+        "time": "2020-07-14T12:35:20+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.18-dev"
+            },
+            "thanks": {
+                "name": "symfony/polyfill",
+                "url": "https://github.com/symfony/polyfill"
+            }
+        },
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Polyfill\\Php80\\": ""
+            },
+            "files": [
+                "bootstrap.php"
+            ],
+            "classmap": [
+                "Resources/stubs"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Ion Bazan",
+                "email": "ion.bazan@gmail.com"
+            },
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
+            "polyfill",
+            "portable",
+            "shim"
+        ],
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
+        "name": "symfony/process",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/process.git",
+            "reference": "f4619b7c317b62637c57ff7cf970139a64c0bf90"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/process/zipball/f4619b7c317b62637c57ff7cf970139a64c0bf90",
+            "reference": "f4619b7c317b62637c57ff7cf970139a64c0bf90",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.2.5",
+            "symfony/polyfill-php80": "^1.15"
+        },
+        "time": "2020-07-23T08:36:44+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.2-dev"
+            }
+        },
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Process\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Process Component",
+        "homepage": "https://symfony.com",
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
         "name": "symfony/yaml",
         "version": "v3.1.6",
         "version_normalized": "3.1.6.0",
@@ -5934,26 +6043,69 @@
         "description": "User with improved RBAC"
     },
     {
-        "name": "yiisoft/yii2",
-        "version": "2.0.10",
-        "version_normalized": "2.0.10.0",
+        "name": "yidas/yii2-bower-asset",
+        "version": "2.0.13.1",
+        "version_normalized": "2.0.13.1",
         "source": {
             "type": "git",
-            "url": "https://github.com/yiisoft/yii2-framework.git",
-            "reference": "5bfcb7a6dfa9771e2248eb8c4448613330f343ff"
+            "url": "https://github.com/yidas/yii2-bower-asset.git",
+            "reference": "056dd55087e0b945c01c91c99eb346ef6e28a42e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/5bfcb7a6dfa9771e2248eb8c4448613330f343ff",
-            "reference": "5bfcb7a6dfa9771e2248eb8c4448613330f343ff",
+            "url": "https://api.github.com/repos/yidas/yii2-bower-asset/zipball/056dd55087e0b945c01c91c99eb346ef6e28a42e",
+            "reference": "056dd55087e0b945c01c91c99eb346ef6e28a42e",
+            "shasum": ""
+        },
+        "provide": {
+            "bower-asset/bootstrap": "*",
+            "bower-asset/inputmask": "*",
+            "bower-asset/jquery": "*",
+            "bower-asset/punycode": "*",
+            "bower-asset/typeahead.js": "*",
+            "bower-asset/yii2-pjax": "*"
+        },
+        "time": "2019-09-19T11:33:03+00:00",
+        "type": "yii2-extension",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "yidas\\yii2BowerAsset\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Bower Assets for Yii 2 app provided via Composer repository",
+        "keywords": [
+            "bower",
+            "bower asset",
+            "framework",
+            "yii2"
+        ]
+    },
+    {
+        "name": "yiisoft/yii2",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/yiisoft/yii2-framework.git",
+            "reference": "4acd4b47a0bd1879f5b6e3a1b999472a52ee81a9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/4acd4b47a0bd1879f5b6e3a1b999472a52ee81a9",
+            "reference": "4acd4b47a0bd1879f5b6e3a1b999472a52ee81a9",
             "shasum": ""
         },
         "require": {
-            "bower-asset/jquery": "2.2.*@stable | 2.1.*@stable | 1.11.*@stable | 1.12.*@stable",
-            "bower-asset/jquery.inputmask": "~3.2.2",
+            "bower-asset/inputmask": "~3.2.2 | ~3.3.5",
+            "bower-asset/jquery": "3.5.*@stable | 3.4.*@stable | 3.3.*@stable | 3.2.*@stable | 3.1.*@stable | 2.2.*@stable | 2.1.*@stable | 1.11.*@stable | 1.12.*@stable",
             "bower-asset/punycode": "1.3.*",
             "bower-asset/yii2-pjax": "~2.0.1",
-            "cebe/markdown": "~1.0.0 | ~1.1.0",
+            "cebe/markdown": "~1.0.0 | ~1.1.0 | ~1.2.0",
             "ext-ctype": "*",
             "ext-mbstring": "*",
             "ezyang/htmlpurifier": "~4.6",
@@ -5961,7 +6113,7 @@
             "php": ">=5.4.0",
             "yiisoft/yii2-composer": "~2.0.4"
         },
-        "time": "2016-10-20T12:02:50+00:00",
+        "time": "2020-08-19T17:32:15+00:00",
         "bin": [
             "yii"
         ],
@@ -5971,7 +6123,7 @@
                 "dev-master": "2.0.x-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "yii\\": ""
@@ -6020,6 +6172,12 @@
                 "name": "Dmitry Naumenko",
                 "email": "d.naumenko.a@gmail.com",
                 "role": "Core framework development"
+            },
+            {
+                "name": "Boudewijn Vahrmeijer",
+                "email": "info@dynasource.eu",
+                "homepage": "http://dynasource.eu",
+                "role": "Core framework development"
             }
         ],
         "description": "Yii PHP Framework Version 2",
@@ -6027,6 +6185,20 @@
         "keywords": [
             "framework",
             "yii2"
+        ],
+        "funding": [
+            {
+                "url": "https://github.com/yiisoft",
+                "type": "github"
+            },
+            {
+                "url": "https://opencollective.com/yiisoft",
+                "type": "open_collective"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/yiisoft/yii2",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -6083,23 +6255,27 @@
     },
     {
         "name": "yiisoft/yii2-composer",
-        "version": "2.0.4",
-        "version_normalized": "2.0.4.0",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/yiisoft/yii2-composer.git",
-            "reference": "7452fd908a5023b8bb5ea1b123a174ca080de464"
+            "reference": "c372400aa6b6f2c52a82764496b37eb50d6e479f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/7452fd908a5023b8bb5ea1b123a174ca080de464",
-            "reference": "7452fd908a5023b8bb5ea1b123a174ca080de464",
+            "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/c372400aa6b6f2c52a82764496b37eb50d6e479f",
+            "reference": "c372400aa6b6f2c52a82764496b37eb50d6e479f",
             "shasum": ""
         },
         "require": {
-            "composer-plugin-api": "^1.0"
+            "composer-plugin-api": "^1.0 | ^2.0"
         },
-        "time": "2016-02-06T00:49:24+00:00",
+        "require-dev": {
+            "composer/composer": "^1.0 | ^2.0@dev",
+            "phpunit/phpunit": "<7"
+        },
+        "time": "2020-06-24T00:04:19+00:00",
         "type": "composer-plugin",
         "extra": {
             "class": "yii\\composer\\Plugin",
@@ -6107,7 +6283,7 @@
                 "dev-master": "2.0.x-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "yii\\composer\\": ""
@@ -6121,6 +6297,10 @@
             {
                 "name": "Qiang Xue",
                 "email": "qiang.xue@gmail.com"
+            },
+            {
+                "name": "Carsten Brandt",
+                "email": "mail@cebe.cc"
             }
         ],
         "description": "The composer plugin for Yii extension installer",
@@ -6128,6 +6308,20 @@
             "composer",
             "extension installer",
             "yii2"
+        ],
+        "funding": [
+            {
+                "url": "https://github.com/yiisoft",
+                "type": "github"
+            },
+            {
+                "url": "https://opencollective.com/yiisoft",
+                "type": "open_collective"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/yiisoft/yii2-composer",
+                "type": "tidelift"
+            }
         ]
     },
     {
@@ -6333,6 +6527,109 @@
         "keywords": [
             "jQuery UI",
             "yii2"
+        ]
+    },
+    {
+        "name": "yiisoft/yii2-queue",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/yiisoft/yii2-queue.git",
+            "reference": "e0cd8ad740f6e4b7fd76a526ccdaafa3b8305e5e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/yiisoft/yii2-queue/zipball/e0cd8ad740f6e4b7fd76a526ccdaafa3b8305e5e",
+            "reference": "e0cd8ad740f6e4b7fd76a526ccdaafa3b8305e5e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.0",
+            "symfony/process": "^3.3||^4.0||^5.0",
+            "yiisoft/yii2": "~2.0.14"
+        },
+        "require-dev": {
+            "aws/aws-sdk-php": ">=2.4",
+            "enqueue/amqp-lib": "^0.8||^0.9.10",
+            "enqueue/stomp": "^0.8.39",
+            "jeremeamia/superclosure": "*",
+            "pda/pheanstalk": "v3.*",
+            "php-amqplib/php-amqplib": "*",
+            "phpunit/phpunit": "~4.4",
+            "yiisoft/yii2-debug": "*",
+            "yiisoft/yii2-gii": "*",
+            "yiisoft/yii2-redis": "*"
+        },
+        "suggest": {
+            "aws/aws-sdk-php": "Need for aws SQS.",
+            "enqueue/amqp-lib": "Need for AMQP interop queue.",
+            "enqueue/stomp": "Need for Stomp queue.",
+            "ext-gearman": "Need for Gearman queue.",
+            "ext-pcntl": "Need for process signals.",
+            "pda/pheanstalk": "Need for Beanstalk queue.",
+            "php-amqplib/php-amqplib": "Need for AMQP queue.",
+            "yiisoft/yii2-redis": "Need for Redis queue."
+        },
+        "time": "2020-07-18T14:14:33+00:00",
+        "type": "yii2-extension",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.x-dev"
+            }
+        },
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "yii\\queue\\": "src",
+                "yii\\queue\\amqp\\": "src/drivers/amqp",
+                "yii\\queue\\amqp_interop\\": "src/drivers/amqp_interop",
+                "yii\\queue\\beanstalk\\": "src/drivers/beanstalk",
+                "yii\\queue\\db\\": "src/drivers/db",
+                "yii\\queue\\file\\": "src/drivers/file",
+                "yii\\queue\\gearman\\": "src/drivers/gearman",
+                "yii\\queue\\redis\\": "src/drivers/redis",
+                "yii\\queue\\sync\\": "src/drivers/sync",
+                "yii\\queue\\sqs\\": "src/drivers/sqs",
+                "yii\\queue\\stomp\\": "src/drivers/stomp"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Roman Zhuravlev",
+                "email": "zhuravljov@gmail.com"
+            }
+        ],
+        "description": "Yii2 Queue Extension which supported DB, Redis, RabbitMQ, Beanstalk, SQS and Gearman",
+        "keywords": [
+            "async",
+            "beanstalk",
+            "db",
+            "gearman",
+            "gii",
+            "queue",
+            "rabbitmq",
+            "redis",
+            "sqs",
+            "yii"
+        ],
+        "funding": [
+            {
+                "url": "https://github.com/yiisoft",
+                "type": "github"
+            },
+            {
+                "url": "https://opencollective.com/yiisoft",
+                "type": "open_collective"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/yiisoft/yii2-queue",
+                "type": "tidelift"
+            }
         ]
     },
     {

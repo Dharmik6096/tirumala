@@ -16,7 +16,7 @@ $this->title = Yii::$app->label->title('create', 'Bank Detail');
         $form = ActiveForm::begin([
                     'action' => $url,
                     'validateOnBlur' => FALSE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableAjaxValidation' => true,
                     'enableClientValidation' => true,
@@ -34,8 +34,7 @@ $this->title = Yii::$app->label->title('create', 'Bank Detail');
                 'dist_field' => $dist_field
             ])
             ?>
-            <div class="clearfix"></div>
-            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+            <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
                     <?= Yii::$app->controls->reset(); ?>

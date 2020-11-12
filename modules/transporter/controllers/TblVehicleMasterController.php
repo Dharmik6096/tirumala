@@ -154,11 +154,11 @@ class TblVehicleMasterController extends \app\controllers\ChildController
                 //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
                 //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
                 // ]
-                echo Json::encode(['output'=>$out, 'selected'=>'']);
+                return Json::encode(['output'=>$out, 'selected'=>'']);
                 return;
             }
         }
-        echo Json::encode(['output'=>'', 'selected'=>'']);
+        return Json::encode(['output'=>'', 'selected'=>'']);
     
     }
 }

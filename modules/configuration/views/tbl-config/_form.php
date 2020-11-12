@@ -14,7 +14,7 @@ $class = $type == 'create' ? '' : 'no_pointer';
 $form = ActiveForm::begin([
             'options' => [],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -22,10 +22,10 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->configFor($model, $form, 'config_for', $model->getAttributeLabel('config_for'), $readonly); ?>  
     </div>
 

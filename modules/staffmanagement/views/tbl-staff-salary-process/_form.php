@@ -17,7 +17,7 @@ $form = ActiveForm::begin([
 <?= Html::activeHiddenInput($model, 'union_code'); ?>
 <?= Html::activeHiddenInput($model, 'month'); ?>
 <?php if (!empty($dataProvider->getModels())) { ?>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'disbursement_date', 'form-group col-sm-3', true, '', false); ?>
     </div>
     <div class="">

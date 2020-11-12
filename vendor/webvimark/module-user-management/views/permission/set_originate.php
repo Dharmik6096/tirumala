@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'Settings for Originate Actions');
 $form = ActiveForm::begin([
             'id' => 'originate-form',
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => FALSE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => FALSE,
             'validateOnSubmit' => FALSE,

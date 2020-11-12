@@ -10,7 +10,7 @@ use yii\helpers\Url;
 $form = ActiveForm::begin([
             'options' => ['id' => 'master-transfer-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -18,66 +18,75 @@ $form = ActiveForm::begin([
         ]]);
 ?>
 <?php echo $form->errorSummary($model); ?>
-<div class="row">
-    <div class="col-sm-3">
-        <?php
-        echo Yii::$app->dropdown->dropdown('transfer_master_type', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('master_type'), false, 'master_type');
-        ?>
+<div class="row theme_border_left theme_border_right theme_border_bottom">
+    <div class="col-md-12 padding_10_0 theme-box">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Transfer Request For') ?></h4>
+        </div>
+        <div class="col-sm-2">
+            <?php
+            echo Yii::$app->dropdown->dropdown('transfer_master_type', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('master_type'), false, 'master_type');
+            ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->transfer_type($model, $form, 'tblmastertransfer-master_type', 'transfer_type', $model->getAttributeLabel('transfer_type')); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+        </div>
+        <div class="col-sm-2 reset_field">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmastertransfer-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
+        </div>
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->transfer_type($model, $form, 'tblmastertransfer-master_type', 'transfer_type', $model->getAttributeLabel('transfer_type')); ?>
-    </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
-    </div>
-    <div class="col-sm-3 reset_field">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmastertransfer-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
-    </div>
-    <div class="clearfix"></div>
-    <div class="CURRENTINFO reset_field">
-        <h5 class="panel-heading mb15"><?= Yii::t('app', 'Current Details') ?></h5>
-        <div class="col-sm-3">
+    <div class="col-md-12 padding_10_0 theme-box theme_border_right CURRENTINFO reset_field">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Current Details') ?></h4>
+        </div>
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'old_mcc_plant_code', $model->getAttributeLabel('old_mcc_plant_code')); ?>
         </div>
-        <div class="col-sm-3 DCSFARMER">
+        <div class="col-sm-2 DCSFARMER">
             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-old_mcc_plant_code', 'old_bmc_code', $model->getAttributeLabel('old_bmc_code')); ?>
         </div>
-        <div class="col-sm-3 DCSFARMER">
+        <div class="col-sm-2 DCSFARMER">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-old_bmc_code', 'old_dcs_code', $model->getAttributeLabel('old_dcs_code')); ?>         
         </div>
-        <div class="col-sm-3 FARMER">
+        <div class="col-sm-2 FARMER">
             <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmastertransfer-old_dcs_code', '', $model->getAttributeLabel('old_member_code'), 'old_member_code', FALSE, 0, [], TRUE); ?>
         </div>
-        <div class="col-sm-3 DCS">
+        <div class="col-sm-2 DCS">
             <?php //$form->field($model, 'old_route_code')->textInput(['readOnly' => TRUE]) ?>  
         </div>
     </div>
-    <div class="clearfix"></div>
-    <div class="NEWINFO reset_field">
-        <h5 class="panel-heading mb15"><?= Yii::t('app', 'New Details') ?></h5>
-        <div class="col-sm-3 DCSFARMER">
+    <div class="col-md-12 padding_10_0 theme-box theme_border_right NEWINFO reset_field">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'New Details') ?></h4>
+        </div>
+        <div class="col-sm-2 DCSFARMER">
             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'new_mcc_plant_code', $model->getAttributeLabel('new_mcc_plant_code')); ?>
         </div>
-        <div class="col-sm-3 DCSFARMER">
+        <div class="col-sm-2 DCSFARMER">
             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-new_mcc_plant_code', 'new_bmc_code', $model->getAttributeLabel('new_bmc_code')); ?>
         </div>
-        <div class="col-sm-3 FARMER">
+        <div class="col-sm-2 FARMER">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-new_bmc_code', 'new_dcs_code', $model->getAttributeLabel('new_dcs_code')); ?>         
         </div>
-        <!--        <div class="col-sm-3 number-validate FARMER">
+        <!--        <div class="col-sm-2 number-validate FARMER">
         <?php //$form->field($model, 'ex_member_code')->textInput() ?>
                 </div>-->
-        <div class="col-sm-3 DCS">
+        <div class="col-sm-2 DCS">
             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmastertransfer-plant_code,tblmastertransfer-new_mcc_plant_code,tblmastertransfer-new_bmc_code', 'new_route_code', $model->getAttributeLabel('new_route_code')); ?>
         </div>
-        <div class="col-sm-3 DCSFARMER">
+        <div class="col-sm-2 DCSFARMER">
             <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
         </div>
     </div>
-    <div class="col-sm-3  UPDATETRANSACTION">
+    <div class="col-sm-2  UPDATETRANSACTION">
         <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+</div>
+<div class="row">
+    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>

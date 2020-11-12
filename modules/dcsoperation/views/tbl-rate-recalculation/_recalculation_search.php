@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
             'action' => $rtype == 'forced' ? ['create'] : ['create-recalc'],
             'method' => 'get',
             'validateOnBlur' => true,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

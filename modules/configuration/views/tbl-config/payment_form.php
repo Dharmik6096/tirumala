@@ -24,7 +24,7 @@ $defaultToggle = true;
                             'id' => 'userUpdatePsd',
                             'options' => [],
                             'validateOnBlur' => FALSE,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
@@ -33,23 +33,24 @@ $defaultToggle = true;
                 <?php // echo $form->errorSummary($model); ?>
                 <div class="row margin_0">
                     <div class="modal-body">
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
                         </div>
-                        <div class="col-sm-6 "style="display: none">
+                        <div class="col-sm-3 "style="display: none">
                             <?= Yii::$app->dropdown->configFor($model, $form, 'config_for', $model->getAttributeLabel('config_for'), $readonly); ?>  
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Html::hiddenInput('input', 1, ['id' => 'input']); ?>
                             <?= Yii::$app->dropdown->processName($model, $form, 'tblconfig-config_for,input', 'process_name', $model->getAttributeLabel('process_name')); ?>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="clearfix"></div>
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblconfig-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblconfig-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
                         </div>
-                        <div class="col-sm-6 bmc_class">
+                        <div class="col-sm-3 bmc_class">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblconfig-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
                         </div>
 

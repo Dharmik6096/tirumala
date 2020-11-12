@@ -233,26 +233,32 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_code);
             ]);
             ?>
         </div>
-    </div>
-    <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div>
-    <div class="form-grid">
-        <?=
-        $this->render('../../../details/views/tbl-bank-details/_bank_details', [
-            'model' => $model,
-            'dataProvider' => $bdataProvider,
-            'searchModel' => $bsearchModel,
-        ])
-        ?>
-    </div>
+        <div class="col-md-12 padding_10_0 theme-box">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Bank Details</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('../../../details/views/tbl-bank-details/_bank_details', [
+                    'model' => $model,
+                    'dataProvider' => $bdataProvider,
+                    'searchModel' => $bsearchModel,
+                ])
+                ?>
+            </div>
 
-    <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
-    <div class="form-grid">
-        <?=
-        $this->render('../../../details/views/tbl-contact-details/_contact_details', [
-            'model' => $model,
-            'dataProvider' => $cdataProvider,
-            'searchModel' => $csearchModel,
-        ])
-        ?>
-    </div>        
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_top_20 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Contact Details</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                    'model' => $model,
+                    'dataProvider' => $cdataProvider,
+                    'searchModel' => $csearchModel,
+                ])
+                ?>
+            </div>  
+        </div>
+    </div>      
 </div>

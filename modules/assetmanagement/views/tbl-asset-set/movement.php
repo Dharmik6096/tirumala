@@ -18,7 +18,7 @@ $this->title = Yii::$app->label->title('create', 'Asset SAP Code Movement');
                         'field-class' => 'form-group col-sm-6'
                     ],
                     'validateOnBlur' => FALSE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -77,13 +77,13 @@ $this->title = Yii::$app->label->title('create', 'Asset SAP Code Movement');
                     <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblassettransaction-to_bmc', 'to_dcs', $model->getAttributeLabel('to_dcs'), FALSE, '', FALSE, TRUE); ?>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', false, false, false); ?>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= $form->field($model, 'in_ward', ['checkboxTemplate' => "<div class='checkbox mt25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div> 
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
 

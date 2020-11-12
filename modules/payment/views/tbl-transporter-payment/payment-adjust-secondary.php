@@ -164,7 +164,6 @@ $model->final_pay = $model->final_amount;
             <?php
             $form = ActiveForm::begin([
                         'validateOnBlur' => false,
-                        'validateOnEnter' => TRUE,
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,

@@ -25,7 +25,7 @@ class AppAsset extends AssetBundle
         'themes/pcdf/assets/css/style.css',
         'themes/pcdf/assets/css/print.css',
         'themes/pcdf/assets/css/font.css',
-        'vendor/bower/jquery-ui/themes/smoothness/jquery-ui.min.css',
+        'vendor/bower-asset/jquery-ui/themes/smoothness/jquery-ui.min.css',
     ];
     public $js = [
 //        'themes/nddb/assets/js/bootstrap.js',
@@ -37,10 +37,10 @@ class AppAsset extends AssetBundle
 //        'themes/pcdf/assets/js/vmenuModule.js',
         'themes/pcdf/assets/js/script.js',
         'themes/pcdf/assets/js/style.js',
-        'vendor/bower/jquery-ui/ui/minified/core.min.js',
-        'vendor/bower/jquery-ui/ui/minified/widget.min.js',
-        'vendor/bower/jquery-ui/ui/minified/mouse.min.js',
-        'vendor/bower/jquery-ui/ui/minified/sortable.min.js'
+        'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
+        'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
+        'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
+        'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js'
         
     ];
     public $depends = [

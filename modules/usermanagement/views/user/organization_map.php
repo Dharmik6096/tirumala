@@ -24,9 +24,13 @@ $this->title = Yii::t('app', $title);
         ]);
         ?>
 
-        <h5 class="panel-subtitle"><?php echo $title; ?></h5>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?php echo $title; ?></h4>
+            </div>
         <?= $form->errorSummary($model); ?>
-        <div class="row">
+        <div class="col-md-12">
+        <div class="row multiple">
             <?php
             echo $form->field($model, 'federation', [ 'options' => ['class' => 'form-group col-sm-12 hidden',]])
                     ->widget(DualListbox::className(), [
@@ -92,7 +96,6 @@ $this->title = Yii::t('app', $title);
             ]);
             ?>
             <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
-
             <div class="clearfix"></div>
             <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
@@ -102,6 +105,8 @@ $this->title = Yii::t('app', $title);
                 </div>
             </div>
         </div>
+        </div>
+    </div>
         <?php ActiveForm::end(); ?>
     </div>
 </div>

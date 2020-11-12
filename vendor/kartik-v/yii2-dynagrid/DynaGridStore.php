@@ -11,7 +11,7 @@ namespace kartik\dynagrid;
 
 use Yii;
 use yii\web\Cookie;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\db\Query;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
@@ -24,7 +24,7 @@ use kartik\base\Config;
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since 1.2.0
  */
-class DynaGridStore extends Object
+class DynaGridStore extends BaseObject
 {
     const STORE_GRID = 'grid';
     const STORE_FILTER = 'filter';

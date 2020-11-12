@@ -17,7 +17,7 @@ $this->title = Yii::t('app', 'Member Payment Process : Step 1');
                     //'action' => ['list-payment'],
                     //'method' => 'GET',
                     'validateOnBlur' => false,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -49,10 +49,8 @@ $this->title = Yii::t('app', 'Member Payment Process : Step 1');
                 ?>
                 <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblmemberpaymentalias-union_code,tblmemberpaymentalias-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+            <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?php
                     AjaxSubmitButton::begin([

@@ -12,14 +12,23 @@ use app\modules\webservice\components\HttpResponse;
  */
 class RestController extends ActiveController {
 
-    public $response = [
-        'status' => '',
-        'message' => [],
-        'data' => '',
-    ];
+//    public $response = [
+//        'status' => '',
+//        'message' => [],
+//        'data' => '',
+//    ];
     public $modelClass = 'app\modules\webservice\models';
     public $post_data = [];
     public $apply_camel_case = TRUE;
+
+    public function init() {
+        parent::init();
+        $this->response = [
+            'status' => '',
+            'message' => [],
+            'data' => '',
+        ];
+    }
 
     public function actions() {
         return [];

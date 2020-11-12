@@ -13,7 +13,7 @@ $readonly = $type == 'edit' ? true : false;
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-attendance-form'],
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -22,13 +22,13 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <?= Html::activeHiddenInput($model, 'staff_salary_code'); ?> 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
     </div>
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffsalary-union_code', 'form-group col-sm-3 ' . $class, Yii::t('app', 'Staff Member'), 'staff_member_code', $readonly); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->depend_dropdown('staff_member_code', $model, $form, 'tblstaffsalary-union_code', 'form-group col-sm-2 ' . $class, Yii::t('app', 'Staff Member'), 'staff_member_code', $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?php
         $model->wef_date = !empty($model->wef_date) ? date('m-Y', strtotime($model->wef_date)) : NULL;
         ?>
@@ -37,7 +37,7 @@ $form = ActiveForm::begin([
             'mask' => '99-9999',])
         ?> 
     </div>
-    <?= $form->field($model, 'total_value', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['readOnly' => TRUE]) ?>
+    <?= $form->field($model, 'total_value', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readOnly' => TRUE]) ?>
 
 </div>
 <div class="row staffMemberArea"></div>

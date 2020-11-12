@@ -17,7 +17,7 @@ $this->title = Yii::$app->label->title('create', 'Silos Info');
         $form = ActiveForm::begin([
                     'action' => $url,
                     'validateOnBlur' => false,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -31,8 +31,7 @@ $this->title = Yii::$app->label->title('create', 'Silos Info');
                 'form' => $form,
             ])
             ?>
-            <div class="clearfix"></div>
-            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+            <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
                     <?= Yii::$app->controls->reset(); ?>

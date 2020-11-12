@@ -459,10 +459,10 @@ class TblPaymentCycleController extends ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo Json::encode(['output' => $out]);
+            return Json::encode(['output' => $out]);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => $selected]);
+        return Json::encode(['output' => '', 'selected' => $selected]);
     }
 
     public function actionBmcDataUnlock($payment_cycle_code, $id) {

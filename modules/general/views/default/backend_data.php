@@ -4,10 +4,13 @@ use yii\helpers\Html;
 
 $this->title = Yii::$app->label->title('view', 'Backend Data');
 ?>
-<div class="panel panel-default panel-grid panel-main">
+<div class="panel panel-default panel-main">
     <div class="panel-body">
-        <div class="col-sm-6">
-            <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Religion Details</h5></div>
+    <div class="row theme_border_left theme_border_right theme_border_bottom">
+        <div class="col-md-6 padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 margin-bottom-10 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Religion Details</h4>
+            </div>
             <div class="form-grid">
                 <?php
                 $attribute = [
@@ -23,8 +26,10 @@ $this->title = Yii::$app->label->title('view', 'Backend Data');
                 ?>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Gender Details</h5></div>
+        <div class="col-md-6 padding_10_0 theme-box theme_border_left">
+            <div class="col-sm-12 col-md-12  margin-bottom-10 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Gender Details</h4>
+            </div>
             <div class="form-grid">
                 <?php
                 $attribute = [
@@ -41,8 +46,10 @@ $this->title = Yii::$app->label->title('view', 'Backend Data');
             </div>
         </div>
         <div class="clearfix"></div>
-        <div class="col-sm-6">
-            <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Blood Group Details</h5></div>
+        <div class="col-md-6 padding_10_0 theme-box theme_border_right">
+            <div class="col-sm-12 col-md-12  margin-bottom-10 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Blood Group Details</h4>
+            </div>
             <div class="form-grid">
                 <?php
                 $attribute = [
@@ -58,8 +65,10 @@ $this->title = Yii::$app->label->title('view', 'Backend Data');
                 ?>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Qualification Details</h5></div>
+        <div class="col-md-6 padding_10_0 theme-box">
+            <div class="col-sm-12 col-md-12  margin-bottom-10 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Qualification Details</h4>
+            </div>
             <div class="form-grid">
                 <?php
                 $attribute = [
@@ -79,8 +88,10 @@ $this->title = Yii::$app->label->title('view', 'Backend Data');
 
 
         <div class="clearfix"></div>
-        <div class="col-sm-6">
-            <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Relationship Details</h5></div>
+        <div class="col-md-12 padding_10_0 theme-box">
+            <div class="col-sm-12 col-md-12  margin-bottom-10 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Relationship Details</h4>
+            </div>
             <div class="form-grid">
                 <?php
                 $attribute = [
@@ -97,4 +108,5 @@ $this->title = Yii::$app->label->title('view', 'Backend Data');
             </div>
         </div>
     </div>
+</div>
 </div>

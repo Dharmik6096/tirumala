@@ -182,7 +182,7 @@ class TblBranchController extends ChildController {
             $model = new TblBranch();
             $ifsc = $model->getIfcs($_POST['id']);
         }
-        echo Json::encode(['code' => $ifsc]);
+        return Json::encode(['code' => $ifsc]);
     }
 
     private function setModel() {

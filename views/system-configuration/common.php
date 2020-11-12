@@ -13,7 +13,7 @@ use yii\web\View;
     <h5 class="panel-subtitle"></h5>
 
     <?php $form = ActiveForm::begin(['validateOnBlur' => false,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,]); ?>

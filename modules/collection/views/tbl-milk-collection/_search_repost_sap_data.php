@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="grid-search search-filter large-search">
+<div class="pt5 search-filter large-search">
 
     <?php
     $form = ActiveForm::begin([

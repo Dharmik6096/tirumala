@@ -34,7 +34,7 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
         $form = ActiveForm::begin([
                     'id' => 'payment-adjust',
                     'validateOnBlur' => TRUE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => TRUE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
