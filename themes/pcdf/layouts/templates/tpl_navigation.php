@@ -620,6 +620,7 @@ echo GhostMenu::widget([
                         ['label' => 'AMCS Files Process', 'url' => ['/syncutility/pendrive-import/create']],
                         ['label' => 'Import Files Detail', 'url' => ['/import/tbl-import-file-log/index']],
                         ['label' => 'Pendrive Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
+                        ['label' => 'FTP File Upload', 'url' => ['/bkgprocess/ftp-generate/ftp-milk-collection']],
                     ]
                 ],
             ],

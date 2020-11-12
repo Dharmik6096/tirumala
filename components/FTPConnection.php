@@ -20,6 +20,7 @@ class FTPConnection extends Component {
     public $conn_close = TRUE;
     public $make_dir = TRUE;
     public $conn_init = TRUE;
+    public $ftp_pasv = false;
 
     public function ConnectServer() {
         if ($this->ftp_type == 'SELF') {
@@ -47,6 +48,7 @@ class FTPConnection extends Component {
         try {
             if ($this->connection = ftp_connect($this->ftp_host, $this->ftp_port)) {
                 if (ftp_login($this->connection, $this->ftp_username, $this->ftp_password)) {
+//                     ftp_pasv($this->connection, TRUE);
                     return TRUE;
                 }
                 ftp_close($this->connection);
