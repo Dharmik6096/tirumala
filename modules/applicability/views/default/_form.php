@@ -110,11 +110,13 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         ?>
         <!-- <div class="col-sm-12 mt10 <?= $appendClass ?>">
             <h5 class="panel-subtitle">Apply to</h5> -->
-        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10 <?= $appendClass ?>">
+        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading">Apply To</h4>
             </div>
-            <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
+            <div class="<?= $appendClass ?>">
+                <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
+            </div>
         <?php
     }
     $customerClass = "";

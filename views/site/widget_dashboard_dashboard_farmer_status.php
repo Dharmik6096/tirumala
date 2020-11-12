@@ -29,7 +29,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
     <div class="col-sm-3 div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
         <div class="div_dash_block_content">
             <p class="dash_block_header">Installed <?= Yii::t('app', 'DCS') ?></p>
-            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+            <p class="dash_block_description"><small>As On <?= Yii::$app->controls->view_date($date) ?></small></p>
             <h4 class="dash_block_value block_value" id="dashboard_farmer_status_installed_dcs">0</h4>
         </div>
         <div class="div_dash_block_icon"> <img

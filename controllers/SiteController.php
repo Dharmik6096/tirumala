@@ -826,6 +826,10 @@ class SiteController extends Controller {
             $dcs_str = Yii::$app->session->get('Dcs');
             $dcs_str = ',' . $dcs_str . ',';
         }
+        $plant_code = str_replace(',', '-', $plant_code);
+        $mcc_code = str_replace(',', '-', $mcc_code);
+        $bmc_code = str_replace(',', '-', $bmc_code);
+        $dcs_str = str_replace(',', '-', $dcs_str);
         $widget_type = '';
         if (!empty(Yii::$app->request->post('widget_type'))) {
             $widget_type = Yii::$app->request->post('widget_type');
@@ -845,83 +849,83 @@ class SiteController extends Controller {
             ],
             'union_comparison' => [
                 'name' => 'sp_portal_dashboard_union_comparison',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list',
             ],
             'union_datewise' => [
                 'name' => 'sp_portal_dashboard_union_datewise',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list',
             ],
             'bmc_union_comparison' => [
                 'name' => 'sp_portal_dashboard_bmc_union_comparison',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,from_date2=' . date('Y-m-d') . '|date,to_date2=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list',
             ],
             'bmc_union_datewise' => [
                 'name' => 'sp_portal_dashboard_bmc_union_datewise',
-                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+                'input' => 'qlt_param=1,from_date=' . date('Y-m-d') . '|date,to_date=' . date('Y-m-d') . '|date,union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list',
             ],
             'milk_coll_widget' => [
                 'name' => 'sp_Portal_dashboard_milk_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
             'bmc_coll_widget' => [
                 'name' => 'sp_Portal_dashboard_bmc_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
             'bmc_dispatch_widget' => [
                 'name' => 'sp_Portal_BMC_Dispatch',
-                'input' => 'union_code=' . $union_str . '|list,bmc_code=' . $bmc_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,bmc_code=' . $bmc_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
             'reconciliation_chart_widget' => [
                 'name' => 'sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart',
                 'appendTime' => true,
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . ' ' . $time . '|date,date=' . date('Y-m-d') . ' ' . $time . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . ' ' . $time . '|date,date=' . date('Y-m-d') . ' ' . $time . '|date',
             ],
             'table_milk_collection' => [
                 'name' => 'sp_portal_dashboard_milk_collection_table',
                 'appendTime' => true,
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
             ],
             'manual_vs_auto_collection' => [
                 'name' => 'sp_portal_dashboard_society_raw_data',
                 'appendTime' => true,
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
             ],
             'dipatch_vs_receipt' => [
                 'name' => 'sp_portal_dashboard_dispatch_vs_receipt',
                 'appendTime' => true,
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',hidden_from_date=' . date('Y-m-d') . '|date,hidden_to_date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,hidden_from_date=' . date('Y-m-d') . '|date,hidden_to_date=' . date('Y-m-d') . '|date',
             ],
             'bmc_collection_summary' => [
                 'name' => 'sp_Portal_dashboard_qlty_qty_sap_summary',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',from_date=' . date('Y-m-d') . '|dateshift:from_shift',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,from_date=' . date('Y-m-d') . '|dateshift:from_shift',
             ],
             'monthly_milk_collection' => [
                 'name' => 'sp_Portal_dashboard_monthly_milk_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',hidden_from_date=' . date('Y-m-d') . '|date,hidden_to_date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,hidden_from_date=' . date('Y-m-d') . '|date,hidden_to_date=' . date('Y-m-d') . '|date',
             ],
             'dashboard_blocks' => [
                 'name' => 'sp_Portal_dashboard_blocks',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
             'piechart_member_app' => [
                 'name' => 'sp_Portal_dashboard_piechart_member_app',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list',
             ],
             'dashboard_farmer_rmrd_blocks' => [
                 'name' => 'sp_portal_dashboard_farmer_rmrd_blocks',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type,
             ],
             'dashboard_farmer_rmrd_avg' => [
                 'name' => 'sp_portal_dashboard_farmer_rmrd_avg',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type,
             ],
             'dashboard_farmer_status' => [
                 'name' => 'sp_portal_dashboard_farmer_status',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
             'tbl_collc_count_summary' => [
                 'name' => 'sp_portal_dashboard_collection_count_summary',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . ',mcc_code=' . $mcc_code . ',bmc_code=' . $bmc_code . ',dcs_code=' . $dcs_code . ',date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
         ];
         return $array[$sp];
@@ -1338,10 +1342,15 @@ class SiteController extends Controller {
             $union_str = implode(',', $union_ary);
         }
         $sp_param = [];
-        $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise';
+        $rlsData = $this->setRlsData();
+        $sp_name = 'rpt_MIS_Shiftwise_CrossTab_BMC_Wise_new';
         $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
         $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
-        $sp_param[] = $union_str;//$data['union'];
+        $sp_param[] = $union_str; //$data['union'];
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = empty($rlsData['mcc']) ? '0' : $rlsData['mcc'];
+        $sp_param[] = empty($rlsData['bmc']) ? '0' : $rlsData['bmc'];
+        $sp_param[] = empty($rlsData['dcs']) ? '0' : $rlsData['dcs'];
         $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 //        }
         return $this->renderAjax('bmc_cross_tab', ['output' => $output, 'union_code' => $union]);
@@ -1740,7 +1749,8 @@ class SiteController extends Controller {
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
-                                $transaction_data->error_log = (string) $transaction;
+                                $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
+//                                $transaction_data->error_log = (string) $transaction;
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                                 if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
                                     $inbox_constraint = new TblInboxConstraint();
@@ -2027,12 +2037,13 @@ class SiteController extends Controller {
         $sp_name = 'sp_portal_dashboard_no_of_hits';
         if (!empty($_POST)) {
             $data = $_POST;
+            $rlsData = $this->setRlsData();
             $sp_param = [];
-            $sp_param[] = empty($data['union']) ? '0' : $data['union'];
-            $sp_param[] = empty($data['plant']) ? '0' : $data['plant'];
-            $sp_param[] = empty($data['mcc']) ? '0' : $data['mcc'];
-            $sp_param[] = empty($data['bmc']) ? '0' : $data['bmc'];
-            $sp_param[] = empty($data['dcs']) ? '0' : $data['dcs'];
+            $sp_param[] = empty($rlsData['union']) ? '0' : $rlsData['union'];
+            $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+            $sp_param[] = empty($rlsData['mcc']) ? '0' : $rlsData['mcc'];
+            $sp_param[] = empty($rlsData['bmc']) ? '0' : $rlsData['bmc'];
+            $sp_param[] = empty($rlsData['dcs']) ? '0' : $rlsData['dcs'];
             $sp_param[] = date('Y-m-d', strtotime($data['from_date_current']));
             $sp_param[] = date('Y-m-d', strtotime($data['to_date_current']));
             $sp_param[] = empty($data['hit_current']) ? '0' : $data['hit_current'];
@@ -2052,12 +2063,13 @@ class SiteController extends Controller {
         $sp = 'sp_portal_dashboard_collection_count_summary';
         if (!empty($_POST)) {
             $data = $_POST;
+            $rlsData = $this->setRlsData();
             $sp_param = [];
-            $sp_param[] = empty($data['union']) ? '0' : $data['union'];
-            $sp_param[] = empty($data['plant']) ? '0' : $data['plant'];
-            $sp_param[] = empty($data['mcc']) ? '0' : $data['mcc'];
-            $sp_param[] = empty($data['bmc']) ? '0' : $data['bmc'];
-            $sp_param[] = empty($data['dcs']) ? '0' : $data['dcs'];
+            $sp_param[] = empty($rlsData['union']) ? '0' : $rlsData['union'];
+            $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+            $sp_param[] = empty($rlsData['mcc']) ? '0' : $rlsData['mcc'];
+            $sp_param[] = empty($rlsData['bmc']) ? '0' : $rlsData['bmc'];
+            $sp_param[] = empty($rlsData['dcs']) ? '0' : $rlsData['dcs'];
             $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
             $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
             $sp_param[] = empty($data['widget_for']) ? '' : $data['widget_for'];

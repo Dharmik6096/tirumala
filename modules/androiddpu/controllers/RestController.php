@@ -17,11 +17,11 @@ use yii\helpers\ArrayHelper;
  */
 class RestController extends ActiveController {
 
-    public $response = [
-        'status' => '',
-        'message' => [],
-        'data' => '',
-    ];
+//    public $response = [
+//        'status' => '',
+//        'message' => [],
+//        'data' => '',
+//    ];
     public $modelClass = 'app\modules\androiddpu\models';
     public $post_data = [];
     public $apply_camel_case = TRUE;
@@ -33,6 +33,11 @@ class RestController extends ActiveController {
     public function init() {
         parent::init();
         $this->generalModel = new GeneralModel();
+        $this->response = [
+            'status' => '',
+            'message' => [],
+            'data' => '',
+        ];
     }
 
     public function actions() {

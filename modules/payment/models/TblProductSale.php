@@ -204,7 +204,9 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function checkAmount($attribute, $params) {
-        $due = $this->amount_due;
+        $amt = !empty($this->amount_due) ? $this->amount_due : 0;
+        $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
+        $due = !empty($noOfIn) ? $amt / $noOfIn : $amt;
         $available = $this->available_credit;
         if ($available == '') {
             $available = 0;
@@ -288,7 +290,10 @@ class TblProductSale extends \app\models\ChildModel {
                     $creditAmount = $modelData->amount;
                 }
                 $availableCredit = $creditAmount - $saledAmount;
-                if ($this->amount_due > $availableCredit) {
+                $amt = !empty($this->amount_due) ? $this->amount_due : 0;
+                $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
+                $due = !empty($noOfIn) ? $amt / $noOfIn : $amt;
+                if ($due > $availableCredit) {
                     $this->addError('amount_due', "Available Credit Limit is " . $availableCredit);
                     return false;
                 }

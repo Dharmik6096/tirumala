@@ -37,7 +37,7 @@ $this->title = 'BIPL Files Process';
                             'addRemoveLinks' => true,
                             'autoDiscover' => false,
                             'maxFiles' => 20,
-                            'maxFilesize' => 0.02,
+                            'maxFilesize' => 2,
                         //  'maxTotalSize' => 0.0009,
                         ],
                         'clientEvents' => [

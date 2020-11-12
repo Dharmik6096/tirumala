@@ -120,11 +120,21 @@ if (isset($data['url1'])) {
                                             <?php
                                         }
                                         if (in_array($value, array('dcs_code'))) {
-                                            ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
-                                            </div>
+                                            if (isset($value_array[1]) && $value_array[1] == 'route_code') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?php
+                                                    echo Yii::$app->dropdown->route_dcs($model, $form, 'reportsmodel-route_code', 'dcs_code', Yii::t('app', 'Society'));
+                                                    ?>
+                                                </div>
                                             <?php
+                                            } else {
+                                                ?>
+                                                <div class="col-sm-3 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (isset($value_array[1]) && $value_array[1] == 'txt') {
                                             ?>
@@ -213,7 +223,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));  ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));   ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -227,11 +237,19 @@ if (isset($data['url1'])) {
                                             <?php
                                         }
                                         if (in_array($value, array('route_code'))) {
-                                            ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
-                                            </div>
-                                            <?php
+                                            if (isset($value_array[1]) && $value_array[1] == 'all_routes') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->all_routes($model, $form, 'reportsmodel-plant_code,reportsmodel-mcc_code,reportsmodel-bmc_code', 'route_code', Yii::t('app', 'Route')); ?>
+                                                </div>
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <div class="col-sm-3 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value); ?>                                           
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (in_array($value, array('store_location_type'))) {
                                             ?>

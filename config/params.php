@@ -36,5 +36,6 @@ return [
     'client_url' => 'http://clients.everestinstruments.com/clients/',
     'soap_api_url' => 'http://103.210.72.119/AMCUService/Service.asmx?WSDL',
     'FTPDirPath' => '/SAPFILES/',
-    'google_map_api_key' => 'AIzaSyAMTTxu_z6hetI1B83CmW30vGv6dibQWLU'
+    'google_map_api_key' => 'AIzaSyD78APuRJaxdjFBBSJjKag_CD2tWXSrjhE',
+    'data_exchange_vendor_code' => 'EIPLMDPL'
 ];
