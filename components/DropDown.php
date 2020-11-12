@@ -430,7 +430,7 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '') {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -441,9 +441,14 @@ class DropDown extends Component {
         }
         if ($multiple)
             $placeholder = FALSE;
+        $dropDownType = DepDrop::TYPE_DEFAULT;
+        if (isset($searchable) && $searchable) {
+            $dropDownType = DepDrop::TYPE_SELECT2;
+        }
 //        $name = ($name == '') ? $data['name'] : $name;
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
+                    'type' => $dropDownType,
                     'data' => [$model->{$name} => $model->{$name}],
                     'name' => $name,
                     'options' => ['multiple' => $multiple],
@@ -459,7 +464,7 @@ class DropDown extends Component {
                 ])->label($islable);
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE) {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true) {
         if ($multiselect) {
             $this->depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList);
             return;
@@ -473,8 +478,13 @@ class DropDown extends Component {
         $depends = explode(',', $depends);
         $dependArray = !empty($data['dependArray']) ? $data['dependArray'] : [];
         $tabIndex = ($tab) ? -1 : '';
+        $dropDownType = DepDrop::TYPE_DEFAULT;
+        if (isset($searchable) && $searchable) {
+            $dropDownType = DepDrop::TYPE_SELECT2;
+        }
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
+                    'type' => $dropDownType,
                     'data' => [$model->{$control_name} => $model->{$control_name}],
                     'name' => $control_name,
                     'pluginOptions' => [
@@ -492,7 +502,7 @@ class DropDown extends Component {
                 ])->label($label);
     }
 
-    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false) {
+    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $searchable = true) {
         $data = $this->getLabels($flag);
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $this->withoutLocal($data, $model);
@@ -503,7 +513,11 @@ class DropDown extends Component {
         if ($addAll) {
             $records = [0 => 'All'] + $records;
         }
-
+        if (isset($searchable) && $searchable) {
+            return $form->field($model, $control_name)->widget(Select2::classname(), [
+                'data' => $records, 'options'=> ['placeholder' => $data['prompt'],'disabled' => $disable]]
+            )->label($label);
+        }
         return $form->field($model, $control_name)->dropDownList($records, ['prompt' => $data['prompt'], 'disabled' => $disable])->label($label);
     }
 
@@ -544,7 +558,7 @@ class DropDown extends Component {
                 });
     }
 
-    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false) {
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true) {
         if (in_array($flag, ['organizations_type'])) {
             (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
         }
@@ -564,7 +578,14 @@ class DropDown extends Component {
                 unset($records[$value]);
             }
         }
-        echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $control_name)->widget(Select2::classname(), [
+                'data' => $records, 'options'=> ['placeholder' => $data['prompt'],'disabled' => $disable, 'class' => $class]]
+            )->label($label);
+        }
+        else{
+            echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
+        }
     }
 
     public function dropdownfilterStatic($flag, $model, $name = '', $class = 'form-control', $addAll = false) {
@@ -1147,15 +1168,20 @@ class DropDown extends Component {
         return $this->sp_depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
     }
 
-    public function sp_depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = []) {
+    public function sp_depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $searchable = true) {
         $class = $readonly ? 'depend-control' : '';
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $checkValid = in_array('checkValid', $data);
         $field_value = isset($model->{$fields[0]}) ? $model->{$fields[0]} : 0;
         $control_name = ($name == '') ? $data['name'] : $name;
+        $dropDownType = DepDrop::TYPE_DEFAULT;
+        if (isset($searchable) && $searchable) {
+            $dropDownType = DepDrop::TYPE_SELECT2;
+        }
         echo $form->field($model, $control_name)
                 ->widget(DepDrop::classname(), [
+                    'type' => $dropDownType,
                     'data' => [$model->{$control_name} => $model->{$control_name}],
                     'name' => $control_name,
                     'pluginOptions' => [
