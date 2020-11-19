@@ -28,12 +28,12 @@ class FtpGenerateController extends \app\controllers\ChildController {
             }
         }
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if (Yii::$app->request->post('submit') == 'ftp-submit') {
+            if (Yii::$app->request->post('ftp-submit') == 'ftp-submit') {
                 $model->status = 'Force Generate';
             }
             $this->LoadReport($model);
             $model->status = 'Generate';
-            if (Yii::$app->request->post('submit') == 'ftp-submit') {
+            if (Yii::$app->request->post('ftp-submit') == 'ftp-submit') {
                 
             } else if (empty($this->output)) {
                 $this->output = Yii::t('app', 'No Data Available.');
@@ -80,7 +80,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
 
         $this->output = $output;
         if (!empty($output)) {
-            if (Yii::$app->request->post('submit') == 'ftp-submit') {
+            if (Yii::$app->request->post('ftp-submit') == 'ftp-submit') {
                 $this->GenerateFileFTP($output, $model);
                 $this->output = [];
             } else {
