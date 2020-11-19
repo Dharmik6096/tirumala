@@ -105,25 +105,7 @@ if (isset($data['url1'])) {
                     }
                     ?>
                 </div>
-                <!--                <div class="col-sm-2 mt25">
-                <?php
-                if ($param && $data['process_type'] == 'EIPL') {
-                    echo GhostHtml::submitButton(Yii::t('app', 'Re-Generate'), ['class' => 'btn btn-default apply-shortcut generate', 'name' => 'regenerate', 'value' => 'regenerate', 'id' => 'regenerate', 'url' => '/sap/default/sap-data-regenerate']);
-                }
-                ?>
-                                </div>-->
             </div>
-            <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
-
-                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                    <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
-                        <?php
-                        if (is_array($result)) {
-                            echo GhostHtml::submitButton(Yii::t('app ', 'Generate File '), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'ftp-submit', 'id' => 'ftp-submit']);
-                        }
-                        ?>
-                </div>
-            <?php } ?>
             <?php ActiveForm::end(); ?>
 
             <?php
@@ -137,7 +119,18 @@ if (isset($data['url1'])) {
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,
             ]);
-            ?>    
+            ?>   
+            <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
+
+                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                    <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
+                        <?php
+                        if (is_array($result)) {
+                            echo GhostHtml::submitButton(Yii::t('app ', 'Generate File '), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'ftp-submit', 'id' => 'ftp-submit']);
+                        }
+                        ?>
+                </div>
+            <?php } ?>
             <?php
             echo Html::activeHiddenInput($model, 'union_code');
             echo Html::activeHiddenInput($model, 'plant_code');
@@ -147,7 +140,9 @@ if (isset($data['url1'])) {
             echo Html::activeHiddenInput($model, 'to_date');
             echo Html::activeHiddenInput($model, 'from_shift');
             echo Html::activeHiddenInput($model, 'to_date');
+            echo Html::activeHiddenInput($model, 'to_shift');
             echo Html::activeHiddenInput($model, 'status');
+            echo Html::activeHiddenInput($model, 'token');
             ?>
             <?php
             if (!empty($result[0]['message'])) {

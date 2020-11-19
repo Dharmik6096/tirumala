@@ -29,7 +29,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
         }
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $this->LoadReport($model);
-
+            $model->status = 'Generate';
             if (Yii::$app->request->post('submit') == 'ftp-submit') {
                 
             } else if (empty($this->output)) {
@@ -107,6 +107,12 @@ class FtpGenerateController extends \app\controllers\ChildController {
         $cnt = 0;
         $connection = FALSE;
         $text = '';
+
+        if (!empty($output)) {
+            $keydata = array_keys($output[0]);
+            $txtrowA = implode(',', $keydata) . PHP_EOL;
+            $text .= $txtrowA . PHP_EOL;
+        }
         foreach ($output as $rows) {
             $txtrowA = implode(',', $rows) . PHP_EOL;
             $text .= $txtrowA . PHP_EOL;
@@ -114,7 +120,6 @@ class FtpGenerateController extends \app\controllers\ChildController {
         if ($text != '') {
             $local_path = Yii::$app->basePath . '/web/FtpUpload/';
             Yii::$app->general->checkDirectory($local_path);
-//            $text = 'test';
             $file_name = date('YmdHis') . ".csv";
             $fileName = $local_path . $file_name;
             $vfile = fopen($fileName, "w") or die("Unable to open file!");
@@ -126,39 +131,42 @@ class FtpGenerateController extends \app\controllers\ChildController {
                 unlink($vfile);
             }
             try {
-            $ftp_model = new TblFtpDetail();
-            $ftp_model->ftp_connection_code = $Ftpmodel->mcc_code;
-            $ftpData = $ftp_model->getData();
-            if ($connection) {
-                $ftp->CloseConnection();
-            }
-            $ftp = new FTPConnection();
-            $ftp->ftp_type = $ftpData->ftp_type;
-            $ftp->ftp_host = $ftpData->ftp_host;
-            $ftp->ftp_username = $ftpData->ftp_username;
-            $ftp->ftp_password = $ftpData->ftp_password;
-            $ftp->ftp_port = $ftpData->ftp_port;
-            $ftp->conn_init = FALSE;
-            $ftp->conn_close = FALSE;
-            $ftp->make_dir = FALSE;
-            $ftp->ftp_pasv=false;
-            $connection = $ftp->ConnectServer();
-
-            if ($connection) {
-                $local_path = str_replace('\\', '/', $local_path);
-                $ftp->ftp_path = '/in/';
-                $ftp->local_path = $local_path;
-                $ftp->file_name = $file_name;
-                if ($ftp->UploadFile()) {
-                   
-                    $msg = 'File Uploaded Succsessfully';
+                $ftp_model = new TblFtpDetail();
+                $ftp_model->ftp_connection_code = $Ftpmodel->mcc_code;
+                $ftpData = $ftp_model->getData();
+                if ($connection) {
+                    $ftp->CloseConnection();
                 }
-            }
+                $ftp = new FTPConnection();
+                $ftp->ftp_type = $ftpData->ftp_type;
+                $ftp->ftp_host = $ftpData->ftp_host;
+                $ftp->ftp_username = $ftpData->ftp_username;
+                $ftp->ftp_password = $ftpData->ftp_password;
+                $ftp->ftp_port = $ftpData->ftp_port;
+                $ftp->conn_init = FALSE;
+                $ftp->conn_close = FALSE;
+                $ftp->make_dir = FALSE;
+                $ftp->ftp_pasv = false;
+                $connection = $ftp->ConnectServer();
+
+                if ($connection) {
+                    $local_path = str_replace('\\', '/', $local_path);
+                    $ftp->ftp_path = $ftpData->ftp_path;
+                    $ftp->local_path = $local_path;
+                    $ftp->file_name = $file_name;
+                    if ($ftp->UploadFile()) {
+                        $spparam = [];
+                        $spname = 'mis_ftp_vijaya_milk_collection_update_status';
+                        $spparam[] = $Ftpmodel->token;
+                        \Yii::$app->general->getSpData($spname, $spparam, TRUE);
+                        $msg = 'File Uploaded Succsessfully';
+                    }
+                }
             } catch (\yii\db\Exception $e) {
                 $msg = 'File Not Uploaded';
             }
         }
-     
+
         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
             'message' => $msg]);
     }
@@ -171,10 +179,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,status:hidden,token:hidden',
                 'sp_name' => 'mis_ftp_vijaya_milk_collection',
                 'scenario' => 'FTPMilkCollection',
-                'title' => 'Milk Collection',
-                'model_name' => 'TblMilkCollection',
-                'process_type' => 'EIPL',
-                'file_folder' => 'DATFILES'
+                'title' => 'FTP File Upload',
             ],
         ];
         return $label[$l];
