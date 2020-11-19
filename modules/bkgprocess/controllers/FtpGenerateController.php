@@ -28,6 +28,9 @@ class FtpGenerateController extends \app\controllers\ChildController {
             }
         }
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (Yii::$app->request->post('submit') == 'ftp-submit') {
+                $model->status = 'Force Generate';
+            }
             $this->LoadReport($model);
             $model->status = 'Generate';
             if (Yii::$app->request->post('submit') == 'ftp-submit') {
