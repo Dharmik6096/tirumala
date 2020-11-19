@@ -94,6 +94,7 @@ class FTPConnection extends Component {
 
     private function FTPUpload() {
         try {
+            ftp_set_option($this->connection, FTP_USEPASVADDRESS, false);
             ftp_pasv($this->connection, true);
             ftp_chdir($this->connection, $this->ftp_path);
             if (ftp_put($this->connection, $this->file_name, $this->local_path . $this->file_name, FTP_BINARY)) {
