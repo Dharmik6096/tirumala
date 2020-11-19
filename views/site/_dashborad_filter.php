@@ -1,5 +1,6 @@
 <?php
 
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
@@ -71,7 +72,11 @@ if (isset($table_pop_up_only) && $table_pop_up_only) {
                     <?php } ?>
                     <?php if (empty($hide_param)) { ?>
                         <div class="col-sm-2">
-                            <?= $form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); ?>
+                            <?php //$form->field($model, 'qlt_param')->dropDownList($quality_params)->label(false); 
+                                echo $form->field($model, 'qlt_param')->widget(Select2::classname(), [
+                                    'data' => $quality_params]
+                                    )->label(false);
+                            ?>
                         </div>
                     <?php } ?>
                     <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);   ?>

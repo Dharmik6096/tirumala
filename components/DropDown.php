@@ -28,7 +28,7 @@ class DropDown extends Component {
 
     private $class = 'form-group padding-right-5 col-sm-2';
 
-    public function state($model, $form, $name = 'state_code', $islable = false, $disable = false, $multiple = false) {
+    public function state($model, $form, $name = 'state_code', $islable = false, $disable = false, $multiple = false, $searchable = true) {
 
         $this->setClass($form, $name);
         $state = new TblStates;
@@ -39,7 +39,14 @@ class DropDown extends Component {
         }
         $model->{$name} = !empty($selected) ? $selected : $model->{$name};
 
-        echo $form->field($model, $name)->dropDownList($state->getActiveStates($model->$name), ['prompt' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $state->getActiveStates($model->$name), 'options'=> ['placeholder' => 'Select State','disabled' => $disable, 'multiple' => $multiple]]
+            )->label($islable);
+        }
+        else{
+            echo $form->field($model, $name)->dropDownList($state->getActiveStates($model->$name), ['prompt' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple])->label($islable);
+        }
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
                     $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
@@ -108,21 +115,42 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, 'Select Destination Type', $multiple);
     }
 
-    public function financialyear($model, $form, $name = 'financial_year_code', $islable = false, $disable = false) {
+    public function financialyear($model, $form, $name = 'financial_year_code', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $routs = new TblFinancialYear();
-        echo $form->field($model, $name)->dropDownList($routs->getLatestYear(), ['prompt' => 'Select Year', 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $routs->getLatestYear(), 'options'=> ['placeholder' => 'Select Year','disabled' => $disable]]
+            )->label($islable);
+        }
+        else{
+            echo $form->field($model, $name)->dropDownList($routs->getLatestYear(), ['prompt' => 'Select Year', 'disabled' => $disable])->label($islable);
+        }
     }
 
-    public function profile($model, $form, $name = 'profile_id', $islable = false, $disable = false) {
+    public function profile($model, $form, $name = 'profile_id', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $profiles = new TblProfiles();
-        echo $form->field($model, $name)->dropDownList($profiles->getAllRoles(), ['prompt' => 'Select Profile', 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $profiles->getAllRoles(), 'options'=> ['placeholder' => 'Select Profile','disabled' => $disable]]
+            )->label($islable);
+        }
+        else{
+            echo $form->field($model, $name)->dropDownList($profiles->getAllRoles(), ['prompt' => 'Select Profile', 'disabled' => $disable])->label($islable);
+        }
     }
 
-    public function shift($model, $form, $name = 'shift', $islable = false, $class = '', $disable = false) {
+    public function shift($model, $form, $name = 'shift', $islable = false, $class = '', $disable = false, $searchable = true) {
         $list = ['1' => 'Morning', '2' => 'Evening'];
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $list, 'options'=> ['placeholder' => 'Select Shift','disabled' => $disable, 'class' => 'form-control ' . $class]]
+            )->label($islable);
+        }
+        else{
         echo $form->field($model, $name)->dropDownList($list, ['prompt' => 'Select Shift', 'disabled' => $disable, 'class' => 'form-control ' . $class])->label($islable);
+        }   
     }
 
     private function setClass($form, $name) {
@@ -137,7 +165,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/union-list', Yii::t('app', 'Select Union'), $multiple/* ,$model->$name */);
     }
 
-    public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false) {
+    public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false, $searchable= true) {
         $this->setClass($form, $name);
         $disable = $readonly ? 'disabled' : false;
         $islable = $islable ? Yii::t('app', $islable) : false;
@@ -147,7 +175,14 @@ class DropDown extends Component {
             $selected = Yii::$app->session->get('Unions');
         }
         $model->{$name} = !empty($selected) ? $selected : $model->{$name};
-        echo $form->field($model, $name)->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $unionModel->getActiveUnions(1), 'options'=> ['placeholder' => Yii::t('app', 'Select Union'),'disabled' => $disable]]
+            )->label($islable);
+        }
+        else{
+            echo $form->field($model, $name)->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
+        }
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
                    $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
@@ -182,29 +217,53 @@ class DropDown extends Component {
         }
     }
 
-    public function bank($model, $form, $name = 'bank_code', $islable = false, $disable = false) {
+    public function bank($model, $form, $name = 'bank_code', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $data = $this->getLabels('bank');
         $records = $this->withLocal($data, $model);
-        echo $form->field($model, $name)->dropDownList($records, ['prompt' => 'Select Bank', 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $records, 'options'=> ['placeholder' =>'Select Bank','disabled' => $disable]]
+            )->label($islable);
+        }else{
+            echo $form->field($model, $name)->dropDownList($records, ['prompt' => 'Select Bank', 'disabled' => $disable])->label($islable);
+        }
     }
 
-    public function defaultlandunit($model, $form, $name = 'land_unit', $islable = false, $disable = false) {
+    public function defaultlandunit($model, $form, $name = 'land_unit', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $routs = new TblLandUnit();
-        echo $form->field($model, $name)->dropDownList($routs->getDefaultValues(), ['prompt' => 'Select Data', 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $routs->getDefaultValues(), 'options'=> ['placeholder' =>'Select Data','disabled' => $disable]]
+            )->label($islable);
+        }else{
+            echo $form->field($model, $name)->dropDownList($routs->getDefaultValues(), ['prompt' => 'Select Data', 'disabled' => $disable])->label($islable);
+        }
     }
 
-    public function vehicle($model, $form, $name = 'vehicle_code', $islable = false, $disable = false, $km_base = false) {
+    public function vehicle($model, $form, $name = 'vehicle_code', $islable = false, $disable = false, $km_base = false, $searchable = true) {
         $this->setClass($form, $name);
         $vehicle = new \app\modules\transporter\models\TblVehicleMaster();
-        echo $form->field($model, $name)->dropDownList($vehicle->vehicle($km_base), ['prompt' => 'Select Vehicle', 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $vehicle->vehicle($km_base), 'options'=> ['placeholder' =>'Select Vehicle','disabled' => $disable]]
+            )->label($islable);
+        }else{
+            echo $form->field($model, $name)->dropDownList($vehicle->vehicle($km_base), ['prompt' => 'Select Vehicle', 'disabled' => $disable])->label($islable);
+        }
     }
 
-    public function bmcroutecode($model, $form, $name = 'route_code', $islable = false, $disable = false, $bmc_code = '') {
+    public function bmcroutecode($model, $form, $name = 'route_code', $islable = false, $disable = false, $bmc_code = '', $searchable = true) {
         $this->setClass($form, $name);
         $routes = new \app\modules\organisation\models\TblRouteMapping();
-        echo $form->field($model, $name)->dropDownList($routes->route($bmc_code), ['prompt' => 'Select Route Code', 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $routes->route($bmc_code), 'options'=> ['placeholder' =>'Select Route Code','disabled' => $disable]]
+            )->label($islable);
+        }else{
+            echo $form->field($model, $name)->dropDownList($routes->route($bmc_code), ['prompt' => 'Select Route Code', 'disabled' => $disable])->label($islable);
+        }
     }
 
     public function transporterpaymentcycle($model, $form, $depends, $name = 'transporter_payment_cycle', $islable = false, $multiple = false, $readonly = false) {
@@ -268,10 +327,16 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list-union', 'Select BMC', $multiple, $model->$name, $readonly);
     }
 
-    public function mccDropDown($model, $form, $name = 'mcc_code', $islable = false, $disable = false, $id = '') {
+    public function mccDropDown($model, $form, $name = 'mcc_code', $islable = false, $disable = false, $id = '', $searchable = true) {
         $this->setClass($form, $name);
         $mcc = new \app\modules\organisation\models\TblMccPlant();
-        echo $form->field($model, $name)->dropDownList($mcc->getMCCList(''), ['prompt' => 'Select MCC', 'id' => $id, 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $mcc->getMCCList(''), 'options'=> ['placeholder' =>'Select MCC','disabled' => $disable]]
+            )->label($islable);
+        }else{
+            echo $form->field($model, $name)->dropDownList($mcc->getMCCList(''), ['prompt' => 'Select MCC', 'id' => $id, 'disabled' => $disable])->label($islable);
+        }
     }
 
     public function androiddevicelist($model, $form, $depends, $name = 'device_id', $islable = false, $multiple = false, $readonly = false) {
@@ -279,10 +344,16 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/installation/tbl-android-installation/device-list', 'Select Device', $multiple, $model->$name, $readonly);
     }
 
-    public function configFor($model, $form, $name = 'config_for', $islable = false, $disable = false, $notin = []) {
+    public function configFor($model, $form, $name = 'config_for', $islable = false, $disable = false, $notin = [], $searchable = true) {
         $this->setClass($form, $name);
         $config = new \app\modules\configuration\models\TblConfig();
-        echo $form->field($model, $name)->dropDownList($config->configForList($notin), ['prompt' => 'Select App', 'disabled' => $disable])->label($islable);
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $config->configForList($notin), 'options'=> ['placeholder' =>'Select App','disabled' => $disable]]
+            )->label($islable);
+        }else{
+            echo $form->field($model, $name)->dropDownList($config->configForList($notin), ['prompt' => 'Select App', 'disabled' => $disable])->label($islable);
+        }
     }
 
     public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false) {
