@@ -76,8 +76,29 @@ class FtpGenerateController extends \app\controllers\ChildController {
         }
 
         $sp_name = $this->data['sp_name'];
-        $output = \Yii::$app->general->getSpData($sp_name, $controls);
-
+        if (Yii::$app->request->post('ftp-submit') == 'ftp-submit') {
+            $output = (new \yii\db\Query())
+                    ->select([
+                        'Sample No' => 'sample_no',
+                        'Date' => 'CONVERT(VARCHAR, date, 103)',
+                        'Session' => 'session',
+                        'Can No' => 'can_no',
+                        'Material Code' => 'material_code',
+                        'Qty' => 'qty',
+                        'Fat' => 'fat',
+                        'SNF' => 'snf',
+                        'Route Code' => 'route_code',
+                        'Vendor Code' => 'vendor_code',
+                        'Qty Automatic/Manual' => 'qty_automatic_manual',
+                        'Fat Automatic/Manual' => 'fat_automatic_manual',
+                        'Snf Automatic/Manual' => 'snf_automatic_manual'
+                    ])
+                    ->from('tbl_ftp_milk_collection_temp')
+                    ->where(['token' => $model->token])
+                    ->all();
+        } else {
+            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+        }
         $this->output = $output;
         if (!empty($output)) {
             if (Yii::$app->request->post('ftp-submit') == 'ftp-submit') {
