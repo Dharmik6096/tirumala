@@ -113,11 +113,11 @@ class FtpGenerateController extends \app\controllers\ChildController {
 
         if (!empty($output)) {
             $keydata = array_keys($output[0]);
-            $txtrowA = implode(',', $keydata) . PHP_EOL;
+            $txtrowA = implode(',', $keydata);
             $text .= $txtrowA . PHP_EOL;
         }
         foreach ($output as $rows) {
-            $txtrowA = implode(',', $rows) . PHP_EOL;
+            $txtrowA = implode(',', $rows);
             $text .= $txtrowA . PHP_EOL;
         }
         if ($text != '') {

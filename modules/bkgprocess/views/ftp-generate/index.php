@@ -126,7 +126,7 @@ if (isset($data['url1'])) {
                     <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
                         <?php
                         if (is_array($result)) {
-                            echo GhostHtml::submitButton(Yii::t('app ', 'Upload File '), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'ftp-submit', 'id' => 'ftp-submit']);
+                            echo GhostHtml::submitButton(Yii::t('app ', 'Upload File '), ['class' => 'btn btn-default apply-shortcut', 'name' => 'ftp-submit', 'value' => 'ftp-submit', 'id' => 'ftp-submit']);
                         }
                         ?>
                 </div>
