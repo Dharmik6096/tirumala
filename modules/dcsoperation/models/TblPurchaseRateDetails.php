@@ -492,9 +492,12 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         } else {
             $where = ['fat' => $data['fat'] + $data['snf']];
         }
+
         return $this->find()
-                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type'], 'rate_class' => $data['rate_class']])
+                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
+                        ->andWhere(['in', 'rate_class', [0, 1]])
                         ->andWhere($where)
+                        ->orderBy('rate_class asc')
                         ->one();
     }
 
