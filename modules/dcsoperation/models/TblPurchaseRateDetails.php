@@ -205,7 +205,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
 
         $models = new TblPurchaseRateDetails();
         $models->purchase_rate_code = $object->purchase_rate_code;
-       // $models->code = $incrCode;
+        // $models->code = $incrCode;
         $models->milk_quality_type_code = $object->milk_quality_type_code;
         $models->milk_type_code = $object->milk_type_code;
         $models->fat = $fat;
@@ -284,7 +284,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                                 $rate = $this->calculateManual($lowfat, $lowsnf, $modelfat[$i]->quality_param_code, $modelsnf[$j]->quality_param_code, $QltyParam[0], $QltyParam[1]);
                                 $save_array[] = $this->saveData($modelfat[$i], $lowfat, $lowsnf, $rate, 0);
                                 $lowsnf = floatval(bcadd($lowsnf, 0.1, 1));
-                               // $key_value += 1;
+                                // $key_value += 1;
                             }
                         }
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
@@ -296,7 +296,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                         $rate = $this->calculateManual($lowfat, '', $modelfat[$i]->quality_param_code, '', $QltyParam[0], '');
                         $save_array[] = $this->saveData($modelfat[$i], $lowfat, 0, $rate, 0);
                         $lowfat = floatval(bcadd($lowfat, 0.1, 1));
-                       // $key_value += 1;
+                        // $key_value += 1;
                     }
                 }
             }
@@ -484,13 +484,14 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
 
     public function getPurchasseRateDetailData($data, $rate_type) {
         if ($rate_type == 'FAT') {
-            $where = ['fat' => $data['fat']];
+            $where = ['fat' => bcdiv($data['fat'], 1, 1)];
         } else if ($rate_type == 'FAT+SNF') {
-            $where = ['fat' => $data['fat'], 'snf' => $data['snf']];
+            $where = ['fat' => bcdiv($data['fat'], 1, 1), 'snf' => bcdiv($data['snf'], 1, 1)];
         } else if ($rate_type == 'FAT+CLR') {
-            $where = ['fat' => $data['fat'], 'snf' => $data['clr']];
+            $where = ['fat' => bcdiv($data['fat'], 1, 1), 'snf' => bcdiv($data['clr'], 1, 1)];
         } else {
-            $where = ['fat' => $data['fat'] + $data['snf']];
+            $sum = $data['fat'] + $data['snf'];
+            $where = ['fat' => bcdiv($sum, 1, 1)];
         }
         return $this->find()
                         ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
