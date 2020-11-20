@@ -406,6 +406,9 @@ echo GhostMenu::widget([
                                 ['label' => '206 -' . Yii::t('app', 'Company Wise Dispatch Vs Recipt'), 'url' => ['/misreports/reports/union-wise-dispatch-vs-recipt']],
                                 ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda']],
                                 ['label' => '208 -' . Yii::t('app', 'BMC Autmation Report'), 'url' => ['/misreports/reports/bmc-automation-report']],
+                                ['label' => '209-' . Yii::t('app', 'Route Wise Collection'), 'url' => ['/misreports/reports/route-wise-collection']],
+                                ['label' => '210-' . Yii::t('app', 'Route Wise Collection Summary'), 'url' => ['/misreports/reports/route-wise-collection-summary']],
+                                ['label' => '211-' . Yii::t('app', 'Vendor Wise Collection Summary'), 'url' => ['/misreports/reports/vendor-wise-collection-summary']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -460,6 +463,7 @@ echo GhostMenu::widget([
                         ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill']],
                         ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill']],
                         ['label' => '611-' . Yii::t('app', 'Member Payment(Drafted)'), 'url' => ['/misreports/reports/member-payment-drafted']],
+                        ['label' => '612-' . Yii::t('app', 'Vendor Bill'), 'url' => ['/jasperreports/default/vendor-bill']],
                     ]
                 ],
                 [
