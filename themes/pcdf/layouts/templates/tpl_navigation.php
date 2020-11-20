@@ -464,6 +464,7 @@ echo GhostMenu::widget([
                         ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill']],
                         ['label' => '611-' . Yii::t('app', 'Member Payment(Drafted)'), 'url' => ['/misreports/reports/member-payment-drafted']],
                         ['label' => '612-' . Yii::t('app', 'Vendor Bill'), 'url' => ['/jasperreports/default/vendor-bill']],
+                        ['label' => '613-' . Yii::t('app', 'Payment Abstract'), 'url' => ['/misreports/reports/payment-abstract']],
                     ]
                 ],
                 [

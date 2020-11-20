@@ -538,6 +538,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionPaymentAbstract() {
+        $this->report = 'PaymentAbstract';
+        return $this->actionIndex();
+    }
+
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
         $model = new ReportsModel();
@@ -1441,6 +1446,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'VendorWiseCollectionSummary',
                 'title' => '211 - Vendor Wise Collection Summary',
                 'report_type' => [Yii::t('app', 'Date Shift Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'PaymentAbstract' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,payment_cycle_code',
+                'sp_name' => 'sp_mis_payment_abstract',
+                'scenario' => 'PaymentAbstract',
+                'title' => '613 - Payment Abstract',
             ],
         ];
         return $label[$l];

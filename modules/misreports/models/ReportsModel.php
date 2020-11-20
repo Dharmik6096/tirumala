@@ -55,6 +55,7 @@ class ReportsModel extends Model {
             [['from_date', 'to_date'], 'required', 'on' => ['SocietyCollectionData']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'route_code', 'date', 'shift'], 'required', 'on' => ['CollectionPendriveFile']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['RouteWiseCollection', 'RouteWiseCollectionSummary', 'VendorWiseCollectionSummary']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => ['PaymentAbstract']],
         ];
     }
 
