@@ -44,7 +44,7 @@ class DataExchangeController extends ChildController {
             $sp_param = [];
             $sp_param[] = $value['union_code'];
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
-
+           
             if (!empty($output)) {
                 $currentDate = strtotime(date('Y-m-d H:i:s'));
                 $futureDate = $currentDate + (60 * $value['interval']);
@@ -65,18 +65,20 @@ class DataExchangeController extends ChildController {
                 } else {
                     $body = !empty($output[0]) ? $output[0] : [];
                 }
+                $postData = [];
                 if (!empty(Yii::$app->params['data_exchange_vendor_code'])) {
                     $body['code'] = Yii::$app->params['data_exchange_vendor_code'];
+                    $postData['params'] = $body;
+                } else {
+                    $postData = $body;
                 }
-                $postData = [];
-                $postData['params'] = $body;
                 $postData = json_encode($postData);
                 $api = new WebApi();
                 $api->serverUrl = $value['request_url'];
                 $api->authentication = FALSE;
-                $api->vendor_code = 'EIPLMDPL';
+                $api->vendor_code = !empty($body['code']) ? $body['code'] : 'EIPL';
                 $api->body = $postData;
-
+              
                 $response = $api->ExchangeData();
                 $responseData = json_decode(json_encode($response), true);
                 $loopData = [];
