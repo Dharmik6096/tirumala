@@ -594,6 +594,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
     }
 
+    public function actionRateMasterRegister() {
+        $this->report = 'RateMasterRegister';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1452,6 +1457,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_payment_abstract',
                 'scenario' => 'PaymentAbstract',
                 'title' => '613 - Payment Abstract',
+			],
+            'RateMasterRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_rate_master_register',
+                'scenario' => 'RateMasterRegister',
+                'title' => 'Rate Master Register',
+                'removeExportType' => ['CSV'],
             ],
         ];
         return $label[$l];

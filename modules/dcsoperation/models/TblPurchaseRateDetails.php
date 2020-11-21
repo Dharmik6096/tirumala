@@ -43,7 +43,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['rate_class'], 'default', 'value' => 'A'],
+            [['rate_class'], 'default', 'value' => 0],
             [['milk_quality_type_code'], 'default', 'value' => 1],
             //[['milk_type_code', 'fat'/* ,'formula' */], 'required'],
             [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'purchase_rate_code', 'rate_type', 'rate_class'], 'safe'],
@@ -493,9 +493,12 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
             $sum = $data['fat'] + $data['snf'];
             $where = ['fat' => bcdiv($sum, 1, 1)];
         }
+
         return $this->find()
                         ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
+                        ->andWhere(['in', 'rate_class', [0, 1]])
                         ->andWhere($where)
+                        ->orderBy('rate_class asc')
                         ->one();
     }
 

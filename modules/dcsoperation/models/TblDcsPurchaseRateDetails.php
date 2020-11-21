@@ -37,6 +37,7 @@ class TblDcsPurchaseRateDetails extends \yii\db\ActiveRecord {
             [['fat', 'rtpl', 'snf'], 'number'],
             [['milk_quality_type_code', 'milk_type_code', 'purchase_rate_code', 'rate_type_code', 'originating_type'], 'integer'],
             [['originating_org_code', 'originating_org_type'], 'string'],
+            [['rate_class'], 'safe']
         ];
     }
 

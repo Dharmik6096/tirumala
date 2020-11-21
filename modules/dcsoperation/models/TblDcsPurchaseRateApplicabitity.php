@@ -49,6 +49,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
 
     public $route_code;
     public $organization;
+    public $import_union_code, $import_eipl_code, $import_key_pattern;
 
     /**
      * @inheritdoc
@@ -74,7 +75,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
             [['wef_date', 'shift_code', 'applicable_code'], 'required'],
 //                [['applicable_code'], 'checkDuplicate'], //Comment as Set Validation from DB Side: Hardik
 //            [['route_code'], 'required', 'except' => 'applicability'],
-            [['purchase_rate_code', 'dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date', 'applicable_code', 'applicable_for'], 'safe'],
+            [['purchase_rate_code', 'dcs_code', 'is_active', 'sync_status', 'created_at', 'shift_code', 'deleted_at', 'sync_timestamp', 'updated_at', 'wef_date', 'applicable_code', 'applicable_for', 'milk_purchase_rate_code'], 'safe'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
@@ -389,6 +390,11 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
 
     public function getMainCustomerCode() {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'applicable_code']);
+    }
+
+    public function checkDuplicateData() {
+        $query = $this->find()->where(['applicable_for' => $this->applicable_for, 'applicable_code' => $this->applicable_code, 'wef_date' => $this->wef_date]);
+        return $query->all();
     }
 
 }
