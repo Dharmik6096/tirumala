@@ -132,6 +132,9 @@ class FtpGenerateController extends \app\controllers\ChildController {
         $connection = FALSE;
         $text = '';
 
+        //date('YmdHis',)
+        //var_dump($Ftpmodel->from_shift);die;
+
         if (!empty($output)) {
             $keydata = array_keys($output[0]);
             $txtrowA = implode(',', $keydata);
@@ -144,7 +147,8 @@ class FtpGenerateController extends \app\controllers\ChildController {
         if ($text != '') {
             $local_path = Yii::$app->basePath . '/web/FtpUpload/';
             Yii::$app->general->checkDirectory($local_path);
-            $file_name = date('YmdHis') . ".csv";
+            $shifts = $Ftpmodel->from_shift == "1" ? " Am" : " Pm";
+            $file_name = date("d-m-Y", strtotime($Ftpmodel->from_date)) . $shifts . ".csv";
             $fileName = $local_path . $file_name;
             $vfile = fopen($fileName, "w") or die("Unable to open file!");
             if (fwrite($vfile, $text)) {
