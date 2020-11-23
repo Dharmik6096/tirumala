@@ -173,10 +173,10 @@ var initDepdropMs;
         };
 
         $('.grid-content td:contains("Total")').parents('tr').css('font-weight', '600');
-        //$('.grid-content td:contains("Total")').parents('tr').find('td:first').text('');
-        var copy = $('.grid-content td:contains("Total"):not(:contains("-Total"))').parents('tr').clone();
-        $('.grid-content td:contains("Total"):not(:contains("-Total"))').parents('tr').remove();
-        $('.grid-content tbody').prepend(copy);
+//        //$('.grid-content td:contains("Total")').parents('tr').find('td:first').text('');
+//        var copy = $('.grid-content td:contains("Total"):not(:contains("-Total"))').parents('tr').clone();
+//        $('.grid-content td:contains("Total"):not(:contains("-Total"))').parents('tr').remove();
+//        $('.grid-content tbody').prepend(copy);
 
         function setHeight() {
             var page_height = $(".pagination").height();
