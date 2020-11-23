@@ -58,7 +58,7 @@ class TblPurchaseRateBased extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['rate_class'], 'default', 'value' => 'A'],
+            [['rate_class'], 'default', 'value' => '0'],
             [['milk_quality_type_code'], 'default', 'value' => 1],
             [['deduction_type', 'fixed_point', 'kg_rate', 'ref_type', 'step', 'value'], 'default', 'value' => '0'],
             [['rate_type_code'], 'unique', 'targetAttribute' => ['rate_type_code', 'quality_param_code', 'purchase_rate_code', 'milk_type_code'], 'on' => 'stellapps'],

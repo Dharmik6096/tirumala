@@ -76,7 +76,7 @@ class RealtimeServicesController extends RestController {
         $model = new TblPurchaseRateDetails();
         $model->attributes = $data['content'];
         $model->rate_type = empty($model->rate_type) ? 'MEMBER' : $model->rate_type;
-        $model->rate_class = empty($model->rate_class) ? 'A' : $model->rate_class;
+        $model->rate_class = empty($model->rate_class) ? '0' : $model->rate_class;
         $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$model->purchase_rate_code, $model->milk_quality_type_code, $model->milk_type_code, $model->rate_type, $model->rate_class]);
         if (!empty($res_data)) {
             $res_data = array_column($res_data, 'detail');
