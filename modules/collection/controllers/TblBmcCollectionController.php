@@ -266,7 +266,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         if (strtolower($for) != 'dcs') {
-            $code = $bmcModel->validateCustomer($data['union'], $bmcModel->dcs_code, $for);
+            $code = $bmcModel->validateCustomer($data['union'],$data['dcs_code'], $for);
         } else {
             $code = $bmcModel->dcs_code;
         }

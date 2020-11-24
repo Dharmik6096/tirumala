@@ -20,6 +20,7 @@ use yii\helpers\Html;
 $attribute = [
     ['attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code',],
     ['attribute' => 'reference_code', 'value' => 'reference_code',],
+    ['attribute' => 'dcs_purchase_rate_code'],
     [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
@@ -34,7 +35,7 @@ $attribute = [
     ['attribute' => 'shift_applicability', 'value' => 'shiftApplicability.shift',],
     ['attribute' => 'rate_gen_method_code', 'value' => 'rateMethod.method',],
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
-    'description'
+    'description',
 ];
 
 $grid_option = [
@@ -61,7 +62,7 @@ $grid_option = [
         'view_rate' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Rate Chart', 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-bar-chart" aria-hidden="true"></i>', ['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1], $options);
+            return GhostHtml::a('<i class="fa fa-bar-chart" aria-hidden="true"></i>', ['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'rate_class' => 0], $options);
         },
         'export_rate_chart' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Export Rate Chart')];

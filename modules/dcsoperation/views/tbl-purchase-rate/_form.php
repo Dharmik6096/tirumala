@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+//use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -39,7 +40,6 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', 'Shift Applicability'); ?>
     </div>
-
     <div class="col-sm-2">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
@@ -49,7 +49,6 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([
-
                 'label' => Yii::t('app', 'Next'),
                 'id' => 'submit',
                 'ajaxOptions' => [

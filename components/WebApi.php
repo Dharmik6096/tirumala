@@ -101,7 +101,7 @@ class WebApi {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, FALSE);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -110,6 +110,9 @@ class WebApi {
         }  // Skip SSL Verification
         //  curl_setopt($ch, CURLOPT_CAINFO, 'C:\Users\nifadmin\Downloads\cacert.pem');
         $result = curl_exec($ch);
+         if ($result === false) {
+        throw new \Exception(curl_error($ch), curl_errno($ch));
+    }
         curl_close($ch);
 //        var_dump($result);
 //        die;
