@@ -231,5 +231,22 @@ var initDepdropMs;
             })
         })
     });
+    
+    $('.check_mobile_length').focusout(function() {
+        var this_id = $(this).attr('id');
+        var filter = /^\d*(?:\.\d{1,2})?$/;
+        var mob_num = $(this).val();
+        if (filter.test(mob_num)) {
+            if(mob_num.length!=10){
+                $('.field-'+this_id+' .help-block').attr('title', $('.field-'+this_id+' label').text()+' must contain exactly 10 digits').text($('.field-'+this_id+' label').text()+' must contain exactly 10 digits');
+            }
+            else{
+                $('.field-'+this_id+' .help-block').attr('title', '').text('');
+            }
+        }
+        else{
+            $('.field-'+this_id+' .help-block').attr('title',  $('.field-'+this_id+' label').text()+' is not valid').text($('.field-'+this_id+' label').text()+' is not valid');
+        }
+    });
 })(jQuery);
 

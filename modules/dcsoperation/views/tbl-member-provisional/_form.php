@@ -23,7 +23,13 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
 <?php
-$form = ActiveForm::begin();
+$form = ActiveForm::begin([
+    'options' => [],
+    'validateOnBlur' => FALSE,
+    'validateOnChange' => FALSE,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+]);
 $disable_ifsc = !empty($model->ifsc) && !empty($model->bank_code) ? true : false;
 $selected = $model->union_code;
 $union_code = count(explode(',', Yii::$app->session->get('Unions'))) == 1 ? Yii::$app->session->get('Unions') : '';
@@ -163,7 +169,7 @@ if ($model->isNewRecord) {
         <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-4">
-        <?= $form->field($model, 'mobile_no')->textInput() ?>
+        <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
     </div>
     <div class="col-sm-4 padding-bottom-32">
         <?= $form->field($model, 'email')->textInput() ?>

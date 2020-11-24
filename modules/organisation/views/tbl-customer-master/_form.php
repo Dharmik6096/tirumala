@@ -13,7 +13,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 $form = ActiveForm::begin([
             'options' => [],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
