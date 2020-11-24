@@ -650,7 +650,7 @@ class DropDown extends Component {
             }
         }
         if (isset($searchable) && $searchable) {
-            echo $form->field($model, $control_name)->widget(Select2::classname(), [
+            echo $form->field($model, $control_name,['options' => ['class' => $class]])->widget(Select2::classname(), [
                 'data' => $records, 'options'=> ['placeholder' => $data['prompt'],'disabled' => $disable, 'class' => $class]]
             )->label($label);
         }
