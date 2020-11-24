@@ -17,7 +17,13 @@ file_exists($path.$model->attachment) ? $size = filesize($path.$model->attachmen
 
 <div class="tbl-dpu-installation-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+    'options' => [],
+    'validateOnBlur' => FALSE,
+    'validateOnChange' => FALSE,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+]); ?>
     <?php echo $form->errorSummary($model); ?>
 
     <?= Html::activeHiddenInput($model, 'inst_code') ?>
@@ -35,13 +41,13 @@ file_exists($path.$model->attachment) ? $size = filesize($path.$model->attachmen
         <?= $form->field($model, 'simcard_company')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'dpu_sim_mobile')->textInput() ?>
+        <?= $form->field($model, 'dpu_sim_mobile')->textInput(['class' => 'form-control check_mobile_length']) ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'soc_secretary')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'secretary_mobile')->textInput() ?>
+        <?= $form->field($model, 'secretary_mobile')->textInput(['class' => 'form-control check_mobile_length']) ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea() ?>

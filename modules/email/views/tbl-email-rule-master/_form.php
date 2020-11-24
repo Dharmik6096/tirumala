@@ -46,7 +46,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'no_of_email')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($model, 'mobile')->textInput() ?>
+            <?= $form->field($model, 'mobile')->textInput(['class' => 'form-control check_mobile_length']) ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'message')->textarea(['rows' => 6]) ?>
