@@ -159,13 +159,20 @@ class TblProductRateController extends \app\controllers\ChildController {
             'commission' => $model->commission
         ];
         $appModel->header_title = ' [Product: ' . Yii::$app->general->getforeignkey($model->productCode, 'product_name') . ', Sale Rate: ' . $model->sale_rate . '] ';
-        $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+        $appModel->fields = [
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
+                }],
+            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
             'applicable_for' => ['view' => ['grid'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
                 }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+                }],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
                 }],

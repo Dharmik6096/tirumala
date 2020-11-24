@@ -127,7 +127,7 @@ if (isset($data['url1'])) {
                                                     echo Yii::$app->dropdown->route_dcs($model, $form, 'reportsmodel-route_code', 'dcs_code', Yii::t('app', 'Society'));
                                                     ?>
                                                 </div>
-                                            <?php
+                                                <?php
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
@@ -181,6 +181,7 @@ if (isset($data['url1'])) {
                                                 echo Html::hiddenInput('customer_type', $value_array[2], ['id' => 'reportsmodel-customer_type']);
                                                 $where = json_encode(['data_lock_member' => 1]);
                                             } else {
+                                                echo Html::hiddenInput('customer_type', 'DCS', ['id' => 'reportsmodel-customer_type']);
                                                 $where = json_encode(['data_lock_bmc' => 1]);
                                             }
                                             echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);

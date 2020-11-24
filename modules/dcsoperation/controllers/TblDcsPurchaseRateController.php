@@ -209,7 +209,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $error = FALSE;
         $errorarray = [];
         $ratearray = [];
-
+        $allowCopy = FALSE;
+        $rateClass = 0;
         $purchaseBasedModel = new TblDcsPurchaseRateBased();
         $basemaxID = $purchaseBasedModel->getCode();
 
@@ -224,14 +225,60 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $milkQuality = new TblMilkQualityType();
         $QualityType = array_values($milkQuality->getActiveQualityType());
 
+        $arraycnt = [];
+        $validSheet = TRUE;
+        $arraySheet = [];
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $sheetTitle = strtolower($worksheet->getTitle());
             $sheetTitlearray = explode('-', $sheetTitle);
-            if (count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) {
+            $rateCatogory = ["A", "B", "C"];
+            if ((count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
+                //check allow to copy member ratechart for milk qlty good
+                if (!empty($sheetTitlearray[1])) {
+                    if (!$allowCopy && strtolower($sheetTitlearray[1] == 'good')) {
+                        $allowCopy = TRUE;
+                        $rateClass = !empty($sheetTitlearray[2]) ? (strtoupper($sheetTitlearray[2]) == 'A' ? 1 : (strtoupper($sheetTitlearray[2]) == 'B' ? 2 : (strtoupper($sheetTitlearray[2]) == 'C' ? 3 : 0))) : 0;
+                    }
+                }
+                //Rate Class A is must if rate class available
+                if (!empty($sheetTitlearray[2])) {
+                    $key = $sheetTitlearray[0] . '-' . $sheetTitlearray[1];
+
+                    if (!empty($arraySheet[$key])) {
+                        if (strtoupper($arraySheet[$key]) != 'A') {
+                            $arraySheet[$key] = $sheetTitlearray[2];
+                        }
+                    } else {
+                        $arraySheet[$key] = $sheetTitlearray[2];
+                    }
+                }
+
+                //Rate Class only allow for Good
+                if (!empty($sheetTitlearray[2]) && strtolower($sheetTitlearray[1] != 'good')) {
+                    $validSheet = FALSE;
+                }
+            } else {
+                $validSheet = FALSE;
+            }
+        }
+
+        foreach ($arraySheet as $class) {
+            if (strtoupper($class) != 'A') {
+                $validSheet = FALSE;
+            }
+        }
+
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+            $sheetTitle = strtolower($worksheet->getTitle());
+            $sheetTitlearray = explode('-', $sheetTitle);
+//            $rateCatogory = ["A", "B", "C"];
+//            if (($validSheet) && (count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
+            if ($validSheet) {
                 $FormulaType = strtoupper($worksheet->getCell('A1')->getValue());
                 if (!isset($ratearray[$sheetTitlearray[0]])) {
                     $ratearray[$sheetTitlearray[0]] = $FormulaType;
                 }
+                $rate_class = !empty($sheetTitlearray[2]) ? (strtoupper($sheetTitlearray[2]) == 'A' ? 1 : (strtoupper($sheetTitlearray[2]) == 'B' ? 2 : (strtoupper($sheetTitlearray[2]) == 'C' ? 3 : 0))) : 0;
                 if (in_array($FormulaType, array_map('strtoupper', $RateTypes)) && $FormulaType == $ratearray[$sheetTitlearray[0]]) {
                     $rate_type_code = array_search($FormulaType, array_map('strtoupper', $milkTypedata));
                     $milk_type_code = array_search($sheetTitlearray[0], array_map('strtolower', $animalTypedata));
@@ -251,6 +298,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                         $purchaseBasedModel->end_range = number_format((float) $worksheet->getCell('A' . $worksheet->getHighestRow())->getValue(), 1);
                         $purchaseBasedModel->milk_quality_type_code = $milk_quality_type_code;
                         $purchaseBasedModel->originating_type = 2;
+                        $purchaseBasedModel->rate_class = $rate_class;
                         $based[] = $purchaseBasedModel;
                         $baseCode++;
                         if (count($quality_param) > 1) {
@@ -264,6 +312,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                             $newModel->start_range = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
                             $newModel->end_range = number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
                             $newModel->originating_type = 2;
+                            $newModel->rate_class = $rate_class;
                             $based[] = $newModel;
                             $baseCode++;
                         }
@@ -329,7 +378,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                                             number_format((float) $cell, 2),
                                             \Yii::$app->session->get('organizations_code'),
                                             \Yii::$app->session->get('organizations_type'),
-                                            2
+                                            2,
+                                            $rate_class
                                         ];
                                         $cnt ++;
                                         if (count($data [$i]) == 1000) {
@@ -363,7 +413,14 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                         $master[] = $error;
                     }
                     foreach ($data as $d) {
-                        \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type'], $d)->execute();
+                        \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type', 'rate_class'], $d)->execute();
+                    }
+                    if ($purchaseRate->for_member == 1 && $allowCopy) {
+                        $sp_param = [];
+                        $sp_name = 'DB_JOB_PORTAL_Member_Rate_chart';
+                        $sp_param[] = $purchaseRate->purchase_rate_code;
+                        $sp_param[] = $rateClass;
+                        \Yii::$app->general->getSpData($sp_name, $sp_param, TRUE);
                     }
                     if ($transaction->isActive && !in_array(FALSE, $master)) {
                         $transaction->commit();
@@ -490,7 +547,11 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
-        $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+        $appModel->fields = [
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
+                }],
+            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
@@ -498,6 +559,9 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
                 }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+                }],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
                 }],

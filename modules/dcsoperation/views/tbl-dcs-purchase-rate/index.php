@@ -16,6 +16,7 @@ if (Yii::$app->general->checkAccess('/dcsoperation/tbl-dcs-purchase-rate/create'
     $this->params['menu'][] = Yii::$app->controls->add('Purchase Rate (BMC)');
     $this->params['menu'][] = GhostHtml::a_alert('<i class="fa fa-download"></i>' . Yii::t('app', 'Download Template'), '/dcsoperation/tbl-dcs-purchase-rate/create', ['class' => 'btn btn-danger btn-block apply-shortcut show-sample', 'shortcut_key' => 'ctrl+alt+c']);
 }
+$this->params['menu'][] = Yii::$app->controls->import('applicability-bulk', $this);
 ?>
 <div class="panel panel-main panel-default panel-grid">
     <div class="panel-heading">

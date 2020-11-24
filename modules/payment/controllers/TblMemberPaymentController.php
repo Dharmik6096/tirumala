@@ -226,7 +226,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $historyModel = new TblMemberPaymentAliasHistory();
                 Yii::$app->operation->history($data, $historyModel, UPDATE);
                 $data->additional_pay = $adjustAmount;
-                $data->adjust_remark = $adjust_remark[$key];
+                $data->adjust_remark = !empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
                 $data->hold_amount = $holdAmount;
                 $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount;
                 $data->payment_status = $processFlag;
