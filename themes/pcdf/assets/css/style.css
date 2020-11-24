@@ -2110,7 +2110,7 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 }
 
 .navbar-brand img {
-    max-height: 45px;
+    max-height: 50px;
     max-width: 77px;
 }
 
@@ -3417,7 +3417,6 @@ input[type="checkbox"]:after{
     width: 100%;
     display: block;
     margin: 5px 0px 5px 0px;
-    white-space: nowrap;
 }
 
 .dash_block_header {
@@ -3812,6 +3811,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .right_30 {
     right: 30px !important
 }
+
 .panel .panel-body .btn.dashboardSearchButton, .modal .modal-body .btn.dashboardSearchButton {
     background: #7A231C !important;
     border-radius: 0px !important;
