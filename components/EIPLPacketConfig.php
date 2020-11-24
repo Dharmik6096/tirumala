@@ -138,6 +138,24 @@ class EIPLPacketConfig extends Component {
                     'sampleno' => 'pckt=86-4',
                     'farmername' => 'pckt=91-16',
                 ],
+                '160' => [
+                    'vlccid' => 'pckt=3-15',
+                    'shift' => 'pckt=127-1',
+                    'dtdate' => 'pckt=67-6',
+                    'farmerid' => 'pckt=19-4',
+                    'milktype' => 'pckt=24-1',
+                    'fat' => 'pckt=26-5',
+                    'snf' => 'pckt=32-5',
+                    'water' => 'pckt=38-4',
+                    'qty' => 'pckt=43-6',
+                    'qtymode' => 'pckt=50-1',
+                    'rate' => 'pckt=52-6',
+                    'amt' => 'pckt=59-7',
+                    'sampletime' => 'pckt=73-2#fix=:#pckt=75-2#fix=:#pckt=77-2',
+                    'txflag' => 'pckt=80-1#pckt=82-1#pckt=84-1',
+                    'sampleno' => 'pckt=86-4',
+                    'farmername' => 'pckt=91-16',
+                ],
             ]
         ];
         return $config[$dpu_type];

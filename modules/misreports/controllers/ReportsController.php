@@ -504,6 +504,45 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRouteWiseCollection() {
+        $this->report = 'RouteWiseFarmerCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'RouteWiseBMCCollection';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionRouteWiseCollectionSummary() {
+        $this->report = 'RouteWiseCollectionSummaryFarmerDateShift';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'RouteWiseCollectionSummaryFarmerConsolidate';
+            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'RouteWiseCollectionSummaryBmcDateShift';
+            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '3') {
+                $this->report = 'RouteWiseCollectionSummaryBmcConsolidate';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionVendorWiseCollectionSummary() {
+        $this->report = 'VendorWiseCollectionSummaryDateShift';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'VendorWiseCollectionSummaryConsolidate';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionPaymentAbstract() {
+        $this->report = 'PaymentAbstract';
+        return $this->actionIndex();
+    }
+
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
         $model = new ReportsModel();
@@ -553,6 +592,11 @@ class ReportsController extends \app\controllers\ChildController {
             }
         }
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
+    }
+
+    public function actionRateMasterRegister() {
+        $this->report = 'RateMasterRegister';
+        return $this->actionIndex();
     }
 
     /* MIS Call */
@@ -1351,6 +1395,75 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CollectionPendriveFile',
                 'title' => 'Collection Pendrive File',
                 'output_type' => ''
+            ],
+            'RouteWiseFarmerCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_route_wise_farmer_collection',
+                'scenario' => 'RouteWiseCollection',
+                'title' => '209 - Route Wise Collection',
+                'report_type' => [Yii::t('app', 'Farmer Collection'), Yii::t('app', 'BMC Collection')],
+            ],
+            'RouteWiseBMCCollection' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_route_wise_bmc_collection',
+                'scenario' => 'RouteWiseCollection',
+                'title' => '209 - Route Wise Collection',
+                'report_type' => [Yii::t('app', 'Farmer Collection'), Yii::t('app', 'BMC Collection')],
+            ],
+            'RouteWiseCollectionSummaryFarmerDateShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_route_wise_collection_summary_farmer_date_shift',
+                'scenario' => 'RouteWiseCollectionSummary',
+                'title' => '210 - Route Wise Collection Summary',
+                'report_type' => [Yii::t('app', 'Farmer Collection Date Shift Wise'), Yii::t('app', 'Farmer Collection Consolidated'), Yii::t('app', 'BMC Collection Date Shift Wise'), Yii::t('app', 'BMC Collection Consolidated')],
+            ],
+            'RouteWiseCollectionSummaryFarmerConsolidate' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_route_wise_collection_summary_farmer_consolidated',
+                'scenario' => 'RouteWiseCollectionSummary',
+                'title' => '210 - Route Wise Collection Summary',
+                'report_type' => [Yii::t('app', 'Farmer Collection Date Shift Wise'), Yii::t('app', 'Farmer Collection Consolidated'), Yii::t('app', 'BMC Collection Date Shift Wise'), Yii::t('app', 'BMC Collection Consolidated')],
+            ],
+            'RouteWiseCollectionSummaryBmcDateShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_route_wise_collection_summary_bmc_date_shift',
+                'scenario' => 'RouteWiseCollectionSummary',
+                'title' => '210 - Route Wise Collection Summary',
+                'report_type' => [Yii::t('app', 'Farmer Collection Date Shift Wise'), Yii::t('app', 'Farmer Collection Consolidated'), Yii::t('app', 'BMC Collection Date Shift Wise'), Yii::t('app', 'BMC Collection Consolidated')],
+            ],
+            'RouteWiseCollectionSummaryBmcConsolidate' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_route_wise_collection_summary_bmc_consolidated',
+                'scenario' => 'RouteWiseCollectionSummary',
+                'title' => '210 - Route Wise Collection Summary',
+                'report_type' => [Yii::t('app', 'Farmer Collection Date Shift Wise'), Yii::t('app', 'Farmer Collection Consolidated'), Yii::t('app', 'BMC Collection Date Shift Wise'), Yii::t('app', 'BMC Collection Consolidated')],
+            ],
+            'VendorWiseCollectionSummaryDateShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_vendor_wise_date_shift_wise_collection_summary',
+                'scenario' => 'VendorWiseCollectionSummary',
+                'title' => '211 - Vendor Wise Collection Summary',
+                'report_type' => [Yii::t('app', 'Date Shift Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'VendorWiseCollectionSummaryConsolidate' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_vendor_wise_consolidated_collection_summary',
+                'scenario' => 'VendorWiseCollectionSummary',
+                'title' => '211 - Vendor Wise Collection Summary',
+                'report_type' => [Yii::t('app', 'Date Shift Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'PaymentAbstract' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,payment_cycle_code',
+                'sp_name' => 'sp_mis_payment_abstract',
+                'scenario' => 'PaymentAbstract',
+                'title' => '613 - Payment Abstract',
+			],
+            'RateMasterRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_rate_master_register',
+                'scenario' => 'RateMasterRegister',
+                'title' => 'Rate Master Register',
+                'removeExportType' => ['CSV'],
             ],
         ];
         return $label[$l];
