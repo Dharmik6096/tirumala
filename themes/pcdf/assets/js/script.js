@@ -232,10 +232,10 @@ var initDepdropMs;
         })
     });
     
-    $('.check_mobile_length').focusout(function() {
+    $('.check_mobile_length').bind("keyup", function (e) {
         var this_id = $(this).attr('id');
         var filter = /^\d*(?:\.\d{1,2})?$/;
-        var mob_num = $(this).val();
+        var mob_num = $(e.target).val();
         if (filter.test(mob_num)) {
             if(mob_num.length!=10){
                 $('.field-'+this_id+' .help-block').attr('title', $('.field-'+this_id+' label').text()+' must contain exactly 10 digits').text($('.field-'+this_id+' label').text()+' must contain exactly 10 digits');
