@@ -25,7 +25,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -71,7 +70,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->routedestinationtype($model, $form, 'tblroutemapping-route_type,tblroutemapping-union_code', 'to_dest', 'To', FALSE, 'to'); ?>
-            <?= $form->field($model, 'to_type')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'to_type')->textInput()->label(false) ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Vehicle Capacity(Ltr)', false, 'capacity'); ?>
@@ -179,7 +178,9 @@ $script = "
     $('#tblroutemapping-to_dest').on('change',function(){
             var str = $('#tblroutemapping-to_dest option:selected').text();
             str=str.split('-');
-            $('#tblroutemapping-to_type').val(str[1].toLowerCase());
+            if(str !='' && str !='Select Destination Type' && str !='NULL' && str !='undefined'){
+               $('#tblroutemapping-to_type').val(str[1].toLowerCase());
+            }
     });
     
     var toType = '" . $toType . "';

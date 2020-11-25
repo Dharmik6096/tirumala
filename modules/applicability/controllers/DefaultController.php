@@ -96,7 +96,7 @@ class DefaultController extends Controller {
         }
         //echo 'here';exit;
         $dcs_list = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
-                    return $dcs->dcs_name . '-' . $dcs->dcs_code_ex;
+                    return $dcs->dcs_code_ex . '-' . $dcs->dcs_name;
                 });
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $dcs_list, 'dcsalert' => $dcsalert, 'dcsarray' => $removedcs]);
@@ -176,7 +176,7 @@ class DefaultController extends Controller {
         $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? Yii::$app->request->post('selected_bmc') : [];
         $unionCode = !empty(Yii::$app->request->post('union_code')) ? Yii::$app->request->post('union_code') : '';
         $routeModel = new TblRouteMapping();
-        $routeList = $routeModel->routeFromDestination([], json_decode($mccCodes), json_decode($bmcCodes));
+        $routeList = $routeModel->routeFromDestination([], json_decode($mccCodes), json_decode($bmcCodes), false);
         return Json::encode(['status' => 'success', 'data' => $routeList]);
     }
 

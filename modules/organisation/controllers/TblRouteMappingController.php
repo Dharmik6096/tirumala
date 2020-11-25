@@ -112,7 +112,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'route_name', $this->model->route_name);
-            
+
             if ($validate == 1 && empty($this->model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapping, ['Route Mapping', 'create']);
                 if ($transaction !== FALSE) {
@@ -251,7 +251,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
             if (!empty($list)) {
                 foreach ($list as $key => $r) {
                     $out[] = array('id' => $r['code'],
-                        'name' => $r['name'] . '-' . $r['tname']);
+                        'name' => $r['name'] . '-' . $r['tname'] . '-' . $r['ref_code']);
                 }
                 echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
                 return;
