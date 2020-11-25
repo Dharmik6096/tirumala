@@ -70,7 +70,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->routedestinationtype($model, $form, 'tblroutemapping-route_type,tblroutemapping-union_code', 'to_dest', 'To', FALSE, 'to'); ?>
-            <?= $form->field($model, 'to_type')->textInput()->label(false) ?>
+            <?= $form->field($model, 'to_type')->hiddenInput()->label(false) ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Vehicle Capacity(Ltr)', false, 'capacity'); ?>
