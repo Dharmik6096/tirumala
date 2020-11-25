@@ -316,7 +316,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
         $message = 'Product Sale';
         if (Yii::$app->request->post()) {
-            $this->createProductSaleData($model, $detailModel, $message);
+            return $this->createProductSaleData($model, $detailModel, $message);
         } else {
             return $this->render('_create_product_sale', [
                         'model' => $model,
@@ -483,7 +483,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
         $message = 'Product Sale to Member';
         if (Yii::$app->request->post()) {
-            $this->createProductSaleData($model, $detailModel, $message);
+            return $this->createProductSaleData($model, $detailModel, $message);
         } else {
             return $this->render('_create_product_sale', [
                         'model' => $model,
@@ -635,16 +635,13 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     }
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     return Json::encode($record);
-                    return;
                 } else {
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
-                    return;
                 }
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
-                return;
             }
         }
     }
