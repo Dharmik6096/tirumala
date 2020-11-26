@@ -201,7 +201,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                     }
                 } catch (\Throwable $ex) {
                     $trans->rollback();
-                    $row['response_message'] = htmlspecialchars($ex->errorInfo[2], ENT_QUOTES, 'UTF-8');
+                    $row['response_message'] = 'Record is incorrect or Already Exist';
                     $error_lines[] = $row;
                 }
             }
