@@ -17,6 +17,8 @@ use app\modules\general\models\TblSocietyVendor;
 use app\modules\organisation\models\TblDcsHistory;
 use app\modules\organisation\models\TblDcsVillageMappingHistory;
 use app\modules\organisation\models\TblDcsMilkTypeHistory;
+use app\modules\organisation\models\TblRouteMappingSources;
+use app\modules\organisation\models\TblRouteMappingSourcesHistory;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -230,6 +232,22 @@ class DcsImportStrategy extends ARImportStrategy {
                             $modelMilk->scenario = 'dcsImport';
                             array_push($modelList, $modelMilk);
                         }
+                        $oldRoute = TblRouteMappingSources::find()->where(['from_dest' => $model->dcs_code, 'from_type' => 'society', 'to_dest' => $model->bmc_code, 'to_type' => 'bmc'])->one();
+                        if (!empty($oldRoute)) {
+                            $sourcessHistory = new TblRouteMappingSourcesHistory();
+                            Yii::$app->operation->history($oldRoute, $sourcessHistory, DELETE);
+                            array_push($modelList, $sourcessHistory);
+                            array_push($deleteModel, $oldRoute);
+                        }
+                        $sourceMapping = new TblRouteMappingSources();
+                        $sourceMapping->from_dest = $model->dcs_code;
+                        $sourceMapping->route_code = $model->route_code;
+                        $sourceMapping->from_type = 'society';
+                        $sourceMapping->to_dest = $model->bmc_code;
+                        $sourceMapping->to_type = 'bmc';
+                        $sourceMapping->is_active = 1;
+                        array_push($modelList, $sourceMapping);
+
                         $model->default_milk_type = $model->milk_type_code;
                         $master[] = $model->save();
                         foreach ($modelList as $modelRow) {
