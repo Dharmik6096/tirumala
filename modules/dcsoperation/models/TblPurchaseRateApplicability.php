@@ -392,9 +392,9 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             if (strtolower($this->applicable_for) != 'dcs' && empty($this->dcsPurchaseRate)) {
                 $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'DCS') . ' Purchase Rate Code is invalid.'));
             }
-            if (strtolower($this->applicable_for) != 'dcs' && !empty($this->purchase_rate_code)) {
-                $this->addError($attribute, Yii::t('app/validation', 'Applicable For is must be DCS.'));
-            }
+//            if (strtolower($this->applicable_for) != 'dcs' && !empty($this->purchase_rate_code)) {
+//                $this->addError($attribute, Yii::t('app/validation', 'Applicable For is must be DCS.'));
+//            }
             $purchase = new TblPurchaseRate();
             $code = $purchase->getValidPurchaseRate($this->purchase_rate_code);
             if (strtolower($this->applicable_for) == 'dcs' && !empty($this->purchase_rate_code) && empty($code)) {
