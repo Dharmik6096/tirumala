@@ -142,7 +142,7 @@ class UserController extends AdminDefaultController {
 
         $out = '';
         if (!isset($_POST['depdrop_parents'])) {
-            echo Json::encode(['output' => '', 'selected' => '']);
+            return Json::encode(['output' => '', 'selected' => '']);
             return;
         }
         $data = [];
@@ -151,7 +151,7 @@ class UserController extends AdminDefaultController {
         foreach ($data['data'] as $row) {
             $out[] = array('id' => $row->{$data['field'][0]} . '_' . $row->{$data['field'][1]}, 'name' => $row->{$data['field'][1]});
         }
-        echo Json::encode(['output' => $out]);
+        return Json::encode(['output' => $out]);
         return;
     }
 
@@ -159,7 +159,7 @@ class UserController extends AdminDefaultController {
 
         $out = '';
         if (!isset($_POST['depdrop_parents'])) {
-            echo Json::encode(['output' => '', 'selected' => '']);
+            return Json::encode(['output' => '', 'selected' => '']);
             return;
         }
         $roles = \webvimark\modules\UserManagement\models\rbacDB\Role::getAvailableRoles(true, true);
@@ -169,7 +169,7 @@ class UserController extends AdminDefaultController {
             $out[] = array('id' => $key,
                 'name' => str_replace('_', ' ', $row));
         }
-        echo Json::encode(['output' => $out, 'selected' => '']);
+        return Json::encode(['output' => $out, 'selected' => '']);
     }
 
     public function actionOrganizationMap($id) {

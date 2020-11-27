@@ -106,6 +106,23 @@ class TblRemunerationSummary extends \app\models\ChildModel {
             if ($count > 0) {
                 $this->addError($attribute, "Payment already done.");
             } else {
+                $pending_disburse = $this->find()
+                                ->where(['status' => 'processed', 'bmc_code' => $this->bmc_code])
+                                ->andWhere(['or',
+                                    ['or',
+                                        ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
+                                        ['NOT BETWEEN', 'CAST(to_datetime as date)', $from_date, $to_date]
+                                    ],
+                                    ['or',
+                                        "'$from_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
+                                        "'$to_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
+                            ]])->one();
+                if (!empty($pending_disburse)) {
+                    $from_date = date('d-m-Y', strtotime($pending_disburse->from_datetime));
+                    $to_date = date('d-m-Y', strtotime($pending_disburse->to_datetime));
+                    $this->addError($attribute, Yii::t('app', "Please first disburse payment of $from_date to $to_date ."));
+                    return FALSE;
+                }
                 $unlock_cnt = TblPaymentCycleApplicability::find()->select(['status'])
                         ->where(['union_code' => $this->union_code,
                             'applicable_code' => $this->bmc_code,

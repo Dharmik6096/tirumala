@@ -12,6 +12,10 @@ $config = [
     'bootstrap' => ['log'],
     'timeZone' => 'Asia/Calcutta',
     // 'language'=>'gu',
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm' => '@vendor/npm-asset',
+    ],
     'components' => [
         'session' => ['name' => 'tirumala'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
@@ -30,6 +34,9 @@ $config = [
         'vendorApiError' => ['class' => 'app\modules\vendorapi\components\SetError'],
         'sqlite' => ['class' => 'app\components\SqliteCreate'],
         'alertnotification' => ['class' => 'app\components\AlertNotification'],
+        'customvalidation' => ['class' => 'app\components\CustomValidation'],
+        'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
+        'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -236,7 +243,9 @@ $config = [
         'soap' => ['class' => 'app\modules\soap\Soap',],
         'usermanagement' => ['class' => 'app\modules\usermanagement\usermanagement',],
         'emilkprolite' => ['class' => 'app\modules\webservice\emilkprolite\emilkProLite',],
-        'tankermovement' => [ 'class' => 'app\modules\tankermovement\Tankermovement',],
+        'tankermovement' => ['class' => 'app\modules\tankermovement\Tankermovement',],
+        'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',],
+        'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
     ],
     'params' => $params,
 ];

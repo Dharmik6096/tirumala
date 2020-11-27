@@ -52,18 +52,36 @@ class TblBranchController extends ChildController {
         $this->model = new TblBranch();
         $this->viewFile = 'create';
         $old_ifsc = '';
-        $this->model->valid_from =  date('Y-m-d');
+        $old_bank = '';
+        $validate = 1;
+        $this->model->valid_from = date('Y-m-d');
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
             $this->model->branch_name = ucwords($this->model->branch_name);
             $old_ifsc = $this->model->ifsc;
             $this->model->ifsc = strtoupper($this->model->ifsc);
             $this->model->branch_code = $this->model->getCode();
+            $old_bank = $this->model->bank_code;
             //$this->model->union_code=Yii::$app->session->get('Unions');
 
-            $transaction = $this->generalModel->saveTransaction([$this->model],['branch', 'create']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
+            if ($_POST['warning'] == 0) {
+                $detail = $this->model->getExistingIfsc();
+                $bankName = '';
+                $branchName = '';
+                if (!empty($detail)) {
+                    $branchName = $detail->branch_name;
+                    $this->model->bank_code = $detail->bank_code;
+                    $bankName = Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name');
+                }
+                $msg = 'IFSC has alreday been taken in ' . '<b>' . $bankName . '</b> and <b>' . $branchName . '</b> Are you sure you want to continue?';
+                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, '', $msg);
+            }
+            $this->model->bank_code = $old_bank;
+            if ($validate == 1 && empty($this->model->getErrors())) {
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['branch', 'create']);
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
             }
         }
         $this->model->ifsc = $old_ifsc;
@@ -82,7 +100,7 @@ class TblBranchController extends ChildController {
         $old_ifsc = $this->model->ifsc;
         $this->model->state_code = $this->model->subDistrictCode->districtCode->stateCode->state_code;
         $this->model->district_code = $this->model->subDistrictCode->districtCode->district_code;
-
+        $validate = 1;
         if (Yii::$app->request->post()) {
             $historyModel = new TblBranchHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
@@ -91,10 +109,25 @@ class TblBranchController extends ChildController {
             $this->model->branch_name = ucwords($this->model->branch_name);
             $old_ifsc = $this->model->ifsc;
             $this->model->ifsc = strtoupper($this->model->ifsc);
-
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['branch', 'edit']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
+            $old_bank = $this->model->bank_code;
+            if ($_POST['warning'] == 0) {
+                $detail = $this->model->getExistingIfsc();
+                $bankName = '';
+                $branchName = '';
+                if (!empty($detail)) {
+                    $branchName = $detail->branch_name;
+                    $this->model->bank_code = $detail->bank_code;
+                    $bankName = Yii::$app->general->getforeignkey($this->model->bankCode, 'bank_name');
+                }
+                $msg = 'IFSC has alreday been taken in ' . '<b>' . $bankName . '</b> and <b>' . $branchName . '</b> Are you sure you want to continue?';
+                $validate = Yii::$app->warning->unique($this->model, 'ifsc', $this->model->ifsc, '', $msg);
+            }
+            $this->model->bank_code = $old_bank;
+            if ($validate == 1) {
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['branch', 'edit']);
+                if ($transaction !== FALSE) {
+                    return $this->{$transaction}();
+                }
             }
         }
         $this->model->ifsc = $old_ifsc;
@@ -108,12 +141,12 @@ class TblBranchController extends ChildController {
      * @return mixed
      */
     public function actionDelete() {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_branch','','', Yii::$app->request->post('id'), 'branch_code']);
+        $valueOut = $this->generalModel->callSp('sp_delete_master_org', ['tbl_branch', '', '', Yii::$app->request->post('id'), 'branch_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
-            $historyModel=new TblBranchHistory();
-            Yii::$app->operation->history($this->model,$historyModel, DELETE);
-            $record = $this->generalModel->deleteTransaction([$this->model,$historyModel]);
+            $historyModel = new TblBranchHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }
@@ -141,7 +174,7 @@ class TblBranchController extends ChildController {
      * By: Dhara
      * DAte: 8-11-2016
      * @return type
-     */    
+     */
     public function actionGetIfscCode() {
 
         $ifsc = '';
@@ -149,14 +182,15 @@ class TblBranchController extends ChildController {
             $model = new TblBranch();
             $ifsc = $model->getIfcs($_POST['id']);
         }
-        echo Json::encode(['code' => $ifsc]);
+        return Json::encode(['code' => $ifsc]);
     }
-    
+
     private function setModel() {
-        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);        
+        $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
     }
 
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->branch_code]);
     }
+
 }

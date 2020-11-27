@@ -33,10 +33,24 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_paymen
                     'columns' => [
                         [
                             'attribute' => 'is_active',
+                            'value' => $model->is_default == 1 ? 'Yes' : 'No',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',
                             'value' => GeneralFunctions::getRecordStatus($model->is_active),
                             'valueColOptions' => ['style' => 'width:80%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:100%']
                         ],
                     ],
                 ],

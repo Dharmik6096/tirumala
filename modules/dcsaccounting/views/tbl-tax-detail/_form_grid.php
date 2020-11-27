@@ -56,7 +56,7 @@ $disable = true;
                                 'item' => function($index, $label, $name, $checked, $value) use ($disable) {
                                     $data = explode('$', $label);
                                     $delete = ($data[0] == 1 || !$disable) ? '' : ((checkRoute()) ? GhostHtml::a_alert('<span class="glyphicon glyphicon-trash"></span>', ['/dcsaccounting/tbl-tax-detail/delete'], ['title' => 'Delete', 'data-id' => $value, 'class' => 'delete-tax']) : '');
-                                    return "<tr><td><input type='radio' {$checked} name='{$name}' value='{$value}' ></td><td>" . $data[0] . "</td><td>" . $data[1] . "</td><td>" . $data[2] . "</td><td class='width15'>" . $data[3] . "</td><td>" . $delete . "</td></tr>";
+                                    return "<tr><td><input class='margin_left15' type='radio' {$checked} name='{$name}' value='{$value}' ></td><td>" . $data[0] . "</td><td>" . $data[1] . "</td><td>" . $data[2] . "</td><td class='width15'>" . $data[3] . "</td><td>" . $delete . "</td></tr>";
                                 }
                             ])->label(FALSE);
                             ?>

@@ -22,7 +22,7 @@ $this->title = Yii::t('app', $title);
                     'class' => 'save-form'
                 ],
                 'validateOnBlur' => false,
-                'validateOnEnter' => TRUE,
+                
                 'validateOnChange' => FALSE,
                 'enableClientValidation' => true,
                 'validateOnSubmit' => true,

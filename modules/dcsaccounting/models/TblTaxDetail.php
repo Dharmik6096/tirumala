@@ -85,7 +85,7 @@ class TblTaxDetail extends \app\models\ChildModel {
         $data = $this->getDetail($tax_code);
         return ArrayHelper::map($data, 'tax_detail_code', function($array, $key) {
                     $operation = ($array->type == 0) ? 'Addition' : 'Substraction';
-                    return $array->basic_tax_code . '$' . $array->basicTaxCode->basic_tax_name . '$' . $array->percentage . '$' . $operation;
+                    return $array->basic_tax_code . '$' . $array->basicTaxCode['basic_tax_name'] . '$' . $array->percentage . '$' . $operation;
                 });
     }
 

@@ -8,7 +8,7 @@ use yii\helpers\Url;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code','Union'); ?>
     </div>
 
     <div class="col-sm-2">
@@ -44,8 +44,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblpreventcollectiondata-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code') . ' *', false, '', false, true); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>

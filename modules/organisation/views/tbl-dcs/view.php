@@ -67,12 +67,24 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'dcs_code_ex',
+                                'attribute' => 'dcs_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'dcs_code',
+                                'attribute' => 'dcs_code_ex',
                                 'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'ref_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'dcs_name',
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
@@ -93,11 +105,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'label' => 'Milk Type',
                                 'format' => 'html',
                                 'value' => $model->milkType(),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                            [
-                                'attribute' => 'dcs_name',
-                                'valueColOptions' => ['style' => 'width:30%'],
+                                'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
                     ],
@@ -425,7 +433,12 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'credit_sale_allow',
                                 'format' => 'html',
                                 'value' => $model->credit_sale_allow == 1 ? 'Yes' : 'No',
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'default_milk_type',
+                                'value' => Yii::$app->general->getStaticDropdownVal('default_milk_type', $model, 'default_milk_type'),
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
@@ -450,26 +463,35 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
             </div>
         </div>
 
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div>
-        <div class="form-grid">
-            <?=
-            $this->render('../../../details/views/tbl-bank-details/_bank_details', [
-                'model' => $model,
-                'dataProvider' => $bdataProvider,
-                'searchModel' => $bsearchModel,
-            ])
-            ?>
+        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div> -->
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Bank Details</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('../../../details/views/tbl-bank-details/_bank_details', [
+                    'model' => $model,
+                    'dataProvider' => $bdataProvider,
+                    'searchModel' => $bsearchModel,
+                ])
+                ?>
+            </div>
         </div>
-
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
-        <div class="form-grid">
-            <?=
-            $this->render('../../../details/views/tbl-contact-details/_contact_details', [
-                'model' => $model,
-                'dataProvider' => $cdataProvider,
-                'searchModel' => $csearchModel,
-            ])
-            ?>
-        </div>        
+        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div> -->
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Contact Details</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                    'model' => $model,
+                    'dataProvider' => $cdataProvider,
+                    'searchModel' => $csearchModel,
+                ])
+                ?>
+            </div>       
+        </div> 
     </div>
 </div>

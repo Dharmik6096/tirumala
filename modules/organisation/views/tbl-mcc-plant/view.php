@@ -32,8 +32,18 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
-//                    'plantCode.name',
-//                    'mcc_plant_code',
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'mcc_plant_code_ex',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'ref_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
                     [
                         'columns' => [
                             [
@@ -165,6 +175,10 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'gst_no',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
@@ -200,37 +214,51 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
             </div>
         </div>
 
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
-        <div class="form-grid">
-            <?=
-            $this->render('../../../details/views/tbl-contact-details/_contact_details', [
-                'model' => $model,
-                'dataProvider' => $cdataProvider,
-                'searchModel' => $csearchModel,
-            ])
-            ?>
+        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div> -->
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Contact Details</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                    'model' => $model,
+                    'dataProvider' => $cdataProvider,
+                    'searchModel' => $csearchModel,
+                ])
+                ?>
+            </div>
         </div>
-
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">BMC Mapping</h5></div>
-        <div class="form-grid">
-            <?=
-            $this->render('_bmc_grid', [
-                'model' => $model,
-                'dataProvider' => $bmcdataProvider,
-                'searchModel' => $bmcsearchModel,
-            ])
-            ?>
+        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">BMC Mapping</h5></div> -->
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">BMC Mapping</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('_bmc_grid', [
+                    'model' => $model,
+                    'dataProvider' => $bmcdataProvider,
+                    'searchModel' => $bmcsearchModel,
+                ])
+                ?>
+            </div>
         </div>
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Silos Information</h5></div>
-        <div class="form-grid">
-            <?=
-            $this->render('@app/modules/organisation/views/tbl-bmc-silos-info/_form_grid', [
-                'model' => $model,
-                'dataProvider' => $sndataProvider,
-                'searchModel' => $snsearchModel,
-                'isaction' => $isaction
-            ])
-            ?>
+        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Silos Information</h5></div> -->
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Silos Information</h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('@app/modules/organisation/views/tbl-bmc-silos-info/_form_grid', [
+                    'model' => $model,
+                    'dataProvider' => $sndataProvider,
+                    'searchModel' => $snsearchModel,
+                    'isaction' => $isaction
+                ])
+                ?>
+            </div>
         </div>
     </div>
 </div>

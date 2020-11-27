@@ -11,7 +11,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $this->title = Yii::$app->label->title('view', 'Vehicle');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Vehicle Masters'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
+//$this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
 //$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-plant/contact-details', 'id' => $model->plant_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 <div class="tbl-vehicle-master-view panel panel-default panel-grid panel-main">
@@ -133,6 +133,11 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
                     [
                         'columns' => [
                             [
+                                'attribute' => 'billing_method',
+                                'value' => Yii::$app->general->getStaticDropdownVal('billing_method', $model, 'billing_method'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
@@ -171,25 +176,25 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
                             ],
                         ],
                     ],
-                    [
-                        'group' => true,
-                        'label' => 'Billing Details',
-                        'rowOptions' => ['class' => 'bg-default']
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'billing_type',
-                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->billingType->billing_type : '',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                            [
-                                'attribute' => 'remarks',
-                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->remarks : '',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                        ],
-                    ],
+//                    [
+//                        'group' => true,
+//                        'label' => 'Billing Details',
+//                        'rowOptions' => ['class' => 'bg-default']
+//                    ],
+//                    [
+//                        'columns' => [
+//                            [
+//                                'attribute' => 'billing_type',
+//                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->billingType->billing_type : '',
+//                                'valueColOptions' => ['style' => 'width:30%'],
+//                            ],
+//                            [
+//                                'attribute' => 'remarks',
+//                                'value' => isset($model->vehicleBillingType) ? $model->vehicleBillingType->remarks : '',
+//                                'valueColOptions' => ['style' => 'width:30%'],
+//                            ],
+//                        ],
+//                    ],
                 ];
 
 // View file rendering the widget
@@ -202,7 +207,7 @@ $this->params['menu'][] = Yii::$app->controls->update($model->vehicle_code);
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],

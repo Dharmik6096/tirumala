@@ -48,6 +48,9 @@ class TblVspOutstanding extends \app\models\ChildModel {
             [['bmc_code', 'customer_code', 'transaction_date'], 'required', 'on' => ['importCsv']],
             [['hold_amount', 'due_amount'], 'default', 'value' => '0'],
             [['hold_amount', 'due_amount'], 'validateAmount', 'on' => ['createPortal', 'importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv', 'importDetailCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');

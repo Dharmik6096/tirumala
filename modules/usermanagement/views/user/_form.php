@@ -34,48 +34,48 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <?php
-//           echo $form->field($model->loadDefaultValues(), 'status', [ 'options' => ['class' => 'form-group col-sm-3',]])
+//           echo $form->field($model->loadDefaultValues(), 'status', [ 'options' => ['class' => 'form-group col-sm-2',]])
 //                ->dropDownList(User::getStatusList())
     ?>
 
-    <?php // $form->field($model, 'user_code', [ 'options' => ['class' => 'form-group col-sm-3',]])->textInput(['maxlength' => 255, 'autocomplete' => 'off', 'readOnly' => $readOnly]) ?>
+    <?php // $form->field($model, 'user_code', [ 'options' => ['class' => 'form-group col-sm-2',]])->textInput(['maxlength' => 255, 'autocomplete' => 'off', 'readOnly' => $readOnly]) ?>
 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'username')->textInput(['maxlength' => 255, 'autocomplete' => 'off', 'readOnly' => $readOnly]) ?>
     </div>
     <?php if (User::hasPermission('editUserEmail')): ?>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
         </div>
     <?php endif; ?>
-    <div class="col-sm-3">
+
+    <div class="col-sm-2">
         <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
     </div>
-    <div class="col-sm-3 user_type_show">
+    <div class="col-sm-2 user_type_show">
         <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
     </div>
-    <div class="col-sm-3 mt25 user_type_show">
+    <div class="col-sm-2 mt25 user_type_show">
         <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div> 
     <?php if ($isNewRecord): ?>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <?= $form->field($model, 'repeat_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
         </div>
 
     <?php endif; ?>
 
     <?php /* if ($model->checkNotSelf()) { ?>
-      <div class="col-sm-3 mt25">
+      <div class="col-sm-2 mt25">
       <?= Yii::$app->controls->active($model, $form); ?>
       </div>
       <?php } */ ?>
-    <div class="clearfix"></div>
 
     <?php if ($isNewRecord): ?>
         <?php
@@ -102,7 +102,7 @@ $form = ActiveForm::begin([
           ]
           ])->label(true); */
         ?>
-        <div class="col-sm-6">
+        <div class="col-sm-2 multiple">
             <?php
             echo $form->field($model, 'role')
                     ->dropDownList(User::getAvailableRoles(), ['multiple' => 'multiple']);
@@ -110,8 +110,7 @@ $form = ActiveForm::begin([
         </div>
     <?php endif; ?>
 
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save($button, $model); ?>
             <?= Yii::$app->controls->reset(); ?>

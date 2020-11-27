@@ -19,6 +19,7 @@ class TblPlantSearch extends TblPlant {
         return [
             [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description', 'capacity', 'valid_from'], 'safe'],
             [['is_active'], 'integer'],
+            [['plant_code_ex', 'ref_code'], 'safe'],
         ];
     }
 
@@ -77,7 +78,9 @@ class TblPlantSearch extends TblPlant {
             'tbl_plant.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_plant.plant_code', $this->plant_code])
+        $query->andFilterWhere(['like', 'tbl_plant.plant_code_ex', $this->plant_code_ex])
+                ->andFilterWhere(['like', 'tbl_plant.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'tbl_plant.plant_code', $this->plant_code])
                 ->andFilterWhere(['like', 'tbl_plant.contact_person', $this->contact_person])
                 ->andFilterWhere(['like', 'tbl_plant.name', $this->name])
                 ->andFilterWhere(['like', 'tbl_plant.district_code', $this->district_code])

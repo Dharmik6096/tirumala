@@ -40,11 +40,13 @@ class V1 extends \yii\base\Module {
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'bmc/master' => [
-                'param' => 'select_param:[mcc_plant_code] as mcc_plant_code,[bmc_code],[bmc_name]#organization_type#organization_code#table:tbl_bmc',
+                'param' => 'select_param:[mcc_plant_code] as mcc_plant_code,[bmc_code],CONCAT([bmc_name], \'(\', [bmc_code_ex], \')\') as bmc_name#organization_type#organization_code#table:tbl_bmc',
                 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'dcs/master' => [
-                'param' => 'select_param:[bmc_code],[dcs_code],[dcs_name],1 as dpu_sync_allowed,1 as dpu_connection_type,\'98216CAA89BB76436941ABCCC8885442\' as dpu_enc_key,\'\' as dpu_salt,\'v1\' as dpu_version,\'AES\' as dpu_enc_type#organization_type#organization_code#table:tbl_dcs', 'sp' => 'sp_app_eipl_v1_master_data',
+                'param' => 'organization_type#organization_code',
+                'sp' => 'sp_app_eipl_v1_dcs_master',
+//                'param' => 'select_param:[bmc_code],[dcs_code],[dcs_name],1 as dpu_sync_allowed,1 as dpu_connection_type,\'98216CAA89BB76436941ABCCC8885442\' as dpu_enc_key,\'\' as dpu_salt,\'v1\' as dpu_version,\'AES\' as dpu_enc_type#organization_type#organization_code#table:tbl_dcs', 'sp' => 'sp_app_eipl_v1_master_data',
             ],
             'member/master' => [
                 'param' => 'select_param:[dcs_code],[member_code],[member_name],convert(varchar,registration_date,105) as registration_date#organization_type#organization_code#table:tbl_member',
@@ -234,17 +236,23 @@ class V1 extends \yii\base\Module {
             'report/member-collection' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_day_wise_report',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/member-collection-passbook' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_passbook',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/member-collection-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_summary',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/collection-dispatch' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
@@ -386,10 +394,14 @@ class V1 extends \yii\base\Module {
             'report/member-collection-paymentcyclewise' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_paymentcycle_wise_report',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/member-collection-monthwise' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime',
                 'sp' => 'sp_app_eipl_v1_member_collection_monthwise_report',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'dashboard/shift-collection-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#member#from_datetime#to_datetime',
@@ -431,7 +443,9 @@ class V1 extends \yii\base\Module {
             'report/member-collection-shift' => [
                 'param' => 'union#plant#mcc#bmc#dcs#collection_date',
                 'sp' => 'sp_app_eipl_v1_milk_collection_shift_report',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/member-collection-date-shift-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
@@ -451,106 +465,209 @@ class V1 extends \yii\base\Module {
             'report/society-collection-date-shift-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_society_wise_milk_collection_date_shift_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/society-collection-date-wise-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_society_wise_milk_collection_date_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/society-collection-consolidated' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_society_wise_milk_collection_consolidated',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
             ],
             'report/manual-milk-entry-society-date-shift-wise' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry_society_date_shift_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/manual-milk-entry-member-date-shift-wise' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry_member_date_shift_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/manual-milk-entry-society-date-wise' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry_society_date_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/manual-milk-entry-member-date-wise' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry_member_date_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/manual-milk-entry-society-consolidated' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry_society_consolidated',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/manual-milk-entry-member-consolidated' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_manual_milk_entry_member_consolidated',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/milk-collection-vs-receipt' => [
-                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_milk_collection_vs_milk_receipt',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
             ],
             'report/milk-dispatch-vs-receipt' => [
-                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_milk_dispatch_vs_receipt',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
             ],
             'report/member-collection-vs-dispatch' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_member_collection_vs_dispatch',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
             ],
             'report/company-wise-collection-vs-dispatch' => [
-                'param' => 'union#route#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_vs_dispatch',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'mcc', 'bmc']
             ],
             'report/company-wise-collection-vs-recipt' => [
-                'param' => 'union#route#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_vs_receipt',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'mcc', 'bmc']
             ],
             'report/company-wise-dispatch-vs-recipt' => [
-                'param' => 'union#route#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_dispatch_vs_receipt',
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'mcc', 'bmc']
             ],
             'report/bmc-collection-shift-report' => [
-                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_shift_report',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/bmc-collection-date-shift-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_date_and_shift_wise_summary',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
             ],
             'report/bmc-collection-date-wise-summary' => [
                 'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_date_wise_summary',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
             ],
             'report/bmc-collection-consolidated' => [
-                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_bmc_collection_consolidated',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
             ],
             'report/union-collection-date-shift-summary' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_date_shift_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/union-collection-date-summary' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_date_wise',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
             'report/union-collection-consolidated' => [
                 'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime#staus_type',
                 'sp' => 'sp_app_eipl_v1_company_wise_collection_consolidated',
-                'call_action' => TRUE
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
+            ],
+            'report/member-wise-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_summary',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true
+            ],
+            'report/member-wise-product-wise-date-wise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_product_wise_date_wise',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true
+            ],
+            'report/member-wise-payment-cycle-wise-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_payment_cycle_wise_summary',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true
+            ],
+            'report/member-wise-product-wise-payment-cycle-wise-summary' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_product_wise_payment_cycle_wise_summary',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true
+            ],
+            'report/member-wise-no-of-payment-cycle' => [
+                'param' => 'union#plant#mcc#bmc#dcs#member#no_of_payment_cycle',
+                'sp' => 'sp_app_eipl_v1_member_wise_no_of_payment_cycle',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
+            ],
+            'report/member-wise-payment-cycle-wise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_member_wise_payment_cycle_wise',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
+            ],
+            'report/mpp-wise-payment-cycle-wise' => [
+                'param' => 'union#plant#mcc#bmc#dcs#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_mpp_wise_payemnt_cycle_wise',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'dcs']
+            ],
+            'report/bmc-wise-payment-cycle-wise' => [
+                'param' => 'union#plant#mcc#bmc#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_bmc_wise_payemnt_cycle_wise',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union', 'mcc', 'bmc']
+            ],
+            'report/company-wise-payment-cycle-wise' => [
+                'param' => 'union#from_datetime#to_datetime',
+                'sp' => 'sp_app_eipl_v1_company_wise_payemnt_cycle_wise',
+                'call_action' => TRUE,
+                'blank_org_to_zero' => true,
+                'rls_param_array' => ['union']
             ],
         ];
         return $label;

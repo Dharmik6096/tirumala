@@ -206,7 +206,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
             $model = new TblProductRequisitionTransaction();
             $array = $model->checkProductAvailabel(Yii::$app->request->post('id'), Yii::$app->request->post('rid'), Yii::$app->request->post('date'));
         }
-        echo Json::encode($array);
+        return Json::encode($array);
         return;
     }
 
@@ -345,7 +345,7 @@ class TblProductRequisitionTransactionController extends \app\controllers\ChildC
 //            $model = new TblProductRequisitionTransaction();
 //            $array = $model->checkProductAvailabel(Yii::$app->request->post('id'), Yii::$app->request->post('rid'), Yii::$app->request->post('date'));
 //        }
-//        echo Json::encode($array);
+//        return Json::encode($array);
 //        return;
 
 

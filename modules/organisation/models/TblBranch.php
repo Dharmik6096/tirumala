@@ -65,12 +65,12 @@ class TblBranch extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['bank_code', 'branch_name', 'ifsc', 'address', 'hamlet_code', 'pincode'], 'required'],
+        $main_rules = [
+            [['bank_code', 'branch_name', 'ifsc', 'address', 'pincode'], 'required'],
             [['created_at', 'updated_at', 'district_code', 'state_code', 'union_code', 'local_address', 'valid_from'], 'safe'],
             [['is_active'], 'safe'],
-            [['branch_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['ifsc'], 'unique', 'message' => Yii::t('app/validation', 'This {attribute} has already been taken')],
+            [['branch_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+//            [['ifsc'], 'unique', 'message' => Yii::t('app/validation', 'This {attribute} has already been taken')],
             [['branch_code'], 'unique'],
 //            [['ifsc'],'trim'],
 //            ['branch_name', 'unique', 'when' => function($model) {
@@ -111,6 +111,9 @@ class TblBranch extends ChildModel {
             //  [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['created_by' => 'user_id']],
             [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblBranch', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     public function validateIfsc($attribute) {
@@ -279,6 +282,11 @@ class TblBranch extends ChildModel {
     public function getBranchIfcs($ifsc) {
 
         $record = $this->find()->select('branch_code,bank_code')->where(['ifsc' => $ifsc, 'is_active' => 1])->one();
+        return $record;
+    }
+
+    public function getExistingIfsc() {
+        $record = $this->find()->where(['ifsc' => ucwords($this->ifsc), 'is_active' => 1])->andWhere(['<>', 'branch_code', $this->branch_code])->one();
         return $record;
     }
 

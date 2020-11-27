@@ -10,7 +10,7 @@ use yii\web\View;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => true,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -19,26 +19,26 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'amount')->textInput(['disabled'=>true]) ?>
     </div>
     <?php $model->available_credit = isset($model->memberCredit) ? $model->memberCredit->balance : '0';?>
     <div style='display:none'>
     <?= $form->field($model, 'available_credit')->hiddenInput(['disabled'=>false]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'other_amount')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'discount')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'paid_amount')->textInput() ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'amount_due')->textInput(['readOnly'=>true]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'payment_cycle_code')->dropDownList($paymentCycle, ['prompt' => 'Select Payment Cycle'])->label('Payment Cycle'); ?>
     </div>
     <!--<div class="col-sm-4">

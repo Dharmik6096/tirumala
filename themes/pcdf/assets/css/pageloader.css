@@ -20,7 +20,7 @@ padding:20px;
   right: 0;
   bottom: 0;
   background-color: #ffffff;
-  z-index: 9999; }
+  z-index: 99999; }
   #pageloader #loadercontent {
     width: 200px;
     height: 200px;

@@ -34,12 +34,11 @@ class TblContactDetails extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['detail_code', 'firstname'], 'required'],
+        $main_rules = [
+            [['detail_code'], 'required'],
             [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
             [['detail_code', 'mobile_no'], 'integer'],
             [['mobile_no'], 'CheckDuplicate'],
-            [['mobile_no'], 'required', 'on' => 'additional'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
@@ -52,6 +51,9 @@ class TblContactDetails extends \app\models\ChildModel {
             [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
             [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active'], 'safe'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

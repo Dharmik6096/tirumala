@@ -19,7 +19,10 @@ class DcsImport extends TblDcs {
         $array = parent::rules();
 
         $rules = [
-            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'hamlet_code'], 'required', 'on' => ['customImport']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name'], 'required', 'on' => ['customImport']],
             [['dpu_type'], 'required', 'on' => 'importCsv'],
             [['union_code'], 'validateUnionCode'],
             [['hamlet_code'], 'validateHamlet'],
@@ -108,7 +111,6 @@ class DcsImport extends TblDcs {
                 }
                 //$this->dcs_code = $this->getCode();
 //                $this->dcs_code = (strlen($this->dcs_code) <= 10 && (in_array($this->union_code, ['001', '002']))) ? '00' . $this->dcs_code : $this->dcs_code;
-                $this->valid_from = date('Y-m-d');
             }
         }
     }

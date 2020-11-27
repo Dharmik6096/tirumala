@@ -5,7 +5,7 @@ use dosamigos\tinymce\TinyMce;
 
 $form = ActiveForm::begin([
             'validateOnBlur' => TRUE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

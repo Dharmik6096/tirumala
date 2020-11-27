@@ -44,8 +44,7 @@ if ($model->is_active == 1) {
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'reference_code',
-                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code,
+                            'attribute' => 'ex_member_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -53,7 +52,7 @@ if ($model->is_active == 1) {
                 [
                     'columns' => [
                         [
-                            'attribute' => 'ex_member_code',
+                            'attribute' => 'ref_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
@@ -176,6 +175,19 @@ if ($model->is_active == 1) {
                         [
                             'attribute' => 'member_class',
                             'value' => ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : ''),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'reference_code',
+                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code,
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'x_col3',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -334,17 +346,21 @@ if ($model->is_active == 1) {
                 [
                     'columns' => [
                         [
-                            'attribute' => 'pan_no',
+                            'attribute' => 'beneficiary_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'adhar_no',
+                            'attribute' => 'pan_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
                 [
                     'columns' => [
+                        [
+                            'attribute' => 'adhar_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
                         [
                             'attribute' => 'annual_income',
                             'valueColOptions' => ['style' => 'width:30%']
@@ -353,6 +369,10 @@ if ($model->is_active == 1) {
 //                            'attribute' => 'payment_mode',
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
                         [
                             'attribute' => 'is_active',
                             'label' => 'Status',
@@ -411,7 +431,7 @@ if ($model->is_active == 1) {
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],

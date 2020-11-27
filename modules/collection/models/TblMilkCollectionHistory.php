@@ -57,9 +57,9 @@ class TblMilkCollectionHistory extends \yii\db\ActiveRecord {
 //            [['milk_collection_code', 'member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag'], 'string'],
 //            [['milk_type_code', 'sample_no', 'ack'], 'integer'],
 //            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-            [['milk_collection_code', 'member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'milk_type_code', 'sample_no', 'ack', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'date_time_of_collection', 'date_time_of_recieve', 'history_created_at', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'dt_date', 'is_approved', 'operation_type', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
+            [['milk_collection_code', 'member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'milk_type_code', 'sample_no', 'ack', 'fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'date_time_of_collection', 'date_time_of_recieve', 'history_created_at', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'dt_date', 'is_approved', 'operation_type', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code'], 'safe'],
-            [['adt_param', 'adt_value'], 'safe']
+            [['adt_param', 'adt_value', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount'], 'safe']
         ];
     }
 

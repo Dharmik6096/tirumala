@@ -92,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-sm-12">
                 <?=
                 Html::checkboxList(
-                        'child_routes', ArrayHelper::map($childRoutes, 'name', 'name'), ArrayHelper::map($routes, 'name', 'description'), [
+                    'child_routes', ArrayHelper::map($childRoutes, 'name', 'name'), ArrayHelper::map($routes, 'name', 'description'), [
                     'id' => 'routes-list',
                     'class' => 'checkbox',
                     'separator' => '<div class="separator"></div>',

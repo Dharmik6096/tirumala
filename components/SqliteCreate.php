@@ -60,6 +60,7 @@ class SqliteCreate extends Component {
 
     public function getDataDcs($android_tables, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code = '') {
         try {
+            $current_date = date('Y-m-d');
             if ($this->is_offline) {
                 $sqls = 'SELECT *  FROM tbl_table_list';
             } else {
@@ -90,25 +91,34 @@ class SqliteCreate extends Component {
                         $tables_fields = implode(',', $tables_fields);
                         $fields = str_replace(',', ',' . $field['table_name'] . '.', $tables_fields);
                         $fields = $field['table_name'] . '.' . $fields;
+                        $sql = '';
                         if ($field['is_main'] == 1) {
                             if ($field['key_field'] == NULL) {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
                             } else {
                                 if ($field['key_field'] == 'to_dest') {
-                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($bmc_code) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($mcc_plant_code) and lower(to_type) = 'mcc'))";
+                                    $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
+                                    $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($whereMcc) and lower(to_type) = 'mcc'))";
                                 } else {
-                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in (${$field['key_field']})";
+                                    $whereKeyField = !empty(${$field['key_field']}) ? ${$field['key_field']} : '\'\'';
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in ($whereKeyField)";
                                 }
                             }
                         } else {
-                            $sql = 'SELECT distinct ' . $fields . ' FROM ' . $tableName . ' inner join ' . $field['primary_table'] . ' on ' . $tableName . '.' . $field['child_key'] . '=' . $field['primary_table'] . '.' . $field['child_key'] . ' where ' . $field['primary_table'] . '.' . $field['key_field'] . " in (${$field['key_field']})";
+                            $whereKeyField = !empty(${$field['key_field']}) ? ${$field['key_field']} : '\'\'';
+                            $sql = 'SELECT distinct ' . $fields . ' FROM ' . $tableName . ' inner join ' . $field['primary_table'] . ' on ' . $tableName . '.' . $field['child_key'] . '=' . $field['primary_table'] . '.' . $field['child_key'] . ' where ' . $field['primary_table'] . '.' . $field['key_field'] . " in ($whereKeyField)";
                         }
-
-                        if (in_array($tableName, ['tbl_purchase_rate_applicability', 'tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'])) {
-                            $sql.= ' and tbl_purchase_rate_applicability.is_active=1 and tbl_purchase_rate_applicability.wef_date >= (select TOP(1) wef_date from tbl_purchase_rate_applicability where ' . $field['key_field'] . " in (${$field['key_field']})" . '  and tbl_purchase_rate_applicability.is_active=1 and CAST(wef_date as date) <= CAST(GETDATE() as date) order by wef_date DESC)';
+                        if (!empty($sql) && in_array($tableName, ['tbl_purchase_rate_applicability', 'tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'])) {
+                            $whereKeyField = !empty(${$field['key_field']}) ? ${$field['key_field']} : '\'\'';
+                            $sql .= ' and tbl_purchase_rate_applicability.is_active=1 and tbl_purchase_rate_applicability.wef_date >= (select TOP(1) wef_date from tbl_purchase_rate_applicability where ' . $field['key_field'] . " in ($whereKeyField)" . '  and tbl_purchase_rate_applicability.is_active=1 and CAST(wef_date as date) <= \'' . $current_date . '\' order by wef_date DESC)';
                         }
-                        $cmd = $this->export_db->createCommand($sql);
-                        $dataReader = $cmd->queryAll();
+                        if (!empty($sql)) {
+                            $cmd = $this->export_db->createCommand($sql);
+                            $dataReader = $cmd->queryAll();
+                        } else {
+                            $dataReader = [];
+                        }
                         if (!empty($dataReader)) {
                             $i = 1;
                             $saveData = [];
@@ -203,7 +213,7 @@ class SqliteCreate extends Component {
                     $value = "'" . str_replace("'", "''", $value) . "'";
                 }
             }
-            $insert_data.=$value . ",";
+            $insert_data .= $value . ",";
         }
         $insert_data = rtrim($insert_data, ',');
     }

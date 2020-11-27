@@ -21,39 +21,34 @@ use Yii;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
- * @property string $delete_at
- * @property string $delete_by
  * @property string $operation_type
  * @property integer $is_active
  */
-class TblVehicleKmInfoHistory extends \yii\db\ActiveRecord
-{
+class TblVehicleKmInfoHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vehicle_km_info_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['is_active','data_lock'], 'safe'],
-            [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by', 'delete_by', 'operation_type'], 'safe'],
-            [['wef_date', 'created_at', 'updated_at', 'delete_at','shift_code'], 'safe'],
-            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'safe'],
+            [['is_active', 'data_lock'], 'safe'],
+            [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at', 'shift_code'], 'safe'],
+            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms','union_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'km_info_code' => Yii::t('app', 'Km Info Code'),
@@ -69,10 +64,9 @@ class TblVehicleKmInfoHistory extends \yii\db\ActiveRecord
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'delete_at' => Yii::t('app', 'Delete At'),
-            'delete_by' => Yii::t('app', 'Delete By'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'is_active' => Yii::t('app', 'Is Active'),
         ];
     }
+
 }

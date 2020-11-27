@@ -32,7 +32,7 @@ class Grid extends Widget {
 
     public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = [], $fixed_header = true, $rowOptions = []) {
         if (!isset($searchModel->grid_filter) || $searchModel->grid_filter) {
-            echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
+        echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
             if (isset($searchModel->tableSchema->fullName)) {
                 $table_name = $searchModel->tableSchema->fullName;
                 if (Yii::$app->session->get('makerChecker') == 1) {
@@ -251,7 +251,7 @@ class Grid extends Widget {
                 $bind_script = FALSE;
                 $kyc_script = FALSE;
                 $message = '';
-                if (in_array($table_name, array('tbl_bank_details', 'tbl_member', 'tbl_transporter'))) {
+                if (in_array($table_name, array('tbl_bank_details', 'tbl_member'))) {
                     $bind_script = TRUE;
                     $grid_option['actions']['verify-bank-detail'] = function($url, $model) {
                         if ($model->is_active == 1 && !empty($model->bank_account_no)) {
@@ -273,7 +273,7 @@ class Grid extends Widget {
                                     $id = $flag . ',' . $model->{$details['field']};
                                     $VURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '1']);
                                     $RURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '2']);
-                                    $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify bank details ?' . $name . '<br/> Bank : ' . $bank . '<br/> Branch : ' . $branch . '<br/> Acc. No. : ' . $model->bank_account_no . '<br/> IFSC : ' . $model->ifsc . '</span></div></div > ';
+                                    $message = '<div class = \"row\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify bank details ?' . $name . '<br/> Bank : ' . $bank . '<br/> Branch : ' . $branch . '<br/> Acc. No. : ' . $model->bank_account_no . '<br/> IFSC : ' . $model->ifsc . '</span></div>';
                                     $options = ['data-name' => $model->bank_account_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Bank Detail',
                                         'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
                                     return GhostHtml::a('<i class="fa fa-bank"></i>', $VURL, $options);
@@ -309,7 +309,7 @@ class Grid extends Widget {
                                     $id = $flag . ',' . $model->{$details['field']};
                                     $VURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '1']);
                                     $RURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '2']);
-                                    $message = '<div class = \"row\"><div class = \"col-sm-12\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify Contact details ?' . $name . '<br/> Mobile No. : ' . $model->mobile_no . '</span></div></div > ';
+                                    $message = '<div class=\'row\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to verify Contact details ?' . $name . '<br/> Mobile No. : ' . $model->mobile_no . '</span></div>';
                                     $options = ['data-name' => $model->mobile_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Contact Detail',
                                         'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
                                     return GhostHtml::a('<i class="fa fa-phone-square"></i>', $VURL, $options);

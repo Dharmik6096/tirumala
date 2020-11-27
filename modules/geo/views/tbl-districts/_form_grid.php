@@ -1,6 +1,6 @@
 
 
-<div class="grid-search">
+<div class="">
     <?php
 //hide state dropdown
     echo $this->render('_search', ['model' => $searchModel]);

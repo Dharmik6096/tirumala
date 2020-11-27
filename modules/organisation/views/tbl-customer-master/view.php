@@ -19,7 +19,11 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                     'columns' => [
                         [
                             'attribute' => 'customer_code',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'ref_code',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
@@ -157,6 +161,35 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                 'container' => ['id' => 'kv-demo'],
             ]);
             ?>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Bank Details') ?></h4>
+            </div>
+        <div class="form-grid">
+            <?=
+            $this->render('../../../details/views/tbl-bank-details/_bank_details', [
+                'model' => $model,
+                'dataProvider' => $bdataProvider,
+                'searchModel' => $bsearchModel,
+            ])
+            ?>
+        </div>
+        </div>
+
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Contact Details') ?></h4>
+            </div>
+        <div class="form-grid">
+            <?=
+            $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                'model' => $model,
+                'dataProvider' => $cdataProvider,
+                'searchModel' => $csearchModel,
+            ])
+            ?>
+        </div>
         </div>
     </div>
 </div>

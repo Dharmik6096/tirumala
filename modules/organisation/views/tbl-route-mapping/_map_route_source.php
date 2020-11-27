@@ -22,7 +22,6 @@ $this->title = Yii::t('app', $title);
                         'tbldcs-is_bmc' => 'form-group col-sm-3'
                     ],
                     'validateOnBlur' => false,
-                    'validateOnEnter' => false,
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => false,
                     'validateOnSubmit' => false,
@@ -30,11 +29,15 @@ $this->title = Yii::t('app', $title);
                     //'labelOptions' => [ 'class' => false],
         ]]);
         ?>
-        <h5 class="panel-subtitle"><?php echo Yii::t('app', $title); ?></h5>
+        <div class="row theme_border_left theme_border_right theme_border_bottom">
+            <div class="col-md-12 padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h5 class="theme-box-heading"><?php echo Yii::t('app', $title); ?></h5>
+                </div>
         <?php echo $form->errorSummary($model); ?>
         <?php echo Html::activeHiddenInput($model, 'route_code', ['value' => $modelRouteSource->route_code]) ?>
-        <div class="row">
-            <div class="col-sm-6">
+        <div class="col-sm-12 margin-top-10">
+            <div class="col-sm-6  margin-bottom-10">
                 <div class="btn-group">
                     <span class="input-group-btn">
                         <span id="show-only-selected-routes" class="btn btn-default btn-sm">
@@ -65,7 +68,7 @@ $this->title = Yii::t('app', $title);
                             $checked = in_array($value, $selected);
                             $modelRouteSource->route_code = Yii::$app->getRequest()->getQueryParam('id');
                             $disabled = $checked ? ' disabled' : '';
-                            return "<div class='col-sm-4 checklist dcs-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
+                            return "<div class='col-sm-2 checklist dcs-checklist'><div class='checkbox'>" . Html::checkbox($name, $checked, [
                                         'value' => $value,
                                         'label' => '<label for=' . $value . '>' . $label . '</label>',
                                         'labelOptions' => [
@@ -90,6 +93,7 @@ $this->title = Yii::t('app', $title);
                         </div>
                     </div>
                 </div>
+            </div>
                 <?php ActiveForm::end(); ?>
             <?=
             $this->render('_source_grid', [

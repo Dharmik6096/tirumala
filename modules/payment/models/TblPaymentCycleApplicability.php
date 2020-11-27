@@ -50,11 +50,11 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'applicable_type'], 'required'],
-                [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
-                [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
-                [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
+            [['applicable_code', 'applicable_type'], 'required'],
+            [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
+            [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
+            [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
 //                [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
         ];
     }
@@ -181,8 +181,22 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function paymentCycles($union_code, $bmc, $type, $for, $where) {
-        return \yii\helpers\ArrayHelper::map($this->find()->select(['from_date', 'to_date', 'payment_cycle_code'])->where(['union_code' => $union_code, 'applicable_code' => $bmc, 'applicable_type' => $type, 'applicable_for' => $for])->andWhere($where)->andWhere(['<', 'from_date', date('Y-m-d')])->orderBy('from_date ASC')->distinct()->all(), function($model) {
+    public function paymentCycles($union_code, $bmc, $type, $for, $where, $member_billing_lock_check = '0', $ignoreTypeCheck = false) {
+        $query = $this->find()->select(['from_date', 'to_date', 'payment_cycle_code'])->distinct()
+                ->where(['union_code' => $union_code, 'applicable_code' => $bmc, 'applicable_for' => $for])->andWhere($where)
+                ->andWhere(['<', 'from_date', date('Y-m-d')]);
+
+        if (empty($ignoreTypeCheck) || !empty($type)) {
+            $query->andWhere(['applicable_type' => $type]);
+        }
+        if ($type == 'DCS' && $member_billing_lock_check == '1') {
+            $check = Yii::$app->general->getConfigMapping('member_billing_lock_check', $bmc, 'BMC');
+            if ($check == '' || $check == '1') {
+                $query->andWhere(['billing_lock_member' => 1]);
+            }
+        }
+        $data = $query->orderBy('from_date DESC')->all();
+        return \yii\helpers\ArrayHelper::map($data, function($model) {
                     return $model['payment_cycle_code'];
                 }, function($model) {
                     return Yii::$app->controls->view_date($model['from_date']) . ' to ' . Yii::$app->controls->view_date($model['to_date']);

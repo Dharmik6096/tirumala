@@ -14,10 +14,10 @@ $this->title = Yii::t('app', 'SAP Data Repost');
         <div class="panel-heading">
             <?= $this->title; ?>           
         </div>
-        <div class="panel-body">
+        <div class="panel-body ">
             <?php
             $sap_collection_type = $model->sap_collection_type;
-            echo $this->render('_search', ['model' => $model]);
+            echo $this->render('_search_repost_sap_data', ['model' => $model]);
             ?>
             <?php
             $action = Url::to(['get-temp-data']);

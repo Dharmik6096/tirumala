@@ -17,7 +17,7 @@ $form = ActiveForm::begin(['options' => [
                 'field-class' => 'form-group col-sm-3',
             ],
             'validateOnBlur' => TRUE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -39,19 +39,19 @@ $form = ActiveForm::begin(['options' => [
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
 
-    <div class="col-sm-3 reset_field">
+    <div class="col-sm-2 reset_field">
         <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblproductrequisitiontransaction-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
     </div>
-    <?= $form->field($model, 'uom', ['options' => ['placeholder' => $model->uom, 'class' => 'form-group col-sm-3']])->textInput(['readonly' => true]) ?>
-    <?= $form->field($model, 'quantity', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
+    <?= $form->field($model, 'uom', ['options' => ['placeholder' => $model->uom, 'class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
+    <?= $form->field($model, 'quantity', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
 
-    <?= $form->field($model, 'provisional_rate', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['readonly' => true]) ?>
+    <?= $form->field($model, 'provisional_rate', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
 
-    <div class="clearfix"></div>
+    <!-- <div class="clearfix"></div> -->
 
-    <?= $form->field($model, 'provisional_amount', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['readonly' => true]) ?>
+    <?= $form->field($model, 'provisional_amount', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['readonly' => true]) ?>
 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'requisition_on_date', '', true); ?>
     </div>
 

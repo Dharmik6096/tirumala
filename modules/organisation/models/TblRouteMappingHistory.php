@@ -32,35 +32,34 @@ use Yii;
  * @property string $updated_by
  * @property integer $is_active
  */
-class TblRouteMappingHistory extends \yii\db\ActiveRecord
-{
+class TblRouteMappingHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_route_mapping_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-           // [['id'], 'required'],
+            // [['id'], 'required'],
             [['id', 'capacity', 'vehicle_type_code', 'is_active'], 'safe'],
             [['history_created_at', 'created_at', 'updated_at', 'valid_from'], 'safe'],
             [['operation_type', 'route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'safe'],
             [['route_length_kms'], 'safe'],
+            [['route_code_ex', 'ref_code', 'vendor_code', 'auto_code'], 'safe'],
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe']
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'history_created_at' => Yii::t('app', 'History Created At'),
@@ -88,4 +87,5 @@ class TblRouteMappingHistory extends \yii\db\ActiveRecord
             'is_active' => Yii::t('app', 'Is Active'),
         ];
     }
+
 }

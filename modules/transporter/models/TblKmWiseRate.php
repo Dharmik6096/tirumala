@@ -4,6 +4,8 @@ namespace app\modules\transporter\models;
 
 use Yii;
 use app\modules\transporter\models\TblVehicleMaster;
+use app\modules\organisation\models\TblUnions;
+
 /**
  * This is the model class for table "tbl_km_wise_rate".
  *
@@ -17,41 +19,46 @@ use app\modules\transporter\models\TblVehicleMaster;
  * @property string $updated_at
  * @property string $updated_by
  */
-class TblKmWiseRate extends \yii\db\ActiveRecord
-{
+class TblKmWiseRate extends \app\models\ChildModel {
+
+    public $parsing_no;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_km_wise_rate';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['rate', 'from_km', 'to_km'], 'number'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['vehicle_code', 'wef_date', 'from_km', 'to_km', 'rate', 'union_code', 'transporter_code'], 'required', 'except' => 'importCsv'],
+            [['rate', 'from_km', 'to_km'], 'number', 'min' => 0],
+            [['wef_date', 'created_at', 'updated_at', 'union_code', 'transporter_code', 'vehicle_code', 'parsing_no'], 'safe'],
             [['created_by', 'updated_by'], 'string'],
-            [['wef_date'], 'wefValidate','on'=>'create'],
-            [['wef_date','vehicle_code'], function ($attribute, $params) {
-                Yii::$app->general->validateVehiclePayment($this);
-            }, 'skipOnEmpty' => false],
-            [['from_km'], 'kmRangeValidate'],
-            [['from_km','to_km','rate'], 'number', 'min'=>1],
             [['to_km'], 'kmValidate'],
-            [['vehicle_code','wef_date','from_km','to_km','rate'], 'required'],
+            //  [['wef_date'], 'wefValidate', 'on' => 'create'],
+//            [['wef_date', 'vehicle_code'], function ($attribute, $params) {
+//            Yii::$app->general->validateVehiclePayment($this);
+//        }, 'skipOnEmpty' => false],
+            [['from_km'], 'rangeValidate', 'skipOnEmpty' => TRUE],
+            //[['from_km', 'to_km', 'rate'], 'number', 'min' => 1],
+            //[['to_km'], 'kmValidate'],
+            [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
+            [['wef_date'], 'setFieldImport', 'on' => 'importCsv'],
+            [['parsing_no'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['parsing_no' => 'parsing_no'], 'on' => 'importCsv'],
+            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => 'importCsv'],
+            [['parsing_no', 'wef_date', 'from_km', 'to_km', 'rate', 'union_code', 'transporter_code', 'vehicle_code'], 'required', 'on' => 'importCsv'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'km_code' => Yii::t('app', 'Km Code'),
             'rate' => Yii::t('app', 'Rate'),
@@ -63,42 +70,74 @@ class TblKmWiseRate extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
+            'transporter_code' => Yii::t('app', 'Transporter'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
-    
-    
-    public function getVehicle(){
+
+    public function getVehicle() {
         return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
-    }    
-    
-    
-    public function wefValidate($attribute, $params) {
+    }
+
+    public function rangeValidate($attribute, $params) {
         $wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
-        $data = $this->find()
-                ->where(['=','vehicle_code',$this->vehicle_code])
-                ->andWhere(['>=','wef_date',$wef_date])
-                ->orderBy('wef_date desc')
-                ->one();
-        if(!empty($data)){
-            $this->addError($attribute, "Please select Wef Date greater than '".Yii::$app->controls->view_date($data->wef_date)."'");
+        $query = $this->find()->where('wef_date=\'' . $wef_date . '\' and  ((' . $this->from_km . '  between from_km and to_km) OR (' . $this->to_km . ' between from_km and to_km))')
+                ->andWhere(['vehicle_code' => $this->vehicle_code])
+                ->andFilterWhere(['<>', 'km_code', $this->km_code]);
+        $record = $query->one();
+        if (!empty($record)) {
+            $this->addError($attribute, Yii::t('app/validation', 'Can not use range in between of used range for same WEF Date.'));
+            return false;
         }
     }
-    
-    public function kmRangeValidate($attribute, $params){
-        $data = $this->find()
-                ->where(['=','vehicle_code',$this->vehicle_code])
-                ->andFilterWhere(['>=','to_km',$this->from_km])
-                ->andFilterWhere(['<>','km_code',$this->km_code])
-                ->orderBy('wef_date desc')
-                ->one();
-        if(!empty($data)){
-            $this->addError($attribute, "Please select From Km greater than '".$data->to_km."'");
-        }
-    }
-    
-    public function kmValidate($attribute, $params){
-        if($this->from_km > $this->to_km){
+
+//    public function wefValidate($attribute, $params) {
+//        $wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
+//        $data = $this->find()
+//                ->where(['=', 'vehicle_code', $this->vehicle_code])
+//                ->andWhere(['>=', 'wef_date', $wef_date])
+//                ->orderBy('wef_date desc')
+//                ->one();
+//        if (!empty($data)) {
+//            $this->addError($attribute, "Please select Wef Date greater than '" . Yii::$app->controls->view_date($data->wef_date) . "'");
+//        }
+//    }
+//
+//    public function kmRangeValidate($attribute, $params) {
+//        $data = $this->find()
+//                ->where(['=', 'vehicle_code', $this->vehicle_code])
+//                ->andFilterWhere(['>=', 'to_km', $this->from_km])
+//                ->andFilterWhere(['<>', 'km_code', $this->km_code])
+//                ->orderBy('wef_date desc')
+//                ->one();
+//        if (!empty($data)) {
+//            $this->addError($attribute, "Please select From Km greater than '" . $data->to_km . "'");
+//        }
+//    }
+
+    public function kmValidate($attribute, $params) {
+        if ($this->from_km > $this->to_km) {
             $this->addError($attribute, "To km is not less than From Km");
         }
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getTransporterCode() {
+        return $this->hasOne(TblTransporter::className(), ['transporter_code' => 'transporter_code']);
+    }
+
+    public function getParsingNo() {
+        return $this->hasOne(TblVehicleMaster::className(), ['parsing_no' => 'parsing_no']);
+    }
+
+    public function setFieldImport($attribute, $params) {
+        if (!empty($this->parsing_no)) {
+            $this->vehicle_code = Yii::$app->general->getforeignkey($this->parsingNo, 'vehicle_code');
+            $this->transporter_code = Yii::$app->general->getforeignkey($this->parsingNo, 'transporter_code');
+        }
+    }
+
 }

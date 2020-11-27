@@ -3,14 +3,14 @@
 namespace arogachev\excel\components;
 
 use yii\base\InvalidParamException;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
 
 /**
  * @property StandardAttribute[] $standardAttributes
  * @property \yii\db\ActiveRecord $instance
  */
-class StandardModel extends Object
+class StandardModel extends BaseObject
 {
     /**
      * @var string

@@ -52,15 +52,24 @@ class TblBmcTransitLossController extends \app\controllers\ChildController {
             $model->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($model->from_shift);
             $model->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($model->to_shift);
             $dcs = (!empty($model->dcs_code) && is_array($model->dcs_code)) ? ',' . implode(',', $model->dcs_code) . ',' : $model->dcs_code;
-            $result = \Yii::$app->db->createCommand("{CALL sp_bmc_transit_loss (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:dcs_code,:from_date,:to_date)}")
-                    ->bindValue(':from_date', $model->from_date)
-                    ->bindValue(':to_date', $model->to_date)
-                    ->bindValue(':union_code', $model->union_code)
-                    ->bindValue(':plant_code', $model->plant_code)
-                    ->bindValue(':mcc_plant_code', $model->mcc_plant_code)
-                    ->bindValue(':bmc_code', $model->bmc_code)
-                    ->bindValue(':dcs_code', $dcs);
-            $result->execute();
+            $data = [];
+            $data['from_datetime'] = $model->from_date;
+            $data['to_datetime'] = $model->to_date;
+            $data['union_code'] = $model->union_code;
+            $data['plant_code'] = $model->plant_code;
+            $data['mcc_plant_code'] = $model->mcc_plant_code;
+            $data['bmc_code'] = $model->bmc_code;
+            $data['dcs_code'] = $dcs;
+            Yii::$app->ClientPaymentConfig->processPayment('transit_loss', $data);
+            /* $result = \Yii::$app->db->createCommand("{CALL sp_bmc_transit_loss (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:dcs_code,:from_date,:to_date)}")
+              ->bindValue(':from_date', $model->from_date)
+              ->bindValue(':to_date', $model->to_date)
+              ->bindValue(':union_code', $model->union_code)
+              ->bindValue(':plant_code', $model->plant_code)
+              ->bindValue(':mcc_plant_code', $model->mcc_plant_code)
+              ->bindValue(':bmc_code', $model->bmc_code)
+              ->bindValue(':dcs_code', $dcs);
+              $result->execute(); */
             $query = TblBmcTransitLoss::find()
                     ->where(['union_code' => $model->union_code])
                     ->andWhere(['>=', 'date_time_of_collection', $model->from_date])

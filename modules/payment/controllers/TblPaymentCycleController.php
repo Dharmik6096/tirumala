@@ -451,16 +451,18 @@ class TblPaymentCycleController extends ChildController {
             $type = $value[2];
             $for = $value[3];
             $where = (array) json_decode($value[4]);
+            $member_billing_lock_check = isset($value[5]) ? $value[5] : '0';
+            $typeCheck = isset($value[6]) ? $value[6] : 0;
             $paymentcycleModel = new TblPaymentCycleApplicability();
-            $list = $paymentcycleModel->paymentCycles($unionCode, $code, $type, $for, $where);
+            $list = $paymentcycleModel->paymentCycles($unionCode, $code, $type, $for, $where, $member_billing_lock_check, $typeCheck);
             foreach ($list as $key => $r) {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo Json::encode(['output' => $out]);
+            return Json::encode(['output' => $out]);
             return;
         }
-        echo Json::encode(['output' => '', 'selected' => $selected]);
+        return Json::encode(['output' => '', 'selected' => $selected]);
     }
 
     public function actionBmcDataUnlock($payment_cycle_code, $id) {

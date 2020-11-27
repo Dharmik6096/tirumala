@@ -9,6 +9,8 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\collection\models\TblDcsMilkDispatchTxn;
+use app\modules\collection\models\TblCollectionDataAlias;
 
 /**
  * This is the model class for table "tbl_dcs_milk_dispatch".
@@ -45,7 +47,7 @@ use app\modules\organisation\models\TblPlant;
  */
 class TblDcsMilkDispatch extends \app\models\ChildModel {
 
-    public $from_date, $to_date, $from_shift, $to_shift;
+    public $from_date, $to_date, $from_shift, $to_shift, $name, $dcs, $status;
 
     /**
      * @inheritdoc
@@ -61,8 +63,14 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
         return [
             [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs_milk_dispatch_code'], 'safe', 'on' => ['androidsync']],
             [['challan_no', 'destination_code', 'vehicle_no', 'vehicle_in_time', 'vehicle_out_time', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks'], 'safe'],
-            [['date_time_of_dispatch', 'created_at', 'updated_at'], 'safe'],
+            [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs'], 'safe'],
             [['shift_code', 'dispatch_type', 'destination_type', 'originating_type', 'dcs_milk_dispatch_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['create', 'update']],
+            [['date_time_of_dispatch'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code', 'BMC', 'DCS', ['data_lock_bmc', 'billing_lock_bmc']);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
         ];
     }
 
@@ -137,6 +145,34 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
 
     public function getBmcCodeDest() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'destination_code']);
+    }
+
+    public function getDcsMilkDispatch() {
+        return $this->hasOne(TblDcsMilkDispatchTxn::className(), ['dcs_milk_dispatch_code' => 'dcs_milk_dispatch_code']);
+    }
+
+    public function getExistingDispatch($data) {
+        return $this->find()->where(['dcs_code' => $data->dcs_code, 'date_time_of_dispatch' => $data->date_time_of_collection, 'shift_code' => $data->shift_code])->one();
+    }
+
+    public function validateUnique(&$model, $txModel) {
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+
+        $mainTable = $this->find()->where(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code, 'date_time_of_dispatch' => $this->date_time_of_dispatch, 'shift_code' => $this->shift_code])->one();
+
+        if (!empty($mainTable)) {
+            $txnModel = new TblDcsMilkDispatchTxn();
+            $mainTableData = $txnModel->find()->where(['dcs_milk_dispatch_code' => $mainTable->dcs_milk_dispatch_code, 'dcs_code' => $this->dcs_code, 'milk_type_code' => $txModel->milk_type_code, 'milk_quality_type_code' => $txModel->milk_quality_type_code])->one();
+        }
+        $ApprovalModel = new TblCollectionDataAlias();
+        $approvalTableData = $ApprovalModel->find()->where(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code, 'date_time_of_collection' => $this->date_time_of_dispatch, 'shift_code' => $this->shift_code, 'milk_type_code' => $txModel->milk_type_code, 'milk_quality_type_code' => $txModel->milk_quality_type_code, 'table_name' => 'tbl_dcs_milk_dispatch'])->one();
+        if (($flag == 1 && !empty($approvalTableData)) || !empty($mainTableData)) {
+            $model->addError('date_time_of_dispatch', "Milk Dispatch Already Exists.");
+        }
+    }
+
+    public function getExistingData($data) {
+        return $this->find()->where(['dcs_code' => $data->dcs_code, 'date_time_of_dispatch' => $data->date_time_of_dispatch, 'shift_code' => $data->shift_code])->one();
     }
 
 }

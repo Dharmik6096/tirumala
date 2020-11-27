@@ -8,6 +8,7 @@ $this->title = Yii::$app->label->title('create', 'Milk Collection');
         $this->render('_form', [
             'model' => $model,
             'type' => 'create',
+            'searchModel' => $searchModel, 'dataProvider' => $dataProvider
         ])
         ?>
     </div>

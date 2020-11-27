@@ -1,7 +1,9 @@
 <?php
-$this->title = Yii::$app->label->title('edit', 'Route Mappings');
 
 use yii\web\View;
+
+$this->title = Yii::$app->label->title('edit', 'Route Mappings');
+$this->title.= ' > ' . $model->route_code_ex . ' > ' . $model->ref_code;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -21,5 +23,5 @@ $script = "
                 $(this).attr('disabled', 'disabled');
             })
         });";
-Yii::$app->view->registerJs($script, View::POS_READY,'disable-dep');
+Yii::$app->view->registerJs($script, View::POS_READY, 'disable-dep');
 ?>

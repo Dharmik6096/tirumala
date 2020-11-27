@@ -18,7 +18,7 @@ use yii\bootstrap\ActiveForm;
                             ],
                             'method' => 'get',
                             'validateOnBlur' => FALSE,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
@@ -26,22 +26,24 @@ use yii\bootstrap\ActiveForm;
                 ?>
                 <div class="row margin_0">
                     <div class="modal-body">
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->configFor($searchModel, $form, 'config_for', $searchModel->getAttributeLabel('config_for'), false, ['VLC', 'PORTAL']); ?>
                         </div>
-                        <div class="col-sm-6">
-                            <?= Yii::$app->dropdown->processName($searchModel, $form, 'tblconfigsearch-config_for', 'process_name', $model->getAttributeLabel('process_name')); ?>
+                        <div class="col-sm-3">
+                            <?= Html::hiddenInput('input', 0, ['id' => 'input']); ?>
+                            <?= Yii::$app->dropdown->processName($searchModel, $form, 'tblconfigsearch-config_for,input', 'process_name', $model->getAttributeLabel('process_name')); ?>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), TRUE); ?>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="clearfix"></div>
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblconfigmapping-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblconfigmapping-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
                         </div>
-                        <div class="col-sm-6 bmc_class">
+                        <div class="col-sm-3 bmc_class">
                             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblconfigmapping-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
                         </div>
                     </div>

@@ -60,6 +60,7 @@ class TblMccPlantHistory extends \yii\db\ActiveRecord {
             [['contact_person', 'description', 'email', 'mcc_plant_code', 'mobile_no', 'name', 'state_code', 'district_code', 'sub_district_code', 'hamlet_code', 'village_code', 'union_code', 'plant_code'], 'safe'],
             [['created_at', 'history_created_at', 'updated_at', 'local_name', 'capacity', 'valid_from', 'is_plant'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+            [['mcc_plant_code_ex', 'ref_code', 'vendor_code', 'auto_code'], 'safe'],
         ];
     }
 

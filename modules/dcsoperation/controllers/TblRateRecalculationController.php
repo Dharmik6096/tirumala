@@ -61,25 +61,14 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
             $searchModel->load(Yii::$app->request->queryParams);
-            $customeCode = [];
             if ($this->model->validate()) {
-                if (strtolower($searchModel->recalc_for) == 'member') {
-                    $dcs_codes = $searchModel->dcs_code;
-                    if (empty($dcs_codes)) {
-                        $dcs = new TblDcs();
-                        $dcs_codes = array_keys($dcs->getBMCDCSList($searchModel->bmc_code));
-                    }
-                } else if (strtolower($searchModel->recalc_for) == 'bmc') {
-                    $dcs_codes = $searchModel->customer_code;
-                    if (empty($dcs_codes)) {
-                        $custome = new TblCustomerMaster();
-                        $dcs = new TblDcs();
-                        $dcs_codes = $custome->getBMCCustomerList($searchModel->bmc_code);
-                        $customeCode = array_keys($dcs->getBMCDCSList($searchModel->bmc_code));
-                    }
+                $dcs_codes = [];
+                $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                foreach ($codes as $code) {
+                    $c = explode('###', $code);
+                    $dcs_codes[] = $c[0];
                 }
-
-                return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', [], $customeCode);
+                return $this->saveAndRedirect($dcs_codes, $searchModel, $this->model->rate_code, 'all', $codes);
             }
         } else {
             $dataProvider = $searchModel->searchDataRecalculation(Yii::$app->request->queryParams);
@@ -136,53 +125,18 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         } else if (!is_array($dcs_codes) && $rtype == 'custom') {
             $dcs_codes = [$searchModel->dcs_code];
         }
+        $customerType = $calcFor = [];
         if ($rtype == 'custom') {
-            $customerType = $calcFor = [];
             foreach ($data as $code) {
                 $c = explode('###', $code);
                 $customerType[] = !empty($c[4]) ? $c[4] : '';
                 $calcFor[] = !empty($c[5]) ? $c[5] : '';
             }
         } else {
-            if (strtolower($searchModel->recalc_for) == 'member') {
-                if (!is_array($dcs_codes)) {
-                    $dcs_codes = [$searchModel->dcs_code];
-                }
-                $customerType = 'DCS';
-                $calcFor = 'Member';
-            } else {
-                if (!is_array($dcs_codes)) {
-                    $dcs_codes = [$searchModel->customer_code];
-                    $customerType = $searchModel->customer_type;
-                } else {
-                    $customerType = [];
-                    /*
-                      foreach ($dcs_codes as $detail) {
-                      $customerType[] = $detail->customer_type;
-                      }
-                      $setVal = [];
-                      foreach ($customeCode as $a) {
-                      $code = [];
-                      $code['customer_type'] = 'DCS';
-                      $code['customer_code'] = $a;
-                      $setVal[] = $code;
-                      }
-                      $dcs_codes = array_merge($dcs_codes, $setVal);
-                     */
-                    $dcsCodes = !empty($dcs_codes[0]) ? $dcs_codes : [];
-                    foreach ($dcsCodes as $detail) {
-                        $customerType[] = $detail->customer_type;
-                    }
-                    $setVal = [];
-                    foreach ($customeCode as $a) {
-                        $code = [];
-                        $code['customer_type'] = 'DCS';
-                        $code['customer_code'] = $a;
-                        $setVal[] = $code;
-                    }
-                    $dcs_codes = array_merge($dcsCodes, $setVal);
-                }
-                $calcFor = 'BMC';
+            foreach ($data as $code) {
+                $c = explode('###', $code);
+                $customerType[] = !empty($c[1]) ? $c[1] : '';
+                $calcFor[] = !empty($c[2]) ? $c[2] : '';
             }
         }
         if (!empty($dcs_codes)) {
@@ -213,7 +167,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                 if ($rtype == 'custom') {
                     foreach ($data as $code) {
                         $c = explode('###', $code);
-                        $sp_params = [$searchModel->bmc_code, $c[1], $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $searchModel->recalc_for, $c[0], $c[4]];
+                        $sp_params = [$searchModel->bmc_code, $c[1], (string) $c[0], date('Y-m-d H:i:s', strtotime($c[2])), date('Y-m-d H:i:s', strtotime($c[3])), $searchModel->recalc_for, (string) $c[0], $c[4]];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }
@@ -223,9 +177,8 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
                         $to_shift = Yii::$app->general->getshift($searchModel->to_shift);
                         $fdate = date('Y-m-d H:i:s', strtotime($searchModel->from_date . ' ' . $from_shift));
                         $tdate = date('Y-m-d H:i:s', strtotime($searchModel->to_date . ' ' . $to_shift));
-                        $codes = !empty($code['customer_code']) ? $code['customer_code'] : $code;
-                        $type = (strtolower($searchModel->recalc_for) == 'member') ? 'DCS' : (!empty($code['customer_type']) ? $code['customer_type'] : $searchModel->customer_type);
-                        $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $type];
+                        $codes = (string) (!empty($code['customer_code']) ? $code['customer_code'] : $code);
+                        $sp_params = [$searchModel->bmc_code, $rateCode, $codes, $fdate, $tdate, $searchModel->recalc_for, $codes, $c[1]];
                         $sp = 'sp_Portal_Process_Recalculation';
                         \Yii::$app->general->getSpData($sp, $sp_params);
                     }

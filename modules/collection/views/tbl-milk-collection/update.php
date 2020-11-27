@@ -1,23 +1,14 @@
 <?php
-
-use yii\helpers\Html;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\collection\models\TblMilkCollection */
-
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Tbl Milk Collection',
-]) . $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Milk Collections'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->milk_collection_code]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->title = Yii::$app->label->title('edit', 'Milk Collection');
 ?>
-<div class="tbl-milk-collection-update">
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider, $action = 'update-collection']); ?>
+        <div class="clearfix"></div>
+        <?=
+        $this->render('_update_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'detailModel' => $detailModel,]);
+        ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+    </div>
 </div>

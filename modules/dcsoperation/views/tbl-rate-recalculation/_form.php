@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\web\View;
 use kartik\grid\GridView;
 ?>
-<div class="grid-search clearfix large-search">
+<div class="pt5 clearfix large-search">
     <?php echo $this->render('_recalculation_search', ['searchModel' => $searchModel, 'model' => $model, 'rtype' => $rtype]); ?>
 </div>
 <?php
@@ -13,7 +13,7 @@ $rec_data = !empty($dataProvider) ? $dataProvider->allModels : '';
 $form = ActiveForm::begin([
             'options' => ['id' => 'recalculation-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
 <?php
 if (!empty($rec_data) && $rtype == 'forced') {
     ?>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tblraterecalculationsearch-union_code,tblraterecalculationsearch-recalc_for', 'rate_code', $model->getAttributeLabel('rate_code')); ?>
     </div>
 <?php } ?>
@@ -36,16 +36,6 @@ if (!empty($rec_data) && $rtype == 'forced') {
 
 <!--<span class="hide-grid-settings kv-panel-before"></span>-->
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-    <div class="form-group">
-        <?php if (!empty($rec_data)) { ?>
-            <span class="btn_show">
-                <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-            </span>
-            <?= Yii::$app->controls->reset(); ?>
-        <?php } ?>
-    </div>
-
-
 
     <?php
     if ($rtype == 'forced') {
@@ -53,9 +43,9 @@ if (!empty($rec_data) && $rtype == 'forced') {
             ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-                'visible' => $rtype == 'forced' ? false : true,
+//                'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['value' => $model['code']];
+                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
                 }],
             ['attribute' => 'type', 'filter' => false],
             ['attribute' => 'code', 'filter' => false],
@@ -72,7 +62,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
+                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
                 }],
             ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
@@ -105,6 +95,18 @@ if (!empty($rec_data) && $rtype == 'forced') {
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
     }
     ?>
+
+<div class="form-group pt5">
+        <?php if (!empty($rec_data)) { ?>
+            <span class="btn_show">
+                <?php
+                echo Html::button(Yii::t('app', 'SAVE'), ['class' => 'btn btn-primary', 'id' => 'recalculation']);
+                ?>
+            </span>
+            <?= Yii::$app->controls->reset(); ?>
+        <?php } ?>
+    </div>
+
     <?php ActiveForm::end(); ?>
 </div>
 <?php
@@ -169,6 +171,16 @@ $script = "
                 });
         }
     }
+    
+    $('#recalculation').click(function() {
+        var len = $('input[class=\"checkbox-recalculation kv-row-checkbox\"]:checked').length;
+            if(len == 0){
+             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select at least one Collection.</span></div></div>');
+                return false;
+            } else {
+            $('#recalculation-form').submit();
+            }
+    });
 ";
 $this->registerJs($script, View::POS_END, 'rate-recalculation-script');
 ?>

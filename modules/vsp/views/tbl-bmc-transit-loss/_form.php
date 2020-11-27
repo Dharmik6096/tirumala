@@ -8,7 +8,7 @@ use kartik\grid\GridView;
 
 $action = Url::to(['update-transit-loss']);
 ?>
-<div class="grid-search no-effect" >
+<div class="no-effect" >
     <?php
     $form = ActiveForm::begin([
                 'id' => 'transit-loss-update',
@@ -49,7 +49,7 @@ $action = Url::to(['update-transit-loss']);
         ['attribute' => 'loss_applied_to',
             'format' => 'raw',
             'contentOptions' => function($model) {
-                return ['class' => 'text-center div_margin_0'];
+                return ['class' => 'table_radio text-center div_margin_0'];
             },
             'value' => function ($model, $key, $index) use ($form) {
                 return Html::activeHiddenInput($model, 'transit_loss_code[' . $index . ']', ['value' => $model->transit_loss_code]) . $form->field($model, 'loss_applied_to[' . $index . ']')->inline()->radioList([1 => 'VSP', 2 => 'TPT'], ['value' => $model->loss_applied_to])->label(false);
@@ -67,7 +67,7 @@ $action = Url::to(['update-transit-loss']);
     Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['#'], false);
     ?>
 </div>
-<div class="panel-footer" >
+<div class="col-sm-2 mt10" >
     <?php
     if (!empty($dataProvider->getModels())) {
         echo Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust']);

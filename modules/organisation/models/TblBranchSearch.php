@@ -51,7 +51,7 @@ class TblBranchSearch extends TblBranch
         ]);
 
         $this->load($params);
-        $query->andwhere(['bank_code' => $this->bank_code]);
+        $query->andFilterwhere(['bank_code' => $this->bank_code]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

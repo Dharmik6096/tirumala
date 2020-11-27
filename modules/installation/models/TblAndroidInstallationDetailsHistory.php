@@ -34,33 +34,30 @@ use Yii;
  * @property string $history_created_by
  * @property string $operation_type
  */
-class TblAndroidInstallationDetailsHistory extends \yii\db\ActiveRecord
-{
+class TblAndroidInstallationDetailsHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_android_installation_details_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['android_installation_details_id', 'otp_code', 'is_active', 'is_expired', 'sync_active', 'installation_type'], 'safe'],
             [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_by', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'history_created_by', 'operation_type'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'password', 'password_date', 'd2d_request'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'android_installation_details_id' => Yii::t('app', 'Android Installation Details ID'),
@@ -90,4 +87,5 @@ class TblAndroidInstallationDetailsHistory extends \yii\db\ActiveRecord
             'operation_type' => Yii::t('app', 'Operation Type'),
         ];
     }
+
 }

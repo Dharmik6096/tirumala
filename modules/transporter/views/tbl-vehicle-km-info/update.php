@@ -7,7 +7,7 @@ use yii\web\View;
     <div class="panel-heading"><?= $this->title ?></div>
     <div class="panel-body">
         <?=
-        $this->render('_update_form', [
+        $this->render('_form', [
             'model' => $model,
             'type' => 'edit',
         ])

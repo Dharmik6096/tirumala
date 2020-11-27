@@ -37,10 +37,10 @@ class ServiceController extends Controller
             $model->attributes = $_POST;
             if($model->save())
             {
-                echo Json::encode(['status'=>'success']);
+                return Json::encode(['status'=>'success']);
             }else{
                 $er = Json::encode($model->errors);
-                echo Json::encode(['status'=>'error','errors'=>$er]);
+                return Json::encode(['status'=>'error','errors'=>$er]);
             }
                
         }

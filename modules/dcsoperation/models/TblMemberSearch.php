@@ -20,6 +20,7 @@ class TblMemberSearch extends TblMember {
     public function rules() {
         return [
             [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
+            [['ex_member_code', 'ref_code'], 'safe'],
         ];
     }
 
@@ -89,7 +90,8 @@ class TblMemberSearch extends TblMember {
           'animal_type_code' => $this->animal_type_code,
           ]); */
 
-        $query->andFilterWhere(['like', 'tbl_member.member_code', $this->member_code])
+        $query->andFilterWhere(['like', 'tbl_member.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'tbl_member.member_code', $this->member_code])
                 //->andFilterWhere(['like', 'tbl_member.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_member.ex_member_code', $this->ex_member_code])
                 ->andFilterWhere(['like', 'tbl_member.member_name', $this->member_name])
@@ -122,8 +124,8 @@ class TblMemberSearch extends TblMember {
                 ->andFilterWhere(['like', 'tbl_member.local_nominee_name', $this->local_nominee_name])
                 ->andFilterWhere(['like', 'tbl_member.is_download', $this->is_download])
                 ->andFilterWhere(['like', 'tbl_member.local_address', $this->local_address])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', substr($this->reference_code,0,3)])
-                ->andFilterWhere(['like', 'RIGHT(tbl_member.member_code,4)', substr($this->reference_code,3,4)]);
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', substr($this->reference_code, 0, 3)])
+                ->andFilterWhere(['like', 'RIGHT(tbl_member.member_code,4)', substr($this->reference_code, 3, 4)]);
 
         return $dataProvider;
     }

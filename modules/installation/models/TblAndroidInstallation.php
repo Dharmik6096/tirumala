@@ -8,6 +8,8 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsMilkType;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\general\models\TblDpuIncentiveMaster;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_android_installation".
@@ -113,6 +115,14 @@ class TblAndroidInstallation extends \app\models\ChildModel {
                 return false;
             }
         }
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'organization_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'organization_code']);
     }
 
 }

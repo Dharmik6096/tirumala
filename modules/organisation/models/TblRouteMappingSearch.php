@@ -22,6 +22,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
             [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
             [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
             [['route_length_kms'], 'number'],
+            [['route_code_ex', 'ref_code'], 'safe'],
         ];
     }
 
@@ -52,8 +53,8 @@ class TblRouteMappingSearch extends TblRouteMapping {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode']);
-        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['dcsCode', 'mccCode']);
+        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_plant');
 
         $where_bmc = [];
         if (Yii::$app->session->get('BMC') !== '') {
@@ -88,7 +89,9 @@ class TblRouteMappingSearch extends TblRouteMapping {
             'tbl_route_mapping.is_active' => $this->is_active,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_route_mapping.route_code', $this->route_code])
+        $query->andFilterWhere(['like', 'tbl_route_mapping.route_code_ex', $this->route_code_ex])
+                ->andFilterWhere(['like', 'tbl_route_mapping.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'tbl_route_mapping.route_code', $this->route_code])
                 ->andFilterWhere(['like', 'tbl_route_mapping.morning_start_time', $this->morning_start_time])
                 ->andFilterWhere(['like', 'tbl_route_mapping.morning_end_time', $this->morning_end_time])
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_name])

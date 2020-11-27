@@ -20,12 +20,19 @@ class FTPConnection extends Component {
     public $conn_close = TRUE;
     public $make_dir = TRUE;
     public $conn_init = TRUE;
+    public $ftp_pasv = false;
 
     public function ConnectServer() {
+        if ($this->ftp_type == 'SELF') {
+            return TRUE;
+        }
         return ($this->ftp_type == 'FTP') ? $this->FTP() : $this->SFTP();
     }
 
     public function CloseConnection() {
+        if ($this->ftp_type == 'SELF') {
+            return TRUE;
+        }
         return ($this->ftp_type == 'FTP') ? $this->FTPClose() : $this->SFTPClose();
     }
 
@@ -41,6 +48,7 @@ class FTPConnection extends Component {
         try {
             if ($this->connection = ftp_connect($this->ftp_host, $this->ftp_port)) {
                 if (ftp_login($this->connection, $this->ftp_username, $this->ftp_password)) {
+//                     ftp_pasv($this->connection, TRUE);
                     return TRUE;
                 }
                 ftp_close($this->connection);
@@ -70,6 +78,9 @@ class FTPConnection extends Component {
     public function UploadFile() {
         $dir = ($this->make_dir) ? $this->CreateDirectory() : TRUE;
         if ($dir) {
+            if ($this->ftp_type == 'SELF') {
+                return $this->LocalUpload();
+            }
             $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
             if ($conn) {
                 return ($this->ftp_type == 'FTP') ? $this->FTPUpload() : $this->SFTPUpload();
@@ -83,6 +94,7 @@ class FTPConnection extends Component {
 
     private function FTPUpload() {
         try {
+            ftp_set_option($this->connection, FTP_USEPASVADDRESS, false);
             ftp_pasv($this->connection, true);
             ftp_chdir($this->connection, $this->ftp_path);
             if (ftp_put($this->connection, $this->file_name, $this->local_path . $this->file_name, FTP_BINARY)) {
@@ -112,7 +124,23 @@ class FTPConnection extends Component {
         }
     }
 
+    private function LocalUpload() {
+        try {
+            if (copy($this->local_path . '/' . $this->file_name, $this->ftp_path . '/' . $this->file_name)) {
+                return TRUE;
+            }
+            return FALSE;
+        } catch (\ErrorException $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Error while file copy.')]);
+            return false;
+        }
+    }
+
     public function DownloadFile() {
+        if ($this->ftp_type == 'SELF') {
+            return $this->LocalDownload();
+        }
         if ($this->ConnectServer()) {
             return ($this->ftp_type == 'FTP') ? $this->FTPDownload() : $this->SFTPDownload();
         } else {
@@ -125,13 +153,13 @@ class FTPConnection extends Component {
             ftp_pasv($this->connection, true);
             ftp_chdir($this->connection, $this->ftp_path);
             if (ftp_get($this->connection, $this->local_path . $this->file_name, $this->file_name, FTP_BINARY)) {
-                ftp_close($this->connection);
+                ($this->conn_close) ? ftp_close($this->connection) : '';
                 return TRUE;
             }
-            ftp_close($this->connection);
+            ($this->conn_close) ? ftp_close($this->connection) : '';
             return FALSE;
         } catch (\ErrorException $e) {
-            ftp_close($this->connection);
+            ($this->conn_close) ? ftp_close($this->connection) : '';
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => \Yii::t('app', 'Error while file copy.')]);
             return false;
@@ -151,7 +179,23 @@ class FTPConnection extends Component {
         }
     }
 
+    private function LocalDownload() {
+        try {
+            if (copy($this->ftp_path . '/' . $this->file_name, $this->local_path . '/' . $this->file_name)) {
+                return TRUE;
+            }
+            return FALSE;
+        } catch (\ErrorException $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Error while file copy.')]);
+            return false;
+        }
+    }
+
     public function ListFile() {
+        if ($this->ftp_type == 'SELF') {
+            return $this->LocalListFile();
+        }
         if ($this->ConnectServer()) {
             return ($this->ftp_type == 'FTP') ? $this->FTPListFile() : $this->SFTPListFile();
         } else {
@@ -170,10 +214,10 @@ class FTPConnection extends Component {
                     $files[] = str_replace($this->ftp_path, '', $filename);
                 }
             }
-            ftp_close($this->connection);
+            ($this->conn_close) ? ftp_close($this->connection) : '';
             return $files;
         } catch (\ErrorException $e) {
-            ftp_close($this->connection);
+            ($this->conn_close) ? ftp_close($this->connection) : '';
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => \Yii::t('app', 'Error while file copy.')]);
             return false;
@@ -201,7 +245,27 @@ class FTPConnection extends Component {
         }
     }
 
+    private function LocalListFile() {
+        try {
+            $files = array();
+            $list = scandir($this->ftp_path);
+            if (is_array($list)) {
+                foreach ($list as $filename) {
+                    $files[] = str_replace($this->ftp_path, '', $filename);
+                }
+            }
+            return $files;
+        } catch (\ErrorException $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Error while file copy.')]);
+            return false;
+        }
+    }
+
     public function CreateDirectory() {
+        if ($this->ftp_type == 'SELF') {
+            return $this->LocalCreateDirectory();
+        }
         $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
         if ($conn) {
             return ($this->ftp_type == 'FTP') ? $this->FTPCreateDirectory() : $this->SFTPCreateDirectory();
@@ -237,7 +301,21 @@ class FTPConnection extends Component {
         return TRUE;
     }
 
+    private function LocalCreateDirectory() {
+        try {
+            Yii::$app->general->checkDirectory($this->ftp_path);
+            return true;
+        } catch (\ErrorException $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Error while Create Directory.')]);
+            return false;
+        }
+    }
+
     public function DeleteFile() {
+        if ($this->ftp_type == 'SELF') {
+            return $this->LocalDeleteFile();
+        }
         $conn = ($this->conn_init) ? $this->ConnectServer() : TRUE;
         if ($conn) {
             return ($this->ftp_type == 'FTP') ? $this->FTPDeleteFile() : $this->SFTPDeleteFile();
@@ -266,6 +344,19 @@ class FTPConnection extends Component {
 
     private function SFTPDeleteFile() {
         return TRUE;
+    }
+
+    private function LocalDeleteFile() {
+        try {
+            if (unlink($this->ftp_path . '/' . $this->file_name)) {
+                return TRUE;
+            }
+            return FALSE;
+        } catch (\ErrorException $e) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => \Yii::t('app', 'Error while file copy.')]);
+            return false;
+        }
     }
 
     public function GetFileContents() {

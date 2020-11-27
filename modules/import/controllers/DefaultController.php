@@ -55,7 +55,7 @@ class DefaultController extends \app\controllers\ChildController {
         echo (Json::encode($result));
     }
 
-    public function importCsv($fileName, $className, $data, $mappingFlag = 0, $flag) {
+    public function importCsv($fileName, $className, $data, $mappingFlag = 0, $flag, $filepath = '/web/import/') {
 
         try {
 
@@ -68,7 +68,9 @@ class DefaultController extends \app\controllers\ChildController {
             $scenario = !empty($data['scenario']) ? $data['scenario'] : '';
             if ($mappingFlag == 1) {
                 $fields = $data['mapping_fields'];
-                $scenario = '';
+                $scenario = !empty($data['mapping_scenario']) ? $data['mapping_scenario'] : '';
+                $data['save_child'] = !empty($data['save_map_child']) ? TRUE : FALSE;
+                $data['update_key'] = FALSE;
             }
             $fields = explode(',', $fields);
 
@@ -101,7 +103,7 @@ class DefaultController extends \app\controllers\ChildController {
                 }
             }
             $importer->setData(new CSVReader([
-                'filename' => Yii::$app->basePath . '/web/import/' . trim($fileName),
+                'filename' => Yii::$app->basePath . $filepath . trim($fileName),
                 'fgetcsvOptions' => [
                     'delimiter' => ';'
                 ]
@@ -138,9 +140,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => $scenario,
                 'updateField' => !empty($data['update_field']) ? $data['update_field'] : '',
                 'saveChild' => !empty($data['save_child']) ? $data['save_child'] : 0,
+                'details' => $data,
+                'file_path' => Yii::$app->basePath . '/web/import/' . trim($fileName),
+                'file_name' => trim($fileName)
             ]));
-
-            return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg']];
+          
+            return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg'], 'allData' => $primaryKeys];
         } catch (UserException $e) {
             return ['status' => 'error', 'msg' => $e->getMessage()];
         }
@@ -272,6 +277,12 @@ class DefaultController extends \app\controllers\ChildController {
         $data_fields = $mapping == 1 ? $data['mapping_fields'] : $data['fields'];
 
         $a = str_replace('local_name', $localField, $data_fields);
+        if (!empty($data['old_label'])) {
+            $this->old_att = array_merge($this->old_att, $data['old_label']);
+        }
+        if (!empty($data['new_label'])) {
+            $this->change_att = array_merge($this->change_att, $data['new_label']);
+        }
         $a = str_replace($this->old_att, $this->change_att, $a);
         $fields = explode(',', $a);
         $fields = array_map(function($str) {
@@ -301,6 +312,12 @@ class DefaultController extends \app\controllers\ChildController {
         $data = \app\modules\import\importData::getLabels(Yii::$app->request->post('type'));
         $fields = ($_POST['sel'] == 1) ? $data['mapping_fields'] : $data['fields'];
         $array = str_replace(',', ', ', $fields);
+        if (!empty($data['old_label'])) {
+            $this->old_att = array_merge($this->old_att, $data['old_label']);
+        }
+        if (!empty($data['new_label'])) {
+            $this->change_att = array_merge($this->change_att, $data['new_label']);
+        }
         $array = str_replace($this->old_att, $this->change_att, $array);
         echo (Json::encode($array));
         //}

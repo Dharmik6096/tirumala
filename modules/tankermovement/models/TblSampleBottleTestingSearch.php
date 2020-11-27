@@ -12,14 +12,14 @@ use app\modules\tankermovement\models\TblSampleBottleTesting;
  */
 class TblSampleBottleTestingSearch extends TblSampleBottleTesting {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $bmc_ref_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['from_date', 'to_date', 'trip_code', 'sample_bottle_testing_date', 'transaction_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['from_date', 'to_date', 'trip_code', 'sample_bottle_testing_date', 'transaction_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'bmc_ref_code'], 'safe'],
             [['fat', 'snf', 'protein', 'sample_no'], 'number'],
         ];
     }
@@ -49,7 +49,7 @@ class TblSampleBottleTestingSearch extends TblSampleBottleTesting {
         ]);
 
         $this->load($params);
-
+        $query->joinWith(['bmcCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_sample_bottle_testing', 'tbl_sample_bottle_testing', 'tbl_sample_bottle_testing');
 
         if (!empty($this->from_date)) {
@@ -72,7 +72,8 @@ class TblSampleBottleTestingSearch extends TblSampleBottleTesting {
             'protein' => $this->protein,
         ]);
 
-        $query->andFilterWhere(['like', 'trip_code', $this->trip_code]);
+        $query->andFilterWhere(['like', 'trip_code', $this->trip_code])
+                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
 
         return $dataProvider;
     }

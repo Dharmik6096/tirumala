@@ -20,7 +20,7 @@ $type = !empty($type) ? $type : '';
             $form = ActiveForm::begin([
                         'options' => ['id' => 'create-product-sale-form'],
                         'validateOnBlur' => FALSE,
-                        'validateOnEnter' => TRUE,
+                        
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,
@@ -60,50 +60,51 @@ $type = !empty($type) ? $type : '';
                     <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', true); ?>
                 </div>
                 <div class="clearfix"></div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <?= $form->field($model, 'ex_code')->textInput() ?>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <?= Html::activeHiddenInput($model, 'customer_code') ?>
                     <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true]) ?>
                     <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE);  ?>
                 </div>
                 <!--<div class="clearfix"></div>-->
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?= Yii::$app->dropdown->dropdownStatic('payment_mode', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false); ?>
                 </div>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?php Yii::$app->dropdown->depend_dropdown('product', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                 </div>
 
-                <div class=" col-sm-2 reset_field unit disabledDiv">
+                <div class=" col-sm-1 reset_field unit disabledDiv">
                     <?= Yii::$app->dropdown->dropdown('unit_code', $detailModel, $form, 'form-group col-sm-2', $detailModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
                 </div>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'rate')->textInput(['readOnly' => true]) ?>
                 </div>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'quantity')->textInput() ?>
                 </div>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
                 </div>
-                <div class="col-sm-2 reset_field">
-                    <?= Yii::$app->dropdown->dropdown('tax_code', $detailModel, $form, 'form-group col-sm-3', $detailModel->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
+                <div class="col-sm-1 reset_field">
+                    <?= Yii::$app->dropdown->dropdown('tax_code', $detailModel, $form, 'form-group col-sm-1', $detailModel->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
                 </div>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($model, 'discount')->textInput() ?>
                 </div>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?= Html::activeHiddenInput($detailModel, 'x_col1'); ?>   
                     <?= $form->field($detailModel, 'tax_amount')->textInput(['readonly' => true]) ?>
                 </div>
-                <div class="col-sm-2 reset_field">
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($model, 'amount_due')->textInput(['readOnly' => true]) ?>
                 </div>
-                <div class="col-sm-2 noOfInstallment reset_field">
+                <div class="col-sm-1 noOfInstallment reset_field">
                     <?= $form->field($model, 'no_of_installment')->textInput() ?>
-                </div>
+                </div>  
+
                 <?= $form->field($detailModel, 'product_sale_rate_applicability_code', ['template' => '{input}'])->hiddenInput()->label(false) ?>
                 <div class="clearfix"></div>
                 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -181,13 +182,15 @@ $type = !empty($type) ? $type : '';
 $script = "
     $(document).on('change','#tblproductsale-invoice_date',function(){
         setRate();
-        reloadGrid('show_loader');
+        if($('#tblproductsale-ex_code').val() != '') {
+          reloadGrid('show_loader');
+        }
     });
     $(document).on('change','#tblproductsale-bmc_code',function(){
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
         setRate();
-        reloadGrid('show_loader');
+//        reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-dcs_code',function(){
         $('#tblproductsale-ex_code').val('');
@@ -199,7 +202,7 @@ $script = "
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
         setRate();
-        reloadGrid();
+//        reloadGrid();
     });
     $(document).on('change','#tblproductsale-customer_code',function(){
         setRate();
@@ -356,6 +359,11 @@ $script = "
         }
     }
     function setRate(){
+        $('#tblproductsaletransaction-rate').val('');
+//        $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
+        $('#tblproductsaletransaction-x_col1').val('');
+        $('#tblproductsaletransaction-unit_code').val('');
+        $('#tblproductsaletransaction-product_sale_rate_applicability_code').val('');
         var product_code=$('#tblproductsaletransaction-product_code').val();
         var csrfToken = $('meta[name=\"csrf-token\"]').attr('content');
         var customer_type=$('#tblproductsale-customer_type').val();
@@ -442,7 +450,10 @@ $script = "
     $(document).on('change', '#tblproductsale-ex_code', function() {  
         setVendorCode();
     });
-
+    $('#tblproductsale-invoice_date').change(function(){
+        $('#tblproductsale-ex_code').val('');     
+    });
+    
     function setVendorCode(){
         $('#tblproductsale-customer_code').val('');
         $('#tblproductsale-customer_name').val('');
@@ -450,6 +461,9 @@ $script = "
         var type= $('#tblproductsale-customer_type').val(); 
         var union= $('#tblproductsale-union_code').val(); 
         var bmc= $('#tblproductsale-bmc_code').val(); 
+        var date= $('#tblproductsale-invoice_date').val(); 
+        var plant= $('#tblproductsale-plant_code').val(); 
+        var mcc= $('#tblproductsale-mcc_plant_code').val(); 
         var dcsCode = '';
         var formType = '" . $type . "';
         if(formType == 'memberWiseSale') {
@@ -459,7 +473,7 @@ $script = "
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-customer']) . "',
-                data: {'customer_code':code, 'dcsCode': dcsCode,'customer_type':type,'union_code':union,'bmc_code':bmc},
+                data: {'customer_code':code, 'dcsCode': dcsCode,'customer_type':type,'union_code':union,'bmc_code':bmc,'date':date,'plant':plant,'mcc':mcc},
                 success: function(data) {                                        
                     var obj = $.parseJSON(data);
                     if (obj.status == 'success') {

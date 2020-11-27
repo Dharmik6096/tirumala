@@ -27,7 +27,7 @@ $tot_amt = array_sum(array_map(function($array) {
                         'action' => ['save-transporter-payment'],
                         'id' => 'transporter-payment',
                         'validateOnBlur' => TRUE,
-                        'validateOnEnter' => TRUE,
+                        
                         'validateOnChange' => TRUE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,

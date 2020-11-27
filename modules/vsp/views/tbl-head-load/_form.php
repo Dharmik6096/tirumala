@@ -18,7 +18,7 @@ $form = ActiveForm::begin(['options' => [
                 'id' => 'head-load-form',
                 'field-class' => 'form-group col-sm-3'
             ], 'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -29,39 +29,44 @@ $form = ActiveForm::begin(['options' => [
 <div class="panel-body">
     <div class="panel-subheading" id="headdiv">
         <?php echo $form->errorSummary($model, ['id' => 'error-summary']); ?>
-        <div class="row">
-
-            <div class="col-lg-6">
-                <div class="col-sm-12" id="union">
-                    <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $disabled); ?>
+        <div class="row theme_border_left theme_border_right">
+            <div class="col-md-12 padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Head load</h4>
                 </div>
-                <?php //Yii::$app->dropdown->dropdown('criteria_type_code', $model, $form, 'form-group col-sm-3', 'Criteria Type', $disabled); ?>
-                <?= $form->field($model, 'fix_value', ['options' => ['class' => 'form-group col-sm-6']])->textInput(['class' => 'form-control number-validate']) ?>
-                <?= $form->field($model, 'min_km', ['options' => ['class' => 'form-group col-sm-6']])->textInput(['class' => 'form-control number-validate']) ?>
-                <?= $form->field($model, 'min_qty', ['options' => ['class' => 'form-group col-sm-6']])->textInput(['class' => 'form-control number-validate']) ?>
-                <?= $form->field($model, 'max_qty', ['options' => ['class' => 'form-group col-sm-6']])->textInput(['class' => 'form-control number-validate']) ?>
+                    <div class="col-sm-2" id="union">
+                        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $disabled); ?>
+                    </div>
+                    <?php //Yii::$app->dropdown->dropdown('criteria_type_code', $model, $form, 'form-group col-sm-3', 'Criteria Type', $disabled); ?>
+                    <?= $form->field($model, 'fix_value', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
+                    <?= $form->field($model, 'min_km', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
+                    <?= $form->field($model, 'min_qty', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
+                    <?= $form->field($model, 'max_qty', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
 
+            <?= $form->field($model, 'criteria_description', ['options' => ['class' => 'form-group col-sm-2',]])->textArea(['onblur' => 'js:Allowadd();']) ?>        
             </div>
-            <?= $form->field($model, 'criteria_description', ['options' => ['class' => 'form-group col-sm-6',]])->textArea(['onblur' => 'js:Allowadd();']) ?>        
-
         </div>
     </div>
+    <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="panel-subheading" id="trdiv">
-        <h5 class="panel-subtitle"><?php echo Yii::t('app', $title) . ' ' . Yii::t('app', 'Transaction') ?></h5>
         <?php //echo $form->errorSummary($transaction);  ?>
         <div class="row">
-            <?= Html::hiddenInput('transaction_code', '0', ['id' => 'transaction_code']); ?>
-            <?= Html::hiddenInput('edit_tr', '0', ['id' => 'edit_tr']); ?>
-            <?= $form->field($transaction, 'from_km', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['class' => 'form-control number-validate']) ?>
-            <?= $form->field($transaction, 'to_km', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['class' => 'form-control number-validate']) ?>
-            <?= $form->field($transaction, 'from_qty', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['class' => 'form-control number-validate']) ?>
-            <?= $form->field($transaction, 'to_qty', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['class' => 'form-control number-validate']) ?>
-            <?= Html::hiddenInput('load_transaction', '', ['id' => 'load_transaction']); ?>
-            <div class="clearfix"></div>
-            <?= $form->field($transaction, 'km_value', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['class' => 'form-control number-validate']) ?>
-            <?= $form->field($transaction, 'value', ['options' => ['class' => 'form-group col-sm-3']])->textInput(['class' => 'form-control number-validate']) ?>
-            <div class="mt25">
-                <?php echo Html::button(Yii::t('app', 'Add Transaction'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'onClick' => 'js:AddTransaction();', 'id' => 'addbutton']); ?>
+            <div class="col-md-12 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading"><?php echo Yii::t('app', $title) . ' ' . Yii::t('app', 'Transaction') ?></h4>
+                </div>
+                <?= Html::hiddenInput('transaction_code', '0', ['id' => 'transaction_code']); ?>
+                <?= Html::hiddenInput('edit_tr', '0', ['id' => 'edit_tr']); ?>
+                <?= $form->field($transaction, 'from_km', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['class' => 'form-control number-validate']) ?>
+                <?= $form->field($transaction, 'to_km', ['options' => ['class' => 'form-group col-sm-1']])->textInput(['class' => 'form-control number-validate']) ?>
+                <?= $form->field($transaction, 'from_qty', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
+                <?= $form->field($transaction, 'to_qty', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
+                <?= Html::hiddenInput('load_transaction', '', ['id' => 'load_transaction']); ?>
+                <?= $form->field($transaction, 'km_value', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
+                <?= $form->field($transaction, 'value', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['class' => 'form-control number-validate']) ?>
+                <div class="col-sm-2 padding_top_20">
+                    <?php echo Html::button(Yii::t('app', 'Add Transaction'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'onClick' => 'js:AddTransaction();', 'id' => 'addbutton']); ?>
+                </div>
             </div>
         </div>
     </div>
@@ -86,8 +91,9 @@ $form = ActiveForm::begin(['options' => [
             </table>
         </div>
     </div>
+    </div>
 </div>
-<div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+<div class=" shortcut-main padding_top_20" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <?= Yii::$app->controls->save($button, $model); ?>
     <?= Html::button(Yii::t('app', 'reset'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+r', 'onClick' => 'window.location.reload();']); ?>
     <?= Yii::$app->controls->cancel($model, 'tbl-head-load/index'); ?>

@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 ?>
 <?php
@@ -26,11 +27,62 @@ $attribute = [
         }, 'filter' => Yii::$app->dropdown->dropdownfilter('customer_type', $searchModel, 'customer_type', Yii::t('app', 'Select'))],
     ['attribute' => 'customer_code'],
     ['attribute' => 'customer_code_ex'],
+    ['attribute' => 'ref_code'],
     ['attribute' => 'customer_name'],
     ['attribute' => 'local_name', 'filter' => FALSE],
     ['attribute' => 'gst_no',],
     ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
     ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
+    ['label' => Yii::t('app', 'Contact Person'), 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultContactDetail($model->customer_code, 'customer');
+            isset($detail->firstname) ? $detail = $detail->firstname . ' ' . $detail->lastname . ' ' . $detail->surname : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'Email', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultContactDetail($model->customer_code, 'customer');
+            isset($detail->email) ? $detail = $detail->email : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'Department', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultContactDetail($model->customer_code, 'customer');
+            isset($detail->department) ? $detail = $detail->department : $detail = '';
+            return $detail;
+        }
+    ],
+// Bank Detail
+    ['label' => 'Bank', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->bankCode) ? $detail = $detail->bankCode->bank_name : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'Branch', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->branchCode) ? $detail = $detail->branchCode->branch_name : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'Bank Account No', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->bank_account_no) ? $detail = $detail->bank_account_no : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'IFSC', 'visible' => false, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->ifsc) ? $detail = $detail->ifsc : $detail = '';
+            return $detail;
+        }
+    ],
 ];
 
 $grid_option = [
@@ -40,6 +92,16 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'update' => true,
+        'bank-details' => function ($url, $model) {
+            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-customer-master/bank-details', 'id' => $model->customer_code], $options);
+        },
+        'contact-details' => function ($url, $model) {
+            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
+        },
     ]
 ];
 

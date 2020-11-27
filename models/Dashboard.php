@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * LoginForm is the model behind the login form.
@@ -11,44 +13,65 @@ use yii\base\Model;
  * @property User|null $user This property is read-only.
  *
  */
-class Dashboard extends Model
-{
-    public $union_code;
+class Dashboard extends Model {
+
+    public $union_code, $widget_type, $rmrd_widgets, $farmer_widgets, $from_date4, $from_date5, $to_date4, $to_date5, $previous_hit, $current_hit, $from_date6, $to_date6, $widget_for;
     public $date, $from_date, $to_date, $from_date2, $to_date2, $qlt_param, $shift, $from_date3, $to_date3, $from_shift, $to_shift, $plant_code, $bmc_code, $mcc_code, $dcs_code, $hidden_from_date, $hidden_to_date;
+
     //public $rememberMe = true;
-
     //private $_user = false;
-
 
     /**
      * @return array the validation rules.
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             // username and password are both required
             //[['username', 'password'], 'required'],
             // rememberMe must be a boolean value
             //['rememberMe', 'boolean'],
             // password is validated by validatePassword()
-            ['date', 'safe'],
+                ['date', 'safe'],
         ];
     }
-    
+
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'union_code' => Yii::t('app', 'Union'),
             'date' => Yii::t('app', 'Date'),
+            'previous_hit' => Yii::t('app', 'No. of Hits'),
+            'current_hit' => Yii::t('app', 'No. of Hits'),
         ];
     }
-    
-    public function search(){
+
+    public function search() {
         
     }
 
-   
+    public function getUnionCode($field) {
+        $model = new TblUnions;
+        $data = $model->find()
+                        ->where(['union_code' => $this->union_code])->one();
+        if (!empty($data)) {
+            return $data->$field;
+        } else {
+            return !empty($this->union_code) ? '' : Yii::t('app', 'All');
+        }
+    }
+
+    public function getMccPlantCode($field) {
+        $model = new TblMccPlant;
+        $data = $model->find()
+                        ->where(['mcc_plant_code' => $this->mcc_code])->one();
+        if (!empty($data)) {
+            return $data->$field;
+        } else {
+            return !empty($this->mcc_code) ? '' : Yii::t('app', 'All');
+            return '';
+        }
+    }
+
 }

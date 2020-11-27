@@ -11,39 +11,30 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\details\models\TblBankDetails;
+use app\modules\details\models\TblBankDetailsSearch;
+use app\modules\details\models\TblContactDetails;
+use app\modules\details\models\TblContactDetailsSearch;
 
 /**
  * TblTransporterController implements the CRUD actions for TblTransporter model.
  */
-class TblTransporterController extends \app\controllers\ChildController
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblTransporterController extends \app\controllers\ChildController {
+
+    public $bankDetails;
+    public $contactDetails;
 
     /**
      * Lists all TblTransporter models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblTransporterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -52,10 +43,19 @@ class TblTransporterController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
+        $bsearchModel = new TblBankDetailsSearch();
+        $bsearchModel->module_name = 'transporter';
+        $bsearchModel->module_code = $id;
+        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
+        $csearchModel = new TblContactDetailsSearch();
+        $csearchModel->module_name = 'transporter';
+        $csearchModel->module_code = $id;
+        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
+                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
+                    'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
         ]);
     }
 
@@ -64,20 +64,33 @@ class TblTransporterController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblTransporter();
+        $this->bankDetails = new TblBankDetails();
+        $this->contactDetails = new TblContactDetails();
+
         $this->viewFile = 'create';
         $validate = 1;
-
+        $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->transporter_code = $this->model->getCode();
             $this->model->transporter_name = ucwords($this->model->transporter_name);
+
+            $this->bankDetails->load(Yii::$app->request->post());
+            if (!empty($this->bankDetails->bank_code)) {
+                $this->bankDetails->setModel('transporter', $this->model->transporter_code);
+                $this->bankDetails->scenario = 'bank_selected';
+                $master[] = $this->bankDetails;
+            }
+            $this->contactDetails->load(Yii::$app->request->post());
+            $this->contactDetails->setModel('transporter', $this->model->transporter_code);
+            $master[] = $this->contactDetails;
 //            var_dump($_POST);exit;
+            $master[] = $this->model;
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'transporter_name', $this->model->transporter_name);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model], ['Transporter', 'create']);
+                $transaction = $this->generalModel->saveTransaction($master, ['Transporter', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -92,8 +105,7 @@ class TblTransporterController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         $validate = 1;
@@ -123,9 +135,8 @@ class TblTransporterController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionDelete()
-    {
-        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_transporter',  Yii::$app->request->post('id'), 'transporter_code']);
+    public function actionDelete() {
+        $valueOut = $this->generalModel->callSp('sp_delete_master_geo', ['tbl_transporter', Yii::$app->request->post('id'), 'transporter_code']);
         if ($valueOut == 0) {
             $this->model = $this->findModel(Yii::$app->request->post('id'));
             $historyModel = new TblTransporterHistory();
@@ -138,7 +149,7 @@ class TblTransporterController extends \app\controllers\ChildController
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
-    
+
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->transporter_code]);
     }
@@ -150,12 +161,53 @@ class TblTransporterController extends \app\controllers\ChildController
      * @return TblTransporter the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblTransporter::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionBankDetails($id) {
+        $bankDetails = new TblBankDetails();
+        $bankDetails->scenario = 'additional';
+        $searchModel = new TblBankDetailsSearch();
+        $searchModel->module_name = 'transporter';
+        $searchModel->module_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $modelTransp = $this->findModel($id);
+        return $this->render('../../../details/views/tbl-bank-details/create', [
+                    'model' => $bankDetails,
+                    'id' => $id,
+                    'module' => 'transporter',
+                    'dist' => $modelTransp->district_code,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'dist_field' => 'tbltransporter-district_code'
+        ]);
+    }
+
+    public function actionContactDetails($id) {
+        $contactDetails = new TblContactDetails();
+        $searchModel = new TblContactDetailsSearch();
+        $searchModel->module_name = 'transporter';
+        $searchModel->module_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('../../../details/views/tbl-contact-details/create', [
+                    'model' => $contactDetails,
+                    'id' => $id,
+                    'module' => 'transporter',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
+        ]);
+    }
+
+    protected function customRender() {
+        return $this->render($this->viewFile, ['model' => $this->model,
+                    'bankDetails' => $this->bankDetails,
+                    'contactDetails' => $this->contactDetails
+        ]);
+    }
+
 }

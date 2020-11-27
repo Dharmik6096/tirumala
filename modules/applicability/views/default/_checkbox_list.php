@@ -6,7 +6,7 @@ use yii\web\View;
 use app\components\GeneralFunctions;
 
 $selectedDataCode = !empty($selectedData) ? $selectedData : [];
-$checkboxWidthClass = !empty($checkboxWidthClass) ? $checkboxWidthClass : 'col-sm-4';
+$checkboxWidthClass = !empty($checkboxWidthClass) ? $checkboxWidthClass : 'col-sm-2';
 $idPrefix = !empty($idPrefix) ? $idPrefix : 'nd';
 $checkboxClass = !empty($checkboxClass) ? $checkboxClass : ' ';
 $setCheckboxClass = !empty($setCheckboxClass) ? $setCheckboxClass : ' route-checkbox ';
@@ -19,7 +19,7 @@ if (!empty($model)) {
     echo $form->field($model, $field_name . '[]')->checkboxList(
             $list, [
         'id' => $field_name . '-list',
-        'class' => 'row',
+        'class' => 'row checkboxFilterList',
         'item' =>
         function ($index, $label, $name, $checked, $value) use ($selected, $selectedDataCode, $checkboxWidthClass, $idPrefix, $checkboxClass, $setCheckboxClass) {
             $checked = in_array($value, $selected);
@@ -40,7 +40,7 @@ if (!empty($model)) {
 } else {
     echo Html::checkboxList($field_name . '[]', null, $list, [
         'id' => $field_name . '-list',
-        'class' => 'row flt',
+        'class' => 'row flt checkboxFilterList',
         'style' => 'display:none',
         'item' =>
         function ($index, $label, $name, $checked, $value) use ($selected, $field_name) {

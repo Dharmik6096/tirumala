@@ -5,12 +5,12 @@ if ($popup != 'allow_popup') {
     <div class="modal fade in" id="chartToTableModal" role="dialog">
         <div class="modal-dialog w750">
             <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h4 class="modal-title" id="modal-title"><?= $title; ?></h4>
+            <div class="modal-content dashboardWidhetModalPopup">
+                <div class="modal-header dashboardWidgetHeader">
+                    <button type="button" class="close color_fff opacity_one" data-dismiss="modal">×</button>
+                    <h4 class="modal-title " id="modal-title"><?= $title; ?></h4>
                 </div>
-                <div class="modal-body" id="modal-body">
+                <div class="modal-body rm_padding" id="modal-body">
                     <div class="milk-collection hide_overflow h450">
                         <div class="table-responsive hide_overflow hide_toolbar_only hide_filters_only">
                             <?php
@@ -49,7 +49,7 @@ if ($popup != 'allow_popup') {
                 <thead>
                     <tr>
                         <?php foreach ($result[0] as $header => $value) { ?>
-                            <th><?= Yii::t('app', $header) ?></th>
+                            <th class="dashboardWidgetDetailPortion"><?= Yii::t('app', $header) ?></th>
                         <?php } ?>
                     </tr>
                 </thead>
@@ -59,15 +59,15 @@ if ($popup != 'allow_popup') {
                     foreach ($data as $key => $value) {
                         ?>
                         <td class="auto_width min_width_100"><?= $value ?></td>
-                    <?php
+                        <?php
                     }
                     echo "</tr>";
                 }
             } else {
                 ?>
                 <tr><td colspan="20">No Data Available.</td></tr>
-    <?php }
-    ?>
+            <?php }
+            ?>
         </table>
     </div>
 <?php } ?>

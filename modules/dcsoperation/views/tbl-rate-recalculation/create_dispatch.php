@@ -11,7 +11,7 @@ use kartik\grid\GridView;
         <?= $this->title ?>
     </div>
     <div class="panel-body">
-        <div class="grid-search clearfix large-search">
+        <div class="pt5 clearfix large-search">
             <?php
             $rec_data = !empty($dataProvider) ? $dataProvider->allModels : '';
             $disable_search = empty($rec_data) ? FALSE : TRUE;
@@ -24,7 +24,7 @@ use kartik\grid\GridView;
             $form = ActiveForm::begin([
                         'options' => ['id' => 'recalculation-form'],
                         'validateOnBlur' => FALSE,
-                        'validateOnEnter' => TRUE,
+                        
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,

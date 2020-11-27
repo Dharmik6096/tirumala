@@ -9,15 +9,16 @@ use yii\web\View;
 
 <?php
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false, 'visible' => false],
     ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
     ['attribute' => 'member_code', 'value' => 'member_code'],
     ['attribute' => 'reference_code',
         'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex') . $model->ex_member_code;
-        }
+        }, 'visible' => false
     ],
     ['attribute' => 'ex_member_code', 'value' => 'ex_member_code'],
+    ['attribute' => 'ref_code'],
     ['attribute' => 'member_type_code', 'value' => 'memberTypeCode.member_type_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'member_name', 'value' => 'member_name'],
     ['attribute' => 'local_name', 'value' => 'local_name', 'filter' => false],
@@ -58,6 +59,7 @@ $attribute = [
     ['attribute' => 'branch_name', 'value' => 'branch_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
+    ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'adhar_no', 'visible' => false, 'filter' => false],
     ['attribute' => 'annual_income', 'visible' => false, 'filter' => false],
@@ -68,6 +70,7 @@ $attribute = [
     ['attribute' => 'member_class', 'value' => function($model) {
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
+    ['attribute' => 'x_col3', 'filter' => false],
 ];
 
 $grid_option = [
@@ -98,7 +101,7 @@ $grid_option = [
     ]
 ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index'], true, ['CSV', 'Excel2007']);
 ?>
 <div id="AppInformation"></div>
 <?php

@@ -6,6 +6,8 @@ use Yii;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\payment\models\TblVehiclePayment;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_km_info".
@@ -23,8 +25,6 @@ use app\modules\dcsoperation\models\TblShift;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
- * @property string $delete_at
- * @property string $delete_by
  * @property integer $is_active
  */
 class TblVehicleKmInfo extends \app\models\ChildModel {
@@ -32,7 +32,7 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $bmc_code,$union_code;
+    public $bmc_code;
 
     public static function tableName() {
         return 'tbl_vehicle_km_info';
@@ -44,17 +44,35 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
     public function rules() {
         return [
 //            [['km_info_code'], 'required'],
+            [['shift_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+                }, 'on' => 'importCsv'],
+            [['shift_code'], 'integer', 'on' => ['importCsv']],
+            [['route_code', 'vehicle_code', 'wef_date', 'morning_kms', 'evening_kms', 'wef_date', 'shift_code'], 'required'],
+            [['transporter_code'], 'required', 'except' => ['importCsv']],
+            [['union_code', 'total_kms'], 'required', 'except' => ['importCsv']],
             [['data_lock'], 'default', 'value' => 0],
-            [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by', 'delete_by'], 'string'],
-            [['wef_date', 'created_at', 'updated_at', 'delete_at', 'shift_code', 'data_lock'], 'safe'],
-            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'number', 'min' => 1],
-            [['wef_date'], 'wefValidate', 'on' => 'create'],
-            [['morning_kms'], 'routeValidate'],
+            [['is_active'], 'default', 'value' => 1],
+            [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by'], 'string'],
+            [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock'], 'safe'],
+            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms'], 'number', 'min' => 0],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+//            [['wef_date'], 'wefValidate', 'on' => 'create'],
+//            [['morning_kms'], 'routeValidate'],
 //            [['wef_date'], 'wefPaidValidate','on'=>'update'],
             [['wef_date', 'vehicle_code'], function ($attribute, $params) {
-            Yii::$app->general->validateVehiclePayment($this);
-        }, 'skipOnEmpty' => false],
-            [['route_code', 'vehicle_code', 'transporter_code', 'wef_date', 'morning_kms', 'evening_kms', 'total_kms'], 'required', 'on' => 'update'],
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->validateVehiclePayment($this);
+                    }
+                }, 'skipOnEmpty' => false],
+            [['vehicle_code'], 'importFieldSet', 'on' => ['importCsv']],
+            [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'on' => ['importCsv']],
+            [['vehicle_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['vehicle_code' => 'vehicle_code'], 'on' => ['importCsv']],
+            [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
+            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
+            [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'wef_date', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 
@@ -76,10 +94,9 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'delete_at' => Yii::t('app', 'Delete At'),
-            'delete_by' => Yii::t('app', 'Delete By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'shift_code' => Yii::t('app', 'Shift'),
+            'union_code' => Yii::t('app', 'Union'),
         ];
     }
 
@@ -141,17 +158,19 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
     }
 
     public function wefValidate($attribute, $params) {
-        $wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
-        $data = $this->find()
-                ->where(['=', 'vehicle_code', $this->vehicle_code])
-                ->andWhere(['>=', 'wef_date', $wef_date])
-                ->andWhere(['=', 'route_code', $this->route_code])
-                ->andWhere(['=', 'transporter_code', $this->transporter_code])
-                ->andWhere(['=', 'shift_code', $this->shift_code])
-                ->orderBy('wef_date desc')
-                ->one();
-        if (!empty($data)) {
-            $this->addError($attribute, "Please select Wef Date greater than '" . Yii::$app->controls->view_date($data->wef_date) . "'");
+        if (empty($this->getErrors())) {
+            $wef_date = Yii::$app->formatter->asDate($this->wef_date, DATE_FORMAT);
+            $data = $this->find()
+                    ->where(['=', 'vehicle_code', $this->vehicle_code])
+                    ->andWhere(['>=', 'wef_date', $wef_date])
+                    ->andWhere(['=', 'route_code', $this->route_code])
+                    ->andWhere(['=', 'transporter_code', $this->transporter_code])
+                    ->andWhere(['=', 'shift_code', $this->shift_code])
+                    ->orderBy('wef_date desc')
+                    ->one();
+            if (!empty($data)) {
+                $this->addError($attribute, "Please select Wef Date greater than '" . Yii::$app->controls->view_date($data->wef_date) . "'");
+            }
         }
     }
 
@@ -169,6 +188,45 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
         return $this->find()->where(['transporter_code' => $this->transporter_code, 'data_lock' => 0])
                         ->andWhere(['or', ['>=', 'wef_date', $from_date], ['<=', 'wef_date', $to_date]])
                         ->all();
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function importFieldSet($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->transporter_code = Yii::$app->general->getforeignkey($this->vehicle, 'transporter_code');
+            $this->union_code = Yii::$app->general->getforeignkey($this->transporterCode, 'union_code');
+            $this->total_kms = $this->morning_kms + $this->evening_kms;
+        }
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+            $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_code);
+        }
+    }
+
+    public function getdateWiseVehicleRouteList($vehicle,$date) {
+        $data = $this->find()
+                        ->select(['route_code'])
+                        ->where(['vehicle_code' => $vehicle])
+                        ->andFilterWhere(['<=', 'wef_date', date('Y-m-d', strtotime($date))])
+                        ->groupBy('route_code')->all();
+        $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function($data) {
+                    return Yii::$app->general->getforeignkey($data->routeCode, 'route_name');
+                });
+        return $array;
     }
 
 }

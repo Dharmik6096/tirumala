@@ -35,6 +35,18 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'route_code_ex',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'ref_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
                                 'attribute' => 'local_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
@@ -160,7 +172,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 
                 <!--                <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div>
                                 <div class="form-grid">
-                                    <? =
+                                    <?=
                                     $this->render('../../../details/views/tbl-bank-details/_bank_details', [
                                         'model' => $model,
                                         'dataProvider' => $bdataProvider,
@@ -169,15 +181,20 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                     ?>
                                 </div>-->
 
-                <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div>
-                <div class="form-grid">
-                    <?=
-                    $this->render('../../../details/views/tbl-contact-details/_contact_details', [
-                        'model' => $model,
-                        'dataProvider' => $cdataProvider,
-                        'searchModel' => $csearchModel,
-                    ])
-                    ?>
+                <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div> -->
+                <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                        <h4 class="theme-box-heading">Contact Details</h4>
+                    </div>
+                    <div class="form-grid">
+                        <?=
+                        $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                            'model' => $model,
+                            'dataProvider' => $cdataProvider,
+                            'searchModel' => $csearchModel,
+                        ])
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>

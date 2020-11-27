@@ -10,8 +10,10 @@ $cunit = !empty($request['TblRouteMappingSearch']['unit']) ? $request['TblRouteM
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
     'route_code',
+    ['attribute' => 'route_code_ex'],
+    ['attribute' => 'ref_code'],
     //'morning_start_time',
     //'morning_end_time',
     //'route_length_kms',
@@ -98,13 +100,13 @@ $grid_option = [
             $options = ['data-name' => $model->route_name, 'data-val' => $model->route_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Route Source'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-route-mapping/map-route-source', 'id' => $model->route_code], $options);
         },
-                'delete' => ['option' => 'route_name,route_code,tbl-route-mapping/delete'],
-                'contact-details' => function ($url, $model) {
+        'delete' => ['option' => 'route_name,route_code,tbl-route-mapping/delete'],
+        'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->route_name, 'data-val' => $model->route_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-route-mapping/contact-details', 'id' => $model->route_code], $options);
         },
-            ]
-        ];
+    ]
+];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-        ?>
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>

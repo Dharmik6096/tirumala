@@ -41,7 +41,7 @@ use app\modules\payment\models\TblSaleInstallments;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit, $plant_code, $mcc_plant_code, $customer_name, $ex_code;
+    public $payment_cycle_code, $available_credit, $customer_name, $ex_code;
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
 
@@ -60,7 +60,7 @@ class TblProductSale extends \app\models\ChildModel {
                 [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync']],
                 [['bmc_code', 'union_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
-                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'number', 'min' => 0],
                 [['discount'], 'validateDisccount'],
@@ -204,7 +204,9 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function checkAmount($attribute, $params) {
-        $due = $this->amount_due;
+        $amt = !empty($this->amount_due) ? $this->amount_due : 0;
+        $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
+        $due = !empty($noOfIn) ? $amt / $noOfIn : $amt;
         $available = $this->available_credit;
         if ($available == '') {
             $available = 0;
@@ -247,7 +249,7 @@ class TblProductSale extends \app\models\ChildModel {
     public function validatePaymentCycle($attribute, $params) {
         if (!empty($this->invoice_date) && $this->payment_mode == 1) {
             $model = new TblPaymentCycleApplicability();
-            $model->applicable_type = $this->customer_type;
+            $model->applicable_type = strtolower($this->customer_type) == 'member' ? 'DCS' : $this->customer_type;
             $model->applicable_code = $this->bmc_code;
             $model->applicable_for = 'BMC';
             $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($this->invoice_date)));
@@ -274,10 +276,10 @@ class TblProductSale extends \app\models\ChildModel {
                 $model = new TblBmcCollection();
                 $collWhere = [];
                 $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
-//                if (strtolower($this->sale_type) == 'member') {
-//                    $model = new TblMilkCollection();
-//                    $collWhere = ['member_code' => $this->member_code];
-//                }
+                if (strtolower($this->customer_type) == 'member') {
+                    $model = new TblMilkCollection();
+                    $collWhere = ['member_code' => $this->customer_code];
+                }
                 $modelData = $model->find()
                         ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
                         ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
@@ -288,7 +290,10 @@ class TblProductSale extends \app\models\ChildModel {
                     $creditAmount = $modelData->amount;
                 }
                 $availableCredit = $creditAmount - $saledAmount;
-                if ($this->amount_due > $availableCredit) {
+                $amt = !empty($this->amount_due) ? $this->amount_due : 0;
+                $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
+                $due = !empty($noOfIn) ? $amt / $noOfIn : $amt;
+                if ($due > $availableCredit) {
                     $this->addError('amount_due', "Available Credit Limit is " . $availableCredit);
                     return false;
                 }
@@ -316,8 +321,8 @@ class TblProductSale extends \app\models\ChildModel {
         $appCycleAppModelData = $appCycleAppModel->getApplicablePaymentCycle($saleDate);
         if (!empty($model->payment_mode)) {
             $no = !empty($model->no_of_installment) ? ($model->no_of_installment) : 1;
-            $cycle = !empty($appCycleAppModelData->payment_cycle_code) ? $appCycleAppModelData->payment_cycle_code : NULL;
-            $appCode = !empty($appCycleAppModelData->payment_cycle_applicabilty_code) ? $appCycleAppModelData->payment_cycle_applicabilty_code : NULL;
+//            $cycle = !empty($appCycleAppModelData->payment_cycle_code) ? $appCycleAppModelData->payment_cycle_code : NULL;
+//            $appCode = !empty($appCycleAppModelData->payment_cycle_applicabilty_code) ? $appCycleAppModelData->payment_cycle_applicabilty_code : NULL;
             $model->amount_due = !empty($model->amount_due) ? $model->amount_due : 0;
             $instAmount = floatval($model->amount_due / $no);
             $ai = 1;
@@ -334,17 +339,17 @@ class TblProductSale extends \app\models\ChildModel {
                 $installmentModel->main_amount = $model->amount_due;
                 $installmentModel->installment_amount = $instAmount;
                 $installmentModel->installment_status = 0;
-                $installmentModel->payment_cycle_applicability_code = $appCode;
-                $installmentModel->payment_cycle_code = $cycle;
+                $installmentModel->payment_cycle_applicability_code = NULL; //$appCode;
+                $installmentModel->payment_cycle_code = NULL; //$cycle;
                 $installmentModel->product_sale_installment_code = Yii::$app->general->getTransactionCode($installmentModel, $model->product_sale_code, $ai);
                 $paymentCycleDate = Yii::$app->general->getforeignkey($installmentModel->tblPaymentCycleCode, 'from_date');
                 $paymentCycleDate = !empty($paymentCycleDate) && $paymentCycleDate != 'N/A' ? date('Y-m-d', strtotime($paymentCycleDate)) : NULL;
-                $installmentModel->installment_date = $paymentCycleDate;
+                $installmentModel->installment_date = NULL; //$paymentCycleDate;
                 $childModel[] = $installmentModel;
-                if (!empty($installmentModel->payment_cycle_code)) {
-                    $appCycleAppModel = new TblPaymentCycle();
-                    $cycle = $appCycleAppModel->getNextCycleCode($installmentModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC', $appCode);
-                }
+//                if (!empty($installmentModel->payment_cycle_code)) {
+//                    $appCycleAppModel = new TblPaymentCycle();
+//                    $cycle = $appCycleAppModel->getNextCycleCode($installmentModel->payment_cycle_code, $model->bmc_code, $model->customer_type, 'BMC', $appCode);
+//                }
                 $ai++;
             }
         }

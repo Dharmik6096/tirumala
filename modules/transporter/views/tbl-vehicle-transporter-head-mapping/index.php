@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vehicle Trasnporter Head'));
-$this->params['menu'][] = Yii::$app->controls->add('Vehicle Trasnporter Head');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vehicle Transporter Head'));
+$this->params['menu'][] = Yii::$app->controls->add('Vehicle Transporter Head');
 //$this->params['menu'][] = Yii::$app->controls->import('transporter', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
@@ -8,11 +8,11 @@ $this->params['menu'][] = Yii::$app->controls->add('Vehicle Trasnporter Head');
         <?= $this->title; ?>
     </div>
     <div class="panel-body">
-         <?=
-            $this->render('_form_grid', [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
-            ])
-            ?>
+        <?=
+        $this->render('_form_grid', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ])
+        ?>
     </div>
 </div>

@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+//use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;
@@ -18,7 +19,7 @@ $selected = Yii::$app->session->get('Unions');
 <?php
 $form = ActiveForm::begin(['id' => 'purchase-rate-form',
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -27,29 +28,30 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
 ?>
 
 <div class="row">                      
-    <div class="col-sm-3 change">
+    <div class="col-sm-2 change">
         <?= Yii::$app->dropdown->dropdown('rate_gen_method_code', $model, $form, 'form-group', 'Rate Method'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', 'form-group', FALSE); ?>
     </div>
-    <div class="col-sm-3 shift">
+    <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift', false, 'shift_id'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group', 'Shift Applicability'); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-6">
+    <div class="col-sm-2">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
+    </div>
+    <div class="col-sm-3  mt25">
+        <?= $form->field($model, 'for_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>
 
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([
-
                 'label' => Yii::t('app', 'Next'),
                 'id' => 'submit',
                 'ajaxOptions' => [
@@ -68,7 +70,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                     'success' => new JsExpression('function(data){                             
                                     if (data.status == "success"){
                                             var purchaseRate = [];
-                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id};
+                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"shift":data.shift,"description":data.description,"shift_id":data.shift_id,"for_member":data.for_member};
                                             localStorage.setItem("purchaseRate", JSON.stringify(purchaseRate));
                                             window.location="' . \Yii::$app->request->getHostInfo() . '"+data.url;
                                     }else{

@@ -64,7 +64,7 @@ use app\modules\organisation\models\TblPlant;
  */
 class TblWeightCollection extends \app\models\ChildModel {
 
-    public $customer_name;
+    public $customer_name, $ref_code, $bmc_ref_code;
 
     /**
      * @inheritdoc
@@ -83,7 +83,7 @@ class TblWeightCollection extends \app\models\ChildModel {
             [['uuid', 'producer_flag', 'shift_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code', 'dcs_code', 'created_by', 'updated_by', 'device_id', 'version_no', 'vehicle_no', 'ws_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
             [['sample_no', 'milk_type_code', 'milk_quality_type_code', 'qty_mode', 'converted_qty_mode', 'rejected_can', 'qty_auto', 'doc_no', 'originating_type'], 'safe'],
             [['date_time_of_collection', 'weight_datetime', 'created_at', 'updated_at', 'route_arrival_time', 'customer_type', 'customer_code'], 'safe'],
-            [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'safe'],
+            [['qty', 'converted_qty', 'cans', 'rejected_qty', 'bmc_silos_info_code'], 'safe'],
             [['qty', 'converted_qty', 'cans', 'rejected_qty'], 'number', 'except' => ['androidsync']],
             [['qty'], 'double', 'min' => 0, 'max' => 99999, 'on' => ['edit_collection']],
             [['sample_no'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'mcc_plant_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],

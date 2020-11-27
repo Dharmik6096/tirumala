@@ -9,7 +9,7 @@ class SearchFilter {
     public function getRecord($l) {
         $label = [
             'TblDcsSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code'],
             ],
             'TblMemberSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
@@ -21,7 +21,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
             'TblBmcCollectionSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
             'TblPlantSearch' => [
                 'filter' => ['f_union_code'],
@@ -33,7 +33,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code'],
             ],
             'TblRouteMappingSearch' => [
-                'filter' => ['f_union_code', 'unit'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'unit'],
             ],
             'TblFormulaMasterSearch' => [
                 'filter' => ['f_union_code'],
@@ -63,25 +63,25 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'shift_code'],
             ],
             'TblFuelRateMasterSearch' => [
-                'filter' => ['f_union_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
             'TblMemberClassificationSearch' => [
                 'filter' => ['f_union_code'],
             ],
             'TblVehicleMasterSearch' => [
-                'filter' => ['f_union_code', 'transporter_code:f_union_code'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'from_date', 'to_date'],
             ],
             'TblVehicleKmInfoSearch' => [
-                'filter' => ['transporter_code', 'vehicle_code:transporter_code'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'route', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
             'TblKmWiseRateSearch' => [
-                'filter' => ['vehicle_code'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
             ],
             'TblMobileOilRateMasterSearch' => [
                 'filter' => ['vehicle_code'],
             ],
             'TblVehicleTransporterHeadMappingSearch' => [
-                'filter' => ['vehicle_code', 'transporter_payment_head_code'],
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'transporter_payment_head_code', 'from_date', 'to_date'],
             ],
             'TblBmcDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
@@ -253,6 +253,33 @@ class SearchFilter {
             ],
             'TblMilkVehicleEntrySearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblDcsDeactiveSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblMemberDeactiveSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'member_code'],
+            ],
+            'TblVspPaymentConfigSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
+            ],
+            'TblAssetTransactionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblTransporterPaymentSearch' => [
+                'filter' => ['f_union_code', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblVehicleExtraKmDaywiseSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+            ],
+            'TblTransporterSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblBranchSearch' => [
+                'filter' => ['bank_code'],
+            ],
+            'TblVillagesSearch' => [
+                'filter' => ['state','district'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

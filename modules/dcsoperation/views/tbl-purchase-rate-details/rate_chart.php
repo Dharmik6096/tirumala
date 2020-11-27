@@ -16,11 +16,14 @@ $this->title = Yii::t('app', 'Rate Chart');
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-12">
-                <div class="grid-search large-search">
+                <div class="pt5 large-search">
                     <?php $form = ActiveForm::begin(); ?>
                     <?= Html::activeHiddenInput($model, 'purchase_rate_code', ['value' => $model->purchase_rate_code]); ?>
                     <div class="col-sm-2">
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', false); ?>
+                    </div>
+                    <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group padding-right-5', false, false, 'rate_class') ?> 
                     </div>
                     <div class="col-sm-2">
                         <?php //Yii::$app->controls->save('Submit', $model); ?>
@@ -29,6 +32,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                 </div>
             </div>
             <div class="col-sm-12">
+                <div class="col-sm-12">
                 <div class="table-responsive table-rate-chart">
                     <table class="table table-bordered table-striped table-input" id="table">
                         <?php
@@ -67,6 +71,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                         <?php } ?>
 
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,9 +79,12 @@ $this->title = Yii::t('app', 'Rate Chart');
 </div>
 <?php
 $script = "
-     $('#tblpurchaseratedetails-milk_type_code').on('change', function(e){
-    this.form.submit()
-  });
+    $('#tblpurchaseratedetails-milk_type_code').on('change', function(e){
+        this.form.submit()
+    });
+    $('#tblpurchaseratedetails-rate_class').on('change', function(e){
+        this.form.submit()
+    });
     $( document ).ready(function() {
         localStorage.removeItem('purchaseRate');
     });

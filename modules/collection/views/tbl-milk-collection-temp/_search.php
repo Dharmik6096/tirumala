@@ -19,13 +19,13 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->union_dcs('dcs', $model, $form, 'tblmilkcollectiontemp-union_code', '', false); ?>            
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('approval_status', $model, $form, 'form-group', false, false, 'is_approved', false); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('update_status', $model, $form, 'form-group', false, false, 'is_updated', false); ?>
     </div>
     <div class="col-sm-2">

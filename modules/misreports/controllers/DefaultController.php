@@ -5,7 +5,7 @@ namespace app\modules\misreports\controllers;
 use yii\web\Controller;
 use yii;
 use Jaspersoft\Client\Client;
-use app\modules\misreports\models\ReportsModel;
+use app\modules\misreports\models\ReportsModelOld;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 
@@ -21,7 +21,7 @@ class DefaultController extends \app\controllers\ChildController {
     private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '';
 
     public function actionIndex() {
-        $model = new ReportsModel();
+        $model = new ReportsModelOld();
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);
             if (!empty($this->data['scenario'])) {
@@ -32,7 +32,20 @@ class DefaultController extends \app\controllers\ChildController {
             $this->LoadReport($model);
             if (empty($this->output)) {
                 $this->output = Yii::t('app', 'No Data Available.');
+            } else if (isset($this->data['export_file_name'])) {
+                $title_data = array_merge($model->attributes, $this->output[0]);
+                $export_file_name = $this->data['export_file_name'];
+                foreach ($title_data as $k => $v) {
+                    if ($k == 'from_date') {
+                        $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
+                    }
+                    $export_file_name = str_replace($k, $v, $export_file_name);
+                }
+                $this->data['export_file_name'] = $export_file_name;
             }
+        }
+        if (isset($this->data['export_file_name']) && empty($this->output)) {
+            $this->data['export_file_name'] = $this->data['title'];
         }
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
     }
@@ -70,9 +83,9 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionSapReport() {
         $this->report = 'VmReportSap';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'WqReportSap';
-            } else if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            } else if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'SdReportSap';
             }
         }
@@ -82,7 +95,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionDateShiftBmcCollection() {
         $this->report = 'DateBmcCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'DateShiftBmcCollection';
             }
         }
@@ -92,7 +105,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionSapStatusReport() {
         $this->report = 'SapStatusReport';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'SapDetailedStatusReport';
             }
         }
@@ -102,7 +115,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionSapComparisionReport() {
         $this->report = 'SapComparisionReportDateWise';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'SapComparisionReportDateShiftWise';
             }
         }
@@ -192,7 +205,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionCollectionDataSummary() {
         $this->report = 'CollectionDataSummary';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'CollectionDataSummaryProductWise';
             }
         }
@@ -217,7 +230,7 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionMemberPayment() {
         $this->report = 'MemberPaymentDcsWise';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'MemberPaymentMemberWise';
             }
         }
@@ -232,10 +245,10 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionMemberMilkCollection() {
         $this->report = 'MemberMilkCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'MemberMilkCollectionDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'MemberMilkCollectionConsolidate';
             }
         }
@@ -245,10 +258,10 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionConsolidatedUnionMilkCollection() {
         $this->report = 'ConsolidatedUnionMilkCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'ConsolidatedUnionMilkCollectionDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'ConsolidatedUnionMilkCollectionConsolidate';
             }
         }
@@ -258,10 +271,10 @@ class DefaultController extends \app\controllers\ChildController {
     public function actionDcsWiseMilkCollection() {
         $this->report = 'DcsWiseMilkCollection';
         if (Yii::$app->request->queryParams) {
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
                 $this->report = 'DcsWiseMilkCollectionDateWise';
             }
-            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '2') {
                 $this->report = 'DcsWiseMilkCollectionConsolidate';
             }
         }
@@ -325,6 +338,36 @@ class DefaultController extends \app\controllers\ChildController {
 
     public function actionVariationPercentageWise() {
         $this->report = 'VariationPercentageWise';
+        return $this->actionIndex();
+    }
+
+    public function actionAmcsSyncPending() {
+        $this->report = 'AmcsSyncPending';
+        return $this->actionIndex();
+    }
+
+    public function actionCpmilkSapReport() {
+        $this->report = 'CPMemberReportSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModelOld']['report_type'] == '1') {
+                $this->report = 'CPRmrdReportSap';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionGprsDataReconciliation() {
+        $this->report = 'GprsDataReconciliation';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsMaster() {
+        $this->report = 'DcsMaster';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMaster() {
+        $this->report = 'MemberMaster';
         return $this->actionIndex();
     }
 
@@ -401,6 +444,7 @@ class DefaultController extends \app\controllers\ChildController {
 
         if (!empty($output)) {
             $attr = '';
+            $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
             foreach ($output[0] as $att => $value) {
                 $attr .= "'" . $att . "',";
             }
@@ -830,6 +874,50 @@ class DefaultController extends \app\controllers\ChildController {
                 'sp_name' => 'rpt_mis_bmc_collection_consolidated',
                 'scenario' => 'BmcCollectionConsolidated',
                 'title' => '124 - BMC Collection Consolidated',
+            ],
+            'AmcsSyncPending' => [
+                'param' => 'p_organization_type:static:p_organization_type,union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_sentbox_sync_pending_data',
+                'scenario' => 'AmcsSyncPending',
+                'title' => '224 - AMCS Sync Pending',
+            ],
+            'CPMemberReportSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_member_collection',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'export_file_name' => 'Plant_Code_VMCC_from_date_from_shift',
+            ],
+            'CPRmrdReportSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_rpt_cpmilk_rmrd_collection',
+                'scenario' => 'CPReportSap',
+                'title' => '404 - SAP Data Export',
+                'report_type' => [Yii::t('app', 'MEMBER'), Yii::t('app', 'RMRD')],
+                'export_file_name' => 'Plant_Code_WQ_from_date_from_shift',
+            ],
+            'GprsDataReconciliation' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_dpu_gprs_data_reconciliation',
+                'scenario' => 'GprsDataReconciliation',
+                'title' => '313 - DPU-GPRS Data Reconciliation',
+            ],
+            'DcsMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_dcs_master_register',
+                'scenario' => '',
+                'title' => 'DCS Register',
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No'],
+                'removeExportType' => ['CSV']
+            ],
+            'MemberMaster' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
+                'sp_name' => 'sp_mis_member_master_register',
+                'scenario' => '',
+                'title' => 'Member Register',
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob'],
+                'removeExportType' => ['CSV']
             ],
         ];
         return $label[$l];

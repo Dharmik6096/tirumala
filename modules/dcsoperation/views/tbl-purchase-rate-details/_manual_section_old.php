@@ -15,7 +15,7 @@ $this->title = Yii::t('app', 'Purchase Rate - Manually');
 $form = ActiveForm::begin(['id' => 'manual_form', 'options' => [
                 'field-class' => 'form-group col-sm-3'
             ], 'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,

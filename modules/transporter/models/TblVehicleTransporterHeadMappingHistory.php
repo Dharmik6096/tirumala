@@ -22,35 +22,32 @@ use Yii;
  * @property string $history_created_at
  * @property string $operation_type
  */
-class TblVehicleTransporterHeadMappingHistory extends \yii\db\ActiveRecord
-{
+class TblVehicleTransporterHeadMappingHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vehicle_transporter_head_mapping_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['vehicle_transporter_head_mapping_code'], 'safe'],
             [['vehicle_transporter_head_mapping_code', 'transporter_payment_head_code', 'is_active'], 'safe'],
             [['vehicle_code', 'remarks', 'created_by', 'updated_by', 'operation_type'], 'safe'],
             [['wef_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['amount'], 'safe'],
+            [['amount', 'union_code', 'transporter_code', 'billing_type', 'route_code'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'vehicle_transporter_head_mapping_code' => Yii::t('app', 'Vehicle Transporter Head Mapping Code'),
@@ -68,4 +65,5 @@ class TblVehicleTransporterHeadMappingHistory extends \yii\db\ActiveRecord
             'operation_type' => Yii::t('app', 'Operation Type'),
         ];
     }
+
 }

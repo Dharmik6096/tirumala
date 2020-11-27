@@ -35,6 +35,8 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -98,6 +100,7 @@ class TblDcsController extends ChildController {
         $this->model->scenario = 'createDcs';
         $this->bankDetails = new TblBankDetails();
         $this->contactDetails = new TblContactDetails();
+        $this->contactDetails->form_validation_type = 'dcs-create';
         $this->model->district_code = Yii::$app->session->get('Districts');
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
@@ -123,10 +126,12 @@ class TblDcsController extends ChildController {
 
 
             //set mapping data
-            $modelMapping = new TblDcsVillageMapping();
-            $this->setMapping($modelMapping);
             $mapList = [];
-            array_push($mapList, $modelMapping);
+            if (!empty($this->model->village_code)) {
+                $modelMapping = new TblDcsVillageMapping();
+                $this->setMapping($modelMapping);
+                array_push($mapList, $modelMapping);
+            }
 
             $modelCodes = new TblSocietyCodes();
             $modelCodes->dcs_code = $this->model->dcs_code;
@@ -143,12 +148,14 @@ class TblDcsController extends ChildController {
                 array_push($mapList, $this->bankDetails);
             }
             $this->contactDetails->load(Yii::$app->request->post());
-            $this->contactDetails->setModel('society', $this->model->dcs_code);
-
-            array_push($mapList, $this->contactDetails);
+            if (!empty($this->contactDetails->mobile_no)) {
+                $this->contactDetails->setModel('society', $this->model->dcs_code);
+                array_push($mapList, $this->contactDetails);
+            }
 
             //set milk type data
             $modelMilkType = $this->setMilk();
+            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($modelMilkType);
             if (!empty($modelMilkType))
                 $mapList = array_merge($mapList, $modelMilkType);
 
@@ -168,8 +175,27 @@ class TblDcsController extends ChildController {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
-            if ($validate == 1) {
+            if ($validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
+                $member = [];
+                if (!empty($this->model->auto_member_create)) {
+                    for ($x = 1; $x <= 100; $x += 1) {
+                        $memberModel = new TblMember();
+                        $memberModel->attributes = $this->model->attributes;
+                        $memberModel->ex_member_code = str_pad($x, 4, '0', STR_PAD_LEFT);
+                        $memberModel->member_code = $this->model->dcs_code . $memberModel->ex_member_code;
+                        $memberModel->ref_code = $memberModel->member_code;
+                        $memberModel->animal_type_code = 1;
+                        $memberModel->address = $this->model->dcs_name;
+                        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+                        $memberModel->member_type_code = '1';
+                        $memberModel->member_name = 'No Name';
+                        $memberModel->gender_code = 1;
+                        $memberModel->caste_category_code = 1;
+                        $memberModel->member_type_code = 1;
+                        array_push($mapList, $memberModel);
+                    }
+                }
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -287,13 +313,18 @@ class TblDcsController extends ChildController {
                     array_push($mappingList, $mappingHistory);
                     array_push($mappingList, $oldModel);
                 }
-                $newModelMapping = new TblDcsVillageMapping();
-                $this->setMapping($newModelMapping);
-                array_push($mappingList, $newModelMapping);
+                if (!empty($this->model->village_code)) {
+                    $newModelMapping = new TblDcsVillageMapping();
+                    $this->setMapping($newModelMapping);
+                    array_push($mappingList, $newModelMapping);
+                }
             }
 
             // $this->model->milk_type_code = $this->model->milk_type_code[0];
             //milk type
+            if (!empty($this->model->milk_type_auto)) {
+                $this->model->milk_type_code = [1, 2, 3];
+            }
             $milkType = TblDcsMilkType::find()->where(['dcs_code' => $this->model->dcs_code, 'is_active' => 1])->all();
             $returnedArray = \yii\helpers\ArrayHelper::map($milkType, 'milk_type_code', 'milk_type_code');
 
@@ -315,7 +346,8 @@ class TblDcsController extends ChildController {
                 $milkModel->is_active = $this->model->is_active;
                 array_push($mappingList, $milkModel);
             }
-
+            $milkTypeArray = TblAnimalType::find()->where(['animal_type_code' => $this->model->milk_type_code, 'is_active' => 1])->all();
+            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($milkTypeArray, 'animal_type_code');
             if ($_POST['warning'] == 0) {
                 $msg = $this->model->dcs_name . ' for Society';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $_POST['TblDcs']['dcs_name'], $msg);
@@ -516,6 +548,9 @@ class TblDcsController extends ChildController {
 
     private function setMilk() {
         $milkArray = $this->model->milk_type_code;
+        if ($this->model->milk_type_auto == 1) {
+            $milkArray = ["1", "2", "3"];
+        }
         $list = [];
         foreach ($milkArray as $row) {
             $modelMilk = new TblDcsMilkType();
@@ -573,10 +608,10 @@ class TblDcsController extends ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo Json::encode(['output' => $out]);
+            return Json::encode(['output' => $out]);
             return;
         }
-        echo Json::encode(['output' => '']);
+        return Json::encode(['output' => '']);
     }
 
     public function actionImeiNumber() {
@@ -621,7 +656,7 @@ class TblDcsController extends ChildController {
             $model = new TblSocietyCodes();
             $imei = $model->getImi($_POST['id']);
         }
-        echo Json::encode(['code' => $imei]);
+        return Json::encode(['code' => $imei]);
     }
 
     public function actionLoadVendorSociety() {
@@ -638,10 +673,10 @@ class TblDcsController extends ChildController {
                     $list[] = ['id' => $society->dcs_code, 'name' => $society->dcsCode->dcs_name];
                 }
             }
-            echo Json::encode(['output' => $list]);
+            return Json::encode(['output' => $list]);
             return;
         }
-        echo Json::encode(['output' => '']);
+        return Json::encode(['output' => '']);
     }
 
     public function actionUpdateImeiNumberSociety() {
@@ -801,11 +836,10 @@ class TblDcsController extends ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
-                return;
+                return Json::encode(['output' => $out, 'selected' => '']);
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionGetBmcDcs() {
@@ -816,7 +850,7 @@ class TblDcsController extends ChildController {
             $model = new TblDcs();
             $mccList = $model->getBMCDCSList($palnt, $RLS);
         }
-        echo Json::encode(['status' => 'success', 'data' => $mccList]);
+        return Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
     public function actionRateList($id) {
@@ -863,11 +897,11 @@ class TblDcsController extends ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionPaymentCycleDcsList() {
@@ -882,11 +916,11 @@ class TblDcsController extends ChildController {
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $val['dcs_code'], 'name' => $val['dcs_name']);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                return Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

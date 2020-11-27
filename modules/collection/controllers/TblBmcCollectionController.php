@@ -16,13 +16,16 @@ use app\modules\collection\models\TblBmcCollectionHistory;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
 use yii\widgets\ActiveForm;
+use app\modules\collection\models\TblCollectionDataAlias;
+use yii\base\Model;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid'];
 
     /**
      * Lists all TblBmcCollection models.
@@ -59,8 +62,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $searchModel = new TblBmcCollectionSearch();
         $searchModel->date_time_of_collection = date('Y-m-d');
         $searchModel->shift_code = 1;
-        $dataProvider = $searchModel->gridsearch(Yii::$app->request->get());
-
+        $dataProvider = $searchModel->createsearch(Yii::$app->request->get());
+        $dataProvider->sort = false;
         $this->model->date_time_of_collection = date('d-m-Y');
         $this->model->milk_type_code = 1;
         $this->model->milk_quality_type_code = 1;
@@ -69,6 +72,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->model->scenario = 'create';
         $modelSave = [];
+        $message = 'BMC Collection';
+        $type = 'create';
         if (Yii::$app->request->post()) {
             $update = FALSE;
             $this->model->load(Yii::$app->request->post());
@@ -114,13 +119,26 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             }
             $this->model->date_time_of_collection = !empty($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
-            $modelSave[] = $this->model;
             if ($this->model->validate()) {
                 $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
                 $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
                 $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
                 $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
-                $transaction = $this->generalModel->saveTransaction($modelSave, ['BMC Collection', ($update) ? 'edit' : 'create']);
+                if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
+                    $approvalModel = new TblCollectionDataAlias();
+                    $approvalModel->attributes = $this->model->attributes;
+                    $approvalModel->purchase_rate_code = $this->model->rate_code;
+                    $approvalModel->table_name = 'tbl_bmc_collection';
+                    $approvalModel->action_perform = 'CREATE';
+                    $approvalModel->setOldAttributesValues($approvalModel);
+                    $modelSave[] = $approvalModel;
+                    $message = 'Data For Approval';
+                    $type = 'create';
+                } else {
+                    $modelSave[] = $this->model;
+                }
+
+                $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
                     $record = ['status' => 'success', 'temp_collection_data' => [], 'msg' => $msg];
@@ -192,6 +210,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $dcs = Yii::$app->request->post('dcs_code');
         $union = Yii::$app->request->post('union_code');
         $type = Yii::$app->request->post('customer_type');
+        $mcc = Yii::$app->request->post('mcc');
+        $plant = Yii::$app->request->post('plant');
+        $date = Yii::$app->request->post('date');
         $bmcModel = new TblBmcCollection();
         if (!empty($type) && strtolower($type) != 'dcs') {
             $data = $bmcModel->validateCustomer($union, $dcs, $type);
@@ -199,6 +220,12 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         } else {
             $model = new TblDcs();
             $data = $model->validDcs($dcs, $bmc);
+            $bmcModel->dcs_code = $data;
+            $bmcModel->date_time_of_collection = $date;
+            $detail = Yii::$app->general->validateDeactivateDcs($bmcModel, $bmcModel->date_time_of_collection);
+            if ($detail === false) {
+                $data = '';
+            }
             $bmcModel->customer_code = $data;
         }
         if (!empty($data)) {
@@ -227,6 +254,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['snf'] = Yii::$app->request->post('snf');
         $data['customer_type'] = Yii::$app->request->post('customer_type');
         $data['union'] = Yii::$app->request->post('union_code');
+        $validCode = !empty(Yii::$app->request->post('valid_code')) ? Yii::$app->request->post('valid_code') : '';
         $bmcModel = new TblBmcCollection();
         $dcsModel = new TblDcs();
         $dcs = $dcsModel->validDcs($data['dcs_code'], $data['bmc_code']);
@@ -238,7 +266,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         if (strtolower($for) != 'dcs') {
-            $code = $bmcModel->validateCustomer($data['union'], $bmcModel->dcs_code, $for);
+            $code = $bmcModel->validateCustomer($data['union'],$data['dcs_code'], $for);
         } else {
             $code = $bmcModel->dcs_code;
         }
@@ -247,14 +275,14 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $data['milk_type'] = $data['milk_type'];
         $data['milk_quality_type_code'] = $data['milk_quality_type'];
         $data['appl_for'] = $for;
-        $data['appl_code'] = $code;
+        $data['appl_code'] = !empty($validCode) ? $validCode : $code;
         $model_data = $model->getDcsPurchaseRateApplicableData($data);
 
         if (!empty($model_data)) {
             $detail_model = new TblDcsPurchaseRateDetails();
             $detail_model->rate_type_code = $model_data->rate_app_code;
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-            $rate_type = $detail_model->rateTypeCode->rate_type;
+            $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
             $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
 
             if (!empty($detail_data)) {
@@ -270,7 +298,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
     public function actionListGrid() {
         $searchModel = new TblBmcCollectionSearch();
         $searchModel->setAttributes(Yii::$app->request->get('TblBmcCollection'));
-        $dataProvider = $searchModel->gridsearch([]);
+        $dataProvider = $searchModel->createsearch([]);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
@@ -309,6 +337,122 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $response['data'] = $clr;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
+    }
+
+    public function actionUpdateBmcCollection() {
+        $searchModel = new TblBmcCollectionSearch();
+        $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'deleteMilkCollection';
+        $detailModel = $dataProvider->getModels();
+        $message = 'BMC Collection';
+        $type = 'edit';
+        if (Yii::$app->request->post()) {
+            foreach ($detailModel as $detail) {
+                $detail->scenario = 'update';
+                $detail->rtpl = '';
+            }
+            $modelData = [];
+            Model::loadMultiple($detailModel, Yii::$app->request->post());
+            foreach ($detailModel as $detail) {
+                $detail->scenario = 'update';
+                $modelData[] = $detail;
+            }
+            if (Model::validateMultiple($modelData)) {
+                $saveModel = [];
+                foreach ($modelData as $detalData) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'])) {
+                        if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                            $approvalModel = new TblCollectionDataAlias();
+                            $approvalModel->attributes = $detalData->attributes;
+                            $approvalModel->old_qty = $detalData->oldAttributes['qty'];
+                            $approvalModel->old_fat = $detalData->oldAttributes['fat'];
+                            $approvalModel->old_snf = $detalData->oldAttributes['snf'];
+                            $approvalModel->old_rtpl = $detalData->oldAttributes['rtpl'];
+                            $approvalModel->old_clr = $detalData->oldAttributes['clr'];
+                            $approvalModel->old_amount = $detalData->oldAttributes['amount'];
+                            $approvalModel->old_milk_type_code = $detalData->oldAttributes['milk_type_code'];
+                            $approvalModel->old_milk_quality_type_code = $detalData->oldAttributes['milk_quality_type_code'];
+                            $approvalModel->old_purchase_rate_code = $detalData->oldAttributes['rate_code'];
+                            $approvalModel->old_no_of_can = $detalData->oldAttributes['no_of_can'];
+                            $approvalModel->table_name = 'tbl_bmc_collection';
+                            $approvalModel->action_perform = 'UPDATE';
+                            $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
+                            $saveModel[] = $approvalModel;
+                            $message = 'Data For Approval';
+                            $type = 'create';
+                        } else {
+                            $existData = $this->findModel($detalData->milk_collection_code);
+                            $historyModel = new TblBmcCollectionHistory();
+                            Yii::$app->operation->history($existData, $historyModel, DELETE);
+                            $saveModel[] = $historyModel;
+                            $existData->attributes = $detalData->attributes;
+                            $existData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
+                            $saveModel[] = $existData;
+                        }
+                    }
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+        if (!empty($detailModel)) {
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $detailModel,
+                'pagination' => FALSE,
+            ]);
+        }
+        return $this->render('update', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'detailModel' => $detailModel,
+        ]);
+    }
+
+    public function actionDeleteBmcCollection() {
+        $searchModel = new TblBmcCollectionSearch();
+        $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'deleteMilkCollection';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $message = 'Data For Approval';
+                $type = 'create';
+                $deletedata = Yii::$app->request->post('selection');
+                $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($deletedata as $code) {
+                    $where['milk_collection_code'] = $code;
+                    $existData = TblBmcCollection::find()->where($where)->one();
+                    if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                        $ApprovalModel = new TblCollectionDataAlias();
+                        $ApprovalModel->attributes = $existData->attributes;
+                        $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                        $ApprovalModel->table_name = 'tbl_bmc_collection';
+                        $ApprovalModel->action_perform = 'DELETE';
+                        $saveModel[] = $ApprovalModel;
+                    } else {
+                        $historyModel = new TblBmcCollectionHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                        $saveModel[] = $historyModel;
+                        $deleteModel[] = $existData;
+                        $message = 'BMC Collection';
+                        $type = 'delete';
+                    }
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+
+        return $this->render('delete', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

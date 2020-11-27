@@ -6,7 +6,7 @@ $this->title = Yii::t('app', 'Mobile Menu Permission');
         <?= $this->title; ?>           
     </div>
     <div class="panel-body">
-        <div class="grid-search large-search hidden-print">
+        <div class="large-search hidden-print">
             <?php echo $this->render('_search', ['model' => $mappingModel]); ?>
         </div>
         <div class="clearfix"></div>

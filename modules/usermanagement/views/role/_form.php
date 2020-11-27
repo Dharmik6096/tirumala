@@ -24,22 +24,22 @@ $form = ActiveForm::begin([
 ?>
 
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('organizations_type', $model, $form, '', $model->getAttributeLabel('organizations_type'), false, 'organizations_type', false); ?>  
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'description')->textInput(['maxlength' => 255, 'autofocus' => $model->isNewRecord ? true : false]) ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= $form->field($model, 'name')->textInput(['maxlength' => 64]) ?>
     </div>
-    <!--    <div class="col-sm-3">
+    <!--    <div class="col-sm-2">
     <?php
 //                        $form->field($model, 'portal_type')
 //                        ->dropDownList(['portal' => 'Portal', 'desktop' => 'Desktop'], ['class' => 'form-control ' . ((isset($_REQUEST['flag'])) ? 'disabled' : '')])
     ?>
         </div>-->
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save($button, $model); ?>
             <?= Yii::$app->controls->reset(); ?>

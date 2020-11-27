@@ -44,10 +44,11 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'safe'],
-            [['otp_code', 'is_active', 'is_expired'], 'safe'],
-            [['created_at', 'updated_at', 'db_path', 'imei_no', 'sync_key', 'sync_active', 'db_version', 'installation_type', 'version_no'], 'safe'],
-            [['installation_type'], 'default', 'value' => 0]
+                [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'use_for', 'lat', 'long', 'created_by', 'updated_by'], 'safe'],
+                [['otp_code', 'is_active', 'is_expired', 'd2d_request'], 'safe'],
+                [['created_at', 'updated_at', 'db_path', 'imei_no', 'sync_key', 'sync_active', 'db_version', 'installation_type', 'version_no', 'password', 'password_date'], 'safe'],
+                [['installation_type'], 'default', 'value' => 0],
+                [['d2d_request'], 'default', 'value' => 0],
         ];
     }
 

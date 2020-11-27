@@ -32,7 +32,7 @@ $tot_amt = array_sum(array_map(function($array) {
         $form = ActiveForm::begin([
                     'id' => 'payment-adjust',
                     'validateOnBlur' => TRUE,
-                    'validateOnEnter' => TRUE,
+                    
                     'validateOnChange' => TRUE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -112,8 +112,8 @@ $tot_amt = array_sum(array_map(function($array) {
     </div>
     <div class="panel-footer" >
         <?php //Yii::$app->controls->save('Confirm', $model);        ?>
-        <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
-        <?= Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
+        <?= Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
+        <?= Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
         <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?> 
     </div>
 </div>

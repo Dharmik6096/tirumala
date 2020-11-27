@@ -79,17 +79,20 @@ class TblMemberController extends \app\controllers\ChildController {
             }
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
-            if ($validate == 1) {
+            if ($validate == 1 && $this->model->validate() && empty($this->model->getErrors())) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
+                $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['member', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
-                        if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
-                            $this->model->generateBiplMemberFiles();
-                        }
+//                        if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
+//                            $this->model->generateBiplMemberFiles();
+//                        }
                     }
                     return $this->{$transaction}();
                 }
+            } else {
+                $this->model->scenario = '';
             }
         }
         return $this->customRender();
@@ -119,19 +122,25 @@ class TblMemberController extends \app\controllers\ChildController {
 
             $this->model->load(Yii::$app->request->post());
 //            $this->setModel();
+            if (!empty($this->model->bank_code)) {
+                $this->model->scenario = 'bank_selected';
+            }
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
-            if ($validate == 1) {
+            if ($validate == 1 && $this->model->validate()) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
+                $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['member', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
-                        if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
-                            $this->model->generateBiplMemberFiles();
-                        }
+//                        if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
+//                            $this->model->generateBiplMemberFiles();
+//                        }
                     }
                     return $this->{$transaction}();
                 }
+            } else {
+                $this->model->scenario = '';
             }
         }
         return $this->customRender();
@@ -224,9 +233,9 @@ class TblMemberController extends \app\controllers\ChildController {
         $this->model->is_active = 0;
         $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['member', 'edit']);
         if ($transaction == 'customRedirect') {
-            if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
-                $this->model->generateBiplMemberFiles();
-            }
+//            if (Yii::$app->general->isVendor($this->model->dcs_code, 'BIPL')) {
+//                $this->model->generateBiplMemberFiles();
+//            }
             $record = ['status' => 'success', 'msg' => 'Member Deactivated Successfully.'];
         } else {
             $record = ['status' => 'error', 'msg' => 'Member Not Deactivated.'];

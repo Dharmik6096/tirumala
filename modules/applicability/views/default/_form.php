@@ -33,20 +33,19 @@ $selectedRouteCode = json_encode($selectedRouteCode);
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
             'encodeErrorSummary' => false,
         ]);
-$divPrefix = '<div class="col-sm-3 shift">';
+$divPrefix = '<div class="col-sm-2 shift">';
 $divPostfix = '</div>';
 $modelName = 'TblDcsPurchaseRateApplicabitity';
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <?php if ($is_union) { ?>
-        <div class="col-sm-3" id="union">
+        <div class="col-sm-2" id="union">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
         </div>
     <?php } else {
@@ -61,7 +60,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 echo $divPrefix . Yii::$app->controls->date($model, $form, $key, '', false) . $divPostfix;
             } else if (!empty($f['type']) && $f['type'] == 'dropdown') {
                 if (isset($f['class'])) {
-                    $divPrefix = '<div class="col-sm-3 ' . $f['class'] . '">';
+                    $divPrefix = '<div class="col-sm-2 ' . $f['class'] . '">';
                 }
                 echo $divPrefix . Yii::$app->dropdown->dropdown($f['flag'], $model, $form, '', $model->getAttributeLabel($key), false, $key) . $divPostfix;
             }
@@ -70,17 +69,20 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
     ?>
     <div class="clearfix"></div>
     <?php
-    $class = 'col-sm-9';
+    $class = 'col-sm-9 padding_10_0';
     $checkboxClass = 'col-sm-4';
     if (in_array('dcs', $options)) {
         ?>
-        <div class="col-sm-12 mt10">
-            <h5 class="panel-subtitle">Apply to</h5>
+        <!-- <div class="col-sm-12 mt10">
+            <h5 class="panel-subtitle">Apply to</h5> -->
+        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Apply To</h4>
+            </div>
             <?= Html::radioList('dcs-filter', 'society', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'dcs-filter']]); ?>
-        </div>
         <div class="col-sm-3">
-            <div class="app-header-list">
-                <h4 class="mt10 mb15" id="header"><?= $title ?></h4>
+                <h4 class="mb15 theme-box-heading" id="header"><?= $title ?></h4>
+            <div class="margin_top_15_reverse mb15">
                 <?php
                 /* foreach ($filter_data as $key => $data) {
                   ?>
@@ -93,7 +95,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                   <?php } */
                 foreach ($filters as $key => $data) {
                     if ($key != 'society')
-                        echo '<div id="' . $key . '-list" class="row flt" style="display:none"></div>';
+                        echo '<div id="' . $key . '-list" class="row flt app-check-list-bmc" style="display:none"></div>';
                 }
                 ?>
             </div>
@@ -103,13 +105,18 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         // change here for BMC MCC Filter
         $modelName = \yii\helpers\StringHelper::basename(get_class($model));
         $class = 'col-sm-12';
-        $checkboxClass = 'col-sm-3';
+        $checkboxClass = 'col-sm-12';
         $appendClass = count($filters) == 1 ? ' disp_none ' : '';
         ?>
-        <div class="col-sm-12 mt10 <?= $appendClass ?>">
-            <h5 class="panel-subtitle">Apply to</h5>
-            <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
-        </div>
+        <!-- <div class="col-sm-12 mt10 <?= $appendClass ?>">
+            <h5 class="panel-subtitle">Apply to</h5> -->
+        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Apply To</h4>
+            </div>
+            <div class="<?= $appendClass ?>">
+                <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
+            </div>
         <?php
     }
     $customerClass = "";
@@ -120,13 +127,18 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         $customerClass = "customerTypeValidate";
         $hideClass = $hideCustomerType ? ' disp_none ' : '';
         ?>
-        <div class="col-sm-12 mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
-            <h5 class="panel-subtitle">Apply to</h5>
+        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Apply To</h4>
+            </div>
+        <!-- <div class="col-sm-12 mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
+            <h5 class="panel-subtitle">Apply to</h5> -->
+            
             <div id="dcs-wrap">
                 <?=
                 $this->render('_checkbox_list', [
                     'model' => $model, 'form' => $form, 'field_name' => $customer_type_field_name,
-                    'list' => $customer_type_list, 'selected' => $selected_customer_type, 'selectedData' => $selectedTypes, 'checkboxClass' => 'col-sm-3',
+                    'list' => $customer_type_list, 'selected' => $selected_customer_type, 'selectedData' => $selectedTypes, 'checkboxClass' => 'col-sm-2',
                 ])
                 ?>
             </div>
@@ -134,10 +146,12 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
     <?php } ?>
     <div class="<?= $class ?>">
         <div class="col-sm-4 padding-left-0 selectMccArea disp_none">
-            <div class="app-check-list-mcc">
-                <h4><?= Yii::t('app', 'MCC List') ?></h4>
+            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'MCC List') ?></h4>
+            <div class="app-check-list-mcc ">
                 <div class="form-group">
-                    <div class="checkbox app-check-all-mcc">
+                    <div class="checkbox app-check-all-mcc app-check-list-padding">
+                        <?php $field_name_for_filter = 'f_mcc_code'?>
+                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllMccList', 'class' => 'mcc-list-checkbox']) ?>
                             <label for="checkAllMccList"><?= Yii::t('app', 'Check ALL MCC') ?></label>
@@ -145,10 +159,10 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="mcc-wrap checkAllMcc" class="<?= $customerClass ?>">
+                <div id="mcc-wrap checkAllMcc" class=" app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => 'f_mcc_code',
+                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => $mccList, 'selected' => [], 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
                         'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'mcc',
                         'checkboxClass' => ' flt-checkbox mccCheckboxes', 'setCheckboxClass' => 'mccCheck'
@@ -158,10 +172,12 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             </div>
         </div>
         <div class="col-sm-4 padding-left-0 selectBmcArea disp_none">
-            <div class="app-check-list-bmc">
-                <h4><?= Yii::t('app', 'BMC List') ?></h4>
+            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'BMC List') ?></h4>
+            <div class="app-check-list-bmc ">
                 <div class="form-group">
-                    <div class="checkbox app-check-all-bmc">
+                    <div class="checkbox app-check-all-bmc app-check-list-padding">
+                        <?php $field_name_for_filter = 'f_bmc_code'?>
+                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
                             <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL BMC') ?></label>
@@ -169,10 +185,10 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="bmc-wrap checkAllBmc" class="<?= $customerClass ?>">
+                <div id="bmc-wrap checkAllBmc" class=" app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => 'f_bmc_code',
+                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => [], 'selected' => $selectedBmcCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
                         'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'bmc',
                         'checkboxClass' => ' flt-checkbox bmcCheckboxes', 'setCheckboxClass' => 'bmcCheck'
@@ -182,10 +198,12 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
             </div>
         </div>
         <div class="col-sm-4 padding-left-0 selectRouteArea disp_none">
-            <div class="app-check-list-bmc">
-                <h4><?= Yii::t('app', 'Route List') ?></h4>
+                <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'Route List') ?></h4>
+                <div class="app-check-list-bmc ">
                 <div class="form-group">
-                    <div class="checkbox app-check-all-route">
+                    <div class="checkbox app-check-all-route app-check-list-padding">
+                    <?php $field_name_for_filter = 'f_route_code'?>
+                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAllRouteList', 'class' => 'route-list-checkbox']) ?>
                             <label for="checkAllRouteList"><?= Yii::t('app', 'Check ALL Route') ?></label>
@@ -193,10 +211,10 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="route-wrap checkAllRoute" class="<?= $customerClass ?>">
+                <div id="route-wrap checkAllRoute" class=" app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => 'f_route_code',
+                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => [], 'selected' => $selectedRouteCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
                         'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'route',
                         'checkboxClass' => ' flt-checkbox routeCheckboxes', 'setCheckboxClass' => 'routemcCheck'
@@ -207,10 +225,12 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
         </div>
         <div class="clearfix"></div>
         <div class="col-sm-12 padding-left-0 padding-right-0 applicableCodeArea">
-            <div class="app-check-list">
-                <h4><?= $title ?> List</h4>
+            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= $title ?> List</h4>
+                <div class="app-check-list ">
                 <div class="form-group">
-                    <div class="checkbox app-check-all">
+                    <div class="checkbox app-check-all app-check-list-padding">
+                    <?php $field_name_for_filter = $main_field_name?>
+                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
                         <label class="route-text">
                             <?= Html::checkbox('checkall', false, ['id' => 'checkAll', 'class' => 'route-checkbox']) ?>
                             <label for="checkAll">Check All <?= $title ?></label>
@@ -218,10 +238,10 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="dcs-wrap" class="<?= $customerClass ?>">
+                <div id="dcs-wrap" class=" app-check-list-padding <?= $customerClass ?>">
                     <?=
                     $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => $main_field_name,
+                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
                         'checkboxClass' => ' flt-checkbox dcsCheckboxes'
                     ])
@@ -242,6 +262,22 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+
+    function checkBoxFilter(val){
+        var id = $(val).attr('id');
+        var value = $(val).val();
+        count = 0;
+        console.log(value);
+        $('#'+id+'-list div').each(function() {
+            if ($(this).text().search(new RegExp(value, 'i')) < 0) {
+                $(this).hide();
+            } else {
+                $(this).show();
+                count++;
+            }
+        });
+    }
+
     var selectedMcc = [];
     var selectedBmc = [];
     var selectedSociety = [];
@@ -348,28 +384,28 @@ $script = "
     function addFilterData(ucode, filter_type = '', applicable_for = '', selectAppCode = [])
     {
         var checkFilter = filter_type.toLowerCase();
-        var setClass = 'col-sm-3';
+        var setClass = 'col-sm-2';
         if(checkFilter == 'bulkven' || checkFilter == 'vlccven' || checkFilter == 'dcs') {
             $('.selectMccArea').show();
             $('.selectBmcArea').show();
             $('.selectRouteArea').show();
             $('.applicableCodeArea').removeClass('col-sm-12');
             $('.applicableCodeArea').addClass('col-sm-12');
-            setClass = 'col-sm-3';
-//            $('.applicableCodeArea .dcs-checklist').addClass('col-sm-3');
+            setClass = 'col-sm-2';
+//            $('.applicableCodeArea .dcs-checklist').addClass('col-sm-2');
 //            $('.applicableCodeArea .dcs-checklist').removeClass('col-sm-4');
         } else {
             $('#f_bmc_code-list').empty();
             $('.mccCheckboxes').prop('checked',false);
             $('#checkAllMccList').prop('checked',false);
             $('#checkAllBmcList').prop('checked',false);
-            setClass = 'col-sm-3';
+            setClass = 'col-sm-2';
             $('.selectMccArea').hide();
             $('.selectBmcArea').hide();
             $('.selectRouteArea').hide();
             $('.applicableCodeArea').addClass('col-sm-12');
             $('.applicableCodeArea').removeClass('col-sm-6');
-//            $('.applicableCodeArea .dcs-checklist').removeClass('col-sm-3');
+//            $('.applicableCodeArea .dcs-checklist').removeClass('col-sm-2');
 //            $('.applicableCodeArea .dcs-checklist').addClass('col-sm-4');
         }
         if(checkFilter == 'society') {
@@ -480,7 +516,7 @@ $script = "
                                     var flag_check = $('input[type=\'radio\']:checked').val();
                                     if(flag_check == flag){
                                         $.each(obj1.data, function(index, value) {
-                                            $('#dcs_code-list').append('<div class=\"col-sm-4 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"{$cname}[dcs_code][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
+                                            $('#dcs_code-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"{$cname}[dcs_code][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
                                         });
                                     }
                                 }

@@ -68,7 +68,7 @@ class TblTaxDetailController extends \app\controllers\ChildController {
         $total = 0;
         foreach ($data as $key => $d) {
             $records[$key]['tax_code'] = $d->basic_tax_code;
-            $records[$key]['tax_name'] = $d->basicTaxCode->basic_tax_name;
+            $records[$key]['tax_name'] = $d->basicTaxCode['basic_tax_name'];
             $records[$key]['tax_val'] = $d->percentage;
             $records[$key]['operation'] = ($d->type == 0) ? 'Addition' : 'Substraction';
 
@@ -79,7 +79,7 @@ class TblTaxDetailController extends \app\controllers\ChildController {
                 $sum = 0;
                 $depend_data = $dependModel->getDepends($d->tax_detail_code);
                 foreach ($depend_data as $depend) {
-                    $sum += $calculation;
+                    $sum += $value;
                 }
                 $calculation = $sum * $d->percentage / 100;
             }
@@ -146,10 +146,10 @@ class TblTaxDetailController extends \app\controllers\ChildController {
     public function addTexDepends($post, $tax_detail_id, $is_active) {
         $list = [];
         if (!empty($post)) {
-            $i = 0;
+            $i = 1;
             foreach ($post as $key => $value) {
                 $depends = new TblTaxDepends();
-                $depends->tax_depends_code = Yii::$app->general->getCodeAutoIncrement($this->model, $i);
+                $depends->tax_depends_code = Yii::$app->general->getCodeAutoIncrement($depends, $i);
                 $depends->tax_detail_code = $tax_detail_id->tax_detail_code;
                 $depends->union_code = $tax_detail_id->union_code;
                 $depends->is_active = $is_active;
@@ -235,7 +235,6 @@ class TblTaxDetailController extends \app\controllers\ChildController {
         $model = new TblTaxDepends();
         $data = $model->find()->select(['tax_detail_code'])->where(['tax_detail_code' => $id])->asArray()->all();
         $this->list = array_merge($this->list, $this->getchild($data));
-        
     }
 
     private function getchild($array) {

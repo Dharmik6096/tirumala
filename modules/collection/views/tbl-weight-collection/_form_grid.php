@@ -23,6 +23,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC Code'), 'value' => 'bmc_code', 'vAlign' => 'middle', 'visible' => FALSE, 'filter' => false],
+    ['attribute' => 'bmc_ref_code', 'label' => (Yii::t('app', 'BMC Ref.Code')), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'vAlign' => 'middle'],
     ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
@@ -37,6 +40,9 @@ $attribute = [
     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
         }, 'filter' => false],
+    ['attribute' => 'ref_code', 'label' => Yii::t('app', 'Ref. Code'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->customer_type, false, false, TRUE);
+        }],
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type);
         }, 'filter' => true],
@@ -48,8 +54,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->date_time_of_collection);
-        }],
+    return Yii::$app->controls->view_date($model->date_time_of_collection);
+}],
     ['attribute' => 'shift_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }
@@ -82,6 +88,7 @@ $grid_option = [
     'id' => 'tbl-weight-collection-grid',
     'attributes' => $attribute,
     'active_column' => false,
+    'default_sorting' => FALSE
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

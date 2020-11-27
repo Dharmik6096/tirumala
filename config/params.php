@@ -4,10 +4,11 @@ return [
     'adminEmail' => 'admin@example.com',
     'eiplDirPath' => 'C:/ftp/eipl/',
     'unionBankDirPath' => 'C:/unionbank/',
-    'biplDirPath' => 'C:/BIPLFTP/',
+    'biplDirPath' => '/LOCALBIPL/',
     'rateFilesPath' => 'web/ratechart',
     'biplRateUtilityPath' => 'web/utility/BIPL/Rate',
     'biplMemberUtilityPath' => 'web/utility/BIPL/Vendor',
+    'biplCollectionUtilityPath' => 'web/utility/BIPL/Collection',
     'jasper_server' => 'http://localhost:13099/jasperserver',
     'jasper_username' => 'jasperadmin',
     'jasper_password' => 'jasperadmin',
@@ -35,4 +36,6 @@ return [
     'client_url' => 'http://clients.everestinstruments.com/clients/',
     'soap_api_url' => 'http://103.210.72.119/AMCUService/Service.asmx?WSDL',
     'FTPDirPath' => '/SAPFILES/',
+    'google_map_api_key' => 'AIzaSyD78APuRJaxdjFBBSJjKag_CD2tWXSrjhE',
+    'data_exchange_vendor_code' => 'EIPLMDPL'
 ];

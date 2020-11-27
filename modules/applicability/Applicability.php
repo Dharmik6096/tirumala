@@ -18,6 +18,9 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
+use app\modules\dcsoperation\models\TblDcsPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRate;
 
 /**
  * applicability module definition class
@@ -272,6 +275,19 @@ class Applicability extends \yii\base\Module {
                                 $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
                                 return $this->customRender();
                             }
+
+                            if (!empty($appModel->purchaseRateCode->for_member) && $appModel->purchaseRateCode->for_member == 1) {
+                                $dcsRateModel = TblPurchaseRate::find()->where(['dcs_purchase_rate_code' => $appModel->purchase_rate_code])->one();
+                                if (!empty($dcsRateModel) && strtoupper($appModel->applicable_for) == 'DCS') {
+                                    $dcsAppModel = new TblPurchaseRateApplicability();
+                                    $dcsAppModel->attributes = $appModel->attributes;
+                                    $dcsAppModel->purchase_rate_code = $dcsRateModel->purchase_rate_code;
+                                    $dcsAppModel->dcs_code = $appModel->applicable_code;
+                                    $dcsAppModel->applicable_for = 'DCS';
+                                    $saveModel[] = $dcsAppModel->save();
+                                }
+                            }
+
                             $saveModel[] = $appModel->save();
                         } catch (UserException $e) {
                             $saveModel[] = false;

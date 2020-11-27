@@ -35,7 +35,7 @@ $attribute = [
             return Yii::$app->general->getCustomer($model, $model->customer_type);
         }],
     ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-            return  Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
+            return Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
         }, 'filter' => false, 'format' => 'raw'],
     [
         'attribute' => 'payment_date',
@@ -71,6 +71,7 @@ $grid_option = [
     'id' => 'vsp-payment-list-grid',
     'attributes' => $attribute,
     'active_column' => false,
+    'default_sorting' => FALSE,
     'actions' => [
         'view' => TRUE
     ]

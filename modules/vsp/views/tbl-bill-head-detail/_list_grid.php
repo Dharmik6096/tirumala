@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use kartik\grid\GridView;
 
 $attribute = [
     ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
@@ -13,9 +14,19 @@ $attribute = [
     ['attribute' => 'bill_head_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
         }, 'filter' => false,],
-    ['attribute' => 'payment_cycle_code', 'value' => function($model) {
-            return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
+    [
+        'attribute' => 'transaction_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->transaction_date);
         }, 'filter' => false],
+//    ['attribute' => 'payment_cycle_code', 'value' => function($model) {
+//            return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
+//        }, 'filter' => false],
     ['attribute' => 'no_installment', 'filter' => false],
     ['attribute' => 'amount', 'filter' => false],
 ];

@@ -45,9 +45,11 @@ class TblFormulaMaster extends \app\models\ChildModel {
             [['formula_code', 'formula_description', 'wef_date', 'milk_type_code', 'rate_type_code', 'union_code'], 'required'],
             [['wef_date', 'dcs_code', 'milk_type_code', 'rate_type_code', 'union_code', 'created_at', 'updated_at'], 'safe'],
             [['is_active'], 'integer'],
-            [['formula_code', 'formula_description', 'formula'], 'string', 'max' => 255],
+            [['formula_code', 'formula_description', 'formula'], 'string', 'max' => 500],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['formula'], 'required', 'on' => ['TextFormula']],
+            [['is_active'], 'default', 'value' => 1]
         ];
     }
 

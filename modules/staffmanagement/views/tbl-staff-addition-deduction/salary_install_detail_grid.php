@@ -17,14 +17,13 @@ $form = ActiveForm::begin(['options' => [
                 'field-class' => 'form-group col-sm-3',
             ],
             'validateOnBlur' => TRUE,
-            'validateOnEnter' => FALSE,
+            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
 ?>
 <div class="panel-subheading">
-    <h5 class="panel-subtitle"></h5>
     <div class="row">
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-main table-language">

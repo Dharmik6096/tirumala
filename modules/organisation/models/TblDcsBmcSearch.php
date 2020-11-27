@@ -18,6 +18,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
     public function rules() {
         return [
             [['bmc_code', 'mcc_plant_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+            [['bmc_code_ex', 'ref_code'], 'safe'],
         ];
     }
 
@@ -95,7 +96,9 @@ class TblDcsBmcSearch extends TblDcsBmc {
             'tbl_bmc.is_quality_manual' => $this->is_quality_manual,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_bmc.bmc_code', $this->bmc_code])
+        $query->andFilterWhere(['like', 'tbl_bmc.bmc_code_ex', $this->bmc_code_ex])
+                ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->ref_code])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_code', $this->bmc_code])
                 ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_name])
                 ->andFilterWhere(['like', 'tbl_bmc.local_name', $this->local_name])
                 ->andFilterWhere(['like', 'tbl_bmc.model', $this->model])

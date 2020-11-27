@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+//use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -15,7 +16,6 @@ $model->union_code = !empty($selected) ? $selected : $model->union_code;
 <?php
 $form = ActiveForm::begin(['id' => 'purchase-rate-form',
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -25,34 +25,30 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row">
-    <div class="col-sm-3" id="union">
+    <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>           
-    <div class="col-sm-3 change">
+    <div class="col-sm-2 change">
         <?= Yii::$app->dropdown->dropdown('rate_gen_method_code', $model, $form, '', 'Rate Method'); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>
-    <div class="col-sm-3 shift">
+    <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift', false, 'shift_id'); ?>
     </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', 'Shift Applicability'); ?>
     </div>
-
-    <div class="col-sm-6">
+    <div class="col-sm-2">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>
 
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php
             AjaxSubmitButton::begin([
-
                 'label' => Yii::t('app', 'Next'),
                 'id' => 'submit',
                 'ajaxOptions' => [

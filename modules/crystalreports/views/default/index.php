@@ -22,7 +22,7 @@ $model->date2 = empty($model->date2) ? date('d-m-Y') : $model->date2;
                                 'id' => 'report-form',
                                 'field-class' => 'form-group col-sm-3'
                             ], 'validateOnBlur' => FALSE,
-                            'validateOnEnter' => TRUE,
+                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,

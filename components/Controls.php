@@ -53,11 +53,11 @@ class Controls extends Component {
         echo Html::resetButton(Yii::t('app', 'reset'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+r']);
     }
 
-    public function cancel($model = '', $action = 'index', $params = null) {
+    public function cancel($model = '', $action = 'index', $params = null, $backArrow = false) {
         // if (!$model->isNewRecord) {
         $label = 'cancel';
         $class = 'btn btn-danger apply-shortcut';
-        if (Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'rate-chart') {
+        if (Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'rate-chart' || $backArrow) {
             $class = 'btn btn-primary apply-shortcut';
             $label = '<i class="fa fa-arrow-left"></i>';
             $tooltip = 'Back To List';
@@ -66,7 +66,7 @@ class Controls extends Component {
         // }
     }
 
-    public function custombutton($name, $action = 'create', $sideButton = false, $class = '') {
+    public function custombutton($name, $action = 'create', $sideButton = false, $class = '', $icon = '') {
         if (is_array($action))
             $url_path = $action;
         else
@@ -75,7 +75,7 @@ class Controls extends Component {
         $sideclass = $sideButton ? 'btn-block' : '';
         $class = empty($class) ? '' : $class . ' ';
         //$url=str_replace('1%5B', '%5B', $url);
-        return GhostHtml::a(Yii::t('app', ucfirst($name)), $url, ['class' => 'btn btn-danger apply-shortcut ' . $class . $sideclass, 'shortcut_key' => 'ctrl+alt+c']);
+        return GhostHtml::a($icon . Yii::t('app', ucfirst($name)), $url, ['class' => 'btn btn-danger apply-shortcut ' . $class . $sideclass, 'shortcut_key' => 'ctrl+alt+c']);
     }
 
     public function search() {

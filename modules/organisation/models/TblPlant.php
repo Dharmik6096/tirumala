@@ -50,28 +50,33 @@ class TblPlant extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-                [['name', 'hamlet_code', 'union_code', 'plant_code'], 'required'],
-                [['plant_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-                [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
-                [['email'], 'email'],
-                [['plant_code'], 'unique'],
-                [['name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-                [['local_name', 'local_cantact_person_name'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-                [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-                [['mobile_no'], 'string', 'max' => 10],
-                [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
-                [['capacity'], 'integer'],
-                [['plant_code'], 'integer', 'min' => 1],
-                [['plant_code'], 'string', 'max' => 6],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+        $main_rules = [
+            [['name', 'union_code'], 'required'],
+            [['plant_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['plant_code', 'contact_person', 'name', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'village_code', 'local_name', 'created_by', 'updated_by', 'union_code', 'mobile_no', 'local_contact_person_name', 'email', 'description'], 'string'],
+            [['email'], 'email'],
+            //[['plant_code'], 'unique'],
+            [['name'], function ($attribute, $params) {
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['mobile_no'], function ($attribute, $params) {
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['mobile_no'], 'string', 'max' => 10],
+            [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
+            [['capacity'], 'integer'],
+//            [['plant_code'], 'integer', 'min' => 1],
+//            [['plant_code'], 'string', 'max' => 6],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code_ex', 'vendor_code', 'ref_code'], 'safe'],
+            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblPlant', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
@@ -100,6 +105,8 @@ class TblPlant extends \app\models\ChildModel {
             'description' => Yii::t('app', 'Description'),
             'capacity' => Yii::t('app', 'Capacity (LPD)'),
             'valid_from' => Yii::t('app', 'Valid From'),
+            'plant_code_ex' => Yii::t('app', 'Plant Code Ex'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
@@ -161,12 +168,7 @@ class TblPlant extends \app\models\ChildModel {
     }
 
     public function getCode() {
-        return $this->plant_code;
-        $data = $this->find()->select(["MAX(CONVERT(INT,substring(plant_code,4,3))) AS plant_code"])->where(['union_code' => $this->union_code])->one();
-        return $this->union_code . str_pad((int) $data['plant_code'] + 1, 3, '0', STR_PAD_LEFT);
-
-        //$data=  $this->find()->select(["MAX(CONVERT(INT,plant_code)) as plant_code"])->one();       
-        //return str_pad(((int)$data['plant_code']+1),3,'0',STR_PAD_LEFT);
+        return Yii::$app->general->setKeyPattern($this, 'tbl_plant', 'plant_code_ex');
     }
 
     public function getMccCode() {
