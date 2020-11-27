@@ -7,6 +7,8 @@ use app\models\UserHistory;
 use app\modules\details\models\TblContactDetails;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\webservice\eipl\models\TblEiplAppLoginTemp;
+use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
+use app\models\TblUserOrganizationMapping;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -59,16 +61,23 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             $contNewModel->department = $model->department;
                             $master[] = $contNewModel;
 
+                            $appOrgModel = new TblAppOrganizationMapping();
+                            $appOrgModel->mobile_no = $model->oldAttributes['mobile_no'];
+                            $appOrgModel->detail_code = $contNewModel->detail_code;
+                            $orgModelData = $appOrgModel->getAppOrgData();
+                            if (!empty($orgModelData)) {
+                                $orgModelData->mobile_no = $model->mobile_no;
+                                $master[] = $orgModelData;
+                            }
+
 
                             $appModel = new TblEiplAppLogin();
                             $appModel->mobile_no = $model->oldAttributes['mobile_no'];
                             $appModelData = $appModel->getAppLogin($id);
                             if (!empty($appModelData)) {
                                 $appModelData->is_active = 0;
-                                $appModel = $appModelData;
+                                $master[] = $appModelData;
                             }
-                            $master[] = $appModel;
-
                             $tempModel = new TblEiplAppLoginTemp();
                             $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
                             $tempModelData = $tempModel->getAppTempLogin($id);
@@ -88,14 +97,21 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         }
                         $master[] = $contactModel;
 
+                        $appOrgModel = new TblAppOrganizationMapping();
+                        $appOrgModel->mobile_no = $model->oldAttributes['mobile_no'];
+                        $appOrgModel->detail_code = $contactModel->detail_code;
+                        $orgModelData = $appOrgModel->getAppOrgData();
+                        if (!empty($orgModelData)) {
+                            $delete[] = $orgModelData;
+                        }
+
                         $appModel = new TblEiplAppLogin();
                         $appModel->mobile_no = $model->oldAttributes['mobile_no'];
                         $appModelData = $appModel->getAppLogin($id);
                         if (!empty($appModelData)) {
                             $appModelData->is_active = 0;
-                            $appModel = $appModelData;
+                            $master[] = $appModelData;
                         }
-                        $master[] = $appModel;
 
                         $tempModel = new TblEiplAppLoginTemp();
                         $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
@@ -106,16 +122,35 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     }
                     if ($model->oldAttributes['allow_app_login'] == 0 && $model->allow_app_login == 1) {
                         $contactModel = new TblContactDetails();
-                        $contactModel->mobile_no = $this->model->mobile_no;
+                        $contactModel->mobile_no = $model->mobile_no;
                         $contactModelData = $contactModel->getContactDetailsRecord();
                         if (!empty($contactModelData)) {
                             $contactModel = $contactModelData;
                         } else {
-                            $contactModel->firstname = $this->model->name;
-                            $contactModel->setModel('user', $this->model->id, 0);
+                            $contactModel->firstname = $model->name;
+                            $contactModel->setModel('user', $model->id, 0);
                         }
-                        $contactModel->department = $this->model->department;
+                        $contactModel->department = $model->department;
                         $master[] = $contactModel;
+
+
+                        $appOrgModel = new TblAppOrganizationMapping();
+                        $appOrgModel->mobile_no = $model->mobile_no;
+                        $appOrgModel->detail_code = $contactModel->detail_code;
+                        $orgModelData = $appOrgModel->getAppOrgData();
+                        if (!empty($orgModelData)) {
+                            $appOrgModel = $orgModelData;
+                            $master[] = $appOrgModel;
+                        } else {
+                            $UserOrgModel = new TblUserOrganizationMapping();
+                            $UserOrgexistData = $UserOrgModel::find()->where(['user_id' => $id, 'is_active' => 1])->one();
+                            $appOrgModel->is_active = 1;
+                            if (!empty($UserOrgexistData)) {
+                                $appOrgModel->organization_code = $UserOrgexistData->organization_code;
+                                $appOrgModel->organization_type = $UserOrgexistData->organization_type;
+                                $master[] = $appOrgModel;
+                            }
+                        }
                     }
                 }
 
@@ -123,7 +158,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
 //                    $model->load(Yii::$app->request->post());
 //                    $model->save();
 //                }
-                $transaction = $this->generalModel->saveTransaction($master, [], $delete, ['User', 'edit']);
+                $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['User', 'edit']);
 //                $redirect = $this->getRedirectPage('update', $model);
 //                Yii::$app->getSession()->setFlash('success', [
 //                    'type' => 'success',
