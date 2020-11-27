@@ -55,6 +55,8 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\syncutility\models\TblGenerateSentbox;
 use app\modules\organisation\models\TblMasterTransfer;
 use app\modules\syncutility\models\TblInboxConstraint;
+use app\modules\collection\models\TblBmcCollectionNotExist;
+use app\modules\collection\models\TblMilkCollectionNotExists;
 
 class SiteController extends Controller {
 
@@ -84,7 +86,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -1745,6 +1747,23 @@ class SiteController extends Controller {
 
                             if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
                                 $model->setTransactionData($model, $json, $childModel);
+                            }
+                            if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
+                                $model->scenario = 'androidsync_coll';
+                                if (!$model->validate()) {
+                                    $setData = $model;
+                                    if ($transaction_data->table_name == 'tbl_bmc_collection') {
+                                        $model = new TblBmcCollectionNotExist();
+                                        $model->attributes = $setData->attributes;
+                                        $model->data_inserted_from = 'androidsync';
+                                    } elseif ($transaction_data->table_name == 'tbl_milk_collection') {
+                                        $model = new TblMilkCollectionNotExists();
+                                        $model->attributes = $setData->attributes;
+                                        $model->data_inserted_from = 'androidsync';
+                                    }
+                                } else {
+                                    $model->scenario = 'androidsync';
+                                }
                             }
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
