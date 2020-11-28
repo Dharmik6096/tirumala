@@ -20,6 +20,7 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
     $logout_url[] = '/site/rail-logout';
 }
 $collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 <?php
 
@@ -405,7 +406,8 @@ echo GhostMenu::widget([
                                 ['label' => '204 -' . Yii::t('app', 'Company Wise Collection Vs Dispatch'), 'url' => ['/misreports/reports/union-wise-coll-vs-dispatch']],
                                 ['label' => '205 -' . Yii::t('app', 'Company Wise Collection Vs Recipt'), 'url' => ['/misreports/reports/union-wise-coll-vs-recipt']],
                                 ['label' => '206 -' . Yii::t('app', 'Company Wise Dispatch Vs Recipt'), 'url' => ['/misreports/reports/union-wise-dispatch-vs-recipt']],
-                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda']],
+                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda'], 'visible' => $eiplCode == 'GYAN' ? FALSE : TRUE],
+                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda-two'], 'visible' => $eiplCode == 'GYAN' ? TRUE : FALSE],
                                 ['label' => '208 -' . Yii::t('app', 'BMC Autmation Report'), 'url' => ['/misreports/reports/bmc-automation-report']],
                                 ['label' => '209-' . Yii::t('app', 'Route Wise Collection'), 'url' => ['/misreports/reports/route-wise-collection']],
                                 ['label' => '210-' . Yii::t('app', 'Route Wise Collection Summary'), 'url' => ['/misreports/reports/route-wise-collection-summary']],

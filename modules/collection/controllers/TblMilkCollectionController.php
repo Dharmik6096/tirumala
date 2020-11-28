@@ -185,11 +185,16 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $data['dt_date'] = $data['dt_date'] . ' ' . \Yii::$app->general->getshift($data['shift']);
         $data['fat'] = Yii::$app->request->post('fat');
         $data['snf'] = Yii::$app->request->post('snf');
-
+        $member = Yii::$app->request->post('member');
+        $this->model = new TblMilkCollection();
+        $this->model->member_code = $member;
+        $rateClass = Yii::$app->general->getforeignkey($this->model->memberCode, 'rate_class');
+        
+        $data['rate_class'] = empty($rateClass) ? 0 : $rateClass;
+        
         $model = new TblPurchaseRateApplicability();
         $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
-        $data['rate_class'] = '(0, 1)';
         $model_data = $model->getPurchaseRateApplicableData($data);
 
         if (!empty($model_data)) {
