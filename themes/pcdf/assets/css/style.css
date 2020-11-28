@@ -3910,3 +3910,6 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .padding_top_10{
     padding-top: 10px;
 }
+.padding_bottom_25{
+    padding-bottom:25px;
+}

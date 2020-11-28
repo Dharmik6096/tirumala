@@ -93,6 +93,9 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                   ])
                   ?>
                   <?php } */
+                //   '.
+                //                 print Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=> $key,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"])
+                //                 .'
                 foreach ($filters as $key => $data) {
                     if ($key != 'society')
                         echo '<div id="' . $key . '-list" class="row flt app-check-list-bmc" style="display:none"></div>';
@@ -243,7 +246,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     $this->render('_checkbox_list', [
                         'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
-                        'checkboxClass' => ' flt-checkbox dcsCheckboxes'
+                        'checkboxClass' => ' flt-checkboxa dcsCheckboxes'
                     ])
                     ?>
                 </div>
@@ -267,12 +270,13 @@ $script = "
         var id = $(val).attr('id');
         var value = $(val).val();
         count = 0;
-        console.log(value);
         $('#'+id+'-list div').each(function() {
             if ($(this).text().search(new RegExp(value, 'i')) < 0) {
                 $(this).hide();
+                $(this).find(':input').prop('disabled', true);
             } else {
                 $(this).show();
+                $(this).find(':input').prop('disabled', false);
                 count++;
             }
         });
@@ -290,10 +294,10 @@ $script = "
         event.stopPropagation();
         var chk=$(this);
         var checked=[];
-        $('.route-checkbox').not('.flt-checkbox').prop('checked', this.checked);
+        $('.route-checkbox').not('.flt-checkbox').not(':disabled').prop('checked', this.checked);
         if($(this).is(':checked'))
         {
-            $('.route-checkbox').not('.flt-checkbox').not('#checkAll').each(function(){
+            $('.route-checkbox').not('.flt-checkbox').not('#checkAll').not(':disabled').each(function(){
                 checked.push($(this).val());
             });
             var flag='check';
@@ -326,6 +330,7 @@ $script = "
             addSociety(flag,id,chkbx);
         }
        var fltl=$(this).closest('label').text();
+       addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val());
         $('#checkAll').prop('checked', false);
         $('#header').text(fltl);
         $('#'+fl+'-list').show();
@@ -455,6 +460,7 @@ $script = "
                     $.each(obj1.data, function(index, value) {
                         $('#'+index+'-list').empty();
                         appendId = index;
+                        $('#'+index+'-list').append('<div class=\"checkbox app-check-all app-check-list-padding padding_bottom_25\"><input type=\"text\" id=\"'+index+'\" class=\"col-sm-12\" name=\"filter\" value=\"\" onkeyup=\"checkBoxFilter(this)\" placeholder=\"Search\"></div>' );
                         $.each(value, function(ind, vl) {
                             if(applicable_for == ''){
                                $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+appendId+'-'+ind+'\"><label class=\"route-text\" for=\"'+appendId+'-'+ind+'\">'+vl+'</label></div></div>');
@@ -533,7 +539,7 @@ $script = "
             });  
     }
     $('#checkAllMccList').click(function (event) {
-        $('.mccCheckboxes').prop('checked', $(this).is(':checked'));
+        $('.mccCheckboxes').not(':disabled').prop('checked', $(this).is(':checked'));
         setBmcList();
     });
     
@@ -591,7 +597,7 @@ $script = "
         }); 
     }
     $('#checkAllBmcList').click(function (event) {
-        $('.bmcCheckboxes').prop('checked', $(this).is(':checked'));
+        $('.bmcCheckboxes').not(':disabled').prop('checked', $(this).is(':checked'));
         setRouteList();
 //        addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code');
     });
@@ -602,7 +608,7 @@ $script = "
     });
     
     $('#checkAllRouteList').click(function (event) {
-        $('.routeCheckboxes').prop('checked', $(this).is(':checked'));
+        $('.routeCheckboxes').not(':disabled').prop('checked', $(this).is(':checked'));
         addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val(), 'applicable_code');
     });
     
