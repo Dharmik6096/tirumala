@@ -376,7 +376,7 @@ class GeneralFunctions extends Component {
         if (!empty($model->milk_type_code)) {
             $milkType = new TblAnimalType();
             $data = $milkType->getRecords();
-            if (!in_array($model->milk_type_code, array_map('strval', array_column($data, 'animal_type_code')), true)) {
+            if (!in_array(strval($model->milk_type_code), array_map('strval', array_column($data, 'animal_type_code')), true)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . " '" . $model->milk_type_code . "'" . ' is invalid.'));
                 return false;
             }
