@@ -51,6 +51,7 @@ class TblDpuPasswordsController extends \app\controllers\ChildController {
                     }
                 }
             }
+            // var_dump($saveModel);die;
             $transaction = $this->generalModel->saveTransaction($saveModel, $historyModel, ['DPU Passwords', 'edit']);
             if ($transaction == 'customRedirect') {
                 $dataProvider = $this->setModel($searchModel, $model);

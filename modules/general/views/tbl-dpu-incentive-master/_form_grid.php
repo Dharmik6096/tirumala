@@ -14,6 +14,9 @@ $attribute = [
             return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['mccPlantCode'], 'name');
         }, 'filter' => false],
     ['attribute' => 'dcs_code', 'filter' => false],
+    ['attribute' => 'ref_code', 'label' => Yii::t('app', 'DCS').' Ref.', 'value' => function($model) {
+        return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+    }, 'filter' => false],
     ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],

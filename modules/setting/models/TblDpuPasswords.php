@@ -4,6 +4,7 @@ namespace app\modules\setting\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tblDPUPasswords".
@@ -78,4 +79,7 @@ class TblDpuPasswords extends \app\models\ChildModel {
         $this->modifiedby = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
     }
 
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
 }
