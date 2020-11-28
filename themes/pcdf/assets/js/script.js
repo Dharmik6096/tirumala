@@ -24,28 +24,28 @@ var initDepdropMs;
             $s2cont.removeClass('kv-loading');
         });
     };
-    // $(document).ready(function () {
-    //     if (!$("div").hasClass('not_ellipsis')) {
-    //         var num;
-    //         var $tds;
-    //         var tdsx = $("table.kv-grid-table").children('tbody').children('tr:first-child').children('td').length;
-    //         $("table.kv-grid-table").each(function (i, t) {
-    //             $tds = $("td", t);
-    //             num = $tds.length;
-    //             if (tdsx > 1) {
-    //                 for (var i = tdsx; i < num; i++) {
-    //                     var t = $tds.eq(i).text();
-    //                     if ($tds.eq(i).text().length > 10 && $tds.eq(i).text().indexOf('<div') < 0 && $tds.eq(i).html().indexOf('<div') < 0)
-    //                     {
-    //                         $tds.eq(i).text(t.substr(0, 10));
-    //                         $tds.eq(i).attr("title", t);
-    //                     }
+    $(document).ready(function () {
+        // if (!$("div").hasClass('not_ellipsis')) {
+        //     var num;
+        //     var $tds;
+        //     var tdsx = $("table.kv-grid-table").children('tbody').children('tr:first-child').children('td').length;
+        //     $("table.kv-grid-table").each(function (i, t) {
+        //         $tds = $("td", t);
+        //         num = $tds.length;
+        //         if (tdsx > 1) {
+        //             for (var i = tdsx; i < num; i++) {
+        //                 var t = $tds.eq(i).text();
+        //                 if ($tds.eq(i).text().length > 10 && $tds.eq(i).text().indexOf('<div') < 0 && $tds.eq(i).html().indexOf('<div') < 0)
+        //                 {
+        //                     $tds.eq(i).text(t.substr(0, 10));
+        //                     $tds.eq(i).attr("title", t);
+        //                 }
 
-    //                 }
-    //             }
+        //             }
+        //         }
 
-    //         });
-    //     }
+        //     });
+        // }
 
         $('.shift select option[value=\'3\']').remove();
         var toolbar = $('#importModal');
