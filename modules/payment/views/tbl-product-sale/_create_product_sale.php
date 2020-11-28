@@ -121,7 +121,7 @@ $type = !empty($type) ? $type : '';
                                                 $('#pageloader').show();
                                                 }"),
                                 'success' => new JsExpression('function(data){
-//                                                                var data=$.parseJSON(data);
+                                                                var data=$.parseJSON(data);
                                                                 $("#loadercontent").hide();
                                                                 $("#pageloader").hide();
                                                                 if (data.status == "success"){ 
