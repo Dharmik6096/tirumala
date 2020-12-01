@@ -19,10 +19,10 @@ class TblRouteMappingSearch extends TblRouteMapping {
      */
     public function rules() {
         return [
-            [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
-            [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
-            [['route_length_kms'], 'number'],
-            [['route_code_ex', 'ref_code'], 'safe'],
+                [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
+                [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
+                [['route_length_kms'], 'number'],
+                [['route_code_ex', 'ref_code'], 'safe'],
         ];
     }
 
@@ -53,8 +53,47 @@ class TblRouteMappingSearch extends TblRouteMapping {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'mccCode']);
-        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_plant');
+        $query->joinWith(['dcsCode', 'mccCode', 'mccCode.bmcCodes']);
+//        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_plant', 'tbl_bmc');
+
+        $model_class = (new \ReflectionClass($this))->getShortName();
+        $q_param = Yii::$app->request->queryParams;
+        if (isset($q_param[$model_class])) {
+            $data = $q_param[$model_class];
+            isset($data['f_union_code']) ? $this->f_union_code = $data['f_union_code'] : NULL;
+            isset($data['f_plant_code']) ? $this->f_plant_code = $data['f_plant_code'] : NULL;
+            isset($data['f_mcc_code']) ? $this->f_mcc_code = $data['f_mcc_code'] : NULL;
+            isset($data['f_bmc_code']) ? $this->f_bmc_code = $data['f_bmc_code'] : NULL;
+            isset($data['f_dcs_code']) ? $this->f_dcs_code = $data['f_dcs_code'] : NULL;
+        }
+        $tablename = $this->tableSchema->fullName;
+        $union_table = !empty($union_table) ? $union_table : $tablename;
+        if (Yii::$app->session->get('Unions') !== '')
+            $query->andFilterWhere([$union_table . '.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        if (!empty($this->f_union_code))
+            $query->andFilterWhere([$union_table . '.union_code' => $this->f_union_code]);
+
+        $plant_table = 'tbl_mcc_plant';
+        if (Yii::$app->session->get('Plant') !== '')
+            $query->andFilterWhere(['tbl_mcc_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        if (!empty($this->f_plant_code))
+            $query->andFilterWhere(['tbl_mcc_plant.plant_code' => $this->f_plant_code]);
+
+
+        if (Yii::$app->session->get('MCC') !== '')
+            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        if (!empty($this->f_mcc_code)) {
+            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => $this->f_mcc_code]);
+            $query->andFilterWhere(['tbl_bmc.mcc_plant_code' => $this->f_mcc_code]);
+        }
+
+
+        if (Yii::$app->session->get('BMC') !== '')
+            $query->andFilterWhere(['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        if (!empty($this->f_bmc_code))
+            $query->andFilterWhere(['tbl_bmc.bmc_code' => $model->f_bmc_code]);
+
+
 
         $where_bmc = [];
         if (Yii::$app->session->get('BMC') !== '') {
