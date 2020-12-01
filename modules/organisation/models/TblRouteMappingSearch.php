@@ -83,7 +83,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
         if (Yii::$app->session->get('MCC') !== '')
             $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
         if (!empty($this->f_mcc_code)) {
-            $query->andFilterWhere(['or', ['tbl_mcc_plant.mcc_plant_code' => $this->f_mcc_code], ['tbl_bmc.mcc_plant_code' => $this->f_mcc_code]]);
+            $query->andFilterWhere(['or', ['tbl_route_mapping.to_dest' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'MCC'], ['tbl_bmc.mcc_plant_code' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'BMC']]);
         }
 
 
