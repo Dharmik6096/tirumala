@@ -32,7 +32,7 @@ class TblDpuPasswordsController extends \app\controllers\ChildController {
             $saveModel = [];
             $historyModel = [];
             foreach ($model as $dpu_password) {
-                if (!empty($dpu_password->AdminPwd) && !empty($dpu_password->SuperPwd) && !empty($dpu_password->UserPwd)) {
+                // if (!empty($dpu_password->AdminPwd) && !empty($dpu_password->SuperPwd) && !empty($dpu_password->UserPwd)) {
                     $dpu_password->mcc_code = Yii::$app->general->getforeignkey($dpu_password->dcsCode, 'mcc_plant_code');
                     $dpu_password->lastmodified = date('Y-m-d H:i:s');
                     $dpu_password->modifiedby = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
@@ -49,12 +49,25 @@ class TblDpuPasswordsController extends \app\controllers\ChildController {
                     } else {
                         $saveModel[] = $dpu_password;
                     }
-                }
+                // }
             }
             // var_dump($saveModel);die;
-            $transaction = $this->generalModel->saveTransaction($saveModel, $historyModel, ['DPU Passwords', 'edit']);
-            if ($transaction == 'customRedirect') {
-                $dataProvider = $this->setModel($searchModel, $model);
+            $message = '';
+            foreach ($saveModel as $m) {
+                if(!$m->validate()) {
+                    foreach ($m->getErrors() as $errorkey => $value) {
+                        $message .= $value[0] . '<br>';
+                    }
+                }
+            }
+            if(empty($message)){
+                $transaction = $this->generalModel->saveTransaction($saveModel, $historyModel, ['DPU Passwords', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    $dataProvider = $this->setModel($searchModel, $model);
+                }
+            }
+            else{
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $message]);
             }
         }
         return $this->render('create', [

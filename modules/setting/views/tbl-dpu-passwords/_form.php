@@ -29,6 +29,7 @@ $form = ActiveForm::begin(['options' => [
         <div class="custom-error-summary">
             <p>Please check highlighted cell for error:</p>
             <ul><li>Admin,Super and UserP should be 7 digit.</li></ul>
+            <?php //var_dump($dataProvider->getModels())?>
         </div>
     <?php } ?>
     <table class="table table-bordered table-striped table-language">
