@@ -1324,7 +1324,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'output_type' => ''
             ],
             'MilkCollectionData' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift,originating_type:static:originating_type',
                 'sp_name' => 'sp_mis_milk_collection_list',
                 'scenario' => 'MilkCollectionData',
                 'title' => '108 - Milk Collection Data',
