@@ -52,7 +52,7 @@ use app\modules\general\models\TblDepartment;
 class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
-    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no;
+    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route;
 
     /**
      * @inheritdoc
@@ -66,9 +66,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
-            [['customer_name', 'address', 'customer_type', 'route_code', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
+            [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
+            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route'], 'safe'],
+            [['route'], 'required', 'on' => ['importCsv']],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type'], 'safe'],
             [['is_active'], 'default', 'value' => 1],
@@ -85,13 +86,13 @@ class TblCustomerMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-            [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
             [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-            [['route_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
             [['x_col1'], 'default', 'value' => '1#1'],
             [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex'], 'safe'],
             [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
@@ -351,6 +352,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $this->sub_district_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode'], 'sub_district_code');
         $this->district_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode', 'subDistrictCode'], 'district_code');
         $this->state_code = Yii::$app->general->getmultiforeignkey($this->hamletCode, ['villageCode', 'subDistrictCode', 'districtCode'], 'state_code');
+
+        $this->route_code = $this->route;
+        $this->route_code = Yii::$app->general->getforeignkey($this->routeRefCode, 'route_code');
     }
 
     public function getCustomerCodeList($bmc, $type) {
@@ -484,6 +488,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public function setExCode($attribute, $params) {
         $this->customer_code_ex = strtoupper($this->customer_code_ex);
+    }
+
+    public function getRouteRefCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code']);
     }
 
 }

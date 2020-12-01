@@ -191,11 +191,13 @@ $script = "
         var fat = $('#tblmilkcollection-fat').val();
         var snf = $('#tblmilkcollection-snf').val();
         var milk_quality_type = 1;
+        var member = $('#tblmilkcollection-member_code').val();
+        var member_code = dcs.concat(member);
         if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift_code':shift,'fat':fat,'snf':snf},
+                data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift_code':shift,'fat':fat,'snf':snf,'member':member_code},
                 success: function(data) {   
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
