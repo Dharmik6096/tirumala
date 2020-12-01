@@ -53,7 +53,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'mccCode', 'mccCode.bmcCodes']);
+        $query->joinWith(['dcsCode', 'mccCode', 'dcsBmcCode']);
 //        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_mcc_plant', 'tbl_bmc');
 
         $model_class = (new \ReflectionClass($this))->getShortName();
@@ -83,15 +83,14 @@ class TblRouteMappingSearch extends TblRouteMapping {
         if (Yii::$app->session->get('MCC') !== '')
             $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
         if (!empty($this->f_mcc_code)) {
-            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => $this->f_mcc_code]);
-            $query->andFilterWhere(['tbl_bmc.mcc_plant_code' => $this->f_mcc_code]);
+            $query->andFilterWhere(['or', ['tbl_mcc_plant.mcc_plant_code' => $this->f_mcc_code], ['tbl_bmc.mcc_plant_code' => $this->f_mcc_code]]);
         }
 
 
         if (Yii::$app->session->get('BMC') !== '')
             $query->andFilterWhere(['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
         if (!empty($this->f_bmc_code))
-            $query->andFilterWhere(['tbl_bmc.bmc_code' => $model->f_bmc_code]);
+            $query->andFilterWhere(['tbl_route_mapping.to_dest' => $this->f_bmc_code]);
 
 
 
