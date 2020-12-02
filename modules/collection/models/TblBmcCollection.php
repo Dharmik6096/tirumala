@@ -212,7 +212,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'clr' => Yii::t('app', 'CLR'),
             'route_arrival_time' => Yii::t('app', 'Arrival Time'),
-            'qlty_time' => Yii::t('app', 'Sample Time'),
+            'qlty_time' => Yii::t('app', 'Qlty. Time'),
             'tag_1' => Yii::t('app', 'SAP Status'),
             'error_desc' => Yii::t('app', 'Status Desc.'),
             'originating_org_type' => Yii::t('app', 'Originated At'),
@@ -220,6 +220,8 @@ class TblBmcCollection extends \app\models\ChildModel {
             'adt_param' => Yii::t('app', 'Adultration Param'),
             'adt_value' => Yii::t('app', 'Adultration Value'),
             'bmc_silos_info_code' => Yii::t('app', 'Silos'),
+            'qty_time' => Yii::t('app', 'Qty. Time'),
+            'created_at' => Yii::t('app', 'Sample Time'),
         ];
     }
 
