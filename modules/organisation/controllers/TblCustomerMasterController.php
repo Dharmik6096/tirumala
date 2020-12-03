@@ -78,17 +78,21 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
             $mapList = [];
             $this->bankDetails->load(Yii::$app->request->post());
+            $errMsg = '';
+            $bankValidate = 1;
             if (!empty($this->bankDetails->bank_code)) {
                 $this->bankDetails->setModel('customer', $this->model->customer_code);
                 $this->bankDetails->scenario = 'bank_selected';
                 array_push($mapList, $this->bankDetails);
+
+                $bankValidate = Yii::$app->warning->codeWarningBankAc($this->bankDetails, 'warning');
             }
             $this->contactDetails->load(Yii::$app->request->post());
             if (!empty($this->contactDetails->mobile_no)) {
                 $this->contactDetails->setModel('customer', $this->model->customer_code);
                 array_push($mapList, $this->contactDetails);
             }
-            if (empty($this->model->getErrors())) {
+            if ($bankValidate == 1 && empty($this->model->getErrors())) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Customer Master', 'create']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();

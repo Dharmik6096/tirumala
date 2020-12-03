@@ -48,6 +48,9 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
+                            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), function ($model) {
+                                return $model->is_active;
+                            }, 'except' => ['saveCreamyData', 'androidsync']],
                     ],
                 ],
                 'TblBranch' => [],
@@ -100,6 +103,9 @@ class CustomValidation extends Component {
                         }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
+                        ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), function ($model) {
+                            return $model->is_active;
+                        }, 'except' => ['saveCreamyData', 'androidsync']],
                 ],
                 'TblBranch' => [
                         [['hamlet_code'], 'required'],
@@ -135,6 +141,9 @@ class CustomValidation extends Component {
                             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
                             [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv']],
                             [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
+                            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), function ($model) {
+                                return $model->is_active;
+                            }, 'except' => ['saveCreamyData', 'androidsync']],
                     ]
                 ],
                 'BackGroundDataImport' => [],
@@ -147,6 +156,37 @@ class CustomValidation extends Component {
             'ATMOST' => [
                 'TblBankDetails' => [
                     'default' => [],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
+                            [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
+                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
+                            [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                    ],
+                ],
+            ],
+            'MURALYA' => [
+                'TblBankDetails' => [
+                    'default' => [],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
+                            [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
+                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
+                            [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                    ],
                 ],
             ],
         ];
