@@ -612,6 +612,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionProductSaleRateMasterRegister() {
+        $this->report = 'ProductSaleRateMasterRegister';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1498,6 +1503,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'ProductSaleRateMasterRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_sale_rate_applicability_register',
+                'scenario' => 'ProductSaleRateMasterRegister',
+                'title' => 'Product Sale Rate Register',
+                'removeExportType' => ['CSV'],
             ],
         ];
         return $label[$l];
