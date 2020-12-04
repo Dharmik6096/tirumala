@@ -44,7 +44,7 @@ class TblImportFileLog extends \app\models\ChildModel {
             [['file_type', 'file_name', 'file_path', 'union_code', 'created_by', 'updated_by', 'response_msg', 'error_file_path'], 'safe'],
             [['total_count', 'success_count', 'error_count', 'status', 'process_type'], 'safe'],
             [['created_at', 'updated_at', 'pick_datetime', 'response_datetime'], 'safe'],
-            [['process_type'], 'default', 'value' => 'background', 'on' => ['member', 'rateapplicability', 'productsale', 'productsalemember', 'salerateapplicability']],
+            [['process_type'], 'default', 'value' => 'background', 'on' => ['member', 'rateapplicability', 'product_sale', 'product_sale_member', 'sale_rate_applicability', 'product_master']],
             [['process_type'], 'default', 'value' => 'SP', 'on' => ['bmc_collection', 'milk_collection']],
         ];
     }
