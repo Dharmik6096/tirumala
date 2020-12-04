@@ -283,53 +283,59 @@ class DefaultController extends \app\controllers\ChildController {
             $model->p_dcs_code = Yii::$app->session->get('Dcs');
         }
         $this->type = Yii::$app->request->post('submit');
-        $controls = [];
-        $param = explode(',', $this->data['param']);
-        foreach ($param as $key => $value) {
-            $value_array = explode(':', $value);
-            $value = $value_array[0];
-            if (isset($value_array[1]) && $value_array[1] == 'string') {
-                $model->{$value} = date('Y-m-d', strtotime($model->{$value}));
-                if (isset($value_array[2])) {
-                    $shift = \Yii::$app->general->getshift($model->{$value_array[2]});
-                    $model->{$value} .= ' ' . $shift . '.000';
+
+        if($this->type != 'tcpdf'){
+            $controls = [];
+            $param = explode(',', $this->data['param']);
+            foreach ($param as $key => $value) {
+                $value_array = explode(':', $value);
+                $value = $value_array[0];
+                if (isset($value_array[1]) && $value_array[1] == 'string') {
+                    $model->{$value} = date('Y-m-d', strtotime($model->{$value}));
+                    if (isset($value_array[2])) {
+                        $shift = \Yii::$app->general->getshift($model->{$value_array[2]});
+                        $model->{$value} .= ' ' . $shift . '.000';
+                    }
+                }
+                if (isset($value_array[1]) && $value_array[1] == 'month') {
+                    $month = !empty($model->{$value}) ? date('01-') . $model->{$value} : NULL;
+                    $model->{$value} = !empty($month) ? date('Y-m', strtotime($month)) : NULL;
+                }
+                if ($value == 'p_dcs_payment') {
+                    $pay_cycle = explode(':', $model->{$value});
+                    $controls[$value] = (int) $pay_cycle[1];
+                    $controls['p_dcs_payment_date'] = $pay_cycle[0];
+                } else {
+                    $controls[$value] = $model->{$value};
+                }
+                if (isset($value_array[1]) && $value_array[1] == 'month') {
+                    $model->{$value} = !empty($month) ? date('m-Y', strtotime($month)) : NULL;
                 }
             }
-            if (isset($value_array[1]) && $value_array[1] == 'month') {
-                $month = !empty($model->{$value}) ? date('01-') . $model->{$value} : NULL;
-                $model->{$value} = !empty($month) ? date('Y-m', strtotime($month)) : NULL;
-            }
-            if ($value == 'p_dcs_payment') {
-                $pay_cycle = explode(':', $model->{$value});
-                $controls[$value] = (int) $pay_cycle[1];
-                $controls['p_dcs_payment_date'] = $pay_cycle[0];
-            } else {
-                $controls[$value] = $model->{$value};
-            }
-            if (isset($value_array[1]) && $value_array[1] == 'month') {
-                $model->{$value} = !empty($month) ? date('m-Y', strtotime($month)) : NULL;
+            //$controls['locale'] = Yii::$app->session->get('LanguageCode');
+            $controls['locale'] = 'en';
+            //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
+            $controls['REPORT_LOCALE'] = 'en';
+            //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
+            $controls['digit_config'] = 0;
+
+    //      var_dump($controls);die;
+            $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
+
+            $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
+            if ($this->type != 'html') {
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Description: File Transfer');
+                header('Content-Disposition: attachment; filename=' . $this->report . '.' . $this->type);
+                header('Content-Transfer-Encoding: binary');
+                header('Content-Length: ' . strlen($this->output));
+                header('Content-Type: application/' . $this->type);
+                echo $this->output;
             }
         }
-        //$controls['locale'] = Yii::$app->session->get('LanguageCode');
-        $controls['locale'] = 'en';
-        //$controls['REPORT_LOCALE'] = Yii::$app->session->get('LanguageCode');
-        $controls['REPORT_LOCALE'] = 'en';
-        //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
-        $controls['digit_config'] = 0;
-
-//      var_dump($controls);die;
-        $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
-
-        $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
-        if ($this->type != 'html') {
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Description: File Transfer');
-            header('Content-Disposition: attachment; filename=' . $this->report . '.' . $this->type);
-            header('Content-Transfer-Encoding: binary');
-            header('Content-Length: ' . strlen($this->output));
-            header('Content-Type: application/' . $this->type);
-            echo $this->output;
+        else{
+            $this->redirect(['/pdf/pdf', 'param'=>$model]);
         }
     }
 
@@ -627,6 +633,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/BillReportFormat1',
                 'scenario' => 'VendorBill',
                 'title' => '612 - Vendor Bill',
+                'tcpdf'=> true,
             ],
         ];
         return $label[$l];
