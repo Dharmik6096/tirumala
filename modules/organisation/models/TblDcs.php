@@ -109,7 +109,7 @@ class TblDcs extends ChildModel {
     public $tmcc_code;
     public $is_sentbox;
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
-    public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto, $auto_member_create;
+    public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto, $auto_member_create, $route;
 
     /**
      * @inheritdoc
@@ -133,7 +133,7 @@ class TblDcs extends ChildModel {
                     return empty($model->milk_type_auto);
                 },
                 'whenClient' => "function (attribute, value) { return !$('#tbldcs-milk_type_auto').is(':checked') }"
-                , 'except' => ['routeMapping']],
+                , 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                 [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
                 [['vendor'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
@@ -268,6 +268,8 @@ class TblDcs extends ChildModel {
                 [['dcs_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+                [['route'], 'required', 'on' => ['importCsv']],
+                [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -1154,6 +1156,19 @@ class TblDcs extends ChildModel {
             }
         }
         return $modelMilkType;
+    }
+
+    public function getRouteRefCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code']);
+    }
+
+    public function validateRoute($attribute, $params) {
+        $this->route_code = $this->route;
+        $this->route_code = Yii::$app->general->getforeignkey($this->routeRefCode, 'route_code');
+
+        if (!empty($this->route_code) && empty($this->routeMapping) || (!empty($this->routeMapping) && ($this->routeMapping->to_type != 'bmc' || $this->routeMapping->to_dest != $this->bmc_code))) {
+            $this->addError('route_code', Yii::t('app/validation', $this->getAttributeLabel('route_code') . ' is Invalid.'));
+        }
     }
 
 }

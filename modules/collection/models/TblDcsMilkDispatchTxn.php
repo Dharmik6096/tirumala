@@ -63,14 +63,14 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
     public function rules() {
         return [
             [['shift_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+                }, 'on' => 'importCsv'],
             [['milk_type_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
+                }, 'on' => 'importCsv'],
             [['milk_quality_type_code'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
-        }, 'on' => 'importCsv'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
+                }, 'on' => 'importCsv'],
             [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
             [['date_time_of_dispatch'], 'convertDateDot', 'on' => ['importCsv']],
             [['date_time_of_dispatch'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
@@ -90,23 +90,23 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'union_code'], 'safe'],
             [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'required', 'on' => ['importCsv']],
             [['bmc_code'], function ($attribute, $params) {
-            Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
-        }, 'on' => ['importCsv']],
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
             [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
             [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
             [['dcs_code'], 'importSet', 'on' => ['importCsv']],
             [['date_time_of_dispatch'], function ($attribute, $params) {
-            if (empty($this->getErrors())) {
-                Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code', 'BMC', 'DCS', ['data_lock_bmc', 'billing_lock_bmc']);
-            }
-        }, 'skipOnEmpty' => TRUE, 'on' => ['importCsv']],
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code', 'BMC', 'DCS', ['data_lock_bmc', 'billing_lock_bmc']);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['importCsv']],
             [['dcs_code'], function ($attribute, $params) {
-            if (empty($this->getErrors())) {
-                Yii::$app->general->validateRateRange($this, 'avg_fat', 'avg_snf');
-            }
-        }, 'skipOnEmpty' => TRUE, 'on' => ['update']],
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->validateRateRange($this, 'avg_fat', 'avg_snf');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['update']],
         ];
     }
 
@@ -285,14 +285,15 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             $model = new TblPurchaseRateApplicability();
             $model->dcs_code = $this->dcs_code;
             $model->wef_date = $this->date_time_of_dispatch;
-            $model_data = $model->getPurchaseRateApplicableData($data);
+            $data['rate_class'] = '(0, 1)';
+            $model_data = $model->getdispatchPurchaseRateApplicableData($data);
 
             if (!empty($model_data)) {
                 $detail_model = new TblPurchaseRateDetails();
                 $detail_model->rate_type_code = $model_data->rate_app_code;
                 $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
                 $rate_type = $detail_model->rateTypeCode->rate_type;
-                $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+                $detail_data = $detail_model->getDispatchPurchasseRateDetailData($data, $rate_type);
                 if (!empty($detail_data)) {
                     $this->purchase_rate_code = (string) $detail_data->purchase_rate_code;
                     $this->rtpl = $detail_data->rtpl;

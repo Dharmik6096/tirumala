@@ -83,7 +83,8 @@ class MemberImport extends TblMember {
                     return $this->is_active;
                 }, 'skipOnEmpty' => TRUE],
             [['x_col3'], 'default', 'value' => 15],
-            [['dcs_code'], 'setXcol3', 'on' => ['importCsv']]
+            [['dcs_code'], 'setXcol3', 'on' => ['importCsv']],
+            [['rate_class'], 'default', 'value' => '0']
 
                 /*  [['dob'], function ($attribute, $params) {
                   Yii::$app->general->validateAge($this, $attribute, $params);

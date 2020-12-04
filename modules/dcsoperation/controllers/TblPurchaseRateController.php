@@ -460,11 +460,18 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
         $appModel->field_value = $id;
         $appModel->trans_label = 'purchase rate applicability';
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
-        $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+        $appModel->fields = [
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function($model) {
+                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'bmc_code');
+                }],
+            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                }],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                 }],

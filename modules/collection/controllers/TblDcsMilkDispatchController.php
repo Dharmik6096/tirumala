@@ -222,14 +222,15 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
         $model = new TblPurchaseRateApplicability();
         $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
-        $model_data = $model->getPurchaseRateApplicableData($data);
+        $data['rate_class'] = '(0, 1)';
+        $model_data = $model->getdispatchPurchaseRateApplicableData($data);
 
         if (!empty($model_data)) {
             $detail_model = new TblPurchaseRateDetails();
             $detail_model->rate_type_code = $model_data->rate_app_code;
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
             $rate_type = $detail_model->rateTypeCode->rate_type;
-            $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+            $detail_data = $detail_model->getDispatchPurchasseRateDetailData($data, $rate_type);
 
             if (!empty($detail_data)) {
                 $response['status'] = 'success';

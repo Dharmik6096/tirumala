@@ -65,18 +65,20 @@ class DataExchangeController extends ChildController {
                 } else {
                     $body = !empty($output[0]) ? $output[0] : [];
                 }
+                $postData = [];
                 if (!empty(Yii::$app->params['data_exchange_vendor_code'])) {
                     $body['code'] = Yii::$app->params['data_exchange_vendor_code'];
+                    $postData['params'] = $body;
+                } else {
+                    $postData = $body;
                 }
-                $postData = [];
-                $postData['params'] = $body;
                 $postData = json_encode($postData);
                 $api = new WebApi();
                 $api->serverUrl = $value['request_url'];
                 $api->authentication = FALSE;
-                $api->vendor_code = 'EIPLMDPL';
+                $api->vendor_code = !empty($body['code']) ? $body['code'] : '';
                 $api->body = $postData;
-
+             
                 $response = $api->ExchangeData();
                 $responseData = json_decode(json_encode($response), true);
                 $loopData = [];
@@ -84,6 +86,8 @@ class DataExchangeController extends ChildController {
                     $loopData[] = $responseData['result'];
                 } else if (!empty($responseData['result']['data'])) {
                     $loopData = !empty($responseData['result']['data']) ? $responseData['result']['data'] : [];
+                } else if (empty(Yii::$app->params['data_exchange_vendor_code']) && !empty($responseData['data'])) {
+                    $loopData = $responseData['data'];
                 }
                 if (!empty($loopData)) {
                     foreach ($loopData as $resp_data) {

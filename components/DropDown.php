@@ -1035,6 +1035,11 @@ class DropDown extends Component {
                 'name' => 'default_milk_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'C'), 2 => Yii::t('app', 'B'), 3 => Yii::t('app', 'M'), 4 => Yii::t('app', 'C/B'), 5 => Yii::t('app', 'B/M'), 6 => Yii::t('app', 'C/M'), 7 => Yii::t('app', 'ALL'), 8 => Yii::t('app', 'Auto')],
+			],
+            'rate_class' => [
+                'name' => 'rate_class',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'A'), 2 => Yii::t('app', 'B'), 3 => Yii::t('app', 'C')],
             ],
         ];
         return $records[$l];
