@@ -7,70 +7,72 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
+$nameWarning = 0;
+$nameWarning = !empty($_POST['warning']) ? $_POST['warning'] : 0;
 ?>
 
 <?php
 $form = ActiveForm::begin([
             'options' => [],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
         ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
+<?= Html::hiddenInput('warning', $nameWarning, ['id' => 'warning']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Customer Details</h4>
         </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
-    </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblcustomermaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), false, '', $readonly); ?>  
-    </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcustomermaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
-    </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcustomermaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
-    </div>
-    <div class="col-sm-4 DCS">
-        <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermaster-plant_code,tblcustomermaster-mcc_plant_code,tblcustomermaster-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
-    </div>
-    <!-- <div class="clearfix"></div> -->
-    <div class="col-sm-4 ">
-        <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
-    </div>
-    <?php
-    $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
-    if (!empty($keyPattern)) {
-        ?>
-        <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
-            <div class="col-sm-4"> 
-                <?= $form->field($model, 'customer_code_ex')->textInput() ?>
-            </div>
-        <?php } ?>
-        <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
-            <div class="col-sm-4 number-validate">  
-                <?= $form->field($model, 'ref_code')->textInput() ?>
-            </div>
-        <?php } ?>
-    <?php } ?>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'customer_name')->textInput() ?>
-    </div>
-
-        <!-- <div class="col-sm-4 ">
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblcustomermaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), false, '', $readonly); ?>  
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcustomermaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), false, '', $readonly); ?>
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcustomermaster-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), false, '', '', $readonly); ?>
+        </div>
+        <div class="col-sm-4 DCS">
+            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermaster-plant_code,tblcustomermaster-mcc_plant_code,tblcustomermaster-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+        </div>
+        <!-- <div class="clearfix"></div> -->
+        <div class="col-sm-4 ">
             <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
         </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'customer_code_ex')->textInput() ?>
-        </div>
+        <?php
+        $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
+        if (!empty($keyPattern)) {
+            ?>
+            <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
+                <div class="col-sm-4"> 
+                    <?= $form->field($model, 'customer_code_ex')->textInput() ?>
+                </div>
+            <?php } ?>
+            <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
+                <div class="col-sm-4 number-validate">  
+                    <?= $form->field($model, 'ref_code')->textInput() ?>
+                </div>
+            <?php } ?>
+        <?php } ?>
         <div class="col-sm-4">
             <?= $form->field($model, 'customer_name')->textInput() ?>
+        </div>
+
+        <!-- <div class="col-sm-4 ">
+        <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
+        </div>
+        <div class="col-sm-4">
+        <?= $form->field($model, 'customer_code_ex')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+        <?= $form->field($model, 'customer_name')->textInput() ?>
         </div> -->
 
         <div class="col-sm-4">
@@ -140,13 +142,30 @@ $form = ActiveForm::begin([
 
 </div>
 <div class="row">
-<div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-    <div class="form-group">
-        <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-        <?= Yii::$app->controls->reset(); ?>
-        <?= Yii::$app->controls->cancel($model); ?>
+    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
     </div>
-</div>
 </div>
 
 <?php ActiveForm::end(); ?>
+
+
+
+<?php
+$script = "
+    $('#tblbankdetails-bank_account_no').on('change', function(){
+        $('#warning').val(0);
+    });
+    $('#tblbankdetails-branch_code').on('change', function(){
+        $('#warning').val(0);
+    });
+    $('#tblbankdetails-ifsc').on('change', function(){
+        $('#warning').val(0);
+    });
+";
+$this->registerJs($script, View::POS_END, 'customer_mastercreate');
+?>
