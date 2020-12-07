@@ -1759,6 +1759,7 @@ class SiteController extends Controller {
                                     } elseif ($transaction_data->table_name == 'tbl_milk_collection') {
                                         $model = new TblMilkCollectionNotExists();
                                         $model->attributes = $setData->attributes;
+                                        $model->send_status = 0;
                                         $model->data_inserted_from = 'androidsync';
                                     }
                                 } else {
