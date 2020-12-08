@@ -246,6 +246,7 @@ $config = [
         'tankermovement' => ['class' => 'app\modules\tankermovement\Tankermovement',],
         'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',],
         'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
+        'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',],
     ],
     'params' => $params,
 ];

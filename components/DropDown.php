@@ -1035,7 +1035,7 @@ class DropDown extends Component {
                 'name' => 'default_milk_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'C'), 2 => Yii::t('app', 'B'), 3 => Yii::t('app', 'M'), 4 => Yii::t('app', 'C/B'), 5 => Yii::t('app', 'B/M'), 6 => Yii::t('app', 'C/M'), 7 => Yii::t('app', 'ALL'), 8 => Yii::t('app', 'Auto')],
-			],
+            ],
             'rate_class' => [
                 'name' => 'rate_class',
                 'prompt' => Yii::t('app', 'Select'),
@@ -1139,6 +1139,7 @@ class DropDown extends Component {
             'store_location_code' => ['name' => 'store_location_code', 'fields' => 'store_location_code,store_location_name,local_name', 'prompt' => Yii::t('app', 'Store Location'), 'model' => 'TblStoreLocation', 'depend' => 'union_code'],
             'unit' => ['name' => 'unit_code', 'fields' => 'unit_code,unit_name,local_name', 'prompt' => 'Select Unit', 'model' => 'TblUnits', 'depend' => 'union_code'],
             'tax_group' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name,', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup', 'depend' => 'union_code'],
+            'report_code' => ['name' => 'report_code', 'fields' => 'report_code,report_name', 'prompt' => 'Select Report', 'model' => 'TblReportList'],
         ];
         return $label[$l];
     }

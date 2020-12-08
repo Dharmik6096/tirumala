@@ -89,6 +89,7 @@ class Path extends Component {
         '\\app\modules\complaint\models\\' => ['TblComplainProduct'],
         '\\app\modules\import\models\\' => ['BackGroundDataImport'],
         '\\app\modules\bkgprocess\models\\' => ['TblDataExchangeConfig'],
+        '\\app\modules\dynamicreport\models\\' => ['TblReportList'],
     ];
 
     public function get($model) {

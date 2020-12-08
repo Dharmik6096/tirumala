@@ -494,6 +494,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other MIS') . '<b class="caret"></b></a>',
                     'items' => [
+                        ['label' => Yii::t('app', 'All Reports - List'), 'url' => ['/dynamicreport/default/index'], 'active' => ($cntrl == 'default' && $action == 'index')],
                         ['label' => '901-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/reports/rate-applicability-details']],
                         ['label' => '902-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/reports/rate-acknowledgement']],
                         ['label' => '903-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/reports/amcs-sync-pending']],
