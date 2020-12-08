@@ -142,10 +142,13 @@ class TblDcsController extends ChildController {
             array_push($mapList, $modelCodes);
             //$mapList[0] = $modelMapping;
             $this->bankDetails->load(Yii::$app->request->post());
+            $bankValidate = 1;
             if (!empty($this->bankDetails->bank_code)) {
                 $this->bankDetails->setModel('society', $this->model->dcs_code);
                 $this->bankDetails->scenario = 'bank_selected';
                 array_push($mapList, $this->bankDetails);
+
+                $bankValidate = Yii::$app->warning->codeWarningBankAc($this->bankDetails);
             }
             $this->contactDetails->load(Yii::$app->request->post());
             if (!empty($this->contactDetails->mobile_no)) {
@@ -171,11 +174,11 @@ class TblDcsController extends ChildController {
                 $vendorModel->vendor_code = $this->model->vendor;
                 array_push($mapList, $vendorModel);
             }
-            if ($_POST['warning'] == 0) {
+            if ($bankValidate == 1 && $_POST['warning'] == 0) {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
-            if ($validate == 1 && empty($this->model->getErrors())) {
+            if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
                 $member = [];
                 if (!empty($this->model->auto_member_create)) {
