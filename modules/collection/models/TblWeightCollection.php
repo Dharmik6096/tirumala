@@ -113,7 +113,7 @@ class TblWeightCollection extends \app\models\ChildModel {
             'cans' => Yii::t('app', 'Cans'),
             'rejected_can' => Yii::t('app', 'Rejected Can'),
             'rejected_qty' => Yii::t('app', 'Rejected Qty'),
-            'weight_datetime' => Yii::t('app', 'Weight Datetime'),
+            'weight_datetime' => Yii::t('app', 'Weight time'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
