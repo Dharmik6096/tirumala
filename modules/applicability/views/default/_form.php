@@ -243,7 +243,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     $this->render('_checkbox_list', [
                         'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
                         'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
-                        'checkboxClass' => ' flt-checkbox dcsCheckboxes'
+                        'checkboxClass' => ' flt-checkboxa dcsCheckboxes'
                     ])
                     ?>
                 </div>

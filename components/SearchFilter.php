@@ -278,6 +278,9 @@ class SearchFilter {
             'TblBranchSearch' => [
                 'filter' => ['bank_code'],
             ],
+            'TblPaymentCycleSearch' => [
+                'filter' => ['f_union_code'],
+            ],
             'TblVillagesSearch' => [
                 'filter' => ['state','district'],
             ],
