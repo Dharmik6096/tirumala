@@ -284,7 +284,7 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $this->type = Yii::$app->request->post('submit');
 
-        if($this->type != 'tcpdf'){
+        if ($this->type != 'tcpdf') {
             $controls = [];
             $param = explode(',', $this->data['param']);
             foreach ($param as $key => $value) {
@@ -319,7 +319,7 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
             $controls['digit_config'] = 0;
 
-    //      var_dump($controls);die;
+            //      var_dump($controls);die;
             $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
 
             $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
@@ -333,9 +333,9 @@ class DefaultController extends \app\controllers\ChildController {
                 header('Content-Type: application/' . $this->type);
                 echo $this->output;
             }
-        }
-        else{
-            $this->redirect(['/pdf/pdf', 'param'=>$model]);
+        } else {
+            \Yii::$app->pdf->generatePdfAtmos($model);
+//            $this->redirect(['/pdf/pdf', 'param' => $model]);
         }
     }
 
@@ -633,7 +633,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/BillReportFormat1',
                 'scenario' => 'VendorBill',
                 'title' => '612 - Vendor Bill',
-                'tcpdf'=> true,
+                'tcpdf' => true,
             ],
         ];
         return $label[$l];
