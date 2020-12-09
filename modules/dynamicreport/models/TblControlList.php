@@ -11,49 +11,35 @@ use Yii;
  * @property string $control_name
  * @property string $control_label
  * @property string $control_type
- * @property integer $is_active
- * @property string $created_at
- * @property string $created_by
- * @property string $updated_at
- * @property string $updated_by
  */
-class TblControlList extends \yii\db\ActiveRecord
-{
+class TblControlList extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_control_list';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['control_name', 'control_label', 'control_type', 'created_by', 'updated_by'], 'string'],
-            [['is_active'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['control_name', 'control_label', 'control_type'], 'string'],
+            [['control_sp', 'control_param'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'control_code' => Yii::t('app', 'Control Code'),
             'control_name' => Yii::t('app', 'Control Name'),
             'control_label' => Yii::t('app', 'Control Label'),
             'control_type' => Yii::t('app', 'Control Type'),
-            'is_active' => Yii::t('app', 'Is Active'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
 
@@ -61,8 +47,8 @@ class TblControlList extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblControlListQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblControlListQuery(get_called_class());
     }
+
 }
