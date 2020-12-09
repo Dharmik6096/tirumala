@@ -106,7 +106,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'contact_person_email')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-3">
-        <?= $form->field($model, 'contact_person_mobile_no')->textInput(['maxlength' => 10]) ?>
+        <?= $form->field($model, 'contact_person_mobile_no')->textInput(['maxlength' => 10, 'class' => 'form-control check_mobile_length']) ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-md-12">

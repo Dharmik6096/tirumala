@@ -85,7 +85,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'mobile_no')->textInput() ?>
+            <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'email_id')->textInput() ?>
