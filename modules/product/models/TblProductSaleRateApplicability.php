@@ -37,6 +37,7 @@ use app\modules\syncutility\models\TblSentbox;
 class TblProductSaleRateApplicability extends \app\models\ChildModel {
 
     public $is_sentbox = TRUE;
+    public $import_union_code, $import_eipl_code, $import_key_pattern, $ex_code;
 
     /**
      * @inheritdoc
@@ -50,13 +51,27 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
-                [['wef_date', 'created_at', 'updated_at'], 'safe'],
-                [['product_sale_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['sale_rate', 'product_rate_applicability_code', 'commission'], 'safe'],
+            [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
+            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['product_sale_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['sale_rate', 'product_rate_applicability_code', 'commission', 'ex_code'], 'safe'],
 //            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
             [['product_sale_rate_code'], 'validateProductSaleRate', 'skipOnEmpty' => false, 'except' => ['androidsync']],
+            [['applicable_for', 'applicable_code', 'bmc_code', 'wef_date', 'product_sale_rate_code'], 'required', 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['applicable_for'], function ($attribute, $params) {
+                    $this->union_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'union_code');
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
+                }, 'on' => ['importCsv']],
+            [['applicable_for'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['applicable_for' => 'customer_type'], 'on' => ['importCsv']],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+            [['applicable_for'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
@@ -273,6 +288,88 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function setImport($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->union_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'union_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'plant_code');
+
+            $this->wef_date = !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : '';
+            if (empty($this->productRateCode)) {
+                $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'product_sale_rate_code') . '  is invalid.'));
+            } else {
+                $this->product_code = Yii::$app->general->getforeignkey($this->productRateCode, 'product_code');
+                $this->sale_rate = Yii::$app->general->getforeignkey($this->productRateCode, 'sale_rate');
+                $this->commission = Yii::$app->general->getforeignkey($this->productRateCode, 'commission');
+                $this->is_member_rate = Yii::$app->general->getforeignkey($this->productRateCode, 'is_member_rate');
+                if ($this->is_member_rate == 1) {
+                    if (strtoupper($this->applicable_for) != 'DCS') {
+                        $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'applicable_for') . '  is invalid.'));
+                    }
+                } else {
+                    $this->validateCustomer($this);
+                }
+            }
+        }
+    }
+
+    public function validateCustomer($model) {
+        if (empty($model->applicable_for) || strtoupper($model->applicable_for) == 'DCS') {
+            $model->applicable_for = 'DCS';
+            $dcs = new TblDcs();
+            $applicable_code = $dcs->validDcs($model->applicable_code, $model->bmc_code);
+        } else {
+            $model->applicable_for = strtoupper($model->applicable_for);
+            $applicable_code = $this->validateCustomerCode($model);
+        }
+
+        if (empty($applicable_code)) {
+            $model->addError('applicable_code', Yii::t('app/validation', Yii::t('app', 'Applicable Code') . ' is invalid'));
+        } else {
+            $model->applicable_code = $applicable_code;
+        }
+    }
+
+    public function validateCustomerCode($model) {
+        if (strtolower($model->applicable_for) != 'dcs') {
+            $prefix = Yii::$app->general->getforeignkey($model->applicCustomerType, 'code_prefix');
+            $length = Yii::$app->general->getforeignkey($model->applicCustomerType, 'code_length');
+            $model->ex_code = $prefix . str_pad($model->applicable_code, $length, '0', STR_PAD_LEFT);
+            $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
+            return $data = empty($Code) ? '' : $Code;
+        }
+    }
+
+    public function getDcsRefCode() {
+        return $this->hasOne(TblDcs::className(), ['ref_code' => 'applicable_code', 'bmc_code' => 'bmc_code']);
+    }
+
+    public function getApplicCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code'])->andOnCondition(['is_applicability' => 1, 'is_active' => 1]);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'applicable_for'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+    }
+
+    public function getMainBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
 }

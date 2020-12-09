@@ -10,6 +10,8 @@ class BackGroundDataImport extends Model {
     public $form_validation_type = 'default';
     public $dcs_code, $ex_member_code, $ref_code, $member_name, $local_name, $father_name, $local_father_name, $surname, $local_surname, $nominee_name, $local_nominee_name, $nominee_relation, $dob, $bloodgroup_code, $gender_code, $qualification_code, $caste_category_code, $religion_code, $total_land, $animal_type_code, $no_of_buffalo, $no_of_cow_cross, $no_of_cow_ind, $member_type_code, $branch_code, $bank_account_no, $beneficiary_name, $mobile_no, $email, $address, $local_address, $pincode, $pan_no, $adhar_no, $annual_income, $hamlet_code, $voter_id, $member_class, $registration_date, $max_allowed_qty;
     public $bmc_code, $applicable_code, $applicable_for, $purchase_rate_code, $dcs_purchase_rate_code, $wef_date, $shift_code;
+    public $customer_type, $customer_code, $invoice_date, $payment_mode, $product_code, $quantity, $discount, $no_of_installment;
+    public $member_code, $product_sale_rate_code, $product_group_code, $product_name, $tax_code, $is_dpu_product, $dpu_product_code, $is_inhouse, $is_inclusive_tax, $is_saleable, $is_indent;
 
     function __construct() {
         
@@ -27,10 +29,21 @@ class BackGroundDataImport extends Model {
             [['dcs_purchase_rate_code'], 'required', 'when' => function ($model) {
                     return strtoupper($model->applicable_for) != 'DCS';
                 }, 'on' => ['rateapplicability']],
-            [['wef_date'], 'convertDateDot', 'on' => ['rateapplicability']],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability']],
+            [['wef_date'], 'convertDateDot', 'on' => ['rateapplicability', 'sale_rate_applicability']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability', 'sale_rate_applicability']],
             [['wef_date'], 'validateRateId', 'on' => ['rateapplicability']],
             ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['rateapplicability']],
+            [['bmc_code', 'customer_code', 'customer_type', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale']],
+            [['invoice_date'], 'convertDateDot', 'on' => ['product_sale', 'product_sale_member']],
+            [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member']],
+            ['payment_mode', 'in', 'range' => ['1', '0'], 'on' => ['product_sale', 'product_sale_member']],
+            [['dcs_code', 'member_code', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale_member']],
+            [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date', 'product_sale_rate_code'], 'required', 'on' => ['sale_rate_applicability']],
+            [['product_group_code', 'product_name', 'tax_code'], 'required', 'on' => ['product_master']],
+            [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent'], 'in', 'range' => ['0', '1'], 'on' => ['product_master']],
+            [['dpu_product_code'], 'required', 'when' => function ($model) {
+                    return $model->is_dpu_product == 1;
+                }, 'on' => ['product_master']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

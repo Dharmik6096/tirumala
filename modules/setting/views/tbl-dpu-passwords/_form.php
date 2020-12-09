@@ -9,7 +9,7 @@ use yii\helpers\Url;
 $button = Yii::$app->label->button($type);
 $this->title = Yii::t('app', 'DPU Passwords');
 ?>
-<div class="">
+<div class="padding_top_10">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 <?php
@@ -29,6 +29,7 @@ $form = ActiveForm::begin(['options' => [
         <div class="custom-error-summary">
             <p>Please check highlighted cell for error:</p>
             <ul><li>Admin,Super and UserP should be 7 digit.</li></ul>
+            <?php //var_dump($dataProvider->getModels())?>
         </div>
     <?php } ?>
     <table class="table table-bordered table-striped table-language">
@@ -38,6 +39,7 @@ $form = ActiveForm::begin(['options' => [
                 <th><?php echo Yii::t('app', 'DCS Name') ?></th>
                 <th><?php echo $model[0]->getAttributeLabel('PPCode') ?></th>
                 <th><?php echo $model[0]->getAttributeLabel('bmc_code') ?></th>
+                <th><?php echo $model[0]->getAttributeLabel('bmc_code_ref') ?></th>
                 <th><?php echo $model[0]->getAttributeLabel('AdminPwd') ?></th>
                 <th><?php echo $model[0]->getAttributeLabel('SuperPwd') ?></th>
                 <th><?php echo $model[0]->getAttributeLabel('UserPwd') ?></th>
@@ -48,6 +50,7 @@ $form = ActiveForm::begin(['options' => [
             $i = 0;
             foreach ($model as $models) {
                 $models->bmc_code = Yii::$app->general->getforeignkey($models->dcsCode, 'bmc_code');
+                $ref_code = Yii::$app->general->getforeignkey($models->bmcCode, 'ref_code');
                 $models->PPCode = substr($models->dcs_code, -3);
                 ?>
                 <tr>
@@ -55,6 +58,7 @@ $form = ActiveForm::begin(['options' => [
                     <td><?= Yii::$app->general->getforeignkey($models->dcsCode, 'dcs_name'); ?></td>
                     <td><?= $models->PPCode ?><?= Html::activeHiddenInput($models, '[' . $i . ']PPCode') ?></td>
                     <td><?= $models->bmc_code ?><?= Html::activeHiddenInput($models, '[' . $i . ']bmc_code') ?></td>
+                    <td><?= $ref_code?></td>
                     <td><?= $form->field($models, '[' . $i . ']AdminPwd')->textInput(['multiple' => true])->label(false) ?></td>
                     <td><?= $form->field($models, '[' . $i . ']SuperPwd')->textInput(['multiple' => true])->label(false) ?></td>
                     <td><?= $form->field($models, '[' . $i . ']UserPwd')->textInput(['multiple' => true])->label(false) ?></td>

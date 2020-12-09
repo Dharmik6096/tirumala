@@ -616,8 +616,13 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberData';
         return $this->actionIndex();
     }
+
     public function actionMemberReceptionStatus() {
         $this->report = 'MemberReceptionStatus';
+    }
+
+    public function actionProductSaleRateMasterRegister() {
+        $this->report = 'ProductSaleRateMasterRegister';
         return $this->actionIndex();
     }
 
@@ -1519,6 +1524,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_reception_data',
                 'scenario' => 'MemberReceptionStatus',
                 'title' => '910 - Member Reception Status',
+            ],
+            'ProductSaleRateMasterRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_sale_rate_applicability_register',
+                'scenario' => 'ProductSaleRateMasterRegister',
+                'title' => 'Product Sale Rate Register',
+                'removeExportType' => ['CSV'],
             ],
         ];
         return $label[$l];
