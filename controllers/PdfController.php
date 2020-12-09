@@ -103,103 +103,82 @@ class PdfController extends Controller
         $member_code = $key;
         foreach ($bill_transaction_pm as $key => $value) {
             if($value['member_code'] == $member_code){
+                $array[$member_code]['details'][$value['collection_date']]['pm'] = [];
                 array_push($array[$member_code]['details'][$value['collection_date']]['pm'],$value);
             }
         }
         foreach ($bill_transaction_am as $key => $value) {
             // var_dump($value);
             if($value['member_code'] == $member_code){
+                $array[$member_code]['details'][$value['collection_date']]['am'] = [];
                 array_push($array[$member_code]['details'][$value['collection_date']]['am'],$value);
             }
         }
     }
     // print_r(count($array));
     // die;
-    if(!empty($array))
+    
+    
+    if(!empty($array)){
     $width = 297;  
     $height = 297; 
-    // $pageLayout = array(250,345);
-    $pageLayout = array(240,335);
-    $pdf = new Yii::$app->pdf('P', PDF_UNIT, $pageLayout, true, 'UTF-8', false);
+    $pageLayout = array(231, 154);
+    $pdf = new Yii::$app->pdf('L', PDF_UNIT, $pageLayout, true, 'UTF-8', false);
     $pdf->SetCreator(PDF_CREATOR);
     $pdf->setPrintHeader(false);
     $pdf->setPrintFooter(false);
     $pdf->SetAutoPageBreak(False, 0);
     $pdf->SetFont('helvetica', '', 8);
-    $pdf->SetTextColor(80,80,80);
-    $pdf->SetMargins(0, 37, 0);
+    $pdf->SetTextColor(0,0,0);
+    $pdf->SetMargins(0, 34, 0);
     // for($i=0;$i<count($array);$i++){
     $i=0;
     foreach ($array as $key => $value) {
-    if($i%2 == 0){
         $pdf->AddPage();
-    }
-    else{
-        $tbl_padding = '<table border="none" cellpadding="1" cellspacing="1">';
-        $tbl_padding .='<tr><td height="150"></td></tr>';
-        $tbl_padding .= '</table>';
-        $pdf->writeHTML($tbl_padding, true, false, false, false, '');
-    }
+        $pdf->SetFont('dejavusans', '', 9, '', true);
+        $tableData = '';
+        $tableData .= '<table  border="none" cellpadding="1" cellspacing="1">';
+        $tableData .= '<tr>';
+        $tableData .= '<td align="center" width="60"></td>';
+        $tableData .= '<td align="left" width="370">'.$value['basic'][0]['member_name'].'</td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '</tr>';
+        $tableData .= '<tr>';
+        $tableData .= '<td align="center" width="60"></td>';
+        $tableData .= '<td align="left" width="370">'.$value['basic'][0]['bank_name'].'</td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '</tr>';
+        $tableData .= '<tr>';
+        $tableData .= '<td align="center" width="60"></td>';
+        $tableData .= '<td align="left" width="370">'.$value['basic'][0]['branch_name'].'</td>';
+        $tableData .= '<td align="left">'.$value['basic'][0]['payment_cycle'].'</td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '</tr>';
+        $tableData .= '<tr>';
+        $tableData .= '<td align="center" width="60"></td>';
+        $tableData .= '<td align="left" width="370">'.$value['basic'][0]['bank_account_no'].'</td>';
+        $tableData .= '<td align="left">'.$value['basic'][0]['bmc_name'].'</td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '</tr>';
+        $tableData .= '<tr>';
+        $tableData .= '<td align="center" width="60"></td>';
+        $tableData .= '<td align="left" width="370">'.$value['basic'][0]['ifsc'].'</td>';
+        $tableData .= '<td align="left">'.$value['basic'][0]['dcs_name'].'</td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '</tr>';
+        $tableData .= '<tr>';
+        $tableData .= '<td align="center" height="28"></td>';
+        $tableData .= '<td align="left"></td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '<td align="center"></td>';
+        $tableData .= '</tr>';
+        $tableData .= '</table>';
 
-    $pdf->SetFont('dejavusans', '', 9, '', true);
-    // "'.$value['basic'][0]['bank_name'].'"
-    $bank_name = $value['basic'][0]['bank_name'];
-    // die;
-    $tbl2 = '
-<table border="none" cellpadding="1" cellspacing="1">
-    <tr>
-            <td align="center" width="60"></td>
-            <td align="left" width="370">'.$value['basic'][0]['member_name'].'</td>
-            <td align="center"></td>
-            <td align="center"></td>
-    </tr>
-    <tr>
-            <td align="center" width="60"></td>
-            <td align="left" width="370">'.$value['basic'][0]['bank_name'].'</td>
-            <td align="center"></td>
-            <td align="center"></td>
-    </tr>
-    <tr>
-        <td align="center" width="60"></td>
-        <td align="left" width="370">'.$value['basic'][0]['branch_name'].'</td>
-        <td align="left">'.$value['basic'][0]['payment_cycle'].'</td>
-        <td align="center"></td>
-    </tr>
-    <tr>
-        <td align="center" width="60"></td>
-        <td align="left" width="370">'.$value['basic'][0]['bank_account_no'].'</td>
-        <td align="left">'.$value['basic'][0]['bmc_name'].'</td>
-        <td align="center"></td>
-    </tr>
-    <tr>
-        <td align="center" width="60"></td>
-        <td align="left" width="370">'.$value['basic'][0]['ifsc'].'</td>
-        <td align="left">'.$value['basic'][0]['dcs_name'].'</td>
-        <td align="center"></td>
-    </tr>
+    $pdf->writeHTML($tableData, true, false, false, false, '');
 
-    <tr>
-        <td align="center" width="60"></td>
-        <td align="left" width="370"></td>
-        <td align="left"></td>
-        <td align="center"></td>
-    </tr>
-
-    <tr>
-        <td align="center" width="60"></td>
-        <td align="left" width="370"></td>
-        <td align="left"></td>
-        <td align="center"></td>
-    </tr>
-</table>';
-
-    // $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, 'right', true);
-    $pdf->writeHTML($tbl2, true, false, false, false, '');
-    // $pdf->writeHTMLCell( 50, 500, 0, 0, $tbl2, 0, 0, false, true, '', false);
-
-
-    $pdf->SetFont('dejavusans', '', 8, '', true);
-    $table = '<table border="none"  width="100%" cellpadding="1" cellspacing="1">';
+    $detailTable = '<table border="none" width="100%" cellpadding="1" cellspacing="1" style="margin-top:100px">';
     // var_dump(count($value['details']));
     $total_qty_am = 0;
     $total_qty_pm = 0;
@@ -216,19 +195,19 @@ class PdfController extends Controller
     $total_SNF_am = 0;
     $total_SNF_pm = 0;
     foreach ($value['details'] as $tbl_key => $tbl_value) {
-        $table .='<tr>
-                        <td align="left" width="65">'.$tbl_value['am'][0]['collection_date'].'</td>
-                        <td align="center" width="50">'.number_format((float)$tbl_value['am'][0]['bm_qty'],2).'</td>
-                        <td align="center" width="40">'.number_format((float)$tbl_value['am'][0]['bm_avgFAT'],2).'</td>
-                        <td align="center">'.number_format((float)$tbl_value['am'][0]['bm_avgSNF'],2).'</td>
-                        <td align="left">'.number_format((float)$tbl_value['am'][0]['rate'],2).'</td>
-                        <td align="center">'.number_format((float)$tbl_value['am'][0]['bm_amount'],2).'</td>
-                        <td align="center" width="70">'.number_format((float)$tbl_value['pm'][0]['bm_qty'],2).'</td>
-                        <td align="center" width="40">'.number_format((float)$tbl_value['pm'][0]['bm_avgFAT'],2).'</td>
-                        <td align="center" width="40">'.number_format((float)$tbl_value['pm'][0]['bm_avgSNF'],2).'</td>
-                        <td align="center">'.number_format((float)$tbl_value['pm'][0]['rate'],2).'</td>
-                        <td align="center" width="60">'.number_format((float)$tbl_value['pm'][0]['bm_amount'],2).'</td>
-                        <td align="center">'.number_format(((float)$tbl_value['am'][0]['bm_amount']+(float)$tbl_value['pm'][0]['bm_amount']),2).'</td>
+        $detailTable .='<tr>
+                            <td align="center" width="60">'.$tbl_value['am'][0]['collection_date'].'</td>
+                            <td align="center" width="50">'.number_format((float)$tbl_value['am'][0]['bm_qty'],2).'</td>
+                            <td align="right" width="35">'.number_format((float)$tbl_value['am'][0]['bm_avgFAT'],2).'</td>
+                            <td align="right" width="40">'.number_format((float)$tbl_value['am'][0]['bm_avgSNF'],2).'</td>
+                            <td align="right" width="50">'.number_format((float)$tbl_value['am'][0]['rate'],2).'</td>
+                            <td align="right" width="67">'.number_format((float)$tbl_value['am'][0]['bm_amount'],2).'</td>
+                            <td align="right" width="70">'.number_format((float)$tbl_value['pm'][0]['bm_qty'],2).'</td>
+                            <td align="right" width="30">'.number_format((float)$tbl_value['pm'][0]['bm_avgFAT'],2).'</td>
+                            <td align="right" width="40">'.number_format((float)$tbl_value['pm'][0]['bm_avgSNF'],2).'</td>
+                            <td align="right" width="48">'.number_format((float)$tbl_value['pm'][0]['rate'],2).'</td>
+                            <td align="right" width="65">'.number_format((float)$tbl_value['pm'][0]['bm_amount'],2).'</td>
+                            <td align="right" width="80">'.number_format(((float)$tbl_value['am'][0]['bm_amount']+(float)$tbl_value['pm'][0]['bm_amount']),2).'</td>
                     </tr>';
         $total_qty_am = (float)$tbl_value['am'][0]['bm_qty'] +$total_qty_am;
         $total_qty_pm = (float)$tbl_value['pm'][0]['bm_qty'] +$total_qty_pm;
@@ -247,8 +226,43 @@ class PdfController extends Controller
 
         $total_amount = (float)$tbl_value['am'][0]['bm_amount']+(float)$tbl_value['pm'][0]['bm_amount'] + $total_amount;
     }
-    for($j = 0 ; $j<15-count($value['details']); $j++){
-        $table .='<tr>
+    for($j = 0 ; $j<13-count($value['details']); $j++){
+        $detailTable .='<tr>
+                            <td align="left"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="left"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                            <td align="center"></td>
+                        </tr>';
+    }
+    $detailTable .= '</table>';
+    $pdf->writeHTML($detailTable, true, false, false, false, '');
+
+    $footerTable = '<table border="none"  width="100%" cellpadding="1" cellspacing="1">';
+    $footerTable .= '
+            <table border="none" cellpadding="1" cellspacing="1">
+                <tr>
+                    <td align="center" width="60"></td>
+                    <td align="center" width="50">'.number_format($total_qty_am,2).'</td>
+                    <td align="right" width="35">'.number_format(($total_FAT_am/count($value['details'])),2).'</td>
+                    <td align="right" width="40">'.number_format(($total_SNF_am/count($value['details'])),2).'</td>
+                    <td align="right" width="50">'.number_format(($total_bm_amount_am/$total_qty_am),2).'</td>
+                    <td align="right" width="67">'.number_format($total_bm_amount_am,2).'</td>
+                    <td align="right" width="70">'.number_format($total_qty_pm,2).'</td>
+                    <td align="right" width="30">'.number_format(($total_FAT_pm/count($value['details'])),2).'</td>
+                    <td align="right" width="40">'.number_format(($total_SNF_pm/count($value['details'])),2).'</td>
+                    <td align="right" width="48">'.number_format(($total_bm_amount_pm/$total_qty_pm),2).'</td>
+                    <td align="right" width="65">'.number_format($total_bm_amount_pm,2).'</td>
+                    <td align="right" width="80">'.number_format($total_amount,2).'</td>
+                </tr>
+                <tr>
                     <td align="left" width="65"></td>
                     <td align="center" width="50"></td>
                     <td align="center" width="40"></td>
@@ -261,43 +275,16 @@ class PdfController extends Controller
                     <td align="center"></td>
                     <td align="center" width="60"></td>
                     <td align="center"></td>
-                </tr>';
+                </tr>
+            </table>';
+
+            $footerTable .= '</table>';
+            $pdf->writeHTML($footerTable, true, false, false, false, '');
+        }
+        $pdf->Output('yii2_tcpdf_example2.pdf', 'I');
+        Yii::$app->end();
     }
-    $table .= '</table>';
-    $pdf->writeHTML($table, true, false, false, false, '');
-
-$tbl = '
-    <table border="none" cellpadding="1" cellspacing="1">
-        <tr>
-            <td align="left" width="65"></td>
-            <td align="center" width="50">'.number_format($total_qty_am,2).'</td>
-            <td align="center" width="40">'.number_format(($total_FAT_am/count($value['details'])),2).'</td>
-            <td align="center">'.number_format(($total_SNF_am/count($value['details'])),2).'</td>
-            <td align="left">'.number_format(($total_rate_am/count($value['details'])),2).'</td>
-            <td align="center">'.number_format($total_bm_amount_am,2).'</td>
-            <td align="center" width="70">'.number_format($total_qty_pm,2).'</td>
-            <td align="center" width="40">'.number_format(($total_FAT_pm/count($value['details'])),2).'</td>
-            <td align="center" width="40">'.number_format(($total_SNF_pm/count($value['details'])),2).'</td>
-            <td align="center">'.number_format(($total_rate_pm/count($value['details'])),2).'</td>
-            <td align="center" width="60">'.number_format($total_bm_amount_pm,2).'</td>
-            <td align="center">'.number_format($total_amount,2).'</td>
-        </tr>
-    </table>';
-
-    // $pdf->writeHTMLCell( 50, 0, 0, 0, $tbl, 0, 0, false, true, '', true );
-    $pdf->writeHTML($tbl, true, false, false, false, '');
-
-    // ---------------------------------------------------------
-
-    // Close and output PDF document
-    // This method has several options, check the source code documentation for more information.
-    // var_dump($pdf);
-    $i++;
-    }
-    $pdf->Output('yii2_tcpdf_example2.pdf', 'I');
-    Yii::$app->end();
-
     return;
-}
+    }
 }
 ?>
