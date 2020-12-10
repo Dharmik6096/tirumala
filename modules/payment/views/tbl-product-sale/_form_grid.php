@@ -9,15 +9,15 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $attribute = [
     //'product_sale_code',
 //    ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter'=>false],
-        ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
-        ['attribute' => 'bmc_code', 'value' => function($model) {
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle'],
-        ['attribute' => 'customer_type', 'value' => function($model) {
+    ['attribute' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         }, 'vAlign' => 'middle'],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
+    ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '';
         }, 'vAlign' => 'middle'],
 //        ['attribute' => 'member_code', 'value' => function($model) {
@@ -35,14 +35,14 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->invoice_date);
         }],
-        ['attribute' => 'payment_mode', 'value' => function($model) {
+    ['attribute' => 'payment_mode', 'value' => function($model) {
             return isset($model->payment_mode) ? Yii::$app->dropdown->getRecords('payment_mode')['data'][$model->payment_mode] : '';
         }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('payment_mode', $searchModel, 'payment_mode'),],
-        ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(),],
-        ['attribute' => 'other_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
-        ['attribute' => 'discount', 'format' => Yii::$app->general->CurrencyFormat(),],
-        ['attribute' => 'amount_due', 'format' => Yii::$app->general->CurrencyFormat(),],
-        ['attribute' => 'paid_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'other_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'discount', 'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'amount_due', 'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'paid_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
         // 'is_installment',
         // 'no_of_installment',
         // 'created_at',
@@ -61,7 +61,7 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Installments'];
             return GhostHtml::a('<i class="fa fa-money"></i>', ['/payment/tbl-product-sale/sale-installments', 'id' => $model->product_sale_code], $options);
         },
-//        'delete' => ['option' => ''],
+        'delete' => ['option' => 'product_sale_code,product_sale_code,/payment/tbl-product-sale/delete,checkPaymentCycleLock()'],
     ]
 ];
 

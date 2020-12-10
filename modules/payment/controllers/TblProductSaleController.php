@@ -33,6 +33,8 @@ use app\modules\configuration\models\TblDcsGeneralConfig;
 use app\modules\payment\models\TblProductSaleTaxCalculated;
 use app\modules\payment\models\TblProductSaleTaxCalculatedHistory;
 use app\modules\organisation\models\TblDcs;
+use app\modules\payment\models\TblProductSaleHistory;
+use app\modules\payment\models\TblProductSaleTransactionHistory;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
@@ -258,10 +260,44 @@ class TblProductSaleController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $deleteModel = [];
+        $saveModel = [];
 
-        return $this->redirect(['index']);
+        $historyModel = new TblProductSaleHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $deleteModel[] = $this->model;
+        $saveModel[] = $historyModel;
+
+        $details = TblProductSaleTransaction::find()->where(['product_sale_code' => $this->model->product_sale_code])->all();
+        foreach ($details as $key => $id) {
+            $detailHistory = new TblProductSaleTransactionHistory();
+            Yii::$app->operation->history($id, $detailHistory, DELETE);
+            $deleteModel[] = $details[$key];
+            $saveModel[] = $detailHistory;
+        }
+        $InstallmentModel = TblSaleInstallments::find()->where(['product_sale_code' => $this->model->product_sale_code])->all();
+        foreach ($InstallmentModel as $key => $id) {
+            $deleteModel[] = $InstallmentModel[$key];
+        }
+        $taxmodel = TblProductSaleTaxCalculated::find()->where(['product_sale_code' => $this->model->product_sale_code])->all();
+        foreach ($taxmodel as $key => $id) {
+            $taxmodelHistory = new TblProductSaleTaxCalculatedHistory();
+            Yii::$app->operation->history($id, $taxmodelHistory, DELETE);
+            $deleteModel[] = $taxmodel[$key];
+            $saveModel[] = $taxmodelHistory;
+        }
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale', 'edit']);
+
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

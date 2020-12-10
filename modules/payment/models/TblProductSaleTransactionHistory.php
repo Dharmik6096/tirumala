@@ -8,7 +8,6 @@ use Yii;
  * This is the model class for table "tbl_product_sale_details_history".
  *
  * @property integer $id
- * @property integer $sale_detail_code
  * @property string $product_sale_code
  * @property integer $product_code
  * @property string $product_sale_rate_applicability_code
@@ -36,10 +35,11 @@ class TblProductSaleTransactionHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['sale_detail_code', 'product_code'], 'integer'],
-                [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by', 'operation_type'], 'string'],
-                [['rate', 'quantity', 'amount'], 'number'],
-                [['created_at', 'updated_at', 'history_created_at', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['product_code', 'product_sale_transaction_code'], 'safe'],
+            [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
+            [['rate', 'quantity', 'amount'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+            [['send_status'], 'default', 'value' => 0]
         ];
     }
 
@@ -49,7 +49,6 @@ class TblProductSaleTransactionHistory extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'sale_detail_code' => Yii::t('app', 'Sale Detail Code'),
             'product_sale_code' => Yii::t('app', 'Product Sale Code'),
             'product_code' => Yii::t('app', 'Product Code'),
             'product_sale_rate_applicability_code' => Yii::t('app', 'Rate App Code'),

@@ -665,4 +665,30 @@ class TblProductSale extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
+    public function checkPaymentCycleLock() {
+        $date = Yii::$app->formatter->asDate($this->invoice_date, 'php:Y-m-d');
+        $type = ($this->customer_type == 'Member' ? 'DCS' : $this->customer_type);
+        $codeParam = $this->bmc_code;
+        $for = 'BMC';
+        $flagArray = ($this->customer_type == 'Member' ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc']);
+        $payment_model = new TblPaymentCycleApplicability;
+        $data = $payment_model->find()
+                ->where(['applicable_code' => $codeParam, 'applicable_for' => $for, 'applicable_type' => $type])
+                ->andWhere(['<=', 'CAST(from_date as date)', $date])
+                ->andWhere(['>=', 'CAST(to_date as date)', $date])
+                ->one();
+
+        if (!empty($data)) {
+            foreach ($flagArray as $flag) {
+                if ($data->$flag == 1) {
+                    return FALSE;
+                } else {
+                    return TRUE;
+                }
+            }
+        } else {
+            return TRUE;
+        }
+    }
+
 }
