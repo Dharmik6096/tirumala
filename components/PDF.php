@@ -141,9 +141,6 @@ class PDF extends TCPDF {
                 }
             }
         }
-        // print_r(count($array));
-        // die;
-
 
         if (!empty($array)) {
             $width = 297;
@@ -166,32 +163,32 @@ class PDF extends TCPDF {
                 $tableData .= '<table  border="none" cellpadding="1" cellspacing="1">';
                 $tableData .= '<tr>';
                 $tableData .= '<td align="center" width="60"></td>';
-                $tableData .= '<td align="left" width="370">' . $this->checkFieldVal($value['basic'][0]['member_name']) . '</td>';
+                $tableData .= '<td align="left" width="370">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '') . '</td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '</tr>';
                 $tableData .= '<tr>';
                 $tableData .= '<td align="center" width="60"></td>';
-                $tableData .= '<td align="left" width="370">' . $this->checkFieldVal($value['basic'][0]['bank_name']) . '</td>';
+                $tableData .= '<td align="left" width="370">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_name'] : '') . '</td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '</tr>';
                 $tableData .= '<tr>';
                 $tableData .= '<td align="center" width="60"></td>';
-                $tableData .= '<td align="left" width="370">' . $this->checkFieldVal($value['basic'][0]['branch_name']) . '</td>';
-                $tableData .= '<td align="left">' . $this->checkFieldVal($value['basic'][0]['payment_cycle']) . '</td>';
+                $tableData .= '<td align="left" width="370">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['branch_name'] : '') . '</td>';
+                $tableData .= '<td align="left">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['payment_cycle'] : '') . '</td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '</tr>';
                 $tableData .= '<tr>';
                 $tableData .= '<td align="center" width="60"></td>';
-                $tableData .= '<td align="left" width="370">' . $this->checkFieldVal($value['basic'][0]['bank_account_no']) . '</td>';
-                $tableData .= '<td align="left">' . $this->checkFieldVal($value['basic'][0]['bmc_name']) . '</td>';
+                $tableData .= '<td align="left" width="370">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '') . '</td>';
+                $tableData .= '<td align="left">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bmc_name'] : '') . '</td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '</tr>';
                 $tableData .= '<tr>';
                 $tableData .= '<td align="center" width="60"></td>';
-                $tableData .= '<td align="left" width="370">' . $this->checkFieldVal($value['basic'][0]['ifsc']) . '</td>';
-                $tableData .= '<td align="left">' . $this->checkFieldVal($value['basic'][0]['dcs_name']) . '</td>';
+                $tableData .= '<td align="left" width="370">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '') . '</td>';
+                $tableData .= '<td align="left">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['dcs_name'] : '') . '</td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '</tr>';
                 $tableData .= '<tr>';
@@ -222,35 +219,35 @@ class PDF extends TCPDF {
                 $total_SNF_pm = 0;
                 foreach ($value['details'] as $tbl_key => $tbl_value) {
                     $detailTable .= '<tr>
-                            <td align="center" width="60">' . $tbl_value['am'][0]['collection_date'] . '</td>
-                            <td align="center" width="50">' . number_format((float) $this->checkFieldVal($tbl_value['am'][0]['bm_qty'], 0), 2) . '</td>
-                            <td align="right" width="35">' . number_format((float) $this->checkFieldVal($tbl_value['am'][0]['bm_avgFAT'], 0), 2) . '</td>
-                            <td align="right" width="40">' . number_format((float) $this->checkFieldVal($tbl_value['am'][0]['bm_avgSNF'], 0), 2) . '</td>
-                            <td align="right" width="50">' . number_format((float) $this->checkFieldVal($tbl_value['am'][0]['rate'], 0), 2) . '</td>
-                            <td align="right" width="67">' . number_format((float) $this->checkFieldVal($tbl_value['am'][0]['bm_amount'], 0), 2) . '</td>
-                            <td align="right" width="70">' . number_format((float) $this->checkFieldVal($tbl_value['pm'][0]['bm_qty'], 0), 2) . '</td>
-                            <td align="right" width="30">' . number_format((float) $this->checkFieldVal($tbl_value['pm'][0]['bm_avgFAT'], 0), 2) . '</td>
-                            <td align="right" width="40">' . number_format((float) $this->checkFieldVal($tbl_value['pm'][0]['bm_avgSNF'], 0), 2) . '</td>
-                            <td align="right" width="48">' . number_format((float) $this->checkFieldVal($tbl_value['pm'][0]['rate'], 0), 2) . '</td>
-                            <td align="right" width="65">' . number_format((float) $this->checkFieldVal($tbl_value['pm'][0]['bm_amount'], 0), 2) . '</td>
-                            <td align="right" width="80">' . number_format(((float) $this->checkFieldVal($tbl_value['am'][0]['bm_amount'], 0) + (float) $this->checkFieldVal($tbl_value['pm'][0]['bm_amount'], 0)), 2) . '</td>
+                            <td align="center" width="60">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['collection_date'] : '') . '</td>
+                            <td align="center" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : 0) . '</td>
+                            <td align="right" width="35">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : 0) . '</td>
+                            <td align="right" width="40">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : 0) . '</td>
+                            <td align="right" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : 0) . '</td>
+                            <td align="right" width="67">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : 0) . '</td>
+                            <td align="right" width="70">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : 0) . '</td>
+                            <td align="right" width="30">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : 0) . '</td>
+                            <td align="right" width="40">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : 0) . '</td>
+                            <td align="right" width="48">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : 0) . '</td>
+                            <td align="right" width="65">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : 0) . '</td>
+                            <td align="right" width="80">' . number_format(((float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_amount'] : 0)), 2) . '</td>
                     </tr>';
-                    $total_qty_am = (float) $this->checkFieldVal($tbl_value['am'][0]['bm_qty'], 0) + $total_qty_am;
-                    $total_qty_pm = (float) $this->checkFieldVal($tbl_value['pm'][0]['bm_qty'], 0) + $total_qty_pm;
+                    $total_qty_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_qty'] : 0) + $total_qty_am;
+                    $total_qty_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_qty'] : 0) + $total_qty_pm;
 
-                    $total_rate_am = (float) $this->checkFieldVal($tbl_value['am'][0]['rate'], 0) + $total_rate_am;
-                    $total_rate_pm = (float) $this->checkFieldVal($tbl_value['pm'][0]['rate'], 0) + $total_rate_pm;
+                    $total_rate_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['rate'] : 0) + $total_rate_am;
+                    $total_rate_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['rate'] : 0) + $total_rate_pm;
 
-                    $total_FAT_am = (float) $this->checkFieldVal($tbl_value['am'][0]['bm_avgFAT'], 0) + $total_FAT_am;
-                    $total_FAT_pm = (float) $this->checkFieldVal($tbl_value['pm'][0]['bm_avgFAT'], 0) + $total_FAT_pm;
+                    $total_FAT_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_avgFAT'] : 0) + $total_FAT_am;
+                    $total_FAT_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_avgFAT'] : 0) + $total_FAT_pm;
 
-                    $total_SNF_am = (float) $this->checkFieldVal($tbl_value['am'][0]['bm_avgSNF'], 0) + $total_SNF_am;
-                    $total_SNF_pm = (float) $this->checkFieldVal($tbl_value['pm'][0]['bm_avgSNF'], 0) + $total_SNF_pm;
+                    $total_SNF_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_avgSNF'] : 0) + $total_SNF_am;
+                    $total_SNF_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_avgSNF'] : 0) + $total_SNF_pm;
 
-                    $total_bm_amount_am = (float) $this->checkFieldVal($tbl_value['am'][0]['bm_amount'], 0) + $total_bm_amount_am;
-                    $total_bm_amount_pm = (float) $this->checkFieldVal($tbl_value['pm'][0]['bm_amount'], 0) + $total_bm_amount_pm;
+                    $total_bm_amount_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_amount'] : 0) + $total_bm_amount_am;
+                    $total_bm_amount_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_bm_amount_pm;
 
-                    $total_amount = (float) $this->checkFieldVal($tbl_value['am'][0]['bm_amount'], 0) + (float) $this->checkFieldVal($tbl_value['pm'][0]['bm_amount'], 0) + $total_amount;
+                    $total_amount = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_amount;
                 }
                 for ($j = 0; $j < 13 - count($value['details']); $j++) {
                     $detailTable .= '<tr>
@@ -277,14 +274,14 @@ class PDF extends TCPDF {
                 <tr>
                     <td align="center" width="60"></td>
                     <td align="center" width="50">' . number_format($total_qty_am, 2) . '</td>
-                    <td align="right" width="35">' . !empty(count($value['details'])) ? number_format(($total_FAT_am / count($value['details'])), 2) : 0 . '</td>
-                    <td align="right" width="40">' . !empty(count($value['details'])) ? number_format(($total_SNF_am / count($value['details'])), 2) : 0 . '</td>
-                    <td align="right" width="50">' . !empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0 . '</td>
+                    <td align="right" width="35">' . (!empty(count($value['details'])) ? number_format(($total_FAT_am / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="40">' . (!empty(count($value['details'])) ? number_format(($total_SNF_am / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="50">' . (!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0) . '</td>
                     <td align="right" width="67">' . number_format($total_bm_amount_am, 2) . '</td>
                     <td align="right" width="70">' . number_format($total_qty_pm, 2) . '</td>
-                    <td align="right" width="30">' . !empty(count($value['details'])) ? number_format(($total_FAT_pm / count($value['details'])), 2) : 0 . '</td>
-                    <td align="right" width="40">' . !empty(count($value['details'])) ? number_format(($total_SNF_pm / count($value['details'])), 2) : 0 . '</td>
-                    <td align="right" width="48">' . !empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0 . '</td>
+                    <td align="right" width="30">' . (!empty(count($value['details'])) ? number_format(($total_FAT_pm / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="40">' . (!empty(count($value['details'])) ? number_format(($total_SNF_pm / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="48">' . (!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0) . '</td>
                     <td align="right" width="65">' . number_format($total_bm_amount_pm, 2) . '</td>
                     <td align="right" width="80">' . number_format($total_amount, 2) . '</td>
                 </tr>
