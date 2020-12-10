@@ -69,9 +69,12 @@ class TblHamletsController extends ChildController {
         $this->viewFile = 'update';
         $this->model->scenario = 'add';
         $validate = 1;
-        $this->model->state = $this->model->villageCode->subDistrictCode->districtCode->stateCode->state_code;
-        $this->model->district = $this->model->villageCode->subDistrictCode->districtCode->district_code;
-        $this->model->sub_district = $this->model->villageCode->subDistrictCode->sub_district_code;
+        // $this->model->state = $this->model->villageCode->subDistrictCode->districtCode->stateCode->state_code;
+        $this->model->state = \Yii::$app->general->getmultiforeignkey($this->model->villageCode,['subDistrictCode','districtCode','stateCode'],'state_code');
+        $this->model->district = \Yii::$app->general->getmultiforeignkey($this->model->villageCode,['subDistrictCode','districtCode'],'district_code');
+        // $this->model->district = $this->model->villageCode->subDistrictCode->districtCode->district_code;
+        // $this->model->sub_district = $this->model->villageCode->subDistrictCode->sub_district_code;
+        $this->model->sub_district = \Yii::$app->general->getmultiforeignkey($this->model->villageCode,['subDistrictCode'],'sub_district_code');
 
         if (Yii::$app->request->post()) {
 
