@@ -39,6 +39,8 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
 
+    public $plant_code, $bmc_code;
+
     /**
      * @inheritdoc
      */
@@ -51,11 +53,11 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'wef_date'], 'required'],
-                [['product_purchase_rate_applicability_code', 'product_purchase_rate_code', 'product_code', 'applicable_code', 'applicable_for', 'applicable_type', 'union_code', 'mcc_plant_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['wef_date', 'created_at', 'updated_at'], 'safe'],
-                [['purchase_rate'], 'safe'],
-                [['originating_type'], 'safe'],
+            [['applicable_code', 'wef_date'], 'required'],
+            [['product_purchase_rate_applicability_code', 'product_purchase_rate_code', 'product_code', 'applicable_code', 'applicable_for', 'applicable_type', 'union_code', 'mcc_plant_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['purchase_rate'], 'safe'],
+            [['originating_type'], 'safe'],
 //                [['applicable_code', 'applicable_for', 'product_code', 'wef_date'], 'unique', 'targetAttribute' => ['applicable_code', 'applicable_for', 'product_code', 'wef_date'], 'message' => 'The combination of Wef Date, Product Code, Applicable Code and Applicable For has already been taken.'],
 //            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
             [['product_purchase_rate_code'], 'validateProductPurchaseRate', 'skipOnEmpty' => false],
