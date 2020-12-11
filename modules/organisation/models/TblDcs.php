@@ -1167,7 +1167,7 @@ class TblDcs extends ChildModel {
         $this->route_code = $this->route;
         $this->route_code = Yii::$app->general->getforeignkey($this->routeRefCode, 'route_code');
 
-        if (!empty($this->route_code) && empty($this->routeMapping) || (!empty($this->routeMapping) && ($this->routeMapping->to_type != 'bmc' || $this->routeMapping->to_dest != $this->bmc_code))) {
+        if ((empty($this->routeMapping)) || (!empty($this->routeMapping) && ($this->routeMapping->to_type != 'bmc' || $this->routeMapping->to_dest != $this->bmc_code))) {
             $this->addError('route_code', Yii::t('app/validation', $this->getAttributeLabel('route_code') . ' is Invalid.'));
         }
     }

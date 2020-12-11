@@ -322,9 +322,8 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
                     if (strtoupper($this->applicable_for) != 'DCS') {
                         $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'applicable_for') . '  is invalid.'));
                     }
-                } else {
-                    $this->validateCustomer($this);
                 }
+                $this->validateCustomer($this);
             }
         }
     }
