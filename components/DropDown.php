@@ -1041,6 +1041,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'A'), 2 => Yii::t('app', 'B'), 3 => Yii::t('app', 'C')],
             ],
+            'apply_for' => [
+                'name' => 'apply_for',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Vendor'), 1 => Yii::t('app', 'Member')],
+            ],
         ];
         return $records[$l];
     }

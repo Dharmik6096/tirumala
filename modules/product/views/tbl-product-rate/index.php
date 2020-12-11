@@ -1,6 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Product Sale Rate'));
 $this->params['menu'][] = Yii::$app->controls->add('Product Sale Rate');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Bulk Delete Applicability', 'delete-bulk-applicability', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 $this->params['menu'][] = Yii::$app->controls->import('salerateapplicability-bulk', $this, Yii::t('app', 'Applicability Import'));
 ?>
 <div class="tbl-banks-index">
