@@ -333,7 +333,7 @@ $script = "
        addFilterData($('#{$nameforid}-union_code').val(), $('input[type=\'radio\']:checked').val());
         $('#checkAll').prop('checked', false);
         $('#header').text(fltl);
-        $('#'+fl+'-list').show();
+        setTimeout(function(){ $('#'+fl+'-list').show(); }, 500);
         $('#dcs_code-list').empty();
     });
     $(document).ready(function(){
@@ -460,7 +460,7 @@ $script = "
                     $.each(obj1.data, function(index, value) {
                         $('#'+index+'-list').empty();
                         appendId = index;
-                        $('#'+index+'-list').append('<div class=\"checkbox app-check-all app-check-list-padding padding_bottom_25\"><input type=\"text\" id=\"'+index+'\" class=\"col-sm-12\" name=\"filter\" value=\"\" onkeyup=\"checkBoxFilter(this)\" placeholder=\"Search\"></div>' );
+                        // $('#'+index+'-list').parent().append('<div class=\"checkbox app-check-all app-check-list-padding padding_bottom_25\"><input type=\"text\" id=\"'+index+'\" class=\"col-sm-12\" name=\"filter\" value=\"\" onkeyup=\"checkBoxFilter(this)\" placeholder=\"Search\"></div>' );
                         $.each(value, function(ind, vl) {
                             if(applicable_for == ''){
                                $('#'+index+'-list').append('<div class=\"col-sm-12 dcs-checklist checklist\" id=\"nd-'+ind+'\"><div class=\"checkbox\"><input type=\"checkbox\" data-flt=\"'+index+'\" class=\"route-checkbox flt-checkbox\" name=\"'+index+'[]\" value=\"'+ind+'\" id=\"'+appendId+'-'+ind+'\"><label class=\"route-text\" for=\"'+appendId+'-'+ind+'\">'+vl+'</label></div></div>');
