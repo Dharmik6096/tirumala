@@ -226,7 +226,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $historyModel = new TblMemberPaymentAliasHistory();
                 Yii::$app->operation->history($data, $historyModel, UPDATE);
                 $data->additional_pay = $adjustAmount;
-                $data->adjust_remark = $adjust_remark[$key];//!empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
+                $data->adjust_remark = $adjust_remark[$key]; //!empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
                 $data->hold_amount = $holdAmount;
                 $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount;
                 $data->payment_status = $processFlag;
@@ -463,77 +463,146 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $query = $newModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'tbl_member_payment_alias.bmc_code' => $model->bmc_code])
                 ->joinWith(['dcsCode', 'memberCode'])->joinWith(['memberCode.bankCode', 'memberCode.branchCode'])
                 ->all();
+        $extention = 'xls';
         $header = [
-            'mime' => 'application/csv',
-            'extension' => 'csv',
-            'writer' => 'CSV',
+            'mime' => 'application/ms-excel',
+            'extension' => $extention,
+            'writer' => 'Excel2007',
         ];
 
-        $objPHPExcel = new PHPExcel();
-        $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getDefaultStyle()
-                ->getNumberFormat()
-                ->setFormatCode(
-                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-        );
-        $rowCount = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Society Code');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Code Ex.');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Society');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Member Code');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Member Name');
-        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'Account No');
-        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Bank');
-        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Branch');
-        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'IFSC');
-        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'KgFAT');
-        $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, 'KgSNF');
-        $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, 'Total Qty');
-        $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, 'Milk Amount(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, 'Addition(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, 'Deduction(-)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, 'Previous Hold(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, 'Previous Due(-)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, 'Final Pay');
-        $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, 'Hold Amount(-)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, 'Additional Pay(+)');
-        $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, 'Net Payable');
-        $objPHPExcel->getActiveSheet()->SetCellValue('V' . $rowCount, 'Remarks');
-        foreach ($query as $row) {
-            if ($row->final_amount > 0) {
-                $rowCount++;
-                $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->dcs_code);
-                $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_code_ex'));
-                $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_name'));
-                $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->member_code);
-                $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, Yii::$app->general->getforeignkey($row->memberCode, 'member_name'));
-                $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, '="' . $row->bank_account_no . '"');
-                $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->bank_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->branch_name);
-                $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->ifsc);
-                $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->kg_fat);
-                $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, $row->kg_snf);
-                $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, $row->qty);
-                $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, $row->total_amount);
-                $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, $row->total_addition);
-                $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, $row->total_deduction);
-                $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, $row->previous_hold);
-                $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, $row->previous_due);
-                $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, $row->net_payable); // Final Pay
-                $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, $row->hold_amount);
-                $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, $row->additional_pay);
-                $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, $row->final_amount); //Net Payable
-                $objPHPExcel->getActiveSheet()->SetCellValue('V' . $rowCount, $row->adjust_remark);
-            }
-        }
         $fileName = "payment_disburse." . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        ob_end_clean();
-        $objWriter->save('php://output');
+        echo "<table border='1'>";
+        echo "<tr>";
+        echo "<td>Society Code</td>";
+        echo "<td>Code Ex.</td>";
+        echo "<td>Society</td>";
+        echo "<td>Member Code</td>";
+        echo "<td>Member Name</td>";
+        echo "<td>Account No</td>";
+        echo "<td>Bank</td>";
+        echo "<td>Branch</td>";
+        echo "<td>IFSC</td>";
+        echo "<td>KgFAT</td>";
+        echo "<td>KgSNF</td>";
+        echo "<td>Total Qty</td>";
+        echo "<td>Milk Amount(+)</td>";
+        echo "<td>Addition(+)</td>";
+        echo "<td>Deduction(-)</td>";
+        echo "<td>Previous Hold(+)</td>";
+        echo "<td>Previous Due(-)</td>";
+        echo "<td>Final Pay</td>";
+        echo "<td>Hold Amount(-)</td>";
+        echo "<td>Additional Pay(+)</td>";
+        echo "<td>Net Payable</td>";
+        echo "<td>Remarks</td>";
+        echo "</tr>";
+
+        foreach ($query as $row) {
+            if ($row->final_amount > 0) {
+                echo "<tr>";
+                $this->setVal($row->dcs_code);
+                $this->setVal(Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_code_ex'));
+                $this->setVal(Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_name'));
+                $this->setVal($row->member_code);
+                $this->setVal(Yii::$app->general->getforeignkey($row->memberCode, 'member_name'));
+                $this->setVal($row->bank_account_no);
+                $this->setVal($row->bank_name);
+                $this->setVal($row->branch_name);
+                $this->setVal($row->ifsc);
+                $this->setVal($row->kg_fat);
+                $this->setVal($row->kg_snf);
+                $this->setVal($row->qty);
+                $this->setVal($row->total_amount);
+                $this->setVal($row->total_addition);
+                $this->setVal($row->total_deduction);
+                $this->setVal($row->previous_hold);
+                $this->setVal($row->previous_due);
+                $this->setVal($row->net_payable);
+                $this->setVal($row->hold_amount);
+                $this->setVal($row->additional_pay);
+                $this->setVal($row->final_amount);
+                $this->setVal($row->adjust_remark);
+                echo "</tr>";
+            }
+        }
+        echo "</table>";
         exit();
+
+
+//        $header = [
+//            'mime' => 'application/ms-excel',
+//            'extension' => 'xls',
+//            'writer' => 'Excel2007',
+//        ];
+//
+//        $objPHPExcel = new PHPExcel();
+//        $objPHPExcel->setActiveSheetIndex(0);
+//        $objPHPExcel->getDefaultStyle()
+//                ->getNumberFormat()
+//                ->setFormatCode(
+//                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//        );
+//        $rowCount = 1;
+//        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Society Code');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Code Ex.');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Society');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Member Code');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Member Name');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'Account No');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Bank');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Branch');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'IFSC');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'KgFAT');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, 'KgSNF');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, 'Total Qty');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, 'Milk Amount(+)');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, 'Addition(+)');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, 'Deduction(-)');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, 'Previous Hold(+)');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, 'Previous Due(-)');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, 'Final Pay');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, 'Hold Amount(-)');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, 'Additional Pay(+)');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, 'Net Payable');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('V' . $rowCount, 'Remarks');
+//        foreach ($query as $row) {
+//            if ($row->final_amount > 0) {
+//                $rowCount++;
+//                $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->dcs_code);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_code_ex'));
+//                $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_name'));
+//                $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->member_code);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, Yii::$app->general->getforeignkey($row->memberCode, 'member_name'));
+//                $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, '="' . $row->bank_account_no . '"');
+//                $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->bank_name);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->branch_name);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->ifsc);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->kg_fat);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('K' . $rowCount, $row->kg_snf);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('L' . $rowCount, $row->qty);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('M' . $rowCount, $row->total_amount);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('N' . $rowCount, $row->total_addition);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('O' . $rowCount, $row->total_deduction);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('P' . $rowCount, $row->previous_hold);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $rowCount, $row->previous_due);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('R' . $rowCount, $row->net_payable); // Final Pay
+//                $objPHPExcel->getActiveSheet()->SetCellValue('S' . $rowCount, $row->hold_amount);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('T' . $rowCount, $row->additional_pay);
+//                $objPHPExcel->getActiveSheet()->SetCellValue('U' . $rowCount, $row->final_amount); //Net Payable
+//                $objPHPExcel->getActiveSheet()->SetCellValue('V' . $rowCount, $row->adjust_remark);
+//            }
+//        }
+//        $fileName = "payment_disburse." . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+//        header('Content-Disposition: attachment;filename=' . $fileName);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        ob_end_clean();
+//        $objWriter->save('php://output');
+//        exit();
     }
 
     public function actionIndex() {
@@ -597,6 +666,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         'searchModel' => $searchModel,
                         'dataProvider' => $dataProvider,
             ]);
+        }
+    }
+
+    public function setVal($value) {
+        if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
+            echo "<td>" . $value . "</td>";
+        } else {
+            echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
         }
     }
 
