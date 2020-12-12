@@ -495,9 +495,27 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
         }
 
         return $this->find()
-                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
-                        ->andWhere(['in', 'rate_class', [0, 1]])
+                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type'], 'rate_class' => $data['rate_class']])
                         ->andWhere($where)
+                        ->one();
+    }
+
+    public function getDispatchPurchasseRateDetailData($data, $rate_type) {
+        if ($rate_type == 'FAT') {
+            $where = ['fat' => bcdiv($data['fat'], 1, 1)];
+        } else if ($rate_type == 'FAT+SNF') {
+            $where = ['fat' => bcdiv($data['fat'], 1, 1), 'snf' => bcdiv($data['snf'], 1, 1)];
+        } else if ($rate_type == 'FAT+CLR') {
+            $where = ['fat' => bcdiv($data['fat'], 1, 1), 'snf' => bcdiv($data['clr'], 1, 1)];
+        } else {
+            $sum = $data['fat'] + $data['snf'];
+            $where = ['fat' => bcdiv($sum, 1, 1)];
+        }
+
+        return $this->find()
+                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
+                        ->andWhere($where)
+                        ->andWhere(['in', 'rate_class', [0, 1]])
                         ->orderBy('rate_class asc')
                         ->one();
     }

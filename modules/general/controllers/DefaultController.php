@@ -9,21 +9,22 @@ use app\modules\general\models\TblGenderSearch;
 use app\modules\general\models\TblQualificationSearch;
 use app\modules\general\models\TblReligionSearch;
 use app\modules\general\models\TblRelationshipSearch;
+use app\modules\globalmaster\models\TblAnimalTypeSearch;
 
 /**
  * Default controller for the `general` module
  */
-class DefaultController extends Controller
-{
+class DefaultController extends Controller {
+
     /**
      * Renders the index view for the module
      * @return string
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         return $this->render('index');
     }
-    public function actionBackendData(){
+
+    public function actionBackendData() {
         $bloodModel = new TblBloodgroupSearch();
         $bloodModel->is_active = 1;
         $bloodData = $bloodModel->search(Yii::$app->request->queryParams);
@@ -39,17 +40,24 @@ class DefaultController extends Controller
         $relationshipModel = new TblRelationshipSearch();
         $relationshipModel->is_active = 1;
         $relationshipData = $relationshipModel->search(Yii::$app->request->queryParams);
+
+        $animalTypeModel = new TblAnimalTypeSearch();
+        $animalTypeModel->is_active = 1;
+        $animalTypeData = $animalTypeModel->search(Yii::$app->request->queryParams);
         return $this->render('backend_data', [
-            'bloodModel' => $bloodModel,
-            'bloodData' => $bloodData,
-            'genderModel' => $genderModel,
-            'genderData' => $genderData,
-            'qualificationModel' => $qualificationModel,
-            'qualificationData' => $qualificationData,
-            'religionModel' => $religionModel,
-            'religionData' => $religionData,
-            'relationshipModel' => $relationshipModel,
-            'relationshipData' => $relationshipData,
+                    'bloodModel' => $bloodModel,
+                    'bloodData' => $bloodData,
+                    'genderModel' => $genderModel,
+                    'genderData' => $genderData,
+                    'qualificationModel' => $qualificationModel,
+                    'qualificationData' => $qualificationData,
+                    'religionModel' => $religionModel,
+                    'religionData' => $religionData,
+                    'relationshipModel' => $relationshipModel,
+                    'relationshipData' => $relationshipData,
+                    'animalTypeModel' => $animalTypeModel,
+                    'animalTypeData' => $animalTypeData,
         ]);
     }
+
 }

@@ -33,7 +33,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code'],
             ],
             'TblRouteMappingSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'unit'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
             ],
             'TblFormulaMasterSearch' => [
                 'filter' => ['f_union_code'],
@@ -277,6 +277,9 @@ class SearchFilter {
             ],
             'TblBranchSearch' => [
                 'filter' => ['bank_code'],
+            ],
+            'TblPaymentCycleSearch' => [
+                'filter' => ['f_union_code'],
             ],
             'TblVillagesSearch' => [
                 'filter' => ['state','district'],

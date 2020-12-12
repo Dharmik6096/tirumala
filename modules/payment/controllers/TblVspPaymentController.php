@@ -85,7 +85,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $save_model = [];
             $cnt = 0;
             foreach ($adjust_id as $key => $value) {
-                if ((!empty($adjust_amt[$key]) && $adjust_amt[$key] != 0 && $adjust_amt[$key] != '') || (!empty($hold_amt[$key]) && $hold_amt[$key] != 0 && $hold_amt[$key] != '')) {
+                if (($adjust_amt[$key] != 0 && $adjust_amt[$key] != '') || ($hold_amt[$key] != 0 && $hold_amt[$key] != '')) {
                     $data = TblVspPayment::findOne($adjust_id[$key]);
                     $historyModel = new TblVspPaymentHistory();
                     Yii::$app->operation->history($data, $historyModel, UPDATE);

@@ -121,7 +121,7 @@ $type = !empty($type) ? $type : '';
                                                 $('#pageloader').show();
                                                 }"),
                                 'success' => new JsExpression('function(data){
-//                                                                var data=$.parseJSON(data);
+                                                                var data=$.parseJSON(data);
                                                                 $("#loadercontent").hide();
                                                                 $("#pageloader").hide();
                                                                 if (data.status == "success"){ 
@@ -182,13 +182,15 @@ $type = !empty($type) ? $type : '';
 $script = "
     $(document).on('change','#tblproductsale-invoice_date',function(){
         setRate();
-        reloadGrid('show_loader');
+        if($('#tblproductsale-ex_code').val() != '') {
+          reloadGrid('show_loader');
+        }
     });
     $(document).on('change','#tblproductsale-bmc_code',function(){
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
         setRate();
-        reloadGrid('show_loader');
+//        reloadGrid('show_loader');
     });
     $(document).on('change','#tblproductsale-dcs_code',function(){
         $('#tblproductsale-ex_code').val('');
@@ -200,7 +202,7 @@ $script = "
         $('#tblproductsale-ex_code').val('');
         $('#tblproductsale-ex_code').trigger('change');
         setRate();
-        reloadGrid();
+//        reloadGrid();
     });
     $(document).on('change','#tblproductsale-customer_code',function(){
         setRate();

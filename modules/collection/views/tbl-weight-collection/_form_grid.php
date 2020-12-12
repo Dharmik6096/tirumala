@@ -82,6 +82,9 @@ $attribute = [
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('is_quality_auto', $searchModel, 'qty_auto'),],
     ['attribute' => 'vehicle_no', 'visible' => FALSE],
     ['attribute' => 'cans', 'visible' => FALSE],
+    ['attribute' => 'weight_datetime', 'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->weight_datetime);
+    }, 'filter' => false],
 ];
 
 $grid_option = [

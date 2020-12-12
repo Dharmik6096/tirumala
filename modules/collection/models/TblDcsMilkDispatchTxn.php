@@ -286,14 +286,14 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             $model->dcs_code = $this->dcs_code;
             $model->wef_date = $this->date_time_of_dispatch;
             $data['rate_class'] = '(0, 1)';
-            $model_data = $model->getPurchaseRateApplicableData($data);
+            $model_data = $model->getdispatchPurchaseRateApplicableData($data);
 
             if (!empty($model_data)) {
                 $detail_model = new TblPurchaseRateDetails();
                 $detail_model->rate_type_code = $model_data->rate_app_code;
                 $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
                 $rate_type = $detail_model->rateTypeCode->rate_type;
-                $detail_data = $detail_model->getPurchasseRateDetailData($data, $rate_type);
+                $detail_data = $detail_model->getDispatchPurchasseRateDetailData($data, $rate_type);
                 if (!empty($detail_data)) {
                     $this->purchase_rate_code = (string) $detail_data->purchase_rate_code;
                     $this->rtpl = $detail_data->rtpl;

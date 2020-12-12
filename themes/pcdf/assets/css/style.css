@@ -2345,7 +2345,7 @@ div.crystalstyle{
 #menu_buttons {
     position: absolute;
     top: 105px;
-    z-index: 9;
+    z-index: 99;
     right: 14px;
 }
 
@@ -3936,13 +3936,20 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .panel > .table-responsive > .table-bordered > thead > tr > th{
     position: sticky;
     top: 0;
-    z-index: 9999;
+    z-index: 9;
     background-color: #7a231c;
 }
 
 .panel > .table-responsive > .table-bordered > thead tr.filters.skip-export > td {
     position: sticky;
     top: 19px;
-    z-index: 9999;
+    z-index: 9;
     background-color: #fff;
+}
+.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom {
+    z-index: 9999 !important;
+}
+
+.panel > .table-responsive > .table-bordered > thead{
+    background-color: #fff !important;
 }

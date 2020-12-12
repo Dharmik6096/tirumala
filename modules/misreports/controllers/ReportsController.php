@@ -599,6 +599,33 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSocietyWiseCdaTwo() {
+        $this->report = 'SocietyWiseCdaTwo';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SocietyWiseCdaDateWiseTwo';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'SocietyWiseCdaConsolidatedTwo';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionMemberData() {
+        $this->report = 'MemberData';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberReceptionStatus() {
+        $this->report = 'MemberReceptionStatus';
+    }
+
+    public function actionProductSaleRateMasterRegister() {
+        $this->report = 'ProductSaleRateMasterRegister';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1457,12 +1484,52 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_payment_abstract',
                 'scenario' => 'PaymentAbstract',
                 'title' => '613 - Payment Abstract',
-			],
+            ],
             'RateMasterRegister' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
                 'sp_name' => 'sp_mis_rate_master_register',
                 'scenario' => 'RateMasterRegister',
                 'title' => 'Rate Master Register',
+                'removeExportType' => ['CSV'],
+            ],
+            'SocietyWiseCdaTwo' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_date_shift_gyan',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'SocietyWiseCdaDateWiseTwo' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_date_gyan',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'SocietyWiseCdaConsolidatedTwo' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_consolidated_gyan',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '207 - Society Wise CDA',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_member_data_report',
+                'scenario' => 'MemberData',
+                'title' => '909 - Member Data',
+            ],
+            'MemberReceptionStatus' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_reception_data',
+                'scenario' => 'MemberReceptionStatus',
+                'title' => '910 - Member Reception Status',
+            ],
+            'ProductSaleRateMasterRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_sale_rate_applicability_register',
+                'scenario' => 'ProductSaleRateMasterRegister',
+                'title' => 'Product Sale Rate Register',
                 'removeExportType' => ['CSV'],
             ],
         ];

@@ -16,16 +16,17 @@ if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
 }
+$bankWarning = !empty($_POST['bank_ac_warning']) ? $_POST['bank_ac_warning'] : 0;
 ?>
 
 <?php
 $form = ActiveForm::begin([
-    'options' => [],
-    'validateOnBlur' => FALSE,
-    'validateOnChange' => FALSE,
-    'enableClientValidation' => true,
-    'validateOnSubmit' => true,
-]);
+            'options' => [],
+            'validateOnBlur' => FALSE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 $disable_ifsc = !empty($model->ifsc) && !empty($model->bank_code) ? true : false;
 $selected = $model->union_code;
 $union_code = count(explode(',', Yii::$app->session->get('Unions'))) == 1 ? Yii::$app->session->get('Unions') : '';
@@ -40,6 +41,7 @@ if ($model->isNewRecord) {
 ?>
 <?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
+<?= Html::hiddenInput('bank_ac_warning', $bankWarning, ['id' => 'bank_ac_warning']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -134,19 +136,19 @@ if ($model->isNewRecord) {
         <hr class="hr10">
     </div>
     <div class="col-sm-4">
-        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
+    <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
     </div>
     <div class="col-sm-4">
-        <?= $form->field($model, 'no_of_buffalo')->textInput() ?>
+    <?= $form->field($model, 'no_of_buffalo')->textInput() ?>
     </div>
     <div class="col-sm-4">
-        <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
+    <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
     </div>
     <div class="col-sm-4">
-        <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
+    <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
     </div>
     <div class="col-sm-4">
-        <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
+    <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
     </div> -->
     <div class="col-sm-6 col-md-6 padding_left_0 padding_right_0 clearfix">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -163,93 +165,94 @@ if ($model->isNewRecord) {
                 </div>
             </div>
         </div>
-    <div class="col-sm-4">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
-    </div>
-    <div class="col-sm-4">
-        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmember-union_code,tblmember-state_code', 'district_code', 'District'); ?>
-    </div>
-    <div class="col-sm-4">
-        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmember-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District'); ?>
-    </div>
-    <div class="col-sm-4">
-        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmember-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village'); ?>
-    </div>
-    <div class="col-sm-4">
-        <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmember-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
-    </div>
-    <div class="col-sm-4">
-        <!--<? = $form->field($model, 'pincode')->textInput() ?>-->
-        <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
-    </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'email')->textInput() ?>
-    </div>
 
-    <div class="col-md-12 padding_10_0 theme-box ">
-        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Animal Details</h4>
+        <div class="col-sm-4">
+            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmember-union_code,tblmember-state_code', 'district_code', 'District'); ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'no_of_buffalo')->textInput() ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmember-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District'); ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmember-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village'); ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmember-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
         </div>
         <div class="col-sm-4">
-            <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
+            <!--<? = $form->field($model, 'pincode')->textInput() ?>-->
+            <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
-    </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'email')->textInput() ?>
+        </div>
+
+        <div class="col-md-12 padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Animal Details</h4>
+            </div>
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'no_of_buffalo')->textInput() ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
+            </div>
+        </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Bank Details</h4>
         </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->bankdepended($model, $form, 'tblmember-district_code', 'bank_code', 'Bank'); ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->bankdepended($model, $form, 'tblmember-district_code', 'bank_code', 'Bank'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tblmember-bank_code', '', 'Branch', 'branch_code'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'bank_account_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <!--<? = $form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc]) ?>-->
+            <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'pan_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'adhar_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'voter_id')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'annual_income')->textInput() ?>
+        </div>
+        <!--    <div class="col-sm-3">
+                <? = $form->field($model, 'payment_mode')->textInput() ?>
+            </div>-->
+        <div class="clearfix"></div>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tblmember-bank_code', '', 'Branch', 'branch_code'); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'bank_account_no')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <!--<? = $form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc]) ?>-->
-        <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'beneficiary_name')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'pan_no')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'adhar_no')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'voter_id')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'annual_income')->textInput() ?>
-    </div>
-    <!--    <div class="col-sm-3">
-            <? = $form->field($model, 'payment_mode')->textInput() ?>
-        </div>-->
-    <div class="clearfix"></div>
 </div>
-    </div>
 <div class="row">
-<div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
@@ -262,6 +265,17 @@ if ($model->isNewRecord) {
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+    
+
+    $('#tblmember-bank_account_no').on('change', function(){
+        $('#bank_ac_warning').val(0);
+    });
+    $('#tblmember-branch_code').on('change', function(){
+        $('#bank_ac_warning').val(0);
+    });
+    $('#tblmember-ifsc').on('change', function(){
+        $('#bank_ac_warning').val(0);
+    });
     $('#tblmember-dcs_code').on('change',function(){
         var id = $(this).val();
             $.ajax({

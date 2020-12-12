@@ -20,6 +20,7 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
     $logout_url[] = '/site/rail-logout';
 }
 $collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 <?php
 
@@ -376,6 +377,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Transporter Master Register'), 'url' => ['/misreports/reports/transporter-master']],
                         ['label' => Yii::t('app', 'Vehicle Master Register'), 'url' => ['/misreports/reports/vehicle-master']],
                         ['label' => Yii::t('app', 'Rate Master Register'), 'url' => ['/misreports/reports/rate-master-register']],
+                        ['label' => Yii::t('app', 'Product Sale Rate Register'), 'url' => ['/misreports/reports/product-sale-rate-master-register']],
                     ]
                 ],
                 [
@@ -405,7 +407,8 @@ echo GhostMenu::widget([
                                 ['label' => '204 -' . Yii::t('app', 'Company Wise Collection Vs Dispatch'), 'url' => ['/misreports/reports/union-wise-coll-vs-dispatch']],
                                 ['label' => '205 -' . Yii::t('app', 'Company Wise Collection Vs Recipt'), 'url' => ['/misreports/reports/union-wise-coll-vs-recipt']],
                                 ['label' => '206 -' . Yii::t('app', 'Company Wise Dispatch Vs Recipt'), 'url' => ['/misreports/reports/union-wise-dispatch-vs-recipt']],
-                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda']],
+                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda'], 'visible' => $eiplCode == 'GYAN' ? FALSE : TRUE],
+                                ['label' => '207 -' . Yii::t('app', 'Society Wise CDA'), 'url' => ['/misreports/reports/society-wise-cda-two'], 'visible' => $eiplCode == 'GYAN' ? TRUE : FALSE],
                                 ['label' => '208 -' . Yii::t('app', 'BMC Autmation Report'), 'url' => ['/misreports/reports/bmc-automation-report']],
                                 ['label' => '209-' . Yii::t('app', 'Route Wise Collection'), 'url' => ['/misreports/reports/route-wise-collection']],
                                 ['label' => '210-' . Yii::t('app', 'Route Wise Collection Summary'), 'url' => ['/misreports/reports/route-wise-collection-summary']],
@@ -492,6 +495,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other MIS') . '<b class="caret"></b></a>',
                     'items' => [
+                        ['label' => Yii::t('app', 'All Reports - List'), 'url' => ['/dynamicreport/default/index'], 'active' => ($cntrl == 'default' && $action == 'index')],
                         ['label' => '901-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/reports/rate-applicability-details']],
                         ['label' => '902-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/reports/rate-acknowledgement']],
                         ['label' => '903-' . Yii::t('app', 'AMCS Sync Pending'), 'url' => ['/misreports/reports/amcs-sync-pending']],
@@ -500,6 +504,8 @@ echo GhostMenu::widget([
                         ['label' => '906-' . Yii::t('app', 'Location Wise Asset Movement'), 'url' => ['/misreports/reports/location-wise-asset-movement']],
                         ['label' => '907-' . Yii::t('app', 'Society Collection Data'), 'url' => ['/misreports/reports/society-collection-data']],
                         ['label' => '908-' . Yii::t('app', 'DPU-GPRS Data Reconciliation'), 'url' => ['/misreports/reports/gprs-data-reconciliation']],
+                        ['label' => '909-' . Yii::t('app', 'Member Data'), 'url' => ['/misreports/reports/member-data']],
+                        ['label' => '910-' . Yii::t('app', 'Member Reception Status'), 'url' => ['/misreports/reports/member-reception-status']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

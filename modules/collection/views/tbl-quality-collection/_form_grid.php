@@ -57,6 +57,9 @@ $attribute = [
     ['attribute' => 'lactose', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'adt_param', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'adt_value', 'filter' => FALSE, 'visible' => false],
+    ['attribute' => 'quality_datetime', 'value' => function($model) {
+        return Yii::$app->controls->view_datetime($model->quality_datetime);
+    }, 'filter' => false],
 ];
 
 $grid_option = [
