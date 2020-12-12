@@ -319,10 +319,11 @@ $defaultToggle = true;
                                         }
                                         ?>
                                         <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
-                                        <?php 
-                                        if($data['tcpdf']){
+                                        <?php
+                                        if (isset($data['tcpdf']) && $data['tcpdf']) {
                                             echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', 'pdf')]);
-                                        } ?>
+                                        }
+                                        ?>
                                         <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                                     </div>
                                 </div>
