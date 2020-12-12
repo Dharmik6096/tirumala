@@ -23,6 +23,8 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitityHistory;
 use yii\helpers\Json;
 use PHPExcel;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
+use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
 
 /**
  * TblDcsPurchaseRateController implements the CRUD actions for TblDcsPurchaseRate model.
@@ -635,6 +637,49 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
             return;
         }
+    }
+
+    public function actionDeleteBulkApplicability() {
+        $searchModel = new TblDcsPurchaseRateApplicabititySearch();
+        $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'deleteApplicability';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $deletedata = Yii::$app->request->post('selection');
+                $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($codes as $code) {
+                    $data = explode('###', $code);
+                    $where['rate_app_code'] = $data[0];
+                    $modelUsed = $data[1];
+                    if ($modelUsed == 'MEMBER') {
+                        $existData = TblPurchaseRateApplicability::find()->where($where)->one();
+                        $historyModel = new TblPurchaseRateApplicabilityHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    } else {
+                        $existData = TblDcsPurchaseRateApplicabitity::find()->where($where)->one();
+                        $historyModel = new TblDcsPurchaseRateApplicabitityHistory();
+                        Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    }
+                    $saveModel[] = $historyModel;
+                    $deleteModel[] = $existData;
+                    $message = 'Purchase Rate Applicability';
+                    $type = 'delete';
+                }
+               
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+
+        return $this->render('delete_bulk_applicability', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }
