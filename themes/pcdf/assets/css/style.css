@@ -3816,8 +3816,8 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .div_dash_block_icon img {
     opacity: 0.9 !important
 }
-  /*122, 35, 28*/
-  
+/*122, 35, 28*/
+
 .right_30 {
     right: 30px !important
 }
@@ -3929,8 +3929,9 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .table-responsive {
-    max-height: 420px;
+    /*max-height: 420px;*/
     overflow-x: auto;
+    max-height: calc(100vH - 227px);
 }
 
 .panel > .table-responsive > .table-bordered > thead > tr > th{
