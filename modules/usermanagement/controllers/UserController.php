@@ -152,6 +152,16 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             }
                         }
                     }
+                    if ($model->oldAttributes['department'] != $model->department && $model->oldAttributes['allow_app_login'] == $model->allow_app_login && $model->oldAttributes['mobile_no'] == $model->mobile_no) {
+                        $contactModel = new TblContactDetails();
+                        $contactModel->mobile_no = $model->mobile_no;
+                        $contactModelData = $contactModel->getContactDetailsRecord();
+                        if (!empty($contactModelData)) {
+                            $contactModel = $contactModelData;
+                        }
+                        $contactModel->department = $model->department;
+                        $master[] = $contactModel;
+                    }
                 }
 
 //                else {
