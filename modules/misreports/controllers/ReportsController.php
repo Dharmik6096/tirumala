@@ -1190,7 +1190,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '807- Cleaning Flag Bmc',
             ],
             'DcsMaster' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,dcs_code:route_code',
                 'sp_name' => 'sp_mis_dcs_master_register',
                 'scenario' => 'DcsMaster',
                 'title' => 'DCS Register',
@@ -1200,7 +1200,7 @@ class ReportsController extends \app\controllers\ChildController {
 //                'output_type' => FALSE
             ],
             'MemberMaster' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,dcs_code:route_code,member_code',
                 'sp_name' => 'sp_mis_member_master_register',
                 'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
