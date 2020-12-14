@@ -24,6 +24,8 @@ use webvimark\modules\UserManagement\models\User;
  */
 class TblPaymentCycleController extends ChildController {
 
+    public $freeAccessActions = ['payment-cycle-list'];
+
     /**
      * Lists all TblPaymentCycle models.
      * @return mixed

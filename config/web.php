@@ -37,6 +37,7 @@ $config = [
         'customvalidation' => ['class' => 'app\components\CustomValidation'],
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
+        'pdf' => ['class' => 'app\components\pdf'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -246,6 +247,7 @@ $config = [
         'tankermovement' => ['class' => 'app\modules\tankermovement\Tankermovement',],
         'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',],
         'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
+        'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',],
     ],
     'params' => $params,
 ];

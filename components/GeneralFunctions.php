@@ -376,7 +376,7 @@ class GeneralFunctions extends Component {
         if (!empty($model->milk_type_code)) {
             $milkType = new TblAnimalType();
             $data = $milkType->getRecords();
-            if (!in_array($model->milk_type_code, array_map('strval', array_column($data, 'animal_type_code')), true)) {
+            if (!in_array(strval($model->milk_type_code), array_map('strval', array_column($data, 'animal_type_code')), true)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . " '" . $model->milk_type_code . "'" . ' is invalid.'));
                 return false;
             }
@@ -1383,14 +1383,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -1801,9 +1801,11 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function paymentCycleLock($model, $dateParam, $codeParam, $for, $type, $flagArray = []) {
+    public function paymentCycleLock($model, $dateParam, $codeParam, $for, $type, $flagArray = [], $showError = '') {
         if (!empty($model->$dateParam)) {
-            $date = Yii::$app->formatter->asDate($model->$dateParam, DATE_FORMAT);
+            $showError = !empty($showError) ? $showError : $dateParam;
+            $date = Yii::$app->formatter->asDate($model->$dateParam, 'php:Y-m-d');
+
             $payment_model = new TblPaymentCycleApplicability;
             $data = $payment_model->find()
                     ->where(['applicable_code' => $model->$codeParam, 'applicable_for' => $for, 'applicable_type' => $type])
@@ -1812,13 +1814,13 @@ class GeneralFunctions extends Component {
                     ->one();
 
             if (empty($data)) {
-                $model->addError($dateParam, "Payment Cycle is Not Available");
+                $model->addError($showError, "Payment Cycle is Not Available");
                 return false;
             } else if (!empty($data)) {
 
                 foreach ($flagArray as $flag) {
                     if ($data->$flag == 1) {
-                        $model->addError($dateParam, "Payment Cycle is Locked");
+                        $model->addError($showError, "Payment Cycle is Locked");
                         return false;
                     }
                 }
@@ -1850,7 +1852,7 @@ class GeneralFunctions extends Component {
 
     public function validateBeneficiary($model, $attribute, $params) {
         if (!empty($model->$attribute))
-            if (!preg_match('/^[a-zA-Z]+(\s[a-zA-Z]+)?$/', $model->$attribute)) {
+            if (!preg_match('/^[a-zA-Z]+(\s{1}+[a-zA-Z]+)*$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' Is Invalid'));
                 return false;
             }

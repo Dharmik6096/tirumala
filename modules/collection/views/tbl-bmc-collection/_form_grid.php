@@ -63,7 +63,7 @@ $attribute = [
             ['attribute' => 'shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'doc_no', 'vAlign' => 'middle'],
             ['attribute' => 'sample_no', 'vAlign' => 'middle'],
-            ['attribute' => 'qlty_time', 'vAlign' => 'middle', 'value' => function($model) {
+            ['attribute' => 'created_at', 'vAlign' => 'middle', 'value' => function($model) {
                     return Yii::$app->controls->view_time($model->created_at, 'php:H:i:s');
                 }],
             ['attribute' => 'milk_type_code', 'value' => function($model) {
@@ -106,6 +106,12 @@ $attribute = [
             ['attribute' => 'error_desc', 'filter' => FALSE],
             ['attribute' => 'adt_param', 'filter' => FALSE, 'visible' => false],
             ['attribute' => 'adt_value', 'filter' => FALSE, 'visible' => false],
+            ['attribute' => 'qlty_time', 'value' => function($model) {
+                return Yii::$app->controls->view_datetime($model->qlty_time);
+            }, 'filter' => false],
+            ['attribute' => 'qty_time', 'value' => function($model) {
+                return Yii::$app->controls->view_datetime($model->qty_time);
+            }, 'filter' => false],
         ];
 
         $grid_option = [

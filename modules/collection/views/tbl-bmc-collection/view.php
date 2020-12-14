@@ -223,7 +223,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'qlty_time',
+                            'attribute' => 'created_at',
                             'value' => Yii::$app->controls->view_time($model->created_at, 'php:H:i:s'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -272,6 +272,20 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         [
                             'attribute' => 'dcs_incharge_name',
                             'value' => !empty(Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')) ? Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->firstname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->lastname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->surname : 'N/A',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'qlty_time',
+                            'value' => !empty(Yii::$app->controls->view_datetime($model->qlty_time)) ? Yii::$app->controls->view_datetime($model->qlty_time) : 'N/A',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'qty_time',
+                            'value' => !empty(Yii::$app->controls->view_datetime($model->qty_time)) ? Yii::$app->controls->view_datetime($model->qty_time) : 'N/A',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],

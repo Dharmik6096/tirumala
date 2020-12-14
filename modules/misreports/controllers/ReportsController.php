@@ -612,6 +612,20 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberData() {
+        $this->report = 'MemberData';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberReceptionStatus() {
+        $this->report = 'MemberReceptionStatus';
+    }
+
+    public function actionProductSaleRateMasterRegister() {
+        $this->report = 'ProductSaleRateMasterRegister';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1498,6 +1512,25 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
+                'sp_name' => 'sp_mis_member_data_report',
+                'scenario' => 'MemberData',
+                'title' => '909 - Member Data',
+            ],
+            'MemberReceptionStatus' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_member_reception_data',
+                'scenario' => 'MemberReceptionStatus',
+                'title' => '910 - Member Reception Status',
+            ],
+            'ProductSaleRateMasterRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code',
+                'sp_name' => 'sp_mis_sale_rate_applicability_register',
+                'scenario' => 'ProductSaleRateMasterRegister',
+                'title' => 'Product Sale Rate Register',
+                'removeExportType' => ['CSV'],
             ],
         ];
         return $label[$l];

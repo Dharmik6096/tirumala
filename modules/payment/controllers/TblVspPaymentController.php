@@ -63,7 +63,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $model = new TblVspPayment();
         $model->scenario = 'processpayment';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            // $this->insertPaymentData($model);
+// $this->insertPaymentData($model);
             $this->getVspSpData($model);
             return $this->redirect(['payment-adjust', 'TblVspPayment' => ['payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'union_code' => $model->union_code]]);
         }
@@ -149,7 +149,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $society_list['member_payment_msg'] = '';
         if (!empty($society_list['member_payment'])) {
             $message = 'Please Process Member Payment of following Society.<br/>';
-            $message.=implode('<br/>', array_values($society_list['member_payment']));
+            $message .= implode('<br/>', array_values($society_list['member_payment']));
             $society_list['member_payment_msg'] = $message;
             $society_list['member_payment'] = array_keys($society_list['member_payment']);
         }
@@ -206,7 +206,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             'bmc_code' => $model->bmc_code,
             'customer_type' => $model->customer_type,
             'status' => ['processed', 'rejected']]);
-        //  ->andWhere(['>', 'final_pay', 0]);
+//  ->andWhere(['>', 'final_pay', 0]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false
@@ -222,16 +222,16 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         if (Yii::$app->request->post()) {
             $model = new TblVspPayment();
-            //   if (isset($_REQUEST['selection'])) {
+//   if (isset($_REQUEST['selection'])) {
             $model->load(Yii::$app->request->post());
             if (!empty($model->payment_cycle_code)) {
                 if (Yii::$app->request->post('flag') == 'vsp') {
-                    //  $model->dcs_code = Yii::$app->request->post('selection');
+//  $model->dcs_code = Yii::$app->request->post('selection');
                     $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code,
                                 'bmc_code' => $model->bmc_code,
                                 'customer_type' => $model->customer_type,
                                 'status' => ['processed', 'rejected']])
-                            // ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
+// ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
                             ->all();
 
                     /*   if (Yii::$app->session->get('makerChecker') == 1) {
@@ -283,56 +283,99 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     'tbl_vsp_payment.status' => ['processed', 'rejected'],
                         // 'tbl_vsp_payment.dcs_code' => $_REQUEST['selection']
                 ])
-                // ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
+// ->andWhere(['>', 'tbl_vsp_payment.final_pay', 0])
                 ->joinWith(['dcsCode', 'mainCustomerCode'])
                 ->all();
+
+        $extention = 'xls';
         $header = [
-            'mime' => 'application/csv',
-            'extension' => 'csv',
-            'writer' => 'CSV',
+            'mime' => 'application/ms-excel',
+            'extension' => $extention,
+            'writer' => 'Excel2007',
         ];
 
-        $objPHPExcel = new PHPExcel();
-        $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getDefaultStyle()
-                ->getNumberFormat()
-                ->setFormatCode(
-                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-        );
-        $rowCount = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Vendor Code');
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Vendor Name');
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Account No');
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Bank');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Branch');
-        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'IFSC');
-        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Total Amount');
-        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Adjsut Amount');
-        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'Final Amount');
-        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjsut Remarks');
-        foreach ($query as $row) {
-            // if ($row->final_pay > 0) {
-            $rowCount++;
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, '="' . $row->bank_account_no . '"');
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->bank_name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, $row->branch_name);
-            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, $row->ifsc);
-            $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->amount);
-            $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->adjust_amount);
-            $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
-            $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
-            //  }
-        }
         $fileName = "payment_disburse_vsp." . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        ob_end_clean();
-        $objWriter->save('php://output');
+        echo "<table border='1'>";
+        echo "<tr>";
+        echo "<td>Vendor Code</td>";
+        echo "<td>Vendor Name</td>";
+        echo "<td>Account No</td>";
+        echo "<td>Bank</td>";
+        echo "<td>Branch</td>";
+        echo "<td>IFSC</td>";
+        echo "<td>Total Amount</td>";
+        echo "<td>Adjsut Amount</td>";
+        echo "<td>Final Amount</td>";
+        echo "<td>Adjsut Remarks</td>";
+        echo "</tr>";
+
+        foreach ($query as $row) {
+            echo "<tr>";
+            echo $this->setVal($row->customer_code);
+            echo $this->setVal(Yii::$app->general->getCustomer($row, $row->customer_type));
+            echo $this->setVal($row->bank_account_no);
+            echo $this->setVal($row->bank_name);
+            echo $this->setVal($row->branch_name);
+            echo $this->setVal($row->ifsc);
+            echo $this->setVal($row->amount);
+            echo $this->setVal($row->adjust_amount);
+            echo $this->setVal($row->final_pay);
+            echo $this->setVal($row->adjust_remark);
+            echo "</tr>";
+        }
+        echo "</table>";
         exit();
+
+//        $header = [
+//            'mime' => 'application/csv',
+//            'extension' => 'csv',
+//            'writer' => 'CSV',
+//        ];
+//
+//        $objPHPExcel = new PHPExcel();
+//        $objPHPExcel->setActiveSheetIndex(0);
+//        $objPHPExcel->getDefaultStyle()
+//                ->getNumberFormat()
+//                ->setFormatCode(
+//                        \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//        );
+//        $rowCount = 1;
+//        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, 'Vendor Code');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, 'Vendor Name');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, 'Account No');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, 'Bank');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, 'Branch');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, 'IFSC');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, 'Total Amount');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, 'Adjsut Amount');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, 'Final Amount');
+//        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, 'Adjsut Remarks');
+//        foreach ($query as $row) {
+//            // if ($row->final_pay > 0) {
+//            $rowCount++;
+//            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $rowCount, $row->customer_code);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $rowCount, Yii::$app->general->getCustomer($row, $row->customer_type));
+//            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $rowCount, '="' . $row->bank_account_no . '"');
+//            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $rowCount, $row->bank_name);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $rowCount, $row->branch_name);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $rowCount, $row->ifsc);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('G' . $rowCount, $row->amount);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('H' . $rowCount, $row->adjust_amount);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('I' . $rowCount, $row->final_pay);
+//            $objPHPExcel->getActiveSheet()->SetCellValue('J' . $rowCount, $row->adjust_remark);
+//            //  }
+//        }
+//        $fileName = "payment_disburse_vsp." . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+//        header('Content-Disposition: attachment;filename=' . $fileName);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        ob_end_clean();
+//        $objWriter->save('php://output');
+//        exit();
     }
 
     public function actionBankPayment() {
@@ -514,12 +557,12 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                                 //'NEFT' . '|' . //Transaction Type
                                 //date('d.m.Y'); //Date of Transaction
                                 if (substr($union_bank->ifsc, 0, 4) == substr($row->ifsc, 0, 4)) {
-                                    $ubi_text.=$txtrow . PHP_EOL;
+                                    $ubi_text .= $txtrow . PHP_EOL;
                                 } else {
-                                    $text.=$txtrow . PHP_EOL;
+                                    $text .= $txtrow . PHP_EOL;
                                 }
                                 $bank_total_dabit = $bank_total_dabit + $row->final_amount;
-                                $bank_total_cnt +=1;
+                                $bank_total_cnt += 1;
                             } else if ($bank_type == 'AXIS') {
                                 $char = (substr($union_bank->ifsc, 0, 4) == substr($row->ifsc, 0, 4)) ? 'FT' : 'NE';
                                 $txtrow = 'P^' . //Identifier
@@ -562,9 +605,9 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                                         $union_bank->email . '^' . // CORP_EMAIL_ADDR
                                         date('Y-m-d H-i-s') . '^' . // TRANSMISSION DATE
                                         '^'; // User ID,USER DEPARTMENT  
-                                $text.=$txtrow . PHP_EOL;
+                                $text .= $txtrow . PHP_EOL;
                                 $bank_total_dabit = $bank_total_dabit + $row->final_amount;
-                                $bank_total_cnt +=1;
+                                $bank_total_cnt += 1;
                             }
                         }
 
@@ -651,14 +694,14 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                                         unlink($temp_fileName);
                                     } else {
                                         /* update vsp payment data */
-                                        Yii::$app->db->createCommand("update mp set mp.status='processed',mp.payment_transaction_code=NULL from tbl_vsp_payment mp 
-                                                                      inner join tbl_payment_transaction pt on pt.payment_transaction_code=mp.payment_transaction_code
-                                                                      where pt.file_name=:file_name and mp.status='sent'")
+                                        Yii::$app->db->createCommand("update mp set mp.status = 'processed', mp.payment_transaction_code = NULL from tbl_vsp_payment mp
+inner join tbl_payment_transaction pt on pt.payment_transaction_code = mp.payment_transaction_code
+where pt.file_name = :file_name and mp.status = 'sent'")
                                                 ->bindValue(':file_name', $f_name)
                                                 ->execute();
                                         /* update vsp payment data */
                                         /* delete payment data */
-                                        Yii::$app->db->createCommand("delete from tbl_payment_transaction where file_name=:file_name and type='vsp'")
+                                        Yii::$app->db->createCommand("delete from tbl_payment_transaction where file_name = :file_name and type = 'vsp'")
                                                 ->bindValue(':file_name', $f_name)
                                                 ->execute();
                                         /* delete payment data */
@@ -789,9 +832,9 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 $saveArray[] = $trn;
                 if ($inshead['sumdata']) {
                     if ($trn->bill_head_type == 0) {
-                        $tot_addition+=$trn->amount;
+                        $tot_addition += $trn->amount;
                     } else {
-                        $tot_deduction+=$trn->amount;
+                        $tot_deduction += $trn->amount;
                     }
                 }
             }
@@ -806,16 +849,16 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     public function deletepayment($model) {
         /* update vsp payment data */
-        Yii::$app->db->createCommand("update mp set mp.status='processed',mp.payment_transaction_code=NULL from tbl_vsp_payment mp 
-                                                                      inner join tbl_payment_transaction pt on pt.payment_transaction_code=mp.payment_transaction_code
-                                                                      where pt.dcs_code IN (:dcs_code) and pt.dcs_payment_cycle_code=:dcs_payment_cycle_code and pt.type='vsp' and mp.status='sent' and pt.is_file=0")
+        Yii::$app->db->createCommand("update mp set mp.status = 'processed', mp.payment_transaction_code = NULL from tbl_vsp_payment mp
+inner join tbl_payment_transaction pt on pt.payment_transaction_code = mp.payment_transaction_code
+where pt.dcs_code IN (:dcs_code) and pt.dcs_payment_cycle_code = :dcs_payment_cycle_code and pt.type = 'vsp' and mp.status = 'sent' and pt.is_file = 0")
                 ->bindValue(':dcs_code', is_array($model->dcs_code) ? implode(',', $model->dcs_code) : $model->dcs_code)
                 ->bindValue(':dcs_payment_cycle_code', $model->dcs_payment_cycle_code)
                 ->execute();
         /* update vsp payment data */
         /* delete payment data */
         Yii::$app->db->createCommand("delete from tbl_payment_transaction
-                                                      where dcs_code IN (:dcs_code) and dcs_payment_cycle_code=:dcs_payment_cycle_code and type='vsp'  and is_file=0")
+where dcs_code IN (:dcs_code) and dcs_payment_cycle_code = :dcs_payment_cycle_code and type = 'vsp' and is_file = 0")
                 ->bindValue(':dcs_code', is_array($model->dcs_code) ? implode(',', $model->dcs_code) : $model->dcs_code)
                 ->bindValue(':dcs_payment_cycle_code', $model->dcs_payment_cycle_code)
                 ->execute();
@@ -832,6 +875,14 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['message' => $msg]);
+    }
+
+    public function setVal($value) {
+        if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
+            echo "<td>" . $value . "</td>";
+        } else {
+            echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
+        }
     }
 
 }

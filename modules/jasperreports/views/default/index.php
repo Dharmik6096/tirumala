@@ -260,14 +260,15 @@ $defaultToggle = true;
                                         if (in_array($value, array('p_payment_cycle_code'))) {
                                             $where = json_encode(['data_lock_bmc' => 1]);
                                             echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
-                                            echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                                             echo Html::hiddenInput('member_billing_lock_check', '', ['id' => 'member_billing_lock_check']);
                                             if (isset($value_array[1]) && isset($value_array[2]) && $value_array[1] == 'default') {
                                                 echo Html::hiddenInput('p_customer_type', $value_array[2], ['id' => 'reportsmodel-p_customer_type']);
+                                                $where = json_encode(['data_lock_member' => 1]);
                                             }
                                             if (isset($value_array[1]) && $value_array[1] == 'type_check') {
                                                 echo Html::hiddenInput('type_check', TRUE, ['id' => 'reportsmodel-type_check']);
                                             }
+                                            echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-p_bmc_code,reportsmodel-p_customer_type,applicable_for,data_lock_bmc,member_billing_lock_check,reportsmodel-type_check', 'p_payment_cycle_code', $model->getAttributeLabel('p_payment_cycle_code'), FALSE, FALSE); ?>
@@ -317,7 +318,12 @@ $defaultToggle = true;
                                             echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
                                         }
                                         ?>
-                                        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                                        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                                        <?php
+                                        if (isset($data['tcpdf']) && $data['tcpdf']) {
+                                            echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', 'pdf')]);
+                                        }
+                                        ?>
                                         <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                                     </div>
                                 </div>

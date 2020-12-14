@@ -25,27 +25,27 @@ var initDepdropMs;
         });
     };
     $(document).ready(function () {
-        if (!$("div").hasClass('not_ellipsis')) {
-            var num;
-            var $tds;
-            var tdsx = $("table.kv-grid-table").children('tbody').children('tr:first-child').children('td').length;
-            $("table.kv-grid-table").each(function (i, t) {
-                $tds = $("td", t);
-                num = $tds.length;
-                if (tdsx > 1) {
-                    for (var i = tdsx; i < num; i++) {
-                        var t = $tds.eq(i).text();
-                        if ($tds.eq(i).text().length > 10 && $tds.eq(i).text().indexOf('<div') < 0 && $tds.eq(i).html().indexOf('<div') < 0)
-                        {
-                            $tds.eq(i).text(t.substr(0, 10));
-                            $tds.eq(i).attr("title", t);
-                        }
+        // if (!$("div").hasClass('not_ellipsis')) {
+        //     var num;
+        //     var $tds;
+        //     var tdsx = $("table.kv-grid-table").children('tbody').children('tr:first-child').children('td').length;
+        //     $("table.kv-grid-table").each(function (i, t) {
+        //         $tds = $("td", t);
+        //         num = $tds.length;
+        //         if (tdsx > 1) {
+        //             for (var i = tdsx; i < num; i++) {
+        //                 var t = $tds.eq(i).text();
+        //                 if ($tds.eq(i).text().length > 10 && $tds.eq(i).text().indexOf('<div') < 0 && $tds.eq(i).html().indexOf('<div') < 0)
+        //                 {
+        //                     $tds.eq(i).text(t.substr(0, 10));
+        //                     $tds.eq(i).attr("title", t);
+        //                 }
 
-                    }
-                }
+        //             }
+        //         }
 
-            });
-        }
+        //     });
+        // }
 
         $('.shift select option[value=\'3\']').remove();
         var toolbar = $('#importModal');
@@ -230,6 +230,23 @@ var initDepdropMs;
                 $(this).attr('disabled', 'disabled');
             })
         })
+    });
+    
+    $('.check_mobile_length').bind("keyup", function (e) {
+        var this_id = $(this).attr('id');
+        var filter = /^\d*(?:\.\d{1,2})?$/;
+        var mob_num = $(e.target).val();
+        if (filter.test(mob_num)) {
+            if(mob_num.length!=10){
+                $('.field-'+this_id+' .help-block').attr('title', $('.field-'+this_id+' label').text()+' must contain exactly 10 digits').text($('.field-'+this_id+' label').text()+' must contain exactly 10 digits');
+            }
+            else{
+                $('.field-'+this_id+' .help-block').attr('title', '').text('');
+            }
+        }
+        else{
+            $('.field-'+this_id+' .help-block').attr('title',  $('.field-'+this_id+' label').text()+' is not valid').text($('.field-'+this_id+' label').text()+' is not valid');
+        }
     });
 })(jQuery);
 

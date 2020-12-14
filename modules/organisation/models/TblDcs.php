@@ -133,7 +133,7 @@ class TblDcs extends ChildModel {
                     return empty($model->milk_type_auto);
                 },
                 'whenClient' => "function (attribute, value) { return !$('#tbldcs-milk_type_auto').is(':checked') }"
-                , 'except' => ['routeMapping']],
+                , 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
             [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
             [['vendor'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
@@ -1166,7 +1166,7 @@ class TblDcs extends ChildModel {
         $this->route_code = $this->route;
         $this->route_code = Yii::$app->general->getforeignkey($this->routeRefCode, 'route_code');
 
-        if (!empty($this->route_code) && empty($this->routeMapping) || (!empty($this->routeMapping) && ($this->routeMapping->to_type != 'bmc' || $this->routeMapping->to_dest != $this->bmc_code))) {
+        if ((empty($this->routeMapping)) || (!empty($this->routeMapping) && ($this->routeMapping->to_type != 'bmc' || $this->routeMapping->to_dest != $this->bmc_code))) {
             $this->addError('route_code', Yii::t('app/validation', $this->getAttributeLabel('route_code') . ' is Invalid.'));
         }
     }

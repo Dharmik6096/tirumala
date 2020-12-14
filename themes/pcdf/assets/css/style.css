@@ -3910,3 +3910,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .padding_top_10{
     padding-top: 10px;
 }
+
+.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom {
+    z-index: 9999 !important;
+}

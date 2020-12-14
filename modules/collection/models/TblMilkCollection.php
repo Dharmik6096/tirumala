@@ -146,6 +146,11 @@ class TblMilkCollection extends \app\models\ChildModel {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member', 'sync_lock_member']);
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll']],
             [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
@@ -501,6 +506,9 @@ class TblMilkCollection extends \app\models\ChildModel {
             $this->milkTypeWiseUnique($ApprovalModel, $this, TRUE);
             $this->milkTypeWiseUnique($this, $this, FALSE, TRUE);
             Yii::$app->general->validateRateRange($this);
+            if ($flag != 1) {
+                Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', 'DCS', ['data_lock_member', 'billing_lock_member'], 'milk_type_code');
+            }
         }
     }
 

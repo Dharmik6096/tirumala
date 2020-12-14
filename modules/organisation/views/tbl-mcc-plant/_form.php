@@ -72,7 +72,7 @@ $form = ActiveForm::begin([
             <? = $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
-            <? = $form->field($model, 'mobile_no')->textInput(['maxlength' => true]) ?>
+            <? = $form->field($model, 'mobile_no')->textInput(['maxlength' => true,'class' => 'form-control check_mobile_length']) ?>
         </div>-->
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
