@@ -28,8 +28,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->wef_date);
-}],
+            return Yii::$app->controls->view_date($model->wef_date);
+        }],
     ['attribute' => 'shift_id',
         'filter' => false,
         'value' => function($model) {
@@ -46,6 +46,9 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'filter' => false],
+    ['attribute' => 'for_member', 'value' => function($model) {
+            return $model->for_member == 1 ? 'YES' : 'NO';
+        }, 'filter' => false],
     'description',
 ];
 
@@ -61,8 +64,8 @@ $grid_option = [
         }
         return ['class' => $rowcolor];
     },
-            'actions' => [
-                'view' => true,
+    'actions' => [
+        'view' => true,
 //                'update_data' => function ($url, $model) {
 //                    $disable = ($model->is_active == 0) ? 'disabled' : '';
 //                    if ($disable == '') {
@@ -74,22 +77,22 @@ $grid_option = [
 //                    $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
 //                    return GhostHtml::a('<span class="glyphicon glyphicon-pencil"></span>', ['/dcsoperation/tbl-dcs-purchase-rate-details/create-rate', 'id' => $model->purchase_rate_code, 'method' => $model->rate_gen_method_code], $options);
 //                },
-                'mapping' => function ($url, $model) {
-                    $disable = ($model->is_active == 0) ? 'disabled' : '';
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
-                    return GhostHtml::a('<i class="fa fa-plus"></i>', ['/dcsoperation/tbl-dcs-purchase-rate/purchase-rate-applicability', 'id' => $model->purchase_rate_code], $options);
-                },
-                        'view_rate' => function ($url, $model) {
-                    $disable = ($model->is_active == 0) ? 'disabled' : '';
-                    $options = ['title' => Yii::t('app', 'Rate Chart'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Rate Chart', 'class' => $disable];
-                    return GhostHtml::a('<i class="fa fa-bar-chart" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'milk_quality' => 1], $options);
-                },
-                        'export_rate_chart' => function ($url, $model) {
-                    $options = ['title' => Yii::t('app', 'Export Rate Chart'),];
-                    return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate-details/export-rate-chart', 'id' => $model->purchase_rate_code], $options);
-                }
-                    ]
-                ];
+        'mapping' => function ($url, $model) {
+            $disable = ($model->is_active == 0) ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/dcsoperation/tbl-dcs-purchase-rate/purchase-rate-applicability', 'id' => $model->purchase_rate_code], $options);
+        },
+        'view_rate' => function ($url, $model) {
+            $disable = ($model->is_active == 0) ? 'disabled' : '';
+            $options = ['title' => Yii::t('app', 'Rate Chart'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Rate Chart', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-bar-chart" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'milk_quality' => 1], $options);
+        },
+        'export_rate_chart' => function ($url, $model) {
+            $options = ['title' => Yii::t('app', 'Export Rate Chart'),];
+            return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate-details/export-rate-chart', 'id' => $model->purchase_rate_code], $options);
+        }
+    ]
+];
 
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-                ?>
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
