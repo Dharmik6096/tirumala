@@ -608,7 +608,7 @@ class TblDcs extends ChildModel {
 
     public function getRouteDcs($route) {
 
-        return $routeSocieties = TblSocietyCodes::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
+        return $routeSocieties = TblSocietyCodes::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.ref_code'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
 
 
 //return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
@@ -681,7 +681,9 @@ class TblDcs extends ChildModel {
         if ($routeCode === '')
             $routeCode = 0;
         $value = $this->getRouteDcs($routeCode);
-        $value = ArrayHelper::map($value, 'dcs_code', 'dcs_name');
+        $value = ArrayHelper::map($value, 'dcs_code', function($value) {
+                    return $value['dcs_name'] . ' - ' . $value['ref_code'];
+                });
         asort($value, SORT_NATURAL | SORT_FLAG_CASE);
         return $value;
     }
@@ -733,13 +735,13 @@ class TblDcs extends ChildModel {
     public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '', $dateFilter = '') {
         $value = $this->getBMCDCS($plantCode, $RLS, $dateFilter);
         $value = ArrayHelper::map($value, 'dcs_code', function($value) use ($type) {
-                    return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ')' : $value->dcs_name;
+                    return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ') - ' . $value->ref_code : $value->dcs_name . ' - ' . $value->ref_code;
                 });
         return $value;
     }
 
     public function getBMCDCS($plantCode = [], $RLS = 'TRUE', $dateFilter = NULL) {
-        $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
+        $query = $this->find()->select(['dcs_code', 'dcs_name', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($plantCode))
             $query->andWhere(['bmc_code' => $plantCode]);
         if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
@@ -902,7 +904,7 @@ class TblDcs extends ChildModel {
         }
         $dcs = $query->all();
         $dcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) use ($concatField) {
-                    return $dcs->dcs_name . '-' . $dcs->{$concatField};
+                    return $dcs->{$concatField} . '-' . $dcs->dcs_name;
                 });
         asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
         return $dcs;

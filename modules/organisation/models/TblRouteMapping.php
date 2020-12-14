@@ -191,8 +191,8 @@ class TblRouteMapping extends \app\models\ChildModel {
 
         //echo $route_type; echo $route_dest_type; exit;
 
-        $plant_quey = (new Query())->select(['plant_code AS code', 'name', new Expression(" 'Plant' as tname"), 'plant_code_ex as ex_code'])->from('tbl_plant p')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
-        $mcc_query = (new Query())->select(['mcc_plant_code AS code', 'name', new Expression("'MCC' as tname"), 'mcc_plant_code_ex as ex_code'])->from('tbl_mcc_plant t')->where(['union_code' => $union_code, 'is_active' => 1]);
+        $plant_quey = (new Query())->select(['plant_code AS code', 'name', new Expression(" 'Plant' as tname"), 'plant_code_ex as ex_code', 'ref_code'])->from('tbl_plant p')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
+        $mcc_query = (new Query())->select(['mcc_plant_code AS code', 'name', new Expression("'MCC' as tname"), 'mcc_plant_code_ex as ex_code', 'ref_code'])->from('tbl_mcc_plant t')->where(['union_code' => $union_code, 'is_active' => 1]);
         $route_type = strtolower($route_type);
         switch (1) {
             case ($route_type == 'can' && $route_dest_type == 'from'):
@@ -220,7 +220,7 @@ class TblRouteMapping extends \app\models\ChildModel {
                 break;
 
             case ($route_type == 'can' && $route_dest_type == 'to'):
-                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname"), 'bmc_code_ex as ex_code'])->from('tbl_bmc b')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
+                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname"), 'bmc_code_ex as ex_code', 'ref_code'])->from('tbl_bmc b')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
                 $results = $mcc_query->union($plant_quey)->union($bmc_query)->all();
                 break;
 
@@ -381,15 +381,15 @@ class TblRouteMapping extends \app\models\ChildModel {
         }
     }
 
-    public function routeFromDestination($plant_code, $mcc_code = NULL, $bmc_code = NULL) {
-        $data = $this->find()->select(['route_code', 'route_name', 'to_type'])
+    public function routeFromDestination($plant_code, $mcc_code = NULL, $bmc_code = NULL, $concateRef = true) {
+        $data = $this->find()->select(['route_code', 'route_name', 'to_type', 'ref_code'])
                 ->where(['to_dest' => $plant_code, 'to_type' => 'plant']);
         !empty($mcc_code) ? $data = $data->orWhere(['to_dest' => $mcc_code, 'to_type' => 'mcc']) : '';
         !empty($bmc_code) ? $data = $data->orWhere(['to_dest' => $bmc_code, 'to_type' => 'bmc']) : '';
 
         $data = $data->all();
-        $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function ($value) {
-                    return $value['route_name'] . ' - ' . strtoupper($value['to_type']);
+        $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function ($value) use($concateRef) {
+                    return ($concateRef) ? $value['route_name'] . ' - ' . strtoupper($value['to_type']) . ' - ' . $value['ref_code'] : $value['route_name'] . ' - ' . strtoupper($value['to_type']);
                 });
         return $array;
     }

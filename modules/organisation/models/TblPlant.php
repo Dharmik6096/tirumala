@@ -57,14 +57,14 @@ class TblPlant extends \app\models\ChildModel {
             [['email'], 'email'],
             //[['plant_code'], 'unique'],
             [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             [['mobile_no'], 'string', 'max' => 10],
             [['created_at', 'updated_at', 'capacity', 'valid_from', 'is_active'], 'safe'],
             [['capacity'], 'integer'],
@@ -178,13 +178,13 @@ class TblPlant extends \app\models\ChildModel {
     public function getPlantList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
         $value = $this->getPlant($unionCode, $RLS, $notIn);
         $value = ArrayHelper::map($value, 'plant_code', function($value) use ($concatCode) {
-                    return $value->name . ($concatCode ? ' - ' . $value->plant_code : '');
+                    return $value->name . ($concatCode ? ' - ' . $value->plant_code : ' - ' . $value->ref_code);
                 });
         return $value;
     }
 
     public function getPlant($unionCode = [], $RLS = 'TRUE', $notIn = []) {
-        $query = $this->find()->select(['plant_code', 'name'])
+        $query = $this->find()->select(['plant_code', 'name', 'ref_code'])
                 ->where(['is_active' => 1]);
         if (!empty($unionCode))
             $query->andWhere(['union_code' => $unionCode]);

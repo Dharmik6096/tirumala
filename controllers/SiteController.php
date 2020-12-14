@@ -399,6 +399,12 @@ class SiteController extends Controller {
             if (!empty($data[5])) {
                 array_push($select_fields, $data[5]);
             }
+            $refVal = explode('~', $select_fields['value']);
+            $select_fields['value'] = !empty($refVal[0]) ? $refVal[0] : '';
+            if (!empty($refVal[1])) {
+                array_push($select_fields, $refVal[1]);
+            }
+
             $check_list = [];
             if (!empty($data[7]) && $data[6] == 1) {
                 $check_list = explode('-', $data[7]);
@@ -432,6 +438,8 @@ class SiteController extends Controller {
                     $value = $r['value'] . '(' . $r[$data[5]] . ')';
                 else
                     $value = $r['value'];
+                if (!empty($refVal[1]) && !empty($r[$refVal[1]]))
+                    $value .= ' - ' . $r[$refVal[1]];
                 if ($data[6] == 0 || empty($check_list) || in_array($r['id'], $check_list))
                     $out[] = array('id' => $r['id'],
                         'name' => $value);

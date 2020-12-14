@@ -227,7 +227,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $data = $query->all();
         if ($concatCode) {
             $data = ArrayHelper::map($data, 'customer_code', function($data) {
-                        return $data->customer_name . ' - ' . $data->customer_code_ex;
+                        return $data->customer_code_ex . ' - ' . $data->customer_name;
                     });
         } else {
             $data = ArrayHelper::map($data, 'customer_code', 'customer_name');
@@ -308,7 +308,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         }
         $data = $query->all();
         $data = ArrayHelper::map($data, 'customer_code', function($data) {
-                    return !empty($data->customerType) ? $data->customer_name . '(' . Yii::t('app', $data->customerType->customer_desc) . ')' : $data->customer_name;
+                    return !empty($data->customerType) ? $data->customer_name . '(' . Yii::t('app', $data->customerType->customer_desc) . ') - ' . $data->ref_code : $data->customer_name . ' - ' . $data->ref_code;
                 });
         asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         return $data;
@@ -363,7 +363,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $query->andWhere(['bmc_code' => $bmc, 'customer_type' => $type]);
         }
         $data = $query->all();
-        $data = ArrayHelper::map($data, 'customer_code', 'customer_name');
+        $data = ArrayHelper::map($data, 'customer_code', function($value) {
+                    return $value->customer_name . ' - ' . $value->ref_code;
+                });
         asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         return $data;
     }

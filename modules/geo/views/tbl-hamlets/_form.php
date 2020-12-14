@@ -59,7 +59,7 @@ echo Html::hiddenInput('warning', 0, ['id' => 'warning']);
 
 <?php
 $script = "
-    $('#tblhamlets-village_code').on('blur',function(){
+    $('#tblhamlets-village_code').change(function(){
             var id = $('#tblhamlets-village_code').val();
             $.ajax({
                         type: 'post',

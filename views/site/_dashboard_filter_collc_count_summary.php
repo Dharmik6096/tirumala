@@ -1,5 +1,6 @@
 <?php
 
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
@@ -43,7 +44,9 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                         <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date6', 'to_date6', $range_1_id_from, $range_1_id_to); ?>
                     </div>
                     <div class="col-sm-2">
-                        <?= $form->field($model, 'widget_for')->dropDownList($widget_for)->label(false); ?>
+                        <?= $form->field($model, 'widget_for')->widget(Select2::classname(), [
+                            'data' => $widget_for]
+                            )->label(false);?>
                     </div>
                     <?= Html::activeHiddenInput($model, 'union_code'); ?>
                     <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
