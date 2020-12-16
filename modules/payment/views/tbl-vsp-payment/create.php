@@ -15,7 +15,6 @@ $this->title = 'Vendor Payment Process : Step 1';
                     //'action' => ['list-payment'],
                     //'method' => 'GET',
                     'validateOnBlur' => false,
-                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -50,7 +49,7 @@ $this->title = 'Vendor Payment Process : Step 1';
 
             <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
-                    <?= Yii::$app->controls->save('Next', $model); ?>   
+                    <?= Yii::$app->controls->save('Next', $model, ' saveData '); ?>   
                     <?= Yii::$app->controls->cancel(); ?>
                 </div>
             </div>
@@ -61,6 +60,22 @@ $this->title = 'Vendor Payment Process : Step 1';
 
 <?php
 $script = "
+
+    $(document).on('click', '.saveData', function(){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        $('form#w0').on('afterValidate', function () {
+            var len = $('form#w0').find('.has-error').length;
+            if (len >= 1) {
+                $('#pageloader').hide();
+                $('#loadercontent').hide();
+            } else {
+                $('#pageloader').show();
+                $('#loadercontent').show();
+            }
+        });
+    })
+
  /* $('#tblvsppayment-customer_type').on('change',function(){
      var customer_type= $(this).val();
     var where_data_lock='';     
