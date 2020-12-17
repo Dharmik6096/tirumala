@@ -52,7 +52,7 @@ use app\modules\general\models\TblDepartment;
 class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
-    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route;
+    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route, $beneficiary_name;
 
     /**
      * @inheritdoc
@@ -68,7 +68,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
             [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route'], 'safe'],
+            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name'], 'safe'],
             [['route'], 'required', 'on' => ['importCsv']],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type'], 'safe'],
@@ -227,7 +227,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $data = $query->all();
         if ($concatCode) {
             $data = ArrayHelper::map($data, 'customer_code', function($data) {
-                        return $data->customer_name . ' - ' . $data->customer_code_ex;
+                        return $data->customer_code_ex . ' - ' . $data->customer_name;
                     });
         } else {
             $data = ArrayHelper::map($data, 'customer_code', 'customer_name');
@@ -308,7 +308,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         }
         $data = $query->all();
         $data = ArrayHelper::map($data, 'customer_code', function($data) {
-                    return !empty($data->customerType) ? $data->customer_name . '(' . Yii::t('app', $data->customerType->customer_desc) . ')' : $data->customer_name;
+                    return !empty($data->customerType) ? $data->customer_name . '(' . Yii::t('app', $data->customerType->customer_desc) . ') - ' . $data->ref_code : $data->customer_name . ' - ' . $data->ref_code;
                 });
         asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         return $data;
@@ -363,7 +363,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $query->andWhere(['bmc_code' => $bmc, 'customer_type' => $type]);
         }
         $data = $query->all();
-        $data = ArrayHelper::map($data, 'customer_code', 'customer_name');
+        $data = ArrayHelper::map($data, 'customer_code', function($value) {
+                    return $value->customer_name . ' - ' . $value->ref_code;
+                });
         asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         return $data;
     }
@@ -409,11 +411,15 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $model->setbankDetails($model, $modelList, $errors);
         } elseif (!empty($defaultBankDetail)) {
             $defaultBankDetail->ifsc = $model->ifsc;
+            $defaultBankDetail->beneficiary_name = $model->beneficiary_name;
             $defaultBankDetail->branch_code = Yii::$app->general->getforeignkey($model->ifscDetail, 'branch_code');
             $defaultBankDetail->bank_code = Yii::$app->general->getforeignkey($model->ifscDetail, 'bank_code');
             if (empty($defaultBankDetail->branch_code)) {
                 $this->addError('ifsc', Yii::t('app/validation', $this->getAttributeLabel('ifsc') . ' is Invalid.'));
                 return false;
+            }
+            if (!$defaultBankDetail->validate()) {
+                $errors[] = $defaultBankDetail->getErrors();
             }
             array_push($modelList, $defaultBankDetail);
         }
@@ -443,6 +449,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             $branch_model = new TblBankDetails();
             $branch_model->setModel('customer', $model->customer_code);
             $branch_model->ifsc = $model->ifsc;
+            $branch_model->beneficiary_name = $model->beneficiary_name;
             $branch_model->bank_account_no = $model->bank_account_no;
             $branch_model->branch_code = Yii::$app->general->getforeignkey($this->ifscDetail, 'branch_code');
             $branch_model->bank_code = Yii::$app->general->getforeignkey($this->ifscDetail, 'bank_code');

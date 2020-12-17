@@ -271,4 +271,38 @@ class TblProductRateController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
+    public function actionDeleteBulkApplicability() {
+        $searchModel = new TblProductSaleRateApplicabilitySearch();
+        $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'deleteApplicability';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $deletedata = Yii::$app->request->post('selection');
+                $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($deletedata as $code) {
+                    $where['product_sale_rate_applicability_code'] = $code;
+                    $existData = TblProductSaleRateApplicability::find()->where($where)->one();
+                    $historyModel = new TblProductSaleRateApplicabilityHistory();
+                    Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    $saveModel[] = $historyModel;
+                    $deleteModel[] = $existData;
+                    $message = 'Sale Rate Applicability';
+                    $type = 'delete';
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+
+        return $this->render('delete_bulk_applicability', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
 }

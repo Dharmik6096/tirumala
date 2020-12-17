@@ -1,6 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Product Purchase Rate'));
 $this->params['menu'][] = Yii::$app->controls->add('Product Purchase Rate');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Bulk Delete Applicability', 'delete-bulk-applicability', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

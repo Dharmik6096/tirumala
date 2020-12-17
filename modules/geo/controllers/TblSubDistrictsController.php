@@ -66,7 +66,8 @@ class TblSubDistrictsController extends ChildController {
         $this->model = $this->findModel($id);
         $this->model->scenario = 'add';
         $this->viewFile = 'update';
-        $this->model->state = $this->model->districtCode->stateCode->state_code;
+        // $this->model->state = $this->model->districtCode->stateCode->state_code;
+        $this->model->state = \Yii::$app->general->getmultiforeignkey($this->model->districtCode,['stateCode'],'state_code');
         $validate = 1;
         if (Yii::$app->request->post()) {
 

@@ -226,7 +226,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'adt_value' => Yii::t('app', 'Adultration Value'),
             'bmc_silos_info_code' => Yii::t('app', 'Silos'),
             'qty_time' => Yii::t('app', 'Qty. Time'),
-            'created_at' => Yii::t('app', 'Sample Time'),
+            'created_at' => Yii::t('app', 'Receive Time'),
         ];
     }
 

@@ -64,8 +64,8 @@ class TblVillagesController extends ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         $this->model->scenario = 'add';
-        $this->model->state = $this->model->subDistrictCode->districtCode->stateCode->state_code;
-        $this->model->district = $this->model->subDistrictCode->districtCode->district_code;
+        $this->model->state = \Yii::$app->general->getmultiforeignkey($this->model->subDistrictCode,['districtCode','stateCode'],'state_code');
+        $this->model->district = \Yii::$app->general->getmultiforeignkey($this->model->subDistrictCode,['districtCode'],'district_code');
         $validate = 1;
 
         if (Yii::$app->request->post()) {

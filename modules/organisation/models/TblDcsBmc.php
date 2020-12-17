@@ -268,7 +268,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 ->all();
         $bmc = [];
         foreach ($rows as $value) {
-            $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name);
+            $bmc[] = array('id' => $value->bmc_code, 'name' => $value->bmc_name . ' - ' . $value->ref_code);
         }
         return $bmc;
     }
@@ -279,12 +279,14 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false) {
         $value = $this->getBMC($plantCode, $RLS, $hasBMC);
-        $value = ArrayHelper::map($value, 'bmc_code', 'bmc_name');
+        $value = ArrayHelper::map($value, 'bmc_code', function($value) {
+                    return $value->bmc_name . ' - ' . $value->ref_code;
+                });
         return $value;
     }
 
     public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1) {
-        $query = $this->find()->select(['bmc_code', 'bmc_name'])->where(['is_active' => 1]);
+        $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($plantCode))
             $query->andWhere(['mcc_plant_code' => $plantCode]);
         if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
@@ -432,7 +434,7 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         $bmc = $query->all();
         $bmc = ArrayHelper::map($bmc, 'bmc_code', function($bmc) {
-                    return $bmc->bmc_name . ' - ' . $bmc->bmc_code;
+                    return $bmc->bmc_code . ' - ' . $bmc->bmc_name;
                 });
         asort($bmc, SORT_NATURAL | SORT_FLAG_CASE);
         return $bmc;

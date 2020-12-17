@@ -109,7 +109,7 @@ class TblDcs extends ChildModel {
     public $tmcc_code;
     public $is_sentbox;
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
-    public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto, $auto_member_create, $route;
+    public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto, $auto_member_create, $route, $beneficiary_name;
 
     /**
      * @inheritdoc
@@ -167,7 +167,7 @@ class TblDcs extends ChildModel {
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']],
-            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create'], 'safe'],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
 //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
@@ -608,7 +608,7 @@ class TblDcs extends ChildModel {
 
     public function getRouteDcs($route) {
 
-        return $routeSocieties = TblSocietyCodes::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
+        return $routeSocieties = TblSocietyCodes::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.ref_code'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
 
 
 //return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
@@ -681,7 +681,9 @@ class TblDcs extends ChildModel {
         if ($routeCode === '')
             $routeCode = 0;
         $value = $this->getRouteDcs($routeCode);
-        $value = ArrayHelper::map($value, 'dcs_code', 'dcs_name');
+        $value = ArrayHelper::map($value, 'dcs_code', function($value) {
+                    return $value['dcs_name'] . ' - ' . $value['ref_code'];
+                });
         asort($value, SORT_NATURAL | SORT_FLAG_CASE);
         return $value;
     }
@@ -733,13 +735,13 @@ class TblDcs extends ChildModel {
     public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '', $dateFilter = '') {
         $value = $this->getBMCDCS($plantCode, $RLS, $dateFilter);
         $value = ArrayHelper::map($value, 'dcs_code', function($value) use ($type) {
-                    return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ')' : $value->dcs_name;
+                    return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ') - ' . $value->ref_code : $value->dcs_name . ' - ' . $value->ref_code;
                 });
         return $value;
     }
 
     public function getBMCDCS($plantCode = [], $RLS = 'TRUE', $dateFilter = NULL) {
-        $query = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_active' => 1]);
+        $query = $this->find()->select(['dcs_code', 'dcs_name', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($plantCode))
             $query->andWhere(['bmc_code' => $plantCode]);
         if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
@@ -902,7 +904,7 @@ class TblDcs extends ChildModel {
         }
         $dcs = $query->all();
         $dcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) use ($concatField) {
-                    return $dcs->dcs_name . '-' . $dcs->{$concatField};
+                    return $dcs->{$concatField} . '-' . $dcs->dcs_name;
                 });
         asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
         return $dcs;
@@ -1013,6 +1015,7 @@ class TblDcs extends ChildModel {
             $branch_model->bank_account_no = $model->bank_account_no;
             $branch_model->bank_code = $model->bank_code;
             $branch_model->branch_code = $model->branch_code;
+            $branch_model->beneficiary_name = $model->beneficiary_name;
             if (!$branch_model->validate()) {
                 $errors[] = $branch_model->getErrors();
             }

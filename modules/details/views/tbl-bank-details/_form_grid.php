@@ -9,13 +9,17 @@ use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
+
 Url::remember();
 $attribute = [
-    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name','filter'=>false],
-    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'filter'=>false],
-    ['attribute' => 'bank_account_no', 'filter'=>false],
-    ['attribute' => 'ifsc', 'filter'=>false],
-    ['attribute' => 'is_default','value'=>function($model){return $model->is_default==1?'Yes':'No';}, 'filter'=>false],
+    ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'filter' => false],
+    ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'filter' => false],
+    ['attribute' => 'bank_account_no', 'filter' => false],
+    ['attribute' => 'ifsc', 'filter' => false],
+    ['attribute' => 'beneficiary_name', 'filter' => false],
+    ['attribute' => 'is_default', 'value' => function($model) {
+            return $model->is_default == 1 ? 'Yes' : 'No';
+        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -25,19 +29,21 @@ $grid_option = [
     'actions' => [
         //'view' => true,
         'disable' => function ($url, $model) {
-            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Deactivate','class'=>'deactive','data-is-default'=>$model->is_default];
-            return $model->is_active==1?Html::a('<i class="fa fa-times"></i>', ['/details/tbl-bank-details/deactivate','id' => $model->detail_code], $options):'';
+            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
+            return $model->is_active == 1 ? Html::a('<i class="fa fa-times"></i>', ['/details/tbl-bank-details/deactivate', 'id' => $model->detail_code], $options) : '';
         },
         'default' => function ($url, $model) {
-            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Set as Default','class'=>'set-default'];
-            return ($model->is_default==0 && $model->is_active==1)?Html::a('<i class="fa fa-check"></i>', ['/details/tbl-bank-details/set-default','id' => $model->detail_code], $options):'';
+            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default'];
+            return ($model->is_default == 0 && $model->is_active == 1) ? Html::a('<i class="fa fa-check"></i>', ['/details/tbl-bank-details/set-default', 'id' => $model->detail_code], $options) : '';
         },
     ]
 ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option,[Yii::$app->controller->action->id,'id'=>Yii::$app->request->get('id')]);
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
 ?>
-<?php $script = <<< JS
+<?php
+
+$script = <<< JS
               
         $(".deactive").on('click',function(event){
             event.preventDefault();
@@ -70,4 +76,5 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option,[Yii::$app->cont
         });
         
 JS;
-$this->registerJs($script, View::POS_READY); ?>
+$this->registerJs($script, View::POS_READY);
+?>

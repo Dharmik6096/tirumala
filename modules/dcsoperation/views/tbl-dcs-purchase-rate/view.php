@@ -49,6 +49,10 @@ $this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'BMC') . '
                             'attribute' => 'union_code',
                             'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                         ],
+                        [
+                            'attribute' => 'for_member',
+                            'value' => $model->for_member == 1 ? 'YES' : 'NO',
+                        ],
                         'description',
                         [
                             'attribute' => 'is_active',

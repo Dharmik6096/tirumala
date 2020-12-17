@@ -25,7 +25,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -179,7 +178,9 @@ $script = "
     $('#tblroutemapping-to_dest').on('change',function(){
             var str = $('#tblroutemapping-to_dest option:selected').text();
             str=str.split('-');
-            $('#tblroutemapping-to_type').val(str[1].toLowerCase());
+            if(str !='' && str !='Select Destination Type' && str !='NULL' && str !='undefined'){
+               $('#tblroutemapping-to_type').val(str[1].toLowerCase());
+            }
     });
     
     var toType = '" . $toType . "';

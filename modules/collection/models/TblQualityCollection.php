@@ -92,7 +92,7 @@ class TblQualityCollection extends \app\models\ChildModel {
             'snf' => Yii::t('app', 'SNF(%)'),
             'clr' => Yii::t('app', 'Clr'),
             'water' => Yii::t('app', 'Water'),
-            'quality_datetime' => Yii::t('app', 'Quality Datetime'),
+            'quality_datetime' => Yii::t('app', 'Qlty time'),
             'retest_count' => Yii::t('app', 'Retest Count'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),

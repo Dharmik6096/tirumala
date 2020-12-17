@@ -43,10 +43,10 @@ class TblProductSaleRateApplicabilityHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
-                [['product_sale_rate_applicability_code', 'created_by', 'updated_by', 'dcs_code', 'product_sale_rate_code', 'union_code', 'operation_type', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['created_at', 'updated_at', 'wef_date', 'history_created_at'], 'safe'],
-                [['sale_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'commission'], 'safe'],
+            [['product_code', 'originating_type', 'is_member_rate'], 'safe'],
+            [['product_sale_rate_applicability_code', 'created_by', 'updated_by', 'dcs_code', 'product_sale_rate_code', 'union_code', 'operation_type', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['created_at', 'updated_at', 'wef_date', 'history_created_at'], 'safe'],
+            [['sale_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'commission', 'plant_code', 'bmc_code'], 'safe'],
         ];
     }
 
