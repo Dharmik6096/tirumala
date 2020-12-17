@@ -74,7 +74,7 @@ class TblQualityCollection extends \app\models\ChildModel {
             [['fat', 'snf', 'clr', 'water', 'retest_count'], 'default', 'value' => 0],
             [['auto_flag'], 'default', 'value' => '1'],
             [['sample_no'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'mcc_plant_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
-            [['protein', 'density', 'lactose', 'adt_param', 'adt_value'], 'safe'],
+            [['protein', 'density', 'lactose', 'adt_param', 'adt_value', 'received_timestamp'], 'safe'],
             [['uuid'], 'validateBmcCode'],
         ];
     }
