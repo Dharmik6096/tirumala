@@ -2149,4 +2149,24 @@ class SiteController extends Controller {
         return $results;
     }
 
+    public function actionCollectionDashboard() {
+        $db_config = new TblDbConfig();
+        $database = $db_config->activeConnection();
+        $sp_param = [];
+        foreach ($database as $db) {
+            if ($db->db_type == 'sql') {
+                \Yii::$app->general->SetDBConnection('db_sql', $db);
+                $result1 = \Yii::$app->general->getSpData('data_milk_collection_widget', $sp_param, false, 'db_sql');
+            } elseif ($db->db_type == 'mysql') {
+                \Yii::$app->general->SetDBConnection('db_mysql', $db);
+                $result2 = \Yii::$app->general->getSpData('data_milk_collection_widget', $sp_param, false, 'db_mysql', 'mysql');
+            }
+        }
+        $data = array_merge($result1, $result2);
+        echo "<pre>";
+        print_r($data);
+        echo "</pre>";
+        die;
+    }
+
 }
