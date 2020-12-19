@@ -42,7 +42,7 @@ class TblAppStartup extends \app\models\ChildModel {
         return [
             [['code'], 'required'],
             [['code', 'startup_mode', 'org_type', 'org_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['startup_datetime', 'created_at', 'updated_at'], 'safe'],
+            [['startup_datetime', 'created_at', 'updated_at', 'received_timestamp'], 'safe'],
             [['retry_count', 'originating_type'], 'integer', 'except' => ['androidsync']],
         ];
     }

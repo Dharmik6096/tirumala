@@ -148,7 +148,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['bmc_code'], 'pastDateValidate', 'on' => 'importCsv'],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
             [['tag_1'], 'default', 'value' => 'X'],
-            [['adt_param', 'adt_value'], 'safe'],
+            [['adt_param', 'adt_value', 'received_timestamp'], 'safe'],
             [['date_time_of_recieve'], 'default', 'value' => date('Y-m-d H:i:s'), 'on' => 'androidsync'],
             [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {

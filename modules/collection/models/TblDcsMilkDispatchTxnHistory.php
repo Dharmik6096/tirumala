@@ -40,34 +40,31 @@ use Yii;
  * @property string $history_created_by
  * @property string $operation_type
  */
-class TblDcsMilkDispatchTxnHistory extends \yii\db\ActiveRecord
-{
+class TblDcsMilkDispatchTxnHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_milk_dispatch_txn_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['dcs_milk_dispatch_txn_code', 'dcs_milk_dispatch_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'history_created_by', 'operation_type'], 'safe'],
             [['milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'qty_mode', 'converted_qty_mode', 'originating_type'], 'safe'],
             [['dispatch_qty', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'received_timestamp'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'dcs_milk_dispatch_txn_code' => Yii::t('app', 'Dcs Milk Dispatch Txn Code'),
@@ -103,4 +100,5 @@ class TblDcsMilkDispatchTxnHistory extends \yii\db\ActiveRecord
             'operation_type' => Yii::t('app', 'Operation Type'),
         ];
     }
+
 }
