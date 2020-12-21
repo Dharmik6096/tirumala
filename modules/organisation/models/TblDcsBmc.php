@@ -417,7 +417,7 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         $bmc = $query->all();
         $bmc = ArrayHelper::map($bmc, 'bmc_code', function($bmc) use ($concatCode) {
-                    return $bmc->bmc_name . ($concatCode ? ' - ' . $bmc->bmc_code : '');
+                    return ($concatCode ? $bmc->ref_code . ' - ' : '') . $bmc->bmc_name;
                 });
         asort($bmc, SORT_NATURAL | SORT_FLAG_CASE);
         return $bmc;
@@ -434,7 +434,7 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         $bmc = $query->all();
         $bmc = ArrayHelper::map($bmc, 'bmc_code', function($bmc) {
-                    return $bmc->bmc_code . ' - ' . $bmc->bmc_name;
+                    return $bmc->ref_code . ' - ' . $bmc->bmc_name;
                 });
         asort($bmc, SORT_NATURAL | SORT_FLAG_CASE);
         return $bmc;

@@ -235,6 +235,12 @@ class TblPaymentCycleController extends ChildController {
                 }],
             'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+                }],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
             'applicable_name' => ['view' => ['grid'], 'value' => function($model) {
                     return $model->getName($model->applicable_for);
                 }],

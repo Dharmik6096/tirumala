@@ -96,7 +96,7 @@ class DefaultController extends Controller {
         }
         //echo 'here';exit;
         $dcs_list = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
-                    return $dcs->dcs_code_ex . '-' . $dcs->dcs_name;
+                    return $dcs->ref_code . '-' . $dcs->dcs_name;
                 });
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $dcs_list, 'dcsalert' => $dcsalert, 'dcsarray' => $removedcs]);
@@ -126,7 +126,7 @@ class DefaultController extends Controller {
         switch (1) {
             case key_exists('routes', $filters):
                 $routs = new TblRouteMapping();
-                $filter_data['routes'] = $routs->getRoutes($union_code);
+                $filter_data['routes'] = $routs->getRoutes($union_code, TRUE);
                 break;
             case in_array('plants', $filters):
                 break;
@@ -146,7 +146,7 @@ class DefaultController extends Controller {
                 break;
             case in_array($filter, ['DCS']):
                 $bmcModel = new TblDcs();
-                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'dcs_code_ex', $routeCodes);
+                $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'ref_code', $routeCodes);
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();
@@ -158,7 +158,7 @@ class DefaultController extends Controller {
         }
         if (key_exists('mcc', $filters)) {
             $mcc = new TblMccPlant();
-            $filter_data['mcc'] = $mcc->getMccs($union_code);
+            $filter_data['mcc'] = $mcc->getMccs($union_code, [], TRUE);
         }
         return Json::encode(['status' => 'success', 'data' => $filter_data]);
     }
