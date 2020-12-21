@@ -28,6 +28,7 @@ use app\modules\payment\models\TblVspPaymentTransaction;
 use app\modules\vsp\models\TblMemberPaymentAllow;
 use app\modules\payment\models\TblVspOutstanding;
 use app\modules\payment\models\TblVspOutstandingHistory;
+use yii\helpers\Url;
 
 /**
  * TblVspPaymentController implements the CRUD actions for TblVspPayment model.
@@ -77,7 +78,9 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
 
-        if (Yii::$app->request->post('TblVspPayment')) {
+        if (Yii::$app->request->post()) {
+//        if (Yii::$app->request->post('TblVspPayment')) {
+//            $postData = Yii::$app->request->post();
             $adjust_id = Yii::$app->request->post('TblVspPayment')['vsp_payment_code'];
             $adjust_amt = Yii::$app->request->post('TblVspPayment')['adjust_amount'];
             $adjust_remark = Yii::$app->request->post('TblVspPayment')['adjust_remark'];
@@ -87,6 +90,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             foreach ($adjust_id as $key => $value) {
                 if (($adjust_amt[$key] != 0 && $adjust_amt[$key] != '') || ($hold_amt[$key] != 0 && $hold_amt[$key] != '')) {
                     $data = TblVspPayment::findOne($adjust_id[$key]);
+                    $updateData = false;
+                    $oldData = $data->oldAttributes;
                     $historyModel = new TblVspPaymentHistory();
                     Yii::$app->operation->history($data, $historyModel, UPDATE);
                     $data->adjust_amount = $adjust_amt[$key];
@@ -96,15 +101,29 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     if ($model->billing_type == 'remuneration') {
                         $data->scenario = 'remuneration';
                     }
-                    $save_model[] = $historyModel;
-                    $save_model[] = $data;
-                    $cnt++;
+                    if (!empty($oldData) && ($oldData['hold_amount'] != $data->hold_amount || $oldData['adjust_amount'] != $data->adjust_amount || $oldData['adjust_remark'] != $data->adjust_remark)) {
+                        $updateData = true;
+                    }
+                    if ($updateData) {
+                        $save_model[] = $historyModel;
+                        $save_model[] = $data;
+                        $cnt++;
+                    }
                 }
             }
             $transaction = $this->generalModel->saveTransaction($save_model, ['Payment of ' . $cnt . ' ' . Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . '  adjusted succesfully', 'info']);
-            if ($transaction !== FALSE && $transaction != 'customRender') {
-                return $this->redirect(['index']);
+
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            $msg = '';
+            $url = Url::to(['index']);
+            if ($transaction == 'customRedirect') {
+                $result = 'success';
+            } else {
+                $result = 'error';
+                $msgData = Yii::$app->session->getFlash('success');
+                $msg = !empty($msg['message']) ? $msg['message'] : '';
             }
+            return ['status' => $result, 'url' => $url, 'msg' => $msg];
         }
 
         if ($model->billing_type == 'remuneration') {
@@ -383,7 +402,13 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $model->load(Yii::$app->request->post());
         // $model->dcs_code = Yii::$app->request->post('selection');
         $this->LockBilling($model);
-        return $this->redirect(['index']);
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        $msg = '';
+        $url = Url::to(['index']);
+        $result = 'success';
+        return ['status' => $result, 'url' => $url, 'msg' => $msg];
+//        return $this->redirect(['index']);
     }
 
     protected function LockBilling($model) {

@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 
 $this->title = 'Process for Payment Disburse';
-
+$action = Url::to(['bank-payment']);
 $bmc_info = '';
 if (!empty($searchModel)) {
     $bmc_info = Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_name') . ' > ' .
@@ -162,8 +162,38 @@ $script = "
  $('#total-payment').html('Total Payable :: '+total.toFixed(2));
  }      
     });
-   $('.disburse').on('click',function(){
-   $('#otp-form').submit();
+    $('.disburse').on('click',function(){
+    
+//        $('#otp-form').submit();
+
+        var postVspDisbData = $('#otp-form').serializeArray();
+        $('#loadercontent').show();
+        $('#pageloader').show();
+        $.ajax({
+            type: 'post',
+            url: '" . $action . "',
+            data: postVspDisbData,
+            dataType: 'json',
+            success: function(data) {
+                if (data.status == 'success') {  
+                    window.location=data.url;
+                } else {
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                    bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+data.msg+\"</span></div></div>\");
+                }
+            },
+            error:function(data){
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+                return false;
+                    //alert('Your data has not been submitted..Please try again');
+            }
+        });
+
+
+
+
    // $('#error-summary').hide();
       //sendotp();
     });
