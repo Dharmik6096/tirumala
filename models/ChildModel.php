@@ -49,6 +49,9 @@ class ChildModel extends \yii\db\ActiveRecord {
                 if ($this->hasAttribute('originating_type') && $this->originating_type == NULL) {
                     $this->originating_type = 0;
                 }
+                if ($this->hasAttribute('received_timestamp') && $this->received_timestamp == NULL) {
+                    $this->received_timestamp = date('Y-m-d H:i:s');
+                }
             } else {
                 if ($this->hasAttribute('updated_by'))
                     $this->updated_by = $user;

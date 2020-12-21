@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblUnions;
 use app\modules\bkgprocess\models\TblFileCreator;
 use yii\db\ActiveQuery;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_ftp_txn_log".
@@ -257,6 +258,10 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
     public function CheckDirectory() {
         return $this->find()->where(['status' => 2, 'module_code' => $this->module_code, 'txn_type' => $this->txn_type])->count();
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'module_code']);
     }
 
 }

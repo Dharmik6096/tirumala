@@ -152,7 +152,7 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('customer_type'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 cust_type">
                                                 <?= Yii::$app->dropdown->customer_type($model, $form, 'reportsmodel-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                                             </div>
                                             <?php
@@ -163,7 +163,7 @@ if (isset($data['url1'])) {
                                                 $depend = 'reportsmodel-bmc_code,reportsmodel-' . $value_array[1];
                                             }
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 vendor">
                                                 <?= Yii::$app->dropdown->customer_code($model, $form, $depend, 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
                                             </div>
                                             <?php
@@ -186,9 +186,12 @@ if (isset($data['url1'])) {
                                             }
                                             echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                                             echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+                                            if (isset($value_array[1]) && $value_array[1] == 'type_check') {
+                                                echo Html::hiddenInput('type_check', TRUE, ['id' => 'reportsmodel-type_check']);
+                                            }
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+                                                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'reportsmodel-union_code,reportsmodel-bmc_code,reportsmodel-customer_type,applicable_for,data_lock_bmc,0,reportsmodel-type_check', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
                                             </div>
                                             <?php
                                         }
@@ -210,7 +213,7 @@ if (isset($data['url1'])) {
                                             }
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -402,7 +405,7 @@ $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
 });
-
+   
     $(document).ready(function(){  
         if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
             hideFields();
@@ -435,6 +438,26 @@ $('.mis_report_modal_toggle').on('click', function(){
             $('.val_dcs_code').show();
         }
        
+    }
+    
+    $('#reportsmodel-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) { 
+        if('" . $report . "'=='RateAcknowledgement'){
+            hideCustomer();
+        }
+    });
+    $(document).on('change','#reportsmodel-rate_type', function() {
+        hideCustomer();
+    });
+    
+    function hideCustomer(){
+        var rate_type =  $('#reportsmodel-rate_type option:selected').text();
+        if(rate_type == 'MEMBER'){
+            $('.cust_type').hide();
+            $('.cust_type select').val('DCS');
+            $('.cust_type select').trigger('change');
+        }else {
+            $('.cust_type').show();
+        }
     }
 
 ";

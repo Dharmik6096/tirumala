@@ -22,6 +22,16 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
      * Lists all TblFtpTxnLog models.
      * @return mixed
      */
+    public function actionList() {
+        $searchModel = new TblFtpTxnLogSearch();
+        $dataProvider = $searchModel->listsearch(Yii::$app->request->queryParams);
+
+        return $this->render('list', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
     public function actionIndex() {
         $searchModel = new TblFtpTxnLogSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

@@ -138,7 +138,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
             ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
             [['tag_1'], 'default', 'value' => 'X'],
-            [['adt_param', 'adt_value'], 'safe'],
+            [['adt_param', 'adt_value', 'received_timestamp'], 'safe'],
             [['member_code'], 'validateUnique', 'on' => ['create']],
             [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
             [['bmc_code'], function ($attribute, $params) {

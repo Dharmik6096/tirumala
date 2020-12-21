@@ -12,12 +12,14 @@ use app\modules\bkgprocess\models\TblFtpTxnLog;
  */
 class TblFtpTxnLogSearch extends TblFtpTxnLog {
 
+    public $dcs_code;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['ftp_txn_log_id', 'total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
+            [['ftp_txn_log_id', 'total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id', 'dcs_code'], 'safe'],
             [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'txn_datetime', 'created_at', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_at', 'updated_by', 'file_name', 'old_file_path', 'old_local_path', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
@@ -87,6 +89,47 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
         $query->andFilterWhere(['like', 'module_name', $this->module_name])
                 ->andFilterWhere(['like', 'file_name', $this->file_name]);
 
+        return $dataProvider;
+    }
+
+    public function listsearch($params) {
+        $query = TblFtpTxnLog::find();
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]],
+        ]);
+
+        $query->joinWith(['dcsCode', 'creatorId']);
+
+        $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs', 'tbl_dcs', 'tbl_dcs', 'tbl_dcs');
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        if (!empty($this->from_date)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $query->andFilterWhere(['>=', 'cast(tbl_file_creator.applicable_date as date)', $from_date]);
+        }
+
+        if (!empty($this->to_date)) {
+            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+            $query->andFilterWhere(['<=', 'cast(tbl_file_creator.applicable_date as date)', $to_date]);
+        }
+        // grid filtering conditions
+//        $query->andFilterWhere([
+//            'module_code' => $this->dcs_code,
+//        ]);
+
+
+        $query->andFilterWhere(['like', 'tbl_ftp_txn_log.total_count', $this->total_count])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.success_count', $this->success_count])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.error_count', $this->error_count])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_name', $this->file_name])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_status', $this->file_status]);
         return $dataProvider;
     }
 
