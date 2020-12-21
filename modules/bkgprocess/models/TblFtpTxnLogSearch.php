@@ -104,7 +104,7 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
         $query->joinWith(['dcsCode', 'creatorId']);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs', 'tbl_dcs', 'tbl_dcs', 'tbl_dcs');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -120,16 +120,16 @@ class TblFtpTxnLogSearch extends TblFtpTxnLog {
             $query->andFilterWhere(['<=', 'cast(tbl_file_creator.applicable_date as date)', $to_date]);
         }
         // grid filtering conditions
-        $query->andFilterWhere([
-            'module_code' => $this->dcs_code,
-        ]);
+//        $query->andFilterWhere([
+//            'module_code' => $this->dcs_code,
+//        ]);
 
 
-        $query->andFilterWhere(['like', 'total_count', $this->total_count])
-                ->andFilterWhere(['like', 'success_count', $this->success_count])
-                ->andFilterWhere(['like', 'error_count', $this->error_count])
-                ->andFilterWhere(['like', 'file_name', $this->file_name])
-                ->andFilterWhere(['like', 'file_status', $this->file_status]);
+        $query->andFilterWhere(['like', 'tbl_ftp_txn_log.total_count', $this->total_count])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.success_count', $this->success_count])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.error_count', $this->error_count])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_name', $this->file_name])
+                ->andFilterWhere(['like', 'tbl_ftp_txn_log.file_status', $this->file_status]);
         return $dataProvider;
     }
 
