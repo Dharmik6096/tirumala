@@ -362,347 +362,355 @@ $( '.sortable' ).sortable();
         var position = '';
         var widgets = '" . $lazy_loading_widgets . "';
         var widget = $.parseJSON(widgets);
+        var timeOut = 500;
         $.each(widget, function(index, value) {
-            var datastring = $('form#'+value).serialize();
-            $('#dataStringVal').val(datastring);
-            if(['fed_union',
-                'fed_comparison',
-                'fed_datewise',
-                'table_milk_collection',
-                'manual_vs_auto_collection',
-                'dipatch_vs_receipt',
-                'bmc_collection_summary',
-                'monthly_milk_collection',
-                'dashboard_blocks',
-                'piechart_member_app',
-                'calender',
-                'dashboard_farmer_rmrd_blocks',
-                'dashboard_farmer_status',
-                'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar'].indexOf(value) == -1) 
-                {
-                    setChartWidgets(value);
-                }
-            
-            else if(['dashboard_blocks'].indexOf(value) == 0){
-                var blockDataString = $('#collapse1 form').serialize();
-                var id= 'dashboard_blocks';
-                var union= '" . $unionCode . "';
-//                var union= $('#dashboard-union_code').val();
-                var mcc= '" . $mccCode . "';
-//                var mcc= $('#dashboard-mcc_code').val();
-                $.ajax({
-                    type: 'post',
-                    url: '" . Url::to(['/site/load-dashboard-block-data']) . "',
-                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
-                    success: function(data) {
-                        var obj1 = data;
-                        if (obj1.status == 'success')
-                        {
-                            for (var key in obj1.res){
-                                if(obj1.res[key] == null){
-                                    obj1.res[key] = 0;
-                                }
-                            }
-                            $('#no_of_societies').text(obj1.res.Dcs_Count);
-                            $('#no_of_societies_M').text(obj1.res.Dcs_Count_M);
-                            $('#no_of_societies_E').text(obj1.res.Dcs_Count_E);
-                            $('#no_of_pourers').text(obj1.res.Total_Member); 
-                            $('#collection_vs_installed').text(obj1.res.Dcs_Count+'/'+obj1.res.Install_Count);
-                            $('#collection_vs_dispatch').text(obj1.res.Dcs_Count+'/'+obj1.res.Dcs_DisQty_total);
-                            $('#dispatch_vs_receipt_block').text(obj1.res.Dcs_DisQty_total+'/'+obj1.res.bmc_dcs_Count);
-                            $('#total_milk_collection_ltr').text(obj1.res.UnionQty+'/'+obj1.res.union_avg_fat+'/'+obj1.res.union_avg_snf);
-                            $('#total_milk_dispatch_ltr').text(obj1.res.UnionDisQty+'/'+obj1.res.union_dis_avg_fat+'/'+obj1.res.union_dis_avg_snf);
-                            $('#total_milk_dispatch_M').text(obj1.res.Dcs_DisQty_M);
-                            $('#total_milk_dispatch_E').text(obj1.res.Dcs_DisQty_E);
-                            $('#total_bmc_collection_ltr').text(obj1.res.BmcQty+'/'+obj1.res.bmc_avg_fat+'/'+obj1.res.bmc_avg_snf);
-                        }
-                    },
-                    error:function(data){
-                        //alert('Your data has not been submitted..Please try again');
-                    }
-                });
-            }
-            else if(['dashboard_farmer_rmrd_blocks'].indexOf(value) == 0){
-                var blockDataString = $('#collapse1 form').serialize();
-                var id= 'dashboard_farmer_rmrd_blocks';
-                var union= '" . $unionCode . "';
-//                var union= $('#dashboard-union_code').val();
-                var mcc= '" . $mccCode . "';
-//                var mcc= $('#dashboard-mcc_code').val();
-                var widget_type= $('#hidden_widget_type').val();
-                $.ajax({
-                    type: 'post',
-                    url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
-                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc+'&widget_type='+widget_type,
-                    success: function(data) {
-                        var obj1 = data;
-                        if (obj1.status == 'success')
-                        {
-                            for (var key in obj1.res){
-                                if(obj1.res[key] == null){
-                                    obj1.res[key] = 0;
-                                }
-                            }
-                            $('#farmer_rmrd_block_union').text(obj1.res.pourerUnion+'/'+obj1.res.totalUnion);
-                            $('#farmer_rmrd_block_mcc').text(obj1.res.pourerMcc+'/'+obj1.res.totalMcc);
-                            $('#farmer_rmrd_block_dcs').text(obj1.res.pourerDcs+'/'+obj1.res.totalDcs);
-                            $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'/'+obj1.res.totalMember);
-                            $('#farmer_rmrd_block_blk_vendor').text(obj1.res.pourerBulkVen+'/'+obj1.res.totalBulkVen);
-                            $('#farmer_rmrd_block_vlcc_vendor').text(obj1.res.pourerVlccVen+'/'+obj1.res.totalVlccVen);
-                            $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty);
-                            $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
-                            $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
-                            $('#farmer_rmrd_block_amount').text(obj1.res.amount);
-                        }
-                    },
-                    error:function(data){
-                        //alert('Your data has not been submitted.Please try again');
-                    }
-                });
-            }
-            else if(['dashboard_farmer_rmrd_avg'].indexOf(value) == 0){
-                var blockDataString = $('#collapse1 form').serialize();
-                var id= 'dashboard_farmer_rmrd_avg';
-                var union= '" . $unionCode . "';
-//                var union= $('#dashboard-union_code').val();
-                var mcc= '" . $mccCode . "';
-//                var mcc= $('#dashboard-mcc_code').val();
-                var widget_type= $('#hidden_widget_type').val();
-                $.ajax({
-                    type: 'post',
-                    url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
-                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc+'&widget_type='+widget_type,
-                    success: function(data) {
-                        var obj1 = data;
-                        if (obj1.status == 'success')
-                        {
-                            for (var key in obj1.res){
-                                if(obj1.res[key] == null){
-                                    obj1.res[key] = 0;
-                                }
-                            }
-                            var table = $('#farmer_rmrd_tbl_container table tbody');
-                            var i = 0;
-//                            console.log(obj1.res);
-                            var htmlData = '';
-                            htmlData = htmlData + '<tbody>';
-                            Object.keys(obj1.res).forEach(function (key){
-                                htmlData = htmlData + '<tr>';
-                                htmlData = htmlData + '<td class=\'dashboardWidgetHeader color_fff\' rowspan=\'2\'>AVG/';
-                                htmlData = htmlData + obj1.res[key].colType;
-                                htmlData = htmlData + '</td>';
-                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'FAT') . "</td>';
-                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'SNF') . "</td>';
-                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'QTY') . "</td>';
-                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'Rate') . "</td>';
-                                htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'Amount') . "</td>';
-                                htmlData = htmlData + '</tr>';
-                                htmlData = htmlData + '<tr>';
-                                htmlData = htmlData + '<td>'+obj1.res[key].avgFat+'</td>';
-                                htmlData = htmlData + '<td>'+obj1.res[key].avgSnf+'</td>';
-                                htmlData = htmlData + '<td>'+obj1.res[key].avgQty+'</td>';
-                                htmlData = htmlData + '<td>'+obj1.res[key].avgRate+'</td>';
-                                htmlData = htmlData + '<td>'+obj1.res[key].avgAmount+'</td>';
-                                htmlData = htmlData + '</tr>';
-                            });
-                            htmlData = htmlData + '</tbody>';
-                            
-                            $('#farmer_rmrd_tbl_container').removeClass('disp_none');
-                            $('.farmerRmrdAvgData').html(htmlData);
-//                            Object.keys(obj1.res).forEach(function (key){
-//                                var j = 0;
-//                                $('#farmer_rmrd_tbl_container table thead tr:last').append('<th>'+obj1.res[key].colType.replace(/(^|_)./g, s => s.toUpperCase()).replace('_',' ')+'</th>')
-//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgQty+'</td>');
-//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgFat+'</td>');
-//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgSnf+'</td>');
-//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgRate+'</td>');
-//                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgAmount+'</td>');
-//                                $('#farmer_rmrd_tbl_container').removeClass('disp_none');
-//                            });
-                        }
-                    },
-                    error:function(data){
-                        //alert('Your data has not been submitted.Please try again');
-                    }
-                });
-            }
-            else if(['dashboard_farmer_status'].indexOf(value) == 0){
-                var blockDataString = $('#collapse1 form').serialize();
-                var id= 'dashboard_farmer_status';
-                var union= '" . $unionCode . "';
-//                var union= $('#dashboard-union_code').val();
-                var mcc= '" . $mccCode . "';
-//                var mcc= $('#dashboard-mcc_code').val();
-                $.ajax({
-                    type: 'post',
-                    url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
-                    data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
-                    success: function(data) {
-                        var obj1 = data;
-                        if (obj1.status == 'success')
-                        {
-                            for (var key in obj1.res){
-                                if(obj1.res[key] == null){
-                                    obj1.res[key] = 0;
-                                }
-                            }
-                            $('#dashboard_farmer_status_active_dcs').text(obj1.res.activeDcs);
-                            $('#dashboard_farmer_status_installed_dcs').text(obj1.res.installedDcs);
-                            $('#dashboard_farmer_status_online_dcs').text(obj1.res.onlineDcs);
-                            $('#dashboard_farmer_status_offline_dcs').text(obj1.res.offlineDcs);
-                            $('#dashboard_farmer_status_online_dcs_e').text(obj1.res.onlineDcsE);
-                            $('#dashboard_farmer_status_online_dcs_m').text(obj1.res.onlineDcsM);
-                        }
-                    },
-                    error:function(data){
-                        //alert('Your data has not been submitted.Please try again');
-                    }
-                });
-            }
-            else if(['calender'].indexOf(value) == 0){
-                //calendar widget
-                $('#calendar').fullCalendar({
-                dayRender: function(date, cell) {
-                    var d=date.format('YYYY-MM-DD');
-                    if(d in cal_data)
+        
+            setTimeout(() => {
+                var datastring = $('form#'+value).serialize();
+                $('#dataStringVal').val(datastring);
+                if(['fed_union',
+                    'fed_comparison',
+                    'fed_datewise',
+                    'table_milk_collection',
+                    'manual_vs_auto_collection',
+                    'dipatch_vs_receipt',
+                    'bmc_collection_summary',
+                    'monthly_milk_collection',
+                    'dashboard_blocks',
+                    'piechart_member_app',
+                    'calender',
+                    'dashboard_farmer_rmrd_blocks',
+                    'dashboard_farmer_status',
+                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar'].indexOf(value) == -1) 
                     {
-                        cell.append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">'+cal_data[d][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\">'+cal_data[d][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">'+cal_data[d][2]+'</span></div>');
+                        setChartWidgets(value);
                     }
-                },
-                defaultDate: moment('" . $date . "'),
-                viewRender: function (view, element) {
-                var b = $('#calendar').fullCalendar('getDate');
-                var m=b.format('Y-MM');
-                var union= '" . $unionCode . "';
-//                var union= $('#dashboard-union_code').val();
-                var mcc= '" . $mccCode . "';
-//                var mcc= $('#dashboard-mcc_code').val();
-                    $('#calendar .fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
-                    // $('.fc-view-container').addClass('disp_none');
-                    $.ajax({
-                                type: 'post',
-                                url: '" . Url::to(['/site/load-month-data']) . "',
-                                data: 'm='+m+'&union='+union+'&mcc='+mcc,
-                                success: function(data) {
 
-                                    var obj1 = data;
-                                    if (obj1.status == 'success')
-                                    {
-                                        cal_data=obj1.res;                                                   
-                                    }
-                                    let cview = $('#calendar').fullCalendar('getView');  
-                                    cview.unrenderDates();
-                                    cview.renderDates();
-                                    $(window).trigger('resize'); 
-                                },
-                                error:function(data){
-                                            //alert('Your data has not been submitted..Please try again');
-                                        }
-                    });
-                },
-                // eventAfterAllRender: function(view){
-                //     console.log(cal_data);
-                // },
-                dayClick: function(date, jsEvent, view) {
-                var dt=date.format();
-                var union= '" . $unionCode . "';
-//                var union= $('#dashboard-union_code').val();
+                else if(['dashboard_blocks'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'dashboard_blocks';
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
                     var mcc= '" . $mccCode . "';
-//                var mcc= $('#dashboard-mcc_code').val();
-                    $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
-                    $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+    //                var mcc= $('#dashboard-mcc_code').val();
                     $.ajax({
-                                type: 'post',
-                                url: '" . Url::to(['/site/load-dcs-data']) . "',
-                                data: 'dt='+dt+'&union='+union+'&mcc='+mcc,
-                                success: function(data) {
-
-                                    var obj1 = data;
-                                    if (obj1.status == 'success')
-                                    {
-                                    
-                                        var html='<div class=\"milk-collection\">'+
-                                        '<div class=\"table-responsive dashboard_tbl\"><table class=\"table table-striped\">'+
-                                        '<thead><tr><th>Union</th><th>Villages</th><th>Avg FAT</th><th>Avg SNF</th><th>Milk Collection (ltr)</th></tr></thead>';
-                                    $.each(obj1.res, function(index, value) {
-                                        html=html+'<tr>'+
-                                            '<td>'+value.union_name+'</td>'+
-                                            '<td>'+value.dcs_name+'</td>'+
-                                            '<td>'+value.AvgFAT+'</td>'+
-                                            '<td>'+value.AvgSNF+'</td>'+
-                                            '<td>'+value.total_qty+'</td>'+
-                                        '</tr>';
-                                        });
-                                        
-                                    html=html+'</table></div></div>';
-                                $('#calendar_details').html(html);
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-block-data']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
                                     }
-                                    else{
-                                        $('#calendar_details').html('Data not available.');
-                                    }
-
-                                },
-                                error:function(data){
-                                            //alert('Your data has not been submitted..Please try again');
-                                        }
-                    });
-                    chartModal.modal('show');
-                }
-            });
-            }
-            else if(['month_calendar'].indexOf(value) == 0){
-                //calendar widget
-                $('#month_calendar').fullCalendar({
-                defaultView: 'year',
-                allDayDefault: false,
-                selectable: true,
-                selectHelper: true,
-                editable: true,
-                eventLimit: true,
-                defaultDate: moment('" . $date . "'),
-                viewRender: function (view, element) {
-                var b = $('#month_calendar').fullCalendar('getDate');
-                var y=b.format('Y');
-                var union= '" . $unionCode . "';
-                var mcc= '" . $mccCode . "';
-                    $('#month_calendar .fc-today-button').html('Current Year');
-                    // $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
-                    $('#month_calendar .fc-view-container').addClass('disp_none');
-                    $.ajax({
-                                type: 'post',
-                                url: '" . Url::to(['/site/load-year-data']) . "',
-                                data: 'y='+y+'&union='+union+'&mcc='+mcc,
-                                success: function(data) {
-
-                                    var obj1 = data;
-                                    if (obj1.status == 'success')
-                                    {
-                                        cal_data=obj1.res;                                                   
-                                    }
-                                    let cview = $('#month_calendar').fullCalendar('getView');  
-                                    if(cview.name == 'year'){
-                                        setYearData(cal_data);
-                                        $('#month_calendar .fc-scroller.fc-day-grid-container').addClass('disp_none');
-                                        $('#month_calendar .fc-row .fc-widget-header').addClass('disp_none');
-                                        $('#month_calendar .fc-view-container').removeClass('disp_none');
-                                    }
-                                    else{
-                                        $('#month_calendar .fc-row .fc-widget-header').removeClass('disp_none');
-                                        $('#month_calendar .fc-scroller.fc-day-grid-container').removeClass('disp_none');
-                                        $('#month_calendar .fc-view-container').removeClass('disp_none');
-                                    }
-                                    cview.unrenderDates();
-                                    cview.renderDates();
-                                    $(window).trigger('resize'); 
-                                },
-                                error:function(data){
-                                            //alert('Your data has not been submitted..Please try again');
-                                        }
+                                }
+                                $('#no_of_societies').text(obj1.res.Dcs_Count);
+                                $('#no_of_societies_M').text(obj1.res.Dcs_Count_M);
+                                $('#no_of_societies_E').text(obj1.res.Dcs_Count_E);
+                                $('#no_of_pourers').text(obj1.res.Total_Member); 
+                                $('#collection_vs_installed').text(obj1.res.Dcs_Count+'/'+obj1.res.Install_Count);
+                                $('#collection_vs_dispatch').text(obj1.res.Dcs_Count+'/'+obj1.res.Dcs_DisQty_total);
+                                $('#dispatch_vs_receipt_block').text(obj1.res.Dcs_DisQty_total+'/'+obj1.res.bmc_dcs_Count);
+                                $('#total_milk_collection_ltr').text(obj1.res.UnionQty+'/'+obj1.res.union_avg_fat+'/'+obj1.res.union_avg_snf);
+                                $('#total_milk_dispatch_ltr').text(obj1.res.UnionDisQty+'/'+obj1.res.union_dis_avg_fat+'/'+obj1.res.union_dis_avg_snf);
+                                $('#total_milk_dispatch_M').text(obj1.res.Dcs_DisQty_M);
+                                $('#total_milk_dispatch_E').text(obj1.res.Dcs_DisQty_E);
+                                $('#total_bmc_collection_ltr').text(obj1.res.BmcQty+'/'+obj1.res.bmc_avg_fat+'/'+obj1.res.bmc_avg_snf);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted..Please try again');
+                        }
                     });
                 }
-            });
-            }
+                else if(['dashboard_farmer_rmrd_blocks'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'dashboard_farmer_rmrd_blocks';
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
+                    var mcc= '" . $mccCode . "';
+    //                var mcc= $('#dashboard-mcc_code').val();
+                    var widget_type= $('#hidden_widget_type').val();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc+'&widget_type='+widget_type,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                $('#farmer_rmrd_block_union').text(obj1.res.pourerUnion+'/'+obj1.res.totalUnion);
+                                $('#farmer_rmrd_block_mcc').text(obj1.res.pourerMcc+'/'+obj1.res.totalMcc);
+                                $('#farmer_rmrd_block_dcs').text(obj1.res.pourerDcs+'/'+obj1.res.totalDcs);
+                                $('#farmer_rmrd_block_farmer').text(obj1.res.pourerMember+'/'+obj1.res.totalMember);
+                                $('#farmer_rmrd_block_blk_vendor').text(obj1.res.pourerBulkVen+'/'+obj1.res.totalBulkVen);
+                                $('#farmer_rmrd_block_vlcc_vendor').text(obj1.res.pourerVlccVen+'/'+obj1.res.totalVlccVen);
+                                $('#farmer_rmrd_block_quantity').text(obj1.res.totalQty);
+                                $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
+                                $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
+                                $('#farmer_rmrd_block_amount').text(obj1.res.amount);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                else if(['dashboard_farmer_rmrd_avg'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'dashboard_farmer_rmrd_avg';
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
+                    var mcc= '" . $mccCode . "';
+    //                var mcc= $('#dashboard-mcc_code').val();
+                    var widget_type= $('#hidden_widget_type').val();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc+'&widget_type='+widget_type,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                var table = $('#farmer_rmrd_tbl_container table tbody');
+                                var i = 0;
+    //                            console.log(obj1.res);
+                                var htmlData = '';
+                                htmlData = htmlData + '<tbody>';
+                                Object.keys(obj1.res).forEach(function (key){
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<td class=\'dashboardWidgetHeader color_fff\' rowspan=\'2\'>AVG/';
+                                    htmlData = htmlData + obj1.res[key].colType;
+                                    htmlData = htmlData + '</td>';
+                                    htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'FAT') . "</td>';
+                                    htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'SNF') . "</td>';
+                                    htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'QTY') . "</td>';
+                                    htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'Rate') . "</td>';
+                                    htmlData = htmlData + '<td class=\'dashboardWidgetDetailPortion color_fff\'>" . Yii::t('app', 'Amount') . "</td>';
+                                    htmlData = htmlData + '</tr>';
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<td>'+obj1.res[key].avgFat+'</td>';
+                                    htmlData = htmlData + '<td>'+obj1.res[key].avgSnf+'</td>';
+                                    htmlData = htmlData + '<td>'+obj1.res[key].avgQty+'</td>';
+                                    htmlData = htmlData + '<td>'+obj1.res[key].avgRate+'</td>';
+                                    htmlData = htmlData + '<td>'+obj1.res[key].avgAmount+'</td>';
+                                    htmlData = htmlData + '</tr>';
+                                });
+                                htmlData = htmlData + '</tbody>';
+
+                                $('#farmer_rmrd_tbl_container').removeClass('disp_none');
+                                $('.farmerRmrdAvgData').html(htmlData);
+    //                            Object.keys(obj1.res).forEach(function (key){
+    //                                var j = 0;
+    //                                $('#farmer_rmrd_tbl_container table thead tr:last').append('<th>'+obj1.res[key].colType.replace(/(^|_)./g, s => s.toUpperCase()).replace('_',' ')+'</th>')
+    //                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgQty+'</td>');
+    //                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgFat+'</td>');
+    //                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgSnf+'</td>');
+    //                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgRate+'</td>');
+    //                                table.find('tr:eq('+ j++ +')').append('<td>'+obj1.res[key].avgAmount+'</td>');
+    //                                $('#farmer_rmrd_tbl_container').removeClass('disp_none');
+    //                            });
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                else if(['dashboard_farmer_status'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'dashboard_farmer_status';
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
+                    var mcc= '" . $mccCode . "';
+    //                var mcc= $('#dashboard-mcc_code').val();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                $('#dashboard_farmer_status_active_dcs').text(obj1.res.activeDcs);
+                                $('#dashboard_farmer_status_installed_dcs').text(obj1.res.installedDcs);
+                                $('#dashboard_farmer_status_online_dcs').text(obj1.res.onlineDcs);
+                                $('#dashboard_farmer_status_offline_dcs').text(obj1.res.offlineDcs);
+                                $('#dashboard_farmer_status_online_dcs_e').text(obj1.res.onlineDcsE);
+                                $('#dashboard_farmer_status_online_dcs_m').text(obj1.res.onlineDcsM);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                else if(['calender'].indexOf(value) == 0){
+                    //calendar widget
+                    $('#calendar').fullCalendar({
+                    dayRender: function(date, cell) {
+                        var d=date.format('YYYY-MM-DD');
+                        if(d in cal_data)
+                        {
+                            cell.append('<div class=\"cal-data\"><span class=\"label text-success\" title=\"Avg FAT\">'+cal_data[d][0]+'</span><span class=\"label text-danger\" title=\"Avg SNF\">'+cal_data[d][1]+'</span><span class=\"label text-info\" title=\"Qty(ltr)\">'+cal_data[d][2]+'</span></div>');
+                        }
+                    },
+                    defaultDate: moment('" . $date . "'),
+                    viewRender: function (view, element) {
+                    var b = $('#calendar').fullCalendar('getDate');
+                    var m=b.format('Y-MM');
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
+                    var mcc= '" . $mccCode . "';
+    //                var mcc= $('#dashboard-mcc_code').val();
+                        $('#calendar .fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                        // $('.fc-view-container').addClass('disp_none');
+                        $.ajax({
+                                    type: 'post',
+                                    url: '" . Url::to(['/site/load-month-data']) . "',
+                                    data: 'm='+m+'&union='+union+'&mcc='+mcc,
+                                    success: function(data) {
+
+                                        var obj1 = data;
+                                        if (obj1.status == 'success')
+                                        {
+                                            cal_data=obj1.res;                                                   
+                                        }
+                                        let cview = $('#calendar').fullCalendar('getView');  
+                                        cview.unrenderDates();
+                                        cview.renderDates();
+                                        $(window).trigger('resize'); 
+                                    },
+                                    error:function(data){
+                                                //alert('Your data has not been submitted..Please try again');
+                                            }
+                        });
+                    },
+                    // eventAfterAllRender: function(view){
+                    //     console.log(cal_data);
+                    // },
+                    dayClick: function(date, jsEvent, view) {
+                    var dt=date.format();
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
+                        var mcc= '" . $mccCode . "';
+    //                var mcc= $('#dashboard-mcc_code').val();
+                        $('#cal_modal-title').html('Data for '+date.format('DD-MM-YYYY'));
+                        $('#calendar_details').html('<div class=\"text-center\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                        $.ajax({
+                                    type: 'post',
+                                    url: '" . Url::to(['/site/load-dcs-data']) . "',
+                                    data: 'dt='+dt+'&union='+union+'&mcc='+mcc,
+                                    success: function(data) {
+
+                                        var obj1 = data;
+                                        if (obj1.status == 'success')
+                                        {
+
+                                            var html='<div class=\"milk-collection\">'+
+                                            '<div class=\"table-responsive dashboard_tbl\"><table class=\"table table-striped\">'+
+                                            '<thead><tr><th>Union</th><th>Villages</th><th>Avg FAT</th><th>Avg SNF</th><th>Milk Collection (ltr)</th></tr></thead>';
+                                        $.each(obj1.res, function(index, value) {
+                                            html=html+'<tr>'+
+                                                '<td>'+value.union_name+'</td>'+
+                                                '<td>'+value.dcs_name+'</td>'+
+                                                '<td>'+value.AvgFAT+'</td>'+
+                                                '<td>'+value.AvgSNF+'</td>'+
+                                                '<td>'+value.total_qty+'</td>'+
+                                            '</tr>';
+                                            });
+
+                                        html=html+'</table></div></div>';
+                                    $('#calendar_details').html(html);
+                                        }
+                                        else{
+                                            $('#calendar_details').html('Data not available.');
+                                        }
+
+                                    },
+                                    error:function(data){
+                                                //alert('Your data has not been submitted..Please try again');
+                                            }
+                        });
+                        chartModal.modal('show');
+                    }
+                });
+                }
+                else if(['month_calendar'].indexOf(value) == 0){
+                    //calendar widget
+                    $('#month_calendar').fullCalendar({
+                    defaultView: 'year',
+                    allDayDefault: false,
+                    selectable: true,
+                    selectHelper: true,
+                    editable: true,
+                    eventLimit: true,
+                    defaultDate: moment('" . $date . "'),
+                    viewRender: function (view, element) {
+                    var b = $('#month_calendar').fullCalendar('getDate');
+                    var y=b.format('Y');
+                    var union= '" . $unionCode . "';
+                    var mcc= '" . $mccCode . "';
+                        $('#month_calendar .fc-today-button').html('Current Year');
+                        // $('.fc-day-grid').html('<div class=\"text-center mt35\"><i class=\"fa fa-spinner fa-pulse fa-3x fa-fw\"></i></div>');
+                        $('#month_calendar .fc-view-container').addClass('disp_none');
+                        $.ajax({
+                                    type: 'post',
+                                    url: '" . Url::to(['/site/load-year-data']) . "',
+                                    data: 'y='+y+'&union='+union+'&mcc='+mcc,
+                                    success: function(data) {
+
+                                        var obj1 = data;
+                                        if (obj1.status == 'success')
+                                        {
+                                            cal_data=obj1.res;                                                   
+                                        }
+                                        let cview = $('#month_calendar').fullCalendar('getView');  
+                                        if(cview.name == 'year'){
+                                            setYearData(cal_data);
+                                            $('#month_calendar .fc-scroller.fc-day-grid-container').addClass('disp_none');
+                                            $('#month_calendar .fc-row .fc-widget-header').addClass('disp_none');
+                                            $('#month_calendar .fc-view-container').removeClass('disp_none');
+                                        }
+                                        else{
+                                            $('#month_calendar .fc-row .fc-widget-header').removeClass('disp_none');
+                                            $('#month_calendar .fc-scroller.fc-day-grid-container').removeClass('disp_none');
+                                            $('#month_calendar .fc-view-container').removeClass('disp_none');
+                                        }
+                                        cview.unrenderDates();
+                                        cview.renderDates();
+                                        $(window).trigger('resize'); 
+                                    },
+                                    error:function(data){
+                                                //alert('Your data has not been submitted..Please try again');
+                                            }
+                        });
+                        }
+                    });
+                }
+            }, timeOut);
+            timeOut = timeOut + 3000;
+//            console.log(timeOut);
         });
+        
+
     });
 
     function setChartWidgets(set_widget_id){
