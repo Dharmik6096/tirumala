@@ -57,6 +57,8 @@ use app\modules\organisation\models\TblMasterTransfer;
 use app\modules\syncutility\models\TblInboxConstraint;
 use app\modules\collection\models\TblBmcCollectionNotExist;
 use app\modules\collection\models\TblMilkCollectionNotExists;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblMccPlant;
 
 class SiteController extends Controller {
 
@@ -2167,6 +2169,116 @@ class SiteController extends Controller {
         print_r($data);
         echo "</pre>";
         die;
+    }
+
+
+    public function actionGetUnions() {
+        $output = [];
+        $union = '';
+        $bmc = '';
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $sp_param = [];
+            $sp_name = 'sp_dashboard_milk_col_union';
+            $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
+            // $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $sp_param[] = '2020-01-01 00:00:00';
+            $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
+        // var_dump($output);die;
+        return $this->render('_dashboard_grid_union', ['output' => $output, 'date' => $data['date']]);
+    }
+
+    public function actionGetMccs() {
+        $output = [];
+        $union = '';
+        $bmc = '';
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $sp_param = [];
+            $sp_name = 'sp_dashboard_milk_col_mcc';
+            $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
+            // $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $sp_param[] = '2020-01-01 00:00:00';
+            // $sp_param[] = '2020-09-01 00:00:00';
+            $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }        
+        $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
+        $tbl_union_model = new TblUnions();
+        $tbl_union_model->union_code = $union;
+        return $this->render('_dashboard_grid_mccs', ['output' => $output, 'date' => $data['date'], 'union' => $data['union_code'], 'union_name'=>Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name')]);
+    }
+
+    public function actionGetBmcs() {
+        $output = [];
+        $union = '';
+        $bmc = '';
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $sp_param = [];
+            $sp_name = 'sp_dashboard_milk_col_bmc';
+            $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
+            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
+            // $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $sp_param[] = '2020-01-01 00:00:00';
+            // $sp_param[] = '2020-09-01 00:00:00';
+            $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
+        $mcc = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
+        $tbl_plant_model = new TblMccPlant();
+        $tbl_plant_model->mcc_plant_code = $mcc;
+        return $this->render('_dashboard_grid_bmc', ['output' => $output, 'date' => $data['date'], 'union' => $data['union_code'] , 'mcc' => $mcc, 'mcc_name'=> Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name')]);
+    }
+
+    public function actionGetDcs() {
+        $output = [];
+        $union = '';
+        $bmc = '';
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $sp_param = [];
+            $sp_name = 'sp_dashboard_milk_col_dcs';
+            $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
+            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
+            $sp_param[] = !empty($data['bmc_code']) ? $data['bmc_code'] : '0';
+            // $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $sp_param[] = '2020-01-01 00:00:00';
+            // $sp_param[] = '2020-09-01 00:00:00';
+            $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
+        $mcc = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
+        $bmc = !empty($data['bmc_code']) ? $data['bmc_code'] : '0';
+        $tbl_plant_model = new TblMccPlant();
+        $tbl_plant_model->mcc_plant_code = $mcc;
+        return $this->render('_dashboard_grid_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $data['union_code'] , 'mcc' => $mcc, 'bmc'=> $bmc, 'mcc_name'=> Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name')]);
+    }
+
+    public function actionGetFarmers() {
+        $output = [];
+        $union = '';
+        $bmc = '';
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $sp_param = [];
+            $sp_name = 'sp_dashboard_milk_col_farmers';
+            $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
+            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
+            $sp_param[] = !empty($data['bmc_code']) ? $data['bmc_code'] : '0';
+            $sp_param[] = !empty($data['dcs_code']) ? $data['dcs_code'] : '0';
+            // $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $sp_param[] = '2020-01-01 00:00:00';
+            // $sp_param[] = '2020-09-01 00:00:00';
+            $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        }
+        $dcs = !empty($data['dcs_code']) ? $data['dcs_code'] : '0';
+        $tbl_dcs_model = new TblDcs();
+        $tbl_dcs_model->dcs_code = $dcs;
+        return $this->render('_dashboard_grid_farmers', ['output' => $output, 'date' => $data['date'], 'dcs_name' => Yii::$app->general->getforeignkey($tbl_dcs_model->tblDcs, 'dcs_name')]);
     }
 
 }

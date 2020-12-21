@@ -577,4 +577,7 @@ class TblMember extends ChildModel {
                         ->one();
     }
 
+    public function getTblMember() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
 }

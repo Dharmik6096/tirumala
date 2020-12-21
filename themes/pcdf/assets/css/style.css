@@ -3965,3 +3965,13 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     right: 12px;
     top: -1px;
 }
+
+.dashboard_collection_grid_tbl .table tbody tr td {
+    text-align: center;
+    width: 10%;
+}
+
+.dashboard_collection_grid_tbl .table tbody tr .grid_left_align{
+    text-align: left !important;
+    width: 50px !important;
+}
