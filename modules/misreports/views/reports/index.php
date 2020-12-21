@@ -163,7 +163,7 @@ if (isset($data['url1'])) {
                                                 $depend = 'reportsmodel-bmc_code,reportsmodel-' . $value_array[1];
                                             }
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 vendor">
                                                 <?= Yii::$app->dropdown->customer_code($model, $form, $depend, 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
                                             </div>
                                             <?php
@@ -172,9 +172,6 @@ if (isset($data['url1'])) {
                                             ?>
                                             <div class="col-sm-3 ">
                                                 <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), FALSE, 'main_customer_type'); ?>
-                                            </div>
-                                            <div class="col-sm-3 vendor">
-                                                <?= Yii::$app->dropdown->customer_code($model, $form, 'reportsmodel-bmc_code,reportsmodel-customer_type', 'vendor_code', $model->getAttributeLabel('vendor_code'), FALSE); ?>
                                             </div>
                                             <?php
                                         }
