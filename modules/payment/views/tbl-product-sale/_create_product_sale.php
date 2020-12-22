@@ -389,6 +389,8 @@ $script = "
                 $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
                 $('#tblproductsaletransaction-x_col1').val(d.sale_rate);
                 $('#tblproductsaletransaction-unit_code').val(d.unit_code);
+                $('#tblproductsaletransaction-unit_code').trigger('change');
+                $('#tblproductsaletransaction-unit_code').trigger('select2:select');
                 $('#tblproductsaletransaction-product_sale_rate_applicability_code').val(d.product_sale_rate_applicability_code);
                 setAmount();
             },
