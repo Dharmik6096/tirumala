@@ -61,7 +61,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Unions'));
                                 }    
                             } else {
                                 ?>
-                                <tr><td colspan="8">No Data Available.</td></tr>
+                                <tr><td colspan="9">No Data Available.</td></tr>
                             <?php }
                             ?>
                             </tbody>
