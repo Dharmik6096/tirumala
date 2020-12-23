@@ -20,7 +20,6 @@ $type = !empty($type) ? $type : '';
             $form = ActiveForm::begin([
                         'options' => ['id' => 'create-product-sale-form'],
                         'validateOnBlur' => FALSE,
-                        
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,
@@ -89,7 +88,8 @@ $type = !empty($type) ? $type : '';
                     <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
                 </div>
                 <div class="col-sm-1 reset_field">
-                    <?= Yii::$app->dropdown->dropdown('tax_code', $detailModel, $form, 'form-group col-sm-1', $detailModel->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
+                    <?php Yii::$app->dropdown->depend_dropdown('depend_tax_code', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-1 padding-right-5 padding-left-0', $detailModel->getAttributeLabel('tax_code'), 'tax_code'); ?>
+                    <?php // Yii::$app->dropdown->dropdown('tax_code', $detailModel, $form, 'form-group col-sm-1', $detailModel->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
                 </div>
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($model, 'discount')->textInput() ?>
