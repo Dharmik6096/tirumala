@@ -2199,6 +2199,7 @@ class SiteController extends Controller {
             $sp_param = [];
             $sp_name = 'sp_dashboard_milk_col_mcc';
             $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
+            $sp_param[] = !empty(Yii::$app->session->get('MCC'))? Yii::$app->session->get('MCC') : '0';
             $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
             // $sp_param[] = '2020-01-01 00:00:00';
             // $sp_param[] = '2020-09-01 00:00:00';
@@ -2220,7 +2221,8 @@ class SiteController extends Controller {
             $sp_param = [];
             $sp_name = 'sp_dashboard_milk_col_bmc';
             $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
-            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
+            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : (!empty(Yii::$app->session->get('MCC'))? Yii::$app->session->get('MCC') : '0');
+            $sp_param[] = !empty(Yii::$app->session->get('BMC'))? Yii::$app->session->get('BMC') : '0';
             $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
             // $sp_param[] = '2020-01-01 00:00:00';
             // $sp_param[] = '2020-09-01 00:00:00';
@@ -2242,8 +2244,9 @@ class SiteController extends Controller {
             $sp_param = [];
             $sp_name = 'sp_dashboard_milk_col_dcs';
             $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
-            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
-            $sp_param[] = !empty($data['bmc_code']) ? $data['bmc_code'] : '0';
+            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : (!empty(Yii::$app->session->get('MCC'))? Yii::$app->session->get('MCC') : '0');
+            $sp_param[] = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC'))? Yii::$app->session->get('BMC') : '0');
+            $sp_param[] = !empty(Yii::$app->session->get('Dcs'))? Yii::$app->session->get('Dcs') : '0';
             $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
             // $sp_param[] = '2020-01-01 00:00:00';
             // $sp_param[] = '2020-09-01 00:00:00';
@@ -2266,9 +2269,9 @@ class SiteController extends Controller {
             $sp_param = [];
             $sp_name = 'sp_dashboard_milk_col_farmers';
             $sp_param[] = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions'))? Yii::$app->session->get('Unions') : '0');
-            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
-            $sp_param[] = !empty($data['bmc_code']) ? $data['bmc_code'] : '0';
-            $sp_param[] = !empty($data['dcs_code']) ? $data['dcs_code'] : '0';
+            $sp_param[] = !empty($data['mcc_code']) ? $data['mcc_code'] : (!empty(Yii::$app->session->get('MCC'))? Yii::$app->session->get('MCC') : '0');
+            $sp_param[] = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC'))? Yii::$app->session->get('BMC') : '0');
+            $sp_param[] = !empty($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs'))? Yii::$app->session->get('Dcs') : '0');
             $sp_param[] = date('Y-m-d', strtotime($data['date'])).' 00:00:00';
             // $sp_param[] = '2020-01-01 00:00:00';
             // $sp_param[] = '2020-09-01 00:00:00';
