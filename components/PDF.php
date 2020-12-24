@@ -304,7 +304,8 @@ class PDF extends TCPDF {
                 $footerTable .= '</table>';
                 $pdf->writeHTML($footerTable, true, false, false, false, '');
             }
-            $pdf->Output('yii2_tcpdf_example2.pdf', 'D');
+            $pdf->Output('vendor_bill_' . date('YmdHis') . '.pdf', 'D');
+//            $pdf->Output('yii2_tcpdf_example2.pdf', 'D');
             Yii::$app->end();
         }
 //        return;

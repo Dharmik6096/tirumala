@@ -285,7 +285,7 @@ class TblMccPlant extends \app\models\ChildModel {
         $mcc = $query->all();
         if ($concatCode) {
             $mcc = ArrayHelper::map($mcc, 'mcc_plant_code', function($mcc) {
-                        return $mcc->mcc_plant_code . '-' . $mcc->name;
+                        return $mcc->ref_code . '-' . $mcc->name;
                     });
         } else {
             $mcc = ArrayHelper::map($mcc, 'mcc_plant_code', 'name');

@@ -634,6 +634,7 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMemberReceptionStatus() {
         $this->report = 'MemberReceptionStatus';
+        return $this->actionIndex();
     }
 
     public function actionProductSaleRateMasterRegister() {

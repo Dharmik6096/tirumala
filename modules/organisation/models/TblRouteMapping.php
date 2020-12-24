@@ -62,26 +62,26 @@ class TblRouteMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['route_type'], function ($attribute, $params) {
+            [['route_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'route_type');
                 }, 'on' => 'importCsv'],
-                [['capacity'], function ($attribute, $params) {
+            [['capacity'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'capacity');
                 }, 'on' => 'importCsv'],
-                [['vehicle_type_code'], function ($attribute, $params) {
+            [['vehicle_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
                 }, 'on' => 'importCsv'],
-                [['union_code', 'route_name', 'to_dest', 'route_type', 'morning_start_time', 'morning_end_time', 'evening_start_time', 'evening_end_time', 'route_length_kms', 'capacity', 'vehicle_type_code'], 'required'],
-                [['valid_from'], 'required', 'except' => ['importCsv']],
-                [['morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
-                [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
-                [['route_length_kms'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', 'Route Length Kms must be greater than 0.')],
-                [['morning_end_time'], 'morningTimeValidate'],
-                [['evening_end_time'], 'eveningTimeValidate'],
-                [['evening_grace_time'], 'graceTimeValidate', 'on' => ['importCsv']],
-                [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'route_code_ex', 'ref_code', 'mobile_no', 'firstname'], 'safe'],
-                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-                ['to_dest', 'compare', 'compareAttribute' => 'from_dest', 'operator' => '!=', 'message' => 'Source and destination can not be same'],
+            [['union_code', 'route_name', 'to_dest', 'route_type', 'morning_start_time', 'morning_end_time', 'evening_start_time', 'evening_end_time', 'route_length_kms', 'capacity', 'vehicle_type_code'], 'required'],
+            [['valid_from'], 'required', 'except' => ['importCsv']],
+            [['morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
+            [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
+            [['route_length_kms'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', 'Route Length Kms must be greater than 0.')],
+            [['morning_end_time'], 'morningTimeValidate'],
+            [['evening_end_time'], 'eveningTimeValidate'],
+            [['evening_grace_time'], 'graceTimeValidate', 'on' => ['importCsv']],
+            [['created_at', 'updated_at', 'unit', 'valid_from', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'route_code_ex', 'ref_code', 'mobile_no', 'firstname'], 'safe'],
+            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            ['to_dest', 'compare', 'compareAttribute' => 'from_dest', 'operator' => '!=', 'message' => 'Source and destination can not be same'],
 //            [['route_name'], function ($attribute, $params) {
 //            Yii::$app->general->validateName($this, $attribute, $params);
 //        }, 'skipOnEmpty' => false],
@@ -95,15 +95,15 @@ class TblRouteMapping extends \app\models\ChildModel {
             [['route_code_ex'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
-                ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['union_code'], 'importData', 'on' => ['importCsv']],
-                [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
-                [['mobile_no', 'firstname'], 'required', 'on' => ['importCsv']],
-                [['mobile_no'], function ($attribute, $params) {
+            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['union_code'], 'importData', 'on' => ['importCsv']],
+            [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
+            [['mobile_no', 'firstname'], 'required', 'on' => ['importCsv']],
+            [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
-                [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
-                [['route_code'], function ($attribute, $params) {
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+            [['route_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
         ];
@@ -189,7 +189,7 @@ class TblRouteMapping extends \app\models\ChildModel {
                 ->select('*')
                 ->from('tbl_route_mapping_sources rms');
 
-        //echo $route_type; echo $route_dest_type; exit;
+//echo $route_type; echo $route_dest_type; exit;
 
         $plant_quey = (new Query())->select(['plant_code AS code', 'name', new Expression(" 'Plant' as tname"), 'plant_code_ex as ex_code', 'ref_code'])->from('tbl_plant p')->where(['union_code' => $union_code, 'is_active' => 1])->createCommand()->rawSql;
         $mcc_query = (new Query())->select(['mcc_plant_code AS code', 'name', new Expression("'MCC' as tname"), 'mcc_plant_code_ex as ex_code', 'ref_code'])->from('tbl_mcc_plant t')->where(['union_code' => $union_code, 'is_active' => 1]);
@@ -197,7 +197,7 @@ class TblRouteMapping extends \app\models\ChildModel {
         switch (1) {
             case ($route_type == 'can' && $route_dest_type == 'from'):
                 $dcs_sub_query = $subQuery->where('t.dcs_code = rms.from_dest');
-                $results = (new Query())->select(['dcs_code AS code', 'dcs_name AS name', new Expression("'Society' as tname"), 'dcs_code_ex as ex_code'])->from('tbl_dcs t')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $dcs_sub_query]);
+                $results = (new Query())->select(['dcs_code AS code', 'dcs_name AS name', new Expression("'Society' as tname"), 'dcs_code_ex as ex_code', 'ref_code'])->from('tbl_dcs t')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $dcs_sub_query]);
                 if (!empty($routeData)) {
                     if (strtolower($routeData->to_type) == 'bmc' && !empty($routeData->to_dest)) {
                         $results->andFilterWhere(['bmc_code' => $routeData->to_dest]);
@@ -214,7 +214,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
             case ($route_type == 'tanker' && $route_dest_type == 'from'):
                 $bmc_sub_query = $subQuery->where('b.bmc_code = rms.from_dest and rms.from_type=\'bmc\'');
-                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname"), 'bmc_code_ex as ex_code'])->from('tbl_bmc b')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $bmc_sub_query])->createCommand()->rawSql;
+                $bmc_query = (new Query())->select(['bmc_code AS code', 'bmc_name AS name', new Expression(" 'BMC' as tname"), 'bmc_code_ex as ex_code', 'ref_code'])->from('tbl_bmc b')->where(['union_code' => $union_code, 'is_active' => 1])->andWhere(['not exists', $bmc_sub_query])->createCommand()->rawSql;
                 $mcc_sub_query = $subQuery->where('t.mcc_plant_code = rms.from_dest and rms.from_type=\'mcc\'');
                 $results = $mcc_query->andWhere(['not exists', $mcc_sub_query])->union($bmc_query)->all();
                 break;
@@ -229,27 +229,31 @@ class TblRouteMapping extends \app\models\ChildModel {
                 break;
             default:
         }
-        //var_dump($results); exit;
+//var_dump($results); exit;
         return $results;
     }
 
-    public function getDestinationName($module, $code) {
+    public function getDestinationName($module, $code, $select = '') {
         switch (strtolower($module)) {
             case 'society':
-                $name = TblDcs::find()->select('dcs_name')->where(['dcs_code' => $code])->one();
-                $name = !empty($name->dcs_name) ? $name->dcs_name : 'N/A';
+                $selectKey = !empty($select) ? $select : 'dcs_name';
+                $name = TblDcs::find()->select($selectKey)->where(['dcs_code' => $code])->one();
+                $name = !empty($name->{$selectKey}) ? $name->{$selectKey} : 'N/A';
                 break;
             case 'plant':
-                $name = TblPlant::find()->select('name')->where(['plant_code' => $code])->one();
-                $name = !empty($name->name) ? $name->name : 'N/A';
+                $selectKey = !empty($select) ? $select : 'name';
+                $name = TblPlant::find()->select($selectKey)->where(['plant_code' => $code])->one();
+                $name = !empty($name->{$selectKey}) ? $name->{$selectKey} : 'N/A';
                 break;
             case 'mcc':
-                $name = TblMccPlant::find()->select('name')->where(['mcc_plant_code' => $code])->one();
-                $name = !empty($name->name) ? $name->name : 'N/A';
+                $selectKey = !empty($select) ? $select : 'name';
+                $name = TblMccPlant::find()->select($selectKey)->where(['mcc_plant_code' => $code])->one();
+                $name = !empty($name->{$selectKey}) ? $name->{$selectKey} : 'N/A';
                 break;
             case 'bmc':
-                $name = TblDcsBmc::find()->select('bmc_name')->where(['bmc_code' => $code])->one();
-                $name = !empty($name->bmc_name) ? $name->bmc_name : 'N/A';
+                $selectKey = !empty($select) ? $select : 'bmc_name';
+                $name = TblDcsBmc::find()->select($selectKey)->where(['bmc_code' => $code])->one();
+                $name = !empty($name->{$selectKey}) ? $name->{$selectKey} : 'N/A';
                 break;
             default :
                 $name = '';
@@ -297,7 +301,7 @@ class TblRouteMapping extends \app\models\ChildModel {
         return $code;
     }
 
-    public function getRoutes($unionCode) {
+    public function getRoutes($unionCode, $concateRef = FALSE) {
         $route = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
 
         $where_bmc = [];
@@ -313,8 +317,10 @@ class TblRouteMapping extends \app\models\ChildModel {
         }
         $route->andWhere(['or', $where_bmc, $where_mcc]);
         $route = $route->all();
-
-        $route = ArrayHelper::map($route, 'route_code', 'route_name');
+        $route = \yii\helpers\ArrayHelper::map($route, 'route_code', function ($value) use($concateRef) {
+                    return ($concateRef) ? $value['ref_code'] . ' - ' . $value['route_name'] . ' - ' . strtoupper($value['to_type']) : $value['route_name'] . ' - ' . strtoupper($value['to_type']);
+                });
+//        $route = ArrayHelper::map($route, 'route_code', 'route_name');
         asort($route, SORT_NATURAL | SORT_FLAG_CASE);
         return $route;
     }
@@ -389,7 +395,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
         $data = $data->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function ($value) use($concateRef) {
-                    return ($concateRef) ? $value['route_name'] . ' - ' . strtoupper($value['to_type']) . ' - ' . $value['ref_code'] : $value['route_name'] . ' - ' . strtoupper($value['to_type']);
+                    return ($concateRef) ? $value['route_name'] . ' - ' . strtoupper($value['to_type']) . ' - ' . $value['ref_code'] : $value['ref_code'] . ' - ' . $value['route_name'] . ' - ' . strtoupper($value['to_type']);
                 });
         return $array;
     }

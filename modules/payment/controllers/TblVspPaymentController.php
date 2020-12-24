@@ -28,6 +28,7 @@ use app\modules\payment\models\TblVspPaymentTransaction;
 use app\modules\vsp\models\TblMemberPaymentAllow;
 use app\modules\payment\models\TblVspOutstanding;
 use app\modules\payment\models\TblVspOutstandingHistory;
+use yii\helpers\Url;
 
 /**
  * TblVspPaymentController implements the CRUD actions for TblVspPayment model.
@@ -77,7 +78,9 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
 
-        if (Yii::$app->request->post('TblVspPayment')) {
+        if (Yii::$app->request->post()) {
+//        if (Yii::$app->request->post('TblVspPayment')) {
+//            $postData = Yii::$app->request->post();
             $adjust_id = Yii::$app->request->post('TblVspPayment')['vsp_payment_code'];
             $adjust_amt = Yii::$app->request->post('TblVspPayment')['adjust_amount'];
             $adjust_remark = Yii::$app->request->post('TblVspPayment')['adjust_remark'];
@@ -87,6 +90,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             foreach ($adjust_id as $key => $value) {
                 if (($adjust_amt[$key] != 0 && $adjust_amt[$key] != '') || ($hold_amt[$key] != 0 && $hold_amt[$key] != '')) {
                     $data = TblVspPayment::findOne($adjust_id[$key]);
+                    $updateData = false;
+                    $oldData = $data->oldAttributes;
                     $historyModel = new TblVspPaymentHistory();
                     Yii::$app->operation->history($data, $historyModel, UPDATE);
                     $data->adjust_amount = $adjust_amt[$key];
@@ -96,15 +101,29 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     if ($model->billing_type == 'remuneration') {
                         $data->scenario = 'remuneration';
                     }
-                    $save_model[] = $historyModel;
-                    $save_model[] = $data;
-                    $cnt++;
+                    if (!empty($oldData) && ($oldData['hold_amount'] != $data->hold_amount || $oldData['adjust_amount'] != $data->adjust_amount || $oldData['adjust_remark'] != $data->adjust_remark)) {
+                        $updateData = true;
+                    }
+                    if ($updateData) {
+                        $save_model[] = $historyModel;
+                        $save_model[] = $data;
+                        $cnt++;
+                    }
                 }
             }
             $transaction = $this->generalModel->saveTransaction($save_model, ['Payment of ' . $cnt . ' ' . Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . '  adjusted succesfully', 'info']);
-            if ($transaction !== FALSE && $transaction != 'customRender') {
-                return $this->redirect(['index']);
+
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            $msg = '';
+            $url = Url::to(['index']);
+            if ($transaction == 'customRedirect') {
+                $result = 'success';
+            } else {
+                $result = 'error';
+                $msgData = Yii::$app->session->getFlash('success');
+                $msg = !empty($msg['message']) ? $msg['message'] : '';
             }
+            return ['status' => $result, 'url' => $url, 'msg' => $msg];
         }
 
         if ($model->billing_type == 'remuneration') {
@@ -383,60 +402,74 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $model->load(Yii::$app->request->post());
         // $model->dcs_code = Yii::$app->request->post('selection');
         $this->LockBilling($model);
-        return $this->redirect(['index']);
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        $msg = '';
+        $url = Url::to(['index']);
+        $result = 'success';
+        return ['status' => $result, 'url' => $url, 'msg' => $msg];
+//        return $this->redirect(['index']);
     }
 
     protected function LockBilling($model) {
-        $save_model = [];
-        $newModel = new TblVspPayment();
-        $query = $newModel->find()->where([
-                    'payment_cycle_code' => $model->payment_cycle_code,
-                    'tbl_vsp_payment.bmc_code' => $model->bmc_code,
-                    'tbl_vsp_payment.customer_type' => $model->customer_type,
-                    'status' => ['processed', 'rejected'],
-                ])
-                ->all();
-        $PaymentApp = TblPaymentCycleApplicability::find()
-                ->where(['payment_cycle_code' => $model->payment_cycle_code,
-                    'applicable_code' => $model->bmc_code,
-                    'applicable_for' => 'BMC',
-                    'applicable_type' => $model->customer_type,
-                ])
-                ->one();
-        if (!empty($PaymentApp)) {
-            $model->from_datetime = $PaymentApp->from_date;
-            $PaymentApp->billing_lock_bmc = 1;
-            $save_model[] = $PaymentApp;
-        }
-        foreach ($query as $data) {
-            $outstanding = TblVspOutstanding::find()->where([
-                        'customer_type' => $data->customer_type,
-                        'customer_code' => $data->customer_code
-                    ])->one();
-            if (empty($outstanding)) {
-                $outstanding = new TblVspOutstanding();
-                $outstanding->attributes = $data->attributes;
-            } else {
-                $oshistoryModel = new TblVspOutstandingHistory();
-                Yii::$app->operation->history($outstanding, $oshistoryModel, UPDATE);
-                $save_model[] = $oshistoryModel;
-            }
-            // $outstanding->scenario = 'payment';
-            $outstanding->payment_cycle_code = $data->payment_cycle_code;
-            $outstanding->hold_amount = $data->hold_amount;
-            $outstanding->due_amount = $data->adjust_amount;
-            $save_model[] = $outstanding;
-            $data->status = 'sent';
-            $save_model[] = $data;
-            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
-            if ($transaction == 'customRedirect') {
-                $param = [];
-                $param['from_datetime'] = $model->from_datetime;
-                $param['customer_type'] = $model->customer_type;
-                $param['bmc_code'] = $model->bmc_code;
-                Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
-            }
-        }
+        $param = [];
+        $param['customer_type'] = $model->customer_type;
+        $param['bmc_code'] = $model->bmc_code;
+        $param['applicable_for'] = 'BMC';
+        $param['payment_cycle_code'] = $model->payment_cycle_code;
+        $param['user_code'] = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+        Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
+
+//        $save_model = [];
+//        $newModel = new TblVspPayment();
+//        $query = $newModel->find()->where([
+//                    'payment_cycle_code' => $model->payment_cycle_code,
+//                    'tbl_vsp_payment.bmc_code' => $model->bmc_code,
+//                    'tbl_vsp_payment.customer_type' => $model->customer_type,
+//                    'status' => ['processed', 'rejected'],
+//                ])
+//                ->all();
+//        $PaymentApp = TblPaymentCycleApplicability::find()
+//                ->where(['payment_cycle_code' => $model->payment_cycle_code,
+//                    'applicable_code' => $model->bmc_code,
+//                    'applicable_for' => 'BMC',
+//                    'applicable_type' => $model->customer_type,
+//                ])
+//                ->one();
+//        if (!empty($PaymentApp)) {
+//            $model->from_datetime = $PaymentApp->from_date;
+//            $PaymentApp->billing_lock_bmc = 1;
+//            $save_model[] = $PaymentApp;
+//        }
+//        foreach ($query as $data) {
+//            $outstanding = TblVspOutstanding::find()->where([
+//                        'customer_type' => $data->customer_type,
+//                        'customer_code' => $data->customer_code
+//                    ])->one();
+//            if (empty($outstanding)) {
+//                $outstanding = new TblVspOutstanding();
+//                $outstanding->attributes = $data->attributes;
+//            } else {
+//                $oshistoryModel = new TblVspOutstandingHistory();
+//                Yii::$app->operation->history($outstanding, $oshistoryModel, UPDATE);
+//                $save_model[] = $oshistoryModel;
+//            }
+//            // $outstanding->scenario = 'payment';
+//            $outstanding->payment_cycle_code = $data->payment_cycle_code;
+//            $outstanding->hold_amount = $data->hold_amount;
+//            $outstanding->due_amount = $data->adjust_amount;
+//            $save_model[] = $outstanding;
+//            $data->status = 'sent';
+//            $save_model[] = $data;
+//            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+//            if ($transaction == 'customRedirect') {
+//                $param = [];
+//                $param['from_datetime'] = $model->from_datetime;
+//                $param['customer_type'] = $model->customer_type;
+//                $param['bmc_code'] = $model->bmc_code;
+//                Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+//            }
+//        }
     }
 
     protected function exportTxt($model) {
