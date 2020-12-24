@@ -190,10 +190,11 @@ $script = "
         var shift = $('#tblmilkcollection-shift_code').val();
         var fat = $('#tblmilkcollection-fat').val();
         var snf = $('#tblmilkcollection-snf').val();
-        var milk_quality_type = 1;
+        var milk_quality_type = $('#tblmilkcollection-milk_quality_type_code').val();
+
         var member = $('#tblmilkcollection-member_code').val();
         var member_code = dcs.concat(member);
-        if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != ''){
+        if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && milk_quality_type != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
@@ -220,6 +221,45 @@ $script = "
             $('#tblmilkcollection-rate_code').val('');
         }
     }
+    $(document).ready(function () {
+        milkQualityType();
+    });
+    $(document).on('change', '#tblmilkcollection-union_code', function() {  
+          milkQualityType();
+    });
+
+    function milkQualityType(){
+        var union = $('#tblmilkcollection-union_code').val();
+        if(union != ''){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['qlty-type-config']) . "',
+                data: {'union':union},
+                success: function(data) {   
+                      var obj = $.parseJSON(data);
+                      if (obj.status == 'success')
+                      {
+                        if(obj.config==1){
+                            $('.milk_quality_type_div').show();
+                        }else{
+                            $('.milk_quality_type_div').hide();
+                            $('#tblmilkcollection-milk_quality_type_code').val(1);
+                        }
+                      }else{
+                           $('.milk_quality_type_div').hide();
+                           $('#tblmilkcollection-milk_quality_type_code').val(1);
+                      }
+                },
+                error:function(data){
+
+                }
+            });
+        }else{
+            $('.milk_quality_type_div').hide();
+            $('#tblmilkcollection-milk_quality_type_code').val(1);
+        }
+    }
+
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

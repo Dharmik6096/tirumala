@@ -45,7 +45,7 @@ class TblDcsDeactive extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
             [['originating_type'], 'integer'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date'], 'required'],
             [['to_date'], 'required', 'on' => ['activeDCS']],
@@ -146,6 +146,31 @@ class TblDcsDeactive extends \app\models\ChildModel {
                 ->all();
         $value = ArrayHelper::map($records, 'dcs_code', 'dcs_code');
         return $value;
+    }
+
+    public function getDeactiveRecords() {
+        $date = date('Y-m-d');
+
+        return $query = $this->find()
+                ->where(['<=', 'from_date', $date])
+                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]])
+                ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
+                ->orderBy(['dcs_deactive_code' => SORT_ASC])
+                ->all();
+    }
+
+    public function getActiveRecords() {
+        $date = date('Y-m-d');
+
+        return $query = $this->find()
+                ->where(['data_post_status' => 2])
+                ->andWhere(['<=', 'to_date', $date])
+                ->orderBy(['dcs_deactive_code' => SORT_ASC])
+                ->all();
+    }
+
+    public function updateFileStatus($value, $status) {
+        return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['dcs_deactive_code' => $value]);
     }
 
 }

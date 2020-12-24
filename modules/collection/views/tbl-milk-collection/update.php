@@ -7,7 +7,7 @@ $this->title = Yii::$app->label->title('edit', 'Milk Collection');
         <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider, $action = 'update-collection']); ?>
         <div class="clearfix"></div>
         <?=
-        $this->render('_update_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'detailModel' => $detailModel,]);
+        $this->render('_update_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'detailModel' => $detailModel, 'config' => $config]);
         ?>
 
     </div>

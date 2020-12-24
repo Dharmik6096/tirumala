@@ -17,7 +17,7 @@ class TblPurchaseRateSearch extends TblPurchaseRate {
      */
     public function rules() {
         return [
-            [['union_code', 'purchase_rate_code', 'wef_date', 'created_at', 'originating_org_type', 'description', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'updated_at', 'created_by', 'updated_by', 'reference_code'], 'safe'],
+            [['union_code', 'purchase_rate_code', 'wef_date', 'created_at', 'originating_org_type', 'description', 'shift_applicability', 'originating_org_code', 'rate_gen_method_code', 'updated_at', 'created_by', 'updated_by', 'reference_code', 'ts_rate'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
@@ -52,7 +52,7 @@ class TblPurchaseRateSearch extends TblPurchaseRate {
 //        }
 
         if (Yii::$app->session->get('Unions') !== '' && empty($this->union_code)) {
-            $query->andFilterWhere([ 'tbl_purchase_rate.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+            $query->andFilterWhere(['tbl_purchase_rate.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         } else {
             $query->andFilterWhere(['tbl_purchase_rate.union_code' => $this->union_code]);
         }
@@ -83,7 +83,8 @@ class TblPurchaseRateSearch extends TblPurchaseRate {
                 ->andFilterWhere(['like', 'tbl_rate_generate_method.method', $this->rate_gen_method_code])
                 // ->andFilterWhere(['like', 'tbl_rate_type.rate_type', $this->rate_type])
                 ->andFilterWhere(['like', 'tbl_shift.shift', $this->shift_applicability])
-                ->andFilterWhere(['like', 'reference_code', $this->reference_code]);
+                ->andFilterWhere(['like', 'reference_code', $this->reference_code])
+                ->andFilterWhere(['like', 'ts_rate', $this->ts_rate]);
 
         return $dataProvider;
     }

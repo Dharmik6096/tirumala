@@ -15,7 +15,7 @@ $this->title = Yii::t('app', 'Delete MPP Collection');
                     <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider, $action = 'delete-collection']); ?>
                     <div class="clearfix"></div>
                     <?php
-                    echo $this->render('_delete_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+                    echo $this->render('_delete_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'configVal' => $configVal,]);
                     ?>
                 </div>
             </div>

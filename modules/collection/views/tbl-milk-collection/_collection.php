@@ -69,6 +69,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-1  rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', $model->getAttributeLabel('milk_type_code'), $readonly, 'milk_type_code'); ?>
         </div>
+        <div class="col-sm-2 rtpl_validate create_fields milk_quality_type_div">
+            <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
+        </div>
         <div class="col-sm-1  reset_field number-validate">
             <?= $form->field($model, 'qty')->textInput() ?>
         </div>
@@ -88,7 +91,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
         </div>
-
+        <div class="clearfix"></div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?php
@@ -118,6 +121,7 @@ $form = ActiveForm::begin([
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     reloadGrid();
+                                                                    milkQualityType();
                                                                     $("#milk-collection-from .reset_field input").val("");
                                                                     $("#milk-collection-from .reset_field select").val("");
                                                                     $("#milk-collection-from .reset_field textarea").val("");

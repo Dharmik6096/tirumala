@@ -37,6 +37,7 @@ use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblDcsDeactiveSearch;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -81,11 +82,15 @@ class TblDcsController extends ChildController {
         $csearchModel->module_name = 'society';
         $csearchModel->module_code = $id;
         $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
+        $dsearchModel = new TblDcsDeactiveSearch();
+        $dsearchModel->dcs_code = $id;
+        $ddataProvider = $dsearchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $dcsBmc, 'dataProvider' => $dataProvider,
                     'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
+                    'dsearchModel' => $dsearchModel, 'ddataProvider' => $ddataProvider,
         ]);
     }
 

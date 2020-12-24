@@ -21,12 +21,59 @@ use kartik\grid\GridView;
     </div>
 </div>
 <?php
+$hasBmc = Yii::$app->session->get('hasBMC');
 $script = "
     gridChange();
     visible();
     $('#tblbmccollection-collection_type').change(function(){
         visible();
     });
+    var hasBMC = '" . $hasBmc . "';
+    $('#tblbmccollection-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        var bmc = $('#tblbmccollection-own_bmc_code').val();
+        $('#tblbmccollection-bmc_code').val(bmc);
+        $('#tblbmccollection-bmc_code').trigger('change');
+        $('#tblbmccollection-bmc_code').trigger('select2:select');
+        if(hasBMC == 0){
+             $('#tblbmccollection-bmc_code').parent('div').parent().hide();  
+        }
+    });
+
+    $(document).ready(function () {
+        pouredBmc();
+    });
+    $(document).on('change', '#tblbmccollection-union_code', function() {  
+          pouredBmc();
+    });
+
+    function pouredBmc(){
+        var union = $('#tblbmccollection-union_code').val();
+        if(union != ''){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['poured-bmc-config']) . "',
+                data: {'union':union},
+                success: function(data) {   
+                      var obj = $.parseJSON(data);
+                      if (obj.status == 'success')
+                      {
+                        if(obj.config==1){
+                            $('#tblbmccollection-bmc_code').parent('div').parent().show();
+                        }else{
+                            $('#tblbmccollection-bmc_code').parent('div').parent().hide();
+                        }
+                      }
+                },
+                error:function(data){
+
+                }
+            });
+        }else{
+            $('.milk_quality_type_div').hide();
+            $('#tblmilkcollection-milk_quality_type_code').val(1);
+        }
+    }
+
     function visible(){
         var coll_type = $('#tblbmccollection-collection_type').val();
         if(coll_type == 1 || coll_type == ''){

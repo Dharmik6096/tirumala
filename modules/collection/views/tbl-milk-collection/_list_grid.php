@@ -35,6 +35,9 @@ use kartik\grid\GridView;
         ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
             }, 'filter' => FALSE],
+        ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->milkQualityCode, 'milk_quality_type_name');
+            }, 'filter' => FALSE],
         ['attribute' => 'qty', 'filter' => FALSE],
         ['attribute' => 'fat', 'filter' => FALSE],
         ['attribute' => 'snf', 'filter' => FALSE],

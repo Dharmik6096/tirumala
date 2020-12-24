@@ -16,10 +16,13 @@ use yii\helpers\Url;
 use PHPExcel;
 use app\modules\import\controllers\DefaultController;
 use app\modules\import\importData;
+use app\modules\organisation\models\TblDcsDeactive;
+use app\modules\organisation\models\TblDcs;
+use app\modules\syncutility\models\TblSentbox;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate'];
     public $errorPath = '';
 
     public function init() {
@@ -247,6 +250,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection') {
                 $flag = 'milk-collection-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            } else if ($row->file_type == 'milk_collection') {
+                $flag = 'milk-collection-qlty-bulk';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -405,6 +411,84 @@ class SchedulerController extends ChildController {
             $row->save(FALSE);
             var_dump($ex->getMessage());
         }
+    }
+
+    public function actionDcsSentboxGenerate() {
+        $model = new TblDcsDeactive();
+        $deactiveData = $model->getDeactiveRecords();
+        $activeData = $model->getActiveRecords();
+        if (!empty($deactiveData)) {
+            $ids = array_map(function($e) {
+                return $e->dcs_deactive_code;
+            }, $deactiveData);
+            $update = $model->updateFileStatus($ids, 1);
+            foreach ($deactiveData as $row) {
+                $dcsModel = new TblDcs();
+                $existData = $dcsModel::find()->where(['dcs_code' => $row->dcs_code])->one();
+                if (!empty($existData)) {
+                    $existData->is_active = 0;
+                    $sentboxArray = [];
+                    $encrypt = $dcsModel->encryptModel($existData->attributes);
+                    $existData->setAttributes($encrypt);
+                    $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
+                    foreach ($sentboxArray as $sent) {
+                        $flag = 'UPDATE';
+                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code);
+                        if (!($sentbox->setSentbox($existData, $flag))) {
+                            $row->data_post_status = 3;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'SentBox Entry is not Generated';
+                            $row->save(FALSE);
+                        } else {
+                            $row->data_post_status = 2;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'Sentbox Generated';
+                            $row->save(FALSE);
+                        }
+                    }
+                }
+            }
+        }
+        if (!empty($activeData)) {
+            $ids = array_map(function($e) {
+                return $e->dcs_deactive_code;
+            }, $activeData);
+            $update = $model->updateFileStatus($ids, 4);
+            foreach ($activeData as $row) {
+                $dcsModel = new TblDcs();
+                $existData = $dcsModel::find()->where(['dcs_code' => $row->dcs_code])->one();
+                if (!empty($existData)) {
+                    $existData->is_active = 1;
+                    $sentboxArray = [];
+                    $encrypt = $dcsModel->encryptModel($existData->attributes);
+                    $existData->setAttributes($encrypt);
+                    $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
+                    foreach ($sentboxArray as $sent) {
+                        $flag = 'UPDATE';
+                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code);
+                        if (!($sentbox->setSentbox($existData, $flag))) {
+                            $row->data_post_status = 6;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'SentBox Entry is not Generated';
+                            $row->save(FALSE);
+                        } else {
+                            $row->data_post_status = 5;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'Sentbox Generated';
+                            $row->save(FALSE);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type, $union) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $union;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

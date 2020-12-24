@@ -25,7 +25,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid', 'poured-bmc-config'];
 
     /**
      * Lists all TblBmcCollection models.
@@ -111,7 +111,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
                 }
                 $this->model->own_mcc_plant_code = $this->model->mcc_plant_code;
-                $this->model->own_bmc_code = $this->model->bmc_code;
             } else {
                 if (strtolower($this->model->customer_type) != 'dcs') {
                     $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
@@ -266,7 +265,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         if (strtolower($for) != 'dcs') {
-            $code = $bmcModel->validateCustomer($data['union'],$data['dcs_code'], $for);
+            $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for);
         } else {
             $code = $bmcModel->dcs_code;
         }
@@ -453,6 +452,12 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionPouredBmcConfig() {
+        $union = Yii::$app->request->post('union');
+        $config = isset(Yii::$app->session->get('unionConfig')[$union]['pouring_bmc_collection']) ? Yii::$app->session->get('unionConfig')[$union]['pouring_bmc_collection'] : 0;
+        return Json::encode(['status' => 'success', 'config' => $config]);
     }
 
 }

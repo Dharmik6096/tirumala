@@ -15,6 +15,7 @@ use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\details\models\TblContactDetailsSearch;
+use app\modules\organisation\models\TblCustomerDeactiveSearch;
 
 /**
  * TblCustomerMasterController implements the CRUD actions for TblCustomerMaster model.
@@ -54,10 +55,14 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $csearchModel->module_name = 'customer';
         $csearchModel->module_code = $id;
         $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
+        $dsearchModel = new TblCustomerDeactiveSearch();
+        $dsearchModel->customer_code = $id;
+        $ddataProvider = $dsearchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
+                    'dsearchModel' => $dsearchModel, 'ddataProvider' => $ddataProvider,
         ]);
     }
 

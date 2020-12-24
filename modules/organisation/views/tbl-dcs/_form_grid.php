@@ -219,15 +219,15 @@ $grid_option = [
           $subCenter = $model->getMainSubCenter();
           return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code, 'dcsname' => $model->dcs_name, 'subcenter' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_code : 0, 'subname' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_name : '','type'=>'DCS'], $options);
           }, */
-        'deactive' => function ($url, $model) {
-            $name = $model->dcs_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
-            if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
-            else
-                return false;
-        },
+//        'deactive' => function ($url, $model) {
+//            $name = $model->dcs_name;
+//            $class = ($model->is_active == 1) ? '' : 'link-disable';
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
+//            if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
+//                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
+//            else
+//                return false;
+//        },
         'bank-details' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];

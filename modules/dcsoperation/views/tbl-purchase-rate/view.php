@@ -95,8 +95,12 @@ $this->title = Yii::$app->label->title('view', 'Purchase Rates');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'ts_rate',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
                                 'attribute' => 'description',
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
@@ -112,7 +116,7 @@ $this->title = Yii::$app->label->title('view', 'Purchase Rates');
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],
@@ -124,16 +128,16 @@ $this->title = Yii::$app->label->title('view', 'Purchase Rates');
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Purchase Rate Transactions') ?></h4>
             </div>
-        <div class="form-grid">
-            <?php echo $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]); ?>
-        </div> 
+            <div class="form-grid">
+                <?php echo $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]); ?>
+            </div> 
         </div>
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Purchase Rate Applicability') ?></h4>
             </div>
-        <div class="form-grid">
-            <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
-        </div> 
+            <div class="form-grid">
+                <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>
+            </div> 
+        </div>
     </div>
-</div>

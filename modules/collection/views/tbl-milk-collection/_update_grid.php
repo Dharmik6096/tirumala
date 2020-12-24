@@ -50,6 +50,12 @@ $form = ActiveForm::begin([
                 return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
             },
         ],
+        ['attribute' => 'milk_quality_type_code',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form, $detailModel) {
+                return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
+            }, 'visible' => $config,
+        ],
 //        ['attribute' => 'milkqtype', 'filter' => false],
         ['attribute' => 'qty',
             'format' => 'raw',
@@ -140,12 +146,12 @@ $script = "
      
          var dcs = $('#tblmilkcollection-'+tr_key+'-dcs_code').val();
          var milk_type = $('#tblmilkcollection-'+tr_key+'-milk_type_code').val();
+         var milk_quality_type = $('#tblmilkcollection-'+tr_key+'-milk_quality_type_code').val();
          var dt_date = $('#tblmilkcollection-'+tr_key+'-date_time_of_collection').val();
          var shift = $('#tblmilkcollection-'+tr_key+'-shift_code').val();
          var fat = $('#tblmilkcollection-'+tr_key+'-fat').val();
          var snf = $('#tblmilkcollection-'+tr_key+'-snf').val();
-        var milk_quality_type = 1;
-        if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != ''){
+        if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && milk_quality_type != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',

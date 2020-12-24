@@ -35,6 +35,7 @@ $attribute = [
     ['attribute' => 'shift_applicability', 'value' => 'shiftApplicability.shift',],
     ['attribute' => 'rate_gen_method_code', 'value' => 'rateMethod.method',],
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
+    'ts_rate',
     'description',
 ];
 

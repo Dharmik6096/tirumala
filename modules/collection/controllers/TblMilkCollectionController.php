@@ -27,7 +27,7 @@ use app\modules\collection\models\OnlineCollectionModel;
  */
 class TblMilkCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid'];
+    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid', 'qlty-type-config'];
 
     /**
      * Lists all TblMilkCollection models.
@@ -189,9 +189,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $this->model = new TblMilkCollection();
         $this->model->member_code = $member;
         $rateClass = Yii::$app->general->getforeignkey($this->model->memberCode, 'rate_class');
-        
+
         $data['rate_class'] = empty($rateClass) ? 0 : $rateClass;
-        
+
         $model = new TblPurchaseRateApplicability();
         $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
@@ -348,7 +348,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $detailModel = $dataProvider->getModels();
         $message = 'Milk Collection';
         $type = 'edit';
-
+        $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
+        $config = $configVal == 1 ? TRUE : FALSE;
         if (Yii::$app->request->post()) {
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
@@ -365,7 +366,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
-                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'])) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'])) {
                         if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;
@@ -411,6 +412,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'detailModel' => $detailModel,
+                    'config' => $config,
         ]);
     }
 
@@ -418,6 +420,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $searchModel = new TblMilkCollectionSearch();
         $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
         $searchModel->scenario = 'deleteMilkCollection';
+        $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -456,6 +459,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         return $this->render('delete', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'configVal' => $configVal,
         ]);
     }
 
@@ -523,6 +527,12 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'model' => $model,
                     'defaultToggle' => $defaultToggle
         ]);
+    }
+
+    public function actionQltyTypeConfig() {
+        $union = Yii::$app->request->post('union');
+        $config = isset(Yii::$app->session->get('unionConfig')[$union]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$union]['qlty_wise_collection'] : 0;
+        return Json::encode(['status' => 'success', 'config' => $config]);
     }
 
 }

@@ -29,7 +29,7 @@ use app\modules\organisation\models\TblBmcSilosInfoSearch;
 class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc'];
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list'];
 
     /**
      * Lists all TblDcsBmc models.
@@ -293,7 +293,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
 
     public function actionBmcMapping($id) {
         $DcsBmcModel = new TblDcsBmc();
-        $bmc_data = $DcsBmcModel->getBMCList([]);
+        $bmc_data = $DcsBmcModel->getBMCList([], TRUE, FALSE, TRUE);
         unset($bmc_data[$id]);
         $model = new TblBmcGroupMapping();
         $searchModel = new TblBmcGroupMappingSearch();
@@ -306,7 +306,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             $main_mcc_code = $searchModel->mainBmcCode->mcc_plant_code;
             $mcc_codes = [];
             $master = [];
-            if(!empty($bmc_code)){
+            if (!empty($bmc_code)) {
                 foreach ($bmc_code as $mapped_bmc_code) {
                     $model_bmc = new TblBmcGroupMapping();
                     $model_bmc->bmc_code = $id;
@@ -376,6 +376,23 @@ class TblDcsBmcController extends \app\controllers\ChildController {
                     'dataProvider' => $dataProvider,
                     'isaction' => $isaction
         ]);
+    }
+
+    public function actionPouredBmcList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $mccs = new TblBmcGroupMapping();
+                $data = $mccs->getBMCList($parents[0], 'TRUE', TRUE);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }
