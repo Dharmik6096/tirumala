@@ -39,6 +39,7 @@ use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\general\models\TblDepartment;
 use app\modules\organisation\models\TblRouteMappingSources;
 use app\modules\organisation\models\TblDcsDeactive;
+use app\modules\organisation\models\TblDcsVendorStatus;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -1172,6 +1173,10 @@ class TblDcs extends ChildModel {
         if ((empty($this->routeMapping)) || (!empty($this->routeMapping) && ($this->routeMapping->to_type != 'bmc' || $this->routeMapping->to_dest != $this->bmc_code))) {
             $this->addError('route_code', Yii::t('app/validation', $this->getAttributeLabel('route_code') . ' is Invalid.'));
         }
+    }
+
+    public function getActiveStatus() {
+        return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'dcs_code'])->andOnCondition(['customer_type' => 'DCS']);
     }
 
 }

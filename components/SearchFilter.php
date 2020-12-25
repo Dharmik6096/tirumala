@@ -291,8 +291,8 @@ class SearchFilter {
             'TblCollectionPenaltyRateSearch' => [
                 'filter' => ['f_union_code'],
             ],
-            'TblDcsDeactiveSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            'TblCustomerDeactiveSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'vendor_type', 'vendor_code'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

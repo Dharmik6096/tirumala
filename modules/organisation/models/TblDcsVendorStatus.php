@@ -20,38 +20,35 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblDcsVendorStatus extends \app\models\ChildModel
-{
+class TblDcsVendorStatus extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_vendor_status';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['dcs_vendor_code'], 'required'],
-            [['is_active', 'originating_type'], 'integer'],
+            [['is_active', 'originating_type'], 'safe'],
             [['created_at', 'updated_at'], 'safe'],
-            [['dcs_vendor_code'], 'string', 'max' => 12],
-            [['union_code'], 'string', 'max' => 3],
-            [['customer_type', 'customer_code'], 'string', 'max' => 20],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['dcs_vendor_code'], 'safe'],
+            [['union_code'], 'safe'],
+            [['customer_type', 'customer_code'], 'safe'],
+            [['created_by', 'updated_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'dcs_vendor_code' => Yii::t('app', 'Dcs Vendor Code'),
             'union_code' => Yii::t('app', 'Union Code'),
@@ -67,4 +64,5 @@ class TblDcsVendorStatus extends \app\models\ChildModel
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
 }

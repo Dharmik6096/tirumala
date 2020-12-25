@@ -162,4 +162,29 @@ class TblCustomerDeactive extends \app\models\ChildModel {
         }
     }
 
+    public function getDeactiveRecords() {
+        $date = date('Y-m-d');
+
+        return $query = $this->find()
+                ->where(['<=', 'from_date', $date])
+                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]])
+                ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
+                ->orderBy(['customer_deactive_code' => SORT_ASC])
+                ->all();
+    }
+
+    public function getActiveRecords() {
+        $date = date('Y-m-d');
+
+        return $query = $this->find()
+                ->where(['data_post_status' => 2])
+                ->andWhere(['<=', 'to_date', $date])
+                ->orderBy(['customer_deactive_code' => SORT_ASC])
+                ->all();
+    }
+
+    public function updateFileStatus($value, $status) {
+        return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['customer_deactive_code' => $value]);
+    }
+
 }

@@ -12,14 +12,14 @@ use app\modules\organisation\models\TblCustomerDeactive;
  */
 class TblCustomerDeactiveSearch extends TblCustomerDeactive {
 
-    public $from_date, $to_date;
+    public $from_date, $to_date, $vendor_type, $vendor_code;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['customer_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date', 'to_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'from_date', 'to_date'], 'safe'],
+            [['customer_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date', 'to_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'from_date', 'to_date', 'vendor_type', 'vendor_code'], 'safe'],
             [['originating_type', 'data_post_status'], 'integer'],
         ];
     }
@@ -63,7 +63,10 @@ class TblCustomerDeactiveSearch extends TblCustomerDeactive {
         $query->andFilterWhere([
             'customer_deactive_code' => $this->customer_deactive_code,
         ]);
-
+        $query->andFilterWhere([
+            'customer_code' => $this->vendor_code,
+            'customer_type' => $this->vendor_type,
+        ]);
         $query->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;

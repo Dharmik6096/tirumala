@@ -118,9 +118,9 @@ if (!empty($filter_data)) {
                                         $model->$value = !empty($model->$value) ? $model->$value : date('d-m-Y');
                                         $f_cnt++;
                                         //if(in_array($value,array('from_date'))){
-                                            ?>
-                                            <!-- <div class="clearfix"></div> -->
-                                            <?php
+                                        ?>
+                                        <!-- <div class="clearfix"></div> -->
+                                        <?php
                                         // }
                                         ?>
                                         <div class="col-sm-3">
@@ -255,6 +255,23 @@ if (!empty($filter_data)) {
                                         <div class="col-sm-3">
                                             <?= Yii::$app->dropdown->dropdown('bank', $model, $form, 'form-group col-sm-2 padding-right-5'); ?> 
 
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('vendor_type'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', FALSE, FALSE, 'vendor_type'); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('vendor_code'))) {
+                                        $f_cnt++;
+                                        $depend_str = $field_class . '-f_bmc_code' . ',' . $field_class . '-vendor_type';
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->customer_code($model, $form, $depend_str, 'vendor_code', FALSE, FALSE); ?>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>

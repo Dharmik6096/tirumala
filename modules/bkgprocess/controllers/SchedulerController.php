@@ -19,6 +19,8 @@ use app\modules\import\importData;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblCustomerDeactive;
+use app\modules\organisation\models\TblDcsVendorStatus;
 
 class SchedulerController extends ChildController {
 
@@ -416,66 +418,64 @@ class SchedulerController extends ChildController {
     public function actionDcsSentboxGenerate() {
         $model = new TblDcsDeactive();
         $deactiveData = $model->getDeactiveRecords();
+        $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
+
         $activeData = $model->getActiveRecords();
-        if (!empty($deactiveData)) {
-            $ids = array_map(function($e) {
-                return $e->dcs_deactive_code;
-            }, $deactiveData);
-            $update = $model->updateFileStatus($ids, 1);
-            foreach ($deactiveData as $row) {
-                $dcsModel = new TblDcs();
-                $existData = $dcsModel::find()->where(['dcs_code' => $row->dcs_code])->one();
+        $this->setSentBox($model, $activeData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 1, 4, 5, 6);
+
+        $CustModel = new TblCustomerDeactive();
+        $deactiveData = $CustModel->getDeactiveRecords();
+
+        $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
+        $activeData = $CustModel->getActiveRecords();
+        $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
+    }
+
+    public function setSentBox($model, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
+        if (!empty($data)) {
+            $ids = array_map(function($e) use ($key) {
+                return $e->{$key};
+            }, $data);
+            $update = $model->updateFileStatus($ids, $u_status);
+            foreach ($data as $row) {
+                $model_name = Yii::$app->path->define($masterModel);
+                $modelMaster = new $model_name();
+                $existData = $modelMaster::find()->where([$f_key => $row->{$f_key}])->one();
                 if (!empty($existData)) {
-                    $existData->is_active = 0;
+                    $existData->is_active = $status;
                     $sentboxArray = [];
-                    $encrypt = $dcsModel->encryptModel($existData->attributes);
+                    $encrypt = $modelMaster->encryptModel($existData->attributes);
                     $existData->setAttributes($encrypt);
-                    $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
-                    foreach ($sentboxArray as $sent) {
-                        $flag = 'UPDATE';
-                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code);
-                        if (!($sentbox->setSentbox($existData, $flag))) {
-                            $row->data_post_status = 3;
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->resp_desc = 'SentBox Entry is not Generated';
-                            $row->save(FALSE);
-                        } else {
-                            $row->data_post_status = 2;
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->resp_desc = 'Sentbox Generated';
-                            $row->save(FALSE);
-                        }
+                    if (!empty($existData->customer_type)) {
+                        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $existData->bmc_code);
+                    } else {
+                        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
                     }
-                }
-            }
-        }
-        if (!empty($activeData)) {
-            $ids = array_map(function($e) {
-                return $e->dcs_deactive_code;
-            }, $activeData);
-            $update = $model->updateFileStatus($ids, 4);
-            foreach ($activeData as $row) {
-                $dcsModel = new TblDcs();
-                $existData = $dcsModel::find()->where(['dcs_code' => $row->dcs_code])->one();
-                if (!empty($existData)) {
-                    $existData->is_active = 1;
-                    $sentboxArray = [];
-                    $encrypt = $dcsModel->encryptModel($existData->attributes);
-                    $existData->setAttributes($encrypt);
-                    $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
                     foreach ($sentboxArray as $sent) {
                         $flag = 'UPDATE';
                         $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code);
                         if (!($sentbox->setSentbox($existData, $flag))) {
-                            $row->data_post_status = 6;
+                            $row->data_post_status = $error;
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'SentBox Entry is not Generated';
                             $row->save(FALSE);
                         } else {
-                            $row->data_post_status = 5;
+                            $row->data_post_status = $success;
                             $row->response_datetime = date('Y-m-d H:i:s');
                             $row->resp_desc = 'Sentbox Generated';
                             $row->save(FALSE);
+                            $statusModel = new TblDcsVendorStatus();
+                            $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
+                            $statusModel->union_code = $existData->union_code;
+                            $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : 'DCS';
+                            $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : $existData->dcs_code;
+                            $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
+                            $statusModel->is_active = $status;
+                            if (!empty($existStatus)) {
+                                $existStatus->updateAll(['is_active' => $status], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
+                            } else {
+                                $statusModel->save(FALSE);
+                            }
                         }
                     }
                 }

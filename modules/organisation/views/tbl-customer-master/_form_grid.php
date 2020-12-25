@@ -83,6 +83,12 @@ $attribute = [
             return $detail;
         }
     ],
+    [
+        'attribute' => 'is_active', 'label' => Yii::t('app', 'Status'), 'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active';
+        },
+    ],
 ];
 
 $grid_option = [
@@ -91,14 +97,19 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        'update' => true,
+        'update' => function ($url, $model) {
+            $name = $model->customer_name;
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+        },
         'bank-details' => function ($url, $model) {
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-customer-master/bank-details', 'id' => $model->customer_code], $options);
         },
         'contact-details' => function ($url, $model) {
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = ($model->is_active == 1) ? 'link-disable' : '';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
         },

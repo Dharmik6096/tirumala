@@ -16,6 +16,7 @@ use app\modules\organisation\models\TblBranch;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblBankDetails;
 use app\modules\general\models\TblDepartment;
+use app\modules\organisation\models\TblDcsVendorStatus;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -497,6 +498,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public function getRouteRefCode() {
         return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code']);
+    }
+
+    public function getActiveStatus() {
+        return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'customer_code', 'customer_type' => 'customer_type']);
     }
 
 }
