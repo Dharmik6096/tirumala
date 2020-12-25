@@ -303,6 +303,7 @@ class DropDown extends Component {
                                 $('#'+modelname+'-'+fieldName).val(bmc);
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
                                 $('#'+modelname+'-'+fieldName).trigger('change');
+                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
                             } else {
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
                             }
@@ -656,7 +657,7 @@ class DropDown extends Component {
         }
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
-                'data' => $records, 'pluginOptions' => ['allowClear' => true],'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
+                'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
             )->label($label);
         } else {
             echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
@@ -1142,6 +1143,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Vendor'), 1 => Yii::t('app', 'Member')],
             ],
+            'penalty_type' => [
+                'name' => 'penalty_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Shortage'), 2 => Yii::t('app', 'Spoilage'), 3 => Yii::t('app', 'Spillage')],
+            ],
         ];
         return $records[$l];
     }
@@ -1355,6 +1361,11 @@ class DropDown extends Component {
     public function customerType($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/get-customer-type', Yii::t('app', 'Select Customer Type'), $multiple, 'where', $readonly);
+    }
+
+    public function poured_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/poured-bmc-list', Yii::t('app', 'Select Poured BMC'), $multiple, $extra_param, $readonly, $id);
     }
 
 }
