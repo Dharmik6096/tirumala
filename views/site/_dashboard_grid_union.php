@@ -54,24 +54,50 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Unions'));
                                     </div>
                                     <div class="row ">
                                         <div class="col-sm-12 padding_left_0 padding_right_0 border_top_1">
-                                            <div class="col-sm-4 dash_grid_block_desc text_center border_right_1 pt_4"><strong>Quantity</strong></div>
-                                            <div class="col-sm-4 dash_grid_block_desc text-center border_right_1 pt_4"><strong>Avg. FAT</strong></div>
-                                            <div class="col-sm-4 dash_grid_block_desc text-center pt_4"><strong>Avg. SNF</strong></div>
-                                            <div class="col-sm-4 dash_grid_block_desc text-center border_right_1"><span class="dash_grid_block_ans"><strong>15</strong></span></div>
-                                            <div class="col-sm-4 dash_grid_block_desc text-center border_right_1"><span class="dash_grid_block_ans"><strong>10.10</strong></span></div>
-                                            <div class="col-sm-4 dash_grid_block_desc text-center "><span class="dash_grid_block_ans"><strong>12</strong></span></div>
+                                            <div class="col-sm-4 dash_grid_block_desc text_center border_right_1 pt_4"><span class="dash_grid_block_ans">Quantity</span></div>
+                                            <div class="col-sm-4 dash_grid_block_desc text-center border_right_1 pt_4"><span class="dash_grid_block_ans">Avg. FAT/SNF</span></div>
+                                            <div class="col-sm-4 dash_grid_block_desc text-center pt_4 border_top_1"><span class="dash_grid_block_ans">Avg. Rate</span></div>
+                                            <div class="col-sm-4 dash_grid_block_desc text-center border_right_1">
+                                                <div class="width_grid_dash">
+                                                    <span class="dash_grid_block_desc_title">
+                                                        15
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 dash_grid_block_desc text-center border_right_1">
+                                                <div class="width_grid_dash">
+                                                    <span class="dash_grid_block_desc_title">
+                                                        15
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 dash_grid_block_desc text-center ">
+                                                <div class="width_grid_dash">
+                                                    <span class="dash_grid_block_desc_title">
+                                                        15
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-12 padding_left_0 padding_right_0 border_bottom_1">
-                                            <div class="col-sm-6 dash_grid_block_desc text-center border_right_1 pt_4 border_top_1"><strong>Avg. Rate</strong></div>
-                                            <div class="col-sm-6 dash_grid_block_desc text-center pt_4 border_top_1"><strong>Amount</strong></div>
-                                            <div class="col-sm-6 dash_grid_block_desc text-center border_right_1"><span class="dash_grid_block_ans"><strong>100</strong></span></div>
-                                            <div class="col-sm-6 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><strong>1500</strong></span></div>
+                                            <div class="col-sm-4 padding_left_0 padding_right_0">
+                                                <div class="col-sm-12 dash_grid_block_desc text-center border_right_1 pt_4 border_top_1"><span class="dash_grid_block_ans">Amount</span></div>
+                                                <div class="col-sm-12 dash_grid_block_desc text-center border_right_1"><span class="dash_grid_block_desc_title"><span>15</span></span></div>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div class="col-sm-4 dash_grid_block_desc text-center pt_4"><span class="dash_grid_block_ans">MCC</span></div>
+                                                <div class="col-sm-4 dash_grid_block_desc text-center pt_4"><span class="dash_grid_block_ans">Society</span></div>
+                                                <div class="col-sm-4 dash_grid_block_desc text-center pt_4"><span class="dash_grid_block_ans">Farmer</span></div>
+                                                <div class="col-sm-4 dash_grid_block_desc text-center "><span class="dash_grid_block_desc_title"><span>10.10</span></span></div>
+                                                <div class="col-sm-4 dash_grid_block_desc text-center "><span class="dash_grid_block_desc_title"><span>12</span></span></div>
+                                                <div class="col-sm-4 dash_grid_block_desc text-center "><span class="dash_grid_block_desc_title"><span>12</span></span></div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-4 dash_grid_block_link"><strong><?= Yii::t('app', 'MCC') ?></strong><br><div class="margin-top-5 padding_l_15"><div class="dash_grid_link_count"><span>1</span></div></div></div>
-                                        <div class="col-sm-4 dash_grid_block_link"><strong><?= Yii::t('app', 'Society') ?></strong><br><div class="margin-top-5 padding_l_15"><div class="dash_grid_link_count"><span>1</span></div></div></div>
-                                        <div class="col-sm-4 dash_grid_block_link"><strong><?= Yii::t('app', 'Farmer') ?></strong><br><div class="margin-top-5 padding_l_15"><div class="dash_grid_link_count"><span>3000</span></div></div></div>
+                                        <div class="col-sm-4 dash_grid_block_link"><span><?= Yii::t('app', 'MCC') ?></span><br><div class="margin-top-5 padding_l_15"><div class="dash_grid_link_count"><span>1</span></div></div></div>
+                                        <div class="col-sm-4 dash_grid_block_link"><span><?= Yii::t('app', 'Society') ?></span><br><div class="margin-top-5 padding_l_15"><div class="dash_grid_link_count"><span>1</span></div></div></div>
+                                        <div class="col-sm-4 dash_grid_block_link"><span><?= Yii::t('app', 'Farmer') ?></span><br><div class="margin-top-5 padding_l_15"><div class="dash_grid_link_count"><span>3000</span></div></div></div>
                                     </div>
                                 </div>
                                 <?php

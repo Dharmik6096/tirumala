@@ -3999,29 +3999,29 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     margin: 5px;
-    /*border-radius: 5px;*/
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
     padding: 5px;
     /* height: 204px !important; */
 }
 
 .div_grid_block_content {
     width: 100% !important;
-    float: left;
-    background-color: #fff;
-    /* margin-bottom: 10px; */
+    /* float: left; */
+    text-align: center;
 }
 
 .dash_grid_block_header {
     color: #7a231c !important;
     font-weight: 500;
     font-size: 12px;
-    text-align: left;
-    padding: 3px 0px;
+    text-align: center;
+    margin-top: 4px;
+    padding: 3px 10px;
 }
 
 .dash_grid_block_description {
-    color: #222;
+    color: #7a231c;
     font-weight: normal;
     font-size: 12px;
     text-align: center;
@@ -4044,11 +4044,11 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     font-weight: normal;
     font-size: 12px;
     padding: 1px;
-    max-width: calc(33.3% - 5px);
+    /* max-width: calc(33.3% - 5px); */
 }
 
 .dash_grid_block_ans{
-    color: #222;
+    color: #7A231C !important;
     font-weight: normal;
     font-size: 12px;
 }
@@ -4103,4 +4103,16 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     padding-top: 4px !important;
     margin-top: 7px;
     /* border-top: 1px solid #ed9b9457; */
+}
+
+.dash_grid_block_desc_title{
+    font-size: 11px;
+    font-weight: 700;
+    color: #000 !important;
+}
+
+.width_grid_dash{
+    margin: 0 auto;
+    width: 88%;
+    border-bottom: 1px solid #ed9b9457;
 }
