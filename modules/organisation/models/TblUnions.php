@@ -489,4 +489,8 @@ class TblUnions extends ChildModel {
                         ->count();
     }
 
+    public function getTblUnion() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
 }

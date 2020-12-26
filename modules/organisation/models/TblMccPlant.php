@@ -410,4 +410,7 @@ class TblMccPlant extends \app\models\ChildModel {
         return $query->all();
     }
 
+    public function getTblMccPlant() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
 }

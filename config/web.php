@@ -158,6 +158,8 @@ $config = [
 //        'db_rmrd' => require(__DIR__ . '/db_rmrd.php'),
         // 'db_reil' => require(__DIR__ . '/db_reil.php'),
         // 'db_creamy' => require(__DIR__ . '/db_creamy.php'),
+        'db_sql' => require(__DIR__ . '/db_sql.php'),
+        'db_mysql' => require(__DIR__ . '/db_mysql.php'),
         /*
           'urlManager' => [
           'enablePrettyUrl' => true,

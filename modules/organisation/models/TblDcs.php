@@ -1179,4 +1179,8 @@ class TblDcs extends ChildModel {
         return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'dcs_code'])->andOnCondition(['customer_type' => 'DCS']);
     }
 
+    public function getTblDcs() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
 }
