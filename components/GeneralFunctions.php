@@ -923,14 +923,18 @@ class GeneralFunctions extends Component {
         return $data == '' ? (!empty($value->$field) ? $value->$field : 'N/A') : 'N/A';
     }
 
-    public function getSpData($sp, $param, $execute = false) {
+    public function getSpData($sp, $param, $execute = false, $db = 'db', $dbtype = 'sql') {
         $str = '';
         $count = count($param);
         for ($i = 1; $i <= $count; $i++) {
             $str .= ':paramName' . $i . ',';
         }
         $str = substr($str, 0, -1);
-        $command = \Yii::$app->db->createCommand("{CALL {$sp}({$str})}");
+        if ($dbtype == 'mysql') {
+            $command = \Yii::$app->{$db}->createCommand("CALL {$sp}({$str})");
+        } else {
+            $command = \Yii::$app->{$db}->createCommand("{CALL {$sp}({$str})}");
+        }
         $i = 1;
         foreach ($param as $key => $value) {
             $command->bindValue(':paramName' . $i, $value);
@@ -997,10 +1001,12 @@ class GeneralFunctions extends Component {
                 $dsn = 'mysql:host=' . $model->db_host;
                 $dsn .= (!empty($model->db_port) && $model->db_port != '3306' ) ? ':' . $model->db_port : '';
                 $dsn .= ';dbname=' . $model->db_name;
+                break;
             case 'sql' :
                 $dsn = 'sqlsrv:server=' . $model->db_host;
                 $dsn .= !empty($model->db_port) ? ',' . $model->db_port : '';
                 $dsn .= ';Database=' . $model->db_name . ';ConnectionPooling=0';
+                break;
         }
         return $dsn;
     }

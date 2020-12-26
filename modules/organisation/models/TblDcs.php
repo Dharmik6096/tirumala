@@ -1174,4 +1174,7 @@ class TblDcs extends ChildModel {
         }
     }
 
+    public function getTblDcs() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
 }

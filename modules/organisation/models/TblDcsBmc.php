@@ -440,4 +440,8 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $bmc;
     }
 
+    public function getTblDcsBmc() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
 }
