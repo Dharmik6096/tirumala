@@ -312,7 +312,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
+            $this->ex_code = !empty($length) ? $prefix . str_pad($code, $length, '0', STR_PAD_LEFT) : '';
             $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
             return $data = empty($Code) ? '' : $Code;
         }
@@ -389,7 +389,6 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->date_time_of_testing = $datetime;
             $this->own_mcc_plant_code = $this->mcc_plant_code;
 //            $this->own_bmc_code = $this->bmc_code;
-
             //set converted_qty
             $this->qty_mode = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_qty_mode', 'BMC');
             (float) $conversion_const = Yii::$app->general->getUnionConfiguration($this->union_code, 'ltr_to_kg_constant', 'BMC');
