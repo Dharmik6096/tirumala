@@ -123,6 +123,9 @@ $rmrd_selected_widgets = !empty($userRmrdWidgets) ? $userRmrdWidgets : [];
 $rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets) ? $rmrdWidgets : [], $rmrd_selected_widgets);
 $allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 
+// array_push($farmer_selected_widgets,'milk_analysis');
+// array_push($rmrd_selected_widgets,'milk_analysis');
+
 if ($widget_type == 'farmer')
     $lazy_loading_widgets = json_encode($farmer_selected_widgets);
 
@@ -306,6 +309,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                 }
             }
         }
+        // echo $this->render('widget_dashboard_milk_analysis', ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
         ?>
 
 
@@ -381,7 +385,7 @@ $( '.sortable' ).sortable();
                     'calender',
                     'dashboard_farmer_rmrd_blocks',
                     'dashboard_farmer_status',
-                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar'].indexOf(value) == -1) 
+                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis'].indexOf(value) == -1) 
                     {
                         setChartWidgets(value);
                     }
@@ -470,7 +474,6 @@ $( '.sortable' ).sortable();
     //                var union= $('#dashboard-union_code').val();
                     var mcc= '" . $mccCode . "';
     //                var mcc= $('#dashboard-mcc_code').val();
-                    var widget_type= $('#hidden_widget_type').val();
                     $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/site/load-dashboard-farmer-rmrd-data']) . "',
@@ -705,6 +708,358 @@ $( '.sortable' ).sortable();
                         }
                     });
                 }
+
+    //             else if(['milk_analysis'].indexOf(value) == 0){
+    //                 var blockDataString = $('#collapse1 form').serialize();
+    //                 var id= 'dashboard_milk_analysis';
+    //                 var union= '" . $unionCode . "';
+    // //                var union= $('#dashboard-union_code').val();
+    //                 var mcc= '" . $mccCode . "';
+    // //                var mcc= $('#dashboard-mcc_code').val();
+    //                 var widget_type= $('#hidden_widget_type').val();
+    //                 $.ajax({
+    //                     type: 'post',
+    //                     url: '" . Url::to(['/site/load-dashboard-milk-analysis']) . "',
+    //                     data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+    //                     success: function(data) {
+    //                         var obj1 = data;
+    //                         if (obj1.status == 'success')
+    //                         {
+    //                             var table = $('#farmer_rmrd_tbl_container table tbody');
+    //                             var i = 0;
+    //                             var htmlData = '';
+
+    //                             console.log(obj1);
+    //                             $.each(obj1.res, function(key,value) {
+    //                                 htmlData = htmlData + '<tr>';
+    //                                 htmlData = htmlData + '<td>'+value.bmc_name+' '+value.bmc_code+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_qty+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_avg_fat+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_avg_snf+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_avg_rate+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_amount+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_count+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_online+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_pendrive+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_manual+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_receipt_qty+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_receipt_avg_fat+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_receipt_avg_snf+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_receipt_avg_rate+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_receipt_amount+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.cc_receipt_count+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.vendor_qty+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.vendor_avg_fat+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.vendor_avg_snf+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.vendor_avg_rate+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.vendor_amount+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.vendor_count+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.total_qty+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.total_avg_fat+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.total_avg_snf+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.total_avg_rate+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.total_amount+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.total_count+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.diff_qty+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.diff_avg_fat+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.diff_avg_snf+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.diff_avg_rate+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.diff_amount+'</td>';
+    //                                 htmlData = htmlData + '<td>'+value.diff_count+'</td>';                                    
+    //                                 htmlData = htmlData + '</tr>';
+    //                             });
+    //                             // htmlData = htmlData + '</body>';
+    //                             $('.dashboardMilkAnalysis_tbody').html(htmlData);
+    //                         }
+    //                     },
+    //                     error:function(data){
+    //                         //alert('Your data has not been submitted.Please try again');
+    //                     }
+    //                 });
+    //             }
+
+                
+                else if(['milk_analysis'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'dashboard_milk_analysis';
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
+                    var mcc= '" . $mccCode . "';
+    //                var mcc= $('#dashboard-mcc_code').val();
+                    var widget_type= $('#hidden_widget_type').val();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-milk-analysis']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                var table = $('#farmer_rmrd_tbl_container table tbody');
+                                var i = 0;
+                                var htmlData = '';
+
+                                console.log(obj1.res.length);
+                                // $.each(obj1.res, function(key,value) {
+                                    htmlData = htmlData + '<thead>';
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<td class = \'dash_grid_v_header\'></td>';
+                                    htmlData = htmlData + '<td class = \'dash_grid_v_header\'></td>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_header\'>'+value.bmc_name+' '+value.bmc_code+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+                                    htmlData = htmlData + '</thead>';
+                                    htmlData = htmlData + '<tbody>';
+                                    
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th rowspan=\'9\' class = \'dash_grid_v_header\'>".Yii::t('app', 'CC Collection')."</th>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Qty')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_qty+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'FAT')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_avg_fat+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'SNF')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_avg_snf+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Rate')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_avg_rate+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Amount')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_amount+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'CC Count')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_count+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Online')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_online+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+                                    
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Pendrive')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_pendrive+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Manual')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_manual+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\' rowspan=\'6\'>".Yii::t('app', 'BMC Receipts')."</th>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Qty')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_receipt_qty+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'FAT')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_receipt_avg_fat+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'SNF')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_receipt_avg_snf+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Rate')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_receipt_avg_rate+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Amount')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_receipt_amount+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Count')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.cc_receipt_count+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\' rowspan=\'6\'>".Yii::t('app', 'Vendor Receipts')."</th>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Qty')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.vendor_qty+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'FAT')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.vendor_avg_fat+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'SNF')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.vendor_avg_snf+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Rate')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.vendor_avg_rate+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Amount')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.vendor_amount+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Count')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.vendor_count+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\' rowspan=\'6\'>".Yii::t('app', 'Total')."</th>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Qty')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.total_qty+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'FAT')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.total_avg_fat+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'SNF')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.total_avg_snf+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Rate')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.total_avg_rate+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Amount')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.total_amount+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Count')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.total_count+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\' rowspan=\'6\'>".Yii::t('app', 'CC Differences')."</th>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Qty')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.diff_qty+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'FAT')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.diff_avg_fat+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'SNF')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.diff_avg_snf+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Rate')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.diff_avg_rate+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Amount')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.diff_amount+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '<tr>';
+                                    htmlData = htmlData + '<th class = \'dash_grid_v_header\'>".Yii::t('app', 'Count')."</th>';
+                                    $.each(obj1.res, function(key,value) {
+                                        htmlData = htmlData + '<td class = \'dash_grid_v_desc\'>'+value.diff_count+'</td>';
+                                    });
+                                    htmlData = htmlData + '</tr>';
+
+                                    htmlData = htmlData + '</tbody>';
+                                
+                                $('.dashboardMilkAnalysis').html(htmlData);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+
+
             }, timeOut);
             timeOut = timeOut + 3000;
 //            console.log(timeOut);

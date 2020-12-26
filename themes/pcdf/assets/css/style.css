@@ -4141,3 +4141,11 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .height_grid_f{
     max-height: calc(100vH - 120px);
 }
+
+.dash_grid_v_header{
+    font-weight: 600;
+    background: #7a231c;
+    width: 1%;
+    color: #fff;
+    border: 1px solid #fff;
+}

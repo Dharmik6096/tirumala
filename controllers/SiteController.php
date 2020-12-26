@@ -940,6 +940,10 @@ class SiteController extends Controller {
                 'name' => 'sp_portal_dashboard_collection_count_summary',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
+            'dashboard_milk_analysis' => [
+                'name' => 'sp_dashboard_milk_analysis',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,date=' . date('Y-m-d') . '|dateshift:from_shift,date=' . date('Y-m-d') . '|dateshift:to_shift',
+            ]
         ];
         return $array[$sp];
     }
@@ -2403,6 +2407,22 @@ class SiteController extends Controller {
         $farmer_blocks = \Yii::$app->general->getSpData($sp_name, $sp_param);
         return [$farmer_status,$farmer_blocks];
         // sp_portal_dashboard_farmer_status
+    }
+
+    public function actionLoadDashboardMilkAnalysis() {
+        // var_dump('hello');die;
+        $sp = Yii::$app->request->post('sp');
+        $results = $this->getSpResult($sp);
+        $res = [];
+        $array_result = $results;
+        if (count($results) > 1) {
+            $array_result = $results;
+        }
+        foreach ($array_result as $key => $value) {
+            $res[$key] = $value;
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $res];
     }
 
 }
