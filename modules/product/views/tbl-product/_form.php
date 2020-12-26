@@ -43,7 +43,8 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'ref_code')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('tax_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('depend_tax_code', $model, $form, 'tblproduct-union_code', 'form-group col-sm-2', $model->getAttributeLabel('tax_code'), 'tax_code'); ?>
+        <?php // Yii::$app->dropdown->dropdown('tax_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
     </div>  
     <?php
     $class = $disableDpuProduct ? ' disabledDiv ' : '';

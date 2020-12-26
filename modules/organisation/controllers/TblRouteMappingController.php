@@ -285,7 +285,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         $searchModel->route_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         foreach ($values['destinations'] as $value) {
-            $dest[$value['code'] . '-' . $value['tname']] = $value['name'] . '(' . $value['ex_code'] . ')-' . Yii::t('app', $value['tname']);
+            $dest[$value['code'] . '-' . $value['tname']] = $value['ref_code'] . ' - ' . $value['name'] . ' - ' . Yii::t('app', $value['tname']);
         }
         if (Yii::$app->request->post()) {
             $route_code = Yii::$app->request->post('TblRouteMappingSources')['route_code'];

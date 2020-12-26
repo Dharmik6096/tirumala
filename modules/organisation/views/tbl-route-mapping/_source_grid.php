@@ -8,7 +8,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'from_dest', 'value' => function($model) use($modelRouteSource) {
-            return $modelRouteSource->getDestinationName($model->from_type, $model->from_dest) . '(' . $model->from_dest . ')' . ' - ' . Yii::t('app', strtoupper($model->from_type));
+            return $modelRouteSource->getDestinationName($model->from_type, $model->from_dest) . '(' . $modelRouteSource->getDestinationName($model->from_type, $model->from_dest, 'ref_code') . ')' . ' - ' . Yii::t('app', strtoupper($model->from_type));
         }, 'visible' => true, 'filter' => false],
 ];
 

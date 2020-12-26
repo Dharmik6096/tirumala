@@ -114,7 +114,7 @@ $script = "
     });
     
     $('.bank').on('click',function(){
-    $('#error-summary').hide();
+        $('#error-summary').hide();
         $('#flag').val($(this).prop('name'));
         $('form#vendor-payment-disburse').submit();
        /*  $.ajax({
