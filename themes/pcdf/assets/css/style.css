@@ -4116,3 +4116,30 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     width: 88%;
     border-bottom: 1px solid #ed9b9457;
 }
+
+.dynamic_report_table{
+    margin-top: 45px;
+}
+
+.overflow_hidden{
+    overflow: hidden;    
+}
+
+.report-area .grid-search.search-filter.custom_report_search{
+    width: calc(100% - 0px) !important
+}
+
+.dynamic_report_table thead tr th{
+    background-color: #7a231c;
+    color: #fff;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.dynamic_report_table tbody tr td{
+    border: 1px solid #ddd;
+}
+
+.dynamic_report_table tbody tr .number_align{
+    text-align: right;
+}

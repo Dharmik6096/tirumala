@@ -22,8 +22,8 @@ use yii\helpers\Url;
      }
  }
 ?>
-<div class="table-responsive dashboard_tbl dashboard_table_section">
- <table class="table overflow_hidden table-striped dashboardMilkAnalysis">
+<div class="table-responsive overflow_hidden dashboard_tbl dashboard_table_section">
+ <table class="table dynamic_report_table table-striped">
      <thead>
          <tr>
              <?php
@@ -77,7 +77,7 @@ use yii\helpers\Url;
                                  $k = $exploded_key[0].'##'.$month_l;
                                      if(!empty($exploded_key[1]) && $month_l == $exploded_key[1]){
                                  ?>
-                                     <td><?= empty($value[$k]) ? '0' : $value[$k]?></td>
+                                     <td class="number_align"><?= empty($value[$k]) ? '0' : $value[$k]?></td>
                                  <?php
                                  }
                              }

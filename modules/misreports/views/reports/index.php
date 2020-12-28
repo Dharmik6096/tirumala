@@ -357,9 +357,10 @@ if (isset($data['url1'])) {
             if (!empty($model->getErrors())) {
                 $defaultToggle = true;
             }
+            $custom_report_class = isset($data['custom_report']) ? 'custom_report_search' : '';
             ?>
 
-            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?>">
+            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class?>">
                 <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
             </div>
 
