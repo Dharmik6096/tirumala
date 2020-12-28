@@ -2,7 +2,7 @@
     <div class="table-responsive dashboard_tbl farmer_rmrd_tbl h450">
         <div id="dashboard_milk_analysis" class="cont milk-collection">
             <div class="table-responsive dashboard_tbl dashboard_table_section">
-                <table class="table overflow_hidden table-striped dashboardMilkAnalysis">
+                <table class="table table_v_wrapper table_table_v_wrapper overflow_hidden table-striped dashboardMilkAnalysis">
                 <!-- <thead class="dashboardWidgetDetailPortion">
                         <tr>
                             <th rowspan='2'><?= Yii::t('app', 'MCC') ?></th>

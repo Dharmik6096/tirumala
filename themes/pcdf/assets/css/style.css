@@ -4145,7 +4145,25 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .dash_grid_v_header{
     font-weight: 600;
     background: #7a231c;
-    width: 1%;
     color: #fff;
     border: 1px solid #fff;
+}
+
+.table_v_wrapper{
+    overflow-x: auto;
+    flex-grow: 1;
+}
+
+.table_table_v_wrapper .sticky_header{
+    position: sticky;
+    top: 0;
+    width: 10px !important;
+}
+
+.dash_grid_v_desc{
+    width: 10px !important;
+}
+
+.grid_header_size{
+    width: 6%;
 }
