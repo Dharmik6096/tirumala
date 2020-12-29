@@ -4143,3 +4143,109 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .dynamic_report_table tbody tr .number_align{
     text-align: right;
 }
+
+.fht-table,
+.fht-table thead,
+.fht-table tfoot,
+.fht-table tbody,
+.fht-table tr,
+.fht-table th,
+.fht-table td {
+	margin: 0;
+}
+
+.fht-table{
+	border: 0 none;
+	height: auto;
+	width: auto;
+	border-collapse: collapse;
+	border-spacing: 0;
+	/*table-layout: fixed;  Algoritmo de distribucion fijo */
+    /*white-space:nowrap;   Impide los saltos de línea automáticos */
+}
+
+.fht-table th,.fht-table td {
+    overflow: hidden;
+}
+
+.fht-table-wrapper,
+.fht-table-wrapper .fht-thead,
+.fht-table-wrapper .fht-tfoot,
+.fht-table-wrapper .fht-fixed-column .fht-tbody,
+.fht-table-wrapper .fht-fixed-body .fht-tbody,
+.fht-table-wrapper .fht-tbody {
+	overflow: hidden;
+	position: relative;
+}
+
+.fht-table-wrapper .fht-fixed-body .fht-tbody,
+.fht-table-wrapper .fht-tbody {
+	overflow: auto;
+}
+
+.fht-table-wrapper .fht-table .fht-cell {
+	overflow: hidden;
+	height: 1px;
+}
+
+.fht-table-wrapper .fht-fixed-column,
+.fht-table-wrapper .fht-fixed-body {
+	top: 0;
+	left: 0;
+	position: absolute;
+}
+
+.fht-table-wrapper .fht-fixed-column {
+	z-index: 1;
+}
+
+.fht-fixed-body .fht-thead table {
+	margin-right: 20px;
+	border: 0 none;
+}
+
+/*For Examples*/
+
+.custom_report_table {
+	height: 400px;
+	margin: 35px auto;
+	overflow: auto;
+	width: 100%;
+	position: relative;
+}
+
+/*When measures are used in%*/
+/*.custom_report_table {
+	height: 80%;
+	margin: 0 auto;
+	overflow: auto;
+	width: 100%;
+	position: fixed;
+}*/ 
+
+.custom_grid_header {
+    background-color: #7a231c;
+    border: 1px solid #ddd;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 1px 4px;
+    text-align: center;
+}
+._Separador{
+	background-color: #fff;
+	height: 12px;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	width: 7px;
+}
+._Separador div{
+	width: 4px;
+}
+.custom_grid_normal {
+    /*background-color: #fff;*/
+    border: 1px solid #ccc;
+    padding: 2px 4px;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 10% !important;
+}
