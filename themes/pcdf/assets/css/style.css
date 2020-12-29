@@ -3571,7 +3571,7 @@ input[type="checkbox"]:after{
 .searchFilterArea  {
     width: calc(100% - 50px);
     color: #fff;
-    right: -270px;
+    right: -220px;
     text-align: center;
     padding-top: 8px;
 }
@@ -4166,4 +4166,17 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 
 .grid_header_size{
     width: 6%;
+}
+
+.dup_data_icon_margin{
+    margin: 0px 23px 0px -98px;
+}
+
+.dpu_data_icon i{
+    font-size: 22px !important;
+    top: 1px !important;
+}
+
+.custom_width_dup_modal{
+    width: 65% !important;
 }

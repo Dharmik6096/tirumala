@@ -214,7 +214,10 @@ class SiteController extends Controller {
         $dashboard_farmer_rmrd_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_status = [];
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets]);
+
+        $dpu_data = $this->DPUDataCollection($model);
+
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets,'dpu_data'=>$dpu_data]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -2156,10 +2159,15 @@ class SiteController extends Controller {
         return $results;
     }
 
-    public function actionCollectionDashboard() {
+    public function DPUDataCollection($model) {
         $db_config = new TblDbConfig();
         $database = $db_config->activeConnection();
+        if(empty($model->date)){
+            $model->date=date("Y-m-d");
+        }
         $sp_param = [];
+        $sp_param[] = date('Y-m-d', strtotime($model->date));
+        // $sp_param[] = ;
         foreach ($database as $db) {
             if ($db->db_type == 'sql') {
                 \Yii::$app->general->SetDBConnection('db_sql', $db);
@@ -2169,11 +2177,7 @@ class SiteController extends Controller {
                 $result2 = \Yii::$app->general->getSpData('data_milk_collection_widget', $sp_param, false, 'db_mysql', 'mysql');
             }
         }
-        $data = array_merge($result1, $result2);
-        echo "<pre>";
-        print_r($data);
-        echo "</pre>";
-        die;
+        return(array_merge($result1, $result2));
     }
 
     public function setBreadcrums($data){

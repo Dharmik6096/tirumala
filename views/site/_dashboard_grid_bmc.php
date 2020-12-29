@@ -18,10 +18,6 @@ $tbl_plant_model->mcc_plant_code = $mcc;
 $union_url = Url::to(['site/get-unions', 'date' => $date]);
 $mcc_url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $union]);
 
-$union_name = !empty(Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'))? Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name') : 'N/A';
-
-$mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'))? Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name') : 'N/A';
-
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

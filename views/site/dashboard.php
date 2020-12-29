@@ -178,7 +178,10 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                                 <?= Yii::$app->controls->search(); ?>
                             </div>
                             <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
-                                <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile"></i></a>
+                                <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile" title="Member Mobile Info."></i></a>
+                            </div>
+                            <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
+                                <a class="dpu_data_popup pull-Left dpu_data_icon pie_chart_icon"><i class="fa fa-tasks" title="DPU Data"></i></a>
                             </div>
                     </span>
 
@@ -339,6 +342,24 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                 <h4 class="modal-title"><?= Yii::t('app', 'Member V/S Mobile APP'); ?></h4>
             </div>
             <div class="modal-body" id='piecontainer'>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="DPU_data_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog custom_width_dup_modal">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?= Yii::t('app', 'DPU Data'); ?></h4>
+            </div>
+            <div class="modal-body" id='DPU_data_container'>
+                <?php 
+                    echo $this->render('_dashboard_collection_widget', ['model' => $model, 'dpu_data' => $dpu_data]);
+                ?>
             </div>
         </div>
 
@@ -1451,6 +1472,10 @@ $(document).on('click','.member-mobile-info',function(e){
         $('#pieChartModal').modal('toggle'); 
         $('#loadercontent').hide();
         $('#pageloader').hide();
+});
+
+$(document).on('click','.dpu_data_popup',function(e){
+    $('#DPU_data_modal').modal('toggle'); 
 });
 
 $('.radio_widgit_type').on('change',function() {
