@@ -82,15 +82,28 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                     <div class="col-sm-12 dash_grid_block_desc text-center border_right_1"><span class="dash_grid_block_desc_title"><span><?= $data['total_amount'] ?></span></span></div>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <div class="col-sm-4 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'BMC') ?></span></div>
-                                                    <div class="col-sm-4 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Society') ?></span></div>
-                                                    <div class="col-sm-4 dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Farmer') ?></span></div>
-                                                    <?php $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                                    <div class="col-sm-4 dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_bmc'] ?></span></span></a></div>
+                                                <?php 
+                                                    if(\Yii::$app->session->get('hasBMC') == 1){
+                                                        $col_class = 'col-sm-4';
+                                                    }else{
+                                                        $col_class = 'col-sm-6';
+                                                    }
+                                                ?>
+                                                <?php if(\Yii::$app->session->get('hasBMC') == 1){?>
+                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'BMC') ?></span></div>
+                                                <?php }?>
+                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Society') ?></span></div>
+                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Farmer') ?></span></div>
+                                                    <?php
+                                                    if(\Yii::$app->session->get('hasBMC') == 1){ 
+                                                        $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
+                                                        <div class="<?= $col_class ?> dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_bmc'] ?></span></span></a></div>
+                                                    <?php 
+                                                    }?>
                                                     <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                                    <div class="col-sm-4 dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
+                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
                                                     <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                                    <div class="col-sm-4 dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_farmers'] ?></span></span></a></div>
+                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_farmers'] ?></span></span></a></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -109,7 +122,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                         <tr>
                                             <th>#</th>
                                             <th><?= Yii::t('app', 'MCC') ?></th>
-                                            <th><?= Yii::t('app', 'BMC') ?></th>
+                                            <?php if(\Yii::$app->session->get('hasBMC') == 1){?><th><?= Yii::t('app', 'BMC') ?></th><?php } ?>
                                             <th><?= Yii::t('app', 'Society') ?></th>
                                             <th><?= Yii::t('app', 'Farmer') ?></th>
                                             <th><?= Yii::t('app', 'Qty') ?></th>
@@ -132,8 +145,11 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                 $tbl_plant_model->mcc_plant_code = $data['mcc_code'];
                                             ?>
                                             <td class="grid_left_align"><?= !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'))? Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name') : 'N/A' ?></td>
-                                            <?php $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                            <td><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
+                                            <?php 
+                                            if(\Yii::$app->session->get('hasBMC') == 1){
+                                                $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
+                                                <td><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
+                                            <?php } ?>
                                             <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
                                             <td><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
                                             <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
