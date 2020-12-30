@@ -669,6 +669,30 @@ class V1 extends \yii\base\Module {
                 'blank_org_to_zero' => true,
                 'rls_param_array' => ['union']
             ],
+            'union/collection-dcs' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_union_data_collection_dcs',
+            ],
+            'union/collection-member' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_union_data_collection_member',
+            ],
+            'dashboard/bmc-union' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_bmc_union',
+            ],
+            'dashboard/dsk-union' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_dashboard_dsk_union',
+            ],
+            'mcc/collection-dcs' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_mcc_data_collection_dcs',
+            ],
+            'mcc/collection-member' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
+                'sp' => 'sp_app_eipl_v1_mcc_data_collection_member',
+            ],
         ];
         return $label;
     }
