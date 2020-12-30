@@ -8,6 +8,8 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
+$imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
+
 $chart_url = Url::to(['load-chart']);
 $table_url = Url::to(['load-table']);
 $container_url = Url::to(['load-table']);
@@ -180,9 +182,9 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                             <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
                                 <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile" title="Member Mobile Info."></i></a>
                             </div>
-                            <!-- <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
-                                <a class="dpu_data_popup pull-Left dpu_data_icon pie_chart_icon"><i class="fa fa-tasks" title="DPU Data"></i></a>
-                            </div> -->
+                            <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
+                                <a class="dpu_data_popup pull-Left dpu_data_icon pie_chart_icon"><img src="<?= $imageIconPath . 'dpu_data.png' ?>"></img></a>
+                            </div>
                     </span>
 
                     <div class="collapse" id="modal_widget_selection">
