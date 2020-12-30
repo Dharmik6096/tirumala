@@ -34,10 +34,10 @@ class TblAppOrganizationMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['detail_code'], 'required'],
-                [['detail_code', 'is_active'], 'integer'],
-                [['mobile_no', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at'], 'safe'],
+            [['detail_code'], 'required'],
+            [['detail_code', 'is_active'], 'integer'],
+            [['mobile_no', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -81,6 +81,12 @@ class TblAppOrganizationMapping extends \app\models\ChildModel {
 
     public function getTblContactDetails() {
         return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'detail_code']);
+    }
+
+    public function getAppOrgData() {
+        return $this->find()
+                        ->where(['mobile_no' => $this->mobile_no, 'is_active' => 1])
+                        ->one();
     }
 
 }
