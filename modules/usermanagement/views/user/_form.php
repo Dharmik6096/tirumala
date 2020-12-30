@@ -51,8 +51,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
         </div>
     <?php endif; ?>
+
     <div class="col-sm-2">
-        <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off', 'readOnly' => $readOnly]) ?>
+        <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
     </div>
     <?php if ($isNewRecord): ?>
         <div class="col-sm-2">
@@ -61,20 +62,20 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'repeat_password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
         </div>
-        <div class="col-sm-2 mt15 user_type_show">
-            <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
-        </div> 
-        <div class="col-sm-2 user_type_show">
-            <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
-        </div>
+
     <?php endif; ?>
+    <div class="col-sm-2 user_type_show">
+        <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+    </div>
+    <div class="col-sm-2 mt18 user_type_show">
+        <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+    </div> 
 
     <?php /* if ($model->checkNotSelf()) { ?>
       <div class="col-sm-2 mt25">
       <?= Yii::$app->controls->active($model, $form); ?>
       </div>
       <?php } */ ?>
-
 
     <?php if ($isNewRecord): ?>
         <?php
