@@ -2168,6 +2168,8 @@ class SiteController extends Controller {
         $sp_param = [];
         $sp_param[] = date('Y-m-d', strtotime($model->date));
         // $sp_param[] = ;
+        $result1 = [];
+        $result2 = [];
         foreach ($database as $db) {
             if ($db->db_type == 'sql') {
                 \Yii::$app->general->SetDBConnection('db_sql', $db);
