@@ -4247,5 +4247,8 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     padding: 2px 4px;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    width: 10% !important;
 }
+
+/* .fht-table > thead > tr > th, .fht-table > tbody > tr > th, .fht-table > tfoot > tr > th, .fht-table > thead > tr > td, .fht-table > tbody > tr > td, .fht-table > tfoot > tr > td{
+    width: 75px !important;
+} */
