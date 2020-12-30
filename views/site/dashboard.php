@@ -123,8 +123,8 @@ $rmrd_selected_widgets = !empty($userRmrdWidgets) ? $userRmrdWidgets : [];
 $rmrd_unselected_widgets = array_diff(!empty($rmrdWidgets) ? $rmrdWidgets : [], $rmrd_selected_widgets);
 $allRmrdWidgets = array_merge($rmrd_selected_widgets, $rmrd_unselected_widgets);
 
-array_push($farmer_selected_widgets,'milk_analysis');
-array_push($rmrd_selected_widgets,'milk_analysis');
+// array_push($farmer_selected_widgets,'milk_analysis');
+// array_push($rmrd_selected_widgets,'milk_analysis');
 
 if ($widget_type == 'farmer')
     $lazy_loading_widgets = json_encode($farmer_selected_widgets);
@@ -180,9 +180,9 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                             <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
                                 <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile" title="Member Mobile Info."></i></a>
                             </div>
-                            <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
+                            <!-- <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
                                 <a class="dpu_data_popup pull-Left dpu_data_icon pie_chart_icon"><i class="fa fa-tasks" title="DPU Data"></i></a>
-                            </div>
+                            </div> -->
                     </span>
 
                     <div class="collapse" id="modal_widget_selection">
@@ -312,7 +312,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                 }
             }
         }
-        echo $this->render('widget_dashboard_milk_analysis', ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
+        // echo $this->render('widget_dashboard_milk_analysis', ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
         ?>
 
 
