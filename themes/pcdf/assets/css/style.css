@@ -4151,7 +4151,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .fht-table tr,
 .fht-table th,
 .fht-table td {
-	margin: 0;
+    margin: 0;
 }
 
 .fht-table{
@@ -4227,7 +4227,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     background-color: #7a231c;
     border: 1px solid #ddd;
     color: #ffffff;
-    font-weight: bold;
+    font-weight: 500;
     padding: 1px 4px;
     text-align: center;
 }
@@ -4249,6 +4249,16 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     text-overflow: ellipsis !important;
 }
 
-/* .fht-table > thead > tr > th, .fht-table > tbody > tr > th, .fht-table > tfoot > tr > th, .fht-table > thead > tr > td, .fht-table > tbody > tr > td, .fht-table > tfoot > tr > td{
-    width: 75px !important;
-} */
+.fht-table-wrapper .fht-fixed-column .fht-thead .fht-table .custom_grid_header{
+    height: 39px !important;
+}
+
+th.custom_grid_header.header_labels,
+td.custom_grid_normal.fixed_label,
+td.custom_grid_normal.dynamic_value {
+    min-width: 102px !important;
+}
+
+.fht-tbody{
+    max-height: calc(100% - 100px) !important;
+}

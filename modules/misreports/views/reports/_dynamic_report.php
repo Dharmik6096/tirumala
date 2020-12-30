@@ -32,26 +32,26 @@ use yii\helpers\Url;
              <?php
                  foreach ($labels as $key => $value) {
                  ?>
-                 <th rowspan="2" class="custom_grid_header"><?= Yii::t('app', $model->getAttributeLabel(substr($value,6)))?></th>
+                 <th rowspan="2" class="custom_grid_header header_labels"><?= Yii::t('app', $model->getAttributeLabel(substr($value,6)))?></th>
              <?php
                  }
              ?>
              <?php
                  foreach ($month_label as $key => $value) {
                  ?>
-                 <th colspan="3" class="custom_grid_header"><?= $value ?></th>
+                 <th colspan="3" class="custom_grid_header header_labels"><?= $value ?></th>
              <?php
                  }
              ?>
-             <th colspan="3" class="custom_grid_header"><?= Yii::t('app', $diff_array[0]).'-'.Yii::t('app', $diff_array[1])?></th>
+             <th colspan="3" class="custom_grid_header header_labels"><?= Yii::t('app', $diff_array[0]).'-'.Yii::t('app', $diff_array[1])?></th>
          </tr>
          <tr>
              <?php
                  for ($i=0; $i<=count($month_label); $i++){
                      ?>
-                         <th class="custom_grid_header"><?= Yii::t('app', 'Quantity')?></th>
-                         <th class="custom_grid_header"><?= Yii::t('app', 'Amount')?></th>
-                         <th class="custom_grid_header"><?= Yii::t('app', 'Rate')?></th>
+                         <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Quantity')?></th>
+                         <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Amount')?></th>
+                         <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Rate')?></th>
                      <?php
                  }
              ?>
@@ -69,7 +69,7 @@ use yii\helpers\Url;
                      <tr>
                          <?php
                              foreach ($labels as $ke => $title) {?>
-                                 <td class="custom_grid_normal"><?= $value[$title]?></td>      
+                                 <td class="custom_grid_normal fixed_label" title="<?=$value[$title]?>"><?= substr($value[$title], 0, 10);?></td>      
                              <?php
                              }
                          ?>
@@ -93,7 +93,7 @@ use yii\helpers\Url;
                                             // array_push($,$arr);
                                          }
                                  ?>
-                                     <td class="number_align custom_grid_normal"><?= empty($value[$k]) ? '0' : $value[$k]?></td>
+                                     <td class="number_align custom_grid_normal dynamic_value" title="<?= empty($value[$k]) ? '0' : $value[$k]?>"><?= empty($value[$k]) ? '0' : substr($value[$k], 0, 10)?></td>
                                  <?php
                                  }
                              }
@@ -101,7 +101,7 @@ use yii\helpers\Url;
                         //  var_dump($diff_value_array);
                          foreach ($diff_value_array as $key => $diff_v_a) {
                             ?>
-                                <td class="number_align custom_grid_normal"><?= empty($diff_v_a) ? '0' : $diff_v_a?></td>
+                                <td class="number_align custom_grid_normal" title="<?= empty($diff_v_a) ? '0' : $diff_v_a?>"><?= empty($diff_v_a) ? '0' : substr($diff_v_a,0,10)?></td>
                             <?php
                          }
 
