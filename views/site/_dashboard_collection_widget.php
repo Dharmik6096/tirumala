@@ -39,7 +39,7 @@ if (!empty($dpu_data)){
         <div class="col-sm-12">
             <div id="w12" class="grid-view hide-resize" > -->
                     <!-- <div class="panel panel-default"> -->
-                            <div class="table-responsive dashboard_collection_grid_tbl">
+                            <div class="table-responsive dashboard_collection_grid_tbl max_h_100-100">
                                 <table class="table overflow_hidden table-striped">
                                     <thead>
                                         <tr>
@@ -59,8 +59,8 @@ if (!empty($dpu_data)){
                                     <tbody>
                                         <?php
                                         if (!empty($dpu_data)) {
-                                        foreach ($dpu_data as $key => $value) {
-                                            $i=1;    
+                                        $i=1; 
+                                        foreach ($dpu_data as $key => $value) {   
                                         ?>
                                         <tr>
                                             <td><?= $i++;?></td>
