@@ -822,7 +822,6 @@ $( '.sortable' ).sortable();
                                 var i = 0;
                                 var htmlData = '';
 
-                                console.log(obj1.res.length);
                                 // $.each(obj1.res, function(key,value) {
                                     htmlData = htmlData + '<thead>';
                                     htmlData = htmlData + '<tr>';

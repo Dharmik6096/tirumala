@@ -777,10 +777,8 @@ class SiteController extends Controller {
                 if (isset($checkshift[0]) && $checkshift[0] == 'dateshift') {
                     if (!empty($post[$checkshift[1]])) {
                         $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift($post[$checkshift[1]]);
-                        // $value = '2019-09-28 06:00:00.000';
                     } else {
                         $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift(1);
-                        // $value = '2020-12-11 06:00:00.000'
                     }
                 }
             }
