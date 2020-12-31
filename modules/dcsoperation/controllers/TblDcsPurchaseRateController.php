@@ -167,7 +167,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             $this->model->is_active = 1;
             $this->model->originating_org_code = Yii::$app->session->get('organizations_code');
             $this->model->originating_org_type = Yii::$app->session->get('organizations_type');
-            $this->model->union_code = Yii::$app->session->get('organizations_code');
+            $this->model->union_code = $this->model->union_code;
 
 //$this->model->scenario = 'create';
             if ($this->model->validate()) {

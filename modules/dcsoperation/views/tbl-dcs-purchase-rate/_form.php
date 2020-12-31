@@ -26,7 +26,10 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
         ]]);
 ?>
 
-<div class="row">                      
+<div class="row">  
+    <div class="col-sm-2" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+    </div>
     <div class="col-sm-2 change">
         <?= Yii::$app->dropdown->dropdown('rate_gen_method_code', $model, $form, 'form-group', 'Rate Method'); ?>
     </div>
