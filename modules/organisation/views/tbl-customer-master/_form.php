@@ -50,7 +50,7 @@ $form = ActiveForm::begin([
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
         if (!empty($keyPattern)) {
             ?>
-            <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
+            <?php if ($keyPattern['has_prefix'] == 1 || $readonly || $keyPattern['ex_code_auto'] == 0) { ?>
                 <div class="col-sm-4"> 
                     <?= $form->field($model, 'customer_code_ex')->textInput() ?>
                 </div>

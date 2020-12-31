@@ -271,6 +271,13 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
             [['route'], 'required', 'on' => ['importCsv']],
             [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
+            [['dcs_code'], function ($attribute, $params) {
+                    $update = FALSE;
+                    if ($this->scenario == 'updateDcs') {
+                        $update = TRUE;
+                    }
+                    Yii::$app->general->vaildateExCodes($this, 'tbl_dcs', 'dcs_code_ex', 'tbl_customer_master', 'customer_code_ex', 'TblCustomerMaster', $this->union_code, $update);
+                }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv', 'createDcs']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

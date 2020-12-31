@@ -77,6 +77,7 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $this->bankDetails = new TblBankDetails();
         $this->contactDetails = new TblContactDetails();
         $this->contactDetails->scenario = 'additional';
+        $this->model->scenario = 'createFront';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->customer_code = $this->model->getCode();
 //            $this->model->customer_code_ex = $this->model->getCodeEx();
@@ -116,6 +117,7 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
+        $this->model->scenario = 'updateFront';
         $x_col1 = explode('#', $this->model->x_col1);
         if (isset($x_col1)) {
             if (isset($x_col1[0]) && isset($x_col1[1])) {

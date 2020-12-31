@@ -124,6 +124,13 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['customer_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['customer_code'], function ($attribute, $params) {
+                    $update = FALSE;
+                    if ($this->scenario == 'updateFront') {
+                        $update = TRUE;
+                    }
+                    Yii::$app->general->vaildateExCodes($this, 'tbl_customer_master', 'customer_code_ex', 'tbl_dcs', 'dcs_code_ex', 'TblDcs', $this->union_code, $update);
+                }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv', 'createFront']],
         ];
     }
 
