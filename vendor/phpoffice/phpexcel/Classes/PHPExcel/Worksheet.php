@@ -2430,12 +2430,14 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
                     if ($strictNullComparison) {
                         if ($cellValue !== $nullValue) {
                             // Set cell value
-                            $this->getCell($currentColumn . $startRow)->setValue($cellValue);
+                            $this->setCellValueExplicit($currentColumn . $startRow, $cellValue);
+//                            $this->getCell($currentColumn . $startRow)->setValue($cellValue);
                         }
                     } else {
                         if ($cellValue != $nullValue) {
                             // Set cell value
-                            $this->getCell($currentColumn . $startRow)->setValue($cellValue);
+                            $this->setCellValueExplicit($currentColumn . $startRow, $cellValue);
+//                            $this->getCell($currentColumn . $startRow)->setValue($cellValue);
                         }
                     }
                     ++$currentColumn;
