@@ -114,6 +114,7 @@ use yii\helpers\Url;
  </table>
 </div>
 </div>
+</div>
 <?php
 $script = "
 $(document).ready(function(){
