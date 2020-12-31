@@ -4279,9 +4279,9 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 /*For Examples*/
 
 .custom_report_table {
-	height: 400px;
-	margin: 35px auto;
-	overflow: auto;
+	height: 500px;
+	margin-top: 35px;
+	/* overflow: auto; */
 	width: 100%;
 	position: relative;
 }

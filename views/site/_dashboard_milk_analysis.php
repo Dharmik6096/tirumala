@@ -59,3 +59,5 @@
         </div>
     </div>
 </div>
+
+<div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="widget_table_search_btn mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
