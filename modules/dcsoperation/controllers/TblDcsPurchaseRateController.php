@@ -643,6 +643,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $searchModel = new TblDcsPurchaseRateApplicabititySearch();
         $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
         $searchModel->scenario = 'deleteApplicability';
+        $searchModel->wef_date = !empty($searchModel->wef_date) ? $searchModel->wef_date : NULL;
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
