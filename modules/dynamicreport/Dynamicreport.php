@@ -34,13 +34,13 @@ class Dynamicreport extends \yii\base\Module {
         if (!empty($report_model)) {
             $control = TblControlList::find()
                     ->join('inner join', 'tbl_report_control_mapping', 'tbl_control_list.control_code=tbl_report_control_mapping.control_code')
-                    ->where(['tbl_report_control_mapping.report_code' => $report_model->report_code, 'tbl_report_control_mapping.is_active' => 1])
+                    ->where(['tbl_report_control_mapping.report_code' => $report_model->report_code])
                     ->all();
             $data['controls'] = $control;
-            $data['title']=$report_model->report_name;
-            $data['sp_name']=$report_model->sp_name;
-            $data['sp_param']=$report_model->sp_param;
-            $data['report_rule']=json_decode($report_model->report_rule);
+            $data['title'] = $report_model->report_name;
+            $data['sp_name'] = $report_model->sp_name;
+            $data['sp_param'] = $report_model->sp_param;
+            $data['report_rule'] = json_decode($report_model->report_rule);
         }
         return $data;
     }
