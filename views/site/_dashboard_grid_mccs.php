@@ -13,7 +13,8 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
     <?= $breadcrum_title.$this->title; ?>
-<button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-toggle="collapse" data-target="#dash_collapse_grid"><i class="fa fa-list"></i></button>
+<button type="button" class="headerIcon gread_header_icon btn btn-danger apply-shortcut btn-block" data-toggle="collapse" data-target=".grid_card"><i class="fa fa-list"></i></button>
+<span class="right_align_date"><?= Yii::$app->controls->view_date($date) ?></span>
     </div>
     <div class="panel-body hide-grid-export">
     <div id="plant-list" class="grid-content">
@@ -28,17 +29,17 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
     
                 <div class="col-sm-6">
                 <div class="col-sm-12">
-                    <div class="grid_card">
+                    <div class="grid_card collapse">
                         <?php 
                             if (!empty($output)) {
                                 foreach ($output as $data) { 
-                                    $tbl_plant_model = new TblMccPlant();
-                                    $tbl_plant_model->mcc_plant_code = $data['mcc_code'];
+                                    // $tbl_plant_model = new TblMccPlant();
+                                    // $tbl_plant_model->mcc_plant_code = $data['mcc_code'];
                                     ?>
                                     <div class="div_grid_block padding_left_0 padding_right_0 padding_top_0 dashboardWidgetDetailPortion col-sm-3">
                                         <div class="div_grid_block_content">
                                             <!-- <p class="dash_grid_block_header"><?= Yii::t('app', 'Union') ?></p> -->
-                                            <h4 class="dash_grid_block_header"><?= !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'))? Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name') : 'N/A' ?></h4>
+                                            <h4 class="dash_grid_block_header"><?= $data['mcc_name']?></h4>
                                             <!-- <h4 class="dash_block_value block_value" id="farmer_rmrd_block_mcc"></h4> -->
                                         </div>
                                         <div class="row ">
@@ -97,13 +98,13 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                                     <?php
                                                     if(\Yii::$app->session->get('hasBMC') == 1){ 
                                                         $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                                        <div class="<?= $col_class ?> dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_bmc'] ?></span></span></a></div>
+                                                        <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_bmc'] ?></span></span></a></div>
                                                     <?php 
                                                     }?>
                                                     <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
+                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_dcs'] ?></span></span></a></div>
                                                     <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center "><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_farmers'] ?></span></span></a></div>
+                                                    <div class="<?= $col_class ?> dash_grid_block_desc text-center href_link_underline"><a href="<?= $url; ?>" ><span class="dash_grid_block_desc_title"><span><?= $data['total_farmers'] ?></span></span></a></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -114,22 +115,22 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                         </div>
                     </div>
 
-                    <div id="dash_collapse_grid" class="collapse">
+                    <div id="dash_collapse_grid">
                         <div class="col-sm-12">
                             <div class="table-responsive dashboard_collection_grid_tbl">
                                 <table class="table overflow_hidden table-striped">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th><?= Yii::t('app', 'MCC') ?></th>
-                                            <?php if(\Yii::$app->session->get('hasBMC') == 1){?><th><?= Yii::t('app', 'BMC') ?></th><?php } ?>
-                                            <th><?= Yii::t('app', 'Society') ?></th>
-                                            <th><?= Yii::t('app', 'Farmer') ?></th>
-                                            <th><?= Yii::t('app', 'Qty') ?></th>
-                                            <th><?= Yii::t('app', 'Avg. FAT') ?></th>
-                                            <th><?= Yii::t('app', 'Avg. SNF') ?></th>
-                                            <th><?= Yii::t('app', 'Avg. Rate') ?></th>
-                                            <th><?= Yii::t('app', 'Amount') ?></th>
+                                            <th class="custom_grid_header">#</th>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'MCC') ?></th>
+                                            <?php if(\Yii::$app->session->get('hasBMC') == 1){?><th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th><?php } ?>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'Society') ?></th>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'Farmer') ?></th>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'Avg. FAT') ?></th>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'Avg. SNF') ?></th>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'Avg. Rate') ?></th>
+                                            <th class="custom_grid_header"><?= Yii::t('app', 'Amount') ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -139,26 +140,26 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
                                     foreach ($output as $data) { 
                                         ?>
                                         <tr>
-                                            <td><?= ++$i; ?></td>
+                                            <td class="custom_grid_normal"><?= ++$i; ?></td>
                                             <?php 
-                                                $tbl_plant_model = new TblMccPlant();
-                                                $tbl_plant_model->mcc_plant_code = $data['mcc_code'];
+                                                // $tbl_plant_model = new TblMccPlant();
+                                                // $tbl_plant_model->mcc_plant_code = $data['mcc_code'];
                                             ?>
-                                            <td class="grid_left_align"><?= !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'))? Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name') : 'N/A' ?></td>
+                                            <td class="grid_left_align custom_grid_normal"><?= $data['mcc_name'] ?></td>
                                             <?php 
                                             if(\Yii::$app->session->get('hasBMC') == 1){
                                                 $url = Url::to(['site/get-bmcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                                <td><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
+                                                <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_bmc'] ?></a></td>
                                             <?php } ?>
                                             <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                            <td><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
+                                            <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_dcs'] ?></a></td>
                                             <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $data['mcc_code']]);?>
-                                            <td><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>
-                                            <td class="grid_right_align" ><?= $data['total_quantity'] ?></td>
-                                            <td class="grid_right_align" ><?= $data['avgFAT'] ?></td>
-                                            <td class="grid_right_align" ><?= $data['avgSNF'] ?></td>
-                                            <td class="grid_right_align" ><?= $data['avgRate'] ?></td>
-                                            <td class="grid_right_align" ><?= $data['total_amount'] ?></td>
+                                            <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>
+                                            <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
+                                            <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
+                                            <td class="number_align custom_grid_normal" ><?= $data['avgSNF'] ?></td>
+                                            <td class="number_align custom_grid_normal" ><?= $data['avgRate'] ?></td>
+                                            <td class="number_align custom_grid_normal" ><?= $data['total_amount'] ?></td>
                                         </tr>
                                     <?php 
                                         }    
@@ -183,7 +184,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'MCC'));
 $script = "  
 var i =0;
 $('.gread_header_icon').click(function(){
-    $('.grid_card').toggle();
+    $('#dash_collapse_grid').toggle();
 
     if(i==0){
         $('.gread_header_icon i ').removeClass('fa fa-list').addClass('fa fa-th-large');

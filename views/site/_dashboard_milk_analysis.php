@@ -1,8 +1,7 @@
 <div class="col-sm-12 dashboard_milk_analysis">
-    <div class="table-responsive dashboard_tbl farmer_rmrd_tbl h450">
-        <div id="dashboard_milk_analysis" class="cont milk-collection">
-            <div class="table-responsive dashboard_tbl dashboard_table_section">
-                <table class="table table_v_wrapper table_table_v_wrapper overflow_hidden table-striped dashboardMilkAnalysis">
+    <div class="table-responsive overflow_hidden dashboard_tbl dashboard_table_section">
+        <div class="custom_report_table mx_h_400 dynamic_report_table dynamic_report_margin">
+            <table id="custom_report" class="fht-table table table-striped dashboardMilkAnalysis">
                 <!-- <thead class="dashboardWidgetDetailPortion">
                         <tr>
                             <th rowspan='2'><?= Yii::t('app', 'MCC') ?></th>
@@ -56,8 +55,9 @@
                     <tbody class="dashboardMilkAnalysis_tbody">
                         
                     </tbody> -->
-                </table>
-            </div>
+            </table>
         </div>
     </div>
 </div>
+
+<div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="widget_table_search_btn mis_custom_report"><i class="fa fa-file-excel-o"></i></div>

@@ -9,6 +9,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
     <?php $url = Url::to(['site/get-unions', 'date' => $date, 'union_code' => $model->union_code]);?>
     <a href="<?= $url ?>" target="_blank">
+    <div class="link_hover_effect">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
                 <p class="dash_block_header"><?= Yii::t('app', 'Union') ?></p>
@@ -18,6 +19,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
             <div class="div_dash_block_icon"> <img
                     src="<?= $imageIconPath . 'company.png' ?>"> </div>
         </div>
+    </div>
     </a>
 
     <?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $model->union_code]);?>
