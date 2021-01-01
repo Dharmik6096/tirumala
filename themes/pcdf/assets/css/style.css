@@ -4013,7 +4013,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 
 .dash_grid_block_header {
     color: #7a231c !important;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 12px;
     text-align: left;
     margin-top: 4px;
@@ -4349,4 +4349,38 @@ td.custom_grid_normal.dynamic_value {
 
 .dashboard_milk_analysis .fht-table-wrapper .fht-fixed-column .fht-thead .fht-table .custom_grid_header{
     height: 17px !important;
+}
+
+/* .link_hover_effect .div_dash_block:hover{
+    background: #7a231c;
+} */
+
+.href_link:hover{
+    text-decoration: underline;
+}
+
+.right_align_date{
+    float: right;
+    padding-right: 26px;
+}
+
+.href_link_underline{
+    text-decoration: underline;
+}
+
+.right_align_date_rm_padding{
+    padding-right: 0px !important;
+}
+
+.link_font_color{
+    /* color: #000 !important; */
+}
+
+.number_align{
+    text-align: right !important;
+}
+
+.sr_text_align{
+    text-align: left !important;
+    width: 10px!important;
 }

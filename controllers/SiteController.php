@@ -2185,13 +2185,15 @@ class SiteController extends Controller {
     public function setBreadcrums($data){
         $title = '';
         $url = [];
+        $url['dashboard'] =  Url::to(['site/dashboard']);
+        $title .= "<a class='href_link' href=".$url['dashboard'].">Dashboard</a> > ";
         if(!empty($data)){
             if(isset($data['union_code']) && $data['union_code'] != 0){
                 $url['union'] =  Url::to(['site/get-unions', 'date' => $data['date']]);
                 $tbl_union_model = new TblUnions();
                 $tbl_union_model->union_code = $data['union_code'];
                 $union_name = !empty(Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'))? Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name') : 'N/A';
-                $title .= "<a href=".$url['union'].">".$union_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['union'].">".Yii::t('app', 'Union').': <span class="link_font_color">'.$union_name."</span></a> > ";
             }
             if(isset($data['mcc_code']) && $data['mcc_code'] != 0){
                 $tbl_plant_model = new TblMccPlant();
@@ -2199,7 +2201,7 @@ class SiteController extends Controller {
                 $union = isset($data['union_code']) ? $data['union_code'] : '';
                 $url['mcc'] = Url::to(['site/get-mccs', 'date' => $data['date'], 'union_code' => $union, 'mcc_code' => '0']);
                 $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'))? Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name') : 'N/A';
-                $title .= "<a href=".$url['mcc'].">".$mcc_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['mcc'].">".Yii::t('app', 'MCC').": <span class='link_font_color'>".$mcc_name."</span></a> > ";
             }
             if(isset($data['bmc_code']) && $data['bmc_code'] != 0){
                 $tbl_bmc_model = new TblDcsBmc();
@@ -2208,7 +2210,7 @@ class SiteController extends Controller {
                 $mcc = isset($data['mcc_code']) ? $data['mcc_code'] : '';
                 $url['bmc'] = Url::to(['site/get-bmcs', 'date' => $data['date'], 'union_code' => $union, 'mcc_code' => '0']);
                 $bmc_name = !empty(Yii::$app->general->getforeignkey($tbl_bmc_model->tblDcsBmc, 'bmc_name')) ? Yii::$app->general->getforeignkey($tbl_bmc_model->tblDcsBmc, 'bmc_name') : 'N/A';
-                $title .= "<a href=".$url['bmc'].">".$bmc_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['bmc'].">".Yii::t('app', 'BMC').": <span class='link_font_color'>".$bmc_name."</span></a> > ";
             }
             if(isset($data['dcs_code']) && $data['dcs_code'] != 0){
                 $tbl_dcs_model = new TblDcs();
@@ -2217,7 +2219,7 @@ class SiteController extends Controller {
                 $mcc = isset($data['mcc_code']) ? $data['mcc_code'] : '';
                 $url['dcs'] = Url::to(['site/get-dcs', 'date' => $data['date'], 'union_code' => $union, 'mcc_code' => $mcc, 'dcs_code' => '0']);
                 $dcs_name = !empty(Yii::$app->general->getforeignkey($tbl_dcs_model->tblDcs, 'dcs_name')) ? Yii::$app->general->getforeignkey($tbl_dcs_model->tblDcs, 'dcs_name') : 'N/A';
-                $title .= "<a href=".$url['dcs'].">".$dcs_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['dcs'].">".Yii::t('app', 'DCS').": <span class='link_font_color'>".$dcs_name."</span></a> > ";
             }
         }
         return $title;
