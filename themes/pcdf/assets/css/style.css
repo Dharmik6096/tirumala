@@ -4139,7 +4139,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .height_grid_f{
-    max-height: calc(100vH - 120px);
+    max-height: calc(100vH - 200px);
 }
 
 .dash_grid_v_header{
