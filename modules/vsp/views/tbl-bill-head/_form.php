@@ -7,7 +7,6 @@ use yii\helpers\Url;
 
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -81,6 +80,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2" id="defaultbill">
         <?= Yii::$app->dropdown->dropdown('default_bill_head_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_bill_head_code'), false, 'default_bill_head_code'); ?>
     </div>
+    <div class="col-sm-2 mt10" id="slab">
+        <?= $form->field($model, 'has_slab', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+    </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
@@ -96,6 +98,7 @@ $form = ActiveForm::begin([
 $script = "
     $(document).ready(function(){
        dispDefBillHead();
+       dispSlab();
     });
     $('#tblbillhead-is_default').on('change',function(){
         dispDefBillHead();
@@ -163,6 +166,20 @@ $script = "
               
             
          });
+        $('#tblbillhead-bill_head_for').on('change',function(){
+            dispSlab();
+        });
+       
+        function dispSlab(){
+            $('#slab').hide();
+            var headFor = $('#tblbillhead-bill_head_for').val();
+            if(headFor == 'TRANSPORTER' || headFor == 'VENDOR'){
+                $('#slab').show();
+            } else {
+                $('#slab').hide();
+                $('#tblbillhead-has_slab').prop('checked', false);
+            }
+        }
 ";
 
 $this->registerJs($script, View::POS_END, 'formula');

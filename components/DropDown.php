@@ -656,7 +656,7 @@ class DropDown extends Component {
         }
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
-                'data' => $records, 'pluginOptions' => ['allowClear' => true],'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
+                'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
             )->label($label);
         } else {
             echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
@@ -1242,6 +1242,7 @@ class DropDown extends Component {
             'tax_group' => ['name' => 'tax_group_code', 'fields' => 'tax_group_code,tax_group_name,', 'prompt' => Yii::t('app', 'Select Tax Group'), 'model' => 'TblTaxGroup', 'depend' => 'union_code'],
             'report_code' => ['name' => 'report_code', 'fields' => 'report_code,report_name', 'prompt' => 'Select Report', 'model' => 'TblReportList'],
             'depend_tax_code' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name,', 'prompt' => Yii::t('app', 'Select Tax'), 'model' => 'TblTax', 'depend' => 'union_code'],
+            'slab_bill_head' => ['name' => 'bill_head_code', 'fields' => 'bill_head_code,bill_head_name', 'prompt' => 'Select Head', 'model' => 'TblBillHead', 'whereCondition' => ['has_slab' => 1]],
         ];
         return $label[$l];
     }
