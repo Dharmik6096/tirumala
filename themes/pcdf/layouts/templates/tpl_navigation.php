@@ -491,7 +491,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', '805 - Eko Milk Calibration'), 'url' => ['/misreports/reports/eko-milk-calibration']],
                             ['label' => Yii::t('app', '806 - Calibration Flag'), 'url' => ['/misreports/reports/calibration-flag']],
                             ['label' => Yii::t('app', '807 - Cleaning Flag Bmc'), 'url' => ['/misreports/reports/cleaning-flag-bmc']],
-                            // ['label' => Yii::t('app', '807 - Monthly Comparision'), 'url' => ['/misreports/reports/milk-and-bmc-collection-monthly-comparision']],
                     ]
                 ],
                     [
@@ -510,6 +509,7 @@ echo GhostMenu::widget([
                             ['label' => '909-' . Yii::t('app', 'Member Data'), 'url' => ['/misreports/reports/member-data']],
                             ['label' => '910-' . Yii::t('app', 'Member Reception Status'), 'url' => ['/misreports/reports/member-reception-status']],
                             ['label' => '911-' . Yii::t('app', 'Shift Wise Auto Manual'), 'url' => ['/misreports/reports/shift-wise-auto-manual']],
+                            ['label' => '912-'. Yii::t('app', 'Monthly Comparision Report'), 'url' => ['/misreports/reports/milk-and-bmc-collection-monthly-comparision']],
                     ]
                 ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

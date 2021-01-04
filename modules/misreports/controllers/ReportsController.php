@@ -1575,7 +1575,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_collection_type,type_wise_report:static:type_wise_report',
                 'sp_name' => 'sp_mis_milk_and_bmc_collection_monthly_comparision',
                 'scenario' => 'MilkAndBmcCollectionMonthlyComparision',
-                'title' => ' - Milk & BMC Collection Monthly Comparision',
+                'title' => '912 - Monthly Comparision Report',
                 'custom_report' => 'custom_report',
             ],
         ];
