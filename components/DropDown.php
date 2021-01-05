@@ -1152,6 +1152,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Report Type'),
                 'data' => [0 => Yii::t('app', 'DCS Wise Monthly Comparison'), 1 => Yii::t('app', 'BMC Wise Monthly Comparison'), 2 => Yii::t('app', 'Route Wise Monthly Comparisom')],
             ],
+            'dpu_status' => [
+                'name' => 'dpu_status',
+                'prompt' => Yii::t('app', 'Select DPU Status'),
+                'data' => [0 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'All')],
+            ],
         ];
         return $records[$l];
     }

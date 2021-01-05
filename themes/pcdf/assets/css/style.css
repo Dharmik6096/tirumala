@@ -4398,3 +4398,32 @@ td.custom_grid_normal.dynamic_value {
 .overflow_auto{
     overflow: auto;
 }
+
+#dpu_widget_filter{
+    width: 51%;
+    float: right;
+    margin-top: -9px;
+}
+
+.background_shadow{
+    box-shadow: -2px 1px 7px 2px rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1) !important;
+    padding: 3px;
+    background: #fff !important;
+    right: -227px;
+}
+
+.margin_top_22_reverse{
+    margin-top :  -22px;
+}
+
+.widget_table_search_btn_right_margin{
+    max-width: 20px;
+    position: absolute;
+    right: 34px;
+    cursor: pointer;
+    color: #fff;
+    top: 7px;
+    background: transparent;
+    border: none !important;
+    box-shadow: none;
+}
