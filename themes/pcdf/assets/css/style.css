@@ -4179,7 +4179,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .custom_width_dup_modal{
-    width: 65% !important;
+    width: calc(100% - 100px) !important;
 }
 
 .max_h_100-100{
