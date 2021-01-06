@@ -647,6 +647,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionWeightCollectionList() {
+        $this->report = 'WeightCollectionList';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
