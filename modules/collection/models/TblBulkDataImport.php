@@ -65,7 +65,8 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['collection_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
                 }],
-            [['own_bmc_code'], 'required', 'on' => ['bmc_collection_mapped']]
+            [['own_bmc_code'], 'required', 'on' => ['bmc_collection_mapped']],
+            [['milk_quality_type_code'], 'required', 'on' => ['milk_collection_qlty']]
         ];
     }
 

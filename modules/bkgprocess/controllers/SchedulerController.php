@@ -232,7 +232,7 @@ class SchedulerController extends ChildController {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-            $update = $model->updateFileStatus($ids);
+//            $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
@@ -252,9 +252,12 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection') {
                 $flag = 'milk-collection-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
-            } else if ($row->file_type == 'milk_collection') {
+            } else if ($row->file_type == 'milk_collection_qlty') {
                 $flag = 'milk-collection-qlty-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            } else if ($row->file_type == 'bmc_collection_mapped') {
+                $flag = 'bmc-mapped-collection-bulk';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
