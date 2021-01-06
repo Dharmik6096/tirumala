@@ -39,7 +39,7 @@ class TblVspBillHeadCriteria extends \app\models\ChildModel {
         return [
             [['vsp_criteria_code', 'bill_head_code', 'general_formula_code', 'criteria_name'], 'required', 'on' => ['create']],
             [['bill_head_code', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'criteria_type'], 'safe'],
             [['vsp_criteria_code', 'general_formula_code'], 'string', 'max' => 20],
             [['criteria_name'], 'string', 'max' => 100],
             [['union_code'], 'string', 'max' => 3],
@@ -49,6 +49,7 @@ class TblVspBillHeadCriteria extends \app\models\ChildModel {
             [['criteria_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
+            [['criteria_type'], 'default', 'value' => 0]
         ];
     }
 

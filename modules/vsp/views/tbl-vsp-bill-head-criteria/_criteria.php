@@ -89,8 +89,8 @@ $form = ActiveForm::begin([
         </div>
         <?= $form->field($model, 'vsp_criteria_code')->hiddenInput()->label(false) ?>
 
-        <div class="col-sm-2 reset_field number-validate">
-            <?= $form->field($txModel, 'from_val')->textInput() ?>
+        <div class="col-sm-2 number-validate">
+            <?= $form->field($txModel, 'from_val')->textInput(['readOnly' => true]) ?>
         </div>
         <div class="col-sm-2 reset_field number-validate">
             <?= $form->field($txModel, 'to_val')->textInput() ?>

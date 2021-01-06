@@ -84,6 +84,7 @@ $script = "
     function reloadGrid(){
          var code = $('#tblvspbillheadcriteria-vsp_criteria_code').val();
          if(code !=''){
+         getFromVal();
             var url = '" . Url::to(['/vsp/tbl-vsp-bill-head-criteria/list-grid']) . "'+ '?' + $('#bill-head-criteria-from').serialize();
                 $.ajax({
                     type: 'get',
@@ -203,9 +204,33 @@ $script = "
             }
         }
     });
-     });
+    });
+    $(document).ready(function() {
+        getFromVal();
+    });
+    function getFromVal(){
+        $('#tblvspbillheadcriteriaslabs-from_val').val('0');
+         var code = $('#tblvspbillheadcriteria-vsp_criteria_code').val();
+            if(code !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['get-from-value']) . "',
+                    data: {'id':code},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                         $('#tblvspbillheadcriteriaslabs-from_val').val(obj.toFixed(2));
+                        if (obj.status == 'success')
+                        {
+                           
+                        }
+                    },
+                    error:function(data){
 
-
+                    }
+                });
+            }
+    };
+   
     
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide-form');

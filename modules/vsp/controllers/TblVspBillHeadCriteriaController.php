@@ -24,7 +24,7 @@ use app\modules\vsp\models\TblVspBillHeadCriteriaSlabsSearch;
  */
 class TblVspBillHeadCriteriaController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['keyword'];
+    public $freeAccessActions = ['keyword', 'get-from-value'];
 
     /**
      * Lists all TblBillHead models.
@@ -297,13 +297,40 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
 
     public function actionDeleteSlab() {
         $deleteModel = new TblVspBillHeadCriteriaSlabs();
-        $deletedata = $deleteModel::find()->where(['vsp_slab_code' => Yii::$app->request->get('id')])->one();
-//        $deletedata->scenario = 'delete';
-        $historyModel = new TblVspBillHeadCriteriaSlabsHistory();
-        Yii::$app->operation->history($deletedata, $historyModel, DELETE);
-        $record = $this->generalModel->deleteTransaction([$deletedata, $historyModel]);
+        $id = Yii::$app->request->get('id');
+        $existData = $deleteModel::find()->where(['vsp_slab_code' => $id])->one();
+        $saveModel = [];
+        $deletedata = [];
+        $deletedetail = $deleteModel::find()->where(['vsp_criteria_code' => $existData->vsp_criteria_code])
+                ->andWhere(['>=', 'from_val', $existData->from_val])
+                ->all();
+        foreach ($deletedetail as $value) {
+            $historyModel = new TblVspBillHeadCriteriaSlabsHistory();
+            Yii::$app->operation->history($value, $historyModel, DELETE);
+            $deletedata[] = $value;
+            $saveModel[] = $historyModel;
+        }
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deletedata, ['Bill Head Criteria', 'edit']);
+
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Record Deleted Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Record Not Deleted.'];
+        }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionGetFromValue() {
+        $Model = new TblVspBillHeadCriteriaSlabs();
+        $existdata = $Model::find()
+                ->select('max(to_val) as to_val')
+                ->where(['vsp_criteria_code' => Yii::$app->request->post('id')])
+                ->one();
+
+        $data = !empty($existdata->to_val) ? $existdata->to_val + 0.1 : 0;
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($data);
     }
 
 }

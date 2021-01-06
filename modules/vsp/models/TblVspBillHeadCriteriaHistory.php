@@ -24,24 +24,22 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblVspBillHeadCriteriaHistory extends \yii\db\ActiveRecord
-{
+class TblVspBillHeadCriteriaHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vsp_bill_head_criteria_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['bill_head_code', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'criteria_type'], 'safe'],
             [['vsp_criteria_code', 'general_formula_code'], 'string', 'max' => 20],
             [['criteria_name'], 'string', 'max' => 100],
             [['union_code'], 'string', 'max' => 3],
@@ -55,8 +53,7 @@ class TblVspBillHeadCriteriaHistory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'vsp_criteria_code' => Yii::t('app', 'Vsp Criteria Code'),
@@ -76,4 +73,5 @@ class TblVspBillHeadCriteriaHistory extends \yii\db\ActiveRecord
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
 }
