@@ -1142,6 +1142,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Vendor'), 1 => Yii::t('app', 'Member')],
             ],
+            'report_collection_type' => [
+                'name' => 'report_collection_type',
+                'prompt' => Yii::t('app', 'Select Collection Type'),
+                'data' => [0 => Yii::t('app', 'Milk Collection'), 1 => Yii::t('app', 'BMC Collection')],
+            ],
+            'type_wise_report' => [
+                'name' => 'report_type_2',
+                'prompt' => Yii::t('app', 'Select Report Type'),
+                'data' => [0 => Yii::t('app', 'DCS Wise Monthly Comparison'), 1 => Yii::t('app', 'BMC Wise Monthly Comparison'), 2 => Yii::t('app', 'Route Wise Monthly Comparisom')],
+            ],
+            'dpu_status' => [
+                'name' => 'dpu_status',
+                'prompt' => Yii::t('app', 'Select DPU Status'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Error'), 2 => Yii::t('app', 'Processed'), -1 => Yii::t('app', 'All')],
+            ],
         ];
         return $records[$l];
     }
