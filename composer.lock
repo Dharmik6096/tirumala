@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7df2595f65ca2296c3e6a5bc9f19ba7",
+    "content-hash": "fb6e1c713e414aadebba60ba26df1386",
     "packages": [
         {
             "name": "2amigos/yii2-multi-select-widget",
@@ -259,6 +259,83 @@
                 "responsive",
                 "web"
             ]
+        },
+        {
+            "name": "bower-asset/datatables",
+            "version": "1.10.21",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DataTables/DataTables.git",
+                "reference": "83e59694a105225ff889ddfa0d723a3ab24fda78"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DataTables/DataTables/zipball/83e59694a105225ff889ddfa0d723a3ab24fda78",
+                "reference": "83e59694a105225ff889ddfa0d723a3ab24fda78",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/jquery": ">=1.7.0"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "media/js/jquery.dataTables.js",
+                    "media/css/jquery.dataTables.css",
+                    "media/images/sort_asc.png",
+                    "media/images/sort_asc_disabled.png",
+                    "media/images/sort_both.png",
+                    "media/images/sort_desc.png",
+                    "media/images/sort_desc_disabled.png"
+                ],
+                "bower-asset-ignore": [
+                    "/.*",
+                    "examples",
+                    "media/unit_testing",
+                    "composer.json",
+                    "dataTables.jquery.json",
+                    "package.json"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "keywords": [
+                "datatables",
+                "javascript",
+                "jquery",
+                "library",
+                "table"
+            ],
+            "time": "2020-05-21T10:08:44+00:00"
+        },
+        {
+            "name": "bower-asset/datatables-plugins",
+            "version": "1.10.22",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DataTables/Plugins.git",
+                "reference": "3cf7d00ef59ee9052fc63ee5b6a31f99fd5b3eb9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DataTables/Plugins/zipball/3cf7d00ef59ee9052fc63ee5b6a31f99fd5b3eb9",
+                "reference": "3cf7d00ef59ee9052fc63ee5b6a31f99fd5b3eb9",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/datatables": ">=1.10.15",
+                "bower-asset/jquery": ">=1.7.0"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [],
+                "bower-asset-ignore": []
+            },
+            "license": [
+                "MIT"
+            ],
+            "time": "2020-12-01T12:23:33+00:00"
         },
         {
             "name": "bower-asset/inputmask",
@@ -2761,7 +2838,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:nickcv-ln/yii2-encrypter.git",
+                "url": "https://github.com/nickcv-ln/yii2-encrypter.git",
                 "reference": "eaedea577f10ba605c1408cb9901e591d8034a8b"
             },
             "dist": {
@@ -2799,6 +2876,59 @@
                 "yii2"
             ],
             "time": "2015-02-04T09:50:53+00:00"
+        },
+        {
+            "name": "nullref/yii2-datatables",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NullRefExcep/yii2-datatables.git",
+                "reference": "993fd3846c701bcdce6c8a205cfecc7d80cbdb6b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NullRefExcep/yii2-datatables/zipball/993fd3846c701bcdce6c8a205cfecc7d80cbdb6b",
+                "reference": "993fd3846c701bcdce6c8a205cfecc7d80cbdb6b",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/datatables": "~1.10.15",
+                "bower-asset/datatables-plugins": "~1.10.15",
+                "php": ">=5.5.0",
+                "yiisoft/yii2": "~2.0.13"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "nullref\\datatable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Serhiy Vinichuk",
+                    "email": "serhiyvinichuk@gmail.com"
+                },
+                {
+                    "name": "Dmytro Karpovych",
+                    "email": "ZAYEC77@gmail.com"
+                }
+            ],
+            "description": "Yii2 Extension for DataTables jQuery plug-in",
+            "homepage": "https://github.com/NullRefExcep/yii2-datatables",
+            "keywords": [
+                "datatable",
+                "datatables",
+                "jquery",
+                "plugin",
+                "widget",
+                "yii",
+                "yii2"
+            ],
+            "time": "2019-08-21T23:22:26+00:00"
         },
         {
             "name": "phpoffice/phpexcel",
@@ -4278,7 +4408,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zainiafzan/yii2-dropzone.git",
+                "url": "git@github.com:zainiafzan/yii2-dropzone.git",
                 "reference": "788f36cb8b7cea1a4205a226c6d0e58e963aabeb"
             },
             "dist": {
@@ -4665,6 +4795,7 @@
                 "faker",
                 "fixtures"
             ],
+            "abandoned": true,
             "time": "2016-04-29T12:21:54+00:00"
         },
         {
@@ -6544,7 +6675,8 @@
         "guzzlehttp/guzzle": 20,
         "jaspersoft/rest-client": 20,
         "softark/yii2-dual-listbox": 20,
-        "yiisoft/yii2-queue": 20
+        "yiisoft/yii2-queue": 20,
+        "nullref/yii2-datatables": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

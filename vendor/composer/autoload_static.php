@@ -74,6 +74,7 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         ),
         'n' => 
         array (
+            'nullref\\datatable\\' => 18,
             'nickcv\\encrypter\\' => 17,
         ),
         'l' => 
@@ -318,6 +319,10 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+        ),
+        'nullref\\datatable\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nullref/yii2-datatables/src',
         ),
         'nickcv\\encrypter\\' => 
         array (
