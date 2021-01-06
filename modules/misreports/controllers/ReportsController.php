@@ -1578,6 +1578,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '912 - Monthly Comparision Report',
                 'custom_report' => 'custom_report',
             ],
+            'WeightCollectionList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_weight_collection_list',
+                'scenario' => 'WeightCollectionList',
+                'title' => 'BMC Weight Data List',
+                'removeExportType' => ['CSV'],
+            ],
         ];
         return $label[$l];
     }

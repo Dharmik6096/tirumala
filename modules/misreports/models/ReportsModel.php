@@ -61,6 +61,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['BmcCollectionData']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'originating_type'], 'required', 'on' => ['MilkCollectionData']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'report_collection_type','type_wise_report'], 'required', 'on' => ['MilkAndBmcCollectionMonthlyComparision']],
+            [['from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['WeightCollectionList']]
         ];
     }
 
