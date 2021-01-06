@@ -213,7 +213,7 @@ if (isset($data['url1'])) {
                                             }
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type','type_wise_report'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -309,11 +309,22 @@ if (isset($data['url1'])) {
                                                 <?php
                                             }
                                         }
+
+                                        if (in_array($value, array('report_collection_type'))) {
+                                            ?>
+                                                <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                                </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
                                     }
+                                    if (isset($data['dynamic'])) {
+                                        echo Html::hiddenInput('dynamic_report', $data['dynamic']);
+                                    }                                    
                                     if (!isset($data['output_type'])) {
                                         echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                     }
@@ -346,10 +357,16 @@ if (isset($data['url1'])) {
             if (!empty($model->getErrors())) {
                 $defaultToggle = true;
             }
+            $custom_report_class = isset($data['custom_report']) ? 'custom_report_search' : '';
             ?>
 
-            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?>">
+            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class?>">
                 <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
+                <?php if(isset($data['custom_report'])){
+                    ?>
+                    <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
+                    <?php
+                }?>
             </div>
 
             <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
@@ -359,9 +376,12 @@ if (isset($data['url1'])) {
                                                 </div>-->
             <?php } ?>
             <?php
-            if (!empty($result) && !is_array($result)) {
+            if (!empty($result) && !is_array($result) && !isset($data['custom_report'])) {
                 echo "<b><p class='text-center mt-50'>" . $result . "</p></b>";
-            } else if (!empty($result) && !(isset($data['download_only']))) {
+            } else if(!empty($result) && isset($data['custom_report'])){
+                echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
+            }
+            else if (!empty($result) && !(isset($data['download_only']))) {
                 $attr = [];
                 foreach ($result[0] as $att => $value) {
                     $checkAttr = explode('##', $att);

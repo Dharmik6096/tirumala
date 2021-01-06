@@ -10,11 +10,6 @@ use Yii;
  * @property integer $mapping_code
  * @property integer $report_code
  * @property integer $control_code
- * @property integer $is_active
- * @property string $created_at
- * @property string $created_by
- * @property string $updated_at
- * @property string $updated_by
  */
 class TblReportControlMapping extends \yii\db\ActiveRecord {
 
@@ -30,9 +25,7 @@ class TblReportControlMapping extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['report_code', 'control_code', 'is_active'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['created_by', 'updated_by'], 'string'],
+            [['report_code', 'control_code'], 'integer'],
         ];
     }
 
@@ -44,11 +37,6 @@ class TblReportControlMapping extends \yii\db\ActiveRecord {
             'mapping_code' => Yii::t('app', 'Mapping Code'),
             'report_code' => Yii::t('app', 'Report Code'),
             'control_code' => Yii::t('app', 'Control Code'),
-            'is_active' => Yii::t('app', 'Is Active'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
 
