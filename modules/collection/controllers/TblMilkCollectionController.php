@@ -27,7 +27,7 @@ use app\modules\collection\models\OnlineCollectionModel;
  */
 class TblMilkCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid'];
+    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid', 'check-fat-range'];
 
     /**
      * Lists all TblMilkCollection models.
@@ -189,9 +189,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $this->model = new TblMilkCollection();
         $this->model->member_code = $member;
         $rateClass = Yii::$app->general->getforeignkey($this->model->memberCode, 'rate_class');
-        
+
         $data['rate_class'] = empty($rateClass) ? 0 : $rateClass;
-        
+
         $model = new TblPurchaseRateApplicability();
         $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
@@ -523,6 +523,21 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'model' => $model,
                     'defaultToggle' => $defaultToggle
         ]);
+    }
+
+    public function actionCheckFatRange() {
+        $response = [];
+        $response['status'] = 'error';
+        $response['data'] = '';
+        (float) $fat = Yii::$app->request->post('fat');
+        $union = Yii::$app->request->post('union_code');
+        $milk_type = Yii::$app->request->post('milk_type');
+        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range'] : '';
+        if (!empty($range) && $range < $fat && $milk_type != 2) {
+            $response['status'] = 'success';
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }

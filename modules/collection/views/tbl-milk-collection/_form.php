@@ -149,6 +149,7 @@ $script = "
     });
     
      $('#tblmilkcollection-fat').change(function(){
+        checkFatRange();
         calculateClr();
     });
     
@@ -220,6 +221,36 @@ $script = "
             $('#tblmilkcollection-rate_code').val('');
         }
     }
+    
+    $('#tblmilkcollection-milk_type_code').change(function(){
+        checkFatRange();
+    });
+    
+    function checkFatRange(){
+        var union = $('#tblmilkcollection-union_code').val();
+        var fat = $('#tblmilkcollection-fat').val();
+        var milk_type = $('#tblmilkcollection-milk_type_code').val();
+            if(union !='' && fat !='' && milk_type !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['check-fat-range']) . "',
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        console.log(obj);
+                        if (obj.status == 'success')
+                        {
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Milk Type Must Be Buffalo</span></div></div>');
+                            $('#tblmilkcollection-milk_type_code').val(2);
+                            $('#tblmilkcollection-milk_type_code').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
