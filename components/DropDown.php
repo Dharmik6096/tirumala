@@ -1155,7 +1155,7 @@ class DropDown extends Component {
             'dpu_status' => [
                 'name' => 'dpu_status',
                 'prompt' => Yii::t('app', 'Select DPU Status'),
-                'data' => [0 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Processed'), 3 => Yii::t('app', 'All')],
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Error'), 2 => Yii::t('app', 'Processed'), -1 => Yii::t('app', 'All')],
             ],
         ];
         return $records[$l];
