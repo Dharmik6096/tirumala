@@ -2170,7 +2170,8 @@ class SiteController extends Controller {
         $result2 = [];
         if (!empty($_POST)) {
             $data = $_POST['Dashboard'];
-            $sp_param[] = date('Y-m-d', strtotime($data['dup_search_date'])).' '.Yii::$app->general->getshift($data['dpu_shift']);
+            $sp_param[] = date('Y-m-d', strtotime($data['dup_search_date']));
+            $sp_param[] = $data['dpu_shift'];
             $sp_param[] = $data['dpu_status'];
             // var_dump($sp_param);die;
             foreach ($database as $db) {
