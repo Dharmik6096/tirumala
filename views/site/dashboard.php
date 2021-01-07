@@ -1347,9 +1347,11 @@ $(document).on('click', '.dashboardDPUSearch', function(){
             htmlData = '';
             if (obj1.status == 'success')
             {
+                var i = 1;
                 obj1.res = JSON.parse(obj1.res);
                 $.each(obj1.res, function(key,value) {
                     htmlData = htmlData + '<tr>';
+                    htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+ i++ +'</td>';
                     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.ref_code+'</td>';
                     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.dcs_name+'</td>';
                     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.collection_date+'</td>';
