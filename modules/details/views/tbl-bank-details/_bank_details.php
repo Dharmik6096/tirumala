@@ -13,7 +13,6 @@ $attribute = [
     ['attribute' => 'bank_account_no', 'filter' => false],
     ['attribute' => 'ifsc', 'filter' => false],
     ['attribute' => 'beneficiary_name', 'filter' => false],
-    ['attribute' => 'adhar_no', 'filter' => false],
     ['attribute' => 'is_default', 'value' => function($model) {
             return $model->is_default == 1 ? 'Yes' : 'No';
         }, 'filter' => false],

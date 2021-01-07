@@ -46,7 +46,7 @@ class TblBankDetails extends \app\models\ChildModel {
               }, 'whenClient' => "function (attribute, value) { return $('#tblbankdetails-bank_code').val()!==''}"], */
             [['detail_code'], 'integer'],
             [['module_name', 'module_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'is_default', 'is_active', 'beneficiary_name', 'adhar_no'], 'safe'],
+            [['created_at', 'updated_at', 'is_default', 'is_active', 'beneficiary_name'], 'safe'],
 //            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
 //            return $model->module_name == $this->module_name;
 //        }],
@@ -67,9 +67,6 @@ class TblBankDetails extends \app\models\ChildModel {
                         $this->addError($attribute, Yii::t('app/validation', 'Beneficiary Name Is Invalid'));
                     }
                 }, 'skipOnEmpty' => false],
-            [['adhar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
         ];
 
         $client_rules = Yii::$app->customvalidation->getRules('TblBankDetails', $this->form_validation_type);
@@ -96,6 +93,7 @@ class TblBankDetails extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
+            'adhar_no' => Yii::t('app', 'Aadhaar No.'),
         ];
     }
 
