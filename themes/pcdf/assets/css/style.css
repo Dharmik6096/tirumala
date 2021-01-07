@@ -4427,3 +4427,11 @@ td.custom_grid_normal.dynamic_value {
     border: none !important;
     box-shadow: none;
 }
+
+.fht-table-wrapper{
+    overflow: auto !important;
+}
+
+.fht-thead{
+    width: auto !important;
+}
