@@ -137,6 +137,9 @@ if ($widget_type == 'rmrd')
 $dashboard_widget = new TblDashboardWidgets();
 $unionCode = !empty($model->union_code) ? $model->union_code : '';
 $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
+$model->dup_search_date = !empty($model->date)?$model->date : Yii::$app->controls->view_date(date('Y-m-d'));
+$model->dpu_status = !empty($model->dpu_status) ? $model->dpu_status :-1;
+$model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 ?>
 
 <div class="panel-group row panel-fixed dashboard_search_filter" id="filter">
@@ -264,7 +267,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                                         <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                     </div>
                                     <div class="col-sm-6 searchFilterHeader">
-                                        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', false, false, 'dpu_shift'); ?>
+                                        <?= Yii::$app->dropdown->shift($model, $form, 'dpu_shift', false); ?>
                                     </div>
                                     <div class="col-sm-6 searchFilterHeader">
                                         <?= Yii::$app->dropdown->dropdownStatic('dpu_status', $model, $form, '', false, false, 'dpu_status', false); ?>
@@ -772,381 +775,14 @@ $('.dpu_data_icon').click(function(){
 
                 else if(['milk_analysis_vertical'].indexOf(value) == 0 || ['milk_analysis_grid'].indexOf(value) == 0){
                     var blockDataString = $('#collapse1 form').serialize();
-                    var id= 'dashboard_milk_analysis';
                     var union= '" . $unionCode . "';
     //                var union= $('#dashboard-union_code').val();
                     var mcc= '" . $mccCode . "';
     //                var mcc= $('#dashboard-mcc_code').val();
                     var widget_type= $('#hidden_widget_type').val();
-                    $.ajax({
-                        type: 'post',
-                        url: '" . Url::to(['/site/load-dashboard-milk-analysis']) . "',
-                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
-                        success: function(data) {
-                            var obj1 = data;
-                            if (obj1.status == 'success' && ['milk_analysis_grid'].indexOf(value) == 0)
-                            {
-                                var table = $('#farmer_rmrd_tbl_container table tbody');
-                                var i = 0;
-                                var htmlData = '';
+                    parseMilkAnalysis(blockDataString,union,mcc,value);
 
-                                console.log(obj1);
-                                $.each(obj1.res, function(key,value) {
-                                    htmlData = htmlData + '<tr>';
-                                    htmlData = htmlData + '<td>'+value.bmc_name+' '+value.bmc_code+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_qty+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_avg_fat+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_avg_snf+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_avg_rate+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_amount+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_count+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_online+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_pendrive+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_manual+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_receipt_qty+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_receipt_avg_fat+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_receipt_avg_snf+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_receipt_avg_rate+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_receipt_amount+'</td>';
-                                    htmlData = htmlData + '<td>'+value.cc_receipt_count+'</td>';
-                                    htmlData = htmlData + '<td>'+value.vendor_qty+'</td>';
-                                    htmlData = htmlData + '<td>'+value.vendor_avg_fat+'</td>';
-                                    htmlData = htmlData + '<td>'+value.vendor_avg_snf+'</td>';
-                                    htmlData = htmlData + '<td>'+value.vendor_avg_rate+'</td>';
-                                    htmlData = htmlData + '<td>'+value.vendor_amount+'</td>';
-                                    htmlData = htmlData + '<td>'+value.vendor_count+'</td>';
-                                    htmlData = htmlData + '<td>'+value.total_qty+'</td>';
-                                    htmlData = htmlData + '<td>'+value.total_avg_fat+'</td>';
-                                    htmlData = htmlData + '<td>'+value.total_avg_snf+'</td>';
-                                    htmlData = htmlData + '<td>'+value.total_avg_rate+'</td>';
-                                    htmlData = htmlData + '<td>'+value.total_amount+'</td>';
-                                    htmlData = htmlData + '<td>'+value.total_count+'</td>';
-                                    
-                                    var var_class = 'negative_value';
-                                    if(value.diff_qty >= 0){
-                                        var_class = 'positive_vlaue';
-                                    }
-                                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_qty+'</td>';
-                                    
-                                    var var_class = 'negative_value';
-                                    if(value.diff_avg_fat >= 0){
-                                        var_class = 'positive_vlaue';
-                                    }
-                                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_avg_fat+'</td>';
-                                    
-                                    var var_class = 'negative_value';
-                                    if(value.diff_avg_snf >= 0){
-                                        var_class = 'positive_vlaue';
-                                    }
-                                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_avg_snf+'</td>';
-                                    
-                                    var var_class = 'negative_value';
-                                    if(value.diff_amount >= 0){
-                                        var_class = 'positive_vlaue';
-                                    }
-                                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_amount+'</td>';
-                                    
-                                    var var_class = 'negative_value';
-                                    if(parseFloat(value.cc_count) == parseFloat(value.cc_receipt_count)){
-                                        var_class = 'positive_vlaue';
-                                    }
-                                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_count+'</td>';
-                                    htmlData = htmlData + '</tr>';
-                                });
-                                // htmlData = htmlData + '</body>';
-                                $('.dashboardMilkAnalysis_tbody').html(htmlData);
-                            }
-                            if(obj1.status == 'success' && ['milk_analysis_vertical'].indexOf(value) == 0){
-                                    var table = $('#farmer_rmrd_tbl_container table tbody');
-                                    var i = 0;
-                                    var htmlData = '';
-
-                                    // $.each(obj1.res, function(key,value) {
-                                        htmlData = htmlData + '<thead>';
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<th class = \'custom_grid_header header_labels\'></td>';
-                                        htmlData = htmlData + '<th class = \'custom_grid_header header_labels\'></td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<th class = \'custom_grid_header header_labels\'>'+value.bmc_name+' '+value.bmc_code+'</th>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-                                        htmlData = htmlData + '</thead>';
-                                        htmlData = htmlData + '<tbody>';
-                                        
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td rowspan=\'9\' class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Collection')."</td>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_qty+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_avg_fat+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_avg_snf+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_avg_rate+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_amount+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Count')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_count+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Online')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_online+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-                                        
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Pendrive')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_pendrive+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Manual')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_manual+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'BMC Receipts')."</td>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_qty+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_avg_fat+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_avg_snf+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_avg_rate+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_amount+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_count+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'Vendor Receipts')."</td>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_qty+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_fat+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_snf+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_rate+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_amount+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_count+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'Total')."</td>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_qty+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_fat+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_snf+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_rate+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_amount+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_count+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'5\'>".Yii::t('app', 'CC Differences')."</td>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                                var var_class = 'negative_value';
-                                                if(value.diff_qty >= 0){
-                                                    var_class = 'positive_vlaue';
-                                                }
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_qty+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                                var var_class = 'negative_value';
-                                                if(value.diff_avg_fat >= 0){
-                                                    var_class = 'positive_vlaue';
-                                                }
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_avg_fat+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            var var_class = 'negative_value';
-                                            if(value.diff_avg_snf >= 0){
-                                                var_class = 'positive_vlaue';
-                                            }
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_avg_snf+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        // htmlData = htmlData + '<tr>';
-                                        // htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
-                                        // $.each(obj1.res, function(key,value) {
-                                        //     var var_class = 'negative_value';
-                                        //     if(value.diff_avg_rate >= 0){
-                                        //         var_class = 'positive_vlaue';
-                                        //     }
-                                        //     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_avg_rate+'</td>';
-                                        // });
-                                        // htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            var var_class = 'negative_value';
-                                            if(value.diff_amount >= 0){
-                                                var_class = 'positive_vlaue';
-                                            }
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_amount+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '<tr>';
-                                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
-                                        $.each(obj1.res, function(key,value) {
-                                            var var_class = 'negative_value';
-                                            if(parseFloat(value.cc_count) == parseFloat(value.cc_receipt_count)){
-                                                var_class = 'positive_vlaue';
-                                            }
-                                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_count+'</td>';
-                                        });
-                                        htmlData = htmlData + '</tr>';
-
-                                        htmlData = htmlData + '</tbody>';
-                                    
-                                    $('.dashboardMilkAnalysis').html(htmlData);
-
-                                    setTimeout(function(){ $('#custom_report').CongelarFilaColumna({Columnas:2}); }, 200);
-                               }
-    
-                        },
-                        error:function(data){
-                            //alert('Your data has not been submitted.Please try again');
-                        }
-                    });
                 }
-
                 
     //             else if(['milk_analysis'].indexOf(value) == 0){
     //                 var blockDataString = $('#collapse1 form').serialize();
@@ -1711,9 +1347,11 @@ $(document).on('click', '.dashboardDPUSearch', function(){
             htmlData = '';
             if (obj1.status == 'success')
             {
+                var i = 1;
                 obj1.res = JSON.parse(obj1.res);
                 $.each(obj1.res, function(key,value) {
                     htmlData = htmlData + '<tr>';
+                    htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+ i++ +'</td>';
                     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.ref_code+'</td>';
                     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.dcs_name+'</td>';
                     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.collection_date+'</td>';
@@ -1742,6 +1380,378 @@ $(document).on('click', '.dashboardDPUSearch', function(){
     return false;
 });
 
+function parseMilkAnalysis(blockDataString,union,mcc,value){
+    var id= 'dashboard_milk_analysis';
+    $.ajax({
+        type: 'post',
+        url: '" . Url::to(['/site/load-dashboard-milk-analysis']) . "',
+        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+        success: function(data) {
+            var obj1 = data;
+            if (obj1.status == 'success' && ['milk_analysis_grid'].indexOf(value) == 0)
+            {
+                $('tbody.dashboardMilkAnalysis_tbody').html('');
+                var table = $('#farmer_rmrd_tbl_container table tbody');
+                var i = 0;
+                var htmlData = '';
+
+                $.each(obj1.res, function(key,value) {
+                    htmlData = htmlData + '<tr>';
+                    htmlData = htmlData + '<td>'+value.bmc_name+' '+value.bmc_code+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_qty+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_avg_fat+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_avg_snf+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_avg_rate+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_amount+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_count+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_online+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_pendrive+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_manual+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_receipt_qty+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_receipt_avg_fat+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_receipt_avg_snf+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_receipt_avg_rate+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_receipt_amount+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_receipt_count+'</td>';
+                    htmlData = htmlData + '<td>'+value.vendor_qty+'</td>';
+                    htmlData = htmlData + '<td>'+value.vendor_avg_fat+'</td>';
+                    htmlData = htmlData + '<td>'+value.vendor_avg_snf+'</td>';
+                    htmlData = htmlData + '<td>'+value.vendor_avg_rate+'</td>';
+                    htmlData = htmlData + '<td>'+value.vendor_amount+'</td>';
+                    htmlData = htmlData + '<td>'+value.vendor_count+'</td>';
+                    htmlData = htmlData + '<td>'+value.total_qty+'</td>';
+                    htmlData = htmlData + '<td>'+value.total_avg_fat+'</td>';
+                    htmlData = htmlData + '<td>'+value.total_avg_snf+'</td>';
+                    htmlData = htmlData + '<td>'+value.total_avg_rate+'</td>';
+                    htmlData = htmlData + '<td>'+value.total_amount+'</td>';
+                    htmlData = htmlData + '<td>'+value.total_count+'</td>';
+                    
+                    var var_class = 'negative_value';
+                    if(value.diff_qty >= 0){
+                        var_class = 'positive_vlaue';
+                    }
+                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_qty+'</td>';
+                    
+                    var var_class = 'negative_value';
+                    if(value.diff_avg_fat >= 0){
+                        var_class = 'positive_vlaue';
+                    }
+                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_avg_fat+'</td>';
+                    
+                    var var_class = 'negative_value';
+                    if(value.diff_avg_snf >= 0){
+                        var_class = 'positive_vlaue';
+                    }
+                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_avg_snf+'</td>';
+                    
+                    var var_class = 'negative_value';
+                    if(value.diff_amount >= 0){
+                        var_class = 'positive_vlaue';
+                    }
+                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_amount+'</td>';
+                    
+                    var var_class = 'negative_value';
+                    if(parseFloat(value.cc_count) == parseFloat(value.cc_receipt_count)){
+                        var_class = 'positive_vlaue';
+                    }
+                    htmlData = htmlData + '<td class='+var_class+'>'+value.diff_count+'</td>';
+                    htmlData = htmlData + '</tr>';
+                });
+                // htmlData = htmlData + '</body>';
+                $('.dashboardMilkAnalysis_tbody').html(htmlData);
+            }
+            if(obj1.status == 'success' && ['milk_analysis_vertical'].indexOf(value) == 0){
+                    $('.dashboardMilkAnalysis_vertical').html('');
+                    var table = $('#farmer_rmrd_tbl_container table tbody');
+                    var i = 0;
+                    var htmlData = '';
+
+                    // $.each(obj1.res, function(key,value) {
+                        htmlData = htmlData + '<table id=\'custom_report\' class=\'fht-table table table-striped\'>';
+                        htmlData = htmlData + '<thead>';
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<th class = \'custom_grid_header header_labels\'></td>';
+                        htmlData = htmlData + '<th class = \'custom_grid_header header_labels\'></td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<th class = \'custom_grid_header header_labels\'>'+value.bmc_name+' '+value.bmc_code+'</th>';
+                        });
+                        htmlData = htmlData + '</tr>';
+                        htmlData = htmlData + '</thead>';
+                        htmlData = htmlData + '<tbody>';
+                        
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td rowspan=\'9\' class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Collection')."</td>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_qty+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_avg_fat+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_avg_snf+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_avg_rate+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_amount+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Count')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_count+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Online')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_online+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+                        
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Pendrive')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_pendrive+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Manual')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_manual+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'BMC Receipts')."</td>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_qty+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_avg_fat+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_avg_snf+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_avg_rate+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_amount+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_receipt_count+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'Vendor Receipts')."</td>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_qty+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_fat+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_snf+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_rate+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_amount+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_count+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'Total')."</td>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_qty+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_fat+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_snf+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_rate+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_amount+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_count+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'5\'>".Yii::t('app', 'CC Differences')."</td>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                                var var_class = 'negative_value';
+                                if(value.diff_qty >= 0){
+                                    var_class = 'positive_vlaue';
+                                }
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_qty+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'FAT')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                                var var_class = 'negative_value';
+                                if(value.diff_avg_fat >= 0){
+                                    var_class = 'positive_vlaue';
+                                }
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_avg_fat+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'SNF')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            var var_class = 'negative_value';
+                            if(value.diff_avg_snf >= 0){
+                                var_class = 'positive_vlaue';
+                            }
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_avg_snf+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        // htmlData = htmlData + '<tr>';
+                        // htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Rate')."</td>';
+                        // $.each(obj1.res, function(key,value) {
+                        //     var var_class = 'negative_value';
+                        //     if(value.diff_avg_rate >= 0){
+                        //         var_class = 'positive_vlaue';
+                        //     }
+                        //     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_avg_rate+'</td>';
+                        // });
+                        // htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Amount')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            var var_class = 'negative_value';
+                            if(value.diff_amount >= 0){
+                                var_class = 'positive_vlaue';
+                            }
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_amount+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Count')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            var var_class = 'negative_value';
+                            if(parseFloat(value.cc_count) == parseFloat(value.cc_receipt_count)){
+                                var_class = 'positive_vlaue';
+                            }
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value '+var_class+'\'>'+value.diff_count+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+                        htmlData = htmlData + '</tbody>';
+                        htmlData = htmlData + '</table>';
+
+                    $('.dashboardMilkAnalysis_vertical').html(htmlData);
+
+                    setTimeout(function(){ $('#custom_report').CongelarFilaColumna({Columnas:2}); }, 200);
+               }
+
+        },
+        error:function(data){
+            //alert('Your data has not been submitted.Please try again');
+        }
+    });
+}
 ";
 $this->registerJs($script, View::POS_READY, 'village-code');
 ?>

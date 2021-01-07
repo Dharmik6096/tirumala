@@ -43,6 +43,7 @@ if (!empty($dpu_data)){
                                 <table class="table overflow_hidden table-striped" id="dup_collection_table">
                                     <thead>
                                         <tr>
+                                            <td class="custom_grid_header header_labels">#</td>
                                             <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Ref. Code')?></td>
                                             <td class="custom_grid_header header_labels"><?= Yii::t('app', 'DCS Name')?></td>
                                             <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Collection Date')?></td>

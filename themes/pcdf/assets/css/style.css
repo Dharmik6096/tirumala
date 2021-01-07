@@ -4601,3 +4601,11 @@ table.dataTable tbody tr:nth-child(odd) {
     margin: 2px 0 0 3px;
     opacity: -3.6 !important;
 }
+
+.fht-table-wrapper{
+    overflow: auto !important;
+}
+
+.fht-thead{
+    width: auto !important;
+}
