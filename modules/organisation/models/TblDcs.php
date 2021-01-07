@@ -802,7 +802,7 @@ class TblDcs extends ChildModel {
     }
 
     public function getMccDCS($mccCode = [], $RLS = 'TRUE', $values = []) {
-        $query = $this->find()->select(['dcs_code', 'dcs_name', 'dcs_code_ex'])->where(['is_active' => 1]);
+        $query = $this->find()->select(['dcs_code', 'dcs_name', 'dcs_code_ex', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($mccCode))
             $query->andWhere(['mcc_plant_code' => $mccCode]);
         if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
@@ -1177,4 +1177,5 @@ class TblDcs extends ChildModel {
     public function getTblDcs() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
+
 }
