@@ -92,13 +92,13 @@ if (isset($data['url1'])) {
                                         if (in_array($value, array('union_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                                                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', false, true, true); ?>
                                             </div>   <?php
                                         }
                                         if (in_array($value, array('plant_code'))) {
                                             ?>
                                             <div class="col-sm-3 val_plant_code">
-                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
+                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant', true); ?>
                                             </div>
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
@@ -362,11 +362,11 @@ if (isset($data['url1'])) {
 
             <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class?>">
                 <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
-                <?php //if(isset($data['custom_report'])){
+                <?php if(!empty($result)){
                     ?>
                     <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
                     <?php
-                //}?>
+                }?>
             </div>
             <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
 

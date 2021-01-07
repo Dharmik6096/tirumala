@@ -4430,7 +4430,12 @@ td.custom_grid_normal.dynamic_value {
 }
 
 .select2-container--krajee .select2-selection--multiple {
-    min-height: 24px;
+    height: 24px !important;
+    min-height: 24px !important;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    /* color: #66778d; */
+    font-size: 12px;
 }
 
 .dataTables_wrapper .dataTables_filter{
@@ -4553,4 +4558,46 @@ table.dataTable tbody tr:nth-child(odd) {
 
 .dropdown-check-list.visible .items {
     display: block;
+}
+
+/* input.select2-search__field{
+    width: auto !important;
+    border: none !important;
+} */
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__rendered {
+    box-sizing: border-box;
+    display: inline-flex;
+    /* line-height: 1.428571429; */
+    list-style: none;
+    margin: 0;
+    overflow-x: auto !important;
+    padding: 0;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__choice {
+    color: #fff !important;
+    background: #7a231c !important;
+    border: 1px solid #7a231c !important;
+    border-radius: 8px;
+    cursor: default;
+    float: left;
+    margin: 1px 0 4px 2px;
+    padding: 0px 2px;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__choice__remove {
+    float: right;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    text-shadow: 0 1px 0 #fff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 2px 0 0 3px;
+    opacity: -3.6 !important;
 }
