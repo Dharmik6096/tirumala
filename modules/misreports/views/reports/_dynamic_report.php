@@ -42,12 +42,18 @@ use yii\helpers\Url;
                  <th colspan="3" class="custom_grid_header header_labels"><?= $value ?></th>
              <?php
                  }
+                $difference_flag=1;
+                if(count($diff_array) > 1){
+                    $difference_flag=0;
              ?>
              <th colspan="3" class="custom_grid_header header_labels"><?= Yii::t('app', $diff_array[0]).'-'.Yii::t('app', $diff_array[1])?></th>
+             <?php 
+                 }
+             ?>
          </tr>
          <tr>
              <?php
-                 for ($i=0; $i<=count($month_label); $i++){
+                 for ($i=$difference_flag; $i<=count($month_label); $i++){
                      ?>
                          <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Quantity')?></th>
                          <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Amount')?></th>
@@ -99,13 +105,14 @@ use yii\helpers\Url;
                              }
                          }
                         //  var_dump($diff_value_array);
-                         foreach ($diff_value_array as $key => $diff_v_a) {
-                            ?>
-                                <td class="number_align custom_grid_normal" title="<?= empty($diff_v_a) ? '0' : $diff_v_a?>"><?= empty($diff_v_a) ? '0' : substr($diff_v_a,0,10)?></td>
-                            <?php
-                         }
-
-                         ?>
+                        if($difference_flag ==0){
+                            foreach ($diff_value_array as $key => $diff_v_a) {
+                                ?>
+                                    <td class="number_align custom_grid_normal" title="<?= empty($diff_v_a) ? '0' : $diff_v_a?>"><?= empty($diff_v_a) ? '0' : substr($diff_v_a,0,10)?></td>
+                                <?php
+                            }
+                        }
+                        ?>
                      </tr>
                  <?php
              }
