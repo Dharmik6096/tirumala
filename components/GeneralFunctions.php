@@ -1961,4 +1961,21 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function getSpDropData($sp, $param, $execute = false) {
+        $str = '';
+        $count = count($param);
+        for ($i = 1; $i <= $count; $i++) {
+            $str .= ':paramName' . $i . ',';
+        }
+        $str = substr($str, 0, -1);
+        $command = \Yii::$app->db->createCommand("{CALL {$sp}({$str})}");
+        $i = 1;
+
+        if ($execute) {
+            return $command->execute();
+        } else {
+            return $command->queryAll();
+        }
+    }
+
 }

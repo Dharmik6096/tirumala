@@ -215,9 +215,9 @@ class SiteController extends Controller {
         $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_status = [];
 
-        $dpu_data = $this->DPUDataCollection($model);
+        // $dpu_data = $this->DPUDataCollection($model);
 
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets,'dpu_data'=>$dpu_data]);
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -2159,39 +2159,47 @@ class SiteController extends Controller {
         return $results;
     }
 
-    public function DPUDataCollection($model) {
+    public function actionDpuDataCollection() {
         $db_config = new TblDbConfig();
         $database = $db_config->activeConnection();
-        if(empty($model->date)){
-            $model->date=date("Y-m-d");
-        }
+        // if(empty($model->date)){
+        //     $model->date=date("Y-m-d");
+        // }
         $sp_param = [];
-        $sp_param[] = date('Y-m-d', strtotime($model->date));
-        // $sp_param[] = ;
         $result1 = [];
         $result2 = [];
-        foreach ($database as $db) {
-            if ($db->db_type == 'sql') {
-                \Yii::$app->general->SetDBConnection('db_sql', $db);
-                $result1 = \Yii::$app->general->getSpData('data_milk_collection_widget', $sp_param, false, 'db_sql');
-            } elseif ($db->db_type == 'mysql') {
-                \Yii::$app->general->SetDBConnection('db_mysql', $db);
-                $result2 = \Yii::$app->general->getSpData('data_milk_collection_widget', $sp_param, false, 'db_mysql', 'mysql');
+        if (!empty($_POST)) {
+            $data = $_POST['Dashboard'];
+            $sp_param[] = date('Y-m-d', strtotime($data['dup_search_date']));
+            $sp_param[] = $data['dpu_shift'];
+            $sp_param[] = $data['dpu_status'];
+            // var_dump($sp_param);die;
+            foreach ($database as $db) {
+                if ($db->db_type == 'sql') {
+                    \Yii::$app->general->SetDBConnection('db_sql', $db);
+                    $result1 = \Yii::$app->general->getSpData('data_milk_collection_widget', $sp_param, false, 'db_sql');
+                } elseif ($db->db_type == 'mysql') {
+                    \Yii::$app->general->SetDBConnection('db_mysql', $db);
+                    $result2 = \Yii::$app->general->getSpData('data_milk_collection_widget', $sp_param, false, 'db_mysql', 'mysql');
+                }
             }
         }
-        return(array_merge($result1, $result2));
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => json_encode(array_merge($result1, $result2))];
     }
 
     public function setBreadcrums($data){
         $title = '';
         $url = [];
+        $url['dashboard'] =  Url::to(['site/dashboard']);
+        $title .= "<a class='href_link' href=".$url['dashboard'].">Dashboard</a> > ";
         if(!empty($data)){
             if(isset($data['union_code']) && $data['union_code'] != 0){
                 $url['union'] =  Url::to(['site/get-unions', 'date' => $data['date']]);
                 $tbl_union_model = new TblUnions();
                 $tbl_union_model->union_code = $data['union_code'];
                 $union_name = !empty(Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name'))? Yii::$app->general->getforeignkey($tbl_union_model->tblUnion, 'union_name') : 'N/A';
-                $title .= "<a href=".$url['union'].">".$union_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['union'].">".Yii::t('app', 'Union').': <span class="link_font_color">'.$union_name."</span></a> > ";
             }
             if(isset($data['mcc_code']) && $data['mcc_code'] != 0){
                 $tbl_plant_model = new TblMccPlant();
@@ -2199,7 +2207,7 @@ class SiteController extends Controller {
                 $union = isset($data['union_code']) ? $data['union_code'] : '';
                 $url['mcc'] = Url::to(['site/get-mccs', 'date' => $data['date'], 'union_code' => $union, 'mcc_code' => '0']);
                 $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'))? Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name') : 'N/A';
-                $title .= "<a href=".$url['mcc'].">".$mcc_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['mcc'].">".Yii::t('app', 'MCC').": <span class='link_font_color'>".$mcc_name."</span></a> > ";
             }
             if(isset($data['bmc_code']) && $data['bmc_code'] != 0){
                 $tbl_bmc_model = new TblDcsBmc();
@@ -2208,7 +2216,7 @@ class SiteController extends Controller {
                 $mcc = isset($data['mcc_code']) ? $data['mcc_code'] : '';
                 $url['bmc'] = Url::to(['site/get-bmcs', 'date' => $data['date'], 'union_code' => $union, 'mcc_code' => '0']);
                 $bmc_name = !empty(Yii::$app->general->getforeignkey($tbl_bmc_model->tblDcsBmc, 'bmc_name')) ? Yii::$app->general->getforeignkey($tbl_bmc_model->tblDcsBmc, 'bmc_name') : 'N/A';
-                $title .= "<a href=".$url['bmc'].">".$bmc_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['bmc'].">".Yii::t('app', 'BMC').": <span class='link_font_color'>".$bmc_name."</span></a> > ";
             }
             if(isset($data['dcs_code']) && $data['dcs_code'] != 0){
                 $tbl_dcs_model = new TblDcs();
@@ -2217,7 +2225,7 @@ class SiteController extends Controller {
                 $mcc = isset($data['mcc_code']) ? $data['mcc_code'] : '';
                 $url['dcs'] = Url::to(['site/get-dcs', 'date' => $data['date'], 'union_code' => $union, 'mcc_code' => $mcc, 'dcs_code' => '0']);
                 $dcs_name = !empty(Yii::$app->general->getforeignkey($tbl_dcs_model->tblDcs, 'dcs_name')) ? Yii::$app->general->getforeignkey($tbl_dcs_model->tblDcs, 'dcs_name') : 'N/A';
-                $title .= "<a href=".$url['dcs'].">".$dcs_name."</a> > ";
+                $title .= "<a class='href_link' href=".$url['dcs'].">".Yii::t('app', 'DCS').": <span class='link_font_color'>".$dcs_name."</span></a> > ";
             }
         }
         return $title;

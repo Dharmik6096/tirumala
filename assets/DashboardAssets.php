@@ -44,6 +44,8 @@ class DashboardAssets extends AssetBundle {
         'themes/pcdf/assets/js/script.js',
         'themes/pcdf/assets/js/style.js',
         'themes/pcdf/assets/js/js.cookie.js',
+        'themes/pcdf/assets/js/jquery.CongelarFilaColumna.js',
+        'themes/pcdf/assets/js/html2excel.js',
         'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
         'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
         'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
