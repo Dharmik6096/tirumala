@@ -157,6 +157,7 @@ $script = "
     
     $(document).on('click','.add-collection',function(e){
         reloadGrid();
+         $('#tblbmccollection-bmc_code').trigger('change');
         $('.QltyParamDiv').show();
     });
     function reloadGrid(){
