@@ -9,6 +9,7 @@ use yii\helpers\Url;
  $labels = [];
  $month_label = [];
  $value_label = [];
+ if(is_array($result)){
  foreach ($result[0] as $key => $value) {
      if(substr($key,0,5) == 'label'){
          array_push($labels,$key);
@@ -21,12 +22,15 @@ use yii\helpers\Url;
          array_push($value_label,$key);
      }
  }
-
+ }
  $diff_array = (array_slice($month_label,count($month_label)-2,2));
 ?>
 <div class="table-responsive overflow_hidden dashboard_tbl dashboard_table_section">
 <div class="custom_report_table dynamic_report_table">
  <table id="custom_report" class="fht-table table table-striped">
+    <?php
+        if(is_array($result)){
+            ?>
      <thead>
          <tr>
              <?php
@@ -117,7 +121,14 @@ use yii\helpers\Url;
                  <?php
              }
          ?>
-     </tbody>              
+     </tbody>
+     <?php 
+        }else{
+         ?>
+         <tr><td><?= $result ?></td><tr>
+         <?php
+         }
+         ?>          
  </table>
 </div>
 </div>
