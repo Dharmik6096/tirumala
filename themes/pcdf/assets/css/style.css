@@ -4281,7 +4281,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .custom_report_table {
 	height: 500px;
 	margin-top: 35px;
-	/* overflow: auto; */
+	overflow: auto;
 	width: 100%;
 	position: relative;
 }
@@ -4383,4 +4383,55 @@ td.custom_grid_normal.dynamic_value {
 .sr_text_align{
     text-align: left !important;
     width: 10px!important;
+}
+
+.negative_value{
+    background-color: #ff0000 !important;
+    color: #fff !important;
+}
+
+.positive_vlaue{
+    background-color: #008000 !important;
+    color: #fff !important;
+}
+
+.overflow_auto{
+    overflow: auto;
+}
+
+#dpu_widget_filter{
+    width: 51%;
+    float: right;
+    margin-top: -9px;
+}
+
+.background_shadow{
+    box-shadow: -2px 1px 7px 2px rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1) !important;
+    padding: 3px;
+    background: #fff !important;
+    right: -227px;
+}
+
+.margin_top_22_reverse{
+    margin-top :  -22px;
+}
+
+.widget_table_search_btn_right_margin{
+    max-width: 20px;
+    position: absolute;
+    right: 34px;
+    cursor: pointer;
+    color: #fff;
+    top: 7px;
+    background: transparent;
+    border: none !important;
+    box-shadow: none;
+}
+
+.fht-table-wrapper{
+    overflow: auto !important;
+}
+
+.fht-thead{
+    width: auto !important;
 }

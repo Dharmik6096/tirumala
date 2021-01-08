@@ -16,7 +16,7 @@ use app\modules\organisation\models\TblMccPlant;
 class Dashboard extends Model {
 
     public $union_code, $widget_type, $rmrd_widgets, $farmer_widgets, $from_date4, $from_date5, $to_date4, $to_date5, $previous_hit, $current_hit, $from_date6, $to_date6, $widget_for;
-    public $date, $from_date, $to_date, $from_date2, $to_date2, $qlt_param, $shift, $from_date3, $to_date3, $from_shift, $to_shift, $plant_code, $bmc_code, $mcc_code, $dcs_code, $hidden_from_date, $hidden_to_date;
+    public $date, $from_date, $to_date, $from_date2, $to_date2, $qlt_param, $shift, $from_date3, $to_date3, $from_shift, $to_shift, $plant_code, $bmc_code, $mcc_code, $dcs_code, $hidden_from_date, $hidden_to_date,$dpu_status,$dup_search_date,$dpu_shift, $from_date_milk_analysis, $to_date_milk_analysis;
 
     //public $rememberMe = true;
     //private $_user = false;
@@ -31,7 +31,7 @@ class Dashboard extends Model {
             // rememberMe must be a boolean value
             //['rememberMe', 'boolean'],
             // password is validated by validatePassword()
-                ['date', 'safe'],
+                [['date','from_date_milk_analysis','to_date_milk_analysis'], 'safe'],
         ];
     }
 
@@ -44,6 +44,7 @@ class Dashboard extends Model {
             'date' => Yii::t('app', 'Date'),
             'previous_hit' => Yii::t('app', 'No. of Hits'),
             'current_hit' => Yii::t('app', 'No. of Hits'),
+            'dpu_status' => Yii::t('app', 'DPU Status'),
         ];
     }
 

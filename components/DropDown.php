@@ -23,6 +23,7 @@ use yii\web\JsExpression;
 use yii\db\Query;
 use app\modules\organisation\models\TblRouteMappingSources;
 use yii\helpers\Html;
+use yii\helpers\Json;
 
 class DropDown extends Component {
 
@@ -496,7 +497,7 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true) {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '') {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -512,6 +513,12 @@ class DropDown extends Component {
             $dropDownType = DepDrop::TYPE_SELECT2;
         }
 //        $name = ($name == '') ? $data['name'] : $name;
+
+        $selected = '';
+        if ($session == 'session_union' && !empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) {
+            $selected = Yii::$app->session->get('Unions');
+            $model->{$name} = !empty($selected) ? $selected : $model->{$name};
+        }
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
@@ -529,6 +536,13 @@ class DropDown extends Component {
                     ],
                     'options' => $options
                 ])->label($islable);
+
+        if (!empty($selected)) {
+            $script = "$(document).ready(function() {
+                   $('#" . strtolower((new ReflectionClass($model))->getShortName() . '-' . $name) . "').parent('div').parent().hide();               
+                    });";
+            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName() . '-' . $name));
+        }
     }
 
     public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true) {
@@ -1142,6 +1156,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Vendor'), 1 => Yii::t('app', 'Member')],
             ],
+            'report_collection_type' => [
+                'name' => 'report_collection_type',
+                'prompt' => Yii::t('app', 'Select Collection Type'),
+                'data' => [0 => Yii::t('app', 'Milk Collection'), 1 => Yii::t('app', 'BMC Collection')],
+            ],
+            'type_wise_report' => [
+                'name' => 'report_type_2',
+                'prompt' => Yii::t('app', 'Select Report Type'),
+                'data' => [0 => Yii::t('app', 'DCS Wise Monthly Comparison'), 1 => Yii::t('app', 'BMC Wise Monthly Comparison'), 2 => Yii::t('app', 'Route Wise Monthly Comparisom')],
+            ],
+            'dpu_status' => [
+                'name' => 'dpu_status',
+                'prompt' => Yii::t('app', 'Select DPU Status'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Error'), 2 => Yii::t('app', 'Processed'), -1 => Yii::t('app', 'All')],
+            ],
         ];
         return $records[$l];
     }
@@ -1356,6 +1385,23 @@ class DropDown extends Component {
     public function customerType($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/get-customer-type', Yii::t('app', 'Select Customer Type'), $multiple, 'where', $readonly);
+    }
+
+    public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name, $sp_param) {
+        $records = \Yii::$app->general->getSpDropData($sp_name, $sp_param);
+        $value = ArrayHelper::map($records, 'id', function($records) {
+                    return !empty($records['name']) ? $records['name'] : '';
+                });
+        echo $form->field($model, $flag)->widget(Select2::classname(), [
+            'data' => $value, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select ' . $label]]
+        )->label($label);
+
+//        return $form->field($model, $flag)->dropDownList($value, ['prompt' => 'Select ' . $label])->label($label);
+    }
+
+    public function sp_dep_dropdown($model, $form, $depends, $name = '', $islable = false, $session) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dynamicreport/default/get-sp-data-drop-list', 'Select ' . $islable, FALSE, '', FALSE, '', TRUE, $session);
     }
 
 }

@@ -12,11 +12,6 @@ use Yii;
  * @property string $sp_name
  * @property string $sp_param
  * @property string $report_rule
- * @property integer $is_active
- * @property string $created_at
- * @property string $created_by
- * @property string $updated_at
- * @property string $updated_by
  */
 class TblReportList extends \yii\db\ActiveRecord {
 
@@ -32,9 +27,7 @@ class TblReportList extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['report_name', 'sp_name', 'sp_param', 'report_rule', 'created_by', 'updated_by'], 'string'],
-            [['is_active'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['report_name', 'sp_name', 'sp_param', 'report_rule'], 'string'],
         ];
     }
 
@@ -48,11 +41,6 @@ class TblReportList extends \yii\db\ActiveRecord {
             'sp_name' => Yii::t('app', 'Sp Name'),
             'sp_param' => Yii::t('app', 'Sp Param'),
             'report_rule' => Yii::t('app', 'Report Rule'),
-            'is_active' => Yii::t('app', 'Is Active'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
 
@@ -65,7 +53,7 @@ class TblReportList extends \yii\db\ActiveRecord {
     }
 
     public function getData() {
-        return $this->find()->where(['report_code' => $this->report_code, 'is_active' => 1])->one();
+        return $this->find()->where(['report_code' => $this->report_code])->one();
     }
 
 }

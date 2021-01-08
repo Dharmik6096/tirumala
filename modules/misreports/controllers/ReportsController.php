@@ -558,6 +558,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkAndBmcCollectionMonthlyComparision() {
+        $this->report = 'MilkAndBmcCollectionMonthlyComparision';
+        return $this->actionIndex();
+    }
+
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
         $model = new ReportsModel();
@@ -639,6 +644,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionProductSaleRateMasterRegister() {
         $this->report = 'ProductSaleRateMasterRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionWeightCollectionList() {
+        $this->report = 'WeightCollectionList';
         return $this->actionIndex();
     }
 
@@ -1354,6 +1364,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_customer_master_register',
                 'scenario' => 'CustomerMaster',
                 'title' => 'Customer Master Register',
+                'to_decrypt' => ['adhar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
             ],
@@ -1565,6 +1576,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_society_raw_data',
                 'scenario' => '',
                 'title' => '911 - Shift Wise Auto Manual',
+            ],
+            'MilkAndBmcCollectionMonthlyComparision' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string,report_collection_type,type_wise_report:static:type_wise_report',
+                'sp_name' => 'sp_mis_milk_and_bmc_collection_monthly_comparision',
+                'scenario' => 'MilkAndBmcCollectionMonthlyComparision',
+                'title' => '912 - Monthly Comparision Report',
+                'custom_report' => 'custom_report',
+            ],
+            'WeightCollectionList' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_weight_collection_list',
+                'scenario' => 'WeightCollectionList',
+                'title' => 'BMC Weight Data List',
+                'removeExportType' => ['CSV'],
             ],
         ];
         return $label[$l];

@@ -40,44 +40,23 @@ if (!empty($dpu_data)){
             <div id="w12" class="grid-view hide-resize" > -->
                     <!-- <div class="panel panel-default"> -->
                             <div class="table-responsive dashboard_collection_grid_tbl max_h_100-100">
-                                <table class="table overflow_hidden table-striped">
+                                <table class="table overflow_hidden table-striped" id="dup_collection_table">
                                     <thead>
                                         <tr>
-                                        <?php 
-                                        if (!empty($dpu_data)) {?>
-                                            <th class="dash_grid_v_header text_center">#</th><?php
-                                        }?>
-                                            <?php
-                                                foreach ($labels as $key => $value) {
-                                                ?>
-                                                <th rowspan="2" class="dash_grid_v_header text_center"><?= Yii::t('app', $model->getAttributeLabel($value))?></th>
-                                            <?php
-                                                }
-                                            ?>
+                                            <td class="custom_grid_header header_labels">#</td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Ref. Code')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'DCS Name')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Collection Date')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Shift')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'No of Sample')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Qty')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Pending')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Error')?></td>
+                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Processed')?></td>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <?php
-                                        if (!empty($dpu_data)) {
-                                        $i=1; 
-                                        foreach ($dpu_data as $key => $value) {   
-                                        ?>
-                                        <tr>
-                                            <td><?= $i++;?></td>
-                                            <?php
-                                            foreach ($labels as $key => $label_value) {?>
-                                                <td><?= $value[$label_value] ?></td>    
-                                            <?php 
-                                            }
-                                            ?>
-                                        </tr>
-                                        <?php 
-                                            }
-                                        } else {
-                                            ?>
-                                            <tr><td colspan="<?= count($labels)?>">No Data Available.</td></tr>
-                                        <?php }
-                                        ?>
+                                    <tbody class="dpu_data_collection_tbl">
+                                        
                                     </tbody>
                                 </table>
                             </div>
