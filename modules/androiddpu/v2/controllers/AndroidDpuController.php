@@ -22,6 +22,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\usermanagement\models\TblAmcsAppMenuMapping;
 use app\modules\configuration\models\TblMilkCollectionConfig;
 use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
+use app\modules\installation\models\TblUserDownloadAck;
+use app\modules\installation\models\TblUserAndroid;
 
 /**
  * Default controller for the `vendorapi` module
@@ -118,6 +120,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
 
     public function actionVerification() {
         $res_data = [];
+        $saveModel = [];
         $data = $this->post_data;
         $content = !empty($data['content']) ? $data['content'] : [];
         $model = new TblAndroidInstallationDetails();
@@ -139,7 +142,36 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $dcsModel->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 1], ['dcs_code' => $dcsModel->dcs_code]);
             }
             // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
-            $transaction = $this->generalModel->saveTransaction([$model], ['app verification', 'create']);
+            $saveModel[] = $model;
+            $ackModel = new TblUserDownloadAck();
+            $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+
+            $ackModel->dcs_code = !empty($orgDetail['dcs_code'][0]) ? $orgDetail['dcs_code'][0] : NULL;
+            $ackModel->bmc_code = !empty($orgDetail['bmc_code'][0]) ? $orgDetail['bmc_code'][0] : NULL;
+            $ackModel->mcc_plant_code = !empty($orgDetail['mcc_plant_code'][0]) ? $orgDetail['mcc_plant_code'][0] : NULL;
+            $ackModel->plant_code = !empty($orgDetail['plant_code'][0]) ? $orgDetail['plant_code'][0] : NULL;
+            $ackModel->union_code = $orgDetail['union_code'];
+            $ackModel->hash_key = $model->hash_key;
+            $ackModel->device_id = $data['device_id'];
+            $existAck = $ackModel->getExistData($org_type, $org_code);
+            if (!empty($existAck)) {
+                foreach ($existAck as $exist) {
+                    $ackModel->updateAll(['download_pending' => 3], ['ack_id' => $exist['ack_id']]);
+                }
+            }
+            $androidUsr = new TblUserAndroid();
+            $user = $androidUsr->getExistData($org_type, $ackModel);
+            if (!empty($user)) {
+                foreach ($user as $usrData) {
+                    $usrAckModel = new TblUserDownloadAck();
+                    $usrAckModel->attributes = $ackModel->attributes;
+                    $usrAckModel->user_code = $usrData->user_code;
+                    $usrAckModel->download_pending = 1;
+                    $saveModel[] = $usrAckModel;
+                }
+            }
+
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['app verification', 'create']);
             if ($transaction !== 'customRedirect') {
                 return FALSE;
             }
