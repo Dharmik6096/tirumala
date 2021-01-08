@@ -53,7 +53,7 @@ $form = ActiveForm::begin([
         ['attribute' => 'milk_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
-                return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
+                return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
             },
         ],
         ['attribute' => 'milk_quality_type_code',
@@ -72,7 +72,7 @@ $form = ActiveForm::begin([
         ['attribute' => 'fat',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $index . ']fat')->textInput(['value' => $model->fat, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+                return '<span class=\'rtpl_validate fat_change\'>' . $form->field($model, '[' . $index . ']fat')->textInput(['value' => $model->fat, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
         ['attribute' => 'snf',
@@ -236,6 +236,39 @@ $script = "
     };
 
 
+    $(document).on('change','span.fat_change input', function() { 
+        var tr_key = $(this).closest('tr').attr('data-key');
+         checkFatRange(tr_key);
+    });
 
+    $(document).on('change','span.milk_type select', function() { 
+        var tr_key = $(this).closest('tr').attr('data-key');
+        checkFatRange(tr_key);
+    });
+    
+     function checkFatRange(tr_key){
+        var union = $('#tblbmccollection-'+tr_key+'-union_code').val();
+        var fat = $('#tblbmccollection-'+tr_key+'-fat').val();
+        var milk_type = $('#tblbmccollection-'+tr_key+'-milk_type_code').val();
+            if(union !='' && fat !='' && milk_type !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['check-fat-range']) . "',
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj.msg+'</span></div></div>');
+                            $('#tblbmccollection-'+tr_key+'-milk_type_code').val(obj.data);
+                            $('#tblbmccollection-'+tr_key+'-milk_type_code').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
       ";
 $this->registerJs($script, View::POS_END, 'update-bmc-collection');

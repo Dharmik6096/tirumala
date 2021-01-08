@@ -25,7 +25,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid', 'check-fat-range'];
 
     /**
      * Lists all TblBmcCollection models.
@@ -266,7 +266,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         if (strtolower($for) != 'dcs') {
-            $code = $bmcModel->validateCustomer($data['union'],$data['dcs_code'], $for);
+            $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for);
         } else {
             $code = $bmcModel->dcs_code;
         }
@@ -453,6 +453,27 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionCheckFatRange() {
+        $response = [];
+        $response['status'] = 'error';
+        $response['data'] = '';
+        (float) $fat = Yii::$app->request->post('fat');
+        $union = Yii::$app->request->post('union_code');
+        $milk_type = Yii::$app->request->post('milk_type');
+        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_bmc']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_bmc'] : '';
+        if (!empty($range) && $range < $fat && $milk_type != 2) {
+            $response['status'] = 'success';
+            $response['data'] = 2;
+            $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+        } elseif (!empty($range) && $range >= $fat && $milk_type != 1) {
+            $response['status'] = 'success';
+            $response['data'] = 1;
+            $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }

@@ -237,11 +237,10 @@ $script = "
                     data: {'union_code':union,'fat':fat,'milk_type':milk_type},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
-                        console.log(obj);
                         if (obj.status == 'success')
                         {
-                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Milk Type Must Be Buffalo</span></div></div>');
-                            $('#tblmilkcollection-milk_type_code').val(2);
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj.msg+'</span></div></div>');
+                            $('#tblmilkcollection-milk_type_code').val(obj.data);
                             $('#tblmilkcollection-milk_type_code').trigger('change');
                         }
                     },

@@ -532,9 +532,15 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         (float) $fat = Yii::$app->request->post('fat');
         $union = Yii::$app->request->post('union_code');
         $milk_type = Yii::$app->request->post('milk_type');
-        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range'] : '';
+        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member'] : '';
         if (!empty($range) && $range < $fat && $milk_type != 2) {
             $response['status'] = 'success';
+            $response['data'] = 2;
+            $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+        } elseif (!empty($range) && $range >= $fat && $milk_type != 1) {
+            $response['status'] = 'success';
+            $response['data'] = 1;
+            $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
