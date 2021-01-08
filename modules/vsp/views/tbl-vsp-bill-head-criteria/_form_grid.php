@@ -32,7 +32,8 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-vsp-bill-head-criteria/vsp-bill-head-applicability', 'id' => $model->vsp_criteria_code], $options);
         },
         'update' => function($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit'];
+            $disable = !empty($model->isApplicability) ? 'link-disable' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', ['update', 'id' => $model->vsp_criteria_code], $options);
         }
     ]

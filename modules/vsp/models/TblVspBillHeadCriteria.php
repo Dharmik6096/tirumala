@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\vsp\models\TblBillHead;
 use app\modules\vsp\models\TblGeneralFormula;
+use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
 
 /**
  * This is the model class for table "tbl_vsp_bill_head_criteria".
@@ -87,6 +88,10 @@ class TblVspBillHeadCriteria extends \app\models\ChildModel {
 
     public function checkAllowDelete() {
         return Yii::$app->general->allowUpdateDelete($this);
+    }
+
+    public function getIsApplicability() {
+        return $this->hasOne(TblVspBillHeadCriteriaApplicability::className(), ['vsp_criteria_code' => 'vsp_criteria_code']);
     }
 
 }
