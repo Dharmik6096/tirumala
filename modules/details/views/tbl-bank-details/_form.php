@@ -4,7 +4,7 @@ use yii\web\View;
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
-<?php // Yii::$app->warning->hiddenfields($nameWarning, '');         ?>
+<?php // Yii::$app->warning->hiddenfields($nameWarning, '');          ?>
 <?php if (!empty($dist)) { ?>
     <?= Html::hiddenInput('union-dist', $dist, ['id' => $dist_field]) ?>
 <?php } ?>

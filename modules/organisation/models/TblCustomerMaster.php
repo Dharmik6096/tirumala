@@ -68,7 +68,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
             [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name'], 'safe'],
+            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no'], 'safe'],
             [['route'], 'required', 'on' => ['importCsv']],
             [['is_active'], 'integer'],
             [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type'], 'safe'],
@@ -123,6 +123,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['customer_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['aadhaar_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
+            [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
         ];
     }
 
@@ -165,6 +169,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'route_code' => Yii::t('app', 'Route'),
             'ref_code' => Yii::t('app', 'Code'),
+            'aadhaar_no' => Yii::t('app', 'Aadhaar No.'),
         ];
     }
 

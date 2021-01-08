@@ -93,6 +93,7 @@ class TblBankDetails extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
             'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
+            'adhar_no' => Yii::t('app', 'Aadhaar No.'),
         ];
     }
 
