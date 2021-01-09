@@ -1404,9 +1404,9 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                     htmlData = htmlData + '<td>'+value.cc_avg_rate+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_amount+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_count+'</td>';
-                    htmlData = htmlData + '<td>'+value.cc_online+'</td>';
-                    htmlData = htmlData + '<td>'+value.cc_pendrive+'</td>';
-                    htmlData = htmlData + '<td>'+value.cc_manual+'</td>';
+                    // htmlData = htmlData + '<td>'+value.cc_online+'</td>';
+                    // htmlData = htmlData + '<td>'+value.cc_pendrive+'</td>';
+                    // htmlData = htmlData + '<td>'+value.cc_manual+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_receipt_qty+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_receipt_avg_fat+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_receipt_avg_snf+'</td>';
@@ -1480,7 +1480,7 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                         htmlData = htmlData + '<tbody>';
                         
                         htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td rowspan=\'9\' class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Collection')."</td>';
+                        htmlData = htmlData + '<td rowspan=\'6\' class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Collection')."</td>';
                         htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
                         $.each(obj1.res, function(key,value) {
                             htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_qty+'</td>';
@@ -1522,26 +1522,26 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                         });
                         htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Online')."</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_online+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                        // htmlData = htmlData + '<tr>';
+                        // htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Online')."</td>';
+                        // $.each(obj1.res, function(key,value) {
+                        //     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_online+'</td>';
+                        // });
+                        // htmlData = htmlData + '</tr>';
                         
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Pendrive')."</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_pendrive+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                        // htmlData = htmlData + '<tr>';
+                        // htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Pendrive')."</td>';
+                        // $.each(obj1.res, function(key,value) {
+                        //     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_pendrive+'</td>';
+                        // });
+                        // htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Manual')."</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_manual+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                        // htmlData = htmlData + '<tr>';
+                        // htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Manual')."</td>';
+                        // $.each(obj1.res, function(key,value) {
+                        //     htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_manual+'</td>';
+                        // });
+                        // htmlData = htmlData + '</tr>';
 
                         htmlData = htmlData + '<tr>';
                         htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'BMC Receipts')."</td>';
