@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\organisation\models\TblCustomerMaster;
 use yii\data\ArrayDataProvider;
+
 /**
  * TblCustomerMasterSearch represents the model behind the search form about `app\modules\organisation\models\TblCustomerMaster`.
  */
@@ -111,7 +112,8 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
                 'union_code' => '',
                 'plant_code' => '',
                 'mcc_plant_code' => '',
-                'bmc_code' => ''];
+                'bmc_code' => '',
+                'datetime' => date('Y-m-d')];
             $sp = 'portal_master_data_verification';
             $sp_params = array_merge($sp_params, $params['TblCustomerMasterSearch']);
             if (!empty($sp_params['bmc_code'])) {
