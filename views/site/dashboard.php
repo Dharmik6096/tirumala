@@ -1365,8 +1365,25 @@ $(document).on('click', '.dashboardDPUSearch', function(){
                 });
             
                 $('.dpu_data_collection_tbl').html(htmlData);
-                $('#dup_collection_table').dataTable({
+
+                $('#dup_collection_table thead .search_filter td').each( function (i) {
+                    var title = $('#dup_collection_table thead .search_filter td').eq( $(this).index() ).text();
+                    $(this).html( '<input type=\'text\' placeholder=\'Search '+title+'\' data-index='+i+' />' );
                 });
+              
+                var table = $('#dup_collection_table').DataTable( {
+                    paging: false,
+                    info: false,
+                    ordering: false,
+                });
+             
+                $( table.table().container() ).on( 'keyup', 'thead .search_filter input', function () {
+                    table
+                        .column( $(this).data('index') )
+                        .search( this.value )
+                        .draw();
+                });
+
                 $('#DPU_data_modal').modal('toggle'); 
                 $('#loadercontent').hide();
                 $('#pageloader').hide();

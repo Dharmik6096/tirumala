@@ -43,16 +43,28 @@ if (!empty($dpu_data)){
                                 <table class="table overflow_hidden table-striped" id="dup_collection_table">
                                     <thead>
                                         <tr>
-                                            <td class="custom_grid_header header_labels">#</td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Ref. Code')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'DCS Name')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Collection Date')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Shift')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'No of Sample')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Qty')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Pending')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Error')?></td>
-                                            <td class="custom_grid_header header_labels"><?= Yii::t('app', 'Processed')?></td>
+                                            <th class="custom_grid_header header_labels">#</th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Ref. Code')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'DCS Name')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Collection Date')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Shift')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'No of Sample')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Qty')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Pending')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Error')?></th>
+                                            <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Processed')?></th>
+                                        </tr>
+                                        <tr class="search_filter">
+                                            <td>#</td>
+                                            <td><?= Yii::t('app', 'Ref. Code')?></td>
+                                            <td><?= Yii::t('app', 'DCS Name')?></td>
+                                            <td><?= Yii::t('app', 'Collection Date')?></td>
+                                            <td><?= Yii::t('app', 'Shift')?></td>
+                                            <td><?= Yii::t('app', 'No of Sample')?></td>
+                                            <td><?= Yii::t('app', 'Qty')?></td>
+                                            <td><?= Yii::t('app', 'Pending')?></td>
+                                            <td><?= Yii::t('app', 'Error')?></td>
+                                            <td><?= Yii::t('app', 'Processed')?></td>
                                         </tr>
                                     </thead>
                                     <tbody class="dpu_data_collection_tbl">
