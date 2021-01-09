@@ -1365,6 +1365,8 @@ $(document).on('click', '.dashboardDPUSearch', function(){
                 });
             
                 $('.dpu_data_collection_tbl').html(htmlData);
+                $('#dup_collection_table').dataTable({
+                });
                 $('#DPU_data_modal').modal('toggle'); 
                 $('#loadercontent').hide();
                 $('#pageloader').hide();
