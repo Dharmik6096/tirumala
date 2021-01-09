@@ -141,4 +141,41 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
         return $dataProvider;
     }
 
+    public function contactverificationsearch($params) {
+        $this->load($params);
+        $output = [];
+        if (!empty($params)) {
+            $sp_params = [
+                'union_code' => '',
+                'plant_code' => '',
+                'mcc_plant_code' => '',
+                'bmc_code' => '',
+                'datetime' => date('Y-m-d')];
+            $sp = 'portal_contact_data_verification';
+            $sp_params = array_merge($sp_params, $params['TblCustomerMasterSearch']);
+            if (!empty($sp_params['bmc_code'])) {
+                $output = \Yii::$app->general->getSpData($sp, $sp_params);
+            }
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        //var_dump($output); exit;
+        return $dataProvider;
+    }
+
 }
