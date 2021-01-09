@@ -71,6 +71,9 @@ $attribute = [
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
     ['attribute' => 'x_col3', 'filter' => false],
+    ['attribute' => 'is_verified', 'value' => function($model) {
+            return $model->is_verified == 1 ? 'Verified' : ( $model->is_verified == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -98,12 +101,21 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Mobile App Info', 'class' => 'block-unblock ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa fa-mobile"></i>', ['/dcsoperation/tbl-member/block-unblock'], $options);
         },
+        'upload-photos' => function ($url, $model) {
+            $id = $model->member_code;
+            $type = 'MEMBER';
+            $class = '';
+            $url = ['/dcsoperation/tbl-member/import-attachements', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
+            return GhostHtml::a('<i class="fa fa-plus"></i>', $url, $options);
+        },
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index'], true, ['CSV', 'Excel2007']);
 ?>
 <div id="AppInformation"></div>
+<div id="ImportAttachements"></div>
 <?php
 $script = "
 $(document).ready(function(){
@@ -200,6 +212,26 @@ $(document).ready(function(){
             }
         });
     });
-    
+     $(document).on('click','.upload-photo',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var code= $(this).attr('data-val');
+        var type= $(this).attr('data-name');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/dcsoperation/tbl-member/import-attachements']) . "',
+            data:{'code':code,'type':type},
+            success: function(data) {     
+                $('#ImportAttachements').html(data);
+                $('#ImportAttachementsModel').modal('toggle'); 
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
 });";
 $this->registerJs($script, View::POS_END, 'member-index');

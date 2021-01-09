@@ -504,4 +504,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code']);
     }
 
+    public function getMainBankDetails() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'customer_code'])->where(['tbl_contact_details.module_name' => 'customer', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
+    }
+
 }

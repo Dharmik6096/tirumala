@@ -84,6 +84,10 @@ $attribute = [
         }
     ],
     ['attribute' => 'aadhaar_no'],
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Is Verified'), 'value' => function($model) {
+            $flag = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified');
+            return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
 ];
 
 $grid_option = [

@@ -16,6 +16,9 @@ $attribute = [
     ['attribute' => 'is_default', 'value' => function($model) {
             return $model->is_default == 1 ? 'Yes' : 'No';
         }, 'filter' => false],
+    ['attribute' => 'is_verified', 'value' => function($model) {
+            return $model->is_verified == 1 ? 'Verified' : ( $model->is_verified == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
 ];
 
 $grid_option = [

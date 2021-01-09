@@ -37,6 +37,8 @@ use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\dcsoperation\models\TblMemberHistory;
+use app\modules\details\models\TblBankDetailsHistory;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -924,6 +926,72 @@ class TblDcsController extends ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionMasterVerification() {
+        $searchModel = new \app\modules\organisation\models\TblCustomerMasterSearch();
+        $searchModel->scenario = 'verification';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'verify' ? 1 : 2) : 1;
+                $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
+
+                $where = [];
+                foreach ($codes as $code) {
+                    $data = explode('###', $code);
+                    $modelUsed = $data[1];
+                    if ($modelUsed == 'MEMBER') {
+                        $where['member_code'] = $data[0];
+                        $existData = TblMember::find()->where($where)->one();
+                        $historyModel = new TblMemberHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->is_verified = $status;
+                        $existData->scenario = 'verification';
+                        $saveModel[] = $existData;
+                    } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
+                        $module = $modelUsed == 'DCS' ? 'society' : 'customer';
+                        $code = $data[0];
+                        $existData = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => $module, 'is_default' => 1, 'is_active' => 1])->one();
+                        $historyModel = new TblBankDetailsHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->is_verified = $status;
+                        $existData->scenario = 'verification';
+                        $saveModel[] = $existData;
+                    }
+                }
+
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Master Verified', 'create']);
+                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+                }
+            }
+        }
+        $dataProvider = $searchModel->verificationsearch(Yii::$app->request->queryParams);
+
+        return $this->render('master_verification', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionViewVerification() {
+        $code = !empty(Yii::$app->request->post('code')) ? Yii::$app->request->post('code') : NULL;
+        $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : NULL;
+        if ($type == 'DCS') {
+            $model = $this->findModel($code);
+        } else if ($type == 'CUSTOMER') {
+            $model = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
+        } elseif ($type == 'MEMBER') {
+            $model = TblMember::find()->where(['member_code' => $code])->one();
+        }
+
+        return $this->renderAjax('verification_view', [
+                    'model' => $model,
+                    'type' => $type,
+        ]);
     }
 
 }

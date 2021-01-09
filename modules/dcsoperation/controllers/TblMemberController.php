@@ -17,6 +17,9 @@ use yii\helpers\Json;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
+use yii\imagine\Image;
+use yii\web\UploadedFile;
+use app\modules\general\models\TblAttachment;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -24,6 +27,7 @@ use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 class TblMemberController extends \app\controllers\ChildController {
 
     public $bankDetails;
+    public $freeAccessActions = ['import-file'];
 
     /**
      * Lists all TblMember models.
@@ -65,13 +69,13 @@ class TblMemberController extends \app\controllers\ChildController {
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-            //var_dump($this->model->unionCode->federationCode);exit();
+//var_dump($this->model->unionCode->federationCode);exit();
             $this->model->member_code = $this->model->getCode();
             $this->setModel();
-            // $dcs = TblDcs::findOne($this->model->dcs_code);
-            // $this->model->state_code = $dcs->state_code;
-            //$this->model->district_code = $dcs->district_code;
-            // $this->model->sub_district_code = $dcs->sub_district_code;
+// $dcs = TblDcs::findOne($this->model->dcs_code);
+// $this->model->state_code = $dcs->state_code;
+//$this->model->district_code = $dcs->district_code;
+// $this->model->sub_district_code = $dcs->sub_district_code;
             $this->model->upload = 0;
             $this->bankDetails->load(Yii::$app->request->post());
             if (!empty($this->model->bank_code)) {
@@ -116,11 +120,11 @@ class TblMemberController extends \app\controllers\ChildController {
 
         if (Yii::$app->request->post()) {
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-            //var_dump($this->model);exit();
-            //$dcs = TblDcs::findOne($this->model->dcs_code);
-            // $this->model->state_code = $dcs->state_code;
-            //   $this->model->district_code = $dcs->district_code;
-            //   $this->model->sub_district_code = $dcs->sub_district_code;
+//var_dump($this->model);exit();
+//$dcs = TblDcs::findOne($this->model->dcs_code);
+// $this->model->state_code = $dcs->state_code;
+//   $this->model->district_code = $dcs->district_code;
+//   $this->model->sub_district_code = $dcs->sub_district_code;
             $historyModel = new TblMemberHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
 
@@ -293,6 +297,69 @@ class TblMemberController extends \app\controllers\ChildController {
                     'appInfo' => $appInfo,
                     'alertInfo' => $alertInfo,
         ]);
+    }
+
+    public function actionImportAttachements() {
+        $model = new TblMember();
+        $saveModel = [];
+        if ($model->load(Yii::$app->request->post())) {
+            $files = !empty(Yii::$app->request->post()['TblMember']['file_name']) ? Yii::$app->request->post()['TblMember']['file_name'] : '';
+            $this->setAttachment($saveModel, $files);
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Image Uploaded', 'edit']);
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('_popup', ['model' => $model]);
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/upload/images/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . $file->name;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
+    private function setAttachment(&$child, $files) {
+        $filesArray = explode(',', $files);
+        unset($filesArray[0]);
+
+        $auto_inc = 0;
+        foreach ($filesArray as $key => $file) {
+            $path = Yii::$app->basePath . '/web/upload/images//' . $file; //Generate your save file path here;
+            $modelAttachment = new TblAttachment();
+            $modelAttachment->attachment_code = (string) Yii::$app->general->getCodeAutoIncrement($modelAttachment, $auto_inc);
+            $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . $file;
+            $modelAttachment->attachment = $file;
+            $modelAttachment->module_name = 'TblMember';
+            $modelAttachment->module_code = '13';
+            $ext = pathinfo($file, PATHINFO_EXTENSION);
+            $modelAttachment->remarks = 'Documents';
+            $modelAttachment->attachment_type = $ext;
+            // save thumbnail
+            $imagePath = Yii::getAlias('@webroot') . 'web/upload/images/';
+            $thumbnail_path = $imagePath . 'thumbnail';
+            $thumbnail_base_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . 'thumbnail';
+            if (Yii::$app->general->checkDirectory($thumbnail_path)) {
+                list($width, $height) = getimagesize($file);
+                $data = Image::thumbnail($file, 60, 60)->save($thumbnail_path . '/' . $file, ['quality' => 100]);
+                $modelAttachment->thumbnail = $thumbnail_base_path . '/' . $file;
+            }
+            $child[] = $modelAttachment;
+            $auto_inc++;
+        }
     }
 
 }
