@@ -518,7 +518,30 @@ if('" . $report . "'=='BlockWiseCollection'){
     });
     
 }
-if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'){
+if('" . $report . "'=='InchargeRemuneration'){
+     $('#reportsmodel-p_mcc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        $('#reportsmodel-p_mcc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+        if('" . $model->p_mcc_code . "'=='0'){
+            $('#reportsmodel-p_mcc_code').val(0);      
+        }
+        if($('#reportsmodel-p_plant_code').val() == '0'){
+            $('#reportsmodel-p_mcc_code').removeAttr('disabled', 'false');
+            $('#reportsmodel-p_mcc_code').val(0);
+        }
+    });
+
+    $('#reportsmodel-p_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        $('#reportsmodel-p_bmc_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
+        if('" . $model->p_bmc_code . "'=='0'){
+            $('#reportsmodel-p_bmc_code').val(0);      
+        }
+        if($('#reportsmodel-p_mcc_code').val() == '0'){
+            $('#reportsmodel-p_bmc_code').removeAttr('disabled', 'false');
+            $('#reportsmodel-p_bmc_code').val(0);
+        }
+    });
+}
+if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'){
     $('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_plant_code . "'=='0'){

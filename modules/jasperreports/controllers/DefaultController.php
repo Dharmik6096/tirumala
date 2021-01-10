@@ -267,6 +267,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionInchargeRemuneration() {
+        $this->report = 'InchargeRemuneration';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -633,6 +638,13 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/BillReportFormat1',
                 'scenario' => 'VendorBill',
                 'title' => '612 - Vendor Bill',
+                'tcpdf' => true,
+            ],
+            'InchargeRemuneration' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_union_code,p_report_name',
+                'path' => 'vsp/CCInchargeRemuneration',
+                'scenario' => 'InchargeRemuneration',
+                'title' => '614 - CC Incharge Remuneration',
                 'tcpdf' => true,
             ],
         ];
