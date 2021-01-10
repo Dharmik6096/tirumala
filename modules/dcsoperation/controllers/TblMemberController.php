@@ -142,6 +142,8 @@ class TblMemberController extends \app\controllers\ChildController {
             if ($bankValidate == 1 && $validate == 1 && $this->model->validate()) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
+                $this->model->is_verified = 0;
+                $this->model->is_contact_verified = 0;
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['member', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
