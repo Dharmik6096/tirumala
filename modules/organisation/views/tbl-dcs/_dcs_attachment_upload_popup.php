@@ -88,12 +88,12 @@ $this->title = 'Upload Documents';
                                                         $("#loadercontent").hide();
                                                         var obj1 = $.parseJSON(data);
                                                         if (obj1.status == "success"){
-                                                            $("#importModal").modal("toggle");
+                                                            $("#ImportAttachementsModel").modal("toggle");
                                                             $("#upload-images-documents")[0].reset();
                                                             Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
                                                         }else{
-                                                            $("#importModal").modal("toggle");
+                                                            $("#ImportAttachementsModel").modal("toggle");
                                                             $("#upload-images-documents")[0].reset();
                                                             Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
@@ -105,7 +105,7 @@ $this->title = 'Upload Documents';
                                                 if($("#file_name").val()==""){
                                                 bootbox.alert("Please select file.");
                                                 }else{
-                                                    $("#importModal").modal("toggle");
+                                                    $("#ImportAttachementsModel").modal("toggle");
                                                     $("#upload-images-documents")[0].reset();
                                                     Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 }
