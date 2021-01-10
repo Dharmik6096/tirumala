@@ -64,22 +64,19 @@ class TblAttachment extends \yii\db\ActiveRecord
     }
     
     public function getData() {
-        $replaceServer = Yii::$app->params['attachment_server'];
-        if (!empty($replaceServer)) {
-            $currentServer = Yii::$app->request->serverName;
+        // $replaceServer = Yii::$app->params['attachment_server'];
+        // if (!empty($replaceServer)) {
+        //     $currentServer = Yii::$app->request->serverName;
             return $this->find()->select(['attachment_code',
                                 'module_name',
                                 'module_code',
                                 'attachment_type',
                                 'remarks',
-                                'attachment' => "REPLACE(attachment,'$replaceServer','$currentServer')",
-                                'thumbnail' => "REPLACE(thumbnail,'$replaceServer','$currentServer')"])
+                                'attachment',
+                                'thumbnail'])
                             ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name])
                             ->andFilterWhere(['remarks' => $this->remarks])
                             ->orderBy('created_at desc')->all();
-        }
-        return $this->find()->where(['module_code' => $this->module_code, 'module_name' => $this->module_name])
-                        ->andFilterWhere(['remarks' => $this->remarks])
-                        ->orderBy('created_at desc')->all();
+        // }
     }
 }
