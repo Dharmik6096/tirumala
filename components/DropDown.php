@@ -517,7 +517,7 @@ class DropDown extends Component {
                     'type' => $dropDownType,
                     'data' => [$model->{$name} => $model->{$name}],
                     'name' => $name,
-                    'select2Options' => ['pluginOptions' => ['allowClear' => true, 'multiple' => $multiple,'placeholder' => $placeholder,]],
+                    'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
                     'options' => ['multiple' => $multiple],
                     'pluginOptions' => [
                         'depends' => $depends,
