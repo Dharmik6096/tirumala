@@ -22,6 +22,8 @@ class MemberImport extends TblMember {
     public function rules() {
         $main_rules = [
             [['is_download'], 'default', 'value' => '0'],
+            [['is_verified'], 'default', 'value' => '0'],
+            [['is_contact_verified'], 'default', 'value' => '0'],
             [['is_active', 'member_type_code'], 'default', 'value' => '1'],
             [['dcs_code', 'member_name'], 'required'],
             [['dcs_code'], 'validateDcs', 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
@@ -84,7 +86,7 @@ class MemberImport extends TblMember {
                 }, 'skipOnEmpty' => TRUE],
             [['x_col3'], 'default', 'value' => 15],
             [['dcs_code'], 'setXcol3', 'on' => ['importCsv']],
-            [['rate_class'], 'default', 'value' => '0']
+            [['rate_class'], 'default', 'value' => '0'],
 
                 /*  [['dob'], function ($attribute, $params) {
                   Yii::$app->general->validateAge($this, $attribute, $params);

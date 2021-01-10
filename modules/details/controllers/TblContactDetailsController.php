@@ -60,6 +60,7 @@ class TblContactDetailsController extends \app\controllers\ChildController {
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $modelSave[] = $historyModel;
                 $this->model->load(Yii::$app->request->post());
+                $this->model->is_contact_verified = 0;
                 $update = TRUE;
             }
             if (!$update) {

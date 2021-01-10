@@ -568,6 +568,8 @@ class TblMember extends ChildModel {
 
     public function setXcol3($attribute, $params) {
         $this->x_col3 = !empty($this->max_allowed_qty) ? $this->max_allowed_qty : 15;
+        $this->is_verified = 0;
+        $this->is_contact_verified = 0;
     }
 
     public function getUniqueBankDetails() {
