@@ -51,6 +51,14 @@ $this->title = Yii::t('app', 'Master Verification');
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => 'view-verification' . $class, 'data-val' => $id, 'data-name' => $type];
                     return GhostHtml::a_alert('<i class="fa fa-eye"></i>', $url, $options);
                 },
+                'get-attachments' => function ($url, $model) {
+                    $id = $model['code'];
+                    $type = $model['verifie_for'];
+                    $class = '';
+                    $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Attachments', 'class' => 'get-attachments' . $class, 'data-val' => $id, 'data-name' => $type];
+                    return GhostHtml::a_alert('<i class="fa fa-image"></i>', $url, $options);
+                },
             ]
         ];
 
@@ -69,7 +77,7 @@ $this->title = Yii::t('app', 'Master Verification');
     </div>
 </div>
 <div id="AppInformation"></div>
-
+<div id="AttachmentView"></div>
 <?php
 $script = '
     $(".kv-panel-before").hide();
@@ -97,6 +105,27 @@ $script = '
             success: function(data) {     
                 $("#AppInformation").html(data);
                 $("#AppInformationModal").modal("toggle"); 
+                $("#loadercontent").hide();
+                $("#pageloader").hide();
+            },    
+            error: function(data) {    
+                $("#loadercontent").hide();
+                $("#pageloader").hide();
+            }
+        });
+    });
+    $(document).on("click",".get-attachments",function(e){
+        $("#pageloader").show();
+        $("#loadercontent").show();
+        var code= $(this).attr("data-val");
+        var type= $(this).attr("data-name");
+        $.ajax({
+            type: "post",
+            url: "' . Url::to(['/organisation/tbl-dcs/get-attachments']) . '" ,
+            data:{"code":code,"type":type},
+            success: function(data) {     
+                $("#AttachmentView").html(data);
+                $("#AttachmentViewModal").modal("toggle"); 
                 $("#loadercontent").hide();
                 $("#pageloader").hide();
             },    

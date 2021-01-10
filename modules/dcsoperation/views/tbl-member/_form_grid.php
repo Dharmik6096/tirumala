@@ -107,7 +107,7 @@ $grid_option = [
             $class = '';
             $url = ['/dcsoperation/tbl-member/import-attachements', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
-            return GhostHtml::a('<i class="fa fa-plus"></i>', $url, $options);
+            return GhostHtml::a_alert('<i class="fa fa-plus"></i>', $url, $options);
         },
     ]
 ];

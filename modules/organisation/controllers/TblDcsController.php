@@ -1043,4 +1043,56 @@ class TblDcsController extends ChildController {
                     'dataProvider' => $dataProvider,
         ]);
     }
+
+    public function actionImportAttachements() {
+        $model = new TblDcs();
+        if(isset($_POST['code'])){
+            $model->dcs_code = $_POST['code'];
+        }
+        $saveModel = [];
+        if ($model->load(Yii::$app->request->post())) {
+            $files = !empty(Yii::$app->request->post()['TblDcs']['file_name']) ? Yii::$app->request->post()['TblDcs']['file_name'] : '';
+            Yii::$app->general->setAttachment($saveModel, $files, $model->dcs_code,'TblDcs');
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Image Uploaded', 'edit']);
+            return $this->redirect(['index']);
+        }
+        return $this->renderAjax('_dcs_attachment_upload_popup', ['model' => $model]);
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/upload/images/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . $file->name;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
+    public function actionGetAttachments() {
+        $type = $_POST['type'];
+        $code = $_POST['code'];
+        $module_name = '';
+        if($type == 'Member'){
+            $module_name = 'TblMember';
+        }
+        if($type == 'CUSTOMER'){
+            $module_name = 'TblCustomerMaster';
+        }
+        if($type == 'DCS'){
+            $module_name = 'TblDcs';
+        }
+        $attachment = Yii::$app->general->getAttachment($module_name, $code, TRUE, TRUE);
+        return $this->renderAjax('_attachment_popup', ['attachment' => $attachment]);
+    }
 }

@@ -282,6 +282,14 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa ' . $icon_class . '""></i>', $url, $options);
             }
         },
+        'upload-photos' => function ($url, $model) {
+            $id = $model->dcs_code;
+            $type = 'DCS';
+            $class = '';
+            $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
+            return GhostHtml::a_alert('<i class="fa fa-plus"></i>', $url, $options);
+        },
     /* 'miscellaneous' => function ($url, $model) {
       $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
       return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);
@@ -291,6 +299,7 @@ $grid_option = [
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+<div id='ImportAttachements'></div>
 <?php
 
 $script = "
@@ -340,5 +349,29 @@ $(document).ready(function(){
         }
       });
     });
+
+    $(document).on('click','.upload-photo',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var code= $(this).attr('data-val');
+        var type= $(this).attr('data-name');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/organisation/tbl-dcs/import-attachements']) . "',
+            data:{'code':code,'type':type},
+            success: function(data) {     
+                $('#ImportAttachements').html(data);
+                $('#ImportAttachementsModel').modal('toggle'); 
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
+    
 });";
 $this->registerJs($script, View::POS_END, 'dcs-index');
+?>

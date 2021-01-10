@@ -32,14 +32,14 @@ $this->title = 'Upload Documents';
                     <div class="modal-body">
                         <div class="row">
                             <?php echo Html::activeHiddenInput($model, 'file_name', $options = ['id' => 'file_name']);?>
-                            <?php echo Html::activeHiddenInput($model, 'member_code', $options = ['id' => 'member_code']);?>
+                            <?php echo Html::activeHiddenInput($model, 'dcs_code', $options = ['id' => 'dcs_code']);?>
                             <div class="col-sm-12">
                                 <?=
                                 Dropzone::widget([
                                     'id' => 'mainDrop',
                                     'options' => [
                                         'acceptedMimeTypes' => ".jpg,.pdf,.jpeg,.png",
-                                        'url' => \yii\helpers\Url::to(['/dcsoperation/tbl-member/import-file']),
+                                        'url' => \yii\helpers\Url::to(['/organisation/tbl-dcs/import-file']),
                                         'addRemoveLinks' => true,
                                         'autoDiscover' => false,
                                         'maxFiles' => 5,
@@ -78,7 +78,7 @@ $this->title = 'Upload Documents';
                             'label' => Yii::t('app', 'Upload'),
                             'ajaxOptions' => [
                                 'type' => 'POST',
-                                'url' => \yii\helpers\Url::to(['/dcsoperation/tbl-member/import-attachements', 'id' => $model->member_code]),
+                                'url' => \yii\helpers\Url::to(['/organisation/tbl-dcs/import-attachements', 'id' => $model->dcs_code]),
                                 'beforeSend' => new \yii\web\JsExpression('function(data){
                                                         $("#loadercontent").show();
                                                         $("#pageloader").show();

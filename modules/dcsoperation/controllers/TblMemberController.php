@@ -301,15 +301,17 @@ class TblMemberController extends \app\controllers\ChildController {
 
     public function actionImportAttachements() {
         $model = new TblMember();
+        if(isset($_POST['code'])){
+            $model->member_code = $_POST['code'];
+        }
         $saveModel = [];
         if ($model->load(Yii::$app->request->post())) {
             $files = !empty(Yii::$app->request->post()['TblMember']['file_name']) ? Yii::$app->request->post()['TblMember']['file_name'] : '';
-            $this->setAttachment($saveModel, $files);
+            Yii::$app->general->setAttachment($saveModel, $files, $model->member_code,'TblMember');
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Image Uploaded', 'edit']);
             return $this->redirect(['index']);
         }
-
-        return $this->render('_popup', ['model' => $model]);
+        return $this->renderAjax('_popup', ['model' => $model]);
     }
 
     public function actionImportFile() {
@@ -332,34 +334,5 @@ class TblMemberController extends \app\controllers\ChildController {
         }
     }
 
-    private function setAttachment(&$child, $files) {
-        $filesArray = explode(',', $files);
-        unset($filesArray[0]);
-
-        $auto_inc = 0;
-        foreach ($filesArray as $key => $file) {
-            $path = Yii::$app->basePath . '/web/upload/images//' . $file; //Generate your save file path here;
-            $modelAttachment = new TblAttachment();
-            $modelAttachment->attachment_code = (string) Yii::$app->general->getCodeAutoIncrement($modelAttachment, $auto_inc);
-            $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . $file;
-            $modelAttachment->attachment = $file;
-            $modelAttachment->module_name = 'TblMember';
-            $modelAttachment->module_code = '13';
-            $ext = pathinfo($file, PATHINFO_EXTENSION);
-            $modelAttachment->remarks = 'Documents';
-            $modelAttachment->attachment_type = $ext;
-            // save thumbnail
-            $imagePath = Yii::getAlias('@webroot') . 'web/upload/images/';
-            $thumbnail_path = $imagePath . 'thumbnail';
-            $thumbnail_base_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . 'thumbnail';
-            if (Yii::$app->general->checkDirectory($thumbnail_path)) {
-                list($width, $height) = getimagesize($file);
-                $data = Image::thumbnail($file, 60, 60)->save($thumbnail_path . '/' . $file, ['quality' => 100]);
-                $modelAttachment->thumbnail = $thumbnail_base_path . '/' . $file;
-            }
-            $child[] = $modelAttachment;
-            $auto_inc++;
-        }
-    }
 
 }
