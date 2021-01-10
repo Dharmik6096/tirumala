@@ -173,7 +173,11 @@ $script = "
     $('#tblroutemapping-from_dest').on('change',function(){
             var str = $('#tblroutemapping-from_dest option:selected').text();
             str=str.split('-');
-            $('#tblroutemapping-from_type').val(str[1].toLowerCase());
+            let setVal = '';
+            if(str[1] != undefined && str[1] != null) {
+                setVal = str[1].toLowerCase();
+            }
+            $('#tblroutemapping-from_type').val(setVal);
     });
     $('#tblroutemapping-to_dest').on('change',function(){
             var str = $('#tblroutemapping-to_dest option:selected').text();
