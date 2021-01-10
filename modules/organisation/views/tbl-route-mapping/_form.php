@@ -182,8 +182,10 @@ $script = "
     $('#tblroutemapping-to_dest').on('change',function(){
             var str = $('#tblroutemapping-to_dest option:selected').text();
             str=str.split('-');
-            if(str !='' && str !='Select Destination Type' && str !='NULL' && str !='undefined'){
+            if(str !='' && str !='Select Destination Type' && str !='NULL' && str !='undefined' && str != undefined && str[1] != undefined && str[1] != null){
                $('#tblroutemapping-to_type').val(str[1].toLowerCase());
+            } else {
+                $('#tblroutemapping-to_type').val('');
             }
     });
     
