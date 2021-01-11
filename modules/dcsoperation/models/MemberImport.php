@@ -14,6 +14,8 @@ use app\modules\general\models\TblReligion;
 use app\modules\organisation\models\TblUnionsDistrictMapping;
 use app\modules\general\models\TblRelationship;
 use app\modules\organisation\models\TblBanks;
+use app\modules\organisation\models\TblBranch;
+use app\modules\organisation\models\TblBanksDistrictsMapping;
 
 class MemberImport extends TblMember {
 
@@ -27,7 +29,7 @@ class MemberImport extends TblMember {
             [['dcs_code'], 'validateDcs', 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
             [['member_code', 'dcs_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['member_code', 'federation_code', 'dcs_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'mobile_no'], 'safe'],
+            [['member_code', 'federation_code', 'dcs_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'mobile_no', 'ifsc'], 'safe'],
             [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation', 'religion_code'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
             [['created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'ex_member_code', 'ref_code', 'beneficiary_name'], 'safe'],
             [['ifsc', 'pan_no'], 'trim'],
@@ -62,9 +64,9 @@ class MemberImport extends TblMember {
             [['payment_mode'], 'string', 'max' => 10, 'skipOnEmpty' => true],
             [['hamlet_code'], 'validateHamlet', 'skipOnEmpty' => TRUE],
             [['no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind'], 'validateNoOfAnimal'],
-            [['branch_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateBranch($this, $attribute, $params);
-                }, 'skipOnEmpty' => TRUE],
+//            [['branch_code'], function ($attribute, $params) {
+//                    Yii::$app->general->validateBranch($this, $attribute, $params);
+//                }, 'skipOnEmpty' => TRUE],
             [['dob', 'registration_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true],
             [['member_type_code', 'member_class'], 'in', 'range' => [1, 2], 'skipOnEmpty' => TRUE],
             [['gender_code'], 'in', 'range' => [1, 2, 3], 'skipOnEmpty' => TRUE],
@@ -84,6 +86,7 @@ class MemberImport extends TblMember {
                 }, 'skipOnEmpty' => TRUE],
             [['x_col3'], 'default', 'value' => 15],
             [['dcs_code'], 'setXcol3', 'on' => ['importCsv']],
+            [['dcs_code'], 'setBankDetail', 'on' => ['importCsv']],
             [['rate_class'], 'default', 'value' => '0']
 
                 /*  [['dob'], function ($attribute, $params) {
@@ -245,6 +248,29 @@ class MemberImport extends TblMember {
                 return false;
             }
         }
+    }
+
+    public function setBankDetail($attribute, $params) {
+        if (empty($this->getErrors()) && !empty($this->ifsc)) {
+            $this->branch_code = Yii::$app->general->getforeignkey($this->ifscDetail, 'branch_code');
+            $this->bank_code = Yii::$app->general->getforeignkey($this->ifscDetail, 'bank_code');
+            if (empty($this->branch_code)) {
+                $this->addError('ifsc', Yii::t('app/validation', $this->getAttributeLabel('ifsc') . ' is Invalid.'));
+                return false;
+            } else {
+                $district = $this->district_code;
+                $mapping = new TblBanksDistrictsMapping();
+                $mapping = $mapping->getRecord($this->bank_code, $district);
+                if (!$mapping && $this->bankCode->nationalized_bank == 0) {
+                    $this->addError('ifsc', Yii::t('app/validation', "District is not mapped in relevant bank for IFSC '" . $this->ifsc . "'."));
+                    return false;
+                }
+            }
+        }
+    }
+
+    public function getIfscDetail() {
+        return $this->hasOne(TblBranch::className(), ['ifsc' => 'ifsc'])->andwhere(['is_active' => 1]);
     }
 
 }

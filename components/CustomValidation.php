@@ -44,9 +44,9 @@ class CustomValidation extends Component {
                     'default' => [
                             [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
-                                return !empty($model->branch_code);
+                                return !empty($model->ifsc);
                             }, 'whenClient' => "function (attribute, value) { 
-                            return $('#tblmember-bank_code').val() != ''; 
+                            return $('#tblmember-ifsc').val() != ''; 
                         }", 'on' => ['importCsv']],
                             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
