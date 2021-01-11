@@ -9,6 +9,7 @@ use yii\helpers\Url;
  $labels = [];
  $month_label = [];
  $value_label = [];
+ if(is_array($result)){
  foreach ($result[0] as $key => $value) {
      if(substr($key,0,5) == 'label'){
          array_push($labels,$key);
@@ -21,12 +22,15 @@ use yii\helpers\Url;
          array_push($value_label,$key);
      }
  }
-
+ }
  $diff_array = (array_slice($month_label,count($month_label)-2,2));
 ?>
 <div class="table-responsive overflow_hidden dashboard_tbl dashboard_table_section">
 <div class="custom_report_table dynamic_report_table">
  <table id="custom_report" class="fht-table table table-striped">
+    <?php
+        if(is_array($result)){
+            ?>
      <thead>
          <tr>
              <?php
@@ -42,12 +46,18 @@ use yii\helpers\Url;
                  <th colspan="3" class="custom_grid_header header_labels"><?= $value ?></th>
              <?php
                  }
+                $difference_flag=1;
+                if(count($diff_array) > 1){
+                    $difference_flag=0;
              ?>
              <th colspan="3" class="custom_grid_header header_labels"><?= Yii::t('app', $diff_array[0]).'-'.Yii::t('app', $diff_array[1])?></th>
+             <?php 
+                 }
+             ?>
          </tr>
          <tr>
              <?php
-                 for ($i=0; $i<=count($month_label); $i++){
+                 for ($i=$difference_flag; $i<=count($month_label); $i++){
                      ?>
                          <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Quantity')?></th>
                          <th class="custom_grid_header header_labels"><?= Yii::t('app', 'Amount')?></th>
@@ -99,18 +109,26 @@ use yii\helpers\Url;
                              }
                          }
                         //  var_dump($diff_value_array);
-                         foreach ($diff_value_array as $key => $diff_v_a) {
-                            ?>
-                                <td class="number_align custom_grid_normal" title="<?= empty($diff_v_a) ? '0' : $diff_v_a?>"><?= empty($diff_v_a) ? '0' : substr($diff_v_a,0,10)?></td>
-                            <?php
-                         }
-
-                         ?>
+                        if($difference_flag ==0){
+                            foreach ($diff_value_array as $key => $diff_v_a) {
+                                ?>
+                                    <td class="number_align custom_grid_normal" title="<?= empty($diff_v_a) ? '0' : $diff_v_a?>"><?= empty($diff_v_a) ? '0' : substr($diff_v_a,0,10)?></td>
+                                <?php
+                            }
+                        }
+                        ?>
                      </tr>
                  <?php
              }
          ?>
-     </tbody>              
+     </tbody>
+     <?php 
+        }else{
+         ?>
+         <tr><td><?= $result ?></td><tr>
+         <?php
+         }
+         ?>          
  </table>
 </div>
 </div>

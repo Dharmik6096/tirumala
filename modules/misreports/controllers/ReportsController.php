@@ -1364,6 +1364,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_customer_master_register',
                 'scenario' => 'CustomerMaster',
                 'title' => 'Customer Master Register',
+                'to_decrypt' => ['adhar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
             ],

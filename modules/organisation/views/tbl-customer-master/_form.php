@@ -81,6 +81,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        </div>
         <div class='pull-left col-sm-12'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>

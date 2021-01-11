@@ -72,6 +72,7 @@ class MasterDataController extends \app\modules\androiddpu\v1\controllers\Master
                     $transaction_data = $request->camelCaseToUnderscore($transaction_data);
                     $model = new TblInbox();
                     $model->setAttributes($transaction_data);
+                    $model->sync_timestamp = date('Y-m-d H:i:s');
                     $modelData = $model->findOne($model->uuid);
                     $syncModel = new TblSyncLog();
                     $syncModel->uuid = $model->uuid;

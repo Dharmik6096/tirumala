@@ -89,6 +89,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active';
         },
     ],
+    ['attribute' => 'aadhaar_no'],
 ];
 
 $grid_option = [
