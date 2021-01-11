@@ -418,7 +418,7 @@ if (isset($data['url1'])) {
                     'active_column' => false,
                 ];
                 $c = 0;
-                echo '<div id="list1" class="dropdown-check-list" tabindex="100">';
+                echo '<div id="grid_show_hide_list" class="dropdown-check-list" tabindex="100">';
                 echo '<span class="anchor"><i class="fa fa-chevron-down"></i></span>';
                 echo '<ul class="items">';
                 foreach ($attr as $key => $value) {
@@ -458,10 +458,10 @@ $('.mis_report_modal_toggle').on('click', function(){
                 hideFields();
             });
         }
-        var table = $('.dataTable').DataTable();
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
+            var table = $('.dataTable').DataTable();
             var column = table.column( $(this).attr('data-column') );
             // Toggle the visibility
             var column_no = column.selector.cols
@@ -473,7 +473,7 @@ $('.mis_report_modal_toggle').on('click', function(){
             column.visible( ! column.visible() );
         });
 
-        var checkList = document.getElementById('list1');
+        var checkList = document.getElementById('grid_show_hide_list');
         checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
         if (checkList.classList.contains('visible'))
             checkList.classList.remove('visible');
