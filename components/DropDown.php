@@ -1177,6 +1177,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select DPU Status'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Error'), 2 => Yii::t('app', 'Processed'), -1 => Yii::t('app', 'All')],
             ],
+            'billing_type' => [
+                'name' => 'billing_type',
+                'prompt' => Yii::t('app', 'Select Billing Type'),
+                'data' => [1 => Yii::t('app', 'Member Paymnet + VSP Salary'), 2 => Yii::t('app', 'VSP Payment')],
+            ],
         ];
         return $records[$l];
     }
@@ -1413,6 +1418,11 @@ class DropDown extends Component {
     public function poured_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/poured-bmc-list', Yii::t('app', 'Select Poured BMC'), $multiple, $extra_param, $readonly, $id);
+    }
+
+    public function PaymentCycleUnion($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
 }

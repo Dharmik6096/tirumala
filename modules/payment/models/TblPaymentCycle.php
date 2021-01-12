@@ -42,13 +42,13 @@ class TblPaymentCycle extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
-                ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
-                [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
-                [['interval_value', 'is_active', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
-                [['to_date'], 'customValidate'],
-                [['from_date', 'to_date'], 'unique', 'targetAttribute' => ['from_date', 'to_date', 'union_code'], 'message' => 'Payemnt cycle already exist for same time period'],
+            [['from_date', 'to_date', 'from_shift', 'to_shift', 'interval_value', 'union_code'], 'required'],
+            ['interval_value', 'match', 'pattern' => '/^[0-9]+$/', 'message' => Yii::t('app', 'Interval Value must be integer.')],
+            [['union_code', 'from_shift', 'to_shift', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
+            [['interval_value', 'is_active', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'check_month', 'federation_code'], 'safe'],
+            [['to_date'], 'customValidate'],
+            [['from_date', 'to_date'], 'unique', 'targetAttribute' => ['from_date', 'to_date', 'union_code'], 'message' => 'Payemnt cycle already exist for same time period'],
         ];
     }
 
@@ -124,6 +124,19 @@ class TblPaymentCycle extends \app\models\ChildModel {
 
     public function getToShift() {
         return $this->hasOne(TblShift::className(), ['id' => 'to_shift']);
+    }
+
+    public function UnionPaymentCycles($union_code) {
+        $query = $this->find()->select(['from_date', 'to_date', 'payment_cycle_code'])->distinct()
+                ->where(['union_code' => $union_code])
+                ->andWhere(['<', 'from_date', date('Y-m-d')]);
+
+        $data = $query->orderBy('from_date DESC')->all();
+        return \yii\helpers\ArrayHelper::map($data, function($model) {
+                    return $model['payment_cycle_code'];
+                }, function($model) {
+                    return Yii::$app->controls->view_date($model['from_date']) . ' to ' . Yii::$app->controls->view_date($model['to_date']);
+                });
     }
 
 }

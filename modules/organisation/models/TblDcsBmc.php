@@ -81,7 +81,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
 //            [['bmc_code'], 'integer', 'min' => 1],
 //            [['bmc_code'], 'string', 'max' => 5],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge', 'billing_type'], 'safe'],
             [['mcc_plant_code'], 'setField'],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
 //            [['bmc_code'], 'unique'],

@@ -489,4 +489,22 @@ class TblPaymentCycleController extends ChildController {
         $this->updateRecords($payment_cycle_code, $id, 'sync_lock_member', 'Sync Lock - Member', 'Sync Unlock - Member');
     }
 
+    public function actionUnionPaymentCycleList() {
+        $out = null;
+
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            $unionCode = $value[0];
+            $paymentcycleModel = new TblPaymentCycle();
+            $list = $paymentcycleModel->UnionPaymentCycles($unionCode);
+            foreach ($list as $key => $r) {
+                $out[] = array('id' => $key,
+                    'name' => $r);
+            }
+            return Json::encode(['output' => $out]);
+            return;
+        }
+        return Json::encode(['output' => '', 'selected' => $selected]);
+    }
+
 }
