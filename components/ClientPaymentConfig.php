@@ -37,7 +37,11 @@ class ClientPaymentConfig extends Component {
             'ATMOST' => [
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
-                    'sp_name' => 'sp_vsp_payment_atmost',
+                    'sp_name' => 'sp_vsp_payment',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
+                    'sp_name' => 'sp_remuneration_payment_tdc',
                 ],
             ],
             'EIPLCOMMON' => [
