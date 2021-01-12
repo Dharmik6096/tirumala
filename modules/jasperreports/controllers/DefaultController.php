@@ -641,7 +641,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'tcpdf' => true,
             ],
             'InchargeRemuneration' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_union_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string,p_union_code,p_report_name',
                 'path' => 'vsp/CCInchargeRemuneration',
                 'scenario' => 'InchargeRemuneration',
                 'title' => '614 - CC Incharge Remuneration',
