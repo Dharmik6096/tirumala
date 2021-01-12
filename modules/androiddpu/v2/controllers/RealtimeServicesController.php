@@ -264,6 +264,7 @@ class RealtimeServicesController extends RestController {
         $res_data['actions'] = [];
         $res_data['roleActionMapping'] = [];
         $res_data['userRoleMapping'] = [];
+        $res_data['ackKey'] = [];
         $data = $this->post_data;
 
         $org_code = $data['organization_code'];
