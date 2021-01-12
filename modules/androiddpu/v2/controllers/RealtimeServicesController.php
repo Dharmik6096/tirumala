@@ -284,6 +284,7 @@ class RealtimeServicesController extends RestController {
         $role_data = [];
         $usr_data = [];
         $ackKey = [];
+        $key = [];
         if (!empty($existAck)) {
             foreach ($existAck as $ackn) {
                 $key[] = $ackn->user_code;
@@ -293,13 +294,14 @@ class RealtimeServicesController extends RestController {
                 $role_data = array_merge($role_data, $role);
                 $ackKey = array_merge($ackKey, $key);
             }
+            $res_data['users'] = $usr_data;
+            $res_data['actions'] = Yii::$app->general->getSpDropData('android_user_actions', []);
+            $res_data['roles'] = Yii::$app->general->getSpDropData('android_user_role', []);
+            $res_data['roleActionMapping'] = Yii::$app->general->getSpDropData('android_user_role_action_mapp', []);
+            $res_data['userRoleMapping'] = $role_data;
+            $res_data['ackKey'] = $key;
         }
-        $res_data['users'] = $usr_data;
-        $res_data['actions'] = Yii::$app->general->getSpDropData('android_user_actions', []);
-        $res_data['roles'] = Yii::$app->general->getSpDropData('android_user_role', []);
-        $res_data['roleActionMapping'] = Yii::$app->general->getSpDropData('android_user_role_action_mapp', []);
-        $res_data['userRoleMapping'] = $role_data;
-        $res_data['ackKey'] = $key;
+
         $this->response['data'] = $res_data;
 
         return $this->response;
