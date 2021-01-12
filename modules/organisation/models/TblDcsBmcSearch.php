@@ -18,7 +18,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
     public function rules() {
         return [
             [['bmc_code', 'mcc_plant_code', 'bmc_name', 'created_at', 'is_active', 'capacity', 'manufacturer_code', 'bmc_milk_type', 'model', 'updated_at', 'created_by', 'updated_by', 'subcenter_code', 'union_code', 'valid_from', 'local_name', 'is_weight_manual', 'is_quality_manual'], 'safe'],
-            [['bmc_code_ex', 'ref_code'], 'safe'],
+            [['bmc_code_ex', 'ref_code', 'rate_calculate_on_merge'], 'safe'],
         ];
     }
 
@@ -55,7 +55,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
 
 
         if (Yii::$app->session->get('BMC') !== '')
-            $query->andFilterWhere([ 'tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+            $query->andFilterWhere(['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -94,6 +94,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
             'tbl_bmc.is_active' => $this->is_active,
             'tbl_bmc.is_weight_manual' => $this->is_weight_manual,
             'tbl_bmc.is_quality_manual' => $this->is_quality_manual,
+            'tbl_bmc.rate_calculate_on_merge' => $this->rate_calculate_on_merge,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_bmc.bmc_code_ex', $this->bmc_code_ex])

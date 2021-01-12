@@ -81,7 +81,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
 //            [['bmc_code'], 'integer', 'min' => 1],
 //            [['bmc_code'], 'string', 'max' => 5],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge'], 'safe'],
             [['mcc_plant_code'], 'setField'],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
 //            [['bmc_code'], 'unique'],
@@ -91,6 +91,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             [['bmc_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['rate_calculate_on_merge'], 'default', 'value' => 0]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
