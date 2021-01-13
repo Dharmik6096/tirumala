@@ -89,8 +89,8 @@ $script = "
             // event.stopImmediatePropagation();
             checkData();
 
-            // $('#tbldcspurchaserateapplicabititysearch-rate_for').val(flag);
-            // $('#tbldcspurchaserateapplicabititysearch-rate_for').trigger('change');
+            $('#tbldcspurchaserateapplicabititysearch-rate_for').val(flag);
+            $('#tbldcspurchaserateapplicabititysearch-rate_for').trigger('change');
         });
       
     });
@@ -104,7 +104,7 @@ function checkData(){
     } else if(length == 1) {
         $('#'+modelname+'-'+fieldName).val('DCS');
         $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
-        $('#'+modelname+'-'+fieldName).trigger('select2:select');
+        $('#'+modelname+'-'+fieldName).trigger('select2select');
         $('#'+modelname+'-'+fieldName).trigger('change');
     } else {
         $('#'+modelname+'-'+fieldName).parent('div').parent().show();               
