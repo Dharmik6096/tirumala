@@ -474,11 +474,13 @@ $('.mis_report_modal_toggle').on('click', function(){
         });
 
         var checkList = document.getElementById('grid_show_hide_list');
-        checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
-        if (checkList.classList.contains('visible'))
-            checkList.classList.remove('visible');
-        else
-            checkList.classList.add('visible');
+        if(checkList != null){
+            checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
+            if (checkList.classList.contains('visible'))
+                checkList.classList.remove('visible');
+            else
+                checkList.classList.add('visible');
+            }
         }
     });
     function hideFields(){

@@ -4609,3 +4609,12 @@ table.dataTable tbody tr:nth-child(odd) {
 .fht-thead{
     width: auto !important;
 }
+
+.select2-selection--multiple .select2-search__field{
+    /* width: auto !important; */
+    border: none !important;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__clear{
+    margin: 0px 10px 0 10px !important;
+}
