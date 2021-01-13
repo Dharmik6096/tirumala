@@ -54,11 +54,11 @@ $depend = 'tbldcspurchaserateapplicabititysearch';
 <?php
 $script = "
     $('#tbldcspurchaserateapplicabititysearch-rate_for').on('change', function(e){
-        e.preventDefault();
+        // e.preventDefault();
         hideType();
     });
     $('#tbldcspurchaserateapplicabititysearch-bmc_code').on('change', function(e){
-        e.preventDefault();
+        // e.preventDefault();
         hideType();
     });
         
@@ -84,13 +84,13 @@ $script = "
     }
     $(document).ready(function() {
        var flag = $('#tbldcspurchaserateapplicabititysearch-rate_for').val();
-       $('#tbldcspurchaserateapplicabititysearch-rate_for').val('');
+    //    $('#tbldcspurchaserateapplicabititysearch-rate_for').val('');
         $('#tbldcspurchaserateapplicabititysearch-applicable_for').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            event.stopImmediatePropagation();
+            // event.stopImmediatePropagation();
             checkData();
 
-            $('#tbldcspurchaserateapplicabititysearch-rate_for').val(flag);
-            $('#tbldcspurchaserateapplicabititysearch-rate_for').trigger('change');
+            // $('#tbldcspurchaserateapplicabititysearch-rate_for').val(flag);
+            // $('#tbldcspurchaserateapplicabititysearch-rate_for').trigger('change');
         });
       
     });
@@ -104,6 +104,7 @@ function checkData(){
     } else if(length == 1) {
         $('#'+modelname+'-'+fieldName).val('DCS');
         $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+        $('#'+modelname+'-'+fieldName).trigger('select2:select');
         $('#'+modelname+'-'+fieldName).trigger('change');
     } else {
         $('#'+modelname+'-'+fieldName).parent('div').parent().show();               

@@ -95,7 +95,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         $MemberData = TblPurchaseRateApplicability::find()->select(['tbl_purchase_rate_applicability.union_code', 'tbl_purchase_rate_applicability.rate_app_code', 'tbl_purchase_rate_applicability.dcs_code as applicable_code', 'applicable_for' => new Expression("'DCS'"), 'wef_date', 'rate_chart_for' => new Expression("'MEMBER'")])
                 ->where(['tbl_dcs.bmc_code' => $this->bmc_code])
                 ->andWhere('\'' . $this->rate_for . '\'=\'member\' or \'' . $this->rate_for . '\'=\'both\'')
-                ->andFilterWhere(['dcs_code' => $this->dcs_code, 'tbl_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
+                ->andFilterWhere(['tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code, 'tbl_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
         if (!empty($this->wef_date)) {
             $MemberData->andFilterWhere(['CAST(wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
         }
