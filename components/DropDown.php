@@ -670,7 +670,7 @@ class DropDown extends Component {
             }
         }
         if (isset($searchable) && $searchable) {
-            echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
+            return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
                 'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
             )->label($label);
         } else {
@@ -1181,6 +1181,16 @@ class DropDown extends Component {
                 'name' => 'billing_type',
                 'prompt' => Yii::t('app', 'Select Billing Type'),
                 'data' => [1 => Yii::t('app', 'Member Paymnet + VSP Salary'), 2 => Yii::t('app', 'VSP Payment')],
+            ],
+            'order_on' => [
+                'name' => 'order_on',
+                'prompt' => Yii::t('app', 'Select Order On'),
+                'data' => [1 => Yii::t('app', 'Date Shift - CC'), 2 => Yii::t('app', 'CC- Date Shift')],
+            ],
+            'loss_responsibility' => [
+                'name' => 'loss_responsibility',
+                'prompt' => Yii::t('app', 'Select TS Loss Responsibility'),
+                'data' => [1 => Yii::t('app', 'Center Incharge'), 2 => Yii::t('app', 'Transporter')],
             ],
         ];
         return $records[$l];
