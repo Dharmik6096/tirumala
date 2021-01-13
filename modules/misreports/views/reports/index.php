@@ -98,7 +98,7 @@ if (isset($data['url1'])) {
                                         if (in_array($value, array('plant_code'))) {
                                             ?>
                                             <div class="col-sm-3 val_plant_code">
-                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant', true); ?>
+                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
