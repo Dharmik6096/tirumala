@@ -515,9 +515,9 @@ class DropDown extends Component {
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
-                    'data' => [$model->{$name} => $model->{$name}],
+                    'data' => ['3100' => '3100'],
                     'name' => $name,
-                    'select2Options' => ['pluginOptions' => ['allowClear' => true]],
+                    'select2Options' => ['options' => ['placeholder' => $placeholder],'pluginOptions' => ['allowClear' => true,'multiple' => $multiple]],
                     'options' => ['multiple' => $multiple],
                     'pluginOptions' => [
                         'depends' => $depends,
@@ -1371,5 +1371,48 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/get-customer-type', Yii::t('app', 'Select Customer Type'), $multiple, 'where', $readonly);
     }
+
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true) {
+        $class = $readonly ? 'depend-control' : '';
+        $depends = explode(',', $depends);
+        $options = [];
+        $options['readonly'] = $readonly;
+        $options['class'] = 'form-control ' . $class;
+        if (!empty($id)) {
+            $options['id'] = $id;
+        }
+        if ($multiple)
+            $placeholder = FALSE;
+        $dropDownType = DepDrop::TYPE_DEFAULT;
+        if (isset($searchable) && $searchable) {
+            $dropDownType = DepDrop::TYPE_SELECT2;
+        }
+//        $name = ($name == '') ? $data['name'] : $name;
+        $data = [];
+        if(is_array($model->{$name})){
+            $data = array_combine(array_values($model->{$name}), array_values($model->{$name})); 
+        }else{
+            $data = [$model->{$name} => $model->{$name}];
+        }
+        
+        $form->field($model, $name)
+            ->widget(DepDrop::classname(), [
+                'type' => $dropDownType,
+                'data' => $data,
+                'name' => $name,
+                'select2Options' => ['options' => ['placeholder' => $placeholder],'pluginOptions' => ['allowClear' => true,'multiple' => $multiple]],
+                'options' => ['multiple' => $multiple],
+                'pluginOptions' => [
+                    'depends' => $depends,
+                    'placeholder' => $placeholder,
+                    'url' => Url::to([$url]),
+                    'allParam' => ["'" . $extraParam . "'"],
+                    'initialize' => true,
+                    'allowClear' => true,
+                ],
+                'options' => $options
+            ])->label($islable);
+    }
+
 
 }

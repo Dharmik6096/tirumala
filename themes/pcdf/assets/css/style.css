@@ -2370,6 +2370,7 @@ div.crystalstyle{
 
 .report-area .grid-search.search-filter {
     width: calc(100% - 175px) !important;
+    z-index: 9;
 }
 
 .grid-search.search-filter.beforeGridLoad{
@@ -4426,4 +4427,199 @@ td.custom_grid_normal.dynamic_value {
     background: transparent;
     border: none !important;
     box-shadow: none;
+}
+
+.select2-container--krajee .select2-selection--multiple {
+    height: 24px !important;
+    min-height: 24px !important;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    /* color: #66778d; */
+    font-size: 12px;
+}
+
+.dataTables_wrapper .dataTables_filter{
+    display: none;
+}
+
+.dataTables_wrapper{
+    overflow: auto !important;
+}
+
+table.dataTable{
+    border-collapse: collapse !important;
+    width: 100% !important;
+    margin-top: 15px;
+    border: 1px solid #ccc;
+}
+
+table.dataTable thead{
+    background-color: #7A231C !important;
+}
+
+table.dataTable, table.dataTable th {
+    white-space: nowrap !important;
+}
+
+table.dataTable thead tr th,
+table.dataTable thead tr th a{
+    color: white !important;
+    padding: 2px 4px 0px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-align: center;
+    line-height: unset !important;
+}
+
+table.dataTable thead .sorting_asc {
+    background-image: none !important;
+}
+
+table.dataTable thead .sorting{
+    background-image: none !important;
+}
+
+table.dataTable thead .sorting_desc{
+    background-image: none !important;
+}
+table.dataTable thead th, table.dataTable thead td{
+    padding: 0px !important;
+    border-bottom : none !important;
+    border: 1px solid #fff;
+}
+
+table.dataTable tbody th, table.dataTable tbody td{
+    padding: 3px !important;
+    border: 1px solid #ddd;
+    font-size: 11px;
+}
+
+table.dataTable tbody tr:nth-child(odd) {
+    background-color: #f1f1f1 /*dfedff*/;
+}
+
+.dropdown-check-list {
+    display: inline-block;
+    float: right;
+    z-index: 9;
+}
+
+.dropdown-check-list .anchor {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    padding: 3px 15px;
+    /* border: 1px solid #ccc; */
+    background: #7a231c;
+    top: 5px;
+    color: #fff;
+}
+
+/* .dropdown-check-list .anchor:after {
+    position: absolute;
+    content: "";
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    padding: 5px;
+    right: 10px;
+    top: 20%;
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+} */
+
+.dropdown-check-list .anchor:active:after {
+    right: 8px;
+    top: 21%;
+}
+
+.dropdown-check-list ul.items {
+    padding: 2px;
+    display: none;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    position: absolute;
+    z-index: 999;
+    background: #fff;
+    max-width: 250px;
+    right: 0;
+}
+
+.dropdown-check-list ul.items li {
+    list-style: none;
+}
+
+.dropdown-check-list.visible .anchor {
+    color: #0094ff;
+}
+
+.dropdown-check-list.visible .items {
+    display: block;
+}
+
+/* input.select2-search__field{
+    width: auto !important;
+    border: none !important;
+} */
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__rendered {
+    box-sizing: border-box;
+    display: inline-flex;
+    /* line-height: 1.428571429; */
+    list-style: none;
+    margin: 0;
+    overflow-x: auto !important;
+    padding: 0;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__choice {
+    color: #fff !important;
+    background: #7a231c !important;
+    border: 1px solid #7a231c !important;
+    border-radius: 8px;
+    cursor: default;
+    float: left;
+    margin: 1px 0 4px 2px;
+    padding: 0px 2px;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__choice__remove {
+    float: right;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    text-shadow: 0 1px 0 #fff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 2px 0 0 3px;
+    opacity: -3.6 !important;
+}
+
+.fht-table-wrapper{
+    overflow: auto !important;
+}
+
+.fht-thead{
+    width: auto !important;
+}
+
+.select2-selection--multiple .select2-search__field{
+    /* width: auto !important; */
+    border: none !important;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__clear{
+    margin: 0px 10px 0 10px !important;
+}
+
+.s2-togall-button,
+.s2-togall-button:hover{
+    color: #7a231c;
 }
