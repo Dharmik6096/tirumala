@@ -39,21 +39,17 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
                     }
                     if ($att == 'ts_loss_responsibility') {
                         $attr_arr['value'] = function ($model, $key, $index) use ($form, $att, $value, $modelData) {
-//                            return '<span class=\'loss_responsibility\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
-                            return '<span class=\'loss_responsibility\'>' . Yii::$app->dropdown->dropdownStatic('loss_responsibility', $modelData[$index], $form, 'form-group', FALSE, false, '['.$index.']ts_loss_responsibility', false) . '</span>';
+                            return '<span class=\'loss_responsibility\'>' . Yii::$app->dropdown->dropdownStatic('loss_responsibility', $modelData[$index], $form, 'form-group', FALSE, false, '[' . $index . ']ts_loss_responsibility', false, false, TRUE, TRUE) . '</span>';
                         };
                     }
                     if ($att == 'qty_diff_type') {
                         $attr_arr['value'] = function ($model, $key, $index) use ($form, $att, $value, $modelData) {
-                            return '<span class=\'qty_diff_type\'>' . Yii::$app->dropdown->dropdownStatic('penalty_type', $modelData[$index], $form, 'form-group', FALSE, false, '['.$index.']qty_diff_type', false) . '</span>';
-
-//                            return $form->field($modelData[$index], 'qty_diff')->textInput(['class' => 'form-control col-sm-3'])->label(FALSE);
+                            return '<span class=\'qty_diff_type\'>' . Yii::$app->dropdown->dropdownStatic('penalty_type', $modelData[$index], $form, 'form-group', FALSE, false, '[' . $index . ']qty_diff_type', false, false, TRUE, TRUE) . '</span>';
                         };
                     }
                     if ($att == 'qty_diff_responsibility') {
                         $attr_arr['value'] = function ($model, $key, $index) use ($form, $att, $value, $modelData) {
-//                            return '<span class=\'loss_responsibility\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
-                            return '<span class=\'qty_diff_responsibility\'>' . Yii::$app->dropdown->dropdownStatic('loss_responsibility', $modelData[$index], $form, 'form-group', FALSE, false, '['.$index.']qty_diff_responsibility', false) . '</span>';
+                            return '<span class=\'qty_diff_responsibility\'>' . Yii::$app->dropdown->dropdownStatic('loss_responsibility', $modelData[$index], $form, 'form-group', FALSE, false, '[' . $index . ']qty_diff_responsibility', false, false, TRUE, TRUE) . '</span>';
                         };
                     }
                     if ($att == 'shortage_recovery') {
