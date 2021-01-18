@@ -95,8 +95,8 @@ class PDF extends TCPDF {
             $bill_detail['bank_account_no'] = $value['bank_account_no'];
             $bill_detail['ifsc'] = $value['ifsc'];
             $bill_detail['member_name'] = $value['member_name'];
-            $bill_detail['bmc_name'] = $value['bmc_name'];
-            $bill_detail['dcs_name'] = $value['dcs_name'];
+            $bill_detail['bmc_name'] = $value['bmc_name'] . '(' . $value['bmc_code'] . ')';
+            $bill_detail['dcs_name'] = $value['dcs_name'] . '(' . $value['ref_code'] . ')';
 
             if (empty($main[$value['member_code']]['basic'])) {
                 array_push($array[$value['member_code']]['basic'], $bill_detail);
@@ -107,7 +107,7 @@ class PDF extends TCPDF {
                     }
                 }
             }
-            $bill_transaction['collection_date'] = $value['collection_date'];
+            $bill_transaction['collection_date_php'] = $value['collection_date_php'];
             $bill_transaction['bm_qty'] = $value['bm_qty'];
             $bill_transaction['bm_avgFAT'] = $value['bm_avgFAT'];
             $bill_transaction['bm_avgSNF'] = $value['bm_avgSNF'];
@@ -115,29 +115,30 @@ class PDF extends TCPDF {
             $bill_transaction['bm_amount'] = $value['bm_amount'];
             $bill_transaction['shift'] = $value['shift'];
             $bill_transaction['member_code'] = $value['member_code'];
+            $bill_transaction['type'] = $value['type'];
+            $bill_transaction['total_addition'] = $value['total_addition'];
+            $bill_transaction['total_deduction'] = $value['total_deduction'];
+            $bill_transaction['final_pay'] = $value['final_pay'];
             if ($value['shift'] == 'AM') {
                 array_push($bill_transaction_am, $bill_transaction);
             }
             if ($value['shift'] == 'PM') {
                 array_push($bill_transaction_pm, $bill_transaction);
             }
-
-            $array[$value['member_code']]['details'][$value['collection_date']]['am'] = [];
-            $array[$value['member_code']]['details'][$value['collection_date']]['pm'] = [];
         }
         foreach ($array as $key => $value) {
             $member_code = $key;
             foreach ($bill_transaction_pm as $key => $value) {
                 if ($value['member_code'] == $member_code) {
-                    $array[$member_code]['details'][$value['collection_date']]['pm'] = [];
-                    array_push($array[$member_code]['details'][$value['collection_date']]['pm'], $value);
+                    $array[$member_code]['details'][$value['collection_date_php']]['pm'] = [];
+                    array_push($array[$member_code]['details'][$value['collection_date_php']]['pm'], $value);
                 }
             }
             foreach ($bill_transaction_am as $key => $value) {
                 // var_dump($value);
                 if ($value['member_code'] == $member_code) {
-                    $array[$member_code]['details'][$value['collection_date']]['am'] = [];
-                    array_push($array[$member_code]['details'][$value['collection_date']]['am'], $value);
+                    $array[$member_code]['details'][$value['collection_date_php']]['am'] = [];
+                    array_push($array[$member_code]['details'][$value['collection_date_php']]['am'], $value);
                 }
             }
         }
@@ -217,17 +218,25 @@ class PDF extends TCPDF {
                 $total_FAT_pm = 0;
                 $total_SNF_am = 0;
                 $total_SNF_pm = 0;
+                $total_addition = 0;
+                $total_deduction = 0;
+                $final_pay = 0;
+                $member_type = '';
                 foreach ($value['details'] as $tbl_key => $tbl_value) {
                     $detailTable .= '<tr>
-                            <td align="center" width="60">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['collection_date'] : '') . '</td>
+                            <td align="center" width="60">' .
+                            '<table><tr>'
+                            . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? '<td  align="right">' . date('d', strtotime($tbl_value['am'][0]['collection_date_php'])) . '  </td><td align="left"> ' . date('D', strtotime($tbl_value['am'][0]['collection_date_php'])) . '</td>' : '<td></td><td></td>') .
+                            '</tr></table>' .
+                            '</td>
                             <td align="center" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : 0) . '</td>
-                            <td align="right" width="35">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : 0) . '</td>
-                            <td align="right" width="40">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : 0) . '</td>
+                            <td align="right" width="39">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : 0) . '</td>
+                            <td align="right" width="38">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : 0) . '</td>
                             <td align="right" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : 0) . '</td>
                             <td align="right" width="67">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : 0) . '</td>
                             <td align="right" width="70">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : 0) . '</td>
-                            <td align="right" width="30">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : 0) . '</td>
-                            <td align="right" width="40">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : 0) . '</td>
+                            <td align="right" width="34">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : 0) . '</td>
+                            <td align="right" width="38">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : 0) . '</td>
                             <td align="right" width="48">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : 0) . '</td>
                             <td align="right" width="65">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : 0) . '</td>
                             <td align="right" width="80">' . number_format(((float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_amount'] : 0)), 2) . '</td>
@@ -246,10 +255,14 @@ class PDF extends TCPDF {
 
                     $total_bm_amount_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_amount'] : 0) + $total_bm_amount_am;
                     $total_bm_amount_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_bm_amount_pm;
-
                     $total_amount = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_amount;
+
+                    $total_addition = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['total_addition'] : 0;
+                    $total_deduction = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['total_deduction'] : 0;
+                    $final_pay = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['final_pay'] : 0;
+                    $member_type = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['type'] : 'Member';
                 }
-                for ($j = 0; $j < 13 - count($value['details']); $j++) {
+                for ($j = 0; $j < 11 - count($value['details']); $j++) {
                     $detailTable .= '<tr>
                             <td align="left"></td>
                             <td align="center"></td>
@@ -269,18 +282,33 @@ class PDF extends TCPDF {
                 $pdf->writeHTML($detailTable, true, false, false, false, '');
 
                 $footerTable = '<table border="none"  width="100%" cellpadding="1" cellspacing="1">';
+
+                if ($member_type == 'Member') {
+                    $footerTable .= ' <table border="none" cellpadding="1" cellspacing="1">
+                    <tr>
+                        <td align="right" colspan="6">Deduction : ' . $total_deduction . '</td>
+                        <td align="right" colspan="6">Net. Payable : ' . $final_pay . '</td>
+                    </tr>';
+                } else {
+                    $footerTable .= ' <table border="none" cellpadding="1" cellspacing="1">
+                    <tr>
+                        <td align="right" colspan="4">Incentive : ' . $total_addition . '</td>
+                        <td align="right" colspan="4">Deduction : ' . $total_deduction . '</td>
+                        <td align="right" colspan="4">Net. Payable : ' . $final_pay . '</td>
+                    </tr>';
+                }
+				$footerTable .= '<tr><td colspan="12"></td></tr>';
                 $footerTable .= '
-            <table border="none" cellpadding="1" cellspacing="1">
                 <tr>
                     <td align="center" width="60"></td>
                     <td align="center" width="50">' . number_format($total_qty_am, 2) . '</td>
-                    <td align="right" width="35">' . (!empty(count($value['details'])) ? number_format(($total_FAT_am / count($value['details'])), 2) : 0) . '</td>
-                    <td align="right" width="40">' . (!empty(count($value['details'])) ? number_format(($total_SNF_am / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="37">' . (!empty(count($value['details'])) ? number_format(($total_FAT_am / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="38">' . (!empty(count($value['details'])) ? number_format(($total_SNF_am / count($value['details'])), 2) : 0) . '</td>
                     <td align="right" width="50">' . (!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0) . '</td>
                     <td align="right" width="67">' . number_format($total_bm_amount_am, 2) . '</td>
                     <td align="right" width="70">' . number_format($total_qty_pm, 2) . '</td>
-                    <td align="right" width="30">' . (!empty(count($value['details'])) ? number_format(($total_FAT_pm / count($value['details'])), 2) : 0) . '</td>
-                    <td align="right" width="40">' . (!empty(count($value['details'])) ? number_format(($total_SNF_pm / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="32">' . (!empty(count($value['details'])) ? number_format(($total_FAT_pm / count($value['details'])), 2) : 0) . '</td>
+                    <td align="right" width="38">' . (!empty(count($value['details'])) ? number_format(($total_SNF_pm / count($value['details'])), 2) : 0) . '</td>
                     <td align="right" width="48">' . (!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0) . '</td>
                     <td align="right" width="65">' . number_format($total_bm_amount_pm, 2) . '</td>
                     <td align="right" width="80">' . number_format($total_amount, 2) . '</td>
@@ -304,6 +332,7 @@ class PDF extends TCPDF {
                 $footerTable .= '</table>';
                 $pdf->writeHTML($footerTable, true, false, false, false, '');
             }
+//            ob_end_clean();
             $pdf->Output('vendor_bill_' . date('YmdHis') . '.pdf', 'D');
 //            $pdf->Output('yii2_tcpdf_example2.pdf', 'D');
             Yii::$app->end();
