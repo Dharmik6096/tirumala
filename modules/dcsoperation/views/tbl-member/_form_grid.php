@@ -71,8 +71,11 @@ $attribute = [
             return ($model->member_class == 1) ? 'APL' : ($model->member_class == 2 ? 'BPL' : '');
         }, 'visible' => false, 'filter' => false],
     ['attribute' => 'x_col3', 'filter' => false],
-    ['attribute' => 'is_verified', 'value' => function($model) {
+    ['attribute' => 'is_verified', 'label' => Yii::t('app', 'Bank Verification'), 'value' => function($model) {
             return $model->is_verified == 1 ? 'Verified' : ( $model->is_verified == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
+    ['attribute' => 'is_contact_verified', 'label' => Yii::t('app', 'Contact Verification'), 'value' => function($model) {
+            return $model->is_contact_verified == 1 ? 'Verified' : ( $model->is_contact_verified == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
 ];
 
@@ -104,7 +107,7 @@ $grid_option = [
         'upload-photos' => function ($url, $model) {
             $id = $model->member_code;
             $type = 'MEMBER';
-            $class = '';
+            $class = ($model->is_verified == 1) ? 'link-disable disabled' : '';
             $url = ['/dcsoperation/tbl-member/import-attachements', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);

@@ -6,7 +6,6 @@ use yii\helpers\Url;
 use yii\web\View;
 ?>
 <?php
-
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -85,8 +84,12 @@ $attribute = [
         }
     ],
     ['attribute' => 'aadhaar_no'],
-    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Is Verified'), 'value' => function($model) {
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Bank Verification'), 'value' => function($model) {
             $flag = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified');
+            return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Contact Verification'), 'value' => function($model) {
+            $flag = Yii::$app->general->getforeignkey($model->mainContactDetails, 'is_contact_verified');
             return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
 ];
@@ -111,7 +114,7 @@ $grid_option = [
         'upload-photos' => function ($url, $model) {
             $id = $model->customer_code;
             $type = 'CUSTOMER';
-            $class = '';
+            $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
             $url = ['/organisation/tbl-customer-master/import-attachements', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);

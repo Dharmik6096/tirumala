@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -10,10 +9,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
-
 ?>
 <?php
-
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'bmc_code', 'value' => function($model) {
@@ -194,8 +191,12 @@ $attribute = [
             return ($model->credit_sale_allow == 1) ? 'Yes' : 'No';
         }, 'visible' => FALSE
     ],
-    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Is Verified'), 'value' => function($model) {
+    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Bank Verification'), 'value' => function($model) {
             $flag = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified');
+            return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
+    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Contact Verification'), 'value' => function($model) {
+            $flag = Yii::$app->general->getforeignkey($model->mainContactDetails, 'is_contact_verified');
             return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
 ];
@@ -285,7 +286,7 @@ $grid_option = [
         'upload-photos' => function ($url, $model) {
             $id = $model->dcs_code;
             $type = 'DCS';
-            $class = '';
+            $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
             $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
@@ -301,7 +302,6 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
 <div id='ImportAttachements'></div>
 <?php
-
 $script = "
 $(document).ready(function(){
     $(document).on('click','.deact-dcs',function(e){

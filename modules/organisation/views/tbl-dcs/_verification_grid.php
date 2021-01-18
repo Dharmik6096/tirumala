@@ -34,6 +34,12 @@ $this->title = Yii::t('app', 'Master Verification');
             ['attribute' => 'branch_code', 'filter' => FALSE],
             ['attribute' => 'bank_account_no', 'filter' => FALSE],
             ['attribute' => 'ifsc', 'filter' => FALSE],
+            ['attribute' => 'beneficiary_name', 'filter' => FALSE],
+            ['attribute' => 'aadhaar_no',
+                'value' => function($model) {
+                    return Yii::$app->general->decryptData($model['aadhaar_no']) !== FALSE ? Yii::$app->general->decryptData($model['aadhaar_no']) : $model['aadhaar_no'];
+                }
+                , 'filter' => FALSE],
         ];
 
         $grid_option = [
