@@ -515,7 +515,7 @@ class DropDown extends Component {
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
-                    'data' => ['3100' => '3100'],
+                    'data' => [$model->{$name} => $model->{$name}],
                     'name' => $name,
                     'select2Options' => ['options' => ['placeholder' => $placeholder],'pluginOptions' => ['allowClear' => true,'multiple' => $multiple]],
                     'options' => ['multiple' => $multiple],
