@@ -586,7 +586,7 @@ class ReportsController extends \app\controllers\ChildController {
                         $model->{$value} .= ' ' . $shift . '.000';
                     }
                 }
-                $controls[$value] = $model->{$value};
+                $controls[$value] = is_array($model->{$value}) ? implode(',',$model->{$value}) : $model->{$value};
             }
             $sp_name = $this->data['sp_name'];
             $output = \Yii::$app->general->getSpData($sp_name, $controls);
@@ -681,7 +681,7 @@ class ReportsController extends \app\controllers\ChildController {
                     $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
-            $controls[$value] = $model->{$value};
+            $controls[$value] = is_array($model->{$value}) ? implode(',',$model->{$value}) : $model->{$value};
         }
         $sp_name = $this->data['sp_name'];
         $output = \Yii::$app->general->getSpData($sp_name, $controls);
@@ -700,7 +700,7 @@ class ReportsController extends \app\controllers\ChildController {
                         $model->{$value} .= ' ' . $shift . '.000';
                     }
                 }
-                $controls[$value] = $model->{$value};
+                $controls[$value] = is_array($model->{$value}) ? implode(',',$model->{$value}) : $model->{$value};
             }
             $sp_name2 = $this->data['sp_name2'];
             $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
