@@ -239,6 +239,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box theme_border_top">
         <!-- <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">

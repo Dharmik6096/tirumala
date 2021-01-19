@@ -142,8 +142,15 @@ class TblMemberController extends \app\controllers\ChildController {
             if ($bankValidate == 1 && $validate == 1 && $this->model->validate()) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
-                $this->model->is_verified = 0;
-                $this->model->is_contact_verified = 0;
+                $oldAttr = $this->model['oldAttributes'];
+                $adhar_no = Yii::$app->general->decryptData($oldAttr['adhar_no']) !== FALSE ? Yii::$app->general->decryptData($oldAttr['adhar_no']) : $oldAttr['adhar_no'];
+                $pan_no = Yii::$app->general->decryptData($oldAttr['pan_no']) !== FALSE ? Yii::$app->general->decryptData($oldAttr['pan_no']) : $oldAttr['pan_no'];
+                if ($oldAttr['bank_account_no'] != $this->model->bank_account_no || $oldAttr['ifsc'] != $this->model->ifsc || $oldAttr['beneficiary_name'] != $this->model->beneficiary_name || $pan_no != $this->model->pan_no || $adhar_no != $this->model->adhar_no || $oldAttr['voter_id'] != $this->model->voter_id) {
+                    $this->model->is_verified = 0;
+                }
+                if ($oldAttr['hamlet_code'] != $this->model->hamlet_code || $oldAttr['address'] != $this->model->address || $oldAttr['local_address'] != $this->model->local_address || $oldAttr['pincode'] != $this->model->pincode || $oldAttr['mobile_no'] != $this->model->mobile_no || $oldAttr['email'] != $this->model->email) {
+                    $this->model->is_contact_verified = 0;
+                }
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['member', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -303,13 +310,13 @@ class TblMemberController extends \app\controllers\ChildController {
 
     public function actionImportAttachements() {
         $model = new TblMember();
-        if(isset($_POST['code'])){
+        if (isset($_POST['code'])) {
             $model->member_code = $_POST['code'];
         }
         $saveModel = [];
         if ($model->load(Yii::$app->request->post())) {
             $files = !empty(Yii::$app->request->post()['TblMember']['file_name']) ? Yii::$app->request->post()['TblMember']['file_name'] : '';
-            Yii::$app->general->setAttachment($saveModel, $files, $model->member_code,'TblMember');
+            Yii::$app->general->setAttachment($saveModel, $files, $model->member_code, 'TblMember');
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Image Uploaded', 'edit']);
             return $this->redirect(['index']);
         }
@@ -335,6 +342,5 @@ class TblMemberController extends \app\controllers\ChildController {
             return Json::encode($record);
         }
     }
-
 
 }

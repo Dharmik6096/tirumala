@@ -87,7 +87,7 @@ class MemberImport extends TblMember {
             [['x_col3'], 'default', 'value' => 15],
             [['dcs_code'], 'setXcol3', 'on' => ['importCsv']],
             [['rate_class'], 'default', 'value' => '0'],
-
+            [['dcs_code'], 'setVerified', 'on' => ['importCsv']],
                 /*  [['dob'], function ($attribute, $params) {
                   Yii::$app->general->validateAge($this, $attribute, $params);
                   }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync']],
@@ -246,6 +246,21 @@ class MemberImport extends TblMember {
                 $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . " Code '" . $this->member_class . "'" . ' is invalid.'));
                 return false;
             }
+        }
+    }
+
+    public function setVerified($attribute, $params) {
+        $existData = $this::find()->where(['union_code' => $this->union_code, 'dcs_code' => $this->dcs_code, 'ex_member_code' => $this->ex_member_code])->one();
+        if (!empty($existData)) {
+            if ($existData->bank_account_no != $this->bank_account_no || $existData->ifsc != $this->ifsc || $existData->beneficiary_name != $this->beneficiary_name || $existData->pan_no != $this->pan_no || $existData->adhar_no != $this->adhar_no || $existData->voter_id != $this->voter_id) {
+                $this->is_verified = 0;
+            }
+            if ($existData->hamlet_code != $this->hamlet_code || $existData->address != $this->address || $existData->local_address != $this->local_address || $existData->pincode != $this->pincode || $existData->mobile_no != $this->mobile_no || $existData->email != $this->email) {
+                $this->is_contact_verified = 0;
+            }
+        } else {
+            $this->is_verified = 0;
+            $this->is_contact_verified = 0;
         }
     }
 
