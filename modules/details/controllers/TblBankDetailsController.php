@@ -53,11 +53,12 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $this->model = new TblBankDetails();
         $this->viewFile = 'create';
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
+            $this->model->setModel($module, $id, 0);
+
             if (!$this->model->validate()) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(ActiveForm::validate($this->model));
             } else {
-                $this->model->setModel($module, $id, 0);
 
                 $saveTxn = true;
                 $client_code = Yii::$app->session->get('eiplCode');

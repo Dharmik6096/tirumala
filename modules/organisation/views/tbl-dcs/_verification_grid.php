@@ -7,7 +7,7 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$this->title = Yii::t('app', 'Master Verification');
+$this->title = Yii::t('app', 'Bank Verification');
 ?>
 <div class=" no-effect">
     <?php
@@ -23,9 +23,9 @@ $this->title = Yii::t('app', 'Master Verification');
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model) {
-                    return ['class' => 'checkbox', 'value' => $model['code'] . '###' . $model['verifie_for']];
+                    return ['class' => 'checkbox', 'value' => $model['code'] . '###' . $model['verify_for']];
                 }],
-            ['attribute' => 'verifie_for'],
+            ['attribute' => 'verify_for'],
             ['attribute' => 'code'],
             ['attribute' => 'name', 'value' => 'name'],
             ['attribute' => 'ex_code'],
@@ -51,7 +51,7 @@ $this->title = Yii::t('app', 'Master Verification');
             'actions' => [
                 'update' => function ($url, $model) {
                     $id = $model['code'];
-                    $type = $model['verifie_for'];
+                    $type = $model['verify_for'];
                     $class = '';
                     $url = ['/organisation/tbl-dcs/view-verification'];
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => 'view-verification' . $class, 'data-val' => $id, 'data-name' => $type];
@@ -59,7 +59,7 @@ $this->title = Yii::t('app', 'Master Verification');
                 },
                 'get-attachments' => function ($url, $model) {
                     $id = $model['code'];
-                    $type = $model['verifie_for'];
+                    $type = $model['verify_for'];
                     $class = '';
                     $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Attachments', 'class' => 'get-attachments' . $class, 'data-val' => $id, 'data-name' => $type];
