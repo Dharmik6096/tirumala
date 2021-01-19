@@ -48,6 +48,8 @@ class TblCollectionPenaltyRateSearch extends TblCollectionPenaltyRate {
         ]);
 
         $this->load($params);
+        $query->joinWith(['penaltyType']);
+
         Yii::$app->general->filterByOrg($query, $this);
 
         if (!$this->validate()) {
@@ -60,7 +62,7 @@ class TblCollectionPenaltyRateSearch extends TblCollectionPenaltyRate {
         // grid filtering conditions
 
         $query->andFilterWhere(['like', 'penalty_rate', $this->penalty_rate])
-                ->andFilterWhere(['like', 'penalty_type', $this->penalty_type]);
+                ->andFilterWhere(['like', 'tbl_collection_penalty_type.penalty_type', $this->penalty_type]);
 
         return $dataProvider;
     }

@@ -25,8 +25,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2" id="union">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <?= Yii::$app->dropdown->dropdownStatic('penalty_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', 'Type', $readonly, 'penalty_type', FALSE) ?> 
-
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->depend_dropdown('penalty_type', $model, $form, 'tblcollectionpenaltyrate-union_code', 'form-group', Yii::t('app', 'Penalty Type')); ?>
+    </div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'penalty_rate')->textInput() ?>
     </div>

@@ -16,11 +16,10 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'penalty_type',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('penalty_type', $searchModel, 'penalty_type'),
-        'value' => function ($model) {
-            return isset($model->penalty_type) ? Yii::$app->dropdown->getRecords('penalty_type')['data'][$model->penalty_type] : '';
-        },],
+    ['attribute' => 'penalty_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->penaltyType, 'penalty_type');
+        },
+    ],
     ['attribute' => 'penalty_rate'],
     [
         'attribute' => 'wef_date',

@@ -4,6 +4,7 @@ namespace app\modules\collection\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use app\modules\collection\models\TblCollectionPenaltyType;
 
 /**
  * This is the model class for table "tbl_collection_penalty_rate".
@@ -77,6 +78,10 @@ class TblCollectionPenaltyRate extends \app\models\ChildModel {
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPenaltyType() {
+        return $this->hasOne(TblCollectionPenaltyType::className(), ['penalty_type_code' => 'penalty_type']);
     }
 
 }
