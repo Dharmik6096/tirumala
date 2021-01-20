@@ -25,9 +25,6 @@ $depend = 'transitrecovery';
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, $depend . '-mcc_plant_code', 'bmc_code', 'BMC'); ?>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, $depend . '-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE, '', FALSE); ?>         
-    </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <?php

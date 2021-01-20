@@ -4504,3 +4504,20 @@ table.dataTable thead .search_filter input[type="text"] {
     max-width: 123px !important;
     border: 1px solid #ccc;
 }
+
+.disable_div{
+    pointer-events:none !important;
+    cursor: not-allowed !important;
+}
+
+.disable_div i{
+    color: #ddd !important;
+}
+
+.active_div{
+    cursor: pointer;
+}
+
+.active_div i{
+    color: #7a231c;
+}

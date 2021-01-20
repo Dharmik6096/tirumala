@@ -57,4 +57,8 @@ class TblCollectionPenaltyType extends \yii\db\ActiveRecord
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
+
+    public function getPenaltyType() {
+        return $this->hasOne(TblCollectionPenaltyType::className(), ['penalty_type_code' => 'penalty_type_code']);
+    }
 }
