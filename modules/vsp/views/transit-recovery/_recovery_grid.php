@@ -22,22 +22,30 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
         
 <table id="recovery_grid" class="table table-striped">
     <?php
-        if(!empty($output)){?>
+        if(!empty($output)){
+        $show_column = ['mcc_plant_code','bmc_code','bmc_ref_code','bmc_name','route_code'];    
+        ?>
         <thead>
         <tr>
         <th class="custom_grid_header">#</th>
         <?php
             foreach ($output[0] as $att => $value) {
                 $str = ucwords(str_replace('_', ' ', $att));
+                if(!in_array($att,$show_column)){
+                    $class = '';
+                    if($att == 'vsp_transit_recovery_code'){
+                        $class = ' disp_none';
+                    }
             ?>
-                <th class="custom_grid_header"><?= Yii::t('app', $str)?></th>
+                <th class="custom_grid_header <?= $class ?>"><?= Yii::t('app', $str)?></th>
             <?php
                 }
+            }
                 if($att != 'message'){
         ?>
             <th class="custom_grid_header"><?= Yii::t('app', 'Action')?></th>
             <?php 
-                }
+            }
             ?>
         </tr>
      </thead>
@@ -50,24 +58,29 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
                 <td class="custom_grid_normal"><?= ++$i;?></td>
                 <?php
                     foreach ($value_row as $value_key => $value){
-                        $class = is_numeric($value) ? 'number_align custom_grid_normal' : 'custom_grid_normal';
-                        $class .= ' '.$value_key.'-'.$i;
-                        if($value_key == 'ts_loss_responsibility' || $value_key == 'qty_diff_responsibility'){?>
-                            <td class="<?= $class?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>"><?= Yii::$app->dropdown->getRecords('loss_responsibility')['data'][$value] ?></td>
+                        if(!in_array($value_key,$show_column)){
+                            $class = is_numeric($value) ? 'number_align custom_grid_normal' : 'custom_grid_normal';
+                            $class .= ' '.$value_key.'-'.$i;
+                            if($value_key == 'vsp_transit_recovery_code'){
+                                $class .= ' disp_none';
+                            }
+                            if($value_key == 'ts_loss_responsibility' || $value_key == 'qty_diff_responsibility'){?>
+                                <td class="<?= $class?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>"><?= Yii::$app->dropdown->getRecords('loss_responsibility')['data'][$value] ?></td>
+                            <?php
+                            }else if($value_key == 'qty_diff_type'){?>
+                                <td class="<?= $class?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>">
+                                    <?php 
+                                        $c_penalty_model = new TblCollectionPenaltyType();
+                                        $c_penalty_model->penalty_type_code = $value;
+                                        echo Yii::$app->general->getforeignkey($c_penalty_model->penaltyType, 'penalty_type');
+                                    ?>
+                                </td>
+                            <?php
+                            }else{
+                        ?>
+                            <td class="<?= $class?>"><?= $value?></td>
                         <?php
-                        }else if($value_key == 'qty_diff_type'){?>
-                            <td class="<?= $class?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>">
-                                <?php 
-                                    $c_penalty_model = new TblCollectionPenaltyType();
-                                    $c_penalty_model->penalty_type_code = $value;
-                                    echo Yii::$app->general->getforeignkey($c_penalty_model->penaltyType, 'penalty_type');
-                                ?>
-                            </td>
-                        <?php
-                        }else{
-                    ?>
-                        <td class="<?= $class?>"><?= $value?></td>
-                    <?php
+                            }
                         }
                     }
                 ?>

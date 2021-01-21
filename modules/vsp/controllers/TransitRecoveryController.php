@@ -157,6 +157,7 @@ class TransitRecoveryController extends \app\controllers\ChildController {
                 }
                 $output = \Yii::$app->general->getSpData($sp, $sp_params,$execute);
                 if($btn_status === 'Unlock'){
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => Yii::t('app', 'Transit Data Recovery Unlocked')]);
                     $this->redirect(['transit-loss-shortage']);
                 }
                 $this->output = $output;

@@ -10,7 +10,9 @@ $depend = 'transitrecovery';
 <div class="tbl-milk-collection-search">
     <?php
     $form = ActiveForm::begin([
+                'id' => 'recovery_search',
                 'method' => 'get',
+                'validateOnSubmit'=>true,
     ]);
     ?>   
     <div class="col-sm-2">
@@ -57,3 +59,14 @@ $depend = 'transitrecovery';
 
     <?php ActiveForm::end(); ?>
 </div>
+
+
+<?php
+$script = "
+$('#recovery_search').submit(function(e){
+    // e.preventDefault();
+    e.stopImmediatePropagation();
+});";
+
+$this->registerJs($script, View::POS_END, 'transit-recovery-search');
+?>
