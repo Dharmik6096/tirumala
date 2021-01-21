@@ -3,6 +3,8 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use app\modules\details\models\TblContactDetails;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_user_android".
@@ -34,6 +36,9 @@ use Yii;
  */
 class TblUserAndroid extends \app\models\ChildModel {
 
+    public $toEncrypt = ['password'];
+    public $org_type, $org_code;
+
     /**
      * @inheritdoc
      */
@@ -47,11 +52,10 @@ class TblUserAndroid extends \app\models\ChildModel {
     public function rules() {
         return [
             [['user_code'], 'required'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code'], 'safe'],
             [['originating_type'], 'integer'],
-            [['user_code', 'created_by', 'updated_by'], 'string', 'max' => 14],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['name', 'username', 'mobile_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['password'], 'string', 'max' => 100],
             [['email'], 'string', 'max' => 128],
             [['device_id'], 'string', 'max' => 500],
             [['union_code'], 'string', 'max' => 3],
@@ -72,11 +76,11 @@ class TblUserAndroid extends \app\models\ChildModel {
             'mobile_no' => Yii::t('app', 'Mobile No'),
             'email' => Yii::t('app', 'Email'),
             'device_id' => Yii::t('app', 'Device ID'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -93,7 +97,7 @@ class TblUserAndroid extends \app\models\ChildModel {
     }
 
     public function getExistData($org_type, $data) {
-        $query = $this->find()->where(['union_code' => $data->union_code, 'device_id' => $data->device_id]);
+        $query = $this->find()->where(['union_code' => $data->union_code]);
         if (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code]);
         } elseif ($org_type == 'BMC') {
@@ -103,6 +107,124 @@ class TblUserAndroid extends \app\models\ChildModel {
         }
         $user = $query->all();
         return $user;
+    }
+
+    public function getOrgType($data, $return = 'code') {
+        if ($return == 'type') {
+            if (!empty($data->dcs_code)) {
+                return 'VLC';
+            } elseif (!empty($data->bmc_code)) {
+                return 'BMC';
+            } elseif (!empty($data->mcc_plant_code)) {
+                return 'MCC';
+            }
+        } else {
+            if (!empty($data->dcs_code)) {
+                return $data->dcs_code;
+            } elseif (!empty($data->bmc_code)) {
+                return $data->bmc_code;
+            } elseif (!empty($data->mcc_plant_code)) {
+                return $data->mcc_plant_code;
+            }
+        }
+    }
+
+    public function getContactDetails($org_type, $data) {
+        $contactModel = new TblContactDetails();
+        $query = $contactModel->find()->where(['is_active' => 1, 'is_default' => 1]);
+        if (strtoupper($org_type == 'MCC')) {
+            $query->andWhere(['module_code' => $data->mcc_plant_code, 'module_name' => 'mccPlant']);
+        } elseif ($org_type == 'BMC') {
+            $query->andWhere(['module_code' => $data->bmc_code, 'module_name' => 'bmc']);
+        } elseif ($org_type == 'VLC') {
+            $query->andWhere(['module_code' => $data->dcs_code, 'module_name' => 'society']);
+        }
+        $user = $query->one();
+        return $user;
+    }
+
+    public function beforeSave($insert) {
+        if (parent::beforeSave($insert)) {
+
+            if ($this->hasAttribute('address'))
+                \Yii::$app->general->validateDiscriptiveField($this, 'address');
+
+            if ($this->hasAttribute('description'))
+                \Yii::$app->general->validateDiscriptiveField($this, 'description');
+
+            $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+            if ($insert) {
+                if ($this->hasAttribute('created_by') && $this->created_by == NULL)
+                    $this->created_by = $user;
+                if ($this->hasAttribute('created_at') && $this->created_at == NULL)
+                    $this->created_at = date('Y-m-d H:i:s');
+
+                if ($this->hasAttribute('originating_org_code') && $this->originating_org_code == NULL) {
+                    $this->originating_org_code = \Yii::$app->session->get('organizations_code');
+                }
+                if ($this->hasAttribute('originating_org_type') && $this->originating_org_type == NULL) {
+                    $this->originating_org_type = 'PORTAL';
+                }
+                if ($this->hasAttribute('originating_type') && $this->originating_type == NULL) {
+                    $this->originating_type = 0;
+                }
+                if ($this->hasAttribute('received_timestamp') && $this->received_timestamp == NULL) {
+                    $this->received_timestamp = date('Y-m-d H:i:s');
+                }
+            } else {
+                if ($this->hasAttribute('updated_by'))
+                    $this->updated_by = $user;
+                if ($this->hasAttribute('updated_at'))
+                    $this->updated_at = date('Y-m-d H:i:s');
+            }
+            if ($this->hasAttribute('flg_sentbox_entry')) {
+                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                    $this->flg_sentbox_entry = 'Y';
+                }
+            }
+            if ($this->hasAttribute('sync_status')) {
+                $this->sync_status = 'U';
+            }
+
+            $encrypt = $this->encryptModel($this->attributes);
+            $this->setAttributes($encrypt);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function afterFind() {
+        $this->decryptModel($this);
+        parent::afterFind();
+    }
+
+    public function decryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model->attributes));
+        foreach ($result as $key => $value) {
+            $decryptData = \Yii::$app->general->decryptData($model->{$value});
+            if ($decryptData) {
+                $model->{$value} = $decryptData;
+            } else {
+                if (($value == 'birth_date' || $value == 'dob') && !(bool) strtotime($model->{$value})) {
+                    $model->{$value} = '';
+                }
+            }
+        }
+        return $model;
+    }
+
+    private function encryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model));
+        foreach ($result as $key => $value) {
+            if ($this->hasAttribute($value) && $this->{$value} != '')
+                $model[$value] = \Yii::$app->general->encryptData($model[$value]);
+        }
+        return $model;
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }

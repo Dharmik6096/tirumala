@@ -24,6 +24,8 @@ use app\modules\configuration\models\TblMilkCollectionConfig;
 use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 use app\modules\installation\models\TblUserDownloadAck;
 use app\modules\installation\models\TblUserAndroid;
+use app\modules\installation\models\TblUserRoleMapping;
+use app\modules\installation\models\TblRole;
 
 /**
  * Default controller for the `vendorapi` module
@@ -168,6 +170,31 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $usrAckModel->user_code = $usrData->user_code;
                     $usrAckModel->download_pending = 1;
                     $saveModel[] = $usrAckModel;
+                }
+            } else {
+                $androidUsr = new TblUserAndroid();
+                $androidUsr->attributes = $ackModel->attributes;
+                $contact = $androidUsr->getContactDetails($org_type, $ackModel);
+                $androidUsr->user_code = Yii::$app->general->getCodeAutoIncrement($androidUsr);
+                $androidUsr->name = !empty($contact) ? $contact->firstname : $org_type;
+                $androidUsr->username = $org_type == 'VLC' ? $ackModel->dcs_code . '01' : ($org_type == 'BMC' ? $ackModel->bmc_code . '01' : $ackModel->mcc_plant_code . '01');
+                $androidUsr->password = Yii::$app->general->generateRandomString();
+                $androidUsr->mobile_no = !empty($contact) ? $contact->mobile_no : '';
+                $androidUsr->email = !empty($contact) ? $contact->email : '';
+                $saveModel[] = $androidUsr;
+                $usrAckModel = new TblUserDownloadAck();
+                $usrAckModel->attributes = $ackModel->attributes;
+                $usrAckModel->user_code = $androidUsr->user_code;
+                $usrAckModel->download_pending = 1;
+                $saveModel[] = $usrAckModel;
+                $roleModel = new TblRole();
+                $roleDetails = $roleModel->getRoleDetails($org_type);
+                $usrRole = new TblUserRoleMapping();
+                $usrRole->user_code = $androidUsr->user_code;
+                $usrRole->role_code = !empty($roleDetails) ? $roleDetails->role_code : '';
+                $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
+                if (empty($existRoleMap)) {
+                    $saveModel[] = $usrRole;
                 }
             }
 

@@ -11,21 +11,19 @@ use Yii;
  * @property string $role_name
  * @property string $description
  */
-class TblRole extends \yii\db\ActiveRecord
-{
+class TblRole extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_role';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['role_name', 'description'], 'string', 'max' => 255],
         ];
@@ -34,12 +32,25 @@ class TblRole extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'role_code' => Yii::t('app', 'Role Code'),
             'role_name' => Yii::t('app', 'Role Name'),
             'description' => Yii::t('app', 'Description'),
         ];
     }
+
+    public function getRoleDetails($org_type) {
+        $query = $this->find();
+        if (strtoupper($org_type == 'MCC')) {
+            $query->andWhere(['role_name' => 'BMC']);
+        } elseif ($org_type == 'BMC') {
+            $query->andWhere(['role_name' => 'BMC']);
+        } elseif ($org_type == 'VLC') {
+            $query->andWhere(['role_name' => 'VLC']);
+        }
+        $role = $query->one();
+        return $role;
+    }
+
 }
