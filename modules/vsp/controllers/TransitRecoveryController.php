@@ -33,49 +33,73 @@ class TransitRecoveryController extends \app\controllers\ChildController {
         $clientRender = isset($clientData['fileToRender']) ? $clientData['fileToRender'] : 'transit_recovery_mmd';
         $clientSp = isset($clientData['spName']) ? $clientData['spName'] : 'sp_process_ts_loss_shortage_calculation';
         if (Yii::$app->request->post()) {
+            $update_status = 'Generated';
             if (Yii::$app->request->post('submitBtn') === 'save_lock') {
                 $status = 'lock';
-            } else {
+            } else if(Yii::$app->request->post('submitBtn') === 'unlock'){
+                $status = 'Unlock';
+                $update_status = 'lock';
+            }
+            else {
                 $status = 'Processed';
             }
             $save_model =[];
             $historyModel = [];
             $post_data = Yii::$app->request->post();
-            $transist_model = new TblVspTransitRecovery();
-            $_GET['TransitRecovery']['status'] = 'Generated';
+            $transist_model_update_all = new TblVspTransitRecovery();
             $model_filter = $_GET['TransitRecovery'];
-            $model_filter['from_date'] =  date('Y-m-d', strtotime($model_filter['from_date']));
-            $model_filter['to_date'] =  date('Y-m-d', strtotime($model_filter['to_date']));
-            unset($model_filter['order_on']);
-            $transist_model->updateAll(['status' => $status],$model_filter);
-            foreach ($post_data['vsp_transit_recovery_code'] as $key => $value) {
-                $transist_model = new TblVspTransitRecovery();
-                $transist_model = $transist_model->find()->where(['vsp_transit_recovery_code' => $value])->one();
-                if(isset($post_data['ts_loss_responsibility'][$value])){
-                    $transist_model->ts_loss_responsibility = $post_data['ts_loss_responsibility'][$value][0];
+            $from_shift = Yii::$app->general->getshift($model_filter['from_shift']);
+            $to_shift = Yii::$app->general->getshift($model_filter['to_shift']);
+            $model_filter['from_date'] = date('Y-m-d H:i:s', strtotime($model_filter['from_date'] . ' ' . $from_shift));
+            $model_filter['to_date'] = date('Y-m-d H:i:s', strtotime($model_filter['to_date'] . ' ' . $to_shift));
+            $condition = ['and',
+                ['union_code'=>$model_filter['union_code']],
+                ['plant_code'=>$model_filter['plant_code']],
+                ['mcc_plant_code'=>$model_filter['mcc_plant_code']],
+                ['bmc_code'=>$model_filter['bmc_code']],
+                ['>=','from_date',$model_filter['from_date']],
+                ['<=','to_date',$model_filter['to_date']],
+                ['status' => $update_status],
+                // ['order_on'=>$model_filter['order_on']],
+            ];
+            $trans = $transist_model_update_all->updateAll(['status' => $status],$condition);
+            if(isset($post_data['vsp_transit_recovery_code'])){
+                foreach ($post_data['vsp_transit_recovery_code'] as $key => $value) {
+                    $transist_model = new TblVspTransitRecovery();
+                    $transist_model = $transist_model->find()->where(['vsp_transit_recovery_code' => $value])->one();
+                    if(isset($post_data['ts_loss_responsibility'][$value])){
+                        $transist_model->ts_loss_responsibility = $post_data['ts_loss_responsibility'][$value][0];
+                    }
+                    if(isset($post_data['qty_diff_type'][$value])){
+                        $transist_model->qty_diff_type = $post_data['qty_diff_type'][$value][0];
+                    }
+                    if(isset($post_data['qty_diff_responsibility'][$value])){
+                        $transist_model->qty_diff_responsibility = $post_data['qty_diff_responsibility'][$value][0];
+                    }
+                    if(isset($post_data['shortage_recovery'][$value])){
+                        $transist_model->shortage_recovery = $post_data['shortage_recovery'][$value][0];
+                    }
+                    if(isset($post_data['total_recovery_incharge'][$value])){
+                        $transist_model->total_recovery_incharge = $post_data['total_recovery_incharge'][$value][0];
+                    }
+                    if(isset($post_data['total_recovery_transporter'][$value])){
+                        $transist_model->total_recovery_transporter = $post_data['total_recovery_transporter'][$value][0];
+                    }
+                    $transist_model->status = $status;
+                    $save_model[] = $transist_model;
                 }
-                if(isset($post_data['qty_diff_type'][$value])){
-                    $transist_model->qty_diff_type = $post_data['qty_diff_type'][$value][0];
-                }
-                if(isset($post_data['qty_diff_responsibility'][$value])){
-                    $transist_model->qty_diff_responsibility = $post_data['qty_diff_responsibility'][$value][0];
-                }
-                if(isset($post_data['shortage_recovery'][$value])){
-                    $transist_model->shortage_recovery = $post_data['shortage_recovery'][$value][0];
-                }
-                if(isset($post_data['total_recovery_incharge'][$value])){
-                    $transist_model->total_recovery_incharge = $post_data['total_recovery_incharge'][$value][0];
-                }
-                if(isset($post_data['total_recovery_transporter'][$value])){
-                    $transist_model->total_recovery_transporter = $post_data['total_recovery_transporter'][$value][0];
-                }
-                $transist_model->status = $status;
-                $save_model[] = $transist_model;
             }
-            // var_dump($save_model);die;
+            // var_dump($trans);die;
             $transaction = $this->generalModel->saveTransaction($save_model, $historyModel, ['vsp transit recovery', 'edit']);
             if ($transaction == 'customRedirect') {
-                $this->redirect(['transit-loss-shortage']);
+                // var_dump($trans);die;
+                // $this->redirect(['transit-loss-shortage']);
+                return $this->render($clientRender, [
+                    'model' => $model,
+                    'modelData' => $modelData,
+                    'dataProvider' => $this->dataProvider,
+                    'output' => $this->output,
+        ]);
             }
         }
 //        $dataProvider = $model->transitshortagesearch(Yii::$app->request->queryParams);

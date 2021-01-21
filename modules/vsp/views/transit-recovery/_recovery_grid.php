@@ -33,8 +33,12 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
                 <th class="custom_grid_header"><?= Yii::t('app', $str)?></th>
             <?php
                 }
+                if($att != 'message'){
         ?>
             <th class="custom_grid_header"><?= Yii::t('app', 'Action')?></th>
+            <?php 
+                }
+            ?>
         </tr>
      </thead>
      <tbody>
@@ -67,7 +71,12 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
                         }
                     }
                 ?>
-                <td class="custom_grid_normal active_div edit_record" id="edit_id_<?= $i?>"><i class="fa fa-edit"></i></td>
+                <?php
+                    if($value_key != 'message'){?>
+                        <td class="custom_grid_normal active_div edit_record" id="edit_id_<?= $i?>"><i class="fa fa-edit"></i></td>
+                    <?php
+                    }
+                ?>
             </tr>
             <?php
             }
@@ -84,8 +93,12 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
         <div class="panel-footer">
             <?php
             if (!empty($output)) {
-                echo Html::submitButton( Yii::t('app', 'Save'),['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']);
-                echo Html::submitButton( Yii::t('app', 'Save & Lock'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save_lock']);
+                if(isset($output[0]['message'])){
+                    echo Html::submitButton( Yii::t('app', 'Unlock'),['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'unlock']);
+                }else{
+                    echo Html::submitButton( Yii::t('app', 'Save'),['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']);
+                    echo Html::submitButton( Yii::t('app', 'Save & Lock'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save_lock']);
+                }
             }
             ?>
             <?= Yii::$app->controls->custombutton('Cancel', 'transit-loss-shortage'); ?> 
