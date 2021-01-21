@@ -191,7 +191,7 @@ $script = '
     function calculateShortageRecovery(dd_value,row_number){
         var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number+" input").val();
         var dcs_code_value = $(".dcs_code-"+row_number).html();
-        var transaction_date_value = $(".transaction_date-"+row_number).html();
+        var from_date_value = $(".from_date-"+row_number).html();
         var actual_qty_value = parseFloat($(".actual_qty-"+row_number).html());
         var composite_qty_value = parseFloat($(".composite_qty-"+row_number).html());
         var qty_diff_responsibility_value = $("#dd_qty_diff_responsibility-"+row_number).val();
@@ -199,7 +199,7 @@ $script = '
             $.ajax({
                 type: "post",
                 url: "' . Url::to(['/vsp/transit-recovery/get-penalty-rate']) . '",
-                data: { dcs_code: dcs_code_value, transaction_date: transaction_date_value, qty_diff_type : dd_value},
+                data: { dcs_code: dcs_code_value, from_date: from_date_value, qty_diff_type : dd_value},
                 success: function(data) {
                     var shortage_recovery_value = ((actual_qty_value - composite_qty_value) * data.res).toFixed(2);
                     var shortage_recovery_append = "<input type=\'hidden\' class=\'shortage_recovery_input-"+row_number+"\' name=\'shortage_recovery["+vsp_transit_recovery_code_value+"][]\' value=\'"+shortage_recovery_value+"\'> <span>"+shortage_recovery_value+"</span>"
@@ -229,13 +229,13 @@ $script = '
             var total_recovery_incharge_append = "<input type=\'hidden\' class=\'total_recovery_incharge_input-"+row_number+"\' name=\'total_recovery_incharge["+vsp_transit_recovery_code_value+"][]\' value=\'"+diffrence_addition+"\'> <span>"+diffrence_addition+"</span>"
             $(".total_recovery_incharge-"+row_number).html(total_recovery_incharge_append);
 
-            var total_recovery_transporter_append = "<span>0</span>"
+            var total_recovery_transporter_append = "<input type=\'hidden\' class=\'total_recovery_transporter_input-"+row_number+"\' name=\'total_recovery_transporter["+vsp_transit_recovery_code_value+"][]\' value=\'0\'> <span>0</span>"
             $(".total_recovery_transporter-"+row_number).html(total_recovery_transporter_append);
         }else{
             var total_recovery_transporter_append = "<input type=\'hidden\' class=\'total_recovery_transporter_input-"+row_number+"\' name=\'total_recovery_transporter["+vsp_transit_recovery_code_value+"][]\' value=\'"+diffrence_addition+"\'> <span>"+diffrence_addition+"</span>"
             $(".total_recovery_transporter-"+row_number).html(total_recovery_transporter_append);
 
-            var total_recovery_incharge_append = "<span>0</span>"
+            var total_recovery_incharge_append = "<input type=\'hidden\' class=\'total_recovery_incharge_input-"+row_number+"\' name=\'total_recovery_incharge["+vsp_transit_recovery_code_value+"][]\' value=\'0\'> <span>0</span>"
             $(".total_recovery_incharge-"+row_number).html(total_recovery_incharge_append);
         }
     }

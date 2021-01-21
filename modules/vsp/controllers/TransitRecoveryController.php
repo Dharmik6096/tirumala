@@ -210,11 +210,11 @@ class TransitRecoveryController extends \app\controllers\ChildController {
 
     public function actionGetPenaltyRate(){
         $dcs_code = $_POST['dcs_code'];
-        $transaction_date = $_POST['transaction_date'];
+        $from_date = date('Y-m-d', strtotime($_POST['from_date']));
         $qty_diff_type = $_POST['qty_diff_type'];
 
         $penalty_rate_applicability = new TblCollectionPenaltyRateApplicability();
-        $penalty_rate_applicability = $penalty_rate_applicability->find()->where('cast(wef_date as date) <= \''.$transaction_date.'\'')->andWhere(['applicable_code' => $dcs_code])->andWhere(['penalty_type' => $qty_diff_type])->orderBy('wef_date DESC')->one();
+        $penalty_rate_applicability = $penalty_rate_applicability->find()->where('cast(wef_date as date) <= \''.$from_date.'\'')->andWhere(['applicable_code' => $dcs_code])->andWhere(['penalty_type' => $qty_diff_type])->orderBy('wef_date DESC')->one();
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!empty($penalty_rate_applicability)){
             return ['status' => 'success', 'res' => $penalty_rate_applicability->penalty_rate];
