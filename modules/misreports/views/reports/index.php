@@ -37,6 +37,8 @@ if (isset($data['url1'])) {
         $removeExportType = $data['removeExportType'];
     }
     $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
+
+    $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
     ?>
     <div class="panel-body padding-0">
         <div class="report-area not_ellipsis">
@@ -103,19 +105,21 @@ if (isset($data['url1'])) {
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
                                                 <?php
+                                                $multiple = in_array($value ,$multiArray) ? true : false ; 
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
-                                                    Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'));
+                                                    Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'), $multiple);
                                                 } else {
-                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC');
+                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC', $multiple);
                                                 }
                                                 ?>                
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('bmc_code'))) {
+                                            $multiple = in_array($value ,$multiArray) ? true : false ;
                                             ?>
                                             <div class="col-sm-3 val_bmc_code">
-                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), true); ?>
+                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
                                             </div>
                                             <?php
                                         }
