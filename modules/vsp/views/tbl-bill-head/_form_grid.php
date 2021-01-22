@@ -32,6 +32,11 @@ $attribute = [
             return isset($model->bill_head_for) ? Yii::$app->dropdown->getRecords('bill_head_for')['data'][$model->bill_head_for] : 'N/A';
         },],
     ['attribute' => 'sequence_no'],
+    ['attribute' => 'has_slab',
+//        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_slab'),
+        'value' => function($model) {
+            return $model->has_slab == 1 ? 'Yes' : 'No';
+        },],
 ];
 $grid_option = [
     'id' => 'bill-head-list',
@@ -44,7 +49,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/vsp/tbl-bill-head/update', 'id' => $model->bill_head_code], $options);
         },
         'mapping' => function ($url, $model) {
-            $disable = ($model->is_active == 0) ? 'disabled' : '';
+            $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-bill-head/bill-head-applicability', 'id' => $model->bill_head_code], $options);
         },

@@ -33,7 +33,7 @@ use app\modules\organisation\models\TblCustomerMasterHistory;
  */
 class TblRouteMappingSources extends \app\models\ChildModel {
 
-    public $dcs_code, $dcs_name, $dcs_code_ex;
+    public $dcs_code, $dcs_name, $dcs_code_ex, $ref_code;
     public $is_sentbox;
     public $customer_code, $customer_type, $union_code;
 
@@ -146,7 +146,7 @@ class TblRouteMappingSources extends \app\models\ChildModel {
 
     public function getRouteDCS($id, $values) {
         $query = $this->find()
-                ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.dcs_code_ex'])
+                ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.dcs_code_ex', 'tbl_dcs.ref_code'])
                 ->where(['tbl_route_mapping_sources.route_code' => $id, 'tbl_route_mapping_sources.is_active' => 1])
                 ->andWhere(['not in', 'tbl_route_mapping_sources.from_dest', $values])
                 ->joinWith(['dcsCode']);

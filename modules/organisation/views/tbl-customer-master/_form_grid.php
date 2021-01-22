@@ -83,6 +83,7 @@ $attribute = [
             return $detail;
         }
     ],
+    ['attribute' => 'aadhaar_no'],
 ];
 
 $grid_option = [

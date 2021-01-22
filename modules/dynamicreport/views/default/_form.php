@@ -3,6 +3,7 @@
 use yii\widgets\ActiveForm;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
+use yii\helpers\Html;
 
 $form = ActiveForm::begin(['options' => [
                 'id' => 'dynamicreport-form',
@@ -27,12 +28,28 @@ $form = ActiveForm::begin(['options' => [
         <?php
         $param = isset($data['controls']) ? $data['controls'] : [];
         foreach ($param as $control) {
+            $label = Yii::t('app', $control->control_label);
+            $cname = $control->control_name;
+            $spname = $control->control_sp;
+            $paramname = $control->control_param;
             if ($control->control_type == 'date') {
                 ?>
                 <div class="col-sm-3">
                     <?php
-//                    echo Yii::$app->controls->date($model, $form, $control->control_name, 'form-group col-sm-6 padding-left-5 padding-right-5', false);
                     echo Yii::$app->controls->date($model, $form, $control->control_name, 'form-group col-sm-3 padding-left-5 padding-right-5', false);
+                    ?>
+                </div>    
+                <?php
+            } if ($control->control_type == 'dep_drop') {
+                echo Html::hiddenInput('sp_' . $cname . '_name', $spname, ['id' => $cname . '_sp_name']);
+                echo Html::hiddenInput('sp_' . $cname . 'param', $paramname, ['id' => $cname . '-sp_param']);
+                $depends = $cname . '_sp_name,' . $cname . '-sp_param';
+                $paramname = !empty($paramname) ? 'dynamicform-' . str_replace(',', ',dynamicform-', $paramname) : '';
+                $depends = !empty($paramname) ? $depends . ',' . $paramname : $depends;
+                ?>
+                <div class="col-sm-3">
+                    <?php
+                    echo Yii::$app->dropdown->sp_dep_dropdown($model, $form, $depends, $cname, $label, $control->control_param);
                     ?>
                 </div>    
                 <?php
@@ -40,36 +57,40 @@ $form = ActiveForm::begin(['options' => [
                 ?>
                 <div class="col-sm-3 shift">
                     <?php
-                    $label = Yii::t('app', $control->control_label);
-                    $cname = $control->control_name;
-                    if (in_array($cname, array('union_code'))) {
-                        Yii::$app->dropdown->federation_union($model, $form, $cname, $label);
-                    } else if (in_array($cname, array('plant_code'))) {
-                        Yii::$app->dropdown->union_plant($model, $form, 'dynamicform-union_code', $cname, $label);
-                    } else if (in_array($cname, array('mcc_code'))) {
-                        Yii::$app->dropdown->plant_mcc($model, $form, 'dynamicform-plant_code', $cname, $label);
-                    } else if (in_array($cname, array('bmc_code'))) {
-                        Yii::$app->dropdown->mcc_bmc($model, $form, 'dynamicform-mcc_code', $cname, $label);
-                    } else if (in_array($cname, array('route_code'))) {
-                        Yii::$app->dropdown->union_routes($model, $form, 'dynamicform-union_code', 'form-group col-sm-6 padding-right-5 padding-left-0', $label, $cname);
-                    } else if (in_array($cname, array('dcs_code'))) {
-                        Yii::$app->dropdown->bmc_society($model, $form, 'dynamicform-bmc_code', $cname, $label);
-                    } else if (in_array($cname, array('member_code'))) {
-                        echo Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'dynamicform-dcs_code', 'form-group col-sm-6 padding-right-5 padding-left-5', $label, $cname);
-                    } else if (in_array($cname, array('customer_type'))) {
-                        echo Yii::$app->dropdown->customer_type($model, $form, 'dynamicform-bmc_code', $cname, $label, FALSE);
-                    } else if (in_array($cname, array('customer_code'))) {
-                        echo Yii::$app->dropdown->merge_dcs_customer($model, $form, 'dynamicform-bmc_code', $cname, $label);
-                    } else {
-                        echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-6 form-group', $label, false, $cname);
-                    }
+                    echo Yii::$app->dropdown->sp_dropdown($cname, $model, $form, 'col-sm-6 form-group', $label, $spname, $paramname);
+                    ?>
+                </div>   
+                <?php
+            } if ($control->control_type == 'staticdd') {
+                ?>
+                <div class="col-sm-3 shift">
+                    <?php
+                    echo Yii::$app->dropdown->sp_dropdown($cname, $model, $form, 'col-sm-6 form-group', $label, $spname, $paramname);
+                    ?>
+                </div>   
+                <?php
+            }if ($control->control_type == 'text') {
+                ?>
+                <div class="col-sm-3">
+                    <?php
+                    echo $form->field($model, $cname)->textInput(['maxlength' => true])
+                    ?>
+                </div>   
+                <?php
+            }if ($control->control_type == 'hidden') {
+                ?>
+                <div class="col-sm-3 shift">
+                    <?php
+                    echo Html::hiddenInput('sp_' . $cname . '_name', $paramname, ['id' => $cname . '_sp_name']);
                     ?>
                 </div>   
                 <?php
             }
         }
         ?>
-
+        <?php
+        echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
+        ?>
         <!--<div class="col-sm-3 mt25">-->
         <?php
         if ($param) {

@@ -267,6 +267,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionInchargeRemuneration() {
+        $this->report = 'InchargeRemuneration';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -283,7 +288,7 @@ class DefaultController extends \app\controllers\ChildController {
             $model->p_dcs_code = Yii::$app->session->get('Dcs');
         }
         $this->type = Yii::$app->request->post('submit');
-
+// var_dump($model);die;
         if ($this->type != 'tcpdf') {
             $controls = [];
             $param = explode(',', $this->data['param']);
@@ -629,10 +634,17 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '701 - Staff Salary',
             ],
             'VendorBill' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcsc_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
                 'path' => 'vsp/BillReportFormat1',
                 'scenario' => 'VendorBill',
                 'title' => '612 - Vendor Bill',
+                'tcpdf' => true,
+            ],
+            'InchargeRemuneration' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_from_date:string,p_to_date:string,p_union_code,p_report_name',
+                'path' => 'vsp/CCInchargeRemuneration',
+                'scenario' => 'InchargeRemuneration',
+                'title' => '614 - CC Incharge Remuneration',
                 'tcpdf' => true,
             ],
         ];

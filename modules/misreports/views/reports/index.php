@@ -213,7 +213,7 @@ if (isset($data['url1'])) {
                                             }
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type','type_wise_report'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type','type_wise_report','route_type_trans'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 

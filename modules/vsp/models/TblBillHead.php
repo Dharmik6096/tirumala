@@ -42,14 +42,14 @@ class TblBillHead extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code'], 'safe'],
             [['is_active'], 'default', 'value' => '1'],
             [['is_disburse_allowed'], 'default', 'value' => '1'],
-            [['is_default'], 'default', 'value' => '0'],
+            [['is_default', 'has_slab'], 'default', 'value' => '0'],
             ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code', 'bill_head_for'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
             ['default_bill_head_code', 'required', 'when' => function ($model) {
                     return $model->is_default == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbillhead-is_default').is(':checked'); 
           }"],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for'], 'safe']
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab'], 'safe']
         ];
     }
 

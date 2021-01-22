@@ -17,7 +17,7 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
      */
     public function rules() {
         return [
-            [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code','ref_code'], 'safe'],
+            [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code', 'ref_code', 'aadhaar_no'], 'safe'],
             [['is_active', 'originating_type'], 'integer'],
             [['bmc_code', 'mcc_plant_code', 'plant_code'], 'safe'],
             [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']]
@@ -65,7 +65,8 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
                 ->andFilterWhere(['like', 'tbl_customer_master.customer_name', $this->customer_name])
                 ->andFilterWhere(['like', 'tbl_customer_master.gst_no', $this->gst_no])
                 ->andFilterWhere(['like', 'tbl_customer_master.sap_code', $this->sap_code])
-                ->andFilterWhere(['like', 'tbl_customer_master.refference_code', $this->refference_code]);
+                ->andFilterWhere(['like', 'tbl_customer_master.refference_code', $this->refference_code])
+                ->andFilterWhere(['like', 'tbl_customer_master.aadhaar_no', $this->aadhaar_no]);
 
         return $dataProvider;
     }

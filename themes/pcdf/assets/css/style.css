@@ -4438,12 +4438,24 @@ td.custom_grid_normal.dynamic_value {
     font-size: 12px;
 }
 
+.fht-table-wrapper{
+    overflow: auto !important;
+}
+
+.fht-thead{
+    width: auto !important;
+}
+
 .dataTables_wrapper .dataTables_filter{
     display: none;
 }
 
 .dataTables_wrapper{
     overflow: auto !important;
+}
+
+.max_h_100-100 .dataTables_wrapper{
+    overflow: hidden !important;
 }
 
 table.dataTable{
@@ -4626,4 +4638,16 @@ table.dataTable tbody tr:nth-child(odd) {
 
 .s2-togall-button {
     display: none !important;
+}
+table.dataTable thead .search_filter td {
+    background-color: #fff !important;
+}
+
+table.dataTable thead .search_filter input[type="text"] {
+    max-width: 123px !important;
+    border: 1px solid #ccc;
+}
+
+.select2-container--krajee .select2-results>.select2-results__options {
+    overflow-x: hidden !important;
 }
