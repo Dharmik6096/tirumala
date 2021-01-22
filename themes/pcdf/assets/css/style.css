@@ -4623,3 +4623,7 @@ table.dataTable tbody tr:nth-child(odd) {
 .s2-togall-button:hover{
     color: #7a231c;
 }
+
+.s2-togall-button {
+    display: none !important;
+}

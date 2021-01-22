@@ -98,7 +98,7 @@ if (isset($data['url1'])) {
                                         if (in_array($value, array('plant_code'))) {
                                             ?>
                                             <div class="col-sm-3 val_plant_code">
-                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant', True); ?>
+                                                <?= Yii::$app->dropdown->union_plant($model, $form, 'reportsmodel-union_code', 'plant_code', 'Plant'); ?>
                                             </div>
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
@@ -106,7 +106,7 @@ if (isset($data['url1'])) {
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                     Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'));
                                                 } else {
-                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC', true);
+                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC');
                                                 }
                                                 ?>                
                                             </div>
