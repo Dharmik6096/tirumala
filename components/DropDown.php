@@ -1171,6 +1171,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select DPU Status'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Error'), 2 => Yii::t('app', 'Processed'), -1 => Yii::t('app', 'All')],
             ],
+            'route_type_trans' => [
+                'name' => 'route_type_trans',
+                'prompt' => Yii::t('app', 'Select Route Type'),
+                'data' => ['0' => Yii::t('app', 'Transaction'), '1' => Yii::t('app', 'Master')],
+            ],
         ];
         return $records[$l];
     }

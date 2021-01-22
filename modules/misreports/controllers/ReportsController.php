@@ -872,7 +872,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'BmcCollectionShiftReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,route_type_trans:static:route_type_trans',
                 'sp_name' => 'sp_mis_bmc_collection_shift_report',
                 'scenario' => 'BmcCollectionShiftReport',
                 'title' => '201 - BMC Collection Shift Report',
