@@ -290,6 +290,14 @@ $defaultToggle = true;
                                                     'mask' => '99-9999',])
                                                 ?>                                               <?php
                                             }
+                                        
+                                        if (in_array($value, array('p_dcsc_code'))) {
+                                            ?>
+                                            <div class="col-sm-3 val_dcs_code">
+                                                <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-p_bmc_code', 'p_dcsc_code', Yii::t('app', 'Name')); ?>
+                                            </div>
+                                            <?php
+                                        }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
