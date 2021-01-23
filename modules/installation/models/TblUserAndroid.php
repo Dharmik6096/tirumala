@@ -214,7 +214,7 @@ class TblUserAndroid extends \app\models\ChildModel {
         return $model;
     }
 
-    private function encryptModel($model) {
+    public function encryptModel($model) {
         $result = array_intersect($this->toEncrypt, array_keys($model));
         foreach ($result as $key => $value) {
             if ($this->hasAttribute($value) && $this->{$value} != '')
