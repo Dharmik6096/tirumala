@@ -13,6 +13,7 @@ $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($alia
 $bmc_info = Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' > ' .
         $fromDate . ' to ' . $toDate;
 $message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+$config = (isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['recovery_from_other_member']) && Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['recovery_from_other_member'] == 1) ? TRUE : FALSE;
 ?>
 <?php
 $array = $dataProvider->getModels();
@@ -32,7 +33,6 @@ $tot_amt = array_sum(array_map(function($array) {
         $form = ActiveForm::begin([
                     'id' => 'payment-adjust',
                     'validateOnBlur' => TRUE,
-                    
                     'validateOnChange' => TRUE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -40,36 +40,36 @@ $tot_amt = array_sum(array_map(function($array) {
         ?>
         <?php
         $attribute = [
-                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                 }],
-                ['attribute' => 'dcs_code', 'value' => function($model) {
+            ['attribute' => 'dcs_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                 }],
-                ['attribute' => 'member_code', 'value' => function($model) {
+            ['attribute' => 'member_code', 'value' => function($model) {
                     return substr($model->member_code, -4);
                 }, 'label' => Yii::t('app', 'Member Code')],
-                ['attribute' => 'member_code', 'value' => function($model) {
+            ['attribute' => 'member_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
                 }],
-                ['attribute' => 'kg_fat'],
-                ['attribute' => 'kg_snf'],
-                ['attribute' => 'qty', 'pageSummary' => true],
-                ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
-                ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
-                ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
-                ['attribute' => 'previous_hold', 'pageSummary' => true],
-                ['attribute' => 'previous_due', 'pageSummary' => true],
-                ['attribute' => 'net_payable', 'pageSummary' => true, 'contentOptions' => ['class' => 'final-amount'],],
-                ['attribute' => 'hold_amount',
+            ['attribute' => 'kg_fat'],
+            ['attribute' => 'kg_snf'],
+            ['attribute' => 'qty', 'pageSummary' => true],
+            ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
+            ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
+            ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
+            ['attribute' => 'previous_hold', 'pageSummary' => true],
+            ['attribute' => 'previous_due', 'pageSummary' => true],
+            ['attribute' => 'net_payable', 'pageSummary' => true, 'contentOptions' => ['class' => 'final-amount'],],
+            ['attribute' => 'hold_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
-                    return Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['value' => $model->member_payment_alias_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
+                    return Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $model->member_payment_alias_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'additional_pay',
+            ['attribute' => 'additional_pay',
                 'format' => 'raw',
                 //  'pageSummary' => true,
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
@@ -77,7 +77,25 @@ $tot_amt = array_sum(array_map(function($array) {
                     return Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']) . $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $model->additional_pay, 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'final_amount',
+            ['attribute' => 'adjust_recovery',
+                'format' => 'raw',
+                'visible' => $config,
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
+                //  'pageSummary' => true,
+                'value' => function ($model, $key, $index) use ($form) {
+                    return Html::activeHiddenInput($model, 'payment_cycle_code[' . $index . ']', ['class' => 'payment_cycle', 'value' => $model->payment_cycle_code]) . Html::activeHiddenInput($model, 'plant_code[' . $index . ']', ['class' => 'plant', 'value' => $model->plant_code]) . Html::activeHiddenInput($model, 'mcc_plant_code[' . $index . ']', ['class' => 'mcc', 'value' => $model->mcc_plant_code]) . Html::activeHiddenInput($model, 'bmc_code[' . $index . ']', ['class' => 'bmc', 'value' => $model->bmc_code]) . Html::activeHiddenInput($model, 'dcs_code[' . $index . ']', ['class' => 'dcs', 'value' => $model->dcs_code]) . Html::activeHiddenInput($model, 'member_code[' . $index . ']', ['class' => 'member', 'value' => $model->member_code]) . $form->field($model, 'adjust_recovery[' . $index . ']')->textInput(['class' => 'adjust-recovery form-control number-validate', 'value' => $model->adjust_recovery])->label(FALSE);
+                },
+            ],
+            ['attribute' => 'recovery',
+                'format' => 'raw',
+                'visible' => $config,
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
+                //  'pageSummary' => true,
+                'value' => function ($model, $key, $index) use ($form) {
+                    return $form->field($model, 'recovery[' . $index . ']')->textInput(['class' => 'recovery form-control', "readOnly" => TRUE, 'value' => $model->recovery])->label(FALSE);
+                },
+            ],
+            ['attribute' => 'final_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 //  'pageSummary' => true,
@@ -85,7 +103,7 @@ $tot_amt = array_sum(array_map(function($array) {
                     return $form->field($model, 'final_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $model->final_amount])->label(FALSE);
                 },
             ],
-                ['attribute' => 'adjust_remark',
+            ['attribute' => 'adjust_remark',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
@@ -111,15 +129,16 @@ $tot_amt = array_sum(array_map(function($array) {
         ?>
     </div>
     <div class="panel-footer" >
-        <?php //Yii::$app->controls->save('Confirm', $model);        ?>
+        <?php //Yii::$app->controls->save('Confirm', $model);           ?>
         <?= Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
         <?= Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
         <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?> 
     </div>
 </div>
-
 <div id='bill_head_view'></div>
 <?php ActiveForm::end(); ?>
+<div id="recoverOtherMember"></div>
+
 <?php
 $script = '$("#adjust").click(function() {
     $(".process_lock_flag").val("Process");
@@ -205,6 +224,39 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
     }
 }
 
+    $(document).ready(function () {
+        $('.hold-amount').each(function(){
+         var id = $(this).attr('id');
+         var parent = $(this).parents('tr');
+         var val = id.split('-');
+         var row_number = val[2];
+             calculte(row_number,parent);
+        }); 
+    });
+    function calculte(row_number,parent){
+        var adjust = parseFloat($('#tblmemberpaymentalias-adjust_amount-'+row_number).val());
+         var final = parseFloat(parent.find('.final-amount').text());
+        var hold = parseFloat($('#tblmemberpaymentalias-hold_amount-'+row_number).val());
+        var adjustRec = parseFloat($('#tblmemberpaymentalias-adjust_recovery-'+row_number).val());
+        var rec = parseFloat($('#tblmemberpaymentalias-recovery-'+row_number).val());
+         $('#tblmemberpaymentalias-final_amount-'+row_number).val('')
+        if(adjust == '' ||  isNaN(adjust)){
+            adjust=0;
+        }
+        if(hold == '' ||  isNaN(hold)){
+            hold=0;
+        }
+        if(adjustRec == '' ||  isNaN(adjustRec)){
+            adjustRec=0;
+        }
+        if(rec == '' ||  isNaN(rec)){
+            rec=0;
+        }
+        var net = final + adjust - hold + adjustRec - rec; 
+       
+        $('#tblmemberpaymentalias-final_amount-'+row_number).val(net);
+    }
+
 
     $('.cal-amount').on('blur',function(){
         var id = $(this).attr('id');
@@ -212,6 +264,10 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
         var adjust = parseFloat(parent.find('.adjust-amount').val());
         var final = parseFloat(parent.find('.final-amount').text());
         var hold = parseFloat(parent.find('.hold-amount').val());
+         var val = id.split('-');
+         var row_number = val[2];
+        var adjustRec = parseFloat(parent.find('.adjust-recovery').val());
+        var rec = parseFloat(parent.find('.recovery').val());
         parent.find('.net-amount').val('');
         if(adjust == '' ||  isNaN(adjust)){
             adjust=0;
@@ -219,8 +275,14 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
         if(hold == '' ||  isNaN(hold)){
             hold=0;
         }
-        var net = final + adjust - hold;  
-        if(net != '' && net < 0){
+        if(adjustRec == '' ||  isNaN(adjustRec)){
+            adjustRec=0;
+        }
+        if(rec == '' ||  isNaN(rec)){
+            rec=0;
+        }
+        var net = final + adjust - hold + adjustRec - rec; 
+        if((adjust !=0  || hold !=0) && net != '' && net < 0){
          bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
                 bootbox.hideAll();
                     $('#'+id).focus().select();
@@ -275,7 +337,62 @@ $('.adjust-amountasd').on('blur',function(){
           SumAmount();
         }
        }
-    });";
+    });
+    
+    $('.adjust-recovery').on('blur',function(){     
+        var adjustRecovery = parseFloat($(this).val());
+        var id = $(this).attr('id');
+        var parent = $(this).parents('tr');
+        var net = parseFloat(parent.find('.net-amount').val());
+        var dcs = parseFloat(parent.find('.dcs').val());
+        var plant = parseFloat(parent.find('.plant').val());
+        var mcc = parseFloat(parent.find('.mcc').val());
+        var bmc = parseFloat(parent.find('.bmc').val());
+        var payment_cycle_code = parseFloat(parent.find('.payment_cycle').val());
+        var member = parseFloat(parent.find('.member').val());
+        var alis_code = parseFloat(parent.find('.alis_code').val());
+        console.log(net);
+        console.log(adjustRecovery);
+        if(adjustRecovery !='' && !isNaN(adjustRecovery)){
+             $.ajax({
+                type: 'get',
+                url:'" . Url::to(['/payment/tbl-member-payment/validate-total-recovery']) . "',
+                    data:{'member_payment_alias_code':alis_code,'plant_code':plant,'mcc_plant_code':mcc,'bmc_code':bmc,'payment_cycle_code':payment_cycle_code,'dcs_code':dcs,'member_code':member,'adjust_recovery':adjustRecovery},
+                     success: function(data) {   
+                      var obj = $.parseJSON(data);
+                      if (obj.status == 'success')
+                      {
+                        $.ajax({
+                        type: 'get',
+                        url: '" . Url::to(['/payment/tbl-member-payment/recovery-adjust']) . "',
+                        data:{'member_payment_alias_code':alis_code,'plant_code':plant,'mcc_plant_code':mcc,'bmc_code':bmc,'payment_cycle_code':payment_cycle_code,'dcs_code':dcs,'member_code':member,'adjust_recovery':adjustRecovery},
+                            success: function(data) {     
+                                $('#recoverOtherMember').html(data);
+                                $('#recoverOtherMemberModal').modal('toggle');    
+                                $('#loadercontent').hide();
+                                $('#pageloader').hide();
+                            },    
+                            error: function(data) {    
+                                $('#loadercontent').hide();
+                                $('#pageloader').hide();
+                            }
+                        });
+                      }else{
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Adjust Recovery Must be '+obj.recovery+' </span></div></div>');
+                            parent.find('.adjust-recovery').val(obj.old_recovery);
+                        }
+                },
+                error:function(data){
+
+                }
+            });
+          
+        } else{
+//            parent.find('.adjust-recovery').val('');
+        }
+    });
+
+";
 $script .= " function SumAmountold()
  {
  var total = parseFloat(0.00);
@@ -287,7 +404,39 @@ $script .= " function SumAmountold()
         }).get();
         total=$tot_amt+total;
  $('#total-payment').html('Total Payable :: '+total.toFixed(2));
- }      ";
+ } 
+ 
+    $(document).on('change','.new_recovery input', function() { 
+        var trClass = $(this).closest('tr').attr('class');
+        claculateNetPay(trClass);
+    });
+    
+    function claculateNetPay(trClass){
+        var recovery = parseFloat($('#tblmemberpaymentalias-'+trClass+'-recovery').val());
+        var net = parseFloat($('#tblmemberpaymentalias-'+trClass+'-final_amount').val());
+        var oldRec = parseFloat($('#tblmemberpaymentalias-'+trClass+'-old_recovery').val());
+        
+        if(recovery == '' || isNaN(recovery)){
+            recovery = 0;
+        }
+        if(oldRec == '' || isNaN(oldRec)){
+            oldRec = 0;
+        }
+        var netPay = oldRec + recovery;
+        if(netPay > net){
+            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Recovery Not More Than Net Pay.</span></div></div>');
+                $('#tblmemberpaymentalias-'+trClass+'-recovery').val('');
+//                setTimeout(function(){
+//                    $('#tblmemberpaymentalias-'+trClass+'-recovery').focus();
+//                },100);
+        }else{
+//            var newNetPay= net-netPay;
+//            setTimeout(function(){
+//                $('#tblmemberpaymentalias-'+trClass+'-final_amount.final_amount').val(newNetPay.toFixed(2)); 
+//            }, 500);
+        }
+    } 
+ ";
 
 $this->registerJs($script, View::POS_END, 'payment-adjust-script');
 ?>

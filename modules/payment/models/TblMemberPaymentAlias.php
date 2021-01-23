@@ -69,7 +69,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
 
     public $payment_cycle;
     public $otp_code;
-    public $net_amount;
+    public $net_amount, $old_recovery;
 
     /**
      * @inheritdoc
@@ -86,9 +86,10 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
             [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'integer'],
             [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
-            [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'safe'],
+            [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'old_recovery'], 'safe'],
             [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
             [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+//            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
         ];
     }
 
@@ -267,6 +268,29 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             $to_date = date('d-m-Y', strtotime($data->to_datetime));
             $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
         }
+    }
+
+    public function CheckFinalAmount($attribute, $params) {
+        if (!empty($this->final_amount) && $this->final_amount < 0) {
+            $this->addError($attribute, Yii::t('app', "Net Payble Must Not Negative."));
+        }
+    }
+
+    public function getRecoverData() {
+        $query = $this->find()->where(['payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code])
+                ->andWhere(['!=', 'payment_status', 'Lock'])
+                ->andWhere(['>', 'final_amount', '0'])
+                ->all();
+
+        return $query;
+    }
+
+    public function getMemberWiseData() {
+        $query = $this->find()->where(['member_payment_alias_code' => $this->member_payment_alias_code])
+                ->andWhere(['!=', 'payment_status', 'Lock'])
+                ->one();
+
+        return $query;
     }
 
 }

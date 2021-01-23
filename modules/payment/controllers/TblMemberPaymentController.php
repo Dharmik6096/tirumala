@@ -49,6 +49,8 @@ use app\modules\payment\models\TblMemberPaymentHeadSearch;
  */
 class TblMemberPaymentController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['validate-total-recovery'];
+
     /**
      * Finds the TblMemberPayment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -205,6 +207,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_amt = Yii::$app->request->post('TblMemberPaymentAlias')['additional_pay'];
             $adjust_remark = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_remark'];
             $hold_amt = Yii::$app->request->post('TblMemberPaymentAlias')['hold_amount'];
+            $reco = Yii::$app->request->post('TblMemberPaymentAlias')['recovery'];
+            $adjust_reco = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'];
             $save_model = [];
             $cnt = 0;
             $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'Process';
@@ -220,6 +224,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $oldData = $data->oldAttributes;
                 $holdAmount = !empty($hold_amt[$key]) ? $hold_amt[$key] : 0;
                 $adjustAmount = !empty($adjust_amt[$key]) ? $adjust_amt[$key] : 0;
+                $recovery = !empty($reco[$key]) ? $reco[$key] : 0;
+                $adjust_recovery = !empty($adjust_reco[$key]) ? $adjust_reco[$key] : 0;
                 $addition = !empty($data->total_addition) ? $data->total_addition : 0;
                 $deduction = !empty($data->total_deduction) ? $data->total_deduction : 0;
                 $dcsCode = $data->dcs_code;
@@ -228,7 +234,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $data->additional_pay = $adjustAmount;
                 $data->adjust_remark = $adjust_remark[$key]; //!empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
                 $data->hold_amount = $holdAmount;
-                $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount;
+                $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount + $adjust_recovery - $recovery;
                 $data->payment_status = $processFlag;
                 $save_model[] = $historyModel;
                 $save_model[] = $data;
@@ -237,6 +243,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 }
                 $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
                 $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
+                $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
+                $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
             }
 
             $memberPaymentModel = new TblMemberPaymentAlias();
@@ -253,6 +261,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
                 $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
                 $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
+                $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
+                $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
             }
 
             foreach ($summaryModelData as $summaryData) {
@@ -263,7 +273,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 if (!empty($adjustmentSummary[$dcs])) {
                     $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                     $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
-                    $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'];
+                    $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
+                    $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
+                    $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
                 }
                 $save_model[] = $historyModel;
                 $save_model[] = $summaryData;
@@ -677,6 +689,83 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         } else {
             echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
         }
+    }
+
+    public function actionRecoveryAdjust() {
+        $model = new TblMemberPaymentAlias();
+        $model->attributes = Yii::$app->request->get();
+        if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
+            $saveModel = [];
+            $postData = Yii::$app->request->post()['TblMemberPaymentAlias'];
+            $pkCode = $postData['member_payment_alias_code'];
+            $adjust = $postData['adjust_recovery'];
+            unset($postData['member_payment_alias_code']);
+            unset($postData['adjust_recovery']);
+            $recoverModel = $model->find()->where(['member_payment_alias_code' => $pkCode])->one();
+            if (!empty($recoverModel)) {
+                $historyModel = new TblMemberPaymentAliasHistory();
+                Yii::$app->operation->history($recoverModel, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $oldAdjustRecovery = !empty($recoverModel->oldAttributes['adjust_recovery']) ? $recoverModel->oldAttributes['adjust_recovery'] : 0;
+                $recoverModel->adjust_recovery = $oldAdjustRecovery + $adjust;
+                $saveModel[] = $recoverModel;
+                foreach ($postData as $key => $value) {
+                    $RecModel = new TblMemberPaymentAlias();
+                    $modelData = $RecModel->find()->where(['member_payment_alias_code' => $key])->one();
+                    $historyModel = new TblMemberPaymentAliasHistory();
+                    Yii::$app->operation->history($modelData, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                    $oldRec = !empty($value['old_recovery']) ? $value['old_recovery'] : 0;
+                    $newRec = !empty($value['recovery']) ? $value['recovery'] : 0;
+                    $modelData->recovery = $oldRec + $newRec;
+                    $saveModel[] = $modelData;
+                }
+            }
+
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Adjust Recovery', 'create']);
+            if ($transaction == 'customRedirect') {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'success', 'msg' => $msg];
+            } else {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'error', 'msg' => $msg];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+        }
+        $recoverMember = $model->getRecoverData();
+        $aliasmodel = new TblMemberPaymentAlias();
+        $aliasmodel->attributes = Yii::$app->request->get();
+        $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
+
+        return $this->renderAjax('_recovery', [
+                    'recoverMember' => $recoverMember,
+                    'aliasmodel' => $aliasmodel,
+        ]);
+    }
+
+    public function actionValidateTotalRecovery() {
+        $response = [];
+        $response['status'] = 'success';
+        $response['recovery'] = '';
+        $model = new TblMemberPaymentAlias();
+        $model->attributes = Yii::$app->request->get();
+        $model->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
+        $recoverMember = $model->getMemberWiseData();
+        if (!empty($recoverMember)) {
+            $newrec = !empty($model->adjust_recovery) ? $model->adjust_recovery : 0;
+            $oldRec = !empty($recoverMember->adjust_recovery) ? $recoverMember->adjust_recovery : 0;
+            $totalRec = ($newrec) + ($oldRec);
+            $totalRemain = $totalRec + ($recoverMember->final_amount);
+            if (!empty($totalRemain) && $totalRemain > 0) {
+                $mustRec = $oldRec + ($recoverMember->final_amount);
+                $response['status'] = 'error';
+                $response['recovery'] = abs($mustRec);
+                $response['old_recovery'] = $oldRec;
+            }
+        }
+        return Json::encode($response);
     }
 
 }
