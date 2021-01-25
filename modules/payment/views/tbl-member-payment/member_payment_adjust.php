@@ -142,7 +142,48 @@ $tot_amt = array_sum(array_map(function($array) {
 <?php
 $script = '$("#adjust").click(function() {
     $(".process_lock_flag").val("Process");
-    $("#payment-adjust").submit();
+     var negativeVal = "No";
+    $(".final-amount").each(function() {
+        var parent = $(this).parents("tr");
+        var final = parseFloat(parent.find(".final-amount").text());
+        var netPay = parseFloat(parent.find(".net-amount").val());
+        if(final == "" ||  isNaN(final)){
+            final=0;
+        }
+        if(final < 0){
+            if((!isNaN(netPay) && netPay < 0)) {
+                negativeVal = "Yes";
+            }
+        }
+    });
+    var message = "' . $message . '";
+    var negativeCount = ' . $negativeValCount . ';
+    if(negativeCount > 0 || negativeVal == "Yes") {
+        var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+        bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
+    } else {
+        var totalRec=0;
+        var totaladjRec=0;
+        $(".adjust-recovery").each(function() {
+            var parent = $(this).parents("tr");
+            var adjustRec = parseFloat(parent.find(".adjust-recovery").val());
+            var recovery = parseFloat(parent.find(".recovery").val());
+                if(adjustRec == "" ||  isNaN(adjustRec)){
+                    adjustRec=0;
+                }
+                if(recovery == "" ||  isNaN(recovery)){
+                    recovery=0;
+                }
+            totalRec=totalRec+recovery;
+            totaladjRec=totaladjRec+adjustRec;
+        });
+            if(totalRec != totaladjRec) {
+                var dispmessage = "' . Yii::t('app', 'Sum of Adjust Recovery and Sum of Reovery Must be Same.') . '";
+                bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispmessage+"</span>");
+            } else {
+                 $("#payment-adjust").submit();
+            }
+    }
 });
 $("#adjust-lock").click(function() {
     $(".process_lock_flag").val("Lock");
@@ -253,8 +294,11 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
             rec=0;
         }
         var net = final + adjust - hold + adjustRec - rec; 
+        if(net != '' &&  !isNaN(net)){
+            $('#tblmemberpaymentalias-final_amount-'+row_number).val(net.toFixed(2));
+            SumAmount();
+        }
        
-        $('#tblmemberpaymentalias-final_amount-'+row_number).val(net);
     }
 
 
@@ -351,8 +395,6 @@ $('.adjust-amountasd').on('blur',function(){
         var payment_cycle_code = parseFloat(parent.find('.payment_cycle').val());
         var member = parseFloat(parent.find('.member').val());
         var alis_code = parseFloat(parent.find('.alis_code').val());
-        console.log(net);
-        console.log(adjustRecovery);
         if(adjustRecovery !='' && !isNaN(adjustRecovery)){
              $.ajax({
                 type: 'get',
