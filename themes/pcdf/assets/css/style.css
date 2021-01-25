@@ -4435,3 +4435,72 @@ td.custom_grid_normal.dynamic_value {
 .fht-thead{
     width: auto !important;
 }
+
+.dataTables_wrapper .dataTables_filter{
+    display: none;
+}
+
+.max_h_100-100 .dataTables_wrapper{
+    overflow: hidden !important;
+}
+
+table.dataTable{
+    border-collapse: collapse !important;
+    width: 100% !important;
+    margin-top: 15px;
+    border: 1px solid #ccc;
+}
+
+table.dataTable thead{
+    background-color: #7A231C !important;
+}
+
+table.dataTable, table.dataTable th {
+    white-space: nowrap !important;
+}
+
+table.dataTable thead tr th,
+table.dataTable thead tr th a{
+    color: white !important;
+    padding: 2px 4px 0px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-align: center;
+    line-height: unset !important;
+}
+
+table.dataTable thead .sorting_asc {
+    background-image: none !important;
+}
+
+table.dataTable thead .sorting{
+    background-image: none !important;
+}
+
+table.dataTable thead .sorting_desc{
+    background-image: none !important;
+}
+table.dataTable thead th, table.dataTable thead td{
+    padding: 0px !important;
+    border-bottom : none !important;
+    border: 1px solid #fff;
+}
+
+table.dataTable tbody th, table.dataTable tbody td{
+    padding: 3px !important;
+    border: 1px solid #ddd;
+    font-size: 11px;
+}
+
+table.dataTable tbody tr:nth-child(odd) {
+    background-color: #f1f1f1 /*dfedff*/;
+}
+
+table.dataTable thead .search_filter td {
+    background-color: #fff !important;
+}
+
+table.dataTable thead .search_filter input[type="text"] {
+    max-width: 123px !important;
+    border: 1px solid #ccc;
+}

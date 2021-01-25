@@ -30,7 +30,7 @@ class TblVspPaymentTransaction extends \app\models\ChildModel {
             [['vsp_payment_code', 'bill_head_code'], 'safe'],
             [['vsp_payment_code'], 'safe'],
             [['bill_head_code'], 'safe'],
-            [['amount', 'bill_head_type'], 'safe'],
+            [['amount', 'bill_head_type', 'general_formula'], 'safe'],
         ];
     }
 
