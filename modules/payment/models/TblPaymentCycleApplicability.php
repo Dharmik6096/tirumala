@@ -38,6 +38,8 @@ use app\modules\payment\models\TblPaymentCycle;
  */
 class TblPaymentCycleApplicability extends \app\models\ChildModel {
 
+    public $check_for, $data_status;
+
     /**
      * @inheritdoc
      */
