@@ -308,13 +308,22 @@ $script = "
             }
             $('#tblmember-total_animals').prop('readonly', true);
     });
-	
+	var changeAc = false;
 
     $('#tblmember-bank_code').on('change',function(){
+        var existBank = '" . $model->bank_code . "';
+        var newBank = $(this).val();
+        if(newBank == null) {
+            newBank = existBank;
+        }
         $('#tblmember-ifsc').val('');
-        $('#tblmember-bank_account_no').val('');
-//        $('#tblmember-ifsc').prop('readonly', false);
+        if(existBank != newBank || changeAc){
+            $('#tblmember-bank_account_no').val('');
+            changeAc = true;
+        }
     });
+
+
     $('#tblmember-branch_code').on('change',function(){
             
             var id = $(this).val();
