@@ -1174,7 +1174,7 @@ class DropDown extends Component {
             'check_for' => [
                 'name' => 'check_for',
                 'prompt' => Yii::t('app', 'Select Check For'),
-                'data' => ['data_lock_bmc' => Yii::t('app', 'Data Lock - BMC'), 'sync_lock_bmc' => Yii::t('app', 'Sync Lock - BMC'), 'billing_lock_bmc' => Yii::t('app', 'Billing Lock - BMC'), 'data_lock_member' => Yii::t('app', 'Data Lock - Member'), 'sync_lock_member' => Yii::t('app', 'Sync Lock - Member'), 'billing_lock_member' => Yii::t('app', 'Billing Lock - Member')],
+                'data' => ['data_lock_bmc' => Yii::t('app', 'Data Lock - BMC'), 'sync_lock_bmc' => Yii::t('app', 'Sync Lock - BMC'), 'data_lock_member' => Yii::t('app', 'Data Lock - Member'), 'sync_lock_member' => Yii::t('app', 'Sync Lock - Member')],
             ],
             'data_status' => [
                 'name' => 'data_status',
