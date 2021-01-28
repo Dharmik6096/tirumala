@@ -1064,7 +1064,7 @@ class TblDcsController extends ChildController {
         Yii::$app->general->checkDirectory($path, '0777');
         try {
             $file = \yii\web\UploadedFile::getInstanceByName('file');
-            $name = date('YmdHis') . rand(1000, 9999) . $file->name;
+            $name = date('YmdHis') . rand(1000, 9999) . str_replace(' ', '_', $file->name);
             if ($file->saveAs($path . $name)) {
                 $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
             } else {
