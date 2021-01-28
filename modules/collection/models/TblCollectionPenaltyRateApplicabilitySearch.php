@@ -12,12 +12,14 @@ use app\modules\collection\models\TblCollectionPenaltyRateApplicability;
  */
 class TblCollectionPenaltyRateApplicabilitySearch extends TblCollectionPenaltyRateApplicability {
 
+    public $code_ex, $ref_code, $name;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['penalty_rate_applicability_code', 'penalty_rate_code', 'penalty_type', 'wef_date', 'applicable_code', 'applicable_for', 'applicable_type', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['penalty_rate_applicability_code', 'penalty_rate_code', 'penalty_type', 'wef_date', 'applicable_code', 'applicable_for', 'applicable_type', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'code_ex', 'ref_code', 'name'], 'safe'],
             [['penalty_rate'], 'number'],
             [['originating_type'], 'integer'],
         ];
@@ -48,6 +50,7 @@ class TblCollectionPenaltyRateApplicabilitySearch extends TblCollectionPenaltyRa
         ]);
 
         $this->load($params);
+        $query->joinWith(['mainCustomerCode', 'dcsCode', 'customerTypeFor']);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -56,19 +59,28 @@ class TblCollectionPenaltyRateApplicabilitySearch extends TblCollectionPenaltyRa
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'penalty_rate' => $this->penalty_rate,
-            'wef_date' => $this->wef_date,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
-        ]);
 
+        if (!empty($this->wef_date)) {
+            $query->andwhere(['wef_date' => date('Y-m-d', strtotime($this->wef_date))]);
+        }
+        $query->andFilterWhere(['or',
+            ['like', 'tbl_dcs.dcs_code_ex', $this->code_ex],
+            ['like', 'tbl_customer_master.customer_code_ex', $this->code_ex]
+        ]);
+        $query->andFilterWhere(['or',
+            ['like', 'tbl_dcs.ref_code', $this->ref_code],
+            ['like', 'tbl_customer_master.ref_code', $this->ref_code]
+        ]);
+        $query->andFilterWhere(['or',
+            ['like', 'tbl_dcs.dcs_name', $this->name],
+            ['like', 'tbl_customer_master.customer_name', $this->name]
+        ]);
         $query->andFilterWhere(['like', 'penalty_rate_applicability_code', $this->penalty_rate_applicability_code])
                 ->andFilterWhere(['like', 'penalty_rate_code', $this->penalty_rate_code])
                 ->andFilterWhere(['like', 'penalty_type', $this->penalty_type])
                 ->andFilterWhere(['like', 'applicable_code', $this->applicable_code])
-                ->andFilterWhere(['like', 'applicable_for', $this->applicable_for])
+                ->andFilterWhere(['like', 'penalty_rate', $this->penalty_rate])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
                 ->andFilterWhere(['like', 'applicable_type', $this->applicable_type])
                 ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
                 ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
