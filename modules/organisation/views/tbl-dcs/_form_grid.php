@@ -151,6 +151,7 @@ $attribute = [
             return $detail;
         }
     ],
+    ['attribute' => 'aadhaar_no'],
     ['attribute' => 'bipl_code', 'label' => Yii::t('app', 'Reference Code'), 'value' => 'societyCodes.bipl_code', 'filter' => false, 'visible' => false],
     ['attribute' => 'is_name_request', 'value' => function($model) {
             return $model->is_name_request == 0 ? 'Downloaded' : 'Not Downloaded';

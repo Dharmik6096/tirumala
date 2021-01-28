@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Master Verification');
+$this->title = Yii::t('app', 'Bank Verification');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
