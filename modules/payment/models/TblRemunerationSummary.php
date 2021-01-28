@@ -46,9 +46,9 @@ class TblRemunerationSummary extends \app\models\ChildModel {
             [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
             [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
             [['union_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
-            [['from_datetime'], function ($attribute, $params) {
-            return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
-        }, 'skipOnError' => true, 'on' => 'processpayment'],
+//            [['from_datetime'], function ($attribute, $params) {
+//                    return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
+//                }, 'skipOnError' => true, 'on' => 'processpayment'],
             [['from_datetime'], 'ValidateDate', 'skipOnError' => true, 'on' => 'processpayment'],
         ];
     }
@@ -83,7 +83,10 @@ class TblRemunerationSummary extends \app\models\ChildModel {
     public function ValidateDate($attribute, $params, $process_alert = FALSE) {
         $from_date = date('Y-m-d', strtotime($this->from_datetime));
         $to_date = date('Y-m-d', strtotime($this->to_datetime));
-
+        if ($to_date < $from_date) {
+            $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+            return false;
+        }
         $query = TblRemunerationSummary::find()
                 ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
         if ($process_alert) {

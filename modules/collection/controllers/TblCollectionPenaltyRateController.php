@@ -14,6 +14,7 @@ use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\collection\models\TblCollectionPenaltyRateApplicabilityHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\collection\models\TblCollectionPenaltyRateApplicabilitySearch;
 
 /**
  * TblCollectionPenaltyRateController implements the CRUD actions for TblCollectionPenaltyRate model.
@@ -117,6 +118,7 @@ class TblCollectionPenaltyRateController extends \app\controllers\ChildControlle
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblCollectionPenaltyRateApplicability();
+        $appModel->searchModel = new TblCollectionPenaltyRateApplicabilitySearch();
         $customerType = new TblCustomerType();
         $customerType->union_code = $model->union_code;
         $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
@@ -135,6 +137,10 @@ class TblCollectionPenaltyRateController extends \app\controllers\ChildControlle
         ];
         $appModel->header_title = ' [Type: ' . Yii::$app->dropdown->getRecords('penalty_type')['data'][$model->penalty_type] . ', Rate: ' . $model->penalty_rate . '] ';
         $appModel->fields = [
+            'bmc_code' => ['view' => ['grid'], 'value' => 'bmc_code', 'filter' => FALSE],
+            'bmc_name' => ['view' => ['grid'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                }, 'filter' => FALSE],
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
