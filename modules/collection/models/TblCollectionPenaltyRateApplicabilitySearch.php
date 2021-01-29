@@ -82,7 +82,7 @@ class TblCollectionPenaltyRateApplicabilitySearch extends TblCollectionPenaltyRa
                 ->andFilterWhere(['like', 'penalty_rate', $this->penalty_rate])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->applicable_for])
                 ->andFilterWhere(['like', 'applicable_type', $this->applicable_type])
-                ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
+                ->andFilterWhere(['like', 'tbl_collection_penalty_rate_applicability.bmc_code', $this->bmc_code])
                 ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
                 ->andFilterWhere(['like', 'plant_code', $this->plant_code])
                 ->andFilterWhere(['like', 'union_code', $this->union_code])
