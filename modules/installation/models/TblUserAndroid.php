@@ -34,10 +34,11 @@ use app\modules\organisation\models\TblUnions;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblUserAndroid extends \app\models\ChildModel {
+class TblUserAndroid extends \yii\db\ActiveRecord {
 
     public $toEncrypt = ['password'];
     public $org_type, $org_code;
+    public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code;
 
     /**
      * @inheritdoc
@@ -52,7 +53,7 @@ class TblUserAndroid extends \app\models\ChildModel {
     public function rules() {
         return [
             [['user_code'], 'required'],
-            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code'], 'safe'],
+            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code'], 'safe'],
             [['originating_type'], 'integer'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['name', 'username', 'mobile_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
