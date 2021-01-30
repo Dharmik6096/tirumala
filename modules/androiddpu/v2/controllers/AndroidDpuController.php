@@ -123,6 +123,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
     public function actionVerification() {
         $res_data = [];
         $saveModel = [];
+        $sendNotificaton = FALSE;
         $data = $this->post_data;
         $content = !empty($data['content']) ? $data['content'] : [];
         $model = new TblAndroidInstallationDetails();
@@ -172,6 +173,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     $saveModel[] = $usrAckModel;
                 }
             } else {
+                $sendNotificaton = TRUE;
                 $androidUsr = new TblUserAndroid();
                 $androidUsr->attributes = $ackModel->attributes;
                 $contact = $androidUsr->getContactDetails($org_type, $ackModel);
@@ -201,6 +203,15 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $transaction = $this->generalModel->saveTransaction($saveModel, ['app verification', 'create']);
             if ($transaction !== 'customRedirect') {
                 return FALSE;
+            } elseif ($sendNotificaton) {
+                $pass = (!empty($androidUsr->password) && Yii::$app->general->decryptData($androidUsr->password) !== FALSE) ? Yii::$app->general->decryptData($androidUsr->password) : $androidUsr->password;
+                $message = 'Welcome to ' . Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name') . ',' . PHP_EOL . ' Your user name is ' . $androidUsr->username . ' and password is ' . $pass . ' to login in AMCS application.';
+                $sms_data = [];
+                if (YII_ENV_DEV) {
+                    
+                } else {
+                    Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE);
+                }
             }
             $androidDpuModel = new TblAndroidInstallationDetails();
             $androidDpuModel->android_installation_details_id = $model->android_installation_details_id;
