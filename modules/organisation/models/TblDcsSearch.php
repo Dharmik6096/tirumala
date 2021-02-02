@@ -138,7 +138,6 @@ class TblDcsSearch extends TblDcs {
             'pagination' => FALSE,
         ]);
         $query->joinWith(['routeSourceMapping'], true, 'INNER JOIN');
-        $query->andWhere(['tbl_dcs.bmc_code' => $this->bmc_code]);
 
         $query->andFilterWhere([
             'tbl_dcs.plant_code' => $this->plant_code,
@@ -147,6 +146,11 @@ class TblDcsSearch extends TblDcs {
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
 
+        if (empty($this->bmc_code)) {
+            $query->where('0=1');
+        } else {
+            $query->andWhere(['tbl_dcs.bmc_code' => $this->bmc_code]);
+        }
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
