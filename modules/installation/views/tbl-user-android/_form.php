@@ -1,69 +1,69 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\installation\models\TblUserAndroid */
+/* @var $model app\modules\product\models\TblProduct */
 /* @var $form yii\widgets\ActiveForm */
+
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
-<div class="tbl-user-android-form">
+<?php
+$form = ActiveForm::begin([
+            'validateOnBlur' => false,
+            
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
+?>
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'user_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'mobile_no')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'device_id')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'union_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'plant_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'mcc_plant_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'bmc_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'dcs_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <?= $form->field($model, 'x_col1')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col2')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col3')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col4')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col5')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+<?= $form->errorSummary($model); ?>
+<div class="row">
+    
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+        </div>
+        <div class="col-sm-2 ">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkcollection-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
+        </div>
+        <div class="col-sm-2 ">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkcollection-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
+        </div>  
+        <div class="col-sm-2 ">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollection-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
+        </div>  
+        <div class="col-sm-2 ">
+            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollection-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+        </div>
+    
+      <div class="col-sm-2">
+        <?= $form->field($model, 'name')->textInput() ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
+    <div class="col-sm-2">
+        <?= $form->field($model, 'username')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'password')->passwordInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'mobile_no')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'email')->textInput() ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
 </div>
+<?php ActiveForm::end(); ?>
+
+

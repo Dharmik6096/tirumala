@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'User Android');
+$this->title = Yii::$app->label->title('create', 'Role');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

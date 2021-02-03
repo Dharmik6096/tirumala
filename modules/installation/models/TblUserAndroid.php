@@ -52,7 +52,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['user_code'], 'required'],
+            [['user_code','username','password'], 'required'],
             [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code'], 'safe'],
             [['originating_type'], 'integer'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -60,7 +60,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
             [['email'], 'string', 'max' => 128],
             [['device_id'], 'string', 'max' => 500],
             [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
+            [['plant_code', 'plant_code','mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
         ];
     }
@@ -78,7 +78,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
             'email' => Yii::t('app', 'Email'),
             'device_id' => Yii::t('app', 'Device ID'),
             'union_code' => Yii::t('app', 'Union'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
+            'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'DCS'),

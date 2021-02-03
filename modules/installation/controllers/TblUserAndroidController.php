@@ -47,8 +47,11 @@ class TblUserAndroidController extends \app\controllers\ChildController {
     public function actionCreate() {
         $model = new TblUserAndroid();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->user_code]);
+        if ($model->load(Yii::$app->request->post())) {
+          $model->user_code = Yii::$app->general->getCodeAutoIncrement($model);
+        }
+        if ($model->save()) {
+            return $this->redirect(['index', 'id' => $model->user_code]);
         } else {
             return $this->render('create', [
                         'model' => $model,
@@ -66,7 +69,7 @@ class TblUserAndroidController extends \app\controllers\ChildController {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->user_code]);
+            return $this->redirect(['index', 'id' => $model->user_code]);
         } else {
             return $this->render('update', [
                         'model' => $model,

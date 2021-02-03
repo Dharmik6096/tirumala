@@ -14,19 +14,10 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
 
-    ['attribute' => 'union_code',
-        'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        },],
-    ['attribute' => 'plant_code'],
-    ['attribute' => 'mcc_plant_code'],
-    ['attribute' => 'bmc_code'],
-    ['attribute' => 'dcs_code'],
-    ['attribute' => 'name'],
-    ['attribute' => 'username'],
-    ['attribute' => 'password'],
-    ['attribute' => 'mobile'],
-    ['attribute' => 'email'],
+    ['attribute' => 'action_name'],
+    ['attribute' => 'menu_level'],
+    ['attribute' => 'parent_code'],
+    ['attribute' => 'description'],
 
 ];
 
