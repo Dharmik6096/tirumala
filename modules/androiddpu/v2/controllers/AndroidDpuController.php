@@ -22,6 +22,10 @@ use yii\helpers\ArrayHelper;
 use app\modules\usermanagement\models\TblAmcsAppMenuMapping;
 use app\modules\configuration\models\TblMilkCollectionConfig;
 use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
+use app\modules\installation\models\TblUserDownloadAck;
+use app\modules\installation\models\TblUserAndroid;
+use app\modules\installation\models\TblUserRoleMapping;
+use app\modules\installation\models\TblRole;
 
 /**
  * Default controller for the `vendorapi` module
@@ -118,6 +122,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
 
     public function actionVerification() {
         $res_data = [];
+        $saveModel = [];
+        $sendNotificaton = FALSE;
         $data = $this->post_data;
         $content = !empty($data['content']) ? $data['content'] : [];
         $model = new TblAndroidInstallationDetails();
@@ -139,9 +145,73 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $dcsModel->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 1], ['dcs_code' => $dcsModel->dcs_code]);
             }
             // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
-            $transaction = $this->generalModel->saveTransaction([$model], ['app verification', 'create']);
+            $saveModel[] = $model;
+            $ackModel = new TblUserDownloadAck();
+            $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+
+            $ackModel->dcs_code = !empty($orgDetail['dcs_code'][0]) ? $orgDetail['dcs_code'][0] : NULL;
+            $ackModel->bmc_code = !empty($orgDetail['bmc_code'][0]) ? $orgDetail['bmc_code'][0] : NULL;
+            $ackModel->mcc_plant_code = !empty($orgDetail['mcc_plant_code'][0]) ? $orgDetail['mcc_plant_code'][0] : NULL;
+            $ackModel->plant_code = !empty($orgDetail['plant_code'][0]) ? $orgDetail['plant_code'][0] : NULL;
+            $ackModel->union_code = $orgDetail['union_code'];
+            $ackModel->hash_key = $model->hash_key;
+            $ackModel->device_id = $data['device_id'];
+            $existAck = $ackModel->getExistData($org_type, $org_code);
+            if (!empty($existAck)) {
+                foreach ($existAck as $exist) {
+                    $ackModel->updateAll(['download_pending' => 3], ['ack_id' => $exist['ack_id']]);
+                }
+            }
+            $androidUsr = new TblUserAndroid();
+            $user = $androidUsr->getExistData($org_type, $ackModel);
+            if (!empty($user)) {
+                foreach ($user as $usrData) {
+                    $usrAckModel = new TblUserDownloadAck();
+                    $usrAckModel->attributes = $ackModel->attributes;
+                    $usrAckModel->user_code = $usrData->user_code;
+                    $usrAckModel->download_pending = 1;
+                    $saveModel[] = $usrAckModel;
+                }
+            } else {
+                $sendNotificaton = TRUE;
+                $androidUsr = new TblUserAndroid();
+                $androidUsr->attributes = $ackModel->attributes;
+                $contact = $androidUsr->getContactDetails($org_type, $ackModel);
+                $androidUsr->user_code = Yii::$app->general->getCodeAutoIncrement($androidUsr);
+                $androidUsr->name = !empty($contact) ? $contact->firstname : $org_type;
+                $androidUsr->username = $org_type == 'VLC' ? $ackModel->dcs_code . '01' : ($org_type == 'BMC' ? $ackModel->bmc_code . '01' : $ackModel->mcc_plant_code . '01');
+                $androidUsr->password = Yii::$app->general->generateRandomString();
+                $androidUsr->mobile_no = !empty($contact) ? $contact->mobile_no : '';
+                $androidUsr->email = !empty($contact) ? $contact->email : '';
+                $saveModel[] = $androidUsr;
+                $usrAckModel = new TblUserDownloadAck();
+                $usrAckModel->attributes = $ackModel->attributes;
+                $usrAckModel->user_code = $androidUsr->user_code;
+                $usrAckModel->download_pending = 1;
+                $saveModel[] = $usrAckModel;
+                $roleModel = new TblRole();
+                $roleDetails = $roleModel->getRoleDetails($org_type);
+                $usrRole = new TblUserRoleMapping();
+                $usrRole->user_code = $androidUsr->user_code;
+                $usrRole->role_code = !empty($roleDetails) ? $roleDetails->role_code : '';
+                $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
+                if (empty($existRoleMap)) {
+                    $saveModel[] = $usrRole;
+                }
+            }
+
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['app verification', 'create']);
             if ($transaction !== 'customRedirect') {
                 return FALSE;
+            } elseif ($sendNotificaton) {
+                $pass = (!empty($androidUsr->password) && Yii::$app->general->decryptData($androidUsr->password) !== FALSE) ? Yii::$app->general->decryptData($androidUsr->password) : $androidUsr->password;
+                $message = 'Welcome to ' . Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name') . ',' . PHP_EOL . ' Your user name is ' . $androidUsr->username . ' and password is ' . $pass . ' to login in AMCS application.';
+                $sms_data = [];
+                if (YII_ENV_DEV) {
+                    
+                } else {
+                    Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE);
+                }
             }
             $androidDpuModel = new TblAndroidInstallationDetails();
             $androidDpuModel->android_installation_details_id = $model->android_installation_details_id;
