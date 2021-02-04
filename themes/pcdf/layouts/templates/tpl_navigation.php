@@ -527,7 +527,16 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Authorization <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'User', 'url' => ['/user-management/user/index'], 'active' => ($cntrl == 'user'),],
-                        ['label' => 'Android User', 'url' => ['/installation/tbl-user-android/index'], 'active' => ($cntrl == 'bl-user-android'),],
+                        ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
+                        [
+                            'options' => ['class' => 'dropdown-submenu toggle_left'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">User Android <b class="caret"></b></a>',
+                            'items' => [
+                                ['label' => 'User', 'url' => ['/installation/tbl-user-android/index'], 'active' => ($cntrl == 'tbl-user-android')],
+                                ['label' => 'Role', 'url' => ['/installation/tbl-role/index'], 'active' => ($cntrl == 'tbl-role')],
+                                ['label' => 'Action', 'url' => ['/installation/tbl-action/index'], 'active' => ($cntrl == 'tbl-action')],
+                            ]
+                        ],
                         ['label' => 'Role', 'url' => ['/user-management/role/index'], 'active' => ($cntrl == 'role'),],
 //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                         ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],

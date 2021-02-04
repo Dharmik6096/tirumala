@@ -52,9 +52,10 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['user_code','username','password'], 'required'],
+            [['user_code','username','name','password','mobile_no','plant_code','mcc_plant_code'], 'required'],
             [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code'], 'safe'],
             [['originating_type'], 'integer'],
+            [['username'],'unique'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['name', 'username', 'mobile_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 128],

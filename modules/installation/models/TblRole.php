@@ -26,6 +26,8 @@ class TblRole extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['role_name', 'description'], 'string', 'max' => 255],
+            [['role_name'], 'unique'],
+            [['role_name', 'description'], 'required']
         ];
     }
 

@@ -45,19 +45,18 @@ class TblUserAndroidController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionCreate() {
-        $model = new TblUserAndroid();
+        $this->model = new TblUserAndroid();
+        $this->viewFile = "create";
+        if ($this->model->load(Yii::$app->request->post())) {
+           $this->model->user_code = Yii::$app->general->getCodeAutoIncrement($this->model);
 
-        if ($model->load(Yii::$app->request->post())) {
-          $model->user_code = Yii::$app->general->getCodeAutoIncrement($model);
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Role', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
-        if ($model->save()) {
-            return $this->redirect(['index', 'id' => $model->user_code]);
-        } else {
-            return $this->render('create', [
-                        'model' => $model,
-            ]);
-        }
-    }
+        return $this->customRender();
+}
 
     /**
      * Updates an existing TblUserAndroid model.
@@ -66,15 +65,17 @@ class TblUserAndroidController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionUpdate($id) {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'id' => $model->user_code]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+        $this->model = $this->findModel($id);
+        $this->viewFile = "update";
+        if ($this->model->load(Yii::$app->request->post())) {
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['User', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+       return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**

@@ -12,35 +12,19 @@ use yii\filters\VerbFilter;
 /**
  * TblRoleController implements the CRUD actions for TblRole model.
  */
-class TblRoleController extends Controller
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblRoleController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblRole models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblRoleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -49,10 +33,9 @@ class TblRoleController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -61,17 +44,16 @@ class TblRoleController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
-        $model = new TblRole();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'id' => $model->role_code]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+    public function actionCreate() {
+        $this->model = new TblRole();
+        $this->viewFile = "create";
+        if ($this->model->load(Yii::$app->request->post())) {
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Role', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**
@@ -80,17 +62,20 @@ class TblRoleController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
+    public function actionUpdate($id) {
+        $this->model= $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'id' => $model->role_code]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+        $this->viewFile = "update";
+        if ($this->model->load(Yii::$app->request->post())) {
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Role', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -99,8 +84,7 @@ class TblRoleController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -113,12 +97,12 @@ class TblRoleController extends Controller
      * @return TblRole the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblRole::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\depdrop\DepDrop;
 use yii\web\View;
 
 /* @var $this yii\web\View */
@@ -14,7 +15,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -23,24 +23,24 @@ $form = ActiveForm::begin([
 
 <?= $form->errorSummary($model); ?>
 <div class="row">
-    
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
-        </div>
-        <div class="col-sm-2 ">
-            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkcollection-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
-        </div>
-        <div class="col-sm-2 ">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkcollection-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
-        </div>  
-        <div class="col-sm-2 ">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollection-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
-        </div>  
-        <div class="col-sm-2 ">
-            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollection-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
-        </div>
-    
-      <div class="col-sm-2">
+
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+    </div>
+    <div class="col-sm-2 ">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tbluserandroid-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
+    </div>
+    <div class="col-sm-2 ">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbluserandroid-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
+    </div>  
+    <div class="col-sm-2 ">
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbluserandroid-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
+    </div>  
+    <div class="col-sm-2 ">
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbluserandroid-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+    </div>
+
+    <div class="col-sm-2">
         <?= $form->field($model, 'name')->textInput() ?>
     </div>
     <div class="col-sm-2">

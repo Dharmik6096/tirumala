@@ -1,45 +1,38 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 use yii\helpers\Html;
+use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
-
 ?>
 
 <?php
 
 $attribute = [
-
-    ['attribute' => 'union_code',
-        'value' => function ($model) {
+    ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        },],
-    ['attribute' => 'plant_code'],
-    ['attribute' => 'mcc_plant_code'],
-    ['attribute' => 'bmc_code'],
-    ['attribute' => 'dcs_code'],
+        },
+        'filter' => false],
+    ['attribute' => 'org_type', 'label' => Yii::t('app', 'Org. Type'),
+        'value' => function($model) {
+            return $model->getOrgType($model, 'type');
+        }],
+    ['attribute' => 'org_code', 'label' => Yii::t('app', 'Org. Code'), 'filter' => false, 'value' => function($model) {
+            return $model->getOrgType($model, 'code');
+        }],
     ['attribute' => 'name'],
     ['attribute' => 'username'],
-    ['attribute' => 'password'],
-    ['attribute' => 'mobile'],
+    ['attribute' => 'password', 'filter' => false],
+    ['attribute' => 'mobile_no'],
     ['attribute' => 'email'],
-
 ];
-
 $grid_option = [
-    'id' => 'action-grid',
+    'id' => 'user-android',
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
         'view' => true,
         'update' => true,
-//                'delete' => ['option' => 'action_name,action_name,tbl-action/delete','id'=> $model->action_code],
-            ]
-        ];
-
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-        ?>
+    ]
+];
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
