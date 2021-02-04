@@ -297,6 +297,9 @@ class SearchFilter {
             'TblVspBillHeadCriteriaSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblMasterTransferSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
