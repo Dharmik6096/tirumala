@@ -527,7 +527,6 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Authorization <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'User', 'url' => ['/user-management/user/index'], 'active' => ($cntrl == 'user'),],
-                        ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
                         [
                             'options' => ['class' => 'dropdown-submenu toggle_left'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">User Android <b class="caret"></b></a>',
