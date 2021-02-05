@@ -19,6 +19,9 @@ $attribute = [
     ['attribute' => 'org_code', 'label' => Yii::t('app', 'Org. Code'), 'filter' => false, 'value' => function($model) {
             return $model->getOrgType($model, 'code');
         }],
+    ['attribute' => 'org_code', 'label' => Yii::t('app', 'Org. Name'), 'filter' => false, 'value' => function($model) {
+            return $model->getOrgType($model, 'name');
+        }],
     ['attribute' => 'name'],
     ['attribute' => 'username'],
     ['attribute' => 'password', 'filter' => false],

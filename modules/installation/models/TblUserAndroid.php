@@ -5,6 +5,9 @@ namespace app\modules\installation\models;
 use Yii;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_user_android".
@@ -52,16 +55,16 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['user_code','username','name','password','mobile_no','plant_code','mcc_plant_code'], 'required'],
+            [['user_code', 'username', 'name', 'password', 'mobile_no', 'plant_code', 'mcc_plant_code'], 'required'],
             [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code'], 'safe'],
             [['originating_type'], 'integer'],
-            [['username'],'unique'],
+            [['username'], 'unique'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['name', 'username', 'mobile_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 128],
             [['device_id'], 'string', 'max' => 500],
             [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'plant_code','mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
+            [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
         ];
     }
@@ -119,6 +122,14 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 return 'BMC';
             } elseif (!empty($data->mcc_plant_code)) {
                 return 'MCC';
+            }
+        } elseif ($return == 'name') {
+            if (!empty($data->dcs_code)) {
+                return Yii::$app->general->getforeignkey($data->dcsCode, 'dcs_name');
+            } elseif (!empty($data->bmc_code)) {
+                return Yii::$app->general->getforeignkey($data->bmcCode, 'bmc_name');
+            } elseif (!empty($data->mcc_plant_code)) {
+                return Yii::$app->general->getforeignkey($data->mccCode, 'name');
             }
         } else {
             if (!empty($data->dcs_code)) {
@@ -227,6 +238,18 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
 }
