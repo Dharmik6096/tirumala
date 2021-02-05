@@ -5,6 +5,8 @@ namespace app\modules\installation\controllers;
 use Yii;
 use app\modules\installation\models\TblUserAndroid;
 use app\modules\installation\models\TblUserAndroidSearch;
+use app\modules\installation\models\TblUserRoleMapping;
+use app\modules\installation\models\TblRole;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -48,7 +50,7 @@ class TblUserAndroidController extends \app\controllers\ChildController {
         $this->model = new TblUserAndroid();
         $this->viewFile = "create";
         if ($this->model->load(Yii::$app->request->post())) {
-           $this->model->user_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $this->model->user_code = Yii::$app->general->getCodeAutoIncrement($this->model);
 
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Role', 'create']);
             if ($transaction == 'customRedirect') {
@@ -56,7 +58,7 @@ class TblUserAndroidController extends \app\controllers\ChildController {
             }
         }
         return $this->customRender();
-}
+    }
 
     /**
      * Updates an existing TblUserAndroid model.
@@ -73,7 +75,7 @@ class TblUserAndroidController extends \app\controllers\ChildController {
                 return $this->{$transaction}();
             }
         }
-       return $this->render('update', [
+        return $this->render('update', [
                     'model' => $this->model,
         ]);
     }
@@ -103,6 +105,75 @@ class TblUserAndroidController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionMapRoles($id) {
+        $this->model = new TblRole();
+        $this->viewFile = "_map_user_role";
+        $userModel = $this->findModel($id);
+        $menuArray = [];
+        $menuArray = $this->model->getRoleDetail();
+        $mappingModel = new TblUserRoleMapping();
+        $selectedArray = [];
+        $selectedArray = $mappingModel->getExistMapingMenu($id);
+        if (Yii::$app->request->post()) {
+
+            $postArray = [];
+            $postArray = Yii::$app->request->post()['TblRole']['role_code'];
+            $master = [];
+            $auto_inc = 1;
+            $newAssignments = [];
+            if (!empty($postArray)) {
+                $newAssignments = $postArray;
+            }
+            $oldAssignments = [];
+            if (!empty($selectedArray)) {
+                $oldAssignments = array_keys($selectedArray);
+            }
+            $toAssign = array_diff($newAssignments, $oldAssignments);
+            $toRevoke = array_values(array_diff($oldAssignments, $newAssignments));
+            $delete = [];
+            if (!empty($toRevoke)) {
+                foreach ($toRevoke as $revoke_key) {
+                    $model = new TblUserRoleMapping();
+                    $model->role_code = (string) $revoke_key;
+                    $model->user_code = $id;
+                    $record = $model->getExistMappedmenus($id);               
+                    if (!empty($record)) {
+                        $delete[] = $record;
+                    }
+                }
+            }
+
+            if (!empty($toAssign)) {
+                foreach ($toAssign as $Assign_key) {
+                    $model = new TblUserRoleMapping();
+                    $model->role_code = $Assign_key;
+                    $model->user_code = $id;
+                    $master[] = $model;
+                    $auto_inc++;
+                }
+            }
+            $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Role Menu Mapping', 'edit']);
+
+            $selectedArray = !empty($postArray) ? $postArray : [];
+            if ($transaction == 'customRedirect')
+                if ($transaction == 'customRedirect') {
+                    return $this->{$transaction}();
+                } 
+                  return $this->render('_map_user_role', [
+                       'model' => $this->model,
+           ]);
+        }
+        return $this->render('_map_user_role', [
+                    'model' => $this->model,
+                    'mappingModel' => $mappingModel,
+                    'userModel' => $userModel,
+                    'defaultValue' => $this->model->role_code,
+                    'selectedArray' => $selectedArray,
+                    'menuArray' => $menuArray,
+                    'id' => $id
+        ]);
     }
 
 }

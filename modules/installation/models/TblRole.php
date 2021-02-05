@@ -3,7 +3,7 @@
 namespace app\modules\installation\models;
 
 use Yii;
-
+use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "tbl_role".
  *
@@ -52,6 +52,15 @@ class TblRole extends \yii\db\ActiveRecord {
             $query->andWhere(['role_name' => 'VLC']);
         }
         $role = $query->one();
+        return $role;
+    }
+
+    public function getRoleDetail() {
+        $allMenu = $this->find()
+                ->orderBy(['role_code' => SORT_ASC])
+                ->asArray()
+                ->all();
+        $role = ArrayHelper::map($allMenu, 'role_code', 'role_name');
         return $role;
     }
 

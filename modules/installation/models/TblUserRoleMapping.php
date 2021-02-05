@@ -3,6 +3,9 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use app\modules\installation\models\TblRole;
+use yii\helpers\ArrayHelper;
+
 
 /**
  * This is the model class for table "tbl_user_role_mapping".
@@ -40,5 +43,18 @@ class TblUserRoleMapping extends \yii\db\ActiveRecord {
             'user_code' => Yii::t('app', 'User Code'),
         ];
     }
+
+      public function getExistMapingMenu($id) {
+        $query = $this->find()
+                ->where(['user_code' => $id])
+                ->all();
+        return ArrayHelper::map($query, 'role_code', 'role_code');
+    }
+    public function getExistMappedmenus() {
+        return $this->find()
+                        ->where(['user_code' => $this->user_code, 'role_code' => $this->role_code])
+                        ->one();
+    }
+    
 
 }

@@ -35,6 +35,10 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'update' => true,
+         'mapping' => function ($url, $model) {
+            $options = ['data-name' => $model->username, 'data-val' => $model->user_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Role Mapping'];
+            return GhostHtml::a('<i class="fa fa-key"></i>', ['/installation/tbl-user-android/map-roles', 'id' => $model->user_code], $options);
+        },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
