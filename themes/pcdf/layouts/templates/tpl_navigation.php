@@ -527,15 +527,6 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Authorization <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'User', 'url' => ['/user-management/user/index'], 'active' => ($cntrl == 'user'),],
-                        [
-                            'options' => ['class' => 'dropdown-submenu toggle_left'],
-                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">User Android <b class="caret"></b></a>',
-                            'items' => [
-                                ['label' => 'User', 'url' => ['/installation/tbl-user-android/index'], 'active' => ($cntrl == 'tbl-user-android')],
-                                ['label' => 'Role', 'url' => ['/installation/tbl-role/index'], 'active' => ($cntrl == 'tbl-role')],
-                                ['label' => 'Action', 'url' => ['/installation/tbl-action/index'], 'active' => ($cntrl == 'tbl-action')],
-                            ]
-                        ],
                         ['label' => 'Role', 'url' => ['/user-management/role/index'], 'active' => ($cntrl == 'role'),],
 //                ['label' => 'Set Originating Location', 'url' => ['/user-management/permission/set-originate-action'], 'active' => ($cntrl == 'permission'),],
                         ['label' => 'Permission', 'url' => ['/user-management/permission/index'], 'active' => ($cntrl == 'permission'),],
@@ -543,6 +534,15 @@ echo GhostMenu::widget([
                         ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
                         ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
                     ],
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu toggle_left'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">User Android <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => 'User', 'url' => ['/installation/tbl-user-android/index'], 'active' => ($cntrl == 'tbl-user-android')],
+                        ['label' => 'Role', 'url' => ['/installation/tbl-role/index'], 'active' => ($cntrl == 'tbl-role')],
+                        ['label' => 'Action', 'url' => ['/installation/tbl-action/index'], 'active' => ($cntrl == 'tbl-action')],
+                    ]
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
