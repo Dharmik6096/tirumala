@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'DPU Master Data'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'DPU Station Detail'));
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
