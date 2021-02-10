@@ -7,29 +7,29 @@ use yii\web\View;
 use kartik\grid\GridView;
 
 $attribute = [
-    
-      
-    ['attribute' => 'company_code','label'=>'Union' ,'value' => function($model) {
+
+
+    ['attribute' => 'company_code', 'label' => 'Union', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }],
-    ['attribute' => 'ref_code','label'=>'Dcs Name' ,'value' => function($model) {
+    ['attribute' => 'ref_code', 'label' => 'Dcs Name', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }],
     ['attribute' => 'station_code'],
     ['attribute' => 'vendor_code'],
     ['attribute' => 'flag_value', 'value' => function($model) {
             return $model->flag_value == 1 ? 'Not Transfer' : 'Transfer';
-    }],
+        }],
     ['attribute' => 'flag_key'],
-   [ 'attribute' => 'created_at',
+    [ 'attribute' => 'created_at',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->created_at);
-        }],
+    return Yii::$app->controls->view_datetime($model->created_at);
+}],
     ['attribute' => 'transferred_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -37,8 +37,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_datetime($model->transferred_datetime);
-        }],
+    return Yii::$app->controls->view_datetime($model->transferred_datetime);
+}],
     ['attribute' => 'transferred_by'],
 ];
 
@@ -47,24 +47,26 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-       'force-sent' => function ($url, $model) {
-            $name =$model->flag_value;
-            $options = [ 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Force Sent','class' => 'force-sent', 'data-val' => $model->id, 'data-name' => $name];
+        'force-sent' => function ($url, $model) {
+            $name = $model->flag_value;
+            $ref = Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+            $options = [ 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Force Sent', 'class' => 'force-sent', 'data-val' => $model->id, 'data-name' => $name,'data-ref'=>$ref];
             return GhostHtml::a_alert('<i class="fa fa-upload"></i>', ['/installation/dpu-station-detail/force-sent', 'id' => $model->id], $options);
-        }, 
-        
-    ]
+        },
+            ]
         ];
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
-<?php
-$script = "
+        <?php
+
+        $script = "
 $(document).ready(function(){
     $(document).on('click','.force-sent',function(e){
     var id= $(this).attr('data-val');
     var name = $(this).attr('data-name');
+    var ref = $(this).attr('data-ref');
     bootbox.confirm({
-        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to Update \"'+name+'\"?</span></div></div>',
+        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to Force Sent \"'+ref+'\"?</span></div></div>',
         buttons: {
             'cancel': {
                             label: 'Cancel',
@@ -104,6 +106,6 @@ $(document).ready(function(){
     });
     });
 });";
-$this->registerJs($script, View::POS_END, 'dpu-station-detail-index');
+        $this->registerJs($script, View::POS_END, 'dpu-station-detail-index');
 
-       
+        
