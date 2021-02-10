@@ -25,19 +25,19 @@ $form = ActiveForm::begin([
 <div class="row">
 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'),$readonly); ?>
     </div>
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tbluserandroid-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tbluserandroid-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '',$readonly); ?>
     </div>
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbluserandroid-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbluserandroid-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, '',$readonly); ?>
     </div>  
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbluserandroid-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbluserandroid-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'),FALSE, '','',$readonly); ?>
     </div>  
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbluserandroid-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbluserandroid-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'),FALSE, '',$readonly); ?>
     </div>
 
     <div class="col-sm-2">

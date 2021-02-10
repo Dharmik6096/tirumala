@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Android User'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'User'));
 $this->params['menu'][] = Yii::$app->controls->add('Android User');
 
 ?>

@@ -52,7 +52,7 @@ class TblUserAndroidController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->user_code = Yii::$app->general->getCodeAutoIncrement($this->model);
 
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Role', 'create']);
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['User', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -154,10 +154,9 @@ class TblUserAndroidController extends \app\controllers\ChildController {
                     $auto_inc++;
                 }
             }
-            $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Role Menu Mapping', 'edit']);
+            $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['User Role Mapping', 'edit']);
 
             $selectedArray = !empty($postArray) ? $postArray : [];
-            if ($transaction == 'customRedirect')
                 if ($transaction == 'customRedirect') {
                     return $this->{$transaction}();
                 } 

@@ -29,9 +29,12 @@ class TblAction extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['menu_level', 'parent_code', 'action_type', 'action_for'], 'integer'],
+            [['action_type', 'action_for'], 'integer'],
             [['action_name', 'description'], 'string', 'max' => 255],
             [['action_name', 'menu_level', 'parent_code', 'description'], 'required'],
+            [['menu_level','parent_code'], function ($attribute, $params) {
+                 Yii::$app->general->vaildateNumericField($this, $attribute, $params);
+                }],
         ];
     }
 

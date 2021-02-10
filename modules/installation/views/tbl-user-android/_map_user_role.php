@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
 
-$title = Yii::$app->label->title('create', 'User Role');
+$title = Yii::$app->label->title('create', 'Role');
 $button = Yii::$app->label->button('create');
 
 $this->title = Yii::t('app', $title);
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading"><?= Yii::t('app', 'User Role For') . ' ' . $userModel->user_code. ' ' .$userModel->username ?></div>
+    <div class="panel-heading"><?= Yii::t('app', ' Role For ') . ' ' .$userModel->username ?></div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin(['options' => [

@@ -4,8 +4,7 @@ use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 
-$this->title = Yii::$app->label->title('view', 'Android User');
-
+$this->title = Yii::$app->label->title('view', 'User');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -16,57 +15,62 @@ $this->title = Yii::$app->label->title('view', 'Android User');
         <div class="table-responsive">
             <?php
             $attributes = [
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
+                        [
                             'attribute' => 'plant_code',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                    ],
-                ], 
-                 [
-                    'columns' => [
-                            [
-                            'attribute' => 'mcc_plant_code',
-                            'valueColOptions' => ['style' => 'width:30%'],
-                        ],
-                            [
-                            'attribute' => 'bmc_code',
+                             'value'=> Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                        [
+                            'attribute' => 'bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'dcs_code',
+                             'value'=> Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'user_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'name',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
-                            [
+                        [
                             'attribute' => 'username',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
-                ], 
+                ],
                 [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'password',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -74,12 +78,11 @@ $this->title = Yii::$app->label->title('view', 'Android User');
                             'attribute' => 'mobile_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            
                     ],
                 ],
                 [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'email',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -87,11 +90,8 @@ $this->title = Yii::$app->label->title('view', 'Android User');
                             'attribute' => 'device_id',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            
                     ],
                 ],
-                
-                 
             ];
 
             // View file rendering the widget

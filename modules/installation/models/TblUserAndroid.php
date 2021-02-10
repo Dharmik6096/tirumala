@@ -65,7 +65,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
             [['device_id'], 'string', 'max' => 500],
             [['union_code'], 'string', 'max' => 3],
             [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],    
         ];
     }
 

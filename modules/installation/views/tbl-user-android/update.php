@@ -1,5 +1,7 @@
 <?php
-$this->title = Yii::$app->label->title('edit', 'User Android');
+$this->title = Yii::$app->label->title('edit', 'User');
+use yii\web\View;
+
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
