@@ -804,7 +804,7 @@ class GeneralFunctions extends Component {
         return FALSE;
     }
 
-    public function base64url_encode($data) {
+    public function base64url_encode($data){
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
