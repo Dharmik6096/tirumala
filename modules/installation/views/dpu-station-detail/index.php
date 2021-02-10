@@ -1,7 +1,5 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'DPU Station Details'));
-$this->params['menu'][] = Yii::$app->controls->add('DPU Station Detail');
-//$this->params['menu'][] = Yii::$app->controls->import('transporter', $this);
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'DPU Master Data'));
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
