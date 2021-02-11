@@ -80,6 +80,12 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_vsp_payment_varddan',
                 ],
             ],
+            'MMD' => [
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
+                    'sp_name' => 'sp_remuneration_payment_mmd',
+                ],
+            ],
         ];
     }
 
