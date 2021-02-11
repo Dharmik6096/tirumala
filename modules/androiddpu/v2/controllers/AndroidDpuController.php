@@ -191,12 +191,14 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $saveModel[] = $usrAckModel;
                 $roleModel = new TblRole();
                 $roleDetails = $roleModel->getRoleDetails($org_type);
-                $usrRole = new TblUserRoleMapping();
-                $usrRole->user_code = $androidUsr->user_code;
-                $usrRole->role_code = !empty($roleDetails) ? $roleDetails->role_code : '';
-                $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
-                if (empty($existRoleMap)) {
-                    $saveModel[] = $usrRole;
+                if (!empty($roleDetails)) {
+                    $usrRole = new TblUserRoleMapping();
+                    $usrRole->user_code = $androidUsr->user_code;
+                    $usrRole->role_code = !empty($roleDetails) ? $roleDetails->role_code : '';
+                    $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
+                    if (empty($existRoleMap)) {
+                        $saveModel[] = $usrRole;
+                    }
                 }
             }
 
