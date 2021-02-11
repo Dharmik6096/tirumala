@@ -265,6 +265,15 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                         Yii::$app->db->createCommand("insert into tbl_purchase_rate_applicability (created_at,created_by,is_active,updated_at,updated_by,wef_date,dcs_code,purchase_rate_code,shift_code,union_code,rate_type,rate_gen_method_code,download_date_time,is_download,originating_org_code,originating_org_type,originating_type) select created_at,created_by,is_active,updated_at,updated_by,wef_date,dcs_code,purchase_rate_code,shift_code,union_code,rate_type,rate_gen_method_code,download_date_time,0,originating_org_code,originating_org_type,originating_type from tbl_purchase_rate_applicability_pending where purchase_rate_code=:purchase_rate_code")
                                 ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
                                 ->execute();
+
+                        Yii::$app->db->createCommand("INSERT INTO dpu_station_detail (station_code, flag_key, flag_value, other_value, vendor_code, company_code, created_at, created_by, ref_code) select  right('000000000000' + d.ref_code, 12), 'RATE', 1, tp.purchase_rate_code, 'EIPL8', tp.union_code, tp.created_at, 'PORTAL', tp.dcs_code from tbl_purchase_rate_applicability_pending tp inner join tbl_dcs d on d.dcs_code = tp.dcs_code and d.dpu_type = 8 where tp.purchase_rate_code  = :purchase_rate_code")
+                                ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
+                                ->execute();
+
+                        Yii::$app->db->createCommand("INSERT INTO dpu_station_detail (station_code, flag_key, flag_value, other_value, vendor_code, company_code, created_at, created_by, ref_code) select right('000000000000' + d.ref_code, 15), 'RATE', 1, tp.purchase_rate_code, 'EIPL32', tp.union_code, tp.created_at, 'PORTAL', tp.dcs_code from tbl_purchase_rate_applicability_pending tp inner join tbl_dcs d on d.dcs_code = tp.dcs_code and d.dpu_type = 32 where tp.purchase_rate_code  = :purchase_rate_code")
+                                ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
+                                ->execute();
+						
                         Yii::$app->db->createCommand("update d set d.rate_flag=1 from tbl_dcs d inner join tbl_purchase_rate p on p.reference_code=d.rate_chart_code where p.purchase_rate_code=:purchase_rate_code")
                                 ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
                                 ->execute();

@@ -451,7 +451,12 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                             $res_data['rate']['memberApplicableRate'] = implode(',', array_column($member_rate, 'purchase_rate_code'));
                         }
                     }
-                    if ($mcc_bmc_config) {
+
+                    $downloadRateAtBmc = true;
+                    if (isset($res_data['config']['download_rate_at_bmc']) && $res_data['config']['download_rate_at_bmc'] == '0') {
+                        $downloadRateAtBmc = false;
+                    }
+                    if ($downloadRateAtBmc && $mcc_bmc_config) {
                         $bmc_rate = Yii::$app->general->getSpData('sp_app_amcs_v2_pending_rate_detail_bmc', [$plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $id_model->device_id, $id_model->hash_key]);
                         if (!empty($bmc_rate)) {
                             $res_data['rate']['bmcApplicableRate'] = implode(',', array_column($bmc_rate, 'purchase_rate_code'));
