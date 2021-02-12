@@ -7,7 +7,7 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $model app\modules\product\models\TblProduct */
 /* @var $form yii\widgets\ActiveForm */
-$readonly = ($type == 'edit'&& $model->role_name =='VLC'||$model->role_name =='MVC') ? TRUE : FALSE;
+$readonly = ($type == 'edit' && $model->role_name == 'VLC_ADMIN' || $model->role_name == 'BMC_ADMIN') ? TRUE : FALSE;
 ?>
 
 <?php
@@ -21,11 +21,11 @@ $form = ActiveForm::begin([
 
 <?= $form->errorSummary($model); ?>
 <div class="row">
-        <div class="col-sm-2">
-           <?= $form->field($model, 'role_name')->textInput(['maxlength'=>true,'readonly'=> $readonly]) ?>
-        </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'description')->textarea(['maxlength'=>true]) ?>
+        <?= $form->field($model, 'role_name')->textInput(['maxlength' => true, 'readonly' => $readonly]) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
     </div>   
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
