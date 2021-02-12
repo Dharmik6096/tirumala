@@ -45,11 +45,11 @@ class TblRole extends \yii\db\ActiveRecord {
     public function getRoleDetails($org_type) {
         $query = $this->find();
         if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['role_name' => 'BMC']);
+            $query->andWhere(['role_name' => 'BMC_ADMIN']);
         } elseif ($org_type == 'BMC') {
-            $query->andWhere(['role_name' => 'BMC']);
+            $query->andWhere(['role_name' => 'BMC_ADMIN']);
         } elseif ($org_type == 'VLC') {
-            $query->andWhere(['role_name' => 'VLC']);
+            $query->andWhere(['role_name' => 'VLC_ADMIN']);
         }
         $role = $query->one();
         return $role;
