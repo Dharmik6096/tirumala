@@ -66,8 +66,6 @@ class TblRoleController extends \app\controllers\ChildController {
      */
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
-
-
         $this->viewFile = "update";
         if ($this->model->load(Yii::$app->request->post())) {
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Role', 'edit']);
@@ -108,6 +106,7 @@ class TblRoleController extends \app\controllers\ChildController {
     }
 
     public function actionAppMenuMapping($id) {
+        $models = $this->findModel($id);
         $this->model = new TblAction();
         $menuArray = [];
         $menuArray = $this->model->getActionDetail();
@@ -163,7 +162,8 @@ class TblRoleController extends \app\controllers\ChildController {
                             'mappingModel' => $mappingModel,
                             'selectedArray' => $selectedArray,
                             'menuArray' => $menuArray,
-                            'id' => $id
+                            'id' => $id,
+                            'models' => $models
                 ]);
             }
         }
@@ -172,7 +172,8 @@ class TblRoleController extends \app\controllers\ChildController {
                     'mappingModel' => $mappingModel,
                     'selectedArray' => $selectedArray,
                     'menuArray' => $menuArray,
-                    'id' => $id
+                    'id' => $id,
+                    'models' => $models
         ]);
     }
 

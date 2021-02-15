@@ -51,8 +51,12 @@ class TblUserAndroidController extends \app\controllers\ChildController {
         $this->viewFile = "create";
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->user_code = Yii::$app->general->getCodeAutoIncrement($this->model);
-
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['User', 'create']);
+            if (!empty($this->model->role_code)) {
+                $model = new TblUserRoleMapping();
+                $model->role_code = $this->model->role_code;
+                $model->user_code = $this->model->user_code;
+            }
+            $transaction = $this->generalModel->saveTransaction([$this->model],[$model], ['User', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -69,8 +73,24 @@ class TblUserAndroidController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = "update";
+        $saveModel=[];
+        $deleteModel=[];
+        $model = new TblUserRoleMapping();
+        $this->model->role_code = $model->getRole($id);
+        $this->model->repeat_password = $this->model->password;
+        $saveModel[]=$this->model;
         if ($this->model->load(Yii::$app->request->post())) {
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['User', 'edit']);
+            $where['user_code'] = $id;
+            $roleMappingModel = TblUserRoleMapping::find()->where($where)->one();
+            $deleteModel[]=$roleMappingModel;   
+            if (!empty($this->model->role_code)) {
+                $model->role_code = $this->model->role_code;
+                $model->user_code = $id;
+                
+            $saveModel[]=$model;
+            }
+       
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel,[],$deleteModel, ['User', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -138,7 +158,7 @@ class TblUserAndroidController extends \app\controllers\ChildController {
                     $model = new TblUserRoleMapping();
                     $model->role_code = (string) $revoke_key;
                     $model->user_code = $id;
-                    $record = $model->getExistMappedmenus($id);               
+                    $record = $model->getExistMappedmenus($id);
                     if (!empty($record)) {
                         $delete[] = $record;
                     }
@@ -157,12 +177,12 @@ class TblUserAndroidController extends \app\controllers\ChildController {
             $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['User Role Mapping', 'edit']);
 
             $selectedArray = !empty($postArray) ? $postArray : [];
-                if ($transaction == 'customRedirect') {
-                    return $this->{$transaction}();
-                } 
-                  return $this->render('_map_user_role', [
-                       'model' => $this->model,
-           ]);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
+            return $this->render('_map_user_role', [
+                        'model' => $this->model,
+            ]);
         }
         return $this->render('_map_user_role', [
                     'model' => $this->model,

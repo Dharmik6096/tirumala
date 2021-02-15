@@ -23,16 +23,14 @@ $form = ActiveForm::begin([
 
 <?= $form->errorSummary($model); ?>
 <div class="row">
-    
-    
     <div class="col-sm-2">
-        <?= $form->field($model, 'action_name')->textInput() ?>
+        <?= $form->field($model, 'action_name')->textInput(['readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'menu_level')->textInput() ?>
+        <?= $form->field($model, 'menu_level')->textInput(['readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'parent_code')->textInput() ?>
+        <?= $form->field($model, 'parent_code')->textInput(['readonly' => $readonly]) ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'description')->textarea() ?>

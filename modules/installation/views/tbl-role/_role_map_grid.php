@@ -31,7 +31,7 @@ use yii\bootstrap\ActiveForm;
             <div class="panel-body">
             <div class="col-md-12 padding_10_0 theme-box">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                    <h4 class="theme-box-heading">Menu Permission</h4>
+                    <h4 class="theme-box-heading">Menu And Action Permission</h4>
                 </div>
                 <div class="col-sm-12 col-md-12 margin-bottom-10 clearfix">
                     <div class="input-group">
@@ -69,7 +69,7 @@ use yii\bootstrap\ActiveForm;
                             <?=
                             Html::checkbox('child_routes[]', in_array($menu['action_code'], $selectedArray), [
                                 'label' => $menu_label . '<span>' . $menu['description'] . '</span>',
-                                'value' => $menu['action_code'], 'class' => 'route-checkbox checkAll'
+                                'value' => $menu['action_code'], 'class' => 'route-checkbox check'
                             ])
                             ?>
                             <?php if (!empty($menu['children'])) { ?>
@@ -88,7 +88,7 @@ use yii\bootstrap\ActiveForm;
                                         <?=
                                         Html::checkbox('child_routes[]', in_array($submenu['action_code'], $selectedArray), [
                                             'label' => $menu_label . '<span>' . $submenu['description'] . '</span>',
-                                            'value' => $submenu['action_code'], 'class' => 'route-checkbox checkAll ' . $class_menu]);
+                                            'value' => $submenu['action_code'], 'class' => 'route-checkbox check ' . $class_menu]);
                                         ?>
                                         <?php if (!empty($submenu['children'])) { ?>
                                             <a href="#SubMenu-<?= $i . $j ?>" data-toggle="collapse" data-parent="#SubMenu-<?= $i . $j ?>" class="colps"><i class="fa fa-caret-down"></i></a>
@@ -106,7 +106,7 @@ use yii\bootstrap\ActiveForm;
                                                     <?=
                                                     Html::checkbox('child_routes[]', in_array($route['action_code'], $selectedArray), [
                                                         'label' => $menu_label . '<span>' . $route['description'] . '</span>',
-                                                        'value' => $route['action_code'], 'class' => 'route-checkbox checkAll ' . $class_submenu . ' ' . $class_menu])
+                                                        'value' => $route['action_code'], 'class' => 'route-checkbox check ' . $class_submenu . ' ' . $class_menu])
                                                     ?>
                                                     <?php if (!empty($route['children'])) { ?>
                                                         <a href="#ChildMenu-<?= $i . $j . $k ?>" data-toggle="collapse" data-parent="#ChildMenu-<?= $i . $j . $k ?>" class="colps"><i class="fa fa-caret-down"></i></a>
@@ -132,9 +132,10 @@ use yii\bootstrap\ActiveForm;
             </div>
 
             <div class="panel-footer">
-                <?php
-                echo GhostHtml::a_alert(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], ['class' => 'btn btn-primary', 'id' => 'mapping-widget']);
-                ?>
+                    <?php
+                    echo GhostHtml::a_alert(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], ['class' => 'btn btn-primary', 'id' => 'mapping-widget']);
+                     Yii::$app->controls->cancel($model); 
+                    ?>
             </div>
             <?php ActiveForm::end(); ?>
             </div>

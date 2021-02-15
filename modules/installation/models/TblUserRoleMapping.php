@@ -3,6 +3,7 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use app\models\ChildModel;
 use app\modules\installation\models\TblRole;
 use yii\helpers\ArrayHelper;
 
@@ -14,7 +15,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $role_code
  * @property string $user_code
  */
-class TblUserRoleMapping extends \yii\db\ActiveRecord {
+class TblUserRoleMapping extends ChildModel {
 
     /**
      * @inheritdoc
@@ -55,6 +56,17 @@ class TblUserRoleMapping extends \yii\db\ActiveRecord {
                         ->where(['user_code' => $this->user_code, 'role_code' => $this->role_code])
                         ->one();
     }
+     public function getRoleCode() {
+        return $this->hasOne(TblRole::className(), ['role_code' => 'role_code']);
+    }
+     
+    public function getRole($id)
+    {
+        $role = $this->find()
+                ->where(['user_code' => $id])
+                ->all();
+        return ArrayHelper::map($role, 'role_code', 'role_code');
     
-
+    }
+    
 }

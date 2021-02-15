@@ -3,6 +3,7 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use app\models\ChildModel;
 use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "tbl_role".
@@ -11,7 +12,7 @@ use yii\helpers\ArrayHelper;
  * @property string $role_name
  * @property string $description
  */
-class TblRole extends \yii\db\ActiveRecord {
+class TblRole extends ChildModel {
 
     /**
      * @inheritdoc
@@ -27,7 +28,7 @@ class TblRole extends \yii\db\ActiveRecord {
         return [
             [['role_name', 'description'], 'string', 'max' => 255],
             [['role_name'], 'unique'],
-            [['role_name'], 'required']
+            [['role_name','description'], 'required']
         ];
     }
 
@@ -60,7 +61,7 @@ class TblRole extends \yii\db\ActiveRecord {
                 ->orderBy(['role_code' => SORT_ASC])
                 ->asArray()
                 ->all();
-        $role = ArrayHelper::map($allMenu, 'role_code', 'role_name');
+        $role = ArrayHelper::map($allMenu, 'role_code', 'description');
         return $role;
     }
 

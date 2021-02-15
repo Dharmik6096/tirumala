@@ -27,18 +27,21 @@ $attribute = [
     ['attribute' => 'password', 'filter' => false],
     ['attribute' => 'mobile_no'],
     ['attribute' => 'email'],
+    ['attribute' => 'role_code','label' => 'Role Name', 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->userCode, ['roleCode'], 'description');
+        }],               
 ];
 $grid_option = [
     'id' => 'user-android',
     'attributes' => $attribute,
-    'active_column' => false,
+    'active_column' => true,
     'actions' => [
         'view' => true,
         'update' => true,
-         'mapping' => function ($url, $model) {
-            $options = ['data-name' => $model->username, 'data-val' => $model->user_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Role Mapping'];
-            return GhostHtml::a('<i class="fa fa-key"></i>', ['/installation/tbl-user-android/map-roles', 'id' => $model->user_code], $options);
-        },
+//         'mapping' => function ($url, $model) {
+//            $options = ['data-name' => $model->username, 'data-val' => $model->user_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Role Mapping'];
+//            return GhostHtml::a('<i class="fa fa-key"></i>', ['/installation/tbl-user-android/map-roles', 'id' => $model->user_code], $options);
+//        },
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

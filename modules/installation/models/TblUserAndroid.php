@@ -3,11 +3,14 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use app\models\ChildModel;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\installation\models\TblUserRoleMapping;
+use app\modules\installation\models\TblRole;
 
 /**
  * This is the model class for table "tbl_user_android".
@@ -37,10 +40,10 @@ use app\modules\organisation\models\TblMccPlant;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblUserAndroid extends \yii\db\ActiveRecord {
+class TblUserAndroid extends ChildModel {
 
     public $toEncrypt = ['password'];
-    public $org_type, $org_code;
+    public $org_type, $org_code, $repeat_password, $role_code;
     public $f_union_code, $f_plant_code, $f_mcc_code, $f_bmc_code, $f_dcs_code;
 
     /**
@@ -55,17 +58,23 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['user_code', 'username', 'name', 'password', 'mobile_no', 'plant_code', 'mcc_plant_code'], 'required'],
-            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code'], 'safe'],
+            [['user_code', 'username', 'name', 'password','mobile_no','repeat_password', 'plant_code', 'mcc_plant_code'], 'required'],
+            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code','is_active','mobile_no'], 'safe'],
             [['originating_type'], 'integer'],
             [['username'], 'unique'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['name', 'username', 'mobile_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['name', 'username', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 128],
             [['device_id'], 'string', 'max' => 500],
             [['union_code'], 'string', 'max' => 3],
             [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],    
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['email'], 'email'],
+            //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
+            [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+            [['repeat_password'], 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"]
         ];
     }
 
@@ -85,6 +94,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
+            'is_active' =>Yii::t('app', 'Is Active'), 
             'dcs_code' => Yii::t('app', 'DCS'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -252,4 +262,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
+    public function getUserCode() {
+        return $this->hasOne(TblUserRoleMapping::className(), ['user_code' => 'user_code']);
+    }
 }

@@ -3,6 +3,7 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use app\models\ChildModel;
 
 /**
  * This is the model class for table "tbl_action".
@@ -15,7 +16,7 @@ use Yii;
  * @property integer $action_type
  * @property integer $action_for
  */
-class TblAction extends \yii\db\ActiveRecord {
+class TblAction extends ChildModel {
 
     /**
      * @inheritdoc

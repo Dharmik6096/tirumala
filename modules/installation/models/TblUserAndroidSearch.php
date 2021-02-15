@@ -17,7 +17,7 @@ class TblUserAndroidSearch extends TblUserAndroid {
      */
     public function rules() {
         return [
-            [['user_code', 'name', 'username', 'password', 'mobile_no', 'email', 'device_id', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['user_code', 'name', 'username', 'password', 'mobile_no', 'email', 'device_id', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'role_code', 'is_active'], 'safe'],
             [['originating_type'], 'integer'],
         ];
     }
@@ -47,6 +47,8 @@ class TblUserAndroidSearch extends TblUserAndroid {
         ]);
 
         $this->load($params);
+        $query->joinWith(['userCode', 'userCode.roleCode']);
+
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -62,7 +64,10 @@ class TblUserAndroidSearch extends TblUserAndroid {
                 ->andFilterWhere(['like', 'password', $this->password])
                 ->andFilterWhere(['like', 'mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'email', $this->email])
-                ->andFilterWhere(['like', 'device_id', $this->device_id]);
+                ->andFilterWhere(['like', 'device_id', $this->device_id])
+                ->andFilterWhere(['like', 'is_active', $this->is_active])
+                ->andFilterWhere(['like', 'tbl_role.description', $this->role_code]);
+
 
         return $dataProvider;
     }
