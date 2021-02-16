@@ -1,15 +1,6 @@
 
 <?php
 
-/**
- * @var $this yii\web\View
- * @var yii\widgets\ActiveForm $form
- * @var array $routes
- * @var array $childRoutes
- * @var array $permissionsByGroup
- * @var array $childPermissions
- * @var yii\rbac\Permission $item
- */
 use webvimark\modules\UserManagement\components\GhostHtml;
 use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
@@ -29,115 +20,115 @@ use yii\bootstrap\ActiveForm;
             ?>     
 
             <div class="panel-body">
-            <div class="col-md-12 padding_10_0 theme-box">
-                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                    <h4 class="theme-box-heading">Menu And Action Permission</h4>
-                </div>
-                <div class="col-sm-12 col-md-12 margin-bottom-10 clearfix">
-                    <div class="input-group">
-                        <span class="input-group-btn">
-                            <?=
-                            Html::submitButton(
-                                    Yii::t('app', 'Save'), ['class' => 'btn btn-default']
-                            )
+                <div class="col-md-12 padding_10_0 theme-box">
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                        <h4 class="theme-box-heading">Menu And Action Permission</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 margin-bottom-10 clearfix">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <?=
+                                Html::submitButton(
+                                        Yii::t('app', 'Save'), ['class' => 'btn btn-default']
+                                )
+                                ?>
+                            </span>
+
+                            <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= UserManagementModule::t('back', 'Search route'); ?>">
+
+                            <span class="input-group-btn">
+                                <span id="show-only-selected-routes" class="btn btn-default">
+                                    <i class="fa fa-minus"></i> <?= Yii::t('app', 'Show only selected'); ?>
+                                </span>
+
+                                <span id="show-all-routes" class="btn btn-default hide">
+                                    <i class="fa fa-plus"></i> <?= Yii::t('app', 'Show all'); ?>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div id="routes-list" class="checkbox">
+                        <?php
+                        $i = $j = $k = 0;
+                        foreach ($menuArray as $menu) {
+                            $class_menu = str_replace('/', '', trim($menu['action_code']));
+                            $menu_text = $menu['description'];
+                            $menu_label = '<span class="route-text" style="display:none">' . $menu_text . '</span>';
                             ?>
-                        </span>
-
-                        <input id="search-in-routes" autofocus="on" type="text" class="form-control input-sm" placeholder="<?= UserManagementModule::t('back', 'Search route'); ?>">
-
-                        <span class="input-group-btn">
-                            <span id="show-only-selected-routes" class="btn btn-default">
-                                <i class="fa fa-minus"></i> <?= Yii::t('app', 'Show only selected'); ?>
-                            </span>
-
-                            <span id="show-all-routes" class="btn btn-default hide">
-                                <i class="fa fa-plus"></i> <?= Yii::t('app', 'Show all'); ?>
-                            </span>
-                        </span>
+                            <div  class="col-lg-12 ml15">
+                                <?=
+                                Html::checkbox('child_routes[]', in_array($menu['action_code'], $selectedArray), [
+                                    'label' => $menu_label . '<span>' . $menu['description'] . '</span>',
+                                    'value' => $menu['action_code'], 'class' => 'route-checkbox checkAll'
+                                ])
+                                ?>
+                                <?php if (!empty($menu['children'])) { ?>
+                                    <a href="#Menu-<?= $i ?>" data-toggle="collapse" data-parent="#Menu-<?= $i ?>" class="colps"><i class="fa fa-caret-down"></i></a>
+                                <?php } ?>
+                            </div>
+                            <div class="collapse in" id="Menu-<?= $i ?>">
+                                <?php
+                                if (isset($menu['children'])) {
+                                    foreach ($menu['children'] as $submenu) {
+                                        $class_submenu = str_replace('/', '', trim($submenu['action_code']));
+                                        $submenu_text = $submenu['description'];
+                                        $menu_label = '<span class="route-text" style="display:none">' . $menu_text . ' : ' . $submenu_text . '</span>';
+                                        ?>
+                                        <div  class="col-lg-12 ml35">
+                                            <?=
+                                            Html::checkbox('child_routes[]', in_array($submenu['action_code'], $selectedArray), [
+                                                'label' => $menu_label . '<span>' . $submenu['description'] . '</span>',
+                                                'value' => $submenu['action_code'], 'class' => 'route-checkbox checkAll ' . $class_menu]);
+                                            ?>
+                                            <?php if (!empty($submenu['children'])) { ?>
+                                                <a href="#SubMenu-<?= $i . $j ?>" data-toggle="collapse" data-parent="#SubMenu-<?= $i . $j ?>" class="colps"><i class="fa fa-caret-down"></i></a>
+                                            <?php } ?>
+                                        </div>
+                                        <div class="collapse in" id="SubMenu-<?= $i . $j ?>">
+                                            <?php
+                                            if (isset($submenu['children'])) {
+                                                foreach ($submenu['children'] as $route) {
+                                                    $class_route = str_replace('/', '', trim($route['action_code']));
+                                                    $route_text = $route['description'];
+                                                    $menu_label = '<span class="route-text" style="display:none">' . $submenu_text . ' : ' . $route_text . '</span>';
+                                                    ?>
+                                                    <div  class="col-lg-12 ml55">
+                                                        <?=
+                                                        Html::checkbox('child_routes[]', in_array($route['action_code'], $selectedArray), [
+                                                            'label' => $menu_label . '<span>' . $route['description'] . '</span>',
+                                                            'value' => $route['action_code'], 'class' => 'route-checkbox checkAll ' . $class_submenu . ' ' . $class_menu])
+                                                        ?>
+                                                        <?php if (!empty($route['children'])) { ?>
+                                                            <a href="#ChildMenu-<?= $i . $j . $k ?>" data-toggle="collapse" data-parent="#ChildMenu-<?= $i . $j . $k ?>" class="colps"><i class="fa fa-caret-down"></i></a>
+                                                        <?php } ?>
+                                                    </div>
+                                                    <?php
+                                                    $k++;
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                        <?php
+                                        $j++;
+                                    }
+                                }
+                                ?>
+                            </div>
+                            <?php
+                            $i++;
+                        }
+                        ?>
                     </div>
                 </div>
-                <hr/>
-                <div id="routes-list" class="checkbox">
-                    <?php
-                    $i = $j = $k = 0;
-                    foreach ($menuArray as $menu) {
-                        $class_menu = str_replace('/', '', trim($menu['action_code']));
-                        $menu_text = $menu['description'];
-                        $menu_label = '<span class="route-text" style="display:none">' . $menu_text . '</span>';
-                        ?>
-                        <div  class="col-lg-12 ml15">
-                            <?=
-                            Html::checkbox('child_routes[]', in_array($menu['action_code'], $selectedArray), [
-                                'label' => $menu_label . '<span>' . $menu['description'] . '</span>',
-                                'value' => $menu['action_code'], 'class' => 'route-checkbox check'
-                            ])
-                            ?>
-                            <?php if (!empty($menu['children'])) { ?>
-                                <a href="#Menu-<?= $i ?>" data-toggle="collapse" data-parent="#Menu-<?= $i ?>" class="colps"><i class="fa fa-caret-down"></i></a>
-                            <?php } ?>
-                        </div>
-                        <div class="collapse in" id="Menu-<?= $i ?>">
-                            <?php
-                            if (isset($menu['children'])) {
-                                foreach ($menu['children'] as $submenu) {
-                                    $class_submenu = str_replace('/', '', trim($submenu['action_code']));
-                                    $submenu_text = $submenu['description'];
-                                    $menu_label = '<span class="route-text" style="display:none">' . $menu_text . ' : ' . $submenu_text . '</span>';
-                                    ?>
-                                    <div  class="col-lg-12 ml35">
-                                        <?=
-                                        Html::checkbox('child_routes[]', in_array($submenu['action_code'], $selectedArray), [
-                                            'label' => $menu_label . '<span>' . $submenu['description'] . '</span>',
-                                            'value' => $submenu['action_code'], 'class' => 'route-checkbox check ' . $class_menu]);
-                                        ?>
-                                        <?php if (!empty($submenu['children'])) { ?>
-                                            <a href="#SubMenu-<?= $i . $j ?>" data-toggle="collapse" data-parent="#SubMenu-<?= $i . $j ?>" class="colps"><i class="fa fa-caret-down"></i></a>
-                                        <?php } ?>
-                                    </div>
-                                    <div class="collapse in" id="SubMenu-<?= $i . $j ?>">
-                                        <?php
-                                        if (isset($submenu['children'])) {
-                                            foreach ($submenu['children'] as $route) {
-                                                $class_route = str_replace('/', '', trim($route['action_code']));
-                                                $route_text = $route['description'];
-                                                $menu_label = '<span class="route-text" style="display:none">' . $submenu_text . ' : ' . $route_text . '</span>';
-                                                ?>
-                                                <div  class="col-lg-12 ml55">
-                                                    <?=
-                                                    Html::checkbox('child_routes[]', in_array($route['action_code'], $selectedArray), [
-                                                        'label' => $menu_label . '<span>' . $route['description'] . '</span>',
-                                                        'value' => $route['action_code'], 'class' => 'route-checkbox check ' . $class_submenu . ' ' . $class_menu])
-                                                    ?>
-                                                    <?php if (!empty($route['children'])) { ?>
-                                                        <a href="#ChildMenu-<?= $i . $j . $k ?>" data-toggle="collapse" data-parent="#ChildMenu-<?= $i . $j . $k ?>" class="colps"><i class="fa fa-caret-down"></i></a>
-                                                    <?php } ?>
-                                                </div>
-                                                <?php
-                                                $k++;
-                                            }
-                                        }
-                                        ?>
-                                    </div>
-                                    <?php
-                                    $j++;
-                                }
-                            }
-                            ?>
-                        </div>
-                        <?php
-                        $i++;
-                    }
-                    ?>
-                </div>
-            </div>
 
-            <div class="panel-footer">
+                <div class="panel-footer">
                     <?php
                     echo GhostHtml::a_alert(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], ['class' => 'btn btn-primary', 'id' => 'mapping-widget']);
-                     Yii::$app->controls->cancel($model); 
+                    Yii::$app->controls->cancel($model);
                     ?>
-            </div>
-            <?php ActiveForm::end(); ?>
+                </div>
+                <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
@@ -152,7 +143,7 @@ var backgroundColor = '#D6FFDE';
 var routeCheckboxes = $('.route-checkbox');
 var routeText = $('.route-text'); 
         
-     $('.checkAll').click(function(event) {
+     /*$('.checkAll').click(function(event) {
         var str = this.value;
         var str = str.replace((new RegExp('/', 'g')), "");
         var str = str.replace(" ", "");
@@ -162,7 +153,7 @@ var routeText = $('.route-text');
         }else{
        $('.'+str).closest('label').css('background', 'none');
         }
-        });          
+        }); */         
         
 function showAllRoutesBack() {
 	$('#routes-list').find('.hide').each(function(){

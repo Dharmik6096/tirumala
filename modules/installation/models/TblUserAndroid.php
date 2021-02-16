@@ -58,8 +58,8 @@ class TblUserAndroid extends ChildModel {
      */
     public function rules() {
         return [
-            [['user_code', 'username', 'name', 'password','mobile_no','repeat_password', 'plant_code', 'mcc_plant_code'], 'required'],
-            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code','is_active','mobile_no'], 'safe'],
+            [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required'],
+            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no'], 'safe'],
             [['originating_type'], 'integer'],
             [['username'], 'unique'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -70,10 +70,9 @@ class TblUserAndroid extends ChildModel {
             [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
             [['email'], 'email'],
-            //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                  }, 'skipOnEmpty' => false],
             [['repeat_password'], 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"]
         ];
     }
@@ -94,7 +93,7 @@ class TblUserAndroid extends ChildModel {
             'plant_code' => Yii::t('app', 'Plant'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
-            'is_active' =>Yii::t('app', 'Is Active'), 
+            'is_active' => Yii::t('app', 'Is Active'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -265,4 +264,5 @@ class TblUserAndroid extends ChildModel {
     public function getUserCode() {
         return $this->hasOne(TblUserRoleMapping::className(), ['user_code' => 'user_code']);
     }
+
 }

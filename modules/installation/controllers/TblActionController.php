@@ -65,14 +65,14 @@ class TblActionController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
 
-       $this->viewFile = "update";
+        $this->viewFile = "update";
         if ($this->model->load(Yii::$app->request->post())) {
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Action', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
         }
-       return $this->render('update', [
+        return $this->render('update', [
                     'model' => $this->model,
         ]);
     }
