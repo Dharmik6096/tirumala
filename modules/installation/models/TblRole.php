@@ -43,14 +43,14 @@ class TblRole extends ChildModel {
         ];
     }
 
-    public function getRoleDetails($org_type) {
+    public function getRoleDetails($org_type, $role_for) {
         $query = $this->find();
         if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['role_name' => 'BMC_ADMIN']);
+            $query->andWhere(['role_name' => 'BMC_' . $role_for]);
         } elseif ($org_type == 'BMC') {
-            $query->andWhere(['role_name' => 'BMC_ADMIN']);
+            $query->andWhere(['role_name' => 'BMC_' . $role_for]);
         } elseif ($org_type == 'VLC') {
-            $query->andWhere(['role_name' => 'VLC_ADMIN']);
+            $query->andWhere(['role_name' => 'VLC_' . $role_for]);
         }
         $role = $query->one();
         return $role;

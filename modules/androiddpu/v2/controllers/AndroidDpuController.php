@@ -156,7 +156,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $ackModel->union_code = $orgDetail['union_code'];
             $ackModel->hash_key = $model->hash_key;
             $ackModel->device_id = $data['device_id'];
-            $existAck = $ackModel->getExistData($org_type, $org_code);
+            $existAck = $ackModel->getExistData($org_type);
             if (!empty($existAck)) {
                 foreach ($existAck as $exist) {
                     $ackModel->updateAll(['download_pending' => 3], ['ack_id' => $exist['ack_id']]);
@@ -174,12 +174,14 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 }
             } else {
                 $sendNotificaton = TRUE;
+                //SUPERVISOR USER
+                $orgCode = $org_type == 'VLC' ? $ackModel->dcs_code : ($org_type == 'BMC' ? $ackModel->bmc_code : $ackModel->mcc_plant_code);
                 $androidUsr = new TblUserAndroid();
                 $androidUsr->attributes = $ackModel->attributes;
                 $contact = $androidUsr->getContactDetails($org_type, $ackModel);
                 $androidUsr->user_code = Yii::$app->general->getCodeAutoIncrement($androidUsr);
                 $androidUsr->name = !empty($contact) ? $contact->firstname : $org_type;
-                $androidUsr->username = $org_type == 'VLC' ? $ackModel->dcs_code . '01' : ($org_type == 'BMC' ? $ackModel->bmc_code . '01' : $ackModel->mcc_plant_code . '01');
+                $androidUsr->username = $orgCode . '01';
                 $androidUsr->password = Yii::$app->general->generateRandomString();
                 $androidUsr->mobile_no = !empty($contact) ? $contact->mobile_no : '';
                 $androidUsr->email = !empty($contact) ? $contact->email : '';
@@ -190,11 +192,34 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $usrAckModel->download_pending = 1;
                 $saveModel[] = $usrAckModel;
                 $roleModel = new TblRole();
-                $roleDetails = $roleModel->getRoleDetails($org_type);
+                $roleDetails = $roleModel->getRoleDetails($org_type, 'SUPERVISOR');
                 if (!empty($roleDetails)) {
                     $usrRole = new TblUserRoleMapping();
                     $usrRole->user_code = $androidUsr->user_code;
-                    $usrRole->role_code = !empty($roleDetails) ? $roleDetails->role_code : '';
+                    $usrRole->role_code = $roleDetails->role_code;
+                    $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
+                    if (empty($existRoleMap)) {
+                        $saveModel[] = $usrRole;
+                    }
+                }
+                $androidUser = new TblUserAndroid();
+                $androidUser->attributes = $ackModel->attributes;
+                $androidUser->user_code = $usrAckModel->user_code + 1;
+                $androidUser->name = $org_type == 'VLC' ? 'VLC Admin' : ($org_type == 'BMC' ? 'BMC Admin' : 'BMC Admin');
+                $androidUser->username = $orgCode;
+                $androidUser->password = 'am' . $orgCode . 'cs';
+                $androidUser->mobile_no = '0000000000';
+                $saveModel[] = $androidUser;
+                $userAckModel = new TblUserDownloadAck();
+                $userAckModel->attributes = $ackModel->attributes;
+                $userAckModel->user_code = $androidUser->user_code;
+                $userAckModel->download_pending = 1;
+                $saveModel[] = $userAckModel;
+                $roleMapDetails = $roleModel->getRoleDetails($org_type, 'ADMIN');
+                if (!empty($roleMapDetails)) {
+                    $usrRole = new TblUserRoleMapping();
+                    $usrRole->user_code = $androidUser->user_code;
+                    $usrRole->role_code = $roleMapDetails->role_code;
                     $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
                     if (empty($existRoleMap)) {
                         $saveModel[] = $usrRole;
