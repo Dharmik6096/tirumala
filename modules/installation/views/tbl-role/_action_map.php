@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Role Action Mapping'. ': ' .$models->description) ;
+$this->title = Yii::t('app', 'Action Mapping For Role'. ': ' .$models->description) ;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

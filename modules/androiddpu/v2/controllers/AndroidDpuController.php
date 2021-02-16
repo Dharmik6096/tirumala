@@ -178,6 +178,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $orgCode = $org_type == 'VLC' ? $ackModel->dcs_code : ($org_type == 'BMC' ? $ackModel->bmc_code : $ackModel->mcc_plant_code);
                 $androidUsr = new TblUserAndroid();
                 $androidUsr->attributes = $ackModel->attributes;
+                $androidUsr->scenario = 'installation';
                 $contact = $androidUsr->getContactDetails($org_type, $ackModel);
                 $androidUsr->user_code = Yii::$app->general->getCodeAutoIncrement($androidUsr);
                 $androidUsr->name = !empty($contact) ? $contact->firstname : $org_type;
@@ -204,6 +205,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 }
                 $androidUser = new TblUserAndroid();
                 $androidUser->attributes = $ackModel->attributes;
+                $androidUser->scenario = 'installation';
                 $androidUser->user_code = $usrAckModel->user_code + 1;
                 $androidUser->name = $org_type == 'VLC' ? 'VLC Admin' : ($org_type == 'BMC' ? 'BMC Admin' : 'BMC Admin');
                 $androidUser->username = $orgCode;
@@ -226,7 +228,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     }
                 }
             }
-
+                
             $transaction = $this->generalModel->saveTransaction($saveModel, ['app verification', 'create']);
             if ($transaction !== 'customRedirect') {
                 return FALSE;

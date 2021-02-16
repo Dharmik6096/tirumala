@@ -7,7 +7,7 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $model app\modules\product\models\TblProduct */
 /* @var $form yii\widgets\ActiveForm */
-$readonly = ($type == 'edit' && $model->role_name == 'VLC_ADMIN' || $model->role_name == 'BMC_ADMIN') ? TRUE : FALSE;
+$readonly = ($type == 'edit' && $model->role_name == 'VLC_ADMIN' || $model->role_name == 'BMC_ADMIN' || $model->role_name == 'VLC_SUPERVISOR' || $model->role_name == 'BMC_SUPERVISOR') ? TRUE : FALSE;
 ?>
 
 <?php

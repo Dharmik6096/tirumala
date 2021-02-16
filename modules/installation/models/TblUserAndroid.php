@@ -58,7 +58,7 @@ class TblUserAndroid extends ChildModel {
      */
     public function rules() {
         return [
-            [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required'],
+            [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['installation']],
             [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no'], 'safe'],
             [['originating_type'], 'integer'],
             [['username'], 'unique'],
@@ -71,9 +71,10 @@ class TblUserAndroid extends ChildModel {
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
             [['email'], 'email'],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                  }, 'skipOnEmpty' => false],
-            [['repeat_password'], 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"]
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+            [['repeat_password'], 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"],
+            [['is_active'], 'default', 'value' => 1]
         ];
     }
 
