@@ -53,6 +53,7 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $this->model = new TblBankDetails();
         $this->viewFile = 'create';
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
+            $this->model->scenario = 'main_create';
             if (!$this->model->validate()) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(ActiveForm::validate($this->model));

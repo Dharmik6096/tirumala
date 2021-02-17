@@ -67,6 +67,7 @@ class TblBankDetails extends \app\models\ChildModel {
                         $this->addError($attribute, Yii::t('app/validation', 'Beneficiary Name Is Invalid'));
                     }
                 }, 'skipOnEmpty' => false],
+            [['branch_code', 'bank_account_no', 'ifsc', 'bank_code'], 'required', 'on' => 'main_create'],
         ];
 
         $client_rules = Yii::$app->customvalidation->getRules('TblBankDetails', $this->form_validation_type);
