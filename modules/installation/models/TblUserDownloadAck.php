@@ -3,6 +3,9 @@
 namespace app\modules\installation\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_user_download_ack".
@@ -89,7 +92,51 @@ class TblUserDownloadAck extends \app\models\ChildModel {
     }
 
     public function getExistData($org_type) {
-        $query = $this->find()->where(['union_code' => $this->union_code, 'device_id' => $this->device_id, 'hash_key' => $this->hash_key, 'download_pending' => 1]);
+        $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
+        if (strtoupper($org_type == 'MCC')) {
+            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code]);
+        } elseif ($org_type == 'BMC') {
+            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code]);
+        } elseif ($org_type == 'VLC') {
+            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
+        }
+        $bmc = $query->all();
+        return $bmc;
+    }
+
+    public function getOrgDetail($org_type, $org_code) {
+        if (strtoupper($org_type == 'MCC')) {
+            $this->mcc_plant_code = $org_code;
+            $this->plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+            $this->union_code = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
+        } elseif ($org_type == 'BMC') {
+            $this->bmc_code = $org_code;
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+            $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        } elseif ($org_type == 'VLC') {
+            $this->dcs_code = $org_code;
+            $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+            $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+        }
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getMccCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getExistDataAck($org_type) {
+        $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
         if (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code]);
         } elseif ($org_type == 'BMC') {

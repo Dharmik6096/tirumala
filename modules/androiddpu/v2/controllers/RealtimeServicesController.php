@@ -272,23 +272,18 @@ class RealtimeServicesController extends RestController {
         $devide_id = $data['device_id'];
         $hashKey = $data['token'];
         $ackModel = new TblUserDownloadAck();
-        $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+        $orgDetail = $ackModel->getOrgDetail($org_type, $org_code);
 
-        $ackModel->dcs_code = $orgDetail['dcs_code'];
-        $ackModel->bmc_code = $orgDetail['bmc_code'];
-        $ackModel->mcc_plant_code = $orgDetail['mcc_plant_code'];
-        $ackModel->plant_code = $orgDetail['plant_code'];
-        $ackModel->union_code = $orgDetail['union_code'];
         $ackModel->hash_key = $hashKey;
         $ackModel->device_id = $devide_id;
-        $existAck = $ackModel->getExistData($org_type);
+        $existAck = $ackModel->getExistDataAck($org_type);
         $role_data = [];
         $usr_data = [];
         $ackKey = [];
         $key = [];
         if (!empty($existAck)) {
             foreach ($existAck as $ackn) {
-                $key[] = $ackn->user_code;
+                $key[] = $ackn->ack_id;
                 $usr = Yii::$app->general->getSpData('android_user', [$ackn->user_code]);
                 $role = Yii::$app->general->getSpData('android_user_role_mapp', [$ackn->user_code]);
                 $usr_data = array_merge($usr_data, $usr);

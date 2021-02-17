@@ -147,13 +147,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
             $saveModel[] = $model;
             $ackModel = new TblUserDownloadAck();
-            $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+            $orgDetail = $ackModel->getOrgDetail($org_type, $org_code);
 
-            $ackModel->dcs_code = !empty($orgDetail['dcs_code'][0]) ? $orgDetail['dcs_code'][0] : NULL;
-            $ackModel->bmc_code = !empty($orgDetail['bmc_code'][0]) ? $orgDetail['bmc_code'][0] : NULL;
-            $ackModel->mcc_plant_code = !empty($orgDetail['mcc_plant_code'][0]) ? $orgDetail['mcc_plant_code'][0] : NULL;
-            $ackModel->plant_code = !empty($orgDetail['plant_code'][0]) ? $orgDetail['plant_code'][0] : NULL;
-            $ackModel->union_code = $orgDetail['union_code'];
             $ackModel->hash_key = $model->hash_key;
             $ackModel->device_id = $data['device_id'];
             $existAck = $ackModel->getExistData($org_type);
@@ -163,14 +158,20 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 }
             }
             $androidUsr = new TblUserAndroid();
-            $user = $androidUsr->getExistData($org_type, $ackModel);
+            $ActiveUser = $androidUsr->getExistData($org_type, $ackModel);
+            $orgCode = $org_type == 'VLC' ? $ackModel->dcs_code : ($org_type == 'BMC' ? $ackModel->bmc_code : $ackModel->mcc_plant_code);
+            //CHECK MAIN USER EXIST
+            $username = [$orgCode, $orgCode . '01'];
+            $user = $androidUsr->getMainExistData($org_type, $ackModel, $username);
             if (!empty($user)) {
-                foreach ($user as $usrData) {
-                    $usrAckModel = new TblUserDownloadAck();
-                    $usrAckModel->attributes = $ackModel->attributes;
-                    $usrAckModel->user_code = $usrData->user_code;
-                    $usrAckModel->download_pending = 1;
-                    $saveModel[] = $usrAckModel;
+                if (!empty($ActiveUser)) {
+                    foreach ($ActiveUser as $usrData) {
+                        $usrAckModel = new TblUserDownloadAck();
+                        $usrAckModel->attributes = $ackModel->attributes;
+                        $usrAckModel->user_code = $usrData->user_code;
+                        $usrAckModel->download_pending = 1;
+                        $saveModel[] = $usrAckModel;
+                    }
                 }
             } else {
                 $sendNotificaton = TRUE;
@@ -203,6 +204,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $saveModel[] = $usrRole;
                     }
                 }
+                //ADMIN USER
                 $androidUser = new TblUserAndroid();
                 $androidUser->attributes = $ackModel->attributes;
                 $androidUser->scenario = 'installation';
@@ -228,7 +230,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     }
                 }
             }
-                
+
             $transaction = $this->generalModel->saveTransaction($saveModel, ['app verification', 'create']);
             if ($transaction !== 'customRedirect') {
                 return FALSE;

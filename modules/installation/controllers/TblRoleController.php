@@ -10,6 +10,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\installation\models\TblAction;
 use app\modules\installation\models\TblRoleActionMapping;
+use app\modules\installation\models\TblUserRoleMapping;
+use app\modules\installation\models\TblUserAndroid;
+use app\modules\installation\models\TblUserDownloadAck;
 
 /**
  * TblRoleController implements the CRUD actions for TblRole model.
@@ -67,8 +70,12 @@ class TblRoleController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = "update";
+        $saveModel = [];
         if ($this->model->load(Yii::$app->request->post())) {
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Role', 'edit']);
+            $data = Yii::$app->general->getSpData('portal_role_wise_identity_user', [$id]);
+            $saveModel[] = $this->model;
+            $this->setDownloadAck($data, $saveModel);
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Role', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -153,7 +160,8 @@ class TblRoleController extends \app\controllers\ChildController {
                     $auto_inc++;
                 }
             }
-
+            $data = Yii::$app->general->getSpData('portal_role_wise_identity_user', [$id]);
+            $this->setDownloadAck($data, $master);
             $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Role Menu Mapping', 'edit']);
             $selectedArray = !empty($postArray) ? $postArray : [];
             if ($transaction == 'customRedirect') {
@@ -175,6 +183,33 @@ class TblRoleController extends \app\controllers\ChildController {
                     'id' => $id,
                     'models' => $models
         ]);
+    }
+
+    public function setDownloadAck($model, &$saveModel) {
+        if (!empty($model)) {
+            foreach ($model as $a) {
+                $modelUsr = new TblUserAndroid();
+                $modelUsr->setAttributes($a);
+                $type = $modelUsr->getOrgType($modelUsr, 'type');
+                $ackModel = new TblUserDownloadAck();
+                $ackModel->attributes = $modelUsr->attributes;
+                $existAck = $ackModel->getExistDataAck($type);
+                if (!empty($existAck)) {
+                    foreach ($existAck as $exist) {
+                        $ackModel->updateAll(['download_pending' => 3], ['ack_id' => $exist['ack_id']]);
+                    }
+                }
+                $this->setDownldAck($ackModel, $saveModel, $modelUsr);
+            }
+        }
+    }
+
+    public function setDownldAck($ackModel, &$saveModel, $usrData) {
+        $usrAckModel = new TblUserDownloadAck();
+        $usrAckModel->attributes = $ackModel->attributes;
+        $usrAckModel->user_code = $usrData->user_code;
+        $usrAckModel->download_pending = 1;
+        $saveModel[] = $usrAckModel;
     }
 
 }

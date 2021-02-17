@@ -40,7 +40,7 @@ use app\modules\installation\models\TblRole;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblUserAndroid extends ChildModel {
+class TblUserAndroid extends \yii\db\ActiveRecord {
 
     public $toEncrypt = ['password'];
     public $org_type, $org_code, $repeat_password, $role_code;
@@ -111,14 +111,17 @@ class TblUserAndroid extends ChildModel {
         ];
     }
 
-    public function getExistData($org_type, $data) {
-        $query = $this->find()->where(['union_code' => $data->union_code]);
+    public function getExistData($org_type, $data, $notIn = '') {
+        $query = $this->find()->where(['union_code' => $data->union_code, 'is_active' => 1]);
         if (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code]);
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code]);
         } elseif ($org_type == 'VLC') {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code]);
+        }
+        if (!empty($notIn)) {
+            $query->andWhere(['!=', 'user_code', $notIn]);
         }
         $user = $query->all();
         return $user;
@@ -264,6 +267,19 @@ class TblUserAndroid extends ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(TblUserRoleMapping::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getMainExistData($org_type, $data, $username) {
+        $query = $this->find()->where(['union_code' => $data->union_code, 'username' => $username]);
+        if (strtoupper($org_type == 'MCC')) {
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code]);
+        } elseif ($org_type == 'BMC') {
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code]);
+        } elseif ($org_type == 'VLC') {
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code]);
+        }
+        $user = $query->all();
+        return $user;
     }
 
 }
