@@ -372,6 +372,7 @@ class DropDown extends Component {
                             } else if(length == 1) {
                                 $('#'+modelname+'-'+fieldName).val('DCS');
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
                                 $('#'+modelname+'-'+fieldName).trigger('change');
                             } else {
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().show();               
