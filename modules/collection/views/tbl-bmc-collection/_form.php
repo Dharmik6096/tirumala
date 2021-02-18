@@ -96,11 +96,13 @@ $script = "
     });
     $(document).on('change', '#tblbmccollection-bmc_code', function() { 
          gridChange();
-         $('#tblbmccollection-bmc_silos_info_code').val('');
+        $('#tblbmccollection-bmc_silos_info_code').val('');
+        $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
          var bmc = $('#tblbmccollection-bmc_code').val();
         if(setData(bmc)){
         $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
             $('#tblbmccollection-bmc_silos_info_code').val($('#tblbmccollection-bmc_silos_info_code option:nth-child(2)').val());
+            $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
         });
         } 
     });
@@ -157,7 +159,7 @@ $script = "
     
     $(document).on('click','.add-collection',function(e){
         reloadGrid();
-         $('#tblbmccollection-bmc_code').trigger('change');
+//         $('#tblbmccollection-bmc_code').trigger('change');
         $('.QltyParamDiv').show();
     });
     function reloadGrid(){
