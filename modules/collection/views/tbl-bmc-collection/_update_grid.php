@@ -173,7 +173,7 @@ $script = "
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
-                data: {'dcs_code':code,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift_code':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'valid_code':valid_code},
+                data: {'dcs_code':code,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift':shift,'fat':fat,'snf':snf,'customer_type':type,'union_code':union,'clr':clr,'bmc_code':bmc,'valid_code':valid_code},
                 success: function(data) {   
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
