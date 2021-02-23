@@ -8,6 +8,7 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\collection\models\TblBmcCollection;
 
 /**
  * This is the model class for table "tbl_quality_collection".
@@ -76,6 +77,7 @@ class TblQualityCollection extends \app\models\ChildModel {
             [['sample_no'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'mcc_plant_code', 'sample_no', 'doc_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
             [['protein', 'density', 'lactose', 'adt_param', 'adt_value', 'received_timestamp'], 'safe'],
             [['uuid'], 'validateBmcCode'],
+            [['plant_code'], 'validateQualityData'],
         ];
     }
 
@@ -155,4 +157,4 @@ class TblQualityCollection extends \app\models\ChildModel {
         }
     }
 
-}
+    }
