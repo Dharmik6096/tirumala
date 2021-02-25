@@ -5,6 +5,7 @@ namespace app\modules\organisation\models;
 use Yii;
 use app\modules\globalmaster\models\TblTransferType;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_master_transfer".
@@ -51,7 +52,7 @@ class TblMasterTransfer extends \app\models\ChildModel {
         return [
             [['status', 'update_transaction'], 'default', 'value' => 0],
             [['master_type', 'transfer_type', 'union_code', 'plant_code', 'wef_date'], 'required'],
-            [['old_member_code'], 'safe'],
+            [['old_member_code', 'customer_type', 'customer_code'], 'safe'],
             [['old_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'new_route_code'], 'required', 'on' => 'DCS'],
             [['old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'old_member_code'], 'required', 'on' => 'FARMER'],
             [['master_type', 'transfer_type', 'new_member_code', 'old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'plant_code', 'old_route_code', 'new_route_code', 'union_code', 'created_by', 'updated_by'], 'string'],
@@ -60,7 +61,7 @@ class TblMasterTransfer extends \app\models\ChildModel {
             // [['ex_member_code'], 'integer', 'min' => 1, 'max' => 1498],
             //  [['ex_member_code'], 'string', 'max' => 4],
             [['master_type'], 'checkMember', 'on' => 'FARMER'],
-            [['master_type'], 'checkRequest', 'on' => ['FARMER', 'DCS']],
+            [['master_type'], 'checkRequest', 'on' => ['FARMER', 'DCS', 'CUSTOMER']],
         ];
     }
 
@@ -93,6 +94,8 @@ class TblMasterTransfer extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'ex_member_code' => Yii::t('app', 'Ex. Member Code'),
+            'customer_type' => Yii::t('app', 'Type'),
+            'customer_code' => Yii::t('app', 'Name'),
         ];
     }
 
@@ -122,6 +125,8 @@ class TblMasterTransfer extends \app\models\ChildModel {
             $data->andWhere(['old_member_code' => $this->old_member_code]);
         } else if ($this->master_type == 'DCS') {
             $data->andWhere(['old_dcs_code' => $this->old_dcs_code]);
+        } else if ($this->master_type == 'CUSTOMER') {
+            $data->andWhere(['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code]);
         }
         $record = $data->one();
         if (!empty($record)) {
@@ -199,6 +204,10 @@ class TblMasterTransfer extends \app\models\ChildModel {
 
     public function checkDelete() {
         return ($this->status == 0) ? TRUE : FALSE;
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code', 'customer_type' => 'customer_type']);
     }
 
 }
