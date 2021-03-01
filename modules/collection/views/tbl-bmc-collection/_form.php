@@ -32,8 +32,8 @@ $script = "
     $('#tblbmccollection-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         var bmc = $('#tblbmccollection-own_bmc_code').val();
         $('#tblbmccollection-bmc_code').val(bmc);
-        $('#tblbmccollection-bmc_code').trigger('change');
         $('#tblbmccollection-bmc_code').trigger('select2:select');
+        $('#tblbmccollection-bmc_code').trigger('change');
         if(hasBMC == 0){
              $('#tblbmccollection-bmc_code').parent('div').parent().hide();  
         }
