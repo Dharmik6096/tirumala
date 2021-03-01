@@ -54,6 +54,7 @@ class TblMasterTransfer extends \app\models\ChildModel {
             [['master_type', 'transfer_type', 'union_code', 'plant_code', 'wef_date'], 'required'],
             [['old_member_code', 'customer_type', 'customer_code'], 'safe'],
             [['old_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'new_route_code'], 'required', 'on' => 'DCS'],
+            [['customer_type', 'customer_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'new_route_code'], 'required', 'on' => 'CUSTOMER'],
             [['old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'old_member_code'], 'required', 'on' => 'FARMER'],
             [['master_type', 'transfer_type', 'new_member_code', 'old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'plant_code', 'old_route_code', 'new_route_code', 'union_code', 'created_by', 'updated_by'], 'string'],
             [['wef_date', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at', 'update_transaction'], 'safe'],
