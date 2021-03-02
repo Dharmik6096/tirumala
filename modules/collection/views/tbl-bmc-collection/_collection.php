@@ -98,6 +98,10 @@ $form = ActiveForm::begin([
                         <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
                         <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
                     </div>
+                    <div class="col-sm-2 reset_field">
+                        <?php // Html::activeHiddenInput($model, 'milk_collection_code', ['value' => $model->milk_collection_code])  ?>
+                        <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
+                    </div>
                     <div class="col-sm-3 reset_field">
                         <?= $form->field($model, 'remarks')->textarea() ?>
                     </div>

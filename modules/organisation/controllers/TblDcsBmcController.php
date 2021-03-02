@@ -105,7 +105,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'bmc_name', $this->model->bmc_name);
             if ($validate == 1 && empty($this->model->getErrors())) {
-                $transaction = $this->generalModel->saveTransaction($master, [$this->contactDetails], ['Society BMC', 'create']);
+                $transaction = $this->generalModel->saveTransaction($master, [$this->contactDetails], [Yii::t('app', 'Society BMC'), 'create']);
                 if ($transaction == 'customRedirect') {
                     if ($this->model->bmc_type_code == '2') {
                         return $this->redirect(['tbl-dcs/create', 'bmc_code' => $this->model->bmc_code, 'is_bmc' => 1]);
@@ -160,7 +160,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique($this->model, 'bmc_name', $_POST['TblDcsBmc']['bmc_name']);
             if ($validate == 1) {
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $master, ['Society BMC', 'edit']);
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $master, [Yii::t('app', 'Society BMC'), 'edit']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }

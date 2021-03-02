@@ -529,6 +529,7 @@ class GridView extends BaseListView
         } else {
             $options = $this->rowOptions;
         }
+        $options = is_array($options) ? $options : [$options];
         $options['data-key'] = is_array($key) ? json_encode($key) : (string) $key;
 
         return Html::tag('tr', implode('', $cells), $options);
