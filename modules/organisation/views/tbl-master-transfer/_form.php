@@ -90,6 +90,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2  UPDATETRANSACTION">
         <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
+    <?= Html::hiddenInput('plant', $model->plant_code, ['id' => 'plant']); ?>
 </div>
 <div class="row">
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -108,15 +109,21 @@ $script = "$(document).ready(function(){
       setvisible();
     });
     $(document).on('change', '#tblmastertransfer-transfer_type', function() {
-      $('#tblmastertransfer-plant_code').val('').trigger('change');
-      $('#tblmastertransfer-new_mcc_plant_code').prop('disabled',false);
-      $('#master-transfer-form .reset_field input').val('');
-      $('#master-transfer-form .reset_field select').val('');
-            setvisible();
-});
+        var plant = $('#plant').val();
+            if(plant !=''){
+                $('#plant').val('');
+            }else{
+                $('#tblmastertransfer-plant_code').trigger('select2:select');
+                $('#tblmastertransfer-plant_code').val('').trigger('change');
+                $('#tblmastertransfer-new_mcc_plant_code').prop('disabled',false);
+                $('#master-transfer-form .reset_field input').val('');
+                $('#master-transfer-form .reset_field select').val('');
+            }
+        setvisible();
+    });
 function setvisible(){
     $('.CURRENTINFO').hide();
-   $('.NEWINFO').hide();
+    $('.NEWINFO').hide();
         $('.UPDATETRANSACTION').hide();
         var master_type = $('#tblmastertransfer-master_type').val();
         var transfer_type = $('#tblmastertransfer-transfer_type').val();
@@ -168,7 +175,7 @@ $('#tblmastertransfer-old_mcc_plant_code').on('change', function() {
      //    $('#tblmastertransfer-new_mcc_plant_code>option[value!='+old_mcc+']').prop('disabled', true);
        //     $('#tblmastertransfer-new_mcc_plant_code').val(old_mcc).trigger('change');
          //   $('#tblmastertransfer-new_mcc_plant_code').prop('disabled', true);
-        }else if(master_type=='DCS'){
+        }else if(master_type=='DCS' || master_type=='CUSTOMER'){
             if(transfer_type=='MCC'){
             $('#tblmastertransfer-new_mcc_plant_code>option[value!='+old_mcc+']').prop('disabled', false);
             $('#tblmastertransfer-new_mcc_plant_code>option[value='+old_mcc+']').prop('disabled', true);
