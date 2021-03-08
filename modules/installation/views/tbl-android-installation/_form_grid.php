@@ -13,6 +13,18 @@ $attribute = [
     ['label' => Yii::t('app', 'Org. Code'), 'attribute' => 'organization_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_code');
         }, 'filter' => FALSE],
+    ['label' => Yii::t('app', 'Org. Ref Code'), 'attribute' => 'organization_code', 'value' => function($model) {
+            $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
+            $code = '';
+            if ($type == 'MCC') {
+                $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['mccCode'], 'ref_code');
+            } elseif ($type == 'BMC') {
+                $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['bmcCode'], 'ref_code');
+            } elseif ($type == 'VLC') {
+                $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'ref_code');
+            }
+            return $code;
+        }, 'filter' => FALSE],
     ['label' => Yii::t('app', 'Org. Name'), 'attribute' => 'organization_code', 'value' => function($model) {
             $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
             $name = '';
@@ -41,7 +53,8 @@ $attribute = [
             return Yii::$app->controls->view_date($model->password_date);
         }, 'visible' => FALSE],
     ['attribute' => 'device_id'],
-    ['attribute' => 'db_version',
+    ['attribute' => 'version_no'],
+    ['attribute' => 'db_version', 'label' => Yii::t('app', 'DB Version'),
         'filter' => FALSE,
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version]) ? Yii::$app->dropdown->getRecords('db_version')['data'][$model->db_version] : $model->db_version;
@@ -60,6 +73,11 @@ $attribute = [
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('installation_type', $searchModel, 'installation_type'),
         'value' => function ($model) {
             return isset($model->installation_type) ? Yii::$app->dropdown->getRecords('installation_type')['data'][$model->installation_type] : '';
+        },],
+    ['attribute' => 'sync_active', 'label' => Yii::t('app', 'Sync status'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('status', $searchModel, 'sync_active'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('status')['data'][$model->sync_active]) ? Yii::$app->dropdown->getRecords('status')['data'][$model->sync_active] : $model->sync_active;
         },],
 ];
 

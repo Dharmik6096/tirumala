@@ -14,7 +14,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle'],
     ['attribute' => 'customer_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+            return isset($model->customer_type) ? (strtolower($model->customer_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') ) : '';
         }, 'vAlign' => 'middle'],
     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
     ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {

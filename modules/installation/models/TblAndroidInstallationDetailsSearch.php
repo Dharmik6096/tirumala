@@ -20,7 +20,7 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
     public function rules() {
         return [
             [['android_installation_details_id', 'otp_code', 'is_active', 'is_expired', 'sync_active'], 'integer'],
-            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'installation_type', 'organization_code', 'from_date', 'to_date', 'organization_type', 'password_date', 'password'], 'safe'],
+            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'installation_type', 'organization_code', 'from_date', 'to_date', 'organization_type', 'password_date', 'password', 'sync_active'], 'safe'],
         ];
     }
 
