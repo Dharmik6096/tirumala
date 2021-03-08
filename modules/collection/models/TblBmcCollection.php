@@ -312,8 +312,22 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
-            $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            $Code = '';
+            if (!empty($prefix) && is_numeric($this->customer_code)) {
+                $customerModel = new TblCustomerMaster();
+                $customerModel->customer_type = $this->customer_type;
+                $customerModelData = $customerModel->find()
+                        ->where(['customer_type' => $this->customer_type])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $this->customer_code])
+                        ->all();
+                if (count($customerModelData) == 1) {
+                    $Code = $customerModelData[0]->customer_code;
+                    $this->ex_code = $customerModelData[0]->customer_code_ex;
+                }
+            } else {
+                $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
+                $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            }
             return $data = empty($Code) ? '' : $Code;
         }
     }

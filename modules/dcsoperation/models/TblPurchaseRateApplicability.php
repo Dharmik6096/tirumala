@@ -440,8 +440,22 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         if (strtolower($model->applicable_for) != 'dcs') {
             $prefix = Yii::$app->general->getforeignkey($model->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($model->customerType, 'code_length');
-            $model->ex_code = $prefix . str_pad($model->applicable_code, $length, '0', STR_PAD_LEFT);
-            $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
+            $Code = '';
+            if (!empty($prefix) && is_numeric($model->applicable_code)) {
+                $customerModel = new TblCustomerMaster();
+                $customerModel->customer_type = $model->applicable_for;
+                $customerModelData = $customerModel->find()
+                        ->where(['customer_type' => $model->applicable_for])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->applicable_code])
+                        ->all();
+                if (count($customerModelData) == 1) {
+                    $Code = $customerModelData[0]->customer_code;
+                    $model->ex_code = $customerModelData[0]->customer_code_ex;
+                }
+            } else {
+                $model->ex_code = $prefix . str_pad($model->applicable_code, $length, '0', STR_PAD_LEFT);
+                $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
+            }
             return $data = empty($Code) ? '' : $Code;
         }
     }
