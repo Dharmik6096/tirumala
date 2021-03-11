@@ -1929,7 +1929,8 @@ class GeneralFunctions extends Component {
                     $code = intval($code);
                     $main_ex_cnt = $model->find()
                             ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
-                            ->andWhere(['CAST(' . $ex_code_key . ' as int)' => $code])
+                            ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
+                            ->andWhere(['CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)' => $code])
                             ->count();
 
                     $ex_cnt = $findModel->find()
