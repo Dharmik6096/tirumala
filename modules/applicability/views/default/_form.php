@@ -80,188 +80,190 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <h4 class="theme-box-heading">Apply To</h4>
             </div>
             <?= Html::radioList('dcs-filter', 'society', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'dcs-filter']]); ?>
-        <div class="col-sm-3">
+            <div class="col-sm-3">
                 <h4 class="mb15 theme-box-heading" id="header"><?= $title ?></h4>
-            <div class="margin_top_15_reverse mb15">
+                <div class="margin_top_15_reverse mb15">
+                    <?php
+                    /* foreach ($filter_data as $key => $data) {
+                      ?>
+                      <?=
+                      $this->render('_checkbox_list', [
+                      'field_name' => $key,
+                      'list' => $data, 'selected' => [],
+                      ])
+                      ?>
+                      <?php } */
+                    foreach ($filters as $key => $data) {
+                        if ($key != 'society')
+                            echo '<div id="' . $key . '-list" class="row flt app-check-list-bmc" style="display:none"></div>';
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+            <?php
+        } else if (in_array('tanker_rate', $options)) {
+            // change here for BMC MCC Filter
+            $modelName = \yii\helpers\StringHelper::basename(get_class($model));
+            $class = 'col-sm-12';
+            $checkboxClass = 'col-sm-12';
+            $appendClass = count($filters) == 1 ? ' disp_none ' : '';
+            ?>
+            <!-- <div class="col-sm-12 mt10 <?= $appendClass ?>">
+                <h5 class="panel-subtitle">Apply to</h5> -->
+            <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                    <h4 class="theme-box-heading">Apply To</h4>
+                </div>
+                <div class="<?= $appendClass ?>">
+                    <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
+                </div>
+        </div>
                 <?php
-                /* foreach ($filter_data as $key => $data) {
-                  ?>
-                  <?=
-                  $this->render('_checkbox_list', [
-                  'field_name' => $key,
-                  'list' => $data, 'selected' => [],
-                  ])
-                  ?>
-                  <?php } */
-                foreach ($filters as $key => $data) {
-                    if ($key != 'society')
-                        echo '<div id="' . $key . '-list" class="row flt app-check-list-bmc" style="display:none"></div>';
-                }
-                ?>
-            </div>
-        </div>
-        <?php
-    } else if (in_array('tanker_rate', $options)) {
-        // change here for BMC MCC Filter
-        $modelName = \yii\helpers\StringHelper::basename(get_class($model));
-        $class = 'col-sm-12';
-        $checkboxClass = 'col-sm-12';
-        $appendClass = count($filters) == 1 ? ' disp_none ' : '';
-        ?>
-        <!-- <div class="col-sm-12 mt10 <?= $appendClass ?>">
-            <h5 class="panel-subtitle">Apply to</h5> -->
-        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading">Apply To</h4>
-            </div>
-            <div class="<?= $appendClass ?>">
-                <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
-            </div>
-        <?php
-    }
-    $customerClass = "";
-    ?>
+            }
+            $customerClass = "";
+            ?>
 
-    <?php
-    if ($customer_type_wise_entry) {
-        $customerClass = "customerTypeValidate";
-        $hideClass = $hideCustomerType ? ' disp_none ' : '';
-        ?>
-        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading">Apply To</h4>
-            </div>
-        <!-- <div class="col-sm-12 mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
-            <h5 class="panel-subtitle">Apply to</h5> -->
-            
-            <div id="dcs-wrap">
-                <?=
-                $this->render('_checkbox_list', [
-                    'model' => $model, 'form' => $form, 'field_name' => $customer_type_field_name,
-                    'list' => $customer_type_list, 'selected' => $selected_customer_type, 'selectedData' => $selectedTypes, 'checkboxClass' => 'col-sm-2',
-                ])
+            <?php
+            if ($customer_type_wise_entry) {
+                $customerClass = "customerTypeValidate";
+                $hideClass = $hideCustomerType ? ' disp_none ' : '';
                 ?>
-            </div>
-        </div>
-    <?php } ?>
-    <div class="<?= $class ?>">
-        <div class="col-sm-4 padding-left-0 selectMccArea disp_none">
-            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'MCC List') ?></h4>
-            <div class="app-check-list-mcc ">
-                <div class="form-group">
-                    <div class="checkbox app-check-all-mcc app-check-list-padding">
-                        <?php $field_name_for_filter = 'f_mcc_code'?>
-                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
-                        <label class="route-text">
-                            <?= Html::checkbox('checkall', false, ['id' => 'checkAllMccList', 'class' => 'mcc-list-checkbox']) ?>
-                            <label for="checkAllMccList"><?= Yii::t('app', 'Check ALL MCC') ?></label>
-                        </label>
+                <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
+                    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                        <h4 class="theme-box-heading">Apply To</h4>
+                    </div>
+                <!-- <div class="col-sm-12 mt10 customerTypeEntries <?= $customerClass ?> <?= $hideClass ?>">
+                    <h5 class="panel-subtitle">Apply to</h5> -->
+
+                    <div id="dcs-wrap">
+                        <?=
+                        $this->render('_checkbox_list', [
+                            'model' => $model, 'form' => $form, 'field_name' => $customer_type_field_name,
+                            'list' => $customer_type_list, 'selected' => $selected_customer_type, 'selectedData' => $selectedTypes, 'checkboxClass' => 'col-sm-2',
+                        ])
+                        ?>
+                    </div>
+                </div>
+            <?php } ?>
+            <div class="<?= $class ?>">
+                <div class="col-sm-4 padding-left-0 selectMccArea disp_none">
+                    <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'MCC List') ?></h4>
+                    <div class="app-check-list-mcc ">
+                        <div class="form-group">
+                            <div class="checkbox app-check-all-mcc app-check-list-padding">
+                                <?php $field_name_for_filter = 'f_mcc_code' ?>
+                                <?= Html::textInput('filter', '', ['class' => 'col-sm-12 margin_bottom_10', 'id' => $field_name_for_filter, 'onkeyup' => 'checkBoxFilter(this)', 'placeholder' => "Search"]); ?>
+                                <label class="route-text">
+                                    <?= Html::checkbox('checkall', false, ['id' => 'checkAllMccList', 'class' => 'mcc-list-checkbox']) ?>
+                                    <label for="checkAllMccList"><?= Yii::t('app', 'Check ALL MCC') ?></label>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="mcc-wrap checkAllMcc" class=" app-check-list-padding <?= $customerClass ?>">
+                            <?=
+                            $this->render('_checkbox_list', [
+                                'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
+                                'list' => $mccList, 'selected' => [], 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
+                                'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'mcc',
+                                'checkboxClass' => ' flt-checkbox mccCheckboxes', 'setCheckboxClass' => 'mccCheck'
+                            ])
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 padding-left-0 selectBmcArea disp_none">
+                    <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'BMC List') ?></h4>
+                    <div class="app-check-list-bmc ">
+                        <div class="form-group">
+                            <div class="checkbox app-check-all-bmc app-check-list-padding">
+                                <?php $field_name_for_filter = 'f_bmc_code' ?>
+                                <?= Html::textInput('filter', '', ['class' => 'col-sm-12 margin_bottom_10', 'id' => $field_name_for_filter, 'onkeyup' => 'checkBoxFilter(this)', 'placeholder' => "Search"]); ?>
+                                <label class="route-text">
+                                    <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
+                                    <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL BMC') ?></label>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="bmc-wrap checkAllBmc" class=" app-check-list-padding <?= $customerClass ?>">
+                            <?=
+                            $this->render('_checkbox_list', [
+                                'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
+                                'list' => [], 'selected' => $selectedBmcCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
+                                'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'bmc',
+                                'checkboxClass' => ' flt-checkbox bmcCheckboxes', 'setCheckboxClass' => 'bmcCheck'
+                            ])
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 padding-left-0 selectRouteArea disp_none">
+                    <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'Route List') ?></h4>
+                    <div class="app-check-list-bmc ">
+                        <div class="form-group">
+                            <div class="checkbox app-check-all-route app-check-list-padding">
+                                <?php $field_name_for_filter = 'f_route_code' ?>
+                                <?= Html::textInput('filter', '', ['class' => 'col-sm-12 margin_bottom_10', 'id' => $field_name_for_filter, 'onkeyup' => 'checkBoxFilter(this)', 'placeholder' => "Search"]); ?>
+                                <label class="route-text">
+                                    <?= Html::checkbox('checkall', false, ['id' => 'checkAllRouteList', 'class' => 'route-list-checkbox']) ?>
+                                    <label for="checkAllRouteList"><?= Yii::t('app', 'Check ALL Route') ?></label>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="route-wrap checkAllRoute" class=" app-check-list-padding <?= $customerClass ?>">
+                            <?=
+                            $this->render('_checkbox_list', [
+                                'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
+                                'list' => [], 'selected' => $selectedRouteCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
+                                'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'route',
+                                'checkboxClass' => ' flt-checkbox routeCheckboxes', 'setCheckboxClass' => 'routemcCheck'
+                            ])
+                            ?>
+                        </div>
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div id="mcc-wrap checkAllMcc" class=" app-check-list-padding <?= $customerClass ?>">
-                    <?=
-                    $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
-                        'list' => $mccList, 'selected' => [], 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
-                        'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'mcc',
-                        'checkboxClass' => ' flt-checkbox mccCheckboxes', 'setCheckboxClass' => 'mccCheck'
-                    ])
-                    ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4 padding-left-0 selectBmcArea disp_none">
-            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'BMC List') ?></h4>
-            <div class="app-check-list-bmc ">
-                <div class="form-group">
-                    <div class="checkbox app-check-all-bmc app-check-list-padding">
-                        <?php $field_name_for_filter = 'f_bmc_code'?>
-                        <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
-                        <label class="route-text">
-                            <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
-                            <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL BMC') ?></label>
-                        </label>
+                <div class="col-sm-12 padding-left-0 padding-right-0 applicableCodeArea">
+                    <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', $title) ?> List</h4>
+                    <div class="app-check-list ">
+                        <div class="form-group">
+                            <div class="checkbox app-check-all app-check-list-padding">
+                                <?php $field_name_for_filter = $main_field_name ?>
+                                <?= Html::textInput('filter', '', ['class' => 'col-sm-12 margin_bottom_10', 'id' => $field_name_for_filter, 'onkeyup' => 'checkBoxFilter(this)', 'placeholder' => "Search"]); ?>
+                                <label class="route-text">
+                                    <?= Html::checkbox('checkall', false, ['id' => 'checkAll', 'class' => 'route-checkbox']) ?>
+                                    <label for="checkAll">Check All <?= $title ?></label>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="dcs-wrap" class=" app-check-list-padding <?= $customerClass ?>">
+                            <?=
+                            $this->render('_checkbox_list', [
+                                'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
+                                'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
+                                'checkboxClass' => ' flt-checkboxa dcsCheckboxes'
+                            ])
+                            ?>
+                        </div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
-                <div id="bmc-wrap checkAllBmc" class=" app-check-list-padding <?= $customerClass ?>">
-                    <?=
-                    $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
-                        'list' => [], 'selected' => $selectedBmcCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
-                        'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'bmc',
-                        'checkboxClass' => ' flt-checkbox bmcCheckboxes', 'setCheckboxClass' => 'bmcCheck'
-                    ])
-                    ?>
-                </div>
             </div>
-        </div>
-        <div class="col-sm-4 padding-left-0 selectRouteArea disp_none">
-                <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'Route List') ?></h4>
-                <div class="app-check-list-bmc ">
+            <div class="clearfix"></div>
+            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
-                    <div class="checkbox app-check-all-route app-check-list-padding">
-                    <?php $field_name_for_filter = 'f_route_code'?>
-                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
-                        <label class="route-text">
-                            <?= Html::checkbox('checkall', false, ['id' => 'checkAllRouteList', 'class' => 'route-list-checkbox']) ?>
-                            <label for="checkAllRouteList"><?= Yii::t('app', 'Check ALL Route') ?></label>
-                        </label>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-                <div id="route-wrap checkAllRoute" class=" app-check-list-padding <?= $customerClass ?>">
-                    <?=
-                    $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
-                        'list' => [], 'selected' => $selectedRouteCode, 'selectedData' => [], 'checkboxClass' => 'col-sm-12',
-                        'checkboxWidthClass' => 'col-sm-6', 'idPrefix' => 'route',
-                        'checkboxClass' => ' flt-checkbox routeCheckboxes', 'setCheckboxClass' => 'routemcCheck'
-                    ])
-                    ?>
+                    <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
+                    <?= Yii::$app->controls->reset(); ?>
+                    <?= Yii::$app->controls->cancel($model); ?>
                 </div>
             </div>
         </div>
-        <div class="clearfix"></div>
-        <div class="col-sm-12 padding-left-0 padding-right-0 applicableCodeArea">
-            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= $title ?> List</h4>
-                <div class="app-check-list ">
-                <div class="form-group">
-                    <div class="checkbox app-check-all app-check-list-padding">
-                    <?php $field_name_for_filter = $main_field_name?>
-                    <?= Html::textInput('filter','',['class'=>'col-sm-12 margin_bottom_10','id'=>$field_name_for_filter,'onkeyup'=>'checkBoxFilter(this)', 'placeholder'=>"Search"]); ?>
-                        <label class="route-text">
-                            <?= Html::checkbox('checkall', false, ['id' => 'checkAll', 'class' => 'route-checkbox']) ?>
-                            <label for="checkAll">Check All <?= $title ?></label>
-                        </label>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-                <div id="dcs-wrap" class=" app-check-list-padding <?= $customerClass ?>">
-                    <?=
-                    $this->render('_checkbox_list', [
-                        'model' => $model, 'form' => $form, 'field_name' => $field_name_for_filter,
-                        'list' => $dcs_list, 'selected' => $selected, 'selectedData' => $selectedCodes, 'checkboxClass' => $checkboxClass,
-                        'checkboxClass' => ' flt-checkboxa dcsCheckboxes'
-                    ])
-                    ?>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
-            <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
-        </div>
-    </div>
-</div>
-<?php ActiveForm::end(); ?>
-<?php
-$script = "
+        <?php ActiveForm::end(); ?>
+        <?php
+        $script = "
 
     function checkBoxFilter(val){
         var id = $(val).attr('id');
@@ -697,4 +699,4 @@ $script = "
 //        }
 //    ";
 //}
-$this->registerJs($script, View::POS_END, 'village-code');
+        $this->registerJs($script, View::POS_END, 'village-code');

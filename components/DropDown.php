@@ -291,7 +291,7 @@ class DropDown extends Component {
 
         $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
         if ((Yii::$app->session->get('hasBMC') == 0)) {
-            $script = "$(document).ready(function() {
+        $script = "$(document).ready(function() {
                         var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                         var fieldName = '" . strtolower($name) . "';
                         $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
@@ -303,13 +303,14 @@ class DropDown extends Component {
                             } else if(length == 1) {
                                 $('#'+modelname+'-'+fieldName).val(bmc);
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
                                 $('#'+modelname+'-'+fieldName).trigger('change');
                             } else {
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();               
                             }
                         });
                     });";
-            Yii::$app->view->registerJs($script, View::POS_END, 'bmc_hide');
+        Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_bmc_hide');
         }
     }
 
@@ -370,6 +371,7 @@ class DropDown extends Component {
                             } else if(length == 1) {
                                 $('#'+modelname+'-'+fieldName).val('DCS');
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+                                $('#'+modelname+'-'+fieldName).trigger('select2:select');
                                 $('#'+modelname+'-'+fieldName).trigger('change');
                             } else {
                                 $('#'+modelname+'-'+fieldName).parent('div').parent().show();               

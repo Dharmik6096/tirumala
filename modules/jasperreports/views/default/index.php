@@ -290,14 +290,14 @@ $defaultToggle = true;
                                                     'mask' => '99-9999',])
                                                 ?>                                               <?php
                                             }
-                                        
-                                        if (in_array($value, array('p_dcsc_code'))) {
-                                            ?>
-                                            <div class="col-sm-3 val_dcs_code">
-                                                <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-p_bmc_code', 'p_dcsc_code', Yii::t('app', 'Name')); ?>
-                                            </div>
-                                            <?php
-                                        }
+
+                                            if (in_array($value, array('p_dcsc_code'))) {
+                                                ?>
+                                                <div class="col-sm-3 val_dcs_code">
+                                                    <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-p_bmc_code', 'p_dcsc_code', Yii::t('app', 'Name')); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (isset($data['report_type'])) {
                                             echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type'], ['prompt' => Yii::t('app', 'Select Type')]);
@@ -549,7 +549,7 @@ if('" . $report . "'=='InchargeRemuneration'){
         }
     });
 }
-if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'){
+if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'&& '" . $report . "'!='VendorMilkPaymentVarddan'){
     $('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_plant_code . "'=='0'){

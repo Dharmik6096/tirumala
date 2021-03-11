@@ -597,7 +597,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $content = '';
                 foreach ($this->output as $dataline) {
                     if (!empty($dataline['Dataline'])) {
-                        $content .= $dataline['Dataline'] . PHP_EOL;
+                        $content .= $dataline['Dataline'] . "\r\n";
                     }
                 }
                 $file_name = substr($model->date, 8, 2) . substr($model->date, 5, 2) . substr($model->date, 2, 2) . (($model->shift == '1') ? 'M' : 'E') . '.EIP';
