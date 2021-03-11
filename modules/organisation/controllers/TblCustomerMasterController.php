@@ -16,13 +16,14 @@ use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\details\models\TblContactDetailsSearch;
 use app\modules\organisation\models\TblCustomerDeactiveSearch;
+use yii\web\Response;
 
 /**
  * TblCustomerMasterController implements the CRUD actions for TblCustomerMaster model.
  */
 class TblCustomerMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type'];
+    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type', 'excode-prefix'];
     public $bankDetails;
     public $contactDetails;
 
@@ -79,6 +80,8 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $this->contactDetails->scenario = 'additional';
         $this->model->scenario = 'createFront';
         if ($this->model->load(Yii::$app->request->post())) {
+            $exCode = $this->model->customer_code_ex;
+            $this->model->customer_code_ex = $this->model->prefix . $exCode;
             $this->model->customer_code = $this->model->getCode();
 //            $this->model->customer_code_ex = $this->model->getCodeEx();
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
@@ -99,11 +102,13 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                 array_push($mapList, $this->contactDetails);
             }
             if ($bankValidate == 1 && empty($this->model->getErrors())) {
+                $this->model->customer_code_ex = !empty($this->model->prefix . $exCode) ? $this->model->prefix . $exCode : $this->model->customer_code_ex;
                 $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Customer Master', 'create']);
-                if ($transaction !== FALSE) {
+                if ($transaction == 'customRedirect') {
                     return $this->{$transaction}();
                 }
             }
+            $this->model->customer_code_ex = $exCode;
         }
         return $this->customRender();
     }
@@ -119,6 +124,12 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $this->viewFile = 'update';
         $this->model->scenario = 'updateFront';
         $x_col1 = explode('#', $this->model->x_col1);
+        $prefix = Yii::$app->general->getforeignkey($this->model->customerTypePre, 'code_prefix');
+        $exCode = str_replace($prefix, '', $this->model->customer_code_ex);
+        if ($exCode != $this->model->customer_code_ex) {
+            $this->model->prefix = $prefix;
+            $this->model->customer_code_ex = $exCode;
+        }
         if (isset($x_col1)) {
             if (isset($x_col1[0]) && isset($x_col1[1])) {
                 $this->model->same_milk_type = $x_col1[0];
@@ -129,11 +140,14 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             $historyModel = new TblCustomerMasterHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
+            $exCode = $this->model->customer_code_ex;
+            $this->model->customer_code_ex = $prefix . $exCode;
             $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master', 'edit']);
-            if ($transaction !== FALSE) {
+            if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
+            $this->model->customer_code_ex = $exCode;
         }
         return $this->customRender();
     }
@@ -264,6 +278,19 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionExcodePrefix() {
+        $response = [];
+        $response['status'] = 'error';
+        $response['data'] = '';
+        $model = new TblCustomerMaster();
+        $model->union_code = Yii::$app->request->post('union_code');
+        $model->customer_type = Yii::$app->request->post('type');
+        $response['status'] = 'success';
+        $response['data'] = Yii::$app->general->getforeignkey($model->customerTypePre, 'code_prefix');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }

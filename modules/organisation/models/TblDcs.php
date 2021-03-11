@@ -276,7 +276,7 @@ class TblDcs extends ChildModel {
                     if ($this->scenario == 'updateDcs') {
                         $update = TRUE;
                     }
-                    Yii::$app->general->vaildateExCodes($this, 'tbl_dcs', 'dcs_code_ex', 'tbl_customer_master', 'customer_code_ex', 'TblCustomerMaster', $this->union_code, $update);
+                    Yii::$app->general->validateExCodes($this, 'tbl_dcs', 'dcs_code_ex', 'tbl_customer_master', 'customer_code_ex', 'TblCustomerMaster', $this->union_code, $update);
                 }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv', 'createDcs']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);

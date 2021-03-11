@@ -1574,13 +1574,13 @@ class GeneralFunctions extends Component {
         return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
     }
 
-    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '') {
+    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '', $conacte = true) {
         $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
             $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
             $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
-            if ($keyPattern['ex_code_auto'] == 1 && $keyPattern['has_prefix'] != 1) {
+            if ($keyPattern['ex_code_auto'] == 1) {
                 $data = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
                         ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
                         ->asArray()
@@ -1588,7 +1588,9 @@ class GeneralFunctions extends Component {
                 $model->{$ex_code_key} = str_pad(($data['ex_code']), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
             } else {
                 if (!empty($model->{$ex_code_key})) {
-                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    if ($conacte) {
+                        $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    }
                     $ex_cnt = $model->find()
                             ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
                             ->andWhere([$ex_code_key => $model->{$ex_code_key}])
@@ -1734,7 +1736,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key) {
+    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key, $conacte = true) {
         if (!$model->isNewRecord) {
             $keyPattern = $this->getKeyPattern($table_name);
             if (!empty($keyPattern)) {
@@ -1745,7 +1747,7 @@ class GeneralFunctions extends Component {
                 } else {
                     $old_ex_code = $model->oldAttributes[$ex_code_key];
                     $allow_update = ($old_ex_code === $model->{$ex_code_key}) ? FALSE : TRUE;
-                    if ($allow_update) {
+                    if ($allow_update && $conacte) {
                         $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
                     }
                     if ($allow_update && strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
@@ -1905,55 +1907,85 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function vaildateExCodes($model, $master_table, $ex_code_key, $cmpare_table, $cmpare_key, $find_model, $unionCode, $update) {
+    public function validateExCodes($model, $master_table, $ex_code_key, $cmpare_table, $cmpare_key, $find_model, $unionCode, $update) {
         $flag = isset(Yii::$app->session->get('unionConfig')[$unionCode]['check_ex_code_unique']) ? Yii::$app->session->get('unionConfig')[$unionCode]['check_ex_code_unique'] : '';
         $keyPattern = $this->getKeyPattern($cmpare_table);
         $MasterKeyPattern = $this->getKeyPattern($master_table);
         if (!empty($flag) && !empty($keyPattern)) {
             $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
+            $Master_code_reset_on = $MasterKeyPattern['ex_code_reset_on'];
 
             $model_name = Yii::$app->path->define($find_model);
             $findModel = new $model_name();
             if (!empty($model->{$ex_code_key})) {
-                $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $MasterKeyPattern['ex_code_length'], '0', STR_PAD_LEFT);
-                $ex_cnt = $findModel->find()
-                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                        ->andWhere([$cmpare_key => $model->{$ex_code_key}])
-                        ->count();
-                if ($ex_cnt > 0) {
-                    if ($MasterKeyPattern['ex_code_auto'] == 0 || $update || $MasterKeyPattern['has_prefix'] == 1) {
+                if ($master_table != 'tbl_customer_master') {
+                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $MasterKeyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                }
+                $ex_cnt = 0;
+                $main_ex_cnt = 0;
+                if ($master_table == 'tbl_customer_master') {
+                    $prefix = Yii::$app->general->getforeignkey($model->customerTypePre, 'code_prefix');
+                    $code = str_replace($prefix, '', $model->{$ex_code_key});
+                    $code = intval($code);
+                    $main_ex_cnt = $model->find()
+                            ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
+                            ->andWhere(['CAST(' . $ex_code_key . ' as int)' => $code])
+                            ->count();
+
+                    $ex_cnt = $findModel->find()
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->andWhere(['CAST(' . $cmpare_key . ' as int)' => $code])
+                            ->count();
+                }
+                if ($master_table == 'tbl_dcs') {
+                    $code = intval($model->{$ex_code_key});
+                    $ex_cnt = $findModel->find()
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
+                            ->andWhere(['CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)' => $code])
+                            ->count();
+//                    var_dump($findModel->createCommand()->getRawSql());
+//                    die;
+                }
+                if ($ex_cnt > 0 || $main_ex_cnt > 0) {
+                    if ($MasterKeyPattern['ex_code_auto'] == 0 || $update) {
                         $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
                     } else {
-                        $Master_code_reset_on = $MasterKeyPattern['ex_code_reset_on'];
+
                         if ($master_table == 'tbl_dcs') {
-                            $MasterData = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
-                                    ->where([$Master_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            $MasterData = $model->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
+                                    ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
                                     ->asArray()
                                     ->one();
                         }
                         if ($cmpare_table == 'tbl_dcs') {
-                            $findData = $findModel->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $cmpare_key . ' as int)),0)+1'])
+                            $findData = $findModel->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $cmpare_key . ' as int)),0)+1'])
                                     ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
                                     ->asArray()
                                     ->one();
                         }
-                        if ($master_table == 'tbl_customer_master' && $MasterKeyPattern['has_prefix'] != 1) {
-                            $MasterData = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
-                                    ->where([$Master_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                        if ($master_table == 'tbl_customer_master') {
+                            $MasterData = $model->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)), 0) + 1'])
+                                    ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
+                                    ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
                                     ->asArray()
                                     ->one();
                         }
-                        if ($cmpare_table == 'tbl_customer_master' && $keyPattern['has_prefix'] != 1) {
-                            $findData = $findModel->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $cmpare_key . ' as int)),0)+1'])
+                        if ($cmpare_table == 'tbl_customer_master') {
+                            $findData = $findModel->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)), 0) + 1'])
+                                    ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
                                     ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
                                     ->asArray()
                                     ->one();
                         }
-
                         $ex_code = 0;
                         $masterMax = !empty($MasterData) ? $MasterData['ex_code'] : 0;
                         $cmprMax = !empty($findData) ? $findData['ex_code'] : 0;
-                        $ex_code = ($masterMax >= $cmprMax) ? (int) $masterMax + 1 : (int) $cmprMax + 1;
+                        $ex_code = ($masterMax >= $cmprMax) ? (int) $masterMax : (int) $cmprMax;
                         $model->{$ex_code_key} = str_pad(($ex_code), $MasterKeyPattern['ex_code_length'], '0', STR_PAD_LEFT);
                     }
                 }

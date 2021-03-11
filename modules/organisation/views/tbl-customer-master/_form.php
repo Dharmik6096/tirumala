@@ -50,8 +50,11 @@ $form = ActiveForm::begin([
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_customer_master');
         if (!empty($keyPattern)) {
             ?>
-            <?php if ($keyPattern['has_prefix'] == 1 || $readonly || $keyPattern['ex_code_auto'] == 0) { ?>
-                <div class="col-sm-4"> 
+            <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
+                <div class="col-sm-1 "> 
+                    <?= $form->field($model, 'prefix')->textInput(['readOnly' => true]) ?>
+                </div>
+                <div class="col-sm-3 number-validate"> 
                     <?= $form->field($model, 'customer_code_ex')->textInput() ?>
                 </div>
             <?php } ?>
@@ -169,6 +172,41 @@ $script = "
     $('#tblbankdetails-ifsc').on('change', function(){
         $('#warning').val(0);
     });
+    $('#tblcustomermaster-customer_type').on('change', function(){
+    $('#tblcustomermaster-prefix').val('');
+        PreffixValue();
+    });
+    $(document).on('change', '#tblcustomermaster-union_code', function() {  
+    $('#tblcustomermaster-prefix').val('');
+        PreffixValue();
+    });
+//    $('#tblcustomermaster-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+//       console.log('tset');
+//    });
+    function PreffixValue(){
+        var union = $('#tblcustomermaster-union_code').val();
+        var type = $('#tblcustomermaster-customer_type').val();
+            if(union !='' && type !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['excode-prefix']) . "',
+                    data: {'union_code':union,'type':type},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                        console.log(obj.data);
+                          $('#tblcustomermaster-prefix').val(obj.data);
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
+
+
 ";
 $this->registerJs($script, View::POS_END, 'customer_mastercreate');
 ?>
