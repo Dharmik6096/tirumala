@@ -25,6 +25,8 @@ $this->title = Yii::t('app', '208 - Society-Shift Collection Completed');
                     ['attribute' => 'mcc_name', 'filter' => false],
                     ['attribute' => 'district_name', 'filter' => false],
                     ['attribute' => 'dcs_code', 'filter' => false],
+                    ['attribute' => 'code_ex','label' => Yii::t('app', 'Ex Code'), 'filter' => false],
+                    ['attribute' => 'ref_code', 'filter' => false],
                     ['attribute' => 'dcs_name', 'filter' => false],
                     ['attribute' => 'product_type', 'filter' => false],
                     ['attribute' => 'MinDate', 'filter' => false],
