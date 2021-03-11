@@ -83,7 +83,7 @@ class TblMemberController extends \app\controllers\ChildController {
             if ($bankValidate == 1 && $_POST['warning'] == '0') {
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
             }
-            if ($bankValidate == 1 && $validate == 1 && $this->model->validate() && empty($this->model->getErrors())) {
+            if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors()) && $this->model->validate()) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['member', 'create']);

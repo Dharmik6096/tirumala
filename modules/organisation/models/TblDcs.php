@@ -608,7 +608,7 @@ class TblDcs extends ChildModel {
 
     public function getRouteDcs($route) {
 
-        return $routeSocieties = TblSocietyCodes::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.ref_code'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
+        return $routeSocieties = TblDcs::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.ref_code'])->where(['tbl_dcs.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
 
 
 //return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
