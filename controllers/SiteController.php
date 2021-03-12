@@ -60,6 +60,7 @@ use app\modules\collection\models\TblMilkCollectionNotExists;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblBmcMilkType;
 
 class SiteController extends Controller {
 
@@ -1783,10 +1784,34 @@ class SiteController extends Controller {
                                 } else {
                                     if ($transaction_data->table_name == 'tbl_bmc_collection') {
                                         $range = Yii::$app->general->getUnionConfiguration($model->union_code, 'buf_min_fat_range_bmc', 'PORTAL');
-                                        if (!empty($range) && $range < $model->fat) {
-                                            $model->milk_type_code = 2;
-                                        } elseif (!empty($range) && $range >= $model->fat) {
-                                            $model->milk_type_code = 1;
+                                        $mapping = new TblBmcMilkType();
+                                        $mapped = $mapping->find()->where(['bmc_code' => $model->bmc_code, 'is_active' => 1])->all();
+                                        if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
+                                            $type = [];
+                                            foreach ($mapped as $map) {
+                                                $type[] = $map->milk_type_code;
+                                            }
+                                            if (in_array(1, $type) && in_array(2, $type)) {
+                                                if ($range < $model->fat) {
+                                                    $model->milk_type_code = 2;
+                                                } elseif ($range >= $model->fat) {
+                                                    $model->milk_type_code = 1;
+                                                }
+                                            }
+                                            if (in_array(1, $type) && in_array(3, $type)) {
+                                                if ($range < $model->fat) {
+                                                    $model->milk_type_code = 3;
+                                                } elseif ($range >= $model->fat) {
+                                                    $model->milk_type_code = 1;
+                                                }
+                                            }
+                                            if (in_array(2, $type) && in_array(3, $type)) {
+                                                if ($range < $model->fat) {
+                                                    $model->milk_type_code = 3;
+                                                } elseif ($range >= $model->fat) {
+                                                    $model->milk_type_code = 2;
+                                                }
+                                            }
                                         }
                                     }
                                     $model->scenario = 'androidsync';

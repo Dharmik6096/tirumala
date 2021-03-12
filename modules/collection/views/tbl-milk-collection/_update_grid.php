@@ -225,11 +225,12 @@ $script = "
         var union = $('#tblmilkcollection-'+tr_key+'-union_code').val();
         var fat = $('#tblmilkcollection-'+tr_key+'-fat').val();
         var milk_type = $('#tblmilkcollection-'+tr_key+'-milk_type_code').val();
-            if(union !='' && fat !='' && milk_type !=''){
+        var dcs = $('#tblmilkcollection-'+tr_key+'-dcs_code').val();
+            if(union !='' && fat !='' && milk_type !='' && dcs!=''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['check-fat-range']) . "',
-                    data: {'union_code':union,'fat':fat,'milk_type':milk_type},
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type,'dcs':dcs},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
