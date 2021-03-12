@@ -97,7 +97,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
                 ->andWhere('\'' . $this->rate_for . '\'=\'member\' or \'' . $this->rate_for . '\'=\'both\'')
                 ->andFilterWhere(['tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code, 'tbl_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
         if (!empty($this->wef_date)) {
-            $MemberData->andFilterWhere(['CAST(wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
+            $MemberData->andFilterWhere(['CAST(tbl_purchase_rate_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
         }
 
         $MemberData->joinWith(['dcsCode', 'purchaseRateCode']);
@@ -126,7 +126,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
             'tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code,
         ]);
         if (!empty($this->wef_date)) {
-            $query->andFilterWhere(['CAST(wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
+            $query->andFilterWhere(['CAST(tbl_dcs_purchase_rate_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $unionQuery,
