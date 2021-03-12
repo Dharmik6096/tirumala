@@ -92,7 +92,8 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                         ],
                             [
                             'attribute' => 'milk_type_code',
-                            'value' => isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name : '',
+                            'label' => Yii::t('app', 'Milk Quality Type'),
+                            'value' => isset($model->milkQualityCode) ? $model->milkQualityCode->milk_quality_type_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
