@@ -26,6 +26,7 @@ $depend = 'tblcustomermastersearch';
     <div class="col-sm-2 height100">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, $depend . '-mcc_plant_code', 'bmc_code', 'BMC'); ?>
     </div>
+    <?= Yii::$app->dropdown->dropdownStatic('master_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', 'Verification For', FALSE, 'master_type', FALSE) ?> 
 
     <?php // if (empty($dataProvider->getModels())) { ?>
     <div class="col-sm-2 mt20">
