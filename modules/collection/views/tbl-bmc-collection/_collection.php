@@ -17,7 +17,6 @@ $list = array('0' => 'No', '1' => 'Yes');
 $form = ActiveForm::begin([
             'options' => ['id' => 'bmc-coll-form'],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -95,6 +94,10 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1 reset_field">
                         <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
                         <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
+                    </div>
+                    <div class="col-sm-2 reset_field">
+                        <?php // Html::activeHiddenInput($model, 'milk_collection_code', ['value' => $model->milk_collection_code])  ?>
+                        <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
                     </div>
                     <div class="col-sm-3 reset_field">
                         <?= $form->field($model, 'remarks')->textarea() ?>

@@ -253,8 +253,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                     $out[] = array('id' => $r['code'],
                         'name' => $r['name'] . '-' . $r['tname'] . '-' . $r['ref_code']);
                 }
-                echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-                return;
+                return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
             }
         }
         echo \yii\helpers\Json::encode(['output' => '', 'selected' => '']);

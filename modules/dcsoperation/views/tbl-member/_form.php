@@ -285,6 +285,7 @@ $script = "
                         success: function(data) {
                                 if(data){
                                     $('#tblmember-district_code').val(data);
+                                    $('#tblmember-district_code').trigger('select2:select');
                                     $('#tblmember-district_code').trigger('change');
                                 }
                                
