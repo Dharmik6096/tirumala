@@ -88,6 +88,10 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->setModel($this->model);
             $this->model->scenario = 'create';
             $this->model->member_code = $this->model->dcs_code . str_pad($this->model->member_code, 4, '0', STR_PAD_LEFT);
+            $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
+            $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
+            $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
+            $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
             if ($this->model->validate()) {
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
                     $approvalModel = new TblCollectionDataAlias();
