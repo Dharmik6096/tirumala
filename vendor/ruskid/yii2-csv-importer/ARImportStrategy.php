@@ -233,7 +233,7 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     }
                 }
                 $errors = [];
-                if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
+                if (isset($this->saveChild) && $this->saveChild && empty($model->getErrors()) && $model->validate()) {
                     $model->setChildTable($model, $modelList, $errors);
                 }
                 if (empty($model->getErrors()) && $model->validate() && empty($errors)) {

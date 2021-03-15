@@ -100,6 +100,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                     ?>
                 </div>
             </div>
+        </div>
             <?php
         } else if (in_array('tanker_rate', $options)) {
             // change here for BMC MCC Filter
@@ -117,6 +118,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
                 <div class="<?= $appendClass ?>">
                     <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
                 </div>
+        </div>
                 <?php
             }
             $customerClass = "";
@@ -698,4 +700,3 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 //    ";
 //}
         $this->registerJs($script, View::POS_END, 'village-code');
-        
