@@ -10,10 +10,10 @@ $attribute = [
     ['label' => Yii::t('app', 'Org. Type'), 'attribute' => 'organization_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
         }, 'filter' => TRUE],
-    ['label' => Yii::t('app', 'Org. Code'), 'attribute' => 'organization_code', 'value' => function($model) {
+    ['label' => Yii::t('app', 'Org. Code'), 'attribute' => 'code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_code');
-        }, 'filter' => FALSE],
-    ['label' => Yii::t('app', 'Org. Ref Code'), 'attribute' => 'organization_code', 'value' => function($model) {
+        }, 'filter' => true],
+    ['label' => Yii::t('app', 'Org. Ref Code'), 'attribute' => 'refCode', 'value' => function($model) {
             $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
             $code = '';
             if ($type == 'MCC') {
@@ -24,7 +24,7 @@ $attribute = [
                 $code = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'ref_code');
             }
             return $code;
-        }, 'filter' => FALSE],
+        }, 'filter' => true],
     ['label' => Yii::t('app', 'Org. Name'), 'attribute' => 'organization_code', 'value' => function($model) {
             $type = Yii::$app->general->getforeignkey($model->androidInstallationCode, 'organization_type');
             $name = '';
