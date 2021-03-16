@@ -17,107 +17,125 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
     ]);
     // va   r_dump($model);die;
     ?>
-    <div class="dynamic_report_table overflow_auto">
+    <div class="dynamic_report_table overflow_auto sticky-footer-panel">
         <?php echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-        
-<table id="recovery_grid" class="table table-striped">
-    <?php
-        if(!empty($output)){
-        $show_column = ['mcc_plant_code','bmc_code','bmc_ref_code','bmc_name','route_code'];    
-        ?>
-        <thead>
-        <tr>
-        <th class="custom_grid_header">#</th>
-        <?php
-            foreach ($output[0] as $att => $value) {
-                $str = ucwords(str_replace('_', ' ', $att));
-                if(!in_array($att,$show_column)){
-                    $class = '';
-                    if($att == 'vsp_transit_recovery_code'){
-                        $class = ' disp_none';
-                    }
-            ?>
-                <th class="custom_grid_header <?= $class ?>"><?= Yii::t('app', $str)?></th>
-            <?php
-                }
-            }
-                if($att != 'message'){
-        ?>
-            <th class="custom_grid_header"><?= Yii::t('app', 'Action')?></th>
-            <?php 
-            }
-            ?>
-        </tr>
-     </thead>
-     <tbody>
-        <?php
-            $i=0;
-            foreach ($output as $att => $value_row) {
-            ?>
-            <tr>
-                <td class="custom_grid_normal"><?= ++$i;?></td>
-                <?php
-                    foreach ($value_row as $value_key => $value){
-                        if(!in_array($value_key,$show_column)){
-                            $class = is_numeric($value) ? 'number_align custom_grid_normal' : 'custom_grid_normal';
-                            $class .= ' '.$value_key.'-'.$i;
-                            if($value_key == 'vsp_transit_recovery_code'){
-                                $class .= ' disp_none';
-                            }
-                            if($value_key == 'ts_loss_responsibility' || $value_key == 'qty_diff_responsibility'){?>
-                                <td class="<?= $class?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>"><?= Yii::$app->dropdown->getRecords('loss_responsibility')['data'][$value] ?></td>
-                            <?php
-                            }else if($value_key == 'qty_diff_type'){?>
-                                <td class="<?= $class?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>">
-                                    <?php 
-                                        $c_penalty_model = new TblCollectionPenaltyType();
-                                        $c_penalty_model->penalty_type_code = $value;
-                                        echo Yii::$app->general->getforeignkey($c_penalty_model->penaltyType, 'penalty_type');
-                                    ?>
-                                </td>
-                            <?php
-                            }else{
-                        ?>
-                            <td class="<?= $class?>"><?= $value?></td>
-                        <?php
-                            }
-                        }
-                    }
-                ?>
-                <?php
-                    if($value_key != 'message'){?>
-                        <td class="custom_grid_normal active_div edit_record" id="edit_id_<?= $i?>"><i class="fa fa-edit"></i></td>
-                    <?php
-                    }
-                ?>
-            </tr>
-            <?php
-            }
-        ?>
-     </tbody>
-     <?php 
-    }
-    ?>          
- </table>
- </div>
 
-
-
-        <div class="panel-footer">
+        <table id="recovery_grid" class="table table-striped">
             <?php
             if (!empty($output)) {
-                if(isset($output[0]['message'])){
-                    echo Html::submitButton( Yii::t('app', 'Unlock'),['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'unlock']);
-                }else{
-                    echo Html::submitButton( Yii::t('app', 'Save'),['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']);
-                    echo Html::submitButton( Yii::t('app', 'Save & Lock'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save_lock']);
-                }
+                $show_column = ['mcc_plant_code', 'bmc_code', 'bmc_ref_code', 'bmc_name', 'route_code'];
+                ?>
+                <thead>
+                    <tr>
+                        <th class="custom_grid_header">#</th>
+                        <?php
+                        foreach ($output[0] as $att => $value) {
+                            $str = ucwords(str_replace('_', ' ', $att));
+                            if (!in_array($att, $show_column)) {
+                                $class = '';
+                                if ($att == 'vsp_transit_recovery_code') {
+                                    $class = ' disp_none';
+                                }
+                                ?>
+                                <th class="custom_grid_header <?= $class ?>"><?= Yii::t('app', $str) ?></th>
+                                <?php
+                            }
+                        }
+                        if ($att != 'message') {
+                            ?>
+                            <th class="custom_grid_header"><?= Yii::t('app', 'Action') ?></th>
+                            <?php
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $i = 0;
+                    foreach ($output as $att => $value_row) {
+                        ?>
+                        <tr>
+                            <td class="custom_grid_normal"><?= ++$i; ?></td>
+                            <?php
+                            foreach ($value_row as $value_key => $value) {
+                                if (!in_array($value_key, $show_column)) {
+                                    $class = is_numeric($value) ? 'number_align custom_grid_normal' : 'custom_grid_normal';
+                                    $class .= ' ' . $value_key . '-' . $i;
+                                    if ($value_key == 'vsp_transit_recovery_code') {
+                                        $class .= ' disp_none';
+                                    }
+                                    if ($value_key == 'ts_loss_responsibility' || $value_key == 'qty_diff_responsibility') {
+                                        ?>
+                                        <td class="<?= $class ?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>"><?= Yii::$app->dropdown->getRecords('loss_responsibility')['data'][$value] ?></td>
+                                        <?php
+                                    } else if ($value_key == 'from_shift') {
+                                        ?>
+                                        <td class="<?= $class ?>"><input type="hidden" id = "" value="<?= $value ?>">
+                                            <?php
+                                            echo $value == '1' ? 'M' : 'E';
+                                            ?>
+                                        </td>
+                                        <?php
+                                    } else if ($value_key == 'to_shift') {
+                                        ?>
+                                        <td class="<?= $class ?>"><input type="hidden" id = "" value="<?= $value ?>">
+                                            <?php
+                                            echo $value == '1' ? 'M' : 'E';
+                                            ?>
+                                        </td>
+                                    <?php } else if ($value_key == 'qty_diff_type') {
+                                        ?>
+                                        <td class="<?= $class ?>"><input type="hidden" id = "dropdown_value" value="<?= $value ?>">
+                                            <?php
+                                            $c_penalty_model = new TblCollectionPenaltyType();
+                                            $c_penalty_model->penalty_type_code = $value;
+                                            echo Yii::$app->general->getforeignkey($c_penalty_model->penaltyType, 'penalty_type');
+                                            ?>
+                                        </td>
+                                        <?php
+                                    } else {
+                                        ?>
+                                        <td class="<?= $class ?>"><?= $value ?></td>
+                                        <?php
+                                    }
+                                }
+                            }
+                            ?>
+                            <?php if ($value_key != 'message') { ?>
+                                <td class="custom_grid_normal active_div edit_record" id="edit_id_<?= $i ?>"><i class="fa fa-edit"></i></td>
+                                <?php
+                            }
+                            ?>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </tbody>
+                <?php
             }
-            ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'transit-loss-shortage'); ?> 
-        </div>
-        <?php ActiveForm::end(); ?>
+            ?>          
+        </table>
     </div>
+
+
+
+    <div class="panel-footer">
+        <?php
+        if (!empty($output)) {
+            if (isset($output[0]['message'])) {
+                echo Html::submitButton(Yii::t('app', 'Unlock'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'unlock']);
+            } else {
+                echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']);
+                echo Html::submitButton(Yii::t('app', 'Save & Lock'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save_lock']);
+            }
+        }
+        ?>
+        <div onclick="exportThisWithParameter('recovery_grid', '<?= $this->title ?>')"class="btn btn-primary apply-shortcut widget_table_search_btnaa downloadDashboardExcel right_30aa mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
+        <?= Yii::$app->controls->custombutton('Cancel', 'transit-loss-shortage'); ?> 
+
+    </div>
+    <?php ActiveForm::end(); ?>
+</div>
 <div id="AppInformation"></div>
 
 <?php
@@ -241,3 +259,50 @@ $script = '
     }
 ';
 $this->registerJs($script, View::POS_END, 'transit-loss-shortage');
+?>
+<?php
+$script = "
+   $(document).on('click', '.downloadDashboardExcel', function(){
+    var idVal = $(this).attr('data-val');
+    var titleVal = $(this).attr('data-title');
+    fnExcelReport(idVal);
+});
+
+function fnExcelReport(idVal, titleVal = 'download')
+{
+    //bgcolor=\'#87AFC6\'
+    var tab_text='<table border=\'2px\'><tr>';
+    var textRange; var j=0;
+    tab = document.getElementById(idVal); // id of table
+
+    for(j = 0 ; j < tab.rows.length ; j++) 
+    {     
+        tab_text=tab_text+tab.rows[j].innerHTML+'</tr>';
+        //tab_text=tab_text+'</tr>';
+    }
+
+    tab_text=tab_text+'</table>';
+    tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, '');//remove if u want links in your table
+    tab_text= tab_text.replace(/<img[^>]*>/gi,''); // remove if u want images in your table
+    tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ''); // reomves input params
+
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf('MSIE '); 
+
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+    {
+        txtArea1.document.open('txt/html','replace');
+        txtArea1.document.write(tab_text);
+        txtArea1.document.close();
+        txtArea1.focus(); 
+        sa=txtArea1.document.execCommand('SaveAs',true,titleVal+'.xls');
+    }  else {
+        //other browser not tested on IE 11
+        sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text), '_blank');  
+    }
+    return (sa);
+}
+ 
+";
+$this->registerJs($script, View::POS_READY, 'recoverys-excel-download');
+?>
