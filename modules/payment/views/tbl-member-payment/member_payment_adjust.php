@@ -388,13 +388,13 @@ $('.adjust-amountasd').on('blur',function(){
         var id = $(this).attr('id');
         var parent = $(this).parents('tr');
         var net = parseFloat(parent.find('.net-amount').val());
-        var dcs = parseFloat(parent.find('.dcs').val());
-        var plant = parseFloat(parent.find('.plant').val());
-        var mcc = parseFloat(parent.find('.mcc').val());
-        var bmc = parseFloat(parent.find('.bmc').val());
-        var payment_cycle_code = parseFloat(parent.find('.payment_cycle').val());
-        var member = parseFloat(parent.find('.member').val());
-        var alis_code = parseFloat(parent.find('.alis_code').val());
+        var dcs = parent.find('.dcs').val();
+        var plant = parent.find('.plant').val();
+        var mcc = parent.find('.mcc').val();
+        var bmc = parent.find('.bmc').val();
+        var payment_cycle_code = parent.find('.payment_cycle').val();
+        var member = parent.find('.member').val();
+        var alis_code = parent.find('.alis_code').val();
         if(adjustRecovery !='' && !isNaN(adjustRecovery)){
              $.ajax({
                 type: 'get',
