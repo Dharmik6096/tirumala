@@ -1562,7 +1562,7 @@ class GeneralFunctions extends Component {
                 $key_config['ref_code_type'] = $data->ref_code_type;
                 $key_config['ref_code_length'] = $data->ref_code_length;
                 $key_config['ref_code_fix_length'] = $data->ref_code_fix_length;
-                $key_config['has_prefix'] = $data->has_prefix;
+//                $key_config['has_prefix'] = $data->has_prefix;
                 //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
                 $PatternArray[$data->pattern_for] = $key_config;
             }
