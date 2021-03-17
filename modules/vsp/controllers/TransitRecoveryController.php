@@ -93,7 +93,7 @@ class TransitRecoveryController extends \app\controllers\ChildController {
                 }
                 // var_dump($trans);die;
                 $transaction = $this->generalModel->saveTransaction($save_model, $historyModel, ['vsp transit recovery', 'edit']);
-                if ($transaction == 'customRedirect') {
+                if ($transaction == 'customRedirect' && $status == 'Lock') {
                     // var_dump($trans);die;
                     // $this->redirect(['transit-loss-shortage']);
                             return $this->render($clientRender, [
@@ -152,14 +152,14 @@ class TransitRecoveryController extends \app\controllers\ChildController {
             unset($sp_params['dcs_code']);
             if (!empty($sp_params['bmc_code'])) {
                 $execute = false;
-                if($btn_status == 'Unlock'){
-                    $execute = true;
-                }
+//                if($btn_status == 'Unlock'){
+//                    $execute = true;
+//                }
                 $output = \Yii::$app->general->getSpData($sp, $sp_params,$execute);
-                if($btn_status === 'Unlock'){
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => Yii::t('app', 'Transit Data Recovery Unlocked')]);
-                    $this->redirect(['transit-loss-shortage']);
-                }
+//                if($btn_status === 'Unlock'){
+//                    Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => Yii::t('app', 'Transit Data Recovery Unlocked')]);
+//                    $this->redirect(['transit-loss-shortage']);
+//                }
                 $this->output = $output;
             }
         }
