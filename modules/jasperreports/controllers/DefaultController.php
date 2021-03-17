@@ -276,6 +276,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberBillAbstract() {
+        $this->report = 'MemberBillAbstract';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -656,6 +661,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VspPaymentBillVardaan',
                 'scenario' => 'VendorMilkPayment',
                 'title' => '604 - Vendor Milk Payment',
+            ],
+            'MemberBillAbstract' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/MemberBillAbstract',
+                'scenario' => 'MemberBillAbstract',
+                'title' => '615 - Member Bill Abstract',
             ],
         ];
         return $label[$l];
