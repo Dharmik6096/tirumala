@@ -8,6 +8,7 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\collection\models\TblBmcCollection;
 
 /**
  * This is the model class for table "tbl_quality_collection".
@@ -155,4 +156,4 @@ class TblQualityCollection extends \app\models\ChildModel {
         }
     }
 
-}
+    }
