@@ -291,7 +291,7 @@ class DropDown extends Component {
 
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
         if ((Yii::$app->session->get('hasBMC') == 0)) {
-        $script = "$(document).ready(function() {
+            $script = "$(document).ready(function() {
                         var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
                         var fieldName = '" . strtolower($name) . "';
                         $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
@@ -311,7 +311,7 @@ class DropDown extends Component {
                             }
                         });
                     });";
-        Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_bmc_hide');
+            Yii::$app->view->registerJs($script, View::POS_END, strtolower((new ReflectionClass($model))->getShortName()) . '_bmc_hide');
         }
     }
 
@@ -717,7 +717,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1199,6 +1199,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select TS Loss Responsibility'),
                 'data' => [1 => Yii::t('app', 'Center Incharge'), 2 => Yii::t('app', 'Transporter')],
             ],
+            'master_type' => [
+                'name' => 'master_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'DCS' => Yii::t('app', 'DCS'), 'CUSTOMER' => Yii::t('app', 'CUSTOMER')],
+            ],
         ];
         return $records[$l];
     }
@@ -1388,7 +1393,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

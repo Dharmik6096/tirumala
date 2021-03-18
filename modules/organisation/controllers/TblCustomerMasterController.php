@@ -293,4 +293,39 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         return Json::encode($response);
     }
 
+    public function actionImportAttachements() {
+        $model = new TblCustomerMaster();
+        if (isset($_POST['code'])) {
+            $model->customer_code = $_POST['code'];
+        }
+        $saveModel = [];
+        if ($model->load(Yii::$app->request->post())) {
+            $files = !empty(Yii::$app->request->post()['TblCustomerMaster']['file_name']) ? Yii::$app->request->post()['TblCustomerMaster']['file_name'] : '';
+            Yii::$app->general->setAttachment($saveModel, $files, $model->customer_code, 'TblCustomerMaster');
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Image Uploaded', 'edit']);
+            return $this->redirect(['index']);
+        }
+        return $this->renderAjax('_attachment_upload_popup', ['model' => $model]);
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/upload/images/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . $file->name;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
 }

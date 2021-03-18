@@ -38,6 +38,7 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             'yii\\queue\\amqp\\' => 15,
             'yii\\queue\\' => 10,
             'yii\\jui\\' => 8,
+            'yii\\imagine\\' => 12,
             'yii\\gii\\' => 8,
             'yii\\faker\\' => 10,
             'yii\\debug\\' => 10,
@@ -154,6 +155,10 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
         ),
+        'I' => 
+        array (
+            'Imagine\\' => 8,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -232,6 +237,10 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         'yii\\jui\\' => 
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2-jui',
+        ),
+        'yii\\imagine\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yiisoft/yii2-imagine/src',
         ),
         'yii\\gii\\' => 
         array (
@@ -538,6 +547,10 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Imagine\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/imagine/imagine/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

@@ -37,5 +37,6 @@ return [
     'soap_api_url' => 'http://103.210.72.119/AMCUService/Service.asmx?WSDL',
     'FTPDirPath' => '/SAPFILES/',
     'google_map_api_key' => 'AIzaSyD78APuRJaxdjFBBSJjKag_CD2tWXSrjhE',
-    'data_exchange_vendor_code' => 'EIPLMDPL'
+    'data_exchange_vendor_code' => 'EIPLMDPL',
+    'attachment_server' => 'localhost'
 ];

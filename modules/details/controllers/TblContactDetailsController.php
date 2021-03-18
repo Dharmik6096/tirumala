@@ -60,6 +60,7 @@ class TblContactDetailsController extends \app\controllers\ChildController {
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $modelSave[] = $historyModel;
                 $this->model->load(Yii::$app->request->post());
+                $this->model->is_contact_verified = 0;
                 $update = TRUE;
             }
             if (!$update) {
@@ -151,6 +152,7 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         $contactModel = new TblContactDetailsHistory();
         Yii::$app->operation->history($this->model, $contactModel, UPDATE);
         $this->model->is_active = 0;
+        $this->model->is_contact_verified = 0;
         $transaction = $this->generalModel->saveTransaction([$this->model, $contactModel], ['Contact Details', 'edit']);
         if ($transaction !== FALSE) {
             Yii::$app->getSession()->setFlash('success', ['type' => 'success',
@@ -178,10 +180,12 @@ class TblContactDetailsController extends \app\controllers\ChildController {
         if (!empty($contactDetail)) {
             foreach ($contactDetail as $detail) {
                 $detail->is_default = 0;
+                $detail->is_contact_verified = 0;
                 $detail->save();
             }
         }
         $this->model->is_default = 1;
+        $this->model->is_contact_verified = 0;
 
         $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Contact Details', 'edit']);
         if ($transaction !== FALSE) {

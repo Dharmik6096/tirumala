@@ -43,9 +43,11 @@ use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\configuration\models\TblConfigMapping;
+use app\modules\general\models\TblAttachment;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
+use yii\imagine\Image;
 
 class GeneralFunctions extends Component {
 
@@ -1391,14 +1393,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -2009,6 +2011,66 @@ class GeneralFunctions extends Component {
         } else {
             return $command->queryAll();
         }
+    }
+
+    public function setAttachment(&$child, $files, $module_code, $module_name) {
+        $filesArray = explode(',', $files);
+        unset($filesArray[0]);
+
+        $auto_inc = 1;
+        foreach ($filesArray as $key => $file) {
+            $file_name = $file;
+            $path = Yii::$app->basePath . '/web/upload/images//' . $file; //Generate your save file path here;
+            $modelAttachment = new TblAttachment();
+            $modelAttachment->attachment_code = (string) Yii::$app->general->getCodeAutoIncrement($modelAttachment, $auto_inc);
+            $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . $file_name;
+            $modelAttachment->attachment = $file;
+            $modelAttachment->module_name = $module_name;
+            $modelAttachment->module_code = $module_code;
+            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+            $modelAttachment->remarks = 'Documents';
+            $modelAttachment->attachment_type = $ext;
+            // save thumbnail
+            $imagePath = Yii::getAlias('@webroot') . '/web/upload/images/';
+            $thumbnail_path = $imagePath . 'thumbnail';
+            $thumbnail_base_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . 'thumbnail';
+            if (Yii::$app->general->checkDirectory($thumbnail_path)) {
+                list($width, $height) = getimagesize($file);
+                $data = Image::thumbnail($file, 60, 60)->save($thumbnail_path . '/' . $file_name, ['quality' => 100]);
+                $modelAttachment->thumbnail = $thumbnail_base_path . '/' . $file_name;
+            }
+            $child[] = $modelAttachment;
+            $auto_inc++;
+        }
+    }
+
+    public function getAttachment($module_name, $reference_code, $link = TRUE, $OnlyData = FALSE, $remarks = NULL, $downloadOnly = false) {
+        $model = new TblAttachment();
+        $model->module_name = $module_name;
+        $model->module_code = $reference_code;
+        $model->remarks = $remarks;
+        $attachment = $model->getData();
+        if ($OnlyData) {
+            return $attachment;
+        }
+
+        if ($attachment) {
+            if ($downloadOnly) {
+                return Html::a('<i class="fa fa-download"></i>', $attachment[0]->attachment, [
+                            'title' => 'Download',
+                            'download' => $reference_code . $attachment[0]->attachment_type,
+                ]);
+            } else if ($link) {
+                return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
+//                            'title' => 'Download',
+                            'class' => 'image-popup-no-margins',
+                            'download' => $attachment[0]->attachment_type,
+                ]);
+            } else {
+                return Html::img($attachment[0]->attachment, ['class' => 'img-responsive disp_image', 'alt' => '']);
+            }
+        }
+        return "";
     }
 
 }
