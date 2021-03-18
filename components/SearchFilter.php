@@ -300,6 +300,9 @@ class SearchFilter {
             'TblMasterTransferSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'DpuStationDetailSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
