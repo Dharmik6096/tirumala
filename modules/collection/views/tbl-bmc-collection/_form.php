@@ -187,6 +187,7 @@ $script = "
     
      $('#tblbmccollection-fat').change(function(){
         calculateClr();
+        checkFatRange();
     });
     
     function calculateClr(){
@@ -316,7 +317,35 @@ $script = "
 	    }
 	});
     });
-   
+    $('#tblbmccollection-milk_type_code').change(function(){
+        checkFatRange();
+    });
+    
+    function checkFatRange(){
+        var union = $('#tblbmccollection-union_code').val();
+        var fat = $('#tblbmccollection-fat').val();
+        var milk_type = $('#tblbmccollection-milk_type_code').val();
+        var bmc = $('#tblbmccollection-bmc_code').val();
+            if(union !='' && fat !='' && milk_type !='' && bmc !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['check-fat-range']) . "',
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type,'bmc':bmc},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj.msg+'</span></div></div>');
+                            $('#tblbmccollection-milk_type_code').val(obj.data);
+                            $('#tblbmccollection-milk_type_code').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
     
 
 ";

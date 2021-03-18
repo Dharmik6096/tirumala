@@ -149,6 +149,7 @@ $script = "
     });
     
      $('#tblmilkcollection-fat').change(function(){
+        checkFatRange();
         calculateClr();
     });
     
@@ -260,6 +261,37 @@ $script = "
         }
     }
 
+
+    
+    $('#tblmilkcollection-milk_type_code').change(function(){
+        checkFatRange();
+    });
+    
+    function checkFatRange(){
+        var union = $('#tblmilkcollection-union_code').val();
+        var fat = $('#tblmilkcollection-fat').val();
+        var dcs = $('#tblmilkcollection-dcs_code').val();
+        var milk_type = $('#tblmilkcollection-milk_type_code').val();
+            if(union !='' && fat !='' && milk_type !='' && dcs!=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['check-fat-range']) . "',
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type,'dcs':dcs},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj.msg+'</span></div></div>');
+                            $('#tblmilkcollection-milk_type_code').val(obj.data);
+                            $('#tblmilkcollection-milk_type_code').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
