@@ -1209,6 +1209,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Route Type'),
                 'data' => ['0' => Yii::t('app', 'Transaction'), '1' => Yii::t('app', 'Master')],
             ],
+            'check_for' => [
+                'name' => 'check_for',
+                'prompt' => Yii::t('app', 'Select Check For'),
+                'data' => ['data_lock_bmc' => Yii::t('app', 'Data Lock - BMC'), 'sync_lock_bmc' => Yii::t('app', 'Sync Lock - BMC'), 'data_lock_member' => Yii::t('app', 'Data Lock - Member'), 'sync_lock_member' => Yii::t('app', 'Sync Lock - Member')],
+            ],
+            'data_status' => [
+                'name' => 'data_status',
+                'prompt' => Yii::t('app', 'Select Check For'),
+                'data' => [0 => Yii::t('app', 'Lock'), 1 => Yii::t('app', 'Unlock')],
+            ],
         ];
         return $records[$l];
     }
