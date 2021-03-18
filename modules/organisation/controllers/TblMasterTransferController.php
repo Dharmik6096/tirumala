@@ -55,10 +55,11 @@ class TblMasterTransferController extends \app\controllers\ChildController {
         $this->model = new TblMasterTransfer();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
+          
             $this->model->scenario = $this->model->master_type;
             if ($this->model->validate()) {
                 $this->model->wef_date = !empty($this->model->wef_date) ? Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT) : '';
-                $this->model->old_route_code = $this->model->oldDcsCode->route_code;
+                $this->model->old_route_code = $this->model->master_type == 'CUSTOMER' ? $this->model->routeCode->route_code : $this->model->oldDcsCode->route_code;
                 $modelList = [];
                 if ($this->model->master_type == 'FARMER') {
                     foreach ($this->model->old_member_code as $key => $member_code) {
