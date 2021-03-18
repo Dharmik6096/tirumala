@@ -42,6 +42,7 @@ return array(
     'ruskid\\csvimporter\\' => array($vendorDir . '/ruskid/yii2-csv-importer'),
     'phpseclib\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
+    'nullref\\datatable\\' => array($vendorDir . '/nullref/yii2-datatables/src'),
     'nickcv\\encrypter\\' => array($vendorDir . '/nickcv/yii2-encrypter'),
     'linslin\\yii2\\curl\\' => array($vendorDir . '/linslin/yii2-curl'),
     'kartik\\widgets\\' => array($vendorDir . '/kartik-v/yii2-widgets'),

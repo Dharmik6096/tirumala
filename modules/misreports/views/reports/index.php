@@ -94,7 +94,7 @@ if (isset($data['url1'])) {
                                         if (in_array($value, array('union_code'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+                                                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', false, true, true); ?>
                                             </div>   <?php
                                         }
                                         if (in_array($value, array('plant_code'))) {
@@ -366,13 +366,12 @@ if (isset($data['url1'])) {
 
             <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class?>">
                 <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
-                <?php if(isset($data['custom_report'])){
+                <?php if(!empty($result)){
                     ?>
                     <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
                     <?php
                 }?>
             </div>
-
             <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
 
                 <!--                                <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -407,8 +406,13 @@ if (isset($data['url1'])) {
                         $attr_arr['attribute'] = $att;
                         $attr_arr['label'] = Yii::t('app', $str);
                         $attr_arr['format'] = $format;
-                        $attr_arr['filter'] = false;
-                        $attr[] = $attr_arr;
+                        $attr_arr['filter'] = true;
+
+                        $datatabel = [];
+                        $datatabel['data'] = $att;
+                        $datatabel['title'] = Yii::t('app', $str);
+                        $datatabel['filter'] = true;
+                        $attr[] = $datatabel;
 //                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
                     }
                 }
@@ -417,8 +421,29 @@ if (isset($data['url1'])) {
                     'attributes' => $attr,
                     'active_column' => false,
                 ];
+                $c = 0;
+                echo '<div id="grid_show_hide_list" class="dropdown-check-list" tabindex="100">';
+                echo '<span class="anchor"><i class="fa fa-chevron-down"></i></span>';
+                echo '<ul class="items">';
+                foreach ($attr as $key => $value) {
+                    echo '<li><input class="toggle-vis" data-column="'.$c++.'" type="checkbox" checked/>'.$value['title'].'</li>';
+                }
+                echo '</ul>';
+                echo '</div>';
+                // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
+                // var_dump($dataProvider->getModels());
+                 echo \nullref\datatable\DataTable::widget([
+                    'id' => 'custom_report',
+                    'data' => $dataProvider->getModels(),
+                    // 'scrollY' => '200px',
+                    'scrollCollapse' => true,
+                    'paging' => false,
+                    'columns' => $attr,
+                    'info' => false,
+                    'withColumnFilter' => true
+                ]);
+                // Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index'], true, $removeExportType, $exportEvents);
 
-                Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index'], true, $removeExportType, $exportEvents);
             }
             ?>
         </div>
@@ -436,6 +461,30 @@ $('.mis_report_modal_toggle').on('click', function(){
             $(document).on('change','#reportsmodel-store_location_type', function() {
                 hideFields();
             });
+        }
+        $('.toggle-vis').on('click', function (e) {
+            // e.preventDefault();
+            // Get the column API object
+            var table = $('.dataTable').DataTable();
+            var column = table.column( $(this).attr('data-column') );
+            // Toggle the visibility
+            var column_no = column.selector.cols
+            if(column.visible()){
+                $('#custom_report #w'+column_no).parent().hide();
+            }else{
+                $('#custom_report #w'+column_no).parent().show();
+            }
+            column.visible( ! column.visible() );
+        });
+
+        var checkList = document.getElementById('grid_show_hide_list');
+        if(checkList != null){
+            checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
+            if (checkList.classList.contains('visible'))
+                checkList.classList.remove('visible');
+            else
+                checkList.classList.add('visible');
+            }
         }
     });
     function hideFields(){

@@ -162,7 +162,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/union-list', Yii::t('app', 'Select Union'), $multiple/* ,$model->$name */);
     }
 
-    public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false, $searchable = true) {
+    public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false, $searchable = true, $multiple = false) {
         $this->setClass($form, $name);
         $disable = $readonly ? 'disabled' : false;
         $islable = $islable ? Yii::t('app', $islable) : false;
@@ -177,7 +177,7 @@ class DropDown extends Component {
                 'data' => $unionModel->getActiveUnions(1), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => Yii::t('app', 'Select Union'), 'disabled' => $disable]]
             )->label($islable);
         } else {
-            echo $form->field($model, $name)->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
+            echo $form->field($model, $name, ['options' => ['multiple' => $multiple]])->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
         }
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
@@ -522,12 +522,13 @@ class DropDown extends Component {
             $selected = Yii::$app->session->get('Unions');
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
+//         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
         echo $form->field($model, $name)
                 ->widget(DepDrop::classname(), [
                     'type' => $dropDownType,
                     'data' => [$model->{$name} => $model->{$name}],
                     'name' => $name,
-                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple]],
+                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
                     'options' => ['multiple' => $multiple],
                     'pluginOptions' => [
                         'depends' => $depends,
