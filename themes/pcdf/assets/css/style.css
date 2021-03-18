@@ -1308,7 +1308,11 @@ input[type="hidden"] + .help-block{
 /*Footer*/
 footer{
     background-color: #3B3E47;
-    height:30px;
+    height: 30px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 99999;
 } 
 footer a {
     color:#fff !important;
@@ -1843,6 +1847,8 @@ input[type="checkbox"][disabled] + label, input[type="radio"][disabled] + label 
     position: fixed;
     z-index: 9;
     box-shadow:0 0 10px rgba(0,0,0,0.15);
+    overflow: hidden;
+    padding-bottom: 42px;
 }
 
 .setting{
@@ -2323,7 +2329,10 @@ div.crystalstyle{
     overflow-y:scroll;
 } */
 .panel.panel-default{
-    min-height: calc(100vH - 100px);
+    /* min-height: calc(100vH - 100px); */
+    min-height: calc(100vH - 200px);
+    overflow: auto;
+    padding-bottom: 18px;
 }
 .actionButtons{
     position: absolute;
@@ -2336,7 +2345,7 @@ div.crystalstyle{
 #menu_buttons {
     position: absolute;
     top: 105px;
-    z-index: 9;
+    z-index: 99;
     right: 14px;
 }
 
@@ -2397,6 +2406,7 @@ div.crystalstyle{
 
 .panel-main > .panel-body {
     min-height: calc(100vH - 180px);
+    /* margin-bottom: 50px; */
 }
 
 .multiselect-container li.active  label.checkbox {
@@ -3915,7 +3925,33 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .padding_top_10{
     padding-top: 10px;
 }
+.padding_bottom_25{
+    padding-bottom:25px;
+}
 
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    z-index: 0 !important;
+}
+
+.table-responsive {
+    /*max-height: 420px;*/
+    overflow-x: auto;
+    max-height: calc(100vH - 227px);
+}
+
+.panel > .table-responsive > .table-bordered > thead > tr > th{
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    background-color: #7a231c;
+}
+
+.panel > .table-responsive > .table-bordered > thead tr.filters.skip-export > td {
+    position: sticky;
+    top: 19px;
+    z-index: 9;
+    background-color: #fff;
+}
 .datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom {
     z-index: 9999 !important;
 }
@@ -4671,4 +4707,7 @@ table.dataTable thead .search_filter input[type="text"] {
 }
 .select2-container--krajee .select2-results>.select2-results__options {
     overflow-x: hidden !important;
+}
+.panel > .table-responsive > .table-bordered > thead{
+    background-color: #fff !important;
 }
