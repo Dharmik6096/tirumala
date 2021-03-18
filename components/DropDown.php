@@ -282,14 +282,14 @@ class DropDown extends Component {
         if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-mcc-plant/mcc-list');
         } else {
-            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple, $extra_param, $readonly);
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/mcc-list', Yii::t('app', 'Select MCC'), $multiple, $extra_param, $readonly);
         }
     }
 
     public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
 
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
         if ((Yii::$app->session->get('hasBMC') == 0)) {
             $script = "$(document).ready(function() {
                         var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
@@ -527,7 +527,7 @@ class DropDown extends Component {
                     'type' => $dropDownType,
                     'data' => [$model->{$name} => $model->{$name}],
                     'name' => $name,
-                    'select2Options' => ['pluginOptions' => ['allowClear' => true]],
+                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple]],
                     'options' => ['multiple' => $multiple],
                     'pluginOptions' => [
                         'depends' => $depends,
@@ -1204,6 +1204,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'DCS' => Yii::t('app', 'DCS'), 'CUSTOMER' => Yii::t('app', 'CUSTOMER')],
             ],
+            'route_type_trans' => [
+                'name' => 'route_type_trans',
+                'prompt' => Yii::t('app', 'Select Route Type'),
+                'data' => ['0' => Yii::t('app', 'Transaction'), '1' => Yii::t('app', 'Master')],
+            ],
         ];
         return $records[$l];
     }
@@ -1447,6 +1452,76 @@ class DropDown extends Component {
     public function PaymentCycleUnion($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
+    }
+
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true) {
+        $class = $readonly ? 'depend-control' : '';
+        $depends = explode(',', $depends);
+        $options = [];
+        $options['readonly'] = $readonly;
+        $options['class'] = 'form-control ' . $class;
+        if (!empty($id)) {
+            $options['id'] = $id;
+        }
+        if ($multiple)
+            $placeholder = FALSE;
+        $dropDownType = DepDrop::TYPE_DEFAULT;
+        if (isset($searchable) && $searchable) {
+            $dropDownType = DepDrop::TYPE_SELECT2;
+        }
+        // $name = ($name == '') ? $data['name'] : $name;
+        $data = [];
+        if (is_array($model->{$name})) {
+            $data = array_combine(array_values($model->{$name}), array_values($model->{$name}));
+        } else {
+            $data = [$model->{$name} => $model->{$name}];
+        }
+
+        echo $form->field($model, $name)
+                ->widget(DepDrop::classname(), [
+                    'type' => $dropDownType,
+                    'data' => $data,
+                    'name' => $name,
+                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple]],
+                    'pluginOptions' => [
+                        'depends' => $depends,
+                        'placeholder' => $placeholder,
+                        'url' => Url::to([$url]),
+                        'allParam' => ["'" . $extraParam . "'"],
+                        'initialize' => true,
+                        'allowClear' => true,
+                    ],
+                    'options' => $options
+                ])->label($islable);
+
+        // echo "<pre>";
+        // print_r($depends);
+        // echo "</pre>";
+
+
+        $selected = Json::encode($data);
+        if (!empty($selected)) {
+            $script = "$(document).ready(function() {
+                        var modelname = '" . strtolower((new ReflectionClass($model))->getShortName()) . "';
+                        var fieldName = '" . strtolower($name) . "';
+                        var selected_val = '" . $selected . "';
+                        var selected_val_json = $.parseJSON(selected_val);
+                        var array_val = [];
+                        var depend = '" . $depends [0] . "';
+                        console.log('#'+modelname+'-'+fieldName+'-'+depend+'-'+$('#'+depend).val());
+                            $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                                $.each(selected_val_json, function(index, value) {
+                                    $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
+                                    array_val.push(value);
+                                });
+                                // console.log('#'+modelname+'-'+fieldName);
+                                // $('#'+modelname+'-'+fieldName).val(array_val);
+                                $('#'+modelname+'-'+fieldName).trigger('change');
+                            });
+                    });";
+            $id_dropdown = strtolower((new ReflectionClass($model))->getShortName()) . '-' . strtolower($name);
+            Yii::$app->view->registerJs($script, View::POS_END, $id_dropdown);
+        }
     }
 
 }

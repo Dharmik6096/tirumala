@@ -423,6 +423,8 @@ class DefaultController extends \app\controllers\ChildController {
                     'mcc_name',
                     'district_name',
                     'dcs_code',
+                    'code_ex',
+                    'ref_code',
                     'dcs_name',
                     'product_type'
                 ],

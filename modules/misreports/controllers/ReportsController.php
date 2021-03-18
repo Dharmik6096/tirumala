@@ -586,7 +586,7 @@ class ReportsController extends \app\controllers\ChildController {
                         $model->{$value} .= ' ' . $shift . '.000';
                     }
                 }
-                $controls[$value] = $model->{$value};
+                $controls[$value] = is_array($model->{$value}) ? ','.implode(',',$model->{$value}).',' : $model->{$value};
             }
             $sp_name = $this->data['sp_name'];
             $output = \Yii::$app->general->getSpData($sp_name, $controls);
@@ -686,7 +686,7 @@ class ReportsController extends \app\controllers\ChildController {
                     $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
-            $controls[$value] = $model->{$value};
+            $controls[$value] = is_array($model->{$value}) ? ','.implode(',',$model->{$value}).',' : $model->{$value};
         }
         $sp_name = $this->data['sp_name'];
         $output = \Yii::$app->general->getSpData($sp_name, $controls);
@@ -705,7 +705,7 @@ class ReportsController extends \app\controllers\ChildController {
                         $model->{$value} .= ' ' . $shift . '.000';
                     }
                 }
-                $controls[$value] = $model->{$value};
+                $controls[$value] = is_array($model->{$value}) ? ','.implode(',',$model->{$value}).',' : $model->{$value};
             }
             $sp_name2 = $this->data['sp_name2'];
             $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
@@ -851,31 +851,32 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //107
             'ManualMilkEntrySocietyDateShiftWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_manual_milk_entry_society_date_shift_wise',
                 'scenario' => 'ManualMilkEntrySocietyDateShiftWise',
                 'title' => '107 - Manual Milk Entry Society Date Shift wise',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'ManualMilkEntrySocietyDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_manual_milk_entry_society_date_wise',
                 'scenario' => 'ManualMilkEntrySocietyDateShiftWise',
                 'title' => '107 - Manual Milk Entry Society Date wise',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'ManualMilkEntrySocietyConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_manual_milk_entry_society_consolidated',
                 'scenario' => 'ManualMilkEntrySocietyDateShiftWise',
                 'title' => '107 - Manual Milk Entry Society Consolidated',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
             ],
             'BmcCollectionShiftReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,route_type_trans:static:route_type_trans',
                 'sp_name' => 'sp_mis_bmc_collection_shift_report',
                 'scenario' => 'BmcCollectionShiftReport',
                 'title' => '201 - BMC Collection Shift Report',
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             //202
             'BmcCollDateShiftWiseSummary' => [
@@ -941,25 +942,28 @@ class ReportsController extends \app\controllers\ChildController {
             ],
             //207
             'SocietyWiseCda' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date_shift',
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             'SocietyWiseCdaDateWise' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date',
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             'SocietyWiseCdaConsolidated' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_consolidated',
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             'GprsDataReconciliation' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1520,25 +1524,28 @@ class ReportsController extends \app\controllers\ChildController {
                 'removeExportType' => ['CSV'],
             ],
             'SocietyWiseCdaTwo' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date_shift_gyan',
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             'SocietyWiseCdaDateWiseTwo' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date_gyan',
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             'SocietyWiseCdaConsolidatedTwo' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_consolidated_gyan',
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise CDA',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             'MemberData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',
@@ -1570,6 +1577,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_collection_list',
                 'scenario' => 'BmcCollectionData',
                 'title' => '212 - BMC Collection Data',
+                'multiArray' => ['mcc_code','bmc_code']
             ],
             'ShiftWiseAutoManual' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
