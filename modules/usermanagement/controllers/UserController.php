@@ -66,11 +66,11 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             $appOrgModel->detail_code = $contNewModel->detail_code;
                             $orgModelData = $appOrgModel->getAppOrgData();
                             if (!empty($orgModelData)) {
-                                $orgModelData->mobile_no = $model->mobile_no;
-                                $master[] = $orgModelData;
+                                foreach ($orgModelData as $org) {
+                                    $org->mobile_no = $model->mobile_no;
+                                    $master[] = $org;
+                                }
                             }
-
-
                             $appModel = new TblEiplAppLogin();
                             $appModel->mobile_no = $model->oldAttributes['mobile_no'];
                             $appModelData = $appModel->getAppLogin($id);
@@ -102,9 +102,10 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $appOrgModel->detail_code = $contactModel->detail_code;
                         $orgModelData = $appOrgModel->getAppOrgData();
                         if (!empty($orgModelData)) {
-                            $delete[] = $orgModelData;
+                            foreach ($orgModelData as $org) {
+                                $delete[] = $org;
+                            }
                         }
-
                         $appModel = new TblEiplAppLogin();
                         $appModel->mobile_no = $model->oldAttributes['mobile_no'];
                         $appModelData = $appModel->getAppLogin($id);
@@ -139,15 +140,21 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $appOrgModel->detail_code = $contactModel->detail_code;
                         $orgModelData = $appOrgModel->getAppOrgData();
                         if (!empty($orgModelData)) {
-                            $appOrgModel = $orgModelData;
-                            $master[] = $appOrgModel;
-                        } else {
-                            $UserOrgModel = new TblUserOrganizationMapping();
-                            $UserOrgexistData = $UserOrgModel::find()->where(['user_id' => $id, 'is_active' => 1])->one();
-                            $appOrgModel->is_active = 1;
-                            if (!empty($UserOrgexistData)) {
-                                $appOrgModel->organization_code = $UserOrgexistData->organization_code;
-                                $appOrgModel->organization_type = $UserOrgexistData->organization_type;
+                            foreach ($orgModelData as $org) {
+                                $delete[] = $org;
+                            }
+                        }
+
+                        $UserOrgModel = new TblUserOrganizationMapping();
+                        $UserOrgexistData = $UserOrgModel::find()->where(['user_id' => $id, 'is_active' => 1])->all();
+                        if (!empty($UserOrgexistData)) {
+                            foreach ($UserOrgexistData as $org) {
+                                $appOrgModel = new TblAppOrganizationMapping();
+                                $appOrgModel->is_active = 1;
+                                $appOrgModel->mobile_no = $model->mobile_no;
+                                $appOrgModel->detail_code = $contactModel->detail_code;
+                                $appOrgModel->organization_code = $org->organization_code;
+                                $appOrgModel->organization_type = $org->organization_type;
                                 $master[] = $appOrgModel;
                             }
                         }
@@ -161,6 +168,22 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         }
                         $contactModel->department = $model->department;
                         $master[] = $contactModel;
+
+                        $appModel = new TblEiplAppLogin();
+                        $appModel->mobile_no = $model->oldAttributes['mobile_no'];
+                        $appModelData = $appModel->getAppLogin($id);
+                        if (!empty($appModelData)) {
+                            $appModelData->department = $model->department;
+                            $master[] = $appModelData;
+                        }
+
+                        $tempModel = new TblEiplAppLoginTemp();
+                        $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
+                        $tempModelData = $tempModel->getAppTempLogin($id);
+                        if (!empty($tempModelData)) {
+                            $tempModelData->department = $model->department;
+                            $delete[] = $tempModelData;
+                        }
                     }
                 }
 
