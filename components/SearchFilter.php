@@ -303,6 +303,9 @@ class SearchFilter {
             'DpuStationDetailSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblBankPaymentLogSearch' => [
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
