@@ -11,10 +11,12 @@ use yii\helpers\Url;
 
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false, 'label' => Yii::t('app', 'Company')], 
+    ['attribute' => 'union_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
+        }, 'filter' => false, 'label' => Yii::t('app', 'Company')],
     ['attribute' => 'dcs_payment_cycle_code', 'value' => function($model) {
             $fdate =  Yii::$app->general->getforeignkey($model->fromDate, 'from_date');
-            $todate = Yii::$app->general->getforeignkey($model->fromDate, 'to_date'); 
+            $todate = Yii::$app->general->getforeignkey($model->fromDate, 'to_date');
             return Yii::$app->controls->view_date($fdate) . ' to ' . Yii::$app->controls->view_date($todate);
         }, 'filter' => false, 'format' => 'raw','label' => Yii::t('app', 'Payment Cycle')],
     ['attribute' => 'status'],
@@ -25,7 +27,7 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->payment_date);
+    return Yii::$app->controls->view_date($model->payment_date);
         },'filter' => false,],
     ['attribute' => 'file_name'],
     ['attribute' => 'file_status'],
