@@ -37,19 +37,22 @@ use app\modules\globalmaster\models\TblCustomerType;
  * @property string $resp_desc
  * @property string $response_datetime
  */
-class TblCustomerDeactive extends \app\models\ChildModel {
+class TblCustomerDeactive extends \app\models\ChildModel
+{
 
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'tbl_customer_deactive';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date'], 'required'],
             [['from_date', 'to_date', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime'], 'safe'],
@@ -71,7 +74,8 @@ class TblCustomerDeactive extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'customer_deactive_code' => Yii::t('app', 'Customer Deactive Code'),
             'union_code' => Yii::t('app', 'Union'),
@@ -98,52 +102,60 @@ class TblCustomerDeactive extends \app\models\ChildModel {
         ];
     }
 
-    public function getUnionCode() {
+    public function getUnionCode()
+    {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getBmcCode() {
+    public function getBmcCode()
+    {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getMccPlantCode() {
+    public function getMccPlantCode()
+    {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function getPlantCode() {
+    public function getPlantCode()
+    {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
-    public function getCustomerCode() {
+    public function getCustomerCode()
+    {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
-    public function getCustomerType() {
+    public function getCustomerType()
+    {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type']);
     }
 
-    public function validateFromDate($attribute, $params) {
+    public function validateFromDate($attribute, $params)
+    {
         $existDCS = $this->find()
-                ->where(['customer_code' => $this->customer_code])
-                ->andfilterWhere(['!=', 'customer_deactive_code', $this->customer_deactive_code])
-                ->andWhere(['IS', 'to_date', NULL])
-                ->one();
+            ->where(['customer_code' => $this->customer_code])
+            ->andfilterWhere(['!=', 'customer_deactive_code', $this->customer_deactive_code])
+            ->andWhere(['IS', 'to_date', NULL])
+            ->one();
         if (!empty($existDCS)) {
             $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'Customer') . ' Is Already Deactivated.'));
             return false;
         }
         $dateData = $this->find()
-                ->where('customer_code=\'' . $this->customer_code . '\'')
-                ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date))')
-                ->andfilterWhere(['!=', 'customer_deactive_code', $this->customer_deactive_code])
-                ->all();
+            ->where('customer_code=\'' . $this->customer_code . '\'')
+            ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date))')
+            ->andfilterWhere(['!=', 'customer_deactive_code', $this->customer_deactive_code])
+            ->all();
         if (!empty($dateData)) {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
     }
 
-    public function validateToRange($attribute, $params) {
+    public function validateToRange($attribute, $params)
+    {
         $fromDate = date('Y-m-d', strtotime($this->from_date));
         $toDate = date('Y-m-d', strtotime($this->to_date));
         if ($fromDate == $toDate || $fromDate > $toDate) {
@@ -152,39 +164,52 @@ class TblCustomerDeactive extends \app\models\ChildModel {
         }
 
         $dateData = $this->find()
-                ->where('customer_code=\'' . $this->customer_code . '\'')
-                ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
-                ->andfilterWhere(['!=', 'customer_deactive_code', $this->customer_deactive_code])
-                ->all();
+            ->where('customer_code=\'' . $this->customer_code . '\'')
+            ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
+            ->andfilterWhere(['!=', 'customer_deactive_code', $this->customer_deactive_code])
+            ->all();
         if (!empty($dateData)) {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
     }
 
-    public function getDeactiveRecords() {
+    public function getDeactiveRecords($checkStatus = true, $data = '')
+    {
         $date = date('Y-m-d');
-
+        $query = $this->find()
+            ->where(['<=', 'from_date', $date])
+            ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]]);
+        if ($checkStatus) {
+            $query->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]]);
+        }
+        if (!empty($data) && (!empty($data['organization_code']) && !empty($data['organization_type']))) {
+            if ($data['organization_type'] == 'MCC') {
+                $query->andWhere(['mcc_plant_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'BMC') {
+                $query->andWhere(['bmc_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'VLC') {
+                $query->andWhere(['dcs_code' => $data['organization_code']]);
+            }
+        }
+        $data =  $query->orderBy(['customer_deactive_code' => SORT_ASC])
+            ->all();
+        return $data;
+    }
+    public function getActiveRecords()
+    {
+        $date = date('Y-m-d');
         return $query = $this->find()
-                ->where(['<=', 'from_date', $date])
-                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]])
-                ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
-                ->orderBy(['customer_deactive_code' => SORT_ASC])
-                ->all();
+            ->where(['data_post_status' => 2])
+            ->andWhere(['<=', 'to_date', $date])
+            ->orderBy(['customer_deactive_code' => SORT_ASC])
+            ->all();
     }
 
-    public function getActiveRecords() {
-        $date = date('Y-m-d');
-
-        return $query = $this->find()
-                ->where(['data_post_status' => 2])
-                ->andWhere(['<=', 'to_date', $date])
-                ->orderBy(['customer_deactive_code' => SORT_ASC])
-                ->all();
-    }
-
-    public function updateFileStatus($value, $status) {
+    public function updateFileStatus($value, $status)
+    {
         return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['customer_deactive_code' => $value]);
     }
-
 }

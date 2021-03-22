@@ -22,13 +22,18 @@ use yii\helpers\ArrayHelper;
 use app\modules\usermanagement\models\TblAmcsAppMenuMapping;
 use app\modules\configuration\models\TblMilkCollectionConfig;
 use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
+use app\modules\organisation\models\TblDcsDeactive;
+use app\modules\organisation\models\TblCustomerDeactive;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * Default controller for the `vendorapi` module
  */
-class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\AndroidDpuController {
+class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\AndroidDpuController
+{
 
-    public function actionRegister() {
+    public function actionRegister()
+    {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['content'])) {
@@ -73,7 +78,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                     }
                     if ($hasDetails) {
                         // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
-//                  if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
+                        //                  if (!empty($contact_data) && $contact_data->mobile_no == $content['mobile_no']) {
                         $master = [];
                         $andoidIdModel = new TblAndroidInstallation();
                         $andoidIdModel->organization_code = $code;
@@ -93,9 +98,9 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $andoidIdDetailModel->version_no = !empty($content['version_no']) ? $content['version_no'] : NULL;
                         $andoidIdDetailModel->d2d_request = !empty($data['d2d_request']) ? $data['d2d_request'] : 0;
                         $andoidIdDetailModelData = $andoidIdDetailModel->getActiveCount();
-//                        if (!empty($andoidIdDetailModelData)) {
-//                            $res_data['message'] = 'Mobile Number already registered.';
-//                        } else {
+                        //                        if (!empty($andoidIdDetailModelData)) {
+                        //                            $res_data['message'] = 'Mobile Number already registered.';
+                        //                        } else {
                         $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
                         $andoidIdDetailModel->otp_code = 1234;
                         $andoidIdDetailModel->is_active = 0;
@@ -107,7 +112,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         }
                         $res_data['token'] = $andoidIdDetailModel->hash_key;
                         $res_data['org_pk_code'] = $code;
-//                        }
+                        //                        }
                     }
                 }
             }
@@ -116,7 +121,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function actionVerification() {
+    public function actionVerification()
+    {
         $res_data = [];
         $data = $this->post_data;
         $content = !empty($data['content']) ? $data['content'] : [];
@@ -158,7 +164,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function getParentDetails(&$res_data, $data) {
+    public function getParentDetails(&$res_data, $data)
+    {
         $code = $data['organization_code'];
         $type = $data['organization_type'];
         $parent_code = '';
@@ -202,7 +209,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $res_data['parent_name'] = $parent_name;
     }
 
-    public function actionInitialization() {
+    public function actionInitialization()
+    {
         $db_file = 'everest_amcs.db';
         $res_data = [];
         $data = $this->post_data;
@@ -257,6 +265,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
 
                         if ($response) {
                             $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
+                            $this->dcsSentboxGenerate($data);
                         } else {
                             $res_data['db_path'] = NULL;
                         }
@@ -268,7 +277,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function actionStartUp() {
+    public function actionStartUp()
+    {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
@@ -489,14 +499,80 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         }
                     }
                     // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
-//                    if (!empty($contact_data)) {
-//                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? '1' : '0';
-//                    }
+                    //                    if (!empty($contact_data)) {
+                    //                        $res_data['is_surveyor'] = !empty($contact_data->department) && strtolower($contact_data->department) == 'surveyor' ? '1' : '0';
+                    //                    }
                 }
             }
         }
         $this->response['data'] = $res_data;
         return $this->response;
     }
+    public function DcsSentboxGenerate($post)
+    {
+        $device = $post['device_id'];
+        $model = new TblDcsDeactive();
+        $deactiveData = $model->getDeactiveRecords(false, $post);
+        $this->setSentBox($post, $model, $device, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
 
+        $CustModel = new TblCustomerDeactive();
+        $deactiveData = $CustModel->getDeactiveRecords(false, $post);
+        $this->setSentBox($post, $CustModel, $device, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
+    }
+
+    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error)
+    {
+        if (!empty($data)) {
+            $ids = array_map(function ($e) use ($key) {
+                return $e->{$key};
+            }, $data);
+            // $update = $model->updateFileStatus($ids, $u_status);
+            foreach ($data as $row) {
+                $model_name = Yii::$app->path->define($masterModel);
+                $modelMaster = new $model_name();
+                $existData = $modelMaster::find()->where([$f_key => $row->{$f_key}])->one();
+                if (!empty($existData)) {
+                    $existData->is_active = $status;
+                    $sentboxArray = [];
+                    $encrypt = $modelMaster->encryptModel($existData->attributes);
+                    $existData->setAttributes($encrypt);
+                    // if (!empty($existData->customer_type)) {
+                    //     $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $existData->bmc_code);
+                    // } else {
+                    //     $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
+                    // }
+                    $array = [];
+                    $array['code'] = $post['organization_code'];
+                    $array['type'] = $post['organization_type'];
+                    $sentboxArray[] = $array;
+
+                    foreach ($sentboxArray as $sent) {
+                        $flag = 'UPDATE';
+                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code, $device);
+                        if (!($sentbox->setSentbox($existData, $flag))) {
+                            $row->data_post_status = $error;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'SentBox Entry is not Generated';
+                            $row->save(FALSE);
+                        } else {
+                            $row->data_post_status = $success;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'Sentbox Generated';
+                            $row->save(FALSE);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type, $union, $device)
+    {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $union;
+        $sentbox->dest_org_type = $type;
+        $sentbox->device_id = $device;
+        return $sentbox;
+    }
 }
