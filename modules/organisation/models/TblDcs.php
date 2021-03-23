@@ -96,7 +96,8 @@ use app\modules\organisation\models\TblDcsVendorStatus;
  * @property string $is_name_request
  * @property string $rate_flag
  */
-class TblDcs extends ChildModel {
+class TblDcs extends ChildModel
+{
 
     public $villages;
     public $federation_code;
@@ -116,180 +117,188 @@ class TblDcs extends ChildModel {
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'tbl_dcs';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         $main_rules = [
-                [['union_code', 'dcs_name', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'routeMapping']],
-                [['dcs_short_name'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
-                [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'ref_code'], 'required', 'on' => ['customImport']],
-                [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
-                [['milk_type_code'], 'required', 'on' => ['importCsv']],
-                [['dcs_code', 'is_bmc', 'destination_type'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                [['milk_type_code'], 'required', 'when' => function ($model) {
+            [['union_code', 'dcs_name', 'bmc_code'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'routeMapping']],
+            [['dcs_short_name'], 'required', 'except' => ['deactivate', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+            [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name', 'ref_code'], 'required', 'on' => ['customImport']],
+            [['dcs_code'], 'required', 'on' => ['customImportUpdate']],
+            [['milk_type_code'], 'required', 'on' => ['importCsv']],
+            [['dcs_code', 'is_bmc', 'destination_type'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+            [
+                ['milk_type_code'], 'required', 'when' => function ($model) {
                     return empty($model->milk_type_auto);
                 },
-                'whenClient' => "function (attribute, value) { return !$('#tbldcs-milk_type_auto').is(':checked') }"
-                , 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
-                [['vendor'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
-                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
-                [['dpu_type'], function ($attribute, $params) {
-                    if (empty($this->getErrors())) {
-                        Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type');
-                    }
-                }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
-                [['same_milk_type'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
-                }, 'on' => ['importCsv']],
-                [['diff_milk_type'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
-                }, 'on' => ['importCsv']],
-                [['department'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'department');
-                }, 'on' => ['importCsv']],
-                [['state_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
-                [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData', 'routeMapping']],
-                [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
+                'whenClient' => "function (attribute, value) { return !$('#tbldcs-milk_type_auto').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']
+            ],
+            [['vendor'], 'required', 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
+            [['vendor'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
+            }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
+            [['dpu_type'], function ($attribute, $params) {
+                if (empty($this->getErrors())) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type');
+                }
+            }, 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate', 'DcsMilkType']],
+            [['same_milk_type'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+            }, 'on' => ['importCsv']],
+            [['diff_milk_type'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+            }, 'on' => ['importCsv']],
+            [['department'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalData($this, $attribute, 'department');
+            }, 'on' => ['importCsv']],
+            [['state_code'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'updateDcs', 'customImportUpdate']],
+            [['union_code'], 'required', 'message' => Yii::t('app/validation', 'Union cannot be blank'), 'except' => ['saveCreamyData', 'routeMapping']],
+            [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             //[['district_code'], 'required', 'message' => Yii::t('app/validation', 'District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             // [['sub_district_code'], 'required', 'message' => Yii::t('app/validation', 'Sub District cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             // [['village_code'], 'required', 'message' => Yii::t('app/validation', 'Village cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate']],
             //[['hamlet_code'], 'required', 'message' => Yii::t('app/validation', 'Hamlet cannot be blank')],
-//            [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
+            //            [['dcs_code', 'dcs_short_name', 'gst_no'], 'unique'],
             [['gst_no'], 'unique', 'except' => ['routeMapping']],
             // [['dcs_code'], 'IntValidateDcs', 'on' => ['customImport', 'importCsv', 'createDcs']],
             [['allow_multi_family_member', /* 'destination_type', */], 'integer', 'except' => ['routeMapping']],
-                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
+            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
             //  [['tin_no'], 'string', 'max' => 11, 'min' => 11],
-            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']],
-                [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no'], 'safe'],
+            [
+                ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
+            ],
+            [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
-//            [['effective_date', 'valid_from'],'validateDate'],
+            //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
-                [['registration_code'], 'string', 'max' => 20],
-                [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
+            [['registration_code'], 'string', 'max' => 20],
+            [['contact_person', 'dcs_short_name'], 'string', 'max' => 100],
             //[['dcs_code_ex'], 'string', 'max' => 6, 'min' => '3', 'except' => ['saveCreamyData']],
             [['gst_no'], 'string', 'max' => 15],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['ifsc', 'pan_no'], 'trim'],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['ifsc', 'pan_no'], 'trim'],
             //[['ifsc'], 'string', 'max' => 11, 'min' => 11, 'message' => Yii::t('app/validation', 'Please enter a valid IFSC Length')],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
-                [['gst_no'], function ($attribute, $params) {
-                    $this->validateGstNo($attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
-                [['phone_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
-//            [['service_tax'], function ($attribute, $params) {
-//                    Yii::$app->general->vaildateServiceTax($this, $attribute,$params);
-//                },'skipOnEmpty'=> false],
-//            ['bank_account_no', 'unique', 'targetAttribute' => 'ifsc'],
-            ['bank_account_no', 'unique', 'when' => function($model) {
-                    $data = $this->find()->where(['ifsc' => $model->ifsc])->andWhere(['<>', 'dcs_code', $model->dcs_code])->one();
-                    return ($data) ? true : false;
-                }, 'except' => ['saveCreamyData', 'routeMapping']/* , 'targetAttribute' => 'bank_code' */],
-                [['pan_no'], function ($attribute, $params) {
-                    Yii::$app->general->validatePancard($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
-//                [['dcs_name', 'contact_person'], function ($attribute, $params) {
-//                    Yii::$app->general->validateName($this, $attribute, $params);
-//                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
+                Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
+            [['gst_no'], function ($attribute, $params) {
+                $this->validateGstNo($attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
+            [['phone_no'], function ($attribute, $params) {
+                Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
+            //            [['service_tax'], function ($attribute, $params) {
+            //                    Yii::$app->general->vaildateServiceTax($this, $attribute,$params);
+            //                },'skipOnEmpty'=> false],
+            //            ['bank_account_no', 'unique', 'targetAttribute' => 'ifsc'],
+            ['bank_account_no', 'unique', 'when' => function ($model) {
+                $data = $this->find()->where(['ifsc' => $model->ifsc])->andWhere(['<>', 'dcs_code', $model->dcs_code])->one();
+                return ($data) ? true : false;
+            }, 'except' => ['saveCreamyData', 'routeMapping']/* , 'targetAttribute' => 'bank_code' */],
+            [['pan_no'], function ($attribute, $params) {
+                Yii::$app->general->validatePancard($this, $attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
+            //                [['dcs_name', 'contact_person'], function ($attribute, $params) {
+            //                    Yii::$app->general->validateName($this, $attribute, $params);
+            //                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData']],
             [['local_name', 'local_short_name', 'local_address'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
-                [['registration_code'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateNumericField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
-                [['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
+                Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
+            [['registration_code'], function ($attribute, $params) {
+                Yii::$app->general->vaildateNumericField($this, $attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'routeMapping']],
+            [
+                ['registration_code', 'registration_date'], 'required', 'when' => function ($model) {
                     return $model->is_registered == 1;
                 },
-                'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }", 'except' => ['routeMapping']],
-                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'except' => ['routeMapping', 'importCsv']],
-                [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'except' => ['routeMapping']],
-                [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'except' => ['routeMapping']],
-//            [['branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
-//                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
-//                },'skipOnEmpty'=> false],
+                'whenClient' => "function (attribute, value) { return $('#tbldcs-is_registered').is(':checked') }", 'except' => ['routeMapping']
+            ],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'except' => ['routeMapping', 'importCsv']],
+            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'except' => ['routeMapping']],
+            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'except' => ['routeMapping']],
+            //            [['branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
+            //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
+            //                },'skipOnEmpty'=> false],
             //  [['tmcc_code'], 'string', 'max' => 10],
             //  [['tmcc_code'], 'number', 'min' => 1],
             // ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
             // [['dcs_code_ex'], 'number'],
             [['is_active'], 'default', 'value' => 1],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code'], 'safe'],
-                [['is_dispatch_mandate', 'is_live'], 'default', 'value' => 0],
-                [['is_dispatch_mandate'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate');
-                }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
-                [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow'], 'boolean'],
-                [['dpu_type', 'is_dispatch_mandate'], 'required', 'on' => ['createDcs', 'updateDcs', 'customImportUpdate', 'routeMapping']],
-                [['x_col1'], 'default', 'value' => '1#1'],
-                [['dcs_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateOnUnionConfig($this, 'rate_chart_member', 'dcs_create_with_member_rate', 1);
-                }, 'skipOnEmpty' => false, 'on' => ['importCsv', 'createDcs']],
-                [['dcs_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'createDcs']],
-                [['department', 'middle_name', 'surname', 'local_middlename', 'local_surname', 'bank_code', 'origination_type'], 'safe'],
-                [['milk_type_code'], 'integer', 'on' => ['importCsv']],
-                [['milk_type_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'default_milk_type');
-                }, 'on' => 'importCsv'],
-//            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code'], 'safe'],
+            [['is_dispatch_mandate', 'is_live'], 'default', 'value' => 0],
+            [['is_dispatch_mandate'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate');
+            }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+            [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow'], 'boolean'],
+            [['dpu_type', 'is_dispatch_mandate'], 'required', 'on' => ['createDcs', 'updateDcs', 'customImportUpdate', 'routeMapping']],
+            [['x_col1'], 'default', 'value' => '1#1'],
+            [['dcs_code'], function ($attribute, $params) {
+                Yii::$app->general->validateOnUnionConfig($this, 'rate_chart_member', 'dcs_create_with_member_rate', 1);
+            }, 'skipOnEmpty' => false, 'on' => ['importCsv', 'createDcs']],
+            [['dcs_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'createDcs']],
+            [['department', 'middle_name', 'surname', 'local_middlename', 'local_surname', 'bank_code', 'origination_type'], 'safe'],
+            [['milk_type_code'], 'integer', 'on' => ['importCsv']],
+            [['milk_type_code'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalStatic($this, $attribute, 'default_milk_type');
+            }, 'on' => 'importCsv'],
+            //            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
-                [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
-                [['ifsc'], 'setBankDetail', 'on' => ['importCsv']],
-                [['dcs_type_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
-                }, 'on' => 'importCsv'],
-                [['dcs_type_code'], 'integer'],
-                [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
-                ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['credit_sale_allow'], 'default', 'value' => 0],
-                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
-                [['dcs_code'], function ($attribute, $params) {
-                    ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
-                }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
-                [['dcs_code'], function ($attribute, $params) {
-                    ($this->vendor == 'BIPL' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
-                }, 'skipOnEmpty' => false, 'on' => ['updateDcs']],
-                [['dcs_code'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
-                }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv']],
-                [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
-                [['default_milk_type'], 'default', 'value' => 8],
-                [['data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
-                [['dcs_code'], function ($attribute, $params) {
-                    $this->data_post_status = 0;
-                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-                [['route'], 'required', 'on' => ['importCsv']],
-                [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
-                [['dcs_code'], function ($attribute, $params) {
-                    $update = FALSE;
-                    if ($this->scenario == 'updateDcs') {
-                        $update = TRUE;
-                    }
-                    Yii::$app->general->validateExCodes($this, 'tbl_dcs', 'dcs_code_ex', 'tbl_customer_master', 'customer_code_ex', 'TblCustomerMaster', $this->union_code, $update);
-                }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv', 'createDcs']],
-                [['aadhaar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
-                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+            [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
+                Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+            }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+            [['ifsc'], 'setBankDetail', 'on' => ['importCsv']],
+            [['dcs_type_code'], function ($attribute, $params) {
+                Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
+            }, 'on' => 'importCsv'],
+            [['dcs_type_code'], 'integer'],
+            [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
+            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['credit_sale_allow'], 'default', 'value' => 0],
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+            [['dcs_code'], function ($attribute, $params) {
+                ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
+            }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
+            [['dcs_code'], function ($attribute, $params) {
+                ($this->vendor == 'BIPL' && $this->oldAttributes['ref_code'] != $this->ref_code) ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
+            }, 'skipOnEmpty' => false, 'on' => ['updateDcs']],
+            [['dcs_code'], function ($attribute, $params) {
+                Yii::$app->general->vaildateKeyCodes($this, 'tbl_dcs', 'dcs_code_ex', 'dcs_code');
+            }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv']],
+            [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
+            [['default_milk_type'], 'default', 'value' => 8],
+            [['data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+            [['dcs_code'], function ($attribute, $params) {
+                $this->data_post_status = 0;
+            }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['route'], 'required', 'on' => ['importCsv']],
+            [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
+            [['dcs_code'], function ($attribute, $params) {
+                $update = FALSE;
+                if ($this->scenario == 'updateDcs') {
+                    $update = TRUE;
+                }
+                Yii::$app->general->validateExCodes($this, 'tbl_dcs', 'dcs_code_ex', 'tbl_customer_master', 'customer_code_ex', 'TblCustomerMaster', $this->union_code, $update);
+            }, 'skipOnEmpty' => false, 'on' => ['updateDcs', 'importCsv', 'createDcs']],
+            [['aadhaar_no'], function ($attribute, $params) {
+                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+            [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }
 
-    public function validateGstNo($attribute, $params) {
+    public function validateGstNo($attribute, $params)
+    {
 
         if (!empty($this->gst_no))
             if (strlen($this->gst_no) != 15) {
@@ -298,7 +307,8 @@ class TblDcs extends ChildModel {
         return false;
     }
 
-    public function bmcValidate($attribute, $params) {
+    public function bmcValidate($attribute, $params)
+    {
         if ($this->is_bmc == 0 || $this->is_bmc == 1 || $this->is_bmc == 2) {
             if (empty($this->destination_code)) {
                 $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' can not be blank.'));
@@ -307,7 +317,8 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function validateDate($attribute, $params) {
+    public function validateDate($attribute, $params)
+    {
 
         if (!empty($this->effective_date) && !empty($this->valid_from)) {
 
@@ -321,11 +332,12 @@ class TblDcs extends ChildModel {
     /**
      * @inheritdoc
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'dcs_code' => Yii::t('app', 'Society Code'),
             'villages' => Yii::t('app', 'Applicable Villages'),
-//            'address' => Yii::t('app', 'Address'),
+            //            'address' => Yii::t('app', 'Address'),
             'street1' => Yii::t('app', 'Address Street1'),
             'street2' => Yii::t('app', 'Address Street2'),
             'local_address' => Yii::t('app', 'Hindi Address'),
@@ -398,16 +410,19 @@ class TblDcs extends ChildModel {
      * @inheritdoc
      * @return TblDcsQuery the active query used by this AR class.
      */
-    public static function find() {
+    public static function find()
+    {
         return new TblDcsQuery(get_called_class());
     }
 
-    public function getCode() {
+    public function getCode()
+    {
         return Yii::$app->general->setKeyPattern($this, 'tbl_dcs', 'dcs_code_ex', 9);
     }
 
-    public function getActiveDcs() {
-//echo $fedrCode;
+    public function getActiveDcs()
+    {
+        //echo $fedrCode;
         $value = $this->find()->where(['is_active' => 1])->all();
         return ArrayHelper::map($value, 'dcs_code', 'dcs_name');
     }
@@ -415,142 +430,166 @@ class TblDcs extends ChildModel {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getStateCode() {
+    public function getStateCode()
+    {
         return $this->hasOne(TblStates::className(), ['state_code' => 'state_code']);
     }
 
-    public function getBankDetails() {
+    public function getBankDetails()
+    {
         return $this->hasMany(TblBankDetails::className(), ['module_code' => 'dcs_code'])->where(['tbl_bank_details.module_name' => 'society']);
     }
 
-    public function getDefaultBankDetail() {
+    public function getDefaultBankDetail()
+    {
         return $this->hasOne(TblBankDetails::className(), ['module_code' => 'dcs_code'])->where(['tbl_bank_details.module_name' => 'society', 'tbl_bank_details.is_default' => 1]);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBankCode() {
+    public function getBankCode()
+    {
         return $this->hasOne(TblBanks::className(), ['bank_code' => 'bank_code'])->via('defaultBankDetail');
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBranchCode() {
+    public function getBranchCode()
+    {
         return $this->hasOne(TblBranch::className(), ['branch_code' => 'branch_code'])->via('defaultBankDetail');
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDistrictCode() {
+    public function getDistrictCode()
+    {
         return $this->hasOne(TblDistricts::className(), ['district_code' => 'district_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getHamletCode() {
+    public function getHamletCode()
+    {
         return $this->hasOne(TblHamlets::className(), ['hamlet_code' => 'hamlet_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVillageCode() {
+    public function getVillageCode()
+    {
         return $this->hasOne(TblVillages::className(), ['village_code' => 'village_code']);
     }
 
-    public function getBlockCode() {
+    public function getBlockCode()
+    {
         return $this->hasOne(TblBlocks::className(), ['block_code' => 'block_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode() {
+    public function getUnionCode()
+    {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRouteCode() {
+    public function getRouteCode()
+    {
         return $this->hasOne(TblRoutes::className(), ['route_code' => 'route_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSubDistrictCode() {
+    public function getSubDistrictCode()
+    {
         return $this->hasOne(TblSubDistricts::className(), ['sub_district_code' => 'sub_district_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMilkQualityTypeCode() {
+    public function getMilkQualityTypeCode()
+    {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDcsTypeCode() {
+    public function getDcsTypeCode()
+    {
         return $this->hasOne(TblDcsTypes::className(), ['dcs_type_code' => 'dcs_type_code']);
     }
 
-    public function getOrganisationTypeCode() {
+    public function getOrganisationTypeCode()
+    {
         return $this->hasOne(TblOrganisationType::className(), ['organisation_type_code' => 'organisation_type_code']);
     }
 
-    public function getSchemeTypeCode() {
+    public function getSchemeTypeCode()
+    {
         return $this->hasOne(TblSchemeType::className(), ['scheme_type_code' => 'scheme_type_code']);
     }
 
-    public function getTblDcsVillageMapping() {
+    public function getTblDcsVillageMapping()
+    {
         return $this->hasMany(TblDcsVillageMapping::className(), ['dcs_code' => 'dcs_code'])->andwhere(['is_active' => 1]);
     }
 
-    public function getTblDcsMilkType() {
+    public function getTblDcsMilkType()
+    {
         return $this->hasMany(TblDcsMilkType::className(), ['dcs_code' => 'dcs_code'])->andwhere(['is_active' => 1]);
     }
 
-    public function getTblDcsBmc() {
+    public function getTblDcsBmc()
+    {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'destination_code'])->andwhere(['is_active' => 1]);
     }
 
-    public function getSocietyCodes() {
+    public function getSocietyCodes()
+    {
         return $this->hasOne(TblSocietyCodes::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getSocietyVendors() {
+    public function getSocietyVendors()
+    {
         return $this->hasOne(TblSocietyVendor::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getDcsForBmc($union) {
+    public function getDcsForBmc($union)
+    {
         $value = $this->find()->select(['dcs_code', 'dcs_name'])->where(['is_bmc' => '2', 'union_code' => $union])->all();
         $value = ArrayHelper::map($value, 'dcs_code', 'dcs_name');
         return $value;
     }
 
-    public function getVillage() {
+    public function getVillage()
+    {
         $village = new TblVillages();
         $village_list = $village->getDcsVillageList($this->union_code);
         $values = TblDcsVillageMapping::find()->select('village_code')->where(['dcs_code' => $this->dcs_code])->asArray()->all();
         $selected = [];
         foreach ($village_list as $key => $row) {
             if (array_search($key, array_column($values, 'village_code')) !== FALSE) {
-//$selected[$key] = ['selected' => 'selected'];
+                //$selected[$key] = ['selected' => 'selected'];
                 $selected[$key] = $row;
             }
         }
         return ['value' => $selected, 'selected' => ''];
-//return ['value' => $village_list, 'selected' => $selected];
+        //return ['value' => $village_list, 'selected' => $selected];
     }
 
-    public function getVillageList() {
+    public function getVillageList()
+    {
         $out = '';
         foreach ($this->tblDcsVillageMapping as $row) {
             $out .= $row->villageCode->village_name . '<br>';
@@ -558,7 +597,8 @@ class TblDcs extends ChildModel {
         return $out;
     }
 
-    public function isBmcValue() {
+    public function isBmcValue()
+    {
 
         switch ($this->is_bmc) {
             case 0;
@@ -576,7 +616,8 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function destinationTypeValue() {
+    public function destinationTypeValue()
+    {
 
         if ($this->is_bmc == 3) {
             $dcs = $this->getDcsName($this->destination_code);
@@ -590,11 +631,13 @@ class TblDcs extends ChildModel {
         return $value;
     }
 
-    public function getDcsName($value) {
+    public function getDcsName($value)
+    {
         return $this->find()->select(['dcs_name', 'union_code'])->where(['dcs_code' => $value])->one();
     }
 
-    public function getDcsList($unionCode, $dcsCode = '') {
+    public function getDcsList($unionCode, $dcsCode = '')
+    {
         if ($unionCode === '')
             $unionCode = 0;
         $value = $this->getDcs($unionCode, $dcsCode);
@@ -602,7 +645,8 @@ class TblDcs extends ChildModel {
         return $value;
     }
 
-    public function getDcs($unionCode, $dcsCode = '') {
+    public function getDcs($unionCode, $dcsCode = '')
+    {
         if (!empty($dcsCode)) {
             $unionQuery = $this->find()->select(['dcs_code', 'dcs_name'])->where(['dcs_code' => $dcsCode]);
 
@@ -619,16 +663,18 @@ class TblDcs extends ChildModel {
         return $query->all();
     }
 
-    public function getRouteDcs($route) {
+    public function getRouteDcs($route)
+    {
 
         return $routeSocieties = TblDcs::find()->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.ref_code'])->where(['tbl_dcs.route_code' => $route, 'tbl_dcs.is_active' => 1])->asArray()->all();
 
 
-//return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
-///$routeSocieties = TblSocietyCodes::find()->select('dcs_code,dcs_name')->where(['route_code'=>$route,'is_active'=>1])->all();
+        //return $routeSocieties = TblSocietyCodes::find()->select(['dcs_code','dcs_name'])->joinWith('dcsCode')->where(['tbl_society_codes.route_code' => $route,'tbl_dcs.is_active'=>1])->indexBy('code')->all();
+        ///$routeSocieties = TblSocietyCodes::find()->select('dcs_code,dcs_name')->where(['route_code'=>$route,'is_active'=>1])->all();
     }
 
-    public function getMilkTypes() {
+    public function getMilkTypes()
+    {
 
         $milkType = new TblAnimalType();
         $data = $milkType->getAnimalMilkTypeArray();
@@ -644,7 +690,8 @@ class TblDcs extends ChildModel {
         return ['value' => $data, 'selected' => $selected];
     }
 
-    public function milkType() {
+    public function milkType()
+    {
         $out = '';
         foreach ($this->tblDcsMilkType as $row) {
             $out .= $row->milkTypeCode->animal_type_name . '<br>';
@@ -652,35 +699,39 @@ class TblDcs extends ChildModel {
         return $out;
     }
 
-    public function getCheckDcsExist() {
+    public function getCheckDcsExist()
+    {
 
         $unions = $this->find()->select('d.district_code')->where(['tbl_dcs.union_code' => $this->union_code, 'tbl_dcs.is_active' => 1])
-                        ->join('INNER JOIN', 'tbl_dcs_village dv', 'dv.dcs_code=tbl_dcs.dcs_code')
-                        ->join('INNER JOIN', 'tbl_villages dd', 'dd.village_code=dv.village_code')
-                        ->join('INNER JOIN', 'tbl_sub_districts sd', 'dd.sub_district_code=sd.sub_district_code')
-                        ->join('INNER JOIN', 'tbl_districts d', 'd.district_code=sd.district_code')
-                        ->groupBy('d.district_code')->asArray()->all();
+            ->join('INNER JOIN', 'tbl_dcs_village dv', 'dv.dcs_code=tbl_dcs.dcs_code')
+            ->join('INNER JOIN', 'tbl_villages dd', 'dd.village_code=dv.village_code')
+            ->join('INNER JOIN', 'tbl_sub_districts sd', 'dd.sub_district_code=sd.sub_district_code')
+            ->join('INNER JOIN', 'tbl_districts d', 'd.district_code=sd.district_code')
+            ->groupBy('d.district_code')->asArray()->all();
 
         $states = array_column($unions, 'district_code');
         return $states;
     }
 
-    public function loadDcs($union_code = '', $q = '') {
+    public function loadDcs($union_code = '', $q = '')
+    {
         $records = (new Query())
-                        ->select('dcs_code as id, dcs_name as text')
-                        ->from('tbl_dcs')
-                        ->where(['union_code' => $union_code])
-                        ->andWhere(['like', 'dcs_name', $q])->createCommand()->rawSql;
+            ->select('dcs_code as id, dcs_name as text')
+            ->from('tbl_dcs')
+            ->where(['union_code' => $union_code])
+            ->andWhere(['like', 'dcs_name', $q])->createCommand()->rawSql;
         echo $records;
         exit;
         return $records;
     }
 
-    public function fullAddress() {
+    public function fullAddress()
+    {
         return $this->street1 . ', ' . $this->street2;
     }
 
-    public function getInstallationId() {
+    public function getInstallationId()
+    {
         $query = TblDpuInstallation::find()->select(['inst_code'])->where(['dcs_code' => $this->dcs_code])->one();
         if (!empty($query)) {
             return $query->inst_code;
@@ -688,47 +739,54 @@ class TblDcs extends ChildModel {
         return false;
     }
 
-    public function getRouteDcsList($routeCode, $dcsCode = '') {
+    public function getRouteDcsList($routeCode, $dcsCode = '')
+    {
 
 
         if ($routeCode === '')
             $routeCode = 0;
         $value = $this->getRouteDcs($routeCode);
-        $value = ArrayHelper::map($value, 'dcs_code', function($value) {
-                    return $value['dcs_name'] . ' - ' . $value['ref_code'];
-                });
+        $value = ArrayHelper::map($value, 'dcs_code', function ($value) {
+            return $value['dcs_name'] . ' - ' . $value['ref_code'];
+        });
         asort($value, SORT_NATURAL | SORT_FLAG_CASE);
         return $value;
     }
 
-    public function getDefaultContactDetail() {
+    public function getDefaultContactDetail()
+    {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->where(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1]);
     }
 
-    public function validDcs($dcs, $bmc) {
+    public function validDcs($dcs, $bmc)
+    {
         $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs], ['ref_code' => $dcs]])->andWhere(['is_active' => 1, 'bmc_code' => $bmc])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
     }
 
-    public function getSocietyStatus() {
+    public function getSocietyStatus()
+    {
         return $this->hasOne(TblSocietyCollection::className(), ['dcs_code' => 'dcs_code'])->orderBy('collection_id desc');
     }
 
-    public function getNewDcs() {
+    public function getNewDcs()
+    {
         return $this->find()
-                        ->joinWith(['societyVendors'])
-                        ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
-                        ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
-                        ->limit(200)
-                        ->orderby('created_at ASC')
-                        ->all();
+            ->joinWith(['societyVendors'])
+            ->where(['or', ['data_post_status' => [0, 3]], ['data_post_status' => NULL]])
+            ->andWhere(['tbl_society_vendor.vendor_code' => 'STELLAPPS'])
+            ->limit(200)
+            ->orderby('created_at ASC')
+            ->all();
     }
 
-    public function updateDcs($value) {
+    public function updateDcs($value)
+    {
         return $this->updateAll(['data_post_status' => 1], ['dcs_code' => $value]);
     }
 
-    public function rlsBmcDcs($parents = '') {
+    public function rlsBmcDcs($parents = '')
+    {
         $rows = $this->find()->where(['bmc_code' => $parents])->all();
         $bmc = [];
         foreach ($rows as $value) {
@@ -737,23 +795,27 @@ class TblDcs extends ChildModel {
         return $bmc;
     }
 
-    public function getBmcCode() {
+    public function getBmcCode()
+    {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getMccPlantCode() {
+    public function getMccPlantCode()
+    {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '', $dateFilter = '') {
+    public function getBMCDCSList($plantCode, $RLS = 'TRUE', $type = '', $dateFilter = '')
+    {
         $value = $this->getBMCDCS($plantCode, $RLS, $dateFilter);
-        $value = ArrayHelper::map($value, 'dcs_code', function($value) use ($type) {
-                    return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ') - ' . $value->ref_code : $value->dcs_name . ' - ' . $value->ref_code;
-                });
+        $value = ArrayHelper::map($value, 'dcs_code', function ($value) use ($type) {
+            return !empty($type) ? $value->dcs_name . '(' . Yii::t('app', $type) . ') - ' . $value->ref_code : $value->dcs_name . ' - ' . $value->ref_code;
+        });
         return $value;
     }
 
-    public function getBMCDCS($plantCode = [], $RLS = 'TRUE', $dateFilter = NULL) {
+    public function getBMCDCS($plantCode = [], $RLS = 'TRUE', $dateFilter = NULL)
+    {
         $query = $this->find()->select(['dcs_code', 'dcs_name', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($plantCode))
             $query->andWhere(['bmc_code' => $plantCode]);
@@ -769,19 +831,23 @@ class TblDcs extends ChildModel {
         return $query->all();
     }
 
-    public function getPlantCode() {
+    public function getPlantCode()
+    {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
-    public function getTblPurchaseRateApplicabilityUnblock() {
+    public function getTblPurchaseRateApplicabilityUnblock()
+    {
         return $this->hasMany(TblPurchaseRateApplicability::className(), ['dcs_code' => 'dcs_code'])->andwhere(['is_active' => 1]);
     }
 
-    public function getTblPurchaseRateApplicabilityBlock() {
+    public function getTblPurchaseRateApplicabilityBlock()
+    {
         return $this->hasMany(TblPurchaseRateApplicability::className(), ['dcs_code' => 'dcs_code'])->andwhere(['is_active' => 0]);
     }
 
-    public function getBmcDcsData() {
+    public function getBmcDcsData()
+    {
         $rows = $this->find()->where(['bmc_code' => $this->bmc_code])->all();
         $dcs = [];
         foreach ($rows as $key => $value) {
@@ -790,11 +856,12 @@ class TblDcs extends ChildModel {
         return $dcs;
     }
 
-    public function getDownloadStatus() {
+    public function getDownloadStatus()
+    {
         $member_model = new TblMember();
         $data = $member_model->find()
-                ->where(['dcs_code' => $this->dcs_code, 'is_download' => '1'])
-                ->all();
+            ->where(['dcs_code' => $this->dcs_code, 'is_download' => '1'])
+            ->all();
         if (count($data) == 0) {
             return Yii::t('app', 'Downloaded');
         } else {
@@ -802,19 +869,22 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function getSocietyData() {
+    public function getSocietyData()
+    {
         return $this->find()
-                        ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_contact_details.mobile_no'])
-                        ->joinWith(['defaultContactDetail'])
-                        ->where(['bmc_code' => $this->bmc_code, 'tbl_dcs.is_active' => 1])
-                        ->all();
+            ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_contact_details.mobile_no'])
+            ->joinWith(['defaultContactDetail'])
+            ->where(['bmc_code' => $this->bmc_code, 'tbl_dcs.is_active' => 1])
+            ->all();
     }
 
-    public function getRouteMapping() {
+    public function getRouteMapping()
+    {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
 
-    public function getMccDCS($mccCode = [], $RLS = 'TRUE', $values = []) {
+    public function getMccDCS($mccCode = [], $RLS = 'TRUE', $values = [])
+    {
         $query = $this->find()->select(['dcs_code', 'dcs_name', 'dcs_code_ex', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($mccCode))
             $query->andWhere(['mcc_plant_code' => $mccCode]);
@@ -827,22 +897,24 @@ class TblDcs extends ChildModel {
         return $query->all();
     }
 
-    public function getData($ref_code_check = FALSE) {
+    public function getData($ref_code_check = FALSE)
+    {
         if ($ref_code_check) {
             $data = $this->find()
-                    ->where(['or', ['dcs_code' => $this->dcs_code], ['ref_code' => $this->dcs_code]])
-                    ->andWhere(['is_active' => 1])
-                    ->all();
+                ->where(['or', ['dcs_code' => $this->dcs_code], ['ref_code' => $this->dcs_code]])
+                ->andWhere(['is_active' => 1])
+                ->all();
             $data = (count($data) == 1) ? $data : [];
         } else {
             $data = $this->find()
-                    ->where(['dcs_code' => $this->dcs_code])
-                    ->one();
+                ->where(['dcs_code' => $this->dcs_code])
+                ->one();
         }
         return $data;
     }
 
-    public function afterSave($insert, $changedAttributes) {
+    public function afterSave($insert, $changedAttributes)
+    {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
@@ -856,7 +928,8 @@ class TblDcs extends ChildModel {
         }
     }
 
-    private function sentboxModel($code, $type) {
+    private function sentboxModel($code, $type)
+    {
         $sentbox = new TblSentbox();
         $sentbox->dest_org_id = $code;
         $sentbox->source_org_id = $this->union_code;
@@ -864,7 +937,8 @@ class TblDcs extends ChildModel {
         return $sentbox;
     }
 
-    public function afterDelete() {
+    public function afterDelete()
+    {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
@@ -877,30 +951,35 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function setModel() {
+    public function setModel()
+    {
         $this->dcs_name = ucwords($this->dcs_name);
         $this->pan_no = strtoupper($this->pan_no);
         $this->dcs_short_name = ucwords($this->dcs_short_name);
         $this->route_code = empty($this->route_code) ? null : $this->route_code;
-//        $this->registration_date = ($this->registration_date == '') ? null : Yii::$app->formatter->asDate($this->registration_date, 'php:Y-m-d');
-//        $this->effective_date = ($this->effective_date == '') ? null : Yii::$app->formatter->asDate($this->effective_date, 'php:Y-m-d');
+        //        $this->registration_date = ($this->registration_date == '') ? null : Yii::$app->formatter->asDate($this->registration_date, 'php:Y-m-d');
+        //        $this->effective_date = ($this->effective_date == '') ? null : Yii::$app->formatter->asDate($this->effective_date, 'php:Y-m-d');
     }
 
-    public function getDpuIncentiveMaster() {
+    public function getDpuIncentiveMaster()
+    {
         return $this->hasOne(TblDpuIncentiveMaster::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getDefaultMobileNo() {
+    public function getDefaultMobileNo()
+    {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
     }
 
-    public function getCollectionIncentive() {
+    public function getCollectionIncentive()
+    {
         $date = date('Y-m-d');
         return $this->hasMany(TblCollectionIncentiveDeduction::className(), ['dcs_code' => 'dcs_code'])
-                        ->andwhere("'$date' BETWEEN [from_date] AND [to_date]")->orderBy('from_time ASC');
+            ->andwhere("'$date' BETWEEN [from_date] AND [to_date]")->orderBy('from_time ASC');
     }
 
-    public function getUnionDcs($unionCode, $notIn = [], $compareBmc = false, $mcc = [], $bmc = [], $concatField = 'dcs_code', $routes = []) {
+    public function getUnionDcs($unionCode, $notIn = [], $compareBmc = false, $mcc = [], $bmc = [], $concatField = 'dcs_code', $routes = [])
+    {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('Dcs') !== '') {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
@@ -916,29 +995,33 @@ class TblDcs extends ChildModel {
             $query->andWhere(['route_code' => $routes]);
         }
         $dcs = $query->all();
-        $dcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) use ($concatField) {
-                    return $dcs->{$concatField} . '-' . $dcs->dcs_name;
-                });
+        $dcs = ArrayHelper::map($dcs, 'dcs_code', function ($dcs) use ($concatField) {
+            return $dcs->{$concatField} . '-' . $dcs->dcs_name;
+        });
         asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
         return $dcs;
     }
 
-    public function getUnionDpuConfig() {
+    public function getUnionDpuConfig()
+    {
         return $this->hasOne(TblUnionDpuConfig::className(), ['union_code' => 'union_code', 'dpu_type' => 'dpu_type']);
     }
 
-    public function getPurchaseRate() {
+    public function getPurchaseRate()
+    {
         return $this->hasOne(TblPurchaseRate::className(), ['union_code' => 'union_code', 'purchase_rate_code' => 'rate_chart_member']);
     }
 
-    public function importData($attribute, $params) {
+    public function importData($attribute, $params)
+    {
         if (!empty($this->rate_chart_member) && empty($this->purchaseRate)) {
             $this->addError('rate_chart_member', Yii::t('app/validation', $this->getAttributeLabel('rate_chart_member') . ' is Invalid.'));
             return false;
         }
     }
 
-    public function setModelData($model, &$saveModel) {
+    public function setModelData($model, &$saveModel)
+    {
         $society_model = new TblSocietyCollection();
         $society_model->dcs_code = $model->dcs_code;
         $society_model->from_date = date('Y-m-d H:i:s');
@@ -973,42 +1056,44 @@ class TblDcs extends ChildModel {
         array_push($saveModel, $incentive_model);
     }
 
-//    public function headWiseDcs($payment_cycle_code, $bill_head_code) {
-//        $value1 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
-//                        ->innerJoinWith(['paymentCycleApplicability', 'billHeadApplicability'])
-//                        ->where(['tbl_dcs_payment_cycle_applicability.dcs_payment_cycle_code' => $payment_cycle_code, 'tbl_bill_head_applicability.bill_head_code' => $bill_head_code])
-//                        ->orderby('dcs_name')->all();
-//
-//        $value1 = ArrayHelper::map($value1, 'dcs_code', 'dcs_name');
-//        $value2 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
-//                        ->innerJoinWith('billHeadTransactions')
-//                        ->where(['payment_cycle_code' => $payment_cycle_code, 'bill_head_code' => $bill_head_code])
-//                        ->orderby('dcs_name')->all();
-//
-//        $value2 = ArrayHelper::map($value2, 'dcs_code', 'dcs_name');
-//        $value = array_diff_key($value1, $value2);
-//        asort($value, SORT_NATURAL | SORT_FLAG_CASE);
-//        return $value;
-//    }
-//
-//    public function getPaymentCycleApplicability() {
-//        return $this->hasMany(TblDcsPaymentCycleApplicability::className(), ['dcs_code' => 'dcs_code']);
-//    }
-//
-//    public function getBillHeadApplicability() {
-//        return $this->hasMany(TblBillHeadApplicability::className(), ['dcs_code' => 'dcs_code']);
-//    }
-//
-//    public function getBillHeadTransactions() {
-//        return $this->hasMany(TblBillHeadDetail::className(), ['dcs_code' => 'dcs_code']);
-//    }
+    //    public function headWiseDcs($payment_cycle_code, $bill_head_code) {
+    //        $value1 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
+    //                        ->innerJoinWith(['paymentCycleApplicability', 'billHeadApplicability'])
+    //                        ->where(['tbl_dcs_payment_cycle_applicability.dcs_payment_cycle_code' => $payment_cycle_code, 'tbl_bill_head_applicability.bill_head_code' => $bill_head_code])
+    //                        ->orderby('dcs_name')->all();
+    //
+    //        $value1 = ArrayHelper::map($value1, 'dcs_code', 'dcs_name');
+    //        $value2 = $this->find()->select(['tbl_dcs.dcs_code', 'dcs_name'])
+    //                        ->innerJoinWith('billHeadTransactions')
+    //                        ->where(['payment_cycle_code' => $payment_cycle_code, 'bill_head_code' => $bill_head_code])
+    //                        ->orderby('dcs_name')->all();
+    //
+    //        $value2 = ArrayHelper::map($value2, 'dcs_code', 'dcs_name');
+    //        $value = array_diff_key($value1, $value2);
+    //        asort($value, SORT_NATURAL | SORT_FLAG_CASE);
+    //        return $value;
+    //    }
+    //
+    //    public function getPaymentCycleApplicability() {
+    //        return $this->hasMany(TblDcsPaymentCycleApplicability::className(), ['dcs_code' => 'dcs_code']);
+    //    }
+    //
+    //    public function getBillHeadApplicability() {
+    //        return $this->hasMany(TblBillHeadApplicability::className(), ['dcs_code' => 'dcs_code']);
+    //    }
+    //
+    //    public function getBillHeadTransactions() {
+    //        return $this->hasMany(TblBillHeadDetail::className(), ['dcs_code' => 'dcs_code']);
+    //    }
 
 
-    public function getIfscDetail() {
+    public function getIfscDetail()
+    {
         return $this->hasOne(TblBranch::className(), ['ifsc' => 'ifsc'])->andwhere(['is_active' => 1]);
     }
 
-    public function setBankDetail($attribute, $params) {
+    public function setBankDetail($attribute, $params)
+    {
 
         if (empty($this->getErrors()) && !empty($this->ifsc)) {
             $this->branch_code = Yii::$app->general->getforeignkey($this->ifscDetail, 'branch_code');
@@ -1020,7 +1105,8 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function setbankDetails($model, &$saveModel, &$errors) {
+    public function setbankDetails($model, &$saveModel, &$errors)
+    {
         if (!empty($model->bank_account_no)) {
             $branch_model = new TblBankDetails();
             $branch_model->setModel('society', $model->dcs_code);
@@ -1036,7 +1122,8 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function setContactDetails($model, &$saveModel, &$errors) {
+    public function setContactDetails($model, &$saveModel, &$errors)
+    {
         if (!empty($model->mobile_no)) {
             $contact_model = new TblContactDetails();
             $contact_model->setModel('society', $model->dcs_code);
@@ -1056,10 +1143,11 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function getRecords($notInDcs = [], $dcs = '') {
+    public function getRecords($notInDcs = [], $dcs = '')
+    {
         $query = $this->find()
-                ->andWhere(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'is_active' => 1])
-                ->andWhere(['not in', 'dcs_code', $notInDcs]);
+            ->andWhere(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'is_active' => 1])
+            ->andWhere(['not in', 'dcs_code', $notInDcs]);
         if (!empty($dcs)) {
             $query->andWhere(['dcs_code' => $dcs]);
         }
@@ -1068,7 +1156,8 @@ class TblDcs extends ChildModel {
         return $dcsCode;
     }
 
-    public function IntValidateDcs() {
+    public function IntValidateDcs()
+    {
         /* if (substr($this->dcs_code, 0, 1) == '0') {
           $msg = Yii::t('app', 'DCS Code') . ' must not contain leading zero.';
           $this->addError('dcs_code', Yii::t('app/validation', $msg));
@@ -1080,8 +1169,8 @@ class TblDcs extends ChildModel {
             return false;
         } else {
             $cnt = $this->find()->where(['convert(bigint,dcs_code)' => (int) $this->dcs_code])
-                    ->andWhere(['!=', 'dcs_code', $this->dcs_code])
-                    ->count();
+                ->andWhere(['!=', 'dcs_code', $this->dcs_code])
+                ->count();
             if ($cnt > 0) {
                 $msg = Yii::t('app', 'DCS Code') . ' has already been taken.';
                 $this->addError('dcs_code', Yii::t('app/validation', $msg));
@@ -1091,43 +1180,52 @@ class TblDcs extends ChildModel {
         $this->ref_code = $this->dcs_code;
     }
 
-    public function getFtpCredentials() {
+    public function getFtpCredentials()
+    {
         return $this->find()
-                        ->select(['module_code' => 'tbl_dcs.dcs_code', 'CP_Code' => 'tbl_dcs.ref_code', 'ftp_connection_code' => 'tbl_dcs.mcc_plant_code', 'sfd.ftp_type', 'sfd.ftp_host', 'sfd.ftp_username', 'sfd.ftp_password', 'sfd.ftp_port', 'sfd.ftp_path'])
-                        ->join('LEFT JOIN', 'tbl_society_vendor sv', 'sv.dcs_code = tbl_dcs.dcs_code')
-                        ->join('LEFT JOIN', 'tbl_ftp_detail sfd', 'sfd.ftp_connection_code = tbl_dcs.mcc_plant_code')
-                        ->where(['sv.vendor_code' => 'BIPL'])
-                        ->orderBy('ftp_connection_code ASC')
-                        ->asArray()
-                        ->all();
+            ->select(['module_code' => 'tbl_dcs.dcs_code', 'CP_Code' => 'tbl_dcs.ref_code', 'ftp_connection_code' => 'tbl_dcs.mcc_plant_code', 'sfd.ftp_type', 'sfd.ftp_host', 'sfd.ftp_username', 'sfd.ftp_password', 'sfd.ftp_port', 'sfd.ftp_path'])
+            ->join('LEFT JOIN', 'tbl_society_vendor sv', 'sv.dcs_code = tbl_dcs.dcs_code')
+            ->join('LEFT JOIN', 'tbl_ftp_detail sfd', 'sfd.ftp_connection_code = tbl_dcs.mcc_plant_code')
+            ->where(['sv.vendor_code' => 'BIPL'])
+            ->orderBy('ftp_connection_code ASC')
+            ->asArray()
+            ->all();
     }
 
-    public function getValidDcs($dcs) {
-        $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs], ['ref_code' => $dcs]])->andWhere(['is_active' => 1])->all();
+    public function getValidDcs($dcs)
+    {
+        $data = $this->find()->select('dcs_code')->where(['dcs_code' => $dcs])->andWhere(['is_active' => 1])->all();
+        if (empty($data)) {
+            $data = $this->find()->select('dcs_code')->where(['or', ['dcs_code' => $dcs], ['dcs_code_ex' => $dcs], ['ref_code' => $dcs]])->andWhere(['is_active' => 1])->all();
+        }
         return !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
     }
 
-    public function getRouteSourceMapping() {
+    public function getRouteSourceMapping()
+    {
         return $this->hasOne(TblRouteMappingSources::className(), ['route_code' => 'route_code', 'from_dest' => 'dcs_code']);
     }
 
-    public function dcsData($bmc) {
+    public function dcsData($bmc)
+    {
         return $this->find()
-                        ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.ref_code', 'tbl_asset_set.sap_code', 'tbl_asset_set.asset_set_code', 'tbl_store_location.store_location_code', 'tbl_store_location.store_location_type'])
-                        ->innerJoin('tbl_store_location', 'tbl_store_location.reference_code=tbl_dcs.dcs_code and tbl_store_location.store_location_type=3')
-                        ->leftJoin('tbl_asset_set', 'tbl_asset_set.reference_code=tbl_dcs.dcs_code')
-                        ->where(['tbl_dcs.bmc_code' => $bmc])
-                        ->asArray()
-                        ->all();
+            ->select(['tbl_dcs.dcs_code', 'tbl_dcs.dcs_name', 'tbl_dcs.ref_code', 'tbl_asset_set.sap_code', 'tbl_asset_set.asset_set_code', 'tbl_store_location.store_location_code', 'tbl_store_location.store_location_type'])
+            ->innerJoin('tbl_store_location', 'tbl_store_location.reference_code=tbl_dcs.dcs_code and tbl_store_location.store_location_type=3')
+            ->leftJoin('tbl_asset_set', 'tbl_asset_set.reference_code=tbl_dcs.dcs_code')
+            ->where(['tbl_dcs.bmc_code' => $bmc])
+            ->asArray()
+            ->all();
     }
 
-    public function setXcol($attribute, $params) {
+    public function setXcol($attribute, $params)
+    {
         $same = empty($this->same_milk_type) ? 0 : $this->same_milk_type;
         $different = empty($this->diff_milk_type) ? 0 : $this->diff_milk_type;
         $this->x_col1 = $same . '#' . $different;
     }
 
-    public function setDefaultMilkType($modelDcsMilkType, $passKey = '') {
+    public function setDefaultMilkType($modelDcsMilkType, $passKey = '')
+    {
         $Key = isset($passKey) && !empty($passKey) ? $passKey : 'milk_type_code';
         $milkType = [];
         foreach ($modelDcsMilkType as $type) {
@@ -1155,7 +1253,8 @@ class TblDcs extends ChildModel {
         return $defaultMilk;
     }
 
-    public function setMilkType($defaultMilk) {
+    public function setMilkType($defaultMilk)
+    {
         if (!empty($defaultMilk)) {
             if (in_array($defaultMilk, [6])) {
                 $modelMilkType = [1, 3];
@@ -1174,11 +1273,13 @@ class TblDcs extends ChildModel {
         return $modelMilkType;
     }
 
-    public function getRouteRefCode() {
+    public function getRouteRefCode()
+    {
         return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code']);
     }
 
-    public function validateRoute($attribute, $params) {
+    public function validateRoute($attribute, $params)
+    {
         $this->route_code = $this->route;
         $this->route_code = Yii::$app->general->getforeignkey($this->routeRefCode, 'route_code');
 
@@ -1187,20 +1288,23 @@ class TblDcs extends ChildModel {
         }
     }
 
-    public function getActiveStatus() {
+    public function getActiveStatus()
+    {
         return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'dcs_code'])->andOnCondition(['customer_type' => 'DCS']);
     }
 
-    public function getTblDcs() {
+    public function getTblDcs()
+    {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getMainBankDetails() {
+    public function getMainBankDetails()
+    {
         return $this->hasOne(TblBankDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_bank_details.module_name' => 'society', 'tbl_bank_details.is_default' => 1, 'tbl_bank_details.is_active' => 1]);
     }
 
-    public function getMainContactDetails() {
+    public function getMainContactDetails()
+    {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
     }
-
 }
