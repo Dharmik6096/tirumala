@@ -50,13 +50,13 @@ class TblBankPaymentLogSearch extends TblBankPaymentLog {
 
         $this->load($params);
 
+        Yii::$app->general->filterByOrg($query, $this);
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-
-        Yii::$app->general->filterByOrg($query, $this);
 
         if (!empty($this->from_date)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -74,8 +74,7 @@ class TblBankPaymentLogSearch extends TblBankPaymentLog {
             'status' => $this->status,
         ]);
 
-        $query
-                ->andFilterWhere(['like', 'file_name', $this->file_name])
+        $query->andFilterWhere(['like', 'file_name', $this->file_name])
                 ->andFilterWhere(['like', 'file_status', $this->file_status])
                 ->andFilterWhere(['like', 'file_status_desc', $this->file_status_desc])
                 ->andFilterWhere(['like', 'file_error_code', $this->file_error_code])
@@ -87,4 +86,5 @@ class TblBankPaymentLogSearch extends TblBankPaymentLog {
 
         return $dataProvider;
     }
+
 }
