@@ -153,9 +153,13 @@ $script = '
         var vsp_code_append = "<input type=\'hidden\' name=\'vsp_transit_recovery_code[]\' value=\'"+vsp_transit_recovery_code_value+"\'> <span>"+vsp_transit_recovery_code_value+"</span>"
         $(".vsp_transit_recovery_code-"+row_number).html(vsp_code_append);
         
+        var ts_deduction_amount_value = $(".ts_deduction_amount-"+row_number).html();
+        var ts_deduction_amount_append = "<input type=\'text\' class=\'ts_deduction_amount\' id=\'ts_deduction_amount_input-"+row_number+"\' name=\'ts_deduction_amount["+vsp_transit_recovery_code_value+"][]\' value=\'"+ts_deduction_amount_value+"\'> <span>"+ts_deduction_amount_value+"</span>"
+        $(".ts_deduction_amount-"+row_number).html(ts_deduction_amount_append);    
+        $("#ts_deduction_amount_input-"+row_number).val(ts_deduction_amount_value);
 
         var ts_loss_responsibility_value = $(".ts_loss_responsibility-"+row_number+" #dropdown_value").val();
-        var data_append = "<select class=\'dd_ts_loss_responsibility\' id=\'dd_ts_loss_responsibility-"+row_number+"\' name = \'ts_loss_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select TS Loss Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option></select>"
+        var data_append = "<select class=\'dd_ts_loss_responsibility\' id=\'dd_ts_loss_responsibility-"+row_number+"\' name = \'ts_loss_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select TS Loss Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option><option value = \'3\'>MCC</option></select>"
         $(".ts_loss_responsibility-"+row_number).html(data_append);
         $("#dd_ts_loss_responsibility-"+row_number).val(ts_loss_responsibility_value);
 
@@ -205,6 +209,14 @@ $script = '
         calculateShortageRecovery(dd_value,row_number);
     });
 
+    $(document).on("change", ".ts_deduction_amount", function(){
+        var row_id = $(this).attr("id");
+        var val = row_id.split("-");
+        var row_number = val[1];
+        var id = "dd_qty_diff_responsibility-"+row_number;
+        var dd_value = $("#"+id).val();
+        calculateInchargeTransport(dd_value,row_number);
+    });
 
     function calculateShortageRecovery(dd_value,row_number){
         var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number+" input").val();
@@ -220,7 +232,7 @@ $script = '
                 data: { dcs_code: dcs_code_value, from_date: from_date_value, qty_diff_type : dd_value},
                 success: function(data) {
                     var shortage_recovery_value = ((actual_qty_value - composite_qty_value) * data.res).toFixed(2);
-                    var shortage_recovery_append = "<input type=\'hidden\' class=\'shortage_recovery_input-"+row_number+"\' name=\'shortage_recovery["+vsp_transit_recovery_code_value+"][]\' value=\'"+shortage_recovery_value+"\'> <span>"+shortage_recovery_value+"</span>"
+                    var shortage_recovery_append = "<input type=\'text\' class=\'shortage_recovery_input-"+row_number+"\' name=\'shortage_recovery["+vsp_transit_recovery_code_value+"][]\' value=\'"+shortage_recovery_value+"\'> <span>"+shortage_recovery_value+"</span>"
                     $(".shortage_recovery-"+row_number).html(shortage_recovery_append);
                     setTimeout(function(){
                         calculateInchargeTransport(qty_diff_responsibility_value,row_number);
@@ -235,7 +247,8 @@ $script = '
 
     function calculateInchargeTransport(dd_value,row_number){
         var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number+" input").val();
-        var ts_deduction_amount = parseFloat($(".ts_deduction_amount-"+row_number).html());
+        // var ts_deduction_amount = parseFloat($(".ts_deduction_amount-"+row_number).html());
+        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
         var shortage_recovery_value = 0;
         if(isNaN($(".shortage_recovery_input-"+row_number).val())){
             var shortage_recovery_value = parseFloat($(".shortage_recovery-"+row_number).html());

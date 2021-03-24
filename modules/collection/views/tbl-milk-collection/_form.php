@@ -270,13 +270,13 @@ $script = "
     function checkFatRange(){
         var union = $('#tblmilkcollection-union_code').val();
         var fat = $('#tblmilkcollection-fat').val();
-        var dcs = $('#tblmilkcollection-dcs_code').val();
+        var bmc = $('#tblmilkcollection-bmc_code').val();
         var milk_type = $('#tblmilkcollection-milk_type_code').val();
-            if(union !='' && fat !='' && milk_type !='' && dcs!=''){
+            if(union !='' && fat !='' && milk_type !='' && bmc!=''){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['check-fat-range']) . "',
-                    data: {'union_code':union,'fat':fat,'milk_type':milk_type,'dcs':dcs},
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type,'bmc':bmc},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')
