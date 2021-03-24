@@ -3913,6 +3913,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     width: 51%;
     float: right;
     margin-top: -14px;
+    background: #fff;
 }
 
 .right_reverse_max{
@@ -4271,7 +4272,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     border-collapse: collapse;
     border-spacing: 0;
     /*table-layout: fixed;  Algoritmo de distribucion fijo */
-    /*white-space:nowrap;   Impide los saltos de línea automáticos */
+    /*white-space:nowrap;   Impide los saltos de lÃ­nea automÃ¡ticos */
 }
 
 .fht-table th,.fht-table td {
@@ -4710,4 +4711,12 @@ table.dataTable thead .search_filter input[type="text"] {
 }
 .panel > .table-responsive > .table-bordered > thead{
     background-color: #fff !important;
+}
+
+.panel > .table-responsive > .table-bordered > thead{
+    background-color: #fff !important;
+}
+
+#collapse1{
+    position: fixed;
 }
