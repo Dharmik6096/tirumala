@@ -108,6 +108,15 @@ $attribute = [
     ['attribute' => 'device_long', 'filter' => FALSE],
     ['attribute' => 'mob_lat', 'filter' => FALSE],
     ['attribute' => 'mob_long', 'filter' => FALSE],
+    ['label' => 'Sample Date', 'attribute' => 'qlty_time',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->qlty_time);
+        }],
 ];
 
 
