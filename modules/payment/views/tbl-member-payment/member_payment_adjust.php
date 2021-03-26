@@ -362,7 +362,7 @@ function SumAmount()
  }     
 
 
-$('.adjust-amountasd').on('blur',function(){     
+$('.adjust-amount').on('blur',function(){     
         var adjust = parseFloat($(this).val());
         var id = $(this).attr('id');
         var parent = $(this).parents('tr');

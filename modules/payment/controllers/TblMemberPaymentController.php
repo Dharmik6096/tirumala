@@ -737,6 +737,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $recoverMember = $model->getRecoverData();
         $aliasmodel = new TblMemberPaymentAlias();
         $aliasmodel->attributes = Yii::$app->request->get();
+        $aliasmodel->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
 
         return $this->renderAjax('_recovery', [
@@ -751,6 +752,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $response['recovery'] = '';
         $model = new TblMemberPaymentAlias();
         $model->attributes = Yii::$app->request->get();
+        $model->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $model->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
         $recoverMember = $model->getMemberWiseData();
         if (!empty($recoverMember)) {
