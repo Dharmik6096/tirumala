@@ -87,6 +87,9 @@ class TransitRecoveryController extends \app\controllers\ChildController {
                         if(isset($post_data['total_recovery_transporter'][$value])){
                             $transist_model->total_recovery_transporter = $post_data['total_recovery_transporter'][$value][0];
                         }
+                        if(isset($post_data['ts_deduction_amount'][$value])){
+                            $transist_model->ts_deduction_amount = $post_data['ts_deduction_amount'][$value][0];
+                        }
                         $transist_model->status = $status;
                         $save_model[] = $transist_model;
                     }
