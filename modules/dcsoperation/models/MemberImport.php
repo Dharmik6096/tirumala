@@ -83,9 +83,9 @@ class MemberImport extends TblMember {
                     if ($error !== TRUE)
                         $this->addError($attribute, $error);
                 }, 'skipOnEmpty' => TRUE],
-                ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                    return $this->is_active;
-                }, 'skipOnEmpty' => TRUE],
+//                ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
+//                    return $this->is_active;
+//                }, 'skipOnEmpty' => TRUE],
                 [['x_col3'], 'default', 'value' => 15],
                 [['pan_no'], 'unique', 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
                 [['adhar_no'], 'unique', 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
