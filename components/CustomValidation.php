@@ -189,6 +189,25 @@ class CustomValidation extends Component {
                     ],
                 ],
             ],
+            'MMD' => [
+                'TblBankDetails' => [
+                    'default' => [],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
+                            [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
+                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv']],
+                            [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                    ],
+                ],
+            ],
         ];
     }
 
