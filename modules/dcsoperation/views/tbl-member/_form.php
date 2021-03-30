@@ -314,7 +314,7 @@ $script = "
     $('#tblmember-bank_code').on('change',function(){
         var existBank = '" . $model->bank_code . "';
         var newBank = $(this).val();
-        if(newBank == null) {
+        if(newBank == null || newBank == '' || newBank == undefined) {
             newBank = existBank;
         }
         $('#tblmember-ifsc').val('');
