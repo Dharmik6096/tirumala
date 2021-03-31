@@ -256,7 +256,7 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                         [
                             'attribute' => 'qlty_time',
                             'label' => 'Sample Date',
-                            'value' => Yii::$app->controls->view_datetime($model->qlty_time),
+                            'value' => Yii::$app->controls->view_datetime($model->qlty_time, 'php:d-m-Y H:i:s'),
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
