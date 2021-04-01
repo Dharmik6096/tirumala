@@ -6,7 +6,8 @@ use yii\web\View;
 use yii\helpers\Url;
 
 //Url::remember();
-$url = Url::to(['/details/tbl-contact-details/create', 'module' => $module, 'id' => $id]);
+$form_validation_type = !empty($form_validation_type) ? $form_validation_type : 'default';
+$url = Url::to(['/details/tbl-contact-details/create', 'module' => $module, 'id' => $id, 'form_validation_type' => $form_validation_type]);
 $this->title = Yii::$app->label->title('create', 'Contact Detail');
 ?>
 <div class="panel panel-default panel-main">

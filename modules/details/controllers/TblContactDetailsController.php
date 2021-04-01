@@ -48,9 +48,10 @@ class TblContactDetailsController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($module, $id) {
+    public function actionCreate($module, $id, $form_validation_type = 'default') {
         $this->model = new TblContactDetails();
         $this->viewFile = 'create';
+        $this->model->form_validation_type = $form_validation_type;
         $modelSave = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $update = FALSE;
@@ -72,17 +73,17 @@ class TblContactDetailsController extends \app\controllers\ChildController {
                 return $this->{$transaction}();
             }
         }
-        return $this->customRender();
+        return $this->customRender($form_validation_type);
     }
 
-    protected function customRender() {
+    protected function customRender($form_validation_type = 'default') {
         $request = Yii::$app->request->queryParams;
         $searchModel = new TblContactDetailsSearch();
         $searchModel->module_name = $request['module'];
         $searchModel->module_code = $request['id'];
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render($this->viewFile, ['model' => $this->model, 'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider, 'module' => $request['module'], 'id' => $request['id'], 'dist' => '']);
+                    'dataProvider' => $dataProvider, 'module' => $request['module'], 'id' => $request['id'], 'dist' => '', 'form_validation_type' => $form_validation_type]);
     }
 
     protected function customRedirect() {
