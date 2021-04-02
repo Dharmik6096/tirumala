@@ -476,7 +476,7 @@ class SchedulerController extends ChildController {
                             $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
                             $statusModel->is_active = $status;
                             if (!empty($existStatus)) {
-                                $existStatus->updateAll(['is_active' => $status], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
+                                $existStatus->updateAll(['is_active' => $status, 'updated_at' => date('Y-m-d H:i:s')], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
                             } else {
                                 $statusModel->save(FALSE);
                             }
