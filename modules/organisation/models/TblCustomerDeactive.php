@@ -203,7 +203,7 @@ class TblCustomerDeactive extends \app\models\ChildModel
         $date = date('Y-m-d');
         return $query = $this->find()
             ->where(['data_post_status' => 2])
-            ->andWhere(['<=', 'to_date', $date])
+            ->andWhere(['<', 'to_date', $date])
             ->orderBy(['customer_deactive_code' => SORT_ASC])
             ->all();
     }
