@@ -461,13 +461,16 @@ class TblRouteMapping extends \app\models\ChildModel {
         }
     }
 
-    public function setChildTable($model, &$modelSave) {
+    public function setChildTable($model, &$modelSave, &$errors) {
         $model->route_code = $this->getCode();
         $contactDetails = new TblContactDetails;
         $contactDetails->firstname = $model->firstname;
         $contactDetails->mobile_no = $model->mobile_no;
         $contactDetails->form_validation_type = 'route-import';
         $contactDetails->setModel('routeMapping', $model->route_code);
+        if (!$contactDetails->validate()) {
+            $errors[] = $contactDetails->getErrors();
+        }
         array_push($modelSave, $contactDetails);
     }
 
