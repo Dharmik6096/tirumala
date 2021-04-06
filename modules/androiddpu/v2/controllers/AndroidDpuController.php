@@ -25,6 +25,7 @@ use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * Default controller for the `vendorapi` module
