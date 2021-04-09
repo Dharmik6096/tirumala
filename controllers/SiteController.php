@@ -2443,7 +2443,7 @@ class SiteController extends Controller {
         $bmc = '';
         if (!empty($_GET)) {
             $data = $_GET;
-            $breadcrum_title = $this->setBreadcrums($data, 'rmrd');
+            $breadcrum_title = $this->setBreadcrums($data);
             $sp_param = [];
             $sp_name = 'sp_dashboard_milk_col_bmc';
 
