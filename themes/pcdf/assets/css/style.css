@@ -4720,3 +4720,32 @@ table.dataTable thead .search_filter input[type="text"] {
 #collapse1{
     position: fixed;
 }
+
+.width_50-10 {
+    width: calc(50% - 10px) !important
+}
+.width_70-10 {
+    width: calc(70% - 10px) !important
+}
+.width_30-10 {
+    width: calc(30% - 10px) !important
+}
+
+.width_100 {
+    width: 100%;
+}
+
+.height_115 {
+    height:115px !important;
+}
+
+.dashboard_widget_table tr td {
+    color: #333;
+    font-weight: 500;
+    font-size: 12px;
+}
+.dashboard_widget_table tr td span {
+    color: #111;
+    font-weight: 600;
+    font-size: 13px;
+}

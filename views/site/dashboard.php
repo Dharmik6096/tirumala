@@ -448,6 +448,7 @@ $('.dpu_data_icon').click(function(){
                     'piechart_member_app',
                     'calender',
                     'dashboard_farmer_rmrd_blocks',
+                    'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
                     'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical'].indexOf(value) == -1) 
                     {
@@ -524,6 +525,59 @@ $('.dpu_data_icon').click(function(){
                                 $('#farmer_rmrd_block_fatkg').text(obj1.res.fatKg);
                                 $('#farmer_rmrd_block_snfkg').text(obj1.res.snfKg);
                                 $('#farmer_rmrd_block_amount').text(obj1.res.amount);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }else if(['today_vs_yesterday_collection'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'today_vs_yesterday_collection';
+                    var union= '" . $unionCode . "';
+    //                var union= $('#dashboard-union_code').val();
+                    var mcc= '" . $mccCode . "';
+    //                var mcc= $('#dashboard-mcc_code').val();
+                    var widget_type= $('#hidden_widget_type').val();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-today-vs-yesterday-collection']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&widget_type='+widget_type,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                console.log(obj1.res);
+                                $('#today_cc_qty').text(obj1.res.today_cc_qty);
+                                $('#today_cc_count').text(obj1.res.today_cc_count);
+                                $('#today_avg_rate').text(obj1.res.today_avg_rate);
+                                
+                                $('#yesterday_cc_qty').text(obj1.res.yesterday_cc_qty);
+                                $('#yesterday_cc_count').text(obj1.res.yesterday_cc_count);
+                                $('#yesterday_avg_rate').text(obj1.res.yesterday_avg_rate);
+                               
+                                $('#today_total_ltr').text(obj1.res.today_total_ltr);
+                                $('#today_rmrd_avg_rate').text(obj1.res.today_rmrd_avg_rate);
+                                $('#today_rmrd_cc_count').text(obj1.res.today_rmrd_cc_count);
+                                $('#today_rmrd_cc_qty').text(obj1.res.today_rmrd_cc_qty);
+                                $('#today_bulk_count').text(obj1.res.today_bulk_count);
+                                $('#today_bulk_qty').text(obj1.res.today_bulk_qty);
+                                $('#today_vlcc_count').text(obj1.res.today_vlcc_count);
+                                $('#today_vlcc_qty').text(obj1.res.today_vlcc_qty);
+                               
+                               $('#yesterday_total_ltr').text(obj1.res.yesterday_total_ltr);
+                                $('#yesterday_rmrd_avg_rate').text(obj1.res.yesterday_rmrd_avg_rate);
+                                $('#yesterday_rmrd_cc_count').text(obj1.res.yesterday_rmrd_cc_count);
+                                $('#yesterday_rmrd_cc_qty').text(obj1.res.yesterday_rmrd_cc_qty);
+                                $('#yesterday_bulk_count').text(obj1.res.yesterday_bulk_count);
+                                $('#yesterday_bulk_qty').text(obj1.res.yesterday_bulk_qty);
+                                $('#yesterday_vlcc_count').text(obj1.res.yesterday_vlcc_count);
+                                $('#yesterday_vlcc_qty').text(obj1.res.yesterday_vlcc_qty);
                             }
                         },
                         error:function(data){
