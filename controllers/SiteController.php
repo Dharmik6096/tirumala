@@ -847,6 +847,7 @@ class SiteController extends Controller {
         $mcc_code = str_replace(',', '-', $mcc_code);
         $bmc_code = str_replace(',', '-', $bmc_code);
         $dcs_str = str_replace(',', '-', $dcs_str);
+        $dcs_code = str_replace(',', '-', $dcs_code);
         $widget_type = '';
         if (!empty(Yii::$app->request->post('widget_type'))) {
             $widget_type = Yii::$app->request->post('widget_type');

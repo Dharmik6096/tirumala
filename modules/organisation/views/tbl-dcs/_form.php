@@ -111,7 +111,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'disabled' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
+            <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'readonly' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
         </div>
         <!--<div class="col-sm-2">-->
         <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('dpu_type'), false); ?>

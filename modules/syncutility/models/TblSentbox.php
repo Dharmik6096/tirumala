@@ -31,19 +31,21 @@ use yii\data\ArrayDataProvider;
  * @property string $source_device_mac
  * @property string $version_no
  */
-class TblSentbox extends \yii\db\ActiveRecord {
-
+class TblSentbox extends \yii\db\ActiveRecord
+{
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'tbl_sentbox';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['uuid'], 'required'],
             [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'safe'],
@@ -55,7 +57,8 @@ class TblSentbox extends \yii\db\ActiveRecord {
     /**
      * @inheritdoc
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'uuid' => Yii::t('app', 'Uuid'),
             'sync_status' => Yii::t('app', 'Sync Status'),
@@ -78,17 +81,17 @@ class TblSentbox extends \yii\db\ActiveRecord {
         ];
     }
 
-    public function setSentbox($model, $operation, $count = 1) {
+    public function setSentbox($model, $operation, $count = 1)
+    {
 
         $addressBook = $this->isAddressBook(!empty($this->table_name) ? $this->table_name : $model->tableName());
-
         foreach ($addressBook as $d) {
-
             $sentModel = new TblSentbox();
             $attribute = $this->attributes;
             $sentModel->setAttributes($attribute);
             switch ($d->destinations) {
-                case 0: $this->childEntry($model, $operation, $sentModel);
+                case 0:
+                    $this->childEntry($model, $operation, $sentModel);
                     break;
                 case 1:
                     if ($d->to_child == 1) {
@@ -108,7 +111,8 @@ class TblSentbox extends \yii\db\ActiveRecord {
                         $this->parentEntry($model, $operation, $sentModel);
                     }
                     break;
-                case 2: $this->childEntry($model, $operation, $sentModel);
+                case 2:
+                    $this->childEntry($model, $operation, $sentModel);
                     $sentModel = new TblSentbox();
                     $attribute = $this->attributes;
                     $sentModel->setAttributes($attribute);
@@ -122,25 +126,33 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return TRUE;
     }
 
-    private function isAddressBook($table_name) {
+    private function isAddressBook($table_name)
+    {
         $model = new TblAddressbook();
         $data = $model->find()->select(['destinations', 'to_child', 'to_parent'])->where(
-                        ['table_name' => $table_name,
-                            'source_org_type' => 'SELF',
-                            'flag_entry' => '1',
-                            'type' => '1'])->all();
+            [
+                'table_name' => $table_name,
+                'source_org_type' => 'SELF',
+                'flag_entry' => '1',
+                'type' => '1'
+            ]
+        )->all();
         return $data;
     }
 
-    private function childEntry($model, $operation, $sentModel) {
+    private function childEntry($model, $operation, $sentModel)
+    {
 
         $destination = '';
         switch (Yii::$app->session->get('organizations_type')) {
-            case 'NATIONAL' : $destination = 'FEDERATION';
+            case 'NATIONAL':
+                $destination = 'FEDERATION';
                 break;
-            case 'FEDERATION' : $destination = 'UNION';
+            case 'FEDERATION':
+                $destination = 'UNION';
                 break;
-            case 'UNION' : $destination = 'DCS';
+            case 'UNION':
+                $destination = 'DCS';
                 break;
         }
         $this->entry($model, $operation, $sentModel);
@@ -153,14 +165,14 @@ class TblSentbox extends \yii\db\ActiveRecord {
         }
         $data = $sentModel->attributes;
         $model = new TblAndroidInstallationDetails();
-        $model_data = $model->getActiveDeviceData($sentModel->dest_org_id, $sentModel->dest_org_type);
+        $model_data = $model->getActiveDeviceData($sentModel->dest_org_id, $sentModel->dest_org_type, $sentModel->device_id);
         $save_model = [];
         $connection = Yii::$app->getDb();
         if (!empty($model_data)) {
             foreach ($model_data as $device) {
                 $sent_box_model = new TblSentbox();
                 $sent_box_model->setAttributes($data);
-                $sent_box_model->device_id = $device->device_id;
+                $sent_box_model->device_id = !empty($device->device_id) ? $device->device_id : '';
                 $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
                 $sent_box_model->uuid = $command['id'];
                 $save_model[] = $sent_box_model;
@@ -174,58 +186,61 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return true;
     }
 
-    private function parentEntry($model, $operation, $sentModel) {
+    private function parentEntry($model, $operation, $sentModel)
+    {
         $this->entry($model, $operation, $sentModel);
         return $sentModel->save();
     }
 
-    public function entry($model, $operation, $sentModel) {
+    public function entry($model, $operation, $sentModel)
+    {
         $microtime = date("Y-m-d H:i:s.") . gettimeofday()["usec"];
         if (strpos($model->tableName(), 'local') || $model->tableName() == 'tbl_message_property') {
             $sentModel->language_code = $model->language_code;
         }
-//        $sentModel->uuid = $this->getUUID();
+        //        $sentModel->uuid = $this->getUUID();
         $sentModel->table_name = !empty($sentModel->table_name) ? $sentModel->table_name : $model->tableName();
         $sentModel->operation = $operation;
         $sentModel->json_text = !empty($sentModel->json_text) ? $sentModel->json_text : Json::encode($this->jsonModel($model), JSON_UNESCAPED_UNICODE);
         $sentModel->message_type = 'RECORD';
-//        $sentModel->processed = 0;
+        //        $sentModel->processed = 0;
         //   $this->column_sequence = implode(',', $model->getTableSchema()->getColumnNames());
         $sentModel->sync_status = 'U';
         $sentModel->sync_timestamp = $microtime;
         $sentModel->posting_timestamp = $microtime;
-//        $sentModel->transmitted = 0;
-//        $sentModel->is_origin = 1;
+        //        $sentModel->transmitted = 0;
+        //        $sentModel->is_origin = 1;
         $sentModel->originating_org_id = Yii::$app->session->get('organizations_code');
         $sentModel->originating_org_type = Yii::$app->session->get('organizations_type');
-//        $sentModel->source_org_id = ''; //Yii::$app->session->get('organizations_code');
+        //        $sentModel->source_org_id = ''; //Yii::$app->session->get('organizations_code');
         $sentModel->source_org_type = Yii::$app->session->get('organizations_type');
         $sentModel->sequence_no = 5;
         $sentModel->source_device_mac = Yii::$app->session->get('MacAddress');
-//        $sentModel->operation_condition = (in_array($model->tableName(), array_keys($this->priority_array))) ? $this->priority_array[$model->tableName()] : '8';
+        //        $sentModel->operation_condition = (in_array($model->tableName(), array_keys($this->priority_array))) ? $this->priority_array[$model->tableName()] : '8';
     }
 
-    public function getUUID() {
+    public function getUUID()
+    {
         $connection = Yii::$app->getDb();
         $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
         return $command['id'];
     }
 
-    private function jsonModel($model) {
+    private function jsonModel($model)
+    {
         $newModel = null;
         $scema = $model->getTableSchema();
         foreach ($model->attributes as $key => $a) {
             if ($scema->name == 'tbl_ledger' && $key == 'has_sub_ledger') {
-                
             } else {
-//            if ($key == 'is_active' || $key == 'is_delete' || $key=='is_milch' || $key=='is_default' || $key=='is_balance_sheet' || $key=='is_profit_loss') {
-//                $new_key = str_replace('is_', '', $key);
-//                $new_key = str_replace('_', ' ', $new_key);
-//                $new_key = ucwords($new_key);
-//                $new_key = str_replace(' ', '', $new_key);
-//                $new_key = lcfirst($new_key);
-//                $newModel[$new_key] = ($a==1)?true:false;
-//            } else {
+                //            if ($key == 'is_active' || $key == 'is_delete' || $key=='is_milch' || $key=='is_default' || $key=='is_balance_sheet' || $key=='is_profit_loss') {
+                //                $new_key = str_replace('is_', '', $key);
+                //                $new_key = str_replace('_', ' ', $new_key);
+                //                $new_key = ucwords($new_key);
+                //                $new_key = str_replace(' ', '', $new_key);
+                //                $new_key = lcfirst($new_key);
+                //                $newModel[$new_key] = ($a==1)?true:false;
+                //            } else {
 
                 $type = $scema->columns[$key]->type;
                 if ($type == 'datetime') {
@@ -244,7 +259,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
                 } elseif ($type == 'integer') {
                     $a = (int) $a;
                 } elseif ($type == 'double') {
-                    $a = (double) $a;
+                    $a = (float) $a;
                 } elseif ($type == 'bigint') {
                     $a = (int) $a;
                 }
@@ -257,16 +272,17 @@ class TblSentbox extends \yii\db\ActiveRecord {
                 // }
             }
         }
-        return(object) $newModel;
+        return (object) $newModel;
     }
 
-    public function getData($notInTables = []) {
+    public function getData($notInTables = [])
+    {
         $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
-                ->andWhere(['NOT IN', 'table_name', $notInTables])
-                ->orderBy('posting_timestamp')
-                ->limit(5)
-                ->all();
+            ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+            ->andWhere(['NOT IN', 'table_name', $notInTables])
+            ->orderBy('posting_timestamp')
+            ->limit(5)
+            ->all();
         $response = [];
         foreach ($data as $key => $model) {
             $response[] = $this->jsonModel($model);
@@ -274,10 +290,11 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return $response;
     }
 
-    public function getExportDataDcsNew($device_id, $dest_org_id, $dest_org_type) {
+    public function getExportDataDcsNew($device_id, $dest_org_id, $dest_org_type)
+    {
         $query = TblSentbox::find()->select(['dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
-                        ->where(['dest_org_id' => $dest_org_id, 'dest_org_type' => $dest_org_type, 'device_id' => $device_id])
-                        ->andWhere(['sync_status' => 'U', 'message_type' => 'RECORD'])->orderBy('posting_timestamp');
+            ->where(['dest_org_id' => $dest_org_id, 'dest_org_type' => $dest_org_type, 'device_id' => $device_id])
+            ->andWhere(['sync_status' => 'U', 'message_type' => 'RECORD'])->orderBy('posting_timestamp');
         $dataProvider = new ArrayDataProvider([
             'allModels' => $query->asArray()->all(),
             'pagination' => false,
@@ -285,12 +302,12 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return $dataProvider;
     }
 
-    public function getDataCount($notInTables = []) {
+    public function getDataCount($notInTables = [])
+    {
         $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
-                ->andWhere(['NOT IN', 'table_name', $notInTables])
-                ->count();
+            ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+            ->andWhere(['NOT IN', 'table_name', $notInTables])
+            ->count();
         return $data;
     }
-
 }

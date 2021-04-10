@@ -51,20 +51,20 @@ class TblCustomerDeactive extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date'], 'required'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime'], 'safe'],
-            [['remarks'], 'string'],
-            [['originating_type', 'data_post_status'], 'integer'],
-            [['customer_deactive_code', 'bmc_code'], 'string', 'max' => 12],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['customer_code', 'customer_type'], 'string', 'max' => 20],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['resp_status', 'resp_desc'], 'string', 'max' => 255],
-            [['to_date'], 'required', 'on' => ['activeCustomer']],
-            [['from_date'], 'validateFromDate', 'except' => ['activeCustomer']],
-            [['to_date'], 'validateToRange', 'on' => ['activeCustomer']]
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date'], 'required'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime'], 'safe'],
+                [['remarks'], 'string'],
+                [['originating_type', 'data_post_status'], 'integer'],
+                [['customer_deactive_code', 'bmc_code'], 'string', 'max' => 12],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
+                [['customer_code', 'customer_type'], 'string', 'max' => 20],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['resp_status', 'resp_desc'], 'string', 'max' => 255],
+                [['to_date'], 'required', 'on' => ['activeCustomer']],
+                [['from_date'], 'validateFromDate', 'except' => ['activeCustomer']],
+                [['to_date'], 'validateToRange', 'on' => ['activeCustomer']]
         ];
     }
 
@@ -162,23 +162,35 @@ class TblCustomerDeactive extends \app\models\ChildModel {
         }
     }
 
-    public function getDeactiveRecords() {
+    public function getDeactiveRecords($checkStatus = true, $data = '') {
         $date = date('Y-m-d');
-
-        return $query = $this->find()
+        $query = $this->find()
                 ->where(['<=', 'from_date', $date])
-                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]])
-                ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
-                ->orderBy(['customer_deactive_code' => SORT_ASC])
+                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]]);
+        if ($checkStatus) {
+            $query->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]]);
+        }
+        if (!empty($data) && (!empty($data['organization_code']) && !empty($data['organization_type']))) {
+            if ($data['organization_type'] == 'MCC') {
+                $query->andWhere(['mcc_plant_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'BMC') {
+                $query->andWhere(['bmc_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'VLC') {
+                $query->andWhere(['customer_code' => $data['organization_code']]);
+            }
+        }
+        $data = $query->orderBy(['customer_deactive_code' => SORT_ASC])
                 ->all();
+        return $data;
     }
 
     public function getActiveRecords() {
         $date = date('Y-m-d');
-
         return $query = $this->find()
                 ->where(['data_post_status' => 2])
-                ->andWhere(['<=', 'to_date', $date])
+                ->andWhere(['<', 'to_date', $date])
                 ->orderBy(['customer_deactive_code' => SORT_ASC])
                 ->all();
     }

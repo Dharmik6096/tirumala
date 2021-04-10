@@ -12,7 +12,7 @@ use app\modules\installation\models\TblAndroidInstallationDetails;
  */
 class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails {
 
-    public $organization_code, $from_date, $to_date, $organization_type;
+    public $organization_code, $from_date, $to_date, $organization_type, $code, $refCode;
 
     /**
      * @inheritdoc
@@ -20,7 +20,7 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
     public function rules() {
         return [
             [['android_installation_details_id', 'otp_code', 'is_active', 'is_expired', 'sync_active'], 'integer'],
-            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'installation_type', 'organization_code', 'from_date', 'to_date', 'organization_type', 'password_date', 'password'], 'safe'],
+            [['android_installation_id', 'mobile_no', 'hash_key', 'device_id', 'device_type', 'db_path', 'use_for', 'lat', 'long', 'created_at', 'created_by', 'updated_at', 'updated_by', 'imei_no', 'sync_key', 'db_version', 'installation_type', 'organization_code', 'from_date', 'to_date', 'organization_type', 'password_date', 'password', 'sync_active', 'code', 'refCode'], 'safe'],
         ];
     }
 
@@ -78,7 +78,8 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
             'updated_at' => $this->updated_at,
             'sync_active' => $this->sync_active,
         ]);
-        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->organization_code], ['like', 'tbl_bmc.bmc_code', $this->organization_code], ['like', 'tbl_mcc_plant.name', $this->organization_code]]);
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->organization_code], ['like', 'tbl_bmc.bmc_name', $this->organization_code], ['like', 'tbl_mcc_plant.name', $this->organization_code]])
+               ->andFilterWhere(['or', ['like', 'tbl_dcs.ref_code', $this->refCode], ['like', 'tbl_bmc.ref_code', $this->refCode], ['like', 'tbl_mcc_plant.ref_code', $this->refCode]]);
 
 
         $query->andFilterWhere(['like', 'android_installation_id', $this->android_installation_id])
@@ -97,6 +98,7 @@ class TblAndroidInstallationDetailsSearch extends TblAndroidInstallationDetails 
 //                ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->organization_code])
                 ->andFilterWhere(['like', 'tbl_android_installation_details.db_version', $this->db_version])
                 ->andFilterWhere(['like', 'tbl_android_installation.organization_type', $this->organization_type])
+                ->andFilterWhere(['like', 'tbl_android_installation.organization_code', $this->code])
                 ->andFilterWhere(['like', 'password', $this->password])
                 ->andFilterWhere(['like', 'tbl_android_installation_details.created_at', ($this->created_at == '') ? null : Yii::$app->formatter->asDate($this->created_at, DATE_FORMAT)])
                 ->andFilterWhere(['like', 'tbl_android_installation_details.password_date', ($this->password_date == '') ? null : Yii::$app->formatter->asDate($this->password_date, DATE_FORMAT)]);

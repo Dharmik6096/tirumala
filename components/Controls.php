@@ -326,8 +326,8 @@ class Controls extends Component {
         ]);
     }
 
-    public function view_datetime($value) {
-        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), 'php:d-m-Y H:i');
+    public function view_datetime($value, $formate = 'php:d-m-Y H:i') {
+        return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), $formate);
     }
 
     public function view_time($value, $formate = 'php:H:i') {

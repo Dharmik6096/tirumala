@@ -99,6 +99,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
         $this->contactDetails = new TblContactDetails();
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
+        $this->contactDetails->form_validation_type = 'route-create';
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
@@ -354,7 +355,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                     'id' => $id,
                     'module' => 'routeMapping',
                     'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider
+                    'dataProvider' => $dataProvider, 'form_validation_type' => 'route-create'
         ]);
     }
 

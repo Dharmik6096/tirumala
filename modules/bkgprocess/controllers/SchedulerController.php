@@ -232,7 +232,7 @@ class SchedulerController extends ChildController {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-//            $update = $model->updateFileStatus($ids);
+            $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
@@ -476,7 +476,7 @@ class SchedulerController extends ChildController {
                             $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
                             $statusModel->is_active = $status;
                             if (!empty($existStatus)) {
-                                $existStatus->updateAll(['is_active' => $status], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
+                                $existStatus->updateAll(['is_active' => $status, 'updated_at' => date('Y-m-d H:i:s')], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
                             } else {
                                 $statusModel->save(FALSE);
                             }

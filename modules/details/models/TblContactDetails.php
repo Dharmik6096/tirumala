@@ -38,7 +38,6 @@ class TblContactDetails extends \app\models\ChildModel {
             [['detail_code'], 'required'],
             [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
             [['detail_code', 'mobile_no'], 'integer'],
-            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],

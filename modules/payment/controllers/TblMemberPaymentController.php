@@ -207,8 +207,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_amt = Yii::$app->request->post('TblMemberPaymentAlias')['additional_pay'];
             $adjust_remark = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_remark'];
             $hold_amt = Yii::$app->request->post('TblMemberPaymentAlias')['hold_amount'];
-            $reco = Yii::$app->request->post('TblMemberPaymentAlias')['recovery'];
-            $adjust_reco = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'];
+            $reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['recovery'] : 0;
+            $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : 0;
             $save_model = [];
             $cnt = 0;
             $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'Process';
@@ -737,6 +737,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $recoverMember = $model->getRecoverData();
         $aliasmodel = new TblMemberPaymentAlias();
         $aliasmodel->attributes = Yii::$app->request->get();
+        $aliasmodel->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
 
         return $this->renderAjax('_recovery', [
@@ -751,6 +752,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $response['recovery'] = '';
         $model = new TblMemberPaymentAlias();
         $model->attributes = Yii::$app->request->get();
+        $model->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $model->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
         $recoverMember = $model->getMemberWiseData();
         if (!empty($recoverMember)) {

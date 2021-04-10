@@ -3,6 +3,8 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\payment\models\TblPaymentCycle;
 
 /**
  * This is the model class for table "tbl_bank_payment_log".
@@ -63,6 +65,14 @@ class TblBankPaymentLog extends \app\models\ChildModel {
 
     public function getUnionBankPaymentCode() {
         return $this->hasOne(TblUnionBankPayment::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getFromDate() {
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'dcs_payment_cycle_code']);
     }
 
 }

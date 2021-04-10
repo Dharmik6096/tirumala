@@ -72,17 +72,17 @@ class ReportsModel extends Model {
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => 'GprsDataReconciliation'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_route_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift', 'p_milk_type', 'p_ltr_kg'], 'required', 'on' => 'BmcCollection'],
             [['p_to_date'], function ($attribute, $params) {
-            Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date');
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'p_from_date', 'p_to_date');
+                }, 'skipOnEmpty' => false],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => 'BMCPayment'],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill']],
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill']],
             [['union_code'], 'required', 'on' => ['StaffSalary']],
             [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBill']],
             [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration']],
-            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code','p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract']]
+            [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract']]
         ];
     }
 

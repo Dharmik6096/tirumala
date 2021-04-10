@@ -1220,6 +1220,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Check For'),
                 'data' => [0 => Yii::t('app', 'Lock'), 1 => Yii::t('app', 'Unlock')],
             ],
+            'status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'In-Active'), '1' => Yii::t('app', 'Active')],
+            ],
         ];
         return $records[$l];
     }
