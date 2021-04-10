@@ -2584,6 +2584,45 @@ class SiteController extends Controller {
         return $this->render('_dashboard_grid_rmrd_dcs', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title]);
     }
 
+    public function actionGetRmrdVendor() {
+        $output = [];
+        $union = '';
+        $bmc = '';
+        if (!empty($_GET)) {
+            $data = $_GET;
+            $breadcrum_title = $this->setBreadcrums($data, 'rmrd');
+            $sp_param = [];
+            $sp_name = 'sp_dashboard_milk_col_vendor';
+
+            $union = !empty($data['union_code']) ? $data['union_code'] : (!empty(Yii::$app->session->get('Unions')) ? ',' . Yii::$app->session->get('Unions') . ',' : '0');
+            $mcc = !empty($data['mcc_code']) ? $data['mcc_code'] : (!empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : '0');
+            $bmc_code = !empty($data['bmc_code']) ? $data['bmc_code'] : (!empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : '0');
+            $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
+            $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
+            $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
+            $status = !empty($data['type']) ? $data['type'] : '';
+
+            $sp_param[] = $union;
+            $sp_param[] = $plant;
+            $sp_param[] = $mcc;
+            $sp_param[] = $bmc_code;
+            $sp_param[] = $dcs;
+            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(1);
+            $sp_param[] = date('Y-m-d', strtotime($data['date'])) . ' ' . Yii::$app->general->getshift(2);
+            $sp_param[] = $status;
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+
+            $blocks_data = $this->getFarmerBlockStatus($union, $plant, $mcc, $bmc_code, $dcs, $date, 'rmrd');
+        }
+        $mcc = !empty($data['mcc_code']) ? $data['mcc_code'] : '0';
+        $bmc = !empty($data['bmc_code']) ? $data['bmc_code'] : '0';
+        $tbl_plant_model = new TblMccPlant();
+        $tbl_plant_model->mcc_plant_code = $mcc;
+        $union_code = !empty($data['union_code']) ? $data['union_code'] : '0';
+        $title = ($status == 'BULKVEN' ? 'BULK Vendor' : 'VLCC Vendor');
+        return $this->render('_dashboard_grid_vendor', ['output' => $output, 'date' => $data['date'], 'union' => $union_code, 'mcc' => $mcc, 'bmc' => $bmc, 'mcc_name' => Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPlant, 'name'), 'blocks_data' => $blocks_data, 'breadcrum_title' => $breadcrum_title, 'title' => $title]);
+    }
+
     public function actionGetSocietyStatus() {
         $output = [];
         $union = '';
