@@ -203,5 +203,14 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 
 <?php
-$script = "var delay=2000;";
-$this->registerJs($script, View::POS_HEAD, 'time-loader');
+
+$script = "
+    var delay=2000;
+    $('#tblunions-contact_person_pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
+";
+$this->registerJs($script, View::POS_END, 'union');
+
