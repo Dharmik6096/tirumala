@@ -1660,7 +1660,7 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                         htmlData = htmlData + '</tr>';
 
                         htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'Vendor Receipts')."</td>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>".Yii::t('app', 'Bulk Vendor Receipts')."</td>';
                         htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
                         $.each(obj1.res, function(key,value) {
                             htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_qty+'</td>';
