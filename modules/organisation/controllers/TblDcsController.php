@@ -190,7 +190,8 @@ class TblDcsController extends ChildController {
                 $this->model->setModelData($this->model, $mapList);
                 $member = [];
                 if (!empty($this->model->auto_member_create)) {
-                    for ($x = 1; $x <= 100; $x += 1) {
+                    $config = !empty(Yii::$app->session->get('unionConfig')[$this->model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['no_of_auto_member_create'] : 100;
+                    for ($x = 1; $x <= $config; $x += 1) {
                         $memberModel = new TblMember();
                         $memberModel->attributes = $this->model->attributes;
                         $memberModel->ex_member_code = str_pad($x, 4, '0', STR_PAD_LEFT);
