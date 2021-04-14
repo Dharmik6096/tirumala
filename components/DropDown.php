@@ -1188,7 +1188,7 @@ class DropDown extends Component {
             'billing_type' => [
                 'name' => 'billing_type',
                 'prompt' => Yii::t('app', 'Select Billing Type'),
-                'data' => [1 => Yii::t('app', 'Member Paymnet + VSP Salary'), 2 => Yii::t('app', 'VSP Payment')],
+                'data' => [1 => Yii::t('app', 'Member Payment + VSP Salary'), 2 => Yii::t('app', 'VSP Payment')],
             ],
             'order_on' => [
                 'name' => 'order_on',
