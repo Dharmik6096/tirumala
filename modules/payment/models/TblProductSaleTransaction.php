@@ -49,7 +49,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
             [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync']],
             [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code'], 'safe'],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
-//                [['product_sale_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductSale::className(), 'targetAttribute' => ['product_sale_code' => 'product_sale_code']],
+            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
         ];
     }
 
